@@ -77,3 +77,7 @@ endpoint عمومی `GET /updates/manifest` (بدون auth — پیش از ور�
 
 ## D-020. (consult-3) فرمت خروجی گزارش محرمانه: HTML چاپی + JSON
 خروجی اصلی = HTML راست‌چین چاپ‌پذیر + JSON ماشین‌خوان؛ PDF فارسی (WeasyPrint) در CI فقط در صورت نیاز. تکمیل‌کنندهٔ D-017.
+
+## D-021. (loop-plan) تصویب نقشهٔ لوپ M22–M31 با ایجنت‌های ECC و مراحل کیفی S1–S9
+کاربر همهٔ موارد صف + ۲۱ کمبود جدید را به لوپ اضافه کرد و خواستار طرح‌ریزی دقیق با مأموریت مرحله‌به‌مرحلهٔ ایجنت‌های ECC + مراحل کیفی از منابع تحقیق‌شده شد. منابع واقعاً بررسی شدند: ادغام (Vercel guidelines، DESIGN.md، Finn-loop، Hermes، scientific-skills الگویی، find-skills، Dokploy، Strix/Browser-use اختیاری)، مرجع (Skiper/Vengeance/21st.dev/vgpu/Casberry/Originkit/AgentMemory/OmniRoute/n8n)، رد (Animaster=پولی، DaisyUI=تعارض با shadcn)، نامعلوم (Soup). فرایند از Finn-loop (spec→build→review→merge) + Hermes (L0–L5 + بازرس) پیروی می‌کند. سطح استقلال فعلی: L2.
+
