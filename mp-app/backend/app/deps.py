@@ -3,16 +3,14 @@
 from __future__ import annotations
 
 from collections.abc import Generator
-from typing import TYPE_CHECKING, Annotated
+from typing import Annotated
 
-from fastapi import Depends, Header
+from fastapi import Depends, Header, Request
 from sqlalchemy.orm import Session
 
 from app.errors import ForbiddenError, UnauthorizedError
 from db.base import get_session_factory
-
-if TYPE_CHECKING:
-    from db.models import User
+from db.models import User
 
 
 def get_db() -> Generator[Session, None, None]:
@@ -46,15 +44,30 @@ def get_current_user(
     return user
 
 
-CurrentUser = Annotated["User", Depends(get_current_user)]
+CurrentUser = Annotated[User, Depends(get_current_user)]
 
 
 def require_roles(*roles: str):
-    """guard نقش (RBAC کامل با casbin در M08)."""
+    """guard نقش ساده — فقط نقش‌های مشخص‌شده (compat)."""
 
     def _guard(user: CurrentUser) -> User:
         if user.role not in roles:
             raise ForbiddenError(f"نقش {user.role} مجاز نیست")
+        return user
+
+    return _guard
+
+
+def require_permission():
+    """guard مجوز با casbin (M08) — نقش کاربر + مسیر/متد درخواست."""
+
+    def _guard(user: CurrentUser, request: Request) -> User:
+        from security.rbac import enforce
+
+        if not enforce(user.role, request.url.path, request.method):
+            raise ForbiddenError(
+                f"نقش {user.role} برای {request.method} {request.url.path} مجاز نیست"
+            )
         return user
 
     return _guard

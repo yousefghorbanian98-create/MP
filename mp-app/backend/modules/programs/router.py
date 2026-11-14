@@ -2,13 +2,15 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
-from app.deps import DbSession
+from app.deps import DbSession, require_permission
 from modules.programs import service
 from modules.programs.schemas import ProgramOut, RejectIn
 
-router = APIRouter(prefix="/programs", tags=["programs"])
+router = APIRouter(
+    prefix="/programs", tags=["programs"], dependencies=[Depends(require_permission())]
+)
 
 
 @router.get(

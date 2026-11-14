@@ -2,13 +2,15 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Depends, Query
 
-from app.deps import DbSession
+from app.deps import DbSession, require_permission
 from modules.notification import service
 from modules.notification.schemas import NotificationOut, NotificationSend
 
-router = APIRouter(prefix="/notifications", tags=["notifications"])
+router = APIRouter(
+    prefix="/notifications", tags=["notifications"], dependencies=[Depends(require_permission())]
+)
 
 
 @router.post("", response_model=NotificationOut, summary="ارسال اعلان (US-107)")

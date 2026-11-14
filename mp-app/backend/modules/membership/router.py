@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Depends, Query
 
-from app.deps import DbSession
+from app.deps import DbSession, require_permission
 from modules.membership import service
 from modules.membership.schemas import (
     MemberCreate,
@@ -14,7 +14,9 @@ from modules.membership.schemas import (
     MemberUpdate,
 )
 
-router = APIRouter(prefix="/members", tags=["members"])
+router = APIRouter(
+    prefix="/members", tags=["members"], dependencies=[Depends(require_permission())]
+)
 
 
 @router.post("", response_model=MemberOut, summary="ثبت‌نام عضو جدید (US-301)")

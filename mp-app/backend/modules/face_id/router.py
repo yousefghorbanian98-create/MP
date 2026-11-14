@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import base64
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
-from app.deps import DbSession
+from app.deps import DbSession, require_permission
 from modules.face_id import service
 from modules.face_id.schemas import (
     CheckInIn,
@@ -17,7 +17,7 @@ from modules.face_id.schemas import (
     FaceTemplateOut,
 )
 
-router = APIRouter(prefix="/face", tags=["face-id"])
+router = APIRouter(prefix="/face", tags=["face-id"], dependencies=[Depends(require_permission())])
 
 
 @router.post("/consent", response_model=ConsentOut, summary="ثبت رضایت بیومتریک (US-108)")

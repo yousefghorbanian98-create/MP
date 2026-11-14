@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+### Added — M08 (2026-11-14)
+- RBAC با casbin — ماتریس نقش/اجازهٔ ۴ نقش + guard سطح روتر (`require_permission`)
+- سخت‌سازی auth: تست نفوذ سطحی (401/403)، rotation refresh، خروج از همهٔ دستگاه‌ها (US-404)
+- تست‌های RBAC (۳۰) + بازنویسی تست‌های قرارداد با احراز هویت نقش‌دار — ۹۱ تست، پوشش ۸۵٪
+
 ### Added — M07 (2026-11-14)
 - `mp-app/shared/motion-spec.md` — مشخصات کامل میکرو-ترنزیشن‌ها (زمان‌ها، easingها، الگوها)
 - `docs/MuscleParadise/design/design-system.md` — سیستم دیزاین رسمی (توکن‌ها، کامپوننت‌ها، WCAG)

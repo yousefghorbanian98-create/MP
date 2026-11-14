@@ -6,3 +6,4 @@
 | 1 | 2026-11-14 | Phase-0 | درس | دانلود از raw.githubusercontent.com در محیط ممکن نیست؛ gh api با Accept raw جایگزین موفق بود | هرگز برای دریافت فایل از raw.githubusercontent.com استفاده نکن — از gh api استفاده کن | — |
 | 2 | 2026-11-14 | M00 | تصمیم | Flutter/Docker/مرورگر در محیط نیستند (D-002..004) | هرگز گیت اجرایی قابل‌اجرا در محیط را به «بعداً» موکول نکن — مسیر جایگزین + CI تعریف کن | — |
 | 3 | 2026-11-14 | M03 | باگ | server_default="CURRENT_TIMESTAMP" به‌صورت رشتهٔ خام ذخیره می‌شود (ValueError isoformat) | هرگز server_default رشته‌ای برای DateTime استفاده نکن — فقط func.now() یا sa.text() | R-002 (OTP hash) + تست‌های مدل |
+| 4 | 2026-11-14 | M08 | باگ | Annotated["User", ...] با TYPE_CHECKING در FastAPI resolve نمی‌شود (query param شد) + keyMatch2 فقط «/*» وایلدکارت دارد | هرگز forward-ref رشته‌ای در CurrentUser استفاده نکن — import واقعی؛ هرگز «foo*» به‌جای «foo/*» در policy casbin ننویس | R-004 + تست‌های RBAC |

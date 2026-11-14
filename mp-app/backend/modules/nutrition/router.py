@@ -2,13 +2,15 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
-from app.deps import DbSession
+from app.deps import DbSession, require_permission
 from modules.nutrition import service
 from modules.nutrition.schemas import PlanFromEngineIn, PlanOut
 
-router = APIRouter(prefix="/nutrition", tags=["nutrition"])
+router = APIRouter(
+    prefix="/nutrition", tags=["nutrition"], dependencies=[Depends(require_permission())]
+)
 
 
 @router.post("/plans", response_model=PlanOut, summary="ثبت برنامهٔ تغذیه از خروجی موتور (US-204)")

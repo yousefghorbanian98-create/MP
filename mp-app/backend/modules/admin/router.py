@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Depends, Query
 
-from app.deps import DbSession
+from app.deps import DbSession, require_permission
 from modules.admin import service
 from modules.admin.schemas import AuditOut, FeatureFlagIn, FeatureFlagOut
 
-router = APIRouter(prefix="/admin", tags=["admin"])
+router = APIRouter(prefix="/admin", tags=["admin"], dependencies=[Depends(require_permission())])
 
 
 @router.get("/audit", response_model=list[AuditOut], summary="لاگ ممیزی (US-406)")

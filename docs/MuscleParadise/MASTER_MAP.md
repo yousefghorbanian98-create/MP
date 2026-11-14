@@ -227,7 +227,8 @@ M07 ──► M08 ──► M09 ──► M10 ──► M11 ──► M12 ──
 | M04 | 2026-11-14 | ✅ Done | 854e2ed | قرارداد /api/v1 + OTP/JWT + rate-limit — ۵۰ تست، پوشش ۸۴٪ |
 | M05 | 2026-11-14 | ✅ Done | 5065361 | هسته: jobs + structlog + Repository — ۶۰ تست، پوشش ۸۴٪ |
 | M06 | 2026-11-14 | ✅ Done | cafe6db | فرانت‌اند Studio/Client + بازرسی UI (موکاپ+Live Preview) |
-| M07 | 2026-11-14 | ✅ Done | (کامیت M07) | دیزاین سیستم: توکن‌ها + motion-spec + تست sync |
+| M07 | 2026-11-14 | ✅ Done | c9129e1 | دیزاین سیستم: توکن‌ها + motion-spec + تست sync |
+| M08 | 2026-11-14 | ✅ Done | (کامیت M08) | احراز هویت: casbin RBAC + rotation + logout-all — ۹۱ تست |
 | M00 | 2026-11-14 | ✅ Done | (این کامیت) | بوت‌استراپ: اسکلپ + CI + state |
 | M01 | — | ⬜ | — | PRD |
 | M02 | — | ⬜ | — | معماری |

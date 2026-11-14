@@ -2,13 +2,15 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
-from app.deps import DbSession
+from app.deps import DbSession, require_permission
 from modules.assessment import service
 from modules.assessment.schemas import AssessmentCreate, AssessmentOut, Jp7In, Jp7Out
 
-router = APIRouter(prefix="/assessments", tags=["assessment"])
+router = APIRouter(
+    prefix="/assessments", tags=["assessment"], dependencies=[Depends(require_permission())]
+)
 
 
 @router.post("", response_model=AssessmentOut, summary="ثبت ارزیابی ۱۴ دامنه (US-201)")

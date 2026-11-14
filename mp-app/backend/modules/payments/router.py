@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Depends, Query
 
-from app.deps import DbSession
+from app.deps import DbSession, require_permission
 from modules.payments import service
 from modules.payments.schemas import (
     PaymentCreate,
@@ -15,7 +15,9 @@ from modules.payments.schemas import (
     WalletTxOut,
 )
 
-router = APIRouter(prefix="/payments", tags=["payments"])
+router = APIRouter(
+    prefix="/payments", tags=["payments"], dependencies=[Depends(require_permission())]
+)
 
 
 @router.post("", response_model=PaymentOut, summary="ایجاد پرداخت (US-302)")
