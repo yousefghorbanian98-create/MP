@@ -120,3 +120,8 @@
 - `docs/MuscleParadise/FACEID-PRIVACY-TEXT.md` + `RELEASE-CHECKLIST.md`.
 - RBAC: دسترسی member/coach/reception به privacy-notice.
 - گیت‌ها: ۱۸۴ pytest سبز، ruff صفر، semgrep صفر.
+
+## 2026-11-14 — بستهٔ نهایی [finn]
+- M22–M31 همگی بسته شدند (MASTER_MAP به‌روز شد)؛ FINAL_REPORT بخش ۱۱ افزوده شد.
+- `docs/MuscleParadise/delivery-reports/2026-11-14-final.md`: جدول قابلیت/شاهد/شکاف + مسیرهای بسته.
+- شرط‌های نهایی: ۱۸۴ تست سبز، ruff صفر، semgrep صفر، Locust بدون 5xx، مانور بکاپ سبز.
