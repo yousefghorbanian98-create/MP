@@ -47,3 +47,6 @@ pip-audit سه آسیب بدون نسخهٔ رفع در python-jose/ecdsa گزا
 
 ## D-010. (M18) مالکیت سطری در لایهٔ سرویس (نه فقط RBAC)
 RBAC مسیر/متد را چک می‌کند؛ مالکیت (عضو فقط دادهٔ خودش) با `app/security/ownership.py` در سرویس‌ها اعمال می‌شود (user از روتر عبور می‌کند؛ فراخوانی داخلی با user=None). ورود پیکرسنجی فقط staff (سیاست POST ندارد برای member)؛ خواندن نتایج/سوابق/کیف پول برای عضو با مالکیت آزاد شد.
+
+## D-011. (M20) معماری آپدیت تفاضلی
+endpoint عمومی `GET /updates/manifest` (بدون auth — پیش از ورود) + `registry.json` (پچ‌ها با sha256/size). نسخه‌یابی semver-simplified در سه لایه یکسان (backend/ts/dart). وب: SW با SKIP_WAITING؛ موبایل: دانلود patch با تأیید هش + fallback به full. حالت `force` وقتی نسخه < min_supported.
