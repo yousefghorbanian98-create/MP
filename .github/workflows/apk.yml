@@ -1,5 +1,6 @@
 # Muscle Paradise — ساخت APK اندروید (M28/باز-۱)
-# اجرا: workflow_dispatch یا push تگ v*
+# خروجی‌ها: آرتیفکت + commit در mp-app/client/release/ (قابل دریافت از مخزن)
+# تشخیص خطا: کامنت issue با برچسب apk-diagnostics
 name: mp-apk
 
 on:
@@ -15,8 +16,14 @@ on:
 jobs:
   apk:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
@@ -25,28 +32,65 @@ jobs:
       - name: Flutter version + pub get
         run: |
           cd mp-app/client
-          flutter --version
-          flutter pub get
+          flutter --version | tee /tmp/step-pubget.txt
+          flutter pub get 2>&1 | tee -a /tmp/step-pubget.txt
 
       - name: Analyze
         run: |
           cd mp-app/client
-          flutter analyze --no-fatal-infos
+          flutter analyze --no-fatal-infos 2>&1 | tee /tmp/step-analyze.txt
 
       - name: Test
         run: |
           cd mp-app/client
-          flutter test
+          flutter test 2>&1 | tee /tmp/step-test.txt
 
       - name: Build APK + SHA256
         env:
           BUILD_NUMBER: ${{ github.event.inputs.build_number || github.run_number }}
         run: |
           cd mp-app/client
-          flutter build apk --release --split-per-abi --build-number="$BUILD_NUMBER"
+          flutter build apk --release --split-per-abi --build-number="$BUILD_NUMBER" 2>&1 | tee /tmp/step-build.txt
           APK="build/app/outputs/flutter-apk/app-arm64-v8a-release.apk"
           test -f "$APK"
           sha256sum "$APK" | tee "$APK.sha256"
+
+      - name: Diagnostics comment on failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ISSUE=$(gh issue list --label apk-diagnostics --state open --json number -q '.[0].number')
+          if [ -z "$ISSUE" ]; then
+            ISSUE=$(gh issue create --title "apk-ci diagnostics" --label apk-diagnostics --body "گزارش خودکار خطاهای ساخت APK" -q .number --match-title "apk-ci diagnostics")
+          fi
+          {
+            echo "## خطا در اجرای ${{ github.run_id }} (${{ github.ref_name }})"
+            for f in /tmp/step-*.txt; do
+              echo "### $(basename $f)"
+              echo '```'
+              tail -60 "$f" || true
+              echo '```'
+            done
+          } > /tmp/comment.md
+          gh issue comment "$ISSUE" --body-file /tmp/comment.md
+
+      - name: Commit APK into repo (delivery)
+        if: success()
+        env:
+          BRANCH: arena/a0408b29-mp
+        run: |
+          git config user.name "mp-apk-ci"
+          git config user.email "ci@muscleparadise.local"
+          git fetch origin "$BRANCH"
+          git checkout -B "$BRANCH" "origin/$BRANCH"
+          mkdir -p mp-app/client/release
+          cp mp-app/client/build/app/outputs/flutter-apk/*.apk mp-app/client/release/ 2>/dev/null || true
+          cp mp-app/client/build/app/outputs/flutter-apk/*.sha256 mp-app/client/release/ 2>/dev/null || true
+          echo "built-from: ${{ github.sha }} run: ${{ github.run_id }}" > mp-app/client/release/BUILD-INFO.txt
+          git add mp-app/client/release
+          git commit -m "mp(apk): deliver APK build ${{ github.run_number }} [skip ci]" || echo "no changes"
+          git push origin "$BRANCH"
 
       - name: Upload APK artifact
         if: success()
@@ -57,11 +101,3 @@ jobs:
             mp-app/client/build/app/outputs/flutter-apk/*.apk
             mp-app/client/build/app/outputs/flutter-apk/*.sha256
           if-no-files-found: error
-
-      - name: Upload diagnostics on failure
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: apk-diagnostics
-          path: mp-app/client/
-          retention-days: 3
