@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Sidebar } from "./components/Sidebar";
 import { TopBar } from "./components/TopBar";
 import { CheckIn } from "./pages/CheckIn";
@@ -20,6 +20,7 @@ const pages = {
 export default function App() {
   const page = useAppStore((s) => s.page);
   const Page = pages[page];
+  const reduced = useReducedMotion(); // احترام به prefers-reduced-motion (M07)
 
   return (
     <div className="flex min-h-screen gap-6 p-6">
@@ -29,10 +30,10 @@ export default function App() {
         <AnimatePresence mode="wait">
           <motion.div
             key={page}
-            initial={{ opacity: 0, y: 14 }}
+            initial={reduced ? false : { opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
+            exit={reduced ? undefined : { opacity: 0, y: -10 }}
+            transition={{ duration: reduced ? 0 : 0.3, ease: "easeOut" }}
           >
             <Page />
           </motion.div>

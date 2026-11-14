@@ -226,7 +226,8 @@ M07 ──► M08 ──► M09 ──► M10 ──► M11 ──► M12 ──
 | M03 | 2026-11-14 | ✅ Done | dab312a | مدل‌ها + Alembic + crypto — ۳۵ تست، پوشش ۹۶٪ |
 | M04 | 2026-11-14 | ✅ Done | 854e2ed | قرارداد /api/v1 + OTP/JWT + rate-limit — ۵۰ تست، پوشش ۸۴٪ |
 | M05 | 2026-11-14 | ✅ Done | 5065361 | هسته: jobs + structlog + Repository — ۶۰ تست، پوشش ۸۴٪ |
-| M06 | 2026-11-14 | ✅ Done | (کامیت M06) | فرانت‌اند Studio/Client + بازرسی UI (موکاپ+Live Preview) |
+| M06 | 2026-11-14 | ✅ Done | cafe6db | فرانت‌اند Studio/Client + بازرسی UI (موکاپ+Live Preview) |
+| M07 | 2026-11-14 | ✅ Done | (کامیت M07) | دیزاین سیستم: توکن‌ها + motion-spec + تست sync |
 | M00 | 2026-11-14 | ✅ Done | (این کامیت) | بوت‌استراپ: اسکلپ + CI + state |
 | M01 | — | ⬜ | — | PRD |
 | M02 | — | ⬜ | — | معماری |

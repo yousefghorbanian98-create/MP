@@ -4,6 +4,12 @@
 
 ## [Unreleased]
 
+### Added — M07 (2026-11-14)
+- `mp-app/shared/motion-spec.md` — مشخصات کامل میکرو-ترنزیشن‌ها (زمان‌ها، easingها، الگوها)
+- `docs/MuscleParadise/design/design-system.md` — سیستم دیزاین رسمی (توکن‌ها، کامپوننت‌ها، WCAG)
+- تست‌های مکانیکی همگام‌سازی توکن‌ها + گیت کنتراست WCAG (۹ تست جدید در Studio)
+- احترام به prefers-reduced-motion
+
 ### Added — M06 (2026-11-14)
 - **MP Studio**: React+Vite+Zustand+Tailwind+Framer Motion — داشبورد KPI، نمودار حضور، جدول اعضا + پنل ۱۴ دامنه، برنامه‌ها، چک‌این زنده، تنظیمات (feature flags) — RTL فارسی، حالت تاریک، glassmorphism، میکرو-ترنزیشن‌ها
 - **MP Client (Flutter)**: اپ «برنامهٔ امروز» + چک‌این با Riverpod/flutter_animate + تست‌های ویجت/واحد
