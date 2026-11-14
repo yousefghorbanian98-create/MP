@@ -137,3 +137,7 @@
 - **Face-ID عمیق**: `modules/face_id/deep.py` — آداپتور ONNX + نگهبان‌های تست‌شده (رد HTML جعلی/حجم مشکوک/قفل چهارشرطه) + `GET /face/deep-status` (۷ تست).
 - **UI مالی استودیو**: صفحهٔ Finance — خلاصهٔ مالی، کمیسیون مربی، دانلود CSV با خروجی واقعی/خطای صریح + رفع خطای tsc (vite-env.d.ts).
 - گیت‌ها: ۱۹۲ pytest سبز، ruff صفر، semgrep صفر، ۱۵ تست استودیو سبز، tsc پاک.
+
+## 2026-11-14 — APK واقعی + استقرار Docker [finn]
+- **APK ساخته شد (CI)**: `mp-app/client/release/` — سه ABI + SHA256 + BUILD-INFO (run 43617637282). رفع: تعارض intl، فونت وزیرمتن (دانلود از منبع رسمی OFL)، importهای theme، آیکن حذف‌شدهٔ Flutter 3.50، scaffold اندروید.
+- **استقرار**: Dockerfile (backend/studio) + docker-compose + workflow GHCR (`mp-container`) + `docs/MuscleParadise/DEPLOYMENT.md` (راهنمای مرحله‌به‌مرحله).
