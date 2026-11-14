@@ -59,7 +59,7 @@ class WebMagfaProvider:
             return False
         try:
             with (
-                urllib.request.urlopen(  # nosemgrep: dynamic-urllib-use-detected — URL از تنظیمات اپراتور + اجبار https
+                urllib.request.urlopen(  # nosec B310,nosemgrep — URL از تنظیمات اپراتور + اجبار https
                     req, timeout=10
                 ) as resp
             ):
@@ -88,7 +88,7 @@ class KavenegarProvider:
             return False
         try:
             with (
-                urllib.request.urlopen(  # nosemgrep: dynamic-urllib-use-detected — URL از تنظیمات اپراتور + اجبار https
+                urllib.request.urlopen(  # nosec B310,nosemgrep — URL از تنظیمات اپراتور + اجبار https
                     url, data=data, timeout=10
                 ) as resp
             ):

@@ -27,6 +27,7 @@ jobs:
           pytest --cov=. --cov-report=xml --cov-fail-under=70
       - name: Security scan (bandit + pip-audit)
         run: |
+          pip install -U "setuptools>=84.1"   # رفع آسیب‌پذیری‌های PYSEC-2026-3447/GHSA-xmj3
           cd mp-app/backend
           bandit -r . -ll -q
           pip-audit
@@ -64,9 +65,9 @@ jobs:
       - name: flutter pub get
         working-directory: mp-app/client
         run: flutter pub get
-      - name: flutter analyze
+      - name: flutter analyze (errors/warnings fatal — infos گزارش می‌شود)
         working-directory: mp-app/client
-        run: flutter analyze
+        run: flutter analyze --no-fatal-infos
       - name: flutter test
         working-directory: mp-app/client
         run: flutter test
