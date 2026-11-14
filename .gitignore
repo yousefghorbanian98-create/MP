@@ -1,0 +1,57 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# --- Node ---
+node_modules/
+.vite/
+.npm/
+*.tsbuildinfo
+
+# --- Flutter / Dart ---
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+*.g.dart
+*.freezed.dart
+build/
+.client-build/
+
+# --- FINN loop ---
+# کلون ECC بازتولیدپذیر است (کامیت پین‌شده در .finn/ecc-commit.txt) → ignore می‌شود.
+# فایل‌های وضعیت لوپ (state) عمداً commit می‌شوند تا در برابر پاک‌شدن محیط محفوظ بمانند.
+.finn/ecc/
+
+# --- Environment / secrets ---
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# --- Build outputs ---
+mp-app/studio/dist/
+mp-app/studio/release/
+mp-app/backend/*.db
+mp-app/backend/*.sqlite3
+tmp/
+_ref/

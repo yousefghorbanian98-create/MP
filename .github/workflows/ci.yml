@@ -1,0 +1,64 @@
+# Muscle Paradise — CI (اسکلپ اولیه؛ در M10 کامل می‌شود)
+# مراحل: lint → test → scan → build
+name: mp-ci
+
+on:
+  push:
+    branches: [main, "arena/**"]
+  pull_request:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install backend deps
+        run: pip install -e "mp-app/backend[dev]"
+      - name: Lint (ruff)
+        run: ruff check mp-app/backend && ruff format --check mp-app/backend
+      - name: Test (pytest + coverage ≥70%)
+        run: cd mp-app/backend && pytest --cov=. --cov-report=term-missing --cov-fail-under=70
+      - name: Security scan (bandit + pip-audit)
+        run: |
+          bandit -r mp-app/backend -ll -q || true
+          pip-audit || true
+
+  studio:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install studio deps
+        working-directory: mp-app/studio
+        run: npm ci || npm install
+      - name: Lint & unit tests (Vitest)
+        working-directory: mp-app/studio
+        run: |
+          npm run lint --if-present
+          npm test --if-present
+      - name: Build
+        working-directory: mp-app/studio
+        run: npm run build --if-present
+
+  client-flutter:
+    runs-on: ubuntu-latest
+    # اجرا در CI: تحلیل و تست Flutter (در سندباکس SDK موجود نیست — D-002)
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - name: flutter pub get
+        working-directory: mp-app/client
+        run: flutter pub get
+      - name: flutter analyze
+        working-directory: mp-app/client
+        run: flutter analyze
+      - name: flutter test
+        working-directory: mp-app/client
+        run: flutter test
