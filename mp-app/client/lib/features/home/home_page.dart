@@ -29,7 +29,25 @@ class _HomePageState extends State<HomePage> {
       child: ListView(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
         children: [
-          _SearchBar(controller: _searchCtrl),
+          Row(
+            children: [
+              Expanded(child: _SearchBar(controller: _searchCtrl)),
+              const SizedBox(width: 10),
+              // M22-c4: ورودی پروفایل (قبلاً صفحه بدون مسیر/ورودی بود)
+              Material(
+                color: MpColors.surface.withOpacity(0.7),
+                borderRadius: BorderRadius.circular(16),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(16),
+                  onTap: () => context.push('/profile'),
+                  child: const Padding(
+                    padding: EdgeInsets.all(11),
+                    child: Icon(Icons.person_outline, color: MpColors.primaryLight, size: 24),
+                  ),
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 16),
           const _PromoBanner(),
           const SizedBox(height: 20),

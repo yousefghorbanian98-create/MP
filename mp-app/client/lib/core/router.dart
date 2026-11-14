@@ -1,15 +1,39 @@
 /// مسیریابی go_router — شل ۴ تبی + مسیرهای بخش‌ها (M19).
 library;
 
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../features/bodycomp/bodycomp_page.dart';
 import '../features/checkin/checkin_page.dart';
 import '../features/classes/classes_page.dart';
 import '../features/nutrition/nutrition_page.dart';
+import '../features/profile/profile_page.dart';
+import '../features/progress/progress_page.dart';
 import '../features/shell/app_shell.dart';
 import '../features/shop/shop_page.dart';
+import '../features/today/today_page.dart';
 import '../features/wallet/wallet_page.dart';
+
+/// پوشش صفحاتِ بدون Scaffold هنگام push مستقیم (خروجی + دکمهٔ بازگشت).
+class _PushedSection extends StatelessWidget {
+  const _PushedSection({required this.title, required this.child});
+
+  final String title;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(title),
+        backgroundColor: MpColors.background,
+        surfaceTintColor: Colors.transparent,
+      ),
+      body: child,
+    );
+  }
+}
 
 final GoRouter mpRouter = GoRouter(
   initialLocation: '/home',
@@ -43,6 +67,21 @@ final GoRouter mpRouter = GoRouter(
     GoRoute(
       path: '/shop',
       pageBuilder: (context, state) => const NoTransitionPage(child: ShopPage()),
+    ),
+    // M22-c4: مسیرهای گرید خانه که قبلاً route نداشتند (دکمه‌های شکسته)
+    GoRoute(
+      path: '/today',
+      pageBuilder: (context, state) => const NoTransitionPage(child: TodayPage()),
+    ),
+    GoRoute(
+      path: '/progress',
+      pageBuilder: (context, state) =>
+          const NoTransitionPage(child: _PushedSection(title: 'پیشرفت', child: ProgressPage())),
+    ),
+    GoRoute(
+      path: '/profile',
+      pageBuilder: (context, state) =>
+          const NoTransitionPage(child: _PushedSection(title: 'پروفایل', child: ProfilePage())),
     ),
   ],
 );
