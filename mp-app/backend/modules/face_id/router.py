@@ -44,3 +44,11 @@ def delete_face(member_id: int, db: DbSession, user: CurrentUser):
 @router.post("/checkin", response_model=CheckInOut, summary="چک‌این (US-106)")
 def check_in(payload: CheckInIn, db: DbSession, user: CurrentUser):
     return service.check_in(db, payload.member_id, payload.method, user=user)
+
+
+from modules.face_id.privacy import PRIVACY_NOTICE  # noqa: E402
+
+
+@router.get("/privacy-notice", summary="متن حریم خصوصی بیومتریک (M31)")
+def privacy_notice():
+    return PRIVACY_NOTICE

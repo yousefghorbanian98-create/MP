@@ -38,6 +38,7 @@ POLICIES: list[tuple[str, str, str]] = [
     ("member", "/api/v1/face/consent/revoke", "POST"),
     ("member", "/api/v1/face/enroll/*", "DELETE"),
     ("member", "/api/v1/face/checkin", "POST"),
+    ("member", "/api/v1/face/privacy-notice", "GET"),
     ("member", "/api/v1/notifications/*", "GET"),
     ("member", "/api/v1/notifications/*", "POST"),
     ("member", "/api/v1/programs/*", "GET"),
@@ -59,6 +60,7 @@ POLICIES: list[tuple[str, str, str]] = [
     ("coach", "/api/v1/nutrition/*", "*"),
     ("coach", "/api/v1/nutrition/plans", "POST"),
     ("coach", "/api/v1/face/*", "*"),
+    ("reception", "/api/v1/face/privacy-notice", "GET"),
     ("coach", "/api/v1/notifications/*", "*"),
     # پذیرش: ثبت‌نام/پرداخت/چک‌این
     ("reception", "/api/v1/members", "GET"),

@@ -114,3 +114,9 @@
 - تست مانور بکاپ/بازیابی (`test_backup_drill.py`): بکاپ ← حذف ← بازیابی ← تأیید SHA256 و داده.
 - `docs/MuscleParadise/OPS-RUNBOOK.md`: سرویس‌ها، پشتیبان روزانه، بازیابی فاجعه (RTO < ۳۰ دقیقه)، پایش، انتشار دلتا.
 - اجرای دوم Locust (۵۰ کاربر/۳۰ ثانیه): ۰ خطا 5xx — `finn/reports/load/M30-smoke-report.md`.
+
+## 2026-11-14 — M31 [finn]
+- `modules/face_id/privacy.py` + `GET /api/v1/face/privacy-notice`: متن حریم خصوصی نسخه‌دار (faceid-privacy-1.0) + حق حذف صریح.
+- `docs/MuscleParadise/FACEID-PRIVACY-TEXT.md` + `RELEASE-CHECKLIST.md`.
+- RBAC: دسترسی member/coach/reception به privacy-notice.
+- گیت‌ها: ۱۸۴ pytest سبز، ruff صفر، semgrep صفر.
