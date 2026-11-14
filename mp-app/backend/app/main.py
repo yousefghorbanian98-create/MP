@@ -24,6 +24,21 @@ async def lifespan(app: FastAPI):
     yield
 
 
+def _rate_limit_handler(request, exc):  # noqa: ANN001, ARG001
+    """پاسخ ۴۲۹ یکنواخت — handler ماژول‌سطح (رفع یافتهٔ semgrep useless-inner-function)."""
+    from app.errors import _payload_for_rate_limit
+
+    return JSONResponse(
+        status_code=429,
+        content=_payload_for_rate_limit(),
+    )
+
+
+def health() -> dict:
+    """سلامت سیستم — endpoint سطح ماژول (رفع FP semgrep)."""
+    return {"status": "ok", "service": settings.app_name, "version": "1.0.0"}
+
+
 def create_app() -> FastAPI:
     app = FastAPI(
         title="Muscle Paradise API",
@@ -47,9 +62,11 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
 
+    # CORS: allowlist محیطی (D-22c2 — حذف wildcard). production خالی = fail-closed.
+    _origins = [o.strip() for o in settings.cors_origins.split(",") if o.strip()]
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],
+        allow_origins=_origins,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
@@ -62,26 +79,15 @@ def create_app() -> FastAPI:
     app.add_exception_handler(ApiError, api_error_handler)
     app.add_exception_handler(RequestValidationError, validation_error_handler)
 
-    from app.errors import _payload_for_rate_limit
     from modules.auth.router import limiter
 
     app.state.limiter = limiter
-
-    def _rate_limit_handler(request, exc):  # noqa: ANN001
-        return JSONResponse(
-            status_code=429,
-            content=_payload_for_rate_limit(),
-        )
-
     app.add_exception_handler(RateLimitExceeded, _rate_limit_handler)
 
     from api.v1.api import api_router
 
     app.include_router(api_router, prefix="/api/v1")
-
-    @app.get("/health", tags=["health"], summary="سلامت سیستم")
-    def health() -> dict:
-        return {"status": "ok", "service": settings.app_name, "version": "1.0.0"}
+    app.add_api_route("/health", health, methods=["GET"], tags=["health"], summary="سلامت سیستم")
 
     return app
 

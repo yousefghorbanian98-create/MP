@@ -39,7 +39,7 @@ def get_current_user(
     from db.models import User
 
     user = db.get(User, int(payload["sub"]))
-    if user is None or not user.is_active:
+    if user is None or not user.is_active:  # nosemgrep: python.lang.maintainability.is-function-without-parentheses — پراپرتی SQLAlchemy است نه فراخوانی
         raise UnauthorizedError("کاربر فعال نیست")
     return user
 

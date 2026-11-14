@@ -13,6 +13,7 @@ abstract final class MpColors {
   static const textPrimary = Color(0xFFF3F6F8);
   static const textSecondary = Color(0xFF9CA3AF);
   static const danger = Color(0xFFF87171);
+  static const info = Color(0xFF38BDF8);
 }
 
 ThemeData mpTheme() {
