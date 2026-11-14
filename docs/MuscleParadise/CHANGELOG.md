@@ -91,3 +91,9 @@
 - اسکلپ `mp-app/` (backend/studio/client/kiosk/infra) + CI اولیهٔ GitHub Actions
 - `docs/MuscleParadise/MASTER_MAP.md` — نقشهٔ جامع اجرا
 - حافظهٔ لوپ: `LEDGER.md`, `STATE.md`, `DECISIONS.md`, `REGRESSIONS.md` (D-001)
+
+## 2026-11-14 — M27 [finn]
+- `modules/classes/` + `db/models/classes.py`: کلاس گروهی، رزرو با ظرفیت، لیست انتظار، ارتقا پس از لغو (migration b2c3d4e5f6a1).
+- `modules/payments/finance.py` + مسیرهای `/payments/finance/{summary,export.csv,commission}`: خلاصهٔ مالی، CSV حسابداری (ضد CSV-injection)، کمیسیون مربی (payment.coach_id).
+- یافته‌های semgrep رفع شد (۰ findings): Escape HTML در render_html، nosem مستند برای ستون‌های SQLAlchemy.
+- گیت‌ها: ۱۶۹ pytest سبز، ruff صفر، semgrep صفر، Locust بدون 5xx (429 = لیمیتر فعال).

@@ -9,6 +9,7 @@ from modules.admin.router import router as admin_router
 from modules.ai_engine.router import router as ai_engine_router
 from modules.assessment.router import router as assessment_router
 from modules.auth.router import router as auth_router
+from modules.classes.router import router as classes_router
 from modules.face_id.router import router as face_router
 from modules.membership.router import router as members_router
 from modules.notification.router import router as notifications_router
@@ -21,6 +22,7 @@ from modules.updates.router import router as updates_router
 
 api_router = APIRouter()
 api_router.include_router(auth_router)
+api_router.include_router(classes_router)
 api_router.include_router(members_router)
 api_router.include_router(payments_router)
 api_router.include_router(assessment_router)

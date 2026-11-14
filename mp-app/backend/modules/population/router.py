@@ -9,7 +9,11 @@ from app.deps import require_roles
 from modules.population.gates import POPULATION_PATHS, assert_generation_allowed
 from modules.population.intake import next_questions
 
-router = APIRouter(prefix="/population", tags=["programs"])
+router = APIRouter(
+    prefix="/population",
+    tags=["programs"],
+    dependencies=[Depends(require_roles("admin", "coach", "manager"))],
+)
 
 
 class IntakeIn(BaseModel):
@@ -19,15 +23,15 @@ class IntakeIn(BaseModel):
 
 
 @router.get("/paths", summary="ماتریس وضعیت مسیرهای جمعیتی (E05)")
-def paths(_staff=Depends(require_roles("admin", "coach", "manager"))):
+def paths():
     return POPULATION_PATHS
 
 
 @router.post("/gate-check", summary="گیت صریح تولید — توقف خودکار برای مسیر غیرفعال")
-def gate_check(path: str, _staff=Depends(require_roles("admin", "coach", "manager"))):
+def gate_check(path: str):
     return assert_generation_allowed(path)
 
 
 @router.post("/intake/next", summary="سؤال‌های تکمیلی پویا (هدف‌محور)")
-def intake_next(payload: IntakeIn, _staff=Depends(require_roles("admin", "coach", "manager"))):
+def intake_next(payload: IntakeIn):
     return {"questions": next_questions(payload.goal, payload.constraints, payload.answered_ids)}

@@ -45,8 +45,13 @@ DOMAIN14_TO_AXES: dict[int, list[str]] = {
 
 # وضعیت‌های مجاز هر محور (پیشنهادی بسته — با دلیل اجباری)
 AXIS_STATUSES = (
-    "direct_training", "covered_in_other_task", "education_monitoring",
-    "low_priority_now", "insufficient_data", "out_of_current_scope", "needs_review_referral",
+    "direct_training",
+    "covered_in_other_task",
+    "education_monitoring",
+    "low_priority_now",
+    "insufficient_data",
+    "out_of_current_scope",
+    "needs_review_referral",
 )
 
 
@@ -78,10 +83,19 @@ def axes_for_domains(domain_scores: dict[int, float]) -> dict[str, dict]:
             continue
         score = sum(domain_scores[d] for d in src) / len(src)
         if score >= 4:
-            status, reason = "covered_in_other_task", f"امتیاز بالا ({score:.1f}/5) از دامنه‌های {src} — پوشش ضمنی"
+            status, reason = (
+                "covered_in_other_task",
+                f"امتیاز بالا ({score:.1f}/5) از دامنه‌های {src} — پوشش ضمنی",
+            )
         elif score <= 1:
-            status, reason = "direct_training", f"امتیاز پایین ({score:.1f}/5) از دامنه‌های {src} — نیاز به تمرین مستقیم"
+            status, reason = (
+                "direct_training",
+                f"امتیاز پایین ({score:.1f}/5) از دامنه‌های {src} — نیاز به تمرین مستقیم",
+            )
         else:
-            status, reason = "education_monitoring", f"امتیاز متوسط ({score:.1f}/5) از دامنه‌های {src}"
+            status, reason = (
+                "education_monitoring",
+                f"امتیاز متوسط ({score:.1f}/5) از دامنه‌های {src}",
+            )
         out[axis["id"]] = {"name_fa": axis["name_fa"], "status": status, "reason": reason}
     return out

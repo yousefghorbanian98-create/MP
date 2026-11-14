@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, Query
+from pydantic import BaseModel
 
 from app.deps import CurrentUser, DbSession, require_permission
 from modules.payments import service
@@ -81,3 +82,31 @@ def wallet_balance(member_id: int, db: DbSession, user: CurrentUser):
         "member_id": member_id,
         "balance_rial": service.wallet_balance(db, member_id, user=user),
     }
+
+
+# ── M27: گزارش مالی، CSV، کمیسیون مربی (فقط admin/manager) ──
+from fastapi.responses import PlainTextResponse  # noqa: E402
+
+from modules.payments.finance import coach_commission, finance_summary, payments_csv  # noqa: E402
+
+
+@router.get("/finance/summary", summary="خلاصهٔ مالی (M27)")
+def _finance_summary(db: DbSession):
+    return finance_summary(db)
+
+
+@router.get(
+    "/finance/export.csv", summary="خروجی CSV پرداخت‌ها (حسابداری)", response_class=PlainTextResponse
+)
+def _finance_csv(db: DbSession):
+    return PlainTextResponse(payments_csv(db), media_type="text/csv; charset=utf-8")
+
+
+class CommissionIn(BaseModel):
+    coach_id: int
+    rate: float | None = None
+
+
+@router.post("/finance/commission", summary="کمیسیون مربی (M27)")
+def _commission(payload: CommissionIn, db: DbSession):
+    return coach_commission(db, payload.coach_id, payload.rate)

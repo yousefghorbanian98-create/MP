@@ -70,19 +70,35 @@ def test_axes_status_from_scores() -> None:
 def test_confidential_report_full_structure(client, auth):
     coach = auth("coach")
     member = client.post(
-        "/api/v1/members", json={"phone": "09125550001", "full_name": "ورزشکار نمونه", "goal": "hypertrophy"},
+        "/api/v1/members",
+        json={"phone": "09125550001", "full_name": "ورزشکار نمونه", "goal": "hypertrophy"},
         headers=coach,
     ).json()
     # ارزیابی ۱۴ دامنه
     scores = [{"domain": d, "score": 3} for d in range(1, 15)]
-    client.post("/api/v1/assessments", json={"member_id": member["id"], "scores": scores}, headers=coach)
+    client.post(
+        "/api/v1/assessments", json={"member_id": member["id"], "scores": scores}, headers=coach
+    )
     # JP7 خام (قفل)
-    skinfolds = {"chest": 10, "triceps": 8, "subscapular": 10, "suprailiac": 9,
-                 "abdomen": 15, "thigh": 12, "calf": 7}
+    skinfolds = {
+        "chest": 10,
+        "triceps": 8,
+        "subscapular": 10,
+        "suprailiac": 9,
+        "abdomen": 15,
+        "thigh": 12,
+        "calf": 7,
+    }
     client.post(
         "/api/v1/assessments/jp7",
-        json={"member_id": member["id"], "age": 30, "gender": "male",
-              "skinfolds_mm": skinfolds, "quality": "good", "method": "caliper"},
+        json={
+            "member_id": member["id"],
+            "age": 30,
+            "gender": "male",
+            "skinfolds_mm": skinfolds,
+            "quality": "good",
+            "method": "caliper",
+        },
         headers=coach,
     )
     r = client.get(f"/api/v1/reports/confidential/{member['id']}", headers=coach)

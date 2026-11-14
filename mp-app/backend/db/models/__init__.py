@@ -4,6 +4,7 @@ from db.models.admin import AuditLog, Campaign, FeatureFlag, Offer
 from db.models.ai import RuleRun
 from db.models.assessment import Assessment14Domain, DomainScore, JacksonPollockMeasurement
 from db.models.auth import OtpCode, RefreshToken, User
+from db.models.classes import ClassBooking, GymClass
 from db.models.content import Exercise, FoodItem
 from db.models.face_id import BiometricConsent, CheckIn, FaceTemplate
 from db.models.membership import Member, Membership
@@ -17,12 +18,14 @@ __all__ = [
     "AuditLog",
     "BiometricConsent",
     "Campaign",
+    "ClassBooking",
     "CheckIn",
     "DomainScore",
     "Exercise",
     "FaceTemplate",
     "FeatureFlag",
     "FoodItem",
+    "GymClass",
     "JacksonPollockMeasurement",
     "MealItem",
     "Member",

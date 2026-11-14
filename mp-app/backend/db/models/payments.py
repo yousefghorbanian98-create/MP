@@ -26,6 +26,9 @@ class Payment(TimestampMixin, BranchMixin, Base):
     status: Mapped[str] = mapped_column(
         String(20), nullable=False, default="pending", index=True
     )  # pending | paid | failed
+    coach_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id"), nullable=True
+    )  # انتساب مربی (کمیسیون M27)
     reference_id: Mapped[str] = mapped_column(String(80), default="", nullable=False)
     description: Mapped[str] = mapped_column(String(200), default="", nullable=False)
     paid_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)

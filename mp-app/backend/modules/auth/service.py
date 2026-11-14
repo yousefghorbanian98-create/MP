@@ -97,8 +97,9 @@ def refresh_session(db: Session, refresh_token: str) -> dict:
     row.revoked_at = now
     user = db.get(User, row.user_id)
     if (
-        user is None or not user.is_active
-    ):  # nosemgrep: python.lang.maintainability.is-function-without-parentheses — پراپرتی SQLAlchemy است نه فراخوانی
+        # nosemgrep-next-line: ستون SQLAlchemy (Mapped[bool]) است نه فراخوانی تابع
+        user is None or not user.is_active  # nosemgrep
+    ):
         raise UnauthorizedError("کاربر فعال نیست")
     access = create_access_token(user.id, user.role)
     new_refresh, new_hash, expires = create_refresh_token()
