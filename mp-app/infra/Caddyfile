@@ -1,0 +1,33 @@
+# Muscle Paradise — Caddyfile (ریورس‌پراکسی + هدرهای امنیتی — لایهٔ ۹/۱۱)
+{
+	email {$MP_TLS_EMAIL}
+}
+
+mp.example.ir {
+	encode gzip zstd
+
+	# هدرهای امنیتی (defense in depth — همراه middleware فست‌API)
+	header {
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "no-referrer"
+		Strict-Transport-Security "max-age=63072000; includeSubDomains"
+		-Server
+	}
+
+	# فایل‌های استاتیک (ویدیوهای حرکات — فشرده‌شده با ffmpeg)
+	handle_path /media/* {
+		root * /srv/media
+		file_server
+	}
+
+	# API
+	handle {
+		reverse_proxy backend:8751
+	}
+
+	log {
+		output file /data/access.log
+		format json
+	}
+}

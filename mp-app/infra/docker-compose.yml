@@ -1,0 +1,73 @@
+# Muscle Paradise — استک کامل با یک دستور (M11)
+# docker compose up -d
+# سرویس‌ها: FastAPI (8751) + Valkey + Ollama + Caddy (80/443)
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: ../Dockerfile.backend
+    image: mp-backend:latest
+    container_name: mp-backend
+    restart: unless-stopped
+    environment:
+      MP_ENVIRONMENT: production
+      MP_DATABASE_URL: sqlite:////data/mp.db
+      MP_SECRET_KEY: ${MP_SECRET_KEY:?set MP_SECRET_KEY}
+      MP_BIOMETRIC_KEY: ${MP_BIOMETRIC_KEY:-}
+    volumes:
+      - mp-data:/data
+    expose:
+      - "8751"
+    depends_on:
+      valkey:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://localhost:8751/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  valkey:
+    # Valkey (BSD-3) — فورک کاملاً اوپن‌سورس Redis (ADR/لایهٔ ۱۲)
+    image: valkey/valkey:8
+    container_name: mp-valkey
+    restart: unless-stopped
+    command: valkey-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - valkey-data:/data
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: mp-ollama
+    restart: unless-stopped
+    volumes:
+      - ollama-models:/root/.ollama
+    # فقط داخل شبکه — هرگز مستقیم در معرض اینترنت (فقط توضیح/انگیزش — G8)
+    expose:
+      - "11434"
+
+  caddy:
+    image: caddy:2
+    container_name: mp-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - ./media:/srv/media:ro
+    depends_on:
+      - backend
+
+volumes:
+  mp-data:
+  valkey-data:
+  ollama-models:
+  caddy-data:

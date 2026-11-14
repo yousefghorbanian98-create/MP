@@ -4,6 +4,12 @@
 
 ## [Unreleased]
 
+### Added — M11 (2026-11-14)
+- docker-compose کامل: FastAPI + Valkey + Ollama + Caddy (با healthcheck و عدم افشای backend)
+- Caddyfile با هدرهای امنیتی + سرو فایل‌های استاتیک فشرده‌شده
+- Ansible playbook (provisioning تکرارپذیر + بکاپ restic) + اسکریپت فشرده‌سازی ffmpeg
+- runbook provisioning — ۱۰۶ تست
+
 ### Added — M10 (2026-11-14)
 - CI کامل GitHub Actions: lint → test → build → scan → e2e (backend/studio/flutter)
 - Deploy با Dokploy (workflow mp-deploy) + Dockerfile.backend + health gate
