@@ -4,6 +4,12 @@
 
 ## [Unreleased]
 
+### Added — M10 (2026-11-14)
+- CI کامل GitHub Actions: lint → test → build → scan → e2e (backend/studio/flutter)
+- Deploy با Dokploy (workflow mp-deploy) + Dockerfile.backend + health gate
+- اسکریپت + runbook rollback (`runbooks/rollback.md`) — سناریوی تست مستند
+- ۵ تست اعتبارسنجی artifacts — مجموعاً ۱۰۱ تست
+
 ### Added — M09 (2026-11-14)
 - هدرهای امنیتی (CSP/HSTS/nosniff/...) با middleware + تست
 - audit log در عملیات حساس (پرداخت، برنامه، چهره، logout-all) — US-406

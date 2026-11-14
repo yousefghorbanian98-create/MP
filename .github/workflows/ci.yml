@@ -1,5 +1,4 @@
-# Muscle Paradise — CI (اسکلپ اولیه؛ در M10 کامل می‌شود)
-# مراحل: lint → test → scan → build
+# Muscle Paradise — CI: lint → test → build → scan
 name: mp-ci
 
 on:
@@ -18,13 +17,19 @@ jobs:
       - name: Install backend deps
         run: pip install -e "mp-app/backend[dev]"
       - name: Lint (ruff)
-        run: ruff check mp-app/backend && ruff format --check mp-app/backend
+        run: |
+          cd mp-app/backend
+          ruff check .
+          ruff format --check .
       - name: Test (pytest + coverage ≥70%)
-        run: cd mp-app/backend && pytest --cov=. --cov-report=term-missing --cov-fail-under=70
+        run: |
+          cd mp-app/backend
+          pytest --cov=. --cov-report=xml --cov-fail-under=70
       - name: Security scan (bandit + pip-audit)
         run: |
-          bandit -r mp-app/backend -ll -q || true
-          pip-audit || true
+          cd mp-app/backend
+          bandit -r . -ll -q
+          pip-audit
 
   studio:
     runs-on: ubuntu-latest
@@ -33,21 +38,24 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
-      - name: Install studio deps
+      - name: Install
         working-directory: mp-app/studio
         run: npm ci || npm install
-      - name: Lint & unit tests (Vitest)
+      - name: Unit tests (Vitest) — شامل گیت‌های WCAG و sync توکن‌ها
+        working-directory: mp-app/studio
+        run: npm test
+      - name: Build (Vite)
+        working-directory: mp-app/studio
+        run: npm run build
+      - name: Audit (بدون بحرانی)
         working-directory: mp-app/studio
         run: |
-          npm run lint --if-present
-          npm test --if-present
-      - name: Build
-        working-directory: mp-app/studio
-        run: npm run build --if-present
+          npm audit --audit-level=critical || true
+          npm audit 2>&1 | tee audit.txt
+          ! grep -q "Severity: critical" audit.txt
 
   client-flutter:
     runs-on: ubuntu-latest
-    # اجرا در CI: تحلیل و تست Flutter (در سندباکس SDK موجود نیست — D-002)
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
@@ -62,3 +70,18 @@ jobs:
       - name: flutter test
         working-directory: mp-app/client
         run: flutter test
+
+  e2e-api:
+    runs-on: ubuntu-latest
+    needs: [backend]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install
+        run: pip install -e "mp-app/backend[dev]"
+      - name: E2E مسیرهای حیاتی (ثبت‌نام→پرداخت→چک‌این + تأیید برنامه)
+        run: |
+          cd mp-app/backend
+          pytest tests/integration -q

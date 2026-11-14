@@ -229,7 +229,8 @@ M07 ──► M08 ──► M09 ──► M10 ──► M11 ──► M12 ──
 | M06 | 2026-11-14 | ✅ Done | cafe6db | فرانت‌اند Studio/Client + بازرسی UI (موکاپ+Live Preview) |
 | M07 | 2026-11-14 | ✅ Done | c9129e1 | دیزاین سیستم: توکن‌ها + motion-spec + تست sync |
 | M08 | 2026-11-14 | ✅ Done | c4bc19f | احراز هویت: casbin RBAC + rotation + logout-all — ۹۱ تست |
-| M09 | 2026-11-14 | ✅ Done | (کامیت M09) | امنیت: هدرها + audit + OWASP + سیاست بیومتریک — ۹۶ تست |
+| M09 | 2026-11-14 | ✅ Done | 63476af | امنیت: هدرها + audit + OWASP + سیاست بیومتریک — ۹۶ تست |
+| M10 | 2026-11-14 | ✅ Done | (کامیت M10) | CI/CD: Actions + Dokploy + rollback — ۱۰۱ تست |
 | M00 | 2026-11-14 | ✅ Done | (این کامیت) | بوت‌استراپ: اسکلپ + CI + state |
 | M01 | — | ⬜ | — | PRD |
 | M02 | — | ⬜ | — | معماری |

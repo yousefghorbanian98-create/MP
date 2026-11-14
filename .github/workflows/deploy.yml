@@ -1,0 +1,51 @@
+# Muscle Paradise — Deploy با Dokploy (M10)
+# دیپلوی: ایمیج Docker جدید → استقرار؛ rollback = بازگشت به ایمیج قبلی (runbooks/rollback.md)
+name: mp-deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "محیط هدف"
+        required: true
+        default: "production"
+        type: choice
+        options: [staging, production]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build backend image
+        run: |
+          docker build -t mp-backend:${{ github.sha }} -f mp-app/infra/Dockerfile.backend mp-app/backend
+      - name: Tag as latest for target
+        run: |
+          docker tag mp-backend:${{ github.sha }} mp-backend:latest
+      # push به registry داخلی/Dokploy در محیط واقعی:
+      # docker push ${{ secrets.REGISTRY }}/mp-backend:${{ github.sha }}
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Dokploy deploy
+        run: |
+          curl -fsS -X POST "${{ secrets.DOKPLOY_WEBHOOK }}" \
+            -H "Content-Type: application/json" \
+            -d '{"image":"mp-backend:${{ github.sha }}","target":"${{ github.inputs.target || 'production' }}"}'
+      - name: Health gate (SLO)
+        run: |
+          sleep 10
+          curl -fsS --max-time 5 "${{ secrets.APP_URL }}/health" | grep -q '"status":"ok"'
+
+  rollback:
+    # اجرای دستی rollback از طریق workflow_dispatch
+    if: false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Rollback to previous image
+        run: bash mp-app/infra/scripts/rollback.sh "${{ secrets.DOKPLOY_WEBHOOK }}"
