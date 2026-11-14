@@ -32,3 +32,6 @@
 - **گزینه‌ها:** shadcn/ui (کامل‌تر، سازگار با Framer Motion و Origin UI) | DaisyUI (ساده‌تر).
 - **انتخاب:** shadcn/ui + Tailwind + Framer Motion.
 - **دلیل:** سازگاری با اکوسیستم انیمیشن (Framer Motion/Skiper UI) و کیفیت کلاس جهانی خواسته‌شده؛ Tailwind برای هر دو گزینه مشترک است.
+
+## D-006. (M14) endpoint خروجی موتور: `POST /programs/from-engine`
+شکاف محصول: سرویس `create_program_from_engine_output` بدون مسیر HTTP بود. مسیر اضافه شد تا M15 (موتور هوش مصنوعی) خروجی قواعد را مستقیم ثبت کند. قواعد G8 حفظ شد: `llm_explanation` فقط متن.

@@ -7,3 +7,9 @@
 | 2 | 2026-11-14 | M00 | تصمیم | Flutter/Docker/مرورگر در محیط نیستند (D-002..004) | هرگز گیت اجرایی قابل‌اجرا در محیط را به «بعداً» موکول نکن — مسیر جایگزین + CI تعریف کن | — |
 | 3 | 2026-11-14 | M03 | باگ | server_default="CURRENT_TIMESTAMP" به‌صورت رشتهٔ خام ذخیره می‌شود (ValueError isoformat) | هرگز server_default رشته‌ای برای DateTime استفاده نکن — فقط func.now() یا sa.text() | R-002 (OTP hash) + تست‌های مدل |
 | 4 | 2026-11-14 | M08 | باگ | Annotated["User", ...] با TYPE_CHECKING در FastAPI resolve نمی‌شود (query param شد) + keyMatch2 فقط «/*» وایلدکارت دارد | هرگز forward-ref رشته‌ای در CurrentUser استفاده نکن — import واقعی؛ هرگز «foo*» به‌جای «foo/*» در policy casbin ننویس | R-004 + تست‌های RBAC |
+
+## ۵. (M14) DB فایل بین اجراها زنده می‌ماند
+فیکسچر client باید در هر تست `settings.database_url` را به فایل تازه ببرد + `reset_engine()` + `init_db()`؛ وگرنه UNIQUE collision با دادهٔ اجرای قبل. شمارندهٔ شناسه هم باید time-based باشد.
+
+## ۶. (M14) قرارداد status code پروژه: همهٔ POSTها 200
+روترهای ما status_code صریح ندارند → 200 برمی‌گردانند؛ تست‌ها نباید 201 انتظار داشته باشند (مگر صریح تغییر کند).

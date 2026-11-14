@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends
 
 from app.deps import DbSession, require_permission
 from modules.programs import service
-from modules.programs.schemas import ProgramOut, RejectIn
+from modules.programs.schemas import ProgramFromEngineIn, ProgramOut, RejectIn
 
 router = APIRouter(
     prefix="/programs", tags=["programs"], dependencies=[Depends(require_permission())]
@@ -18,6 +18,17 @@ router = APIRouter(
 )
 def list_member_programs(member_id: int, db: DbSession):
     return service.list_member_programs(db, member_id)
+
+
+@router.post(
+    "/from-engine",
+    response_model=ProgramOut,
+    summary="ثبت خروجی موتور قواعد به‌صورت draft (G8 — M15)",
+)
+def create_from_engine(payload: ProgramFromEngineIn, db: DbSession):
+    return service.create_program_from_engine_output(
+        db, payload.member_id, payload.model_dump(), coach_id=None
+    )
 
 
 @router.get("/{program_id}", response_model=ProgramOut, summary="جزئیات برنامه")

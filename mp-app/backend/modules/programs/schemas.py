@@ -47,3 +47,28 @@ class ProgramOut(BaseModel):
 
 class RejectIn(BaseModel):
     reason: str = Field(..., min_length=3, max_length=1000)
+
+
+class EngineExerciseIn(BaseModel):
+    exercise_id: int
+    day: int = Field(..., ge=1, le=7)
+    order: int = Field(0, ge=0, le=20)
+    sets: int = Field(..., ge=1, le=20)
+    reps: str = Field(..., min_length=1, max_length=20)
+    load_pct: int = Field(0, ge=0, le=120)
+    rest_seconds: int = Field(60, ge=0, le=600)
+    notes: str = Field("", max_length=300)
+
+
+class EngineWeekIn(BaseModel):
+    week_number: int = Field(..., ge=1, le=52)
+    focus: str = Field("", max_length=120)
+    exercises: list[EngineExerciseIn] = Field(default_factory=list)
+
+
+class ProgramFromEngineIn(BaseModel):
+    member_id: int
+    goal: str = Field("", max_length=60)
+    engine_version: str = Field("", max_length=20)
+    llm_explanation: str = Field("", max_length=5000)  # فقط متن — هرگز عدد (G8)
+    weeks: list[EngineWeekIn] = Field(default_factory=list)
