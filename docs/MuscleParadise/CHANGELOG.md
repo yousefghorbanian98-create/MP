@@ -125,3 +125,8 @@
 - M22–M31 همگی بسته شدند (MASTER_MAP به‌روز شد)؛ FINAL_REPORT بخش ۱۱ افزوده شد.
 - `docs/MuscleParadise/delivery-reports/2026-11-14-final.md`: جدول قابلیت/شاهد/شکاف + مسیرهای بسته.
 - شرط‌های نهایی: ۱۸۴ تست سبز، ruff صفر، semgrep صفر، Locust بدون 5xx، مانور بکاپ سبز.
+
+## 2026-11-14 — ممیزی داده←تابع←خروجی [finn]
+- `tests/integration/test_e2e_dataflow.py`: جریان کامل ورودی‌های عدد/اسم ← توابع ← خروجی‌ها (۱۲ مرحله) — به گیت‌های همیشگی افزوده شد.
+- اجرای زندهٔ HTTP + بار فیک (Locust): `finn/reports/audit/2026-11-14-dataflow-audit.md` — صفر 5xx.
+- گیت‌ها: ۱۸۵ pytest سبز، ruff صفر، semgrep صفر.
