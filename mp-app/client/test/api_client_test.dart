@@ -28,13 +28,20 @@ void main() {
 
   test('خطای سرور با پیام فارسی detail بالا می‌آید', () async {
     final mock = MockClient((request) async {
-      return http.Response(jsonEncode({'detail': 'کاربر فعال نیست'}), 401);
+      return http.Response.bytes(
+        utf8.encode(jsonEncode({'detail': 'کاربر فعال نیست'})),
+        401,
+        headers: {'content-type': 'application/json; charset=utf-8'},
+      );
     });
     final api = ApiClient(httpClient: mock, baseUrl: 'http://test/api/v1');
-    await expectLater(
-      api.get('/members/me'),
-      throwsA(isA<ApiException>().having((e) => e.message, 'message', 'کاربر فعال نیست')),
-    );
+    try {
+      await api.get('/members/me');
+      fail('باید ApiException بدهد');
+    } on ApiException catch (e) {
+      expect(e.message, 'کاربر فعال نیست');
+      expect(e.statusCode, 401);
+    }
   });
 
   test('POST بدنهٔ JSON می‌فرستد', () async {
@@ -53,16 +60,21 @@ void main() {
     SharedPreferences.setMockInitialValues({});
     final mock = MockClient((request) async {
       if (request.url.path.endsWith('/otp/verify')) {
-        return http.Response(
-          jsonEncode({
+        return http.Response.bytes(
+          utf8.encode(jsonEncode({
             'access_token': 'A1',
             'refresh_token': 'R1',
             'user': {'id': 9, 'full_name': 'کاربر تست', 'phone': '09', 'role': 'member'},
-          }),
+          })),
           200,
+          headers: {'content-type': 'application/json; charset=utf-8'},
         );
       }
-      return http.Response(jsonEncode({'id': 4, 'full_name': 'کاربر تست'}), 200);
+      return http.Response.bytes(
+        utf8.encode(jsonEncode({'id': 4, 'full_name': 'کاربر تست'})),
+        200,
+        headers: {'content-type': 'application/json; charset=utf-8'},
+      );
     });
     final api = ApiClient(httpClient: mock, baseUrl: 'http://test/api/v1');
     final auth = AuthController(api);
