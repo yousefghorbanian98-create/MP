@@ -22,6 +22,7 @@ class Settings(BaseSettings):
     otp_max_attempts: int = 5
     otp_rate_limit: str = "5/minute"
     login_rate_limit: str = "10/minute"
+    valkey_url: str = "redis://localhost:6379/0"
     backend_dir: Path = Path(__file__).resolve().parent.parent
 
 

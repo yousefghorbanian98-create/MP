@@ -22,7 +22,10 @@ def client(tmp_path, monkeypatch):
     monkeypatch.setattr(settings, "database_url", db_url)
     reset_engine()
     init_db()
-    limiter.reset()  # جلوگیری از آلودگی شمارندهٔ rate-limit بین تست‌ها
+    limiter.reset()
+    from cache.store import InMemoryCache, reset_cache
+
+    reset_cache(InMemoryCache())  # جلوگیری از آلودگی شمارندهٔ rate-limit بین تست‌ها
     app = create_app()
     with TestClient(app) as c:
         yield c

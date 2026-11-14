@@ -23,6 +23,9 @@ def client(tmp_path, monkeypatch):
     reset_engine()
     init_db()
     limiter.reset()
+    from cache.store import InMemoryCache, reset_cache
+
+    reset_cache(InMemoryCache())
     app = create_app()
     with TestClient(app) as c:
         yield c

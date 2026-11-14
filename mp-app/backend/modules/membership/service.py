@@ -37,22 +37,49 @@ def create_member(
     db.add(member)
     db.commit()
     db.refresh(member)
+    from cache.keys import invalidate_member_caches
+    from cache.store import get_cache
+
+    invalidate_member_caches(get_cache())
     return member
 
 
 def get_member(db: Session, member_id: int) -> Member:
+    from cache.keys import member_profile_key
+    from cache.store import get_cache
     from modules.membership.repository import MemberRepository
 
+    cache = get_cache()
+    cached = cache.get(member_profile_key(member_id))
+    if cached is not None:
+        from db.models import Member as MemberModel
+
+        return db.get(MemberModel, cached["id"])
     member = MemberRepository(db).get(member_id)
     if member is None:
         raise NotFoundError("عضو یافت نشد")
+    cache.set(
+        member_profile_key(member_id),
+        {"id": member.id, "goal": member.goal},
+        ttl=30,
+    )
     return member
 
 
 def list_members(db: Session, offset: int = 0, limit: int = 50) -> list[Member]:
+    from cache.keys import members_list_key
+    from cache.store import get_cache
+    from db.models import Member as MemberModel
     from modules.membership.repository import MemberRepository
 
-    return MemberRepository(db).list(offset=offset, limit=limit)
+    cache = get_cache()
+    key = members_list_key(offset, limit)
+    cached = cache.get(key)
+    if cached is not None:
+        return [db.get(MemberModel, mid) for mid in cached]
+    members = MemberRepository(db).list(offset=offset, limit=limit)
+    cache.set(key, [m.id for m in members], ttl=30)
+    return members
 
 
 def update_member(db: Session, member_id: int, **fields) -> Member:
@@ -62,6 +89,10 @@ def update_member(db: Session, member_id: int, **fields) -> Member:
             setattr(member, key, value)
     db.commit()
     db.refresh(member)
+    from cache.keys import invalidate_member_caches
+    from cache.store import get_cache
+
+    invalidate_member_caches(get_cache(), member.id)
     return member
 
 
