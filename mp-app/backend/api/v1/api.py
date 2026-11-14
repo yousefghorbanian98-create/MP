@@ -6,6 +6,7 @@ from fastapi import APIRouter
 
 from api.v1.monitoring import router as monitoring_router
 from modules.admin.router import router as admin_router
+from modules.ai_engine.router import router as ai_engine_router
 from modules.assessment.router import router as assessment_router
 from modules.auth.router import router as auth_router
 from modules.face_id.router import router as face_router
@@ -26,3 +27,4 @@ api_router.include_router(face_router)
 api_router.include_router(notifications_router)
 api_router.include_router(admin_router)
 api_router.include_router(monitoring_router)
+api_router.include_router(ai_engine_router)

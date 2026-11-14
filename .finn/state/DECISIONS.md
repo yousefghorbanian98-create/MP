@@ -35,3 +35,6 @@
 
 ## D-006. (M14) endpoint خروجی موتور: `POST /programs/from-engine`
 شکاف محصول: سرویس `create_program_from_engine_output` بدون مسیر HTTP بود. مسیر اضافه شد تا M15 (موتور هوش مصنوعی) خروجی قواعد را مستقیم ثبت کند. قواعد G8 حفظ شد: `llm_explanation` فقط متن.
+
+## D-007. (M15) معماری هوش مصنوعی: موتور قواعد قطعی + توضیح متنی
+اعداد تمرین/تغذیه فقط از `engine/workout.py` + `engine/nutrition.py` (جدول‌های قطعی + Mifflin-St Jeor) می‌آیند؛ `llm_explanation` فقط متن قالبی/LLM است (G8). اسلات Ollama برای آینده با fallback قالبی — هیچ عددی از LLM خوانده نمی‌شود.
