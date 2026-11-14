@@ -3,7 +3,7 @@ library;
 
 import 'package:flutter/material.dart';
 
-import '../core/theme.dart';
+import '../../core/theme.dart';
 import '../home/home_page.dart';
 import '../profile/profile_page.dart';
 import '../progress/progress_page.dart';

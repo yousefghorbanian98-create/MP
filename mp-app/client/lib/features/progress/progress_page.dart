@@ -19,7 +19,7 @@ class ProgressPage extends StatelessWidget {
           const SizedBox(height: 16),
           Row(
             children: const [
-              Expanded(child: _ProgressTile('چربی بدن', '۱۲٫۴٪', '−۱٫۲٪', Icons.monitoring, MpColors.primary)),
+              Expanded(child: _ProgressTile('چربی بدن', '۱۲٫۴٪', '−۱٫۲٪', Icons.show_chart, MpColors.primary)),
               SizedBox(width: 12),
               Expanded(child: _ProgressTile('وزن', '۷۸٫۵', '−۱٫۶ کیلو', Icons.scale, MpColors.info)),
             ],

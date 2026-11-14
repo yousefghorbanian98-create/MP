@@ -4,6 +4,8 @@ library;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'theme.dart';
+
 import '../features/bodycomp/bodycomp_page.dart';
 import '../features/checkin/checkin_page.dart';
 import '../features/classes/classes_page.dart';
