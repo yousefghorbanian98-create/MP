@@ -45,4 +45,6 @@ def record_jp7(payload: Jp7In, db: DbSession):
         skinfolds_mm=payload.skinfolds_mm,
         age=payload.age,
         gender=payload.gender,
+        quality=payload.quality,
+        method=payload.method,
     )

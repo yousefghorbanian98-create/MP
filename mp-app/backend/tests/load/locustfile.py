@@ -22,7 +22,9 @@ class GymVisitor(HttpUser):
 
     @task(4)
     def updates_manifest(self) -> None:
-        self.client.get("/api/v1/updates/manifest?platform=web&current=1.0.0", name="/updates/manifest")
+        self.client.get(
+            "/api/v1/updates/manifest?platform=web&current=1.0.0", name="/updates/manifest"
+        )
 
     @task(1)
     def openapi(self) -> None:

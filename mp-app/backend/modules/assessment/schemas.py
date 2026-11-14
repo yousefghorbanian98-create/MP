@@ -44,8 +44,11 @@ class Jp7In(BaseModel):
     age: int = Field(..., ge=10, le=100)
     gender: str = Field(..., pattern="^(male|female)$")
     skinfolds_mm: dict[str, float] = Field(
-        ..., description="۷ چین: chest, triceps, subscapular, suprailiac, abdomen, thigh, calf"
+        ...,
+        description="۷ چین: chest, triceps, subscapular, suprailiac, abdomen, thigh, calf (خام، mm)",
     )
+    quality: str | None = Field(None, max_length=32, description="کیفیت اندازه‌گیری (E02)")
+    method: str | None = Field(None, max_length=64, description="روش/ابزار (E02)")
 
 
 class Jp7Out(BaseModel):
@@ -54,7 +57,10 @@ class Jp7Out(BaseModel):
     age: int
     gender: str
     skinfolds_mm: str
-    body_fat_pct: float
+    body_fat_pct: float | None = None  # قفل تا مرجع مستقل (D-012) — None = نامعلوم
+    equation_version: str
+    quality: str | None = None
+    method: str | None = None
     measured_at: datetime
 
     model_config = {"from_attributes": True}

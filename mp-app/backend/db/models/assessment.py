@@ -66,5 +66,11 @@ class JacksonPollockMeasurement(BranchMixin, Base):
     gender: Mapped[str] = mapped_column(String(10), nullable=False)
     # ۷ چین به‌صورت JSON متنی: '{"chest":12,"abdomen":15,...}'
     skinfolds_mm: Mapped[str] = mapped_column(Text, nullable=False)
-    body_fat_pct: Mapped[float] = mapped_column(nullable=False)
+    # E07/D-012: تا تأیید مرجع مستقل، هیچ درصد چربی محاسبه/ذخیره نمی‌شود (None = نامعلوم)
+    body_fat_pct: Mapped[float | None] = mapped_column(nullable=True)
+    equation_version: Mapped[str] = mapped_column(
+        String(64), nullable=False, default="LOCKED:pending-independent-reference"
+    )
+    quality: Mapped[str | None] = mapped_column(String(32), nullable=True)  # E02: کیفیت اندازه‌گیری
+    method: Mapped[str | None] = mapped_column(String(64), nullable=True)  # E02: روش/ابزار
     measured_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)

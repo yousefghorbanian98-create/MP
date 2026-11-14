@@ -83,7 +83,9 @@ def test_golden_path_battle(client):
         headers=h,
     )
     assert assess.status_code == 200, assess.text
-    assert 0 < assess.json()["body_fat_pct"] < 60
+    # E07/D-012: درصد چربی قفل — خام ذخیره، محاسبه ممنوع
+    assert assess.json()["body_fat_pct"] is None
+    assert assess.json()["equation_version"].startswith("LOCKED")
     # برنامه از خروجی موتور قطعی (G8) — draft سپس تأیید مربی
     engine_out = {
         "member_id": mid,

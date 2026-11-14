@@ -82,23 +82,12 @@ def list_member_assessments(db: Session, member_id: int, user=None) -> list[Asse
 
 
 def jp7_body_fat(skinfolds_mm: dict, age: int, gender: str) -> float:
-    """فرمول جکسون-پولاک ۷ نقطه‌ای + معادلهٔ سیری — خروجی: درصد چربی."""
-    try:
-        total = sum(float(skinfolds_mm[site]) for site in SKINFOLD_SITES)
-    except (KeyError, TypeError, ValueError) as exc:
-        raise ApiError(
-            f"چین‌های پوستی ناقص‌اند — نیاز به {SKINFOLD_SITES}", code="invalid_skinfolds"
-        ) from exc
-    if total <= 0:
-        raise ApiError("مجموع چین‌ها باید مثبت باشد", code="invalid_skinfolds")
-    if gender == "male":
-        density = 1.112 - 0.00043499 * total + 0.00000055 * total**2 - 0.00028826 * age
-    elif gender == "female":
-        density = 1.097 - 0.00046971 * total + 0.00000056 * total**2 - 0.00012828 * age
-    else:
-        raise ApiError("برای JP7 باید جنسیت male یا female باشد", code="invalid_gender")
-    body_fat = 495.0 / density - 450.0
-    return round(max(body_fat, 2.0), 2)
+    """قفل‌شده طبق E07/D-012 — فقط از مسیر ثبتیهٔ تأییدشده (equations.py)."""
+    from modules.assessment.equations import LOCKED_VERSION
+    from modules.assessment.equations import jp7_body_fat as _locked
+
+    # عمداً بدون equation_id: همیشه قفل تا ثبت مرجع مستقل
+    return _locked(skinfolds_mm, age, gender, equation_id=LOCKED_VERSION)
 
 
 def record_jp7(
@@ -108,16 +97,28 @@ def record_jp7(
     age: int,
     gender: str,
     measured_by: int | None = None,
+    quality: str | None = None,
+    method: str | None = None,
 ) -> JacksonPollockMeasurement:
+    """ثبت اندازه‌گیری خام ۷ نقطه — محاسبهٔ درصد چربی قفل است (D-012).
+
+    دادهٔ خام mm + کیفیت + روش + نسخهٔ معادله ذخیره می‌شود؛ body_fat_pct تا تأیید
+    مرجع مستقل None می‌ماند (E02/E07 — مقادیر نامعلوم با صفر/ساختگی جایگزین نمی‌شوند).
+    """
+    from modules.assessment.equations import LOCKED_VERSION, validate_jp7_raw
+
     if db.get(Member, member_id) is None:
         raise NotFoundError("عضو یافت نشد")
-    body_fat = jp7_body_fat(skinfolds_mm, age, gender)
+    clean = validate_jp7_raw(skinfolds_mm, gender)  # اعتبارسنجی خام — بدون محاسبه
     m = JacksonPollockMeasurement(
         member_id=member_id,
         age=age,
         gender=gender,
-        skinfolds_mm=json.dumps(skinfolds_mm, ensure_ascii=False),
-        body_fat_pct=body_fat,
+        skinfolds_mm=json.dumps(clean, ensure_ascii=False),
+        body_fat_pct=None,  # قفل: معادله تأیید نشده (E07)
+        equation_version=LOCKED_VERSION,
+        quality=quality,
+        method=method,
         measured_by=measured_by,
         branch_id=1,
     )

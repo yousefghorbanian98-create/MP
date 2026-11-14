@@ -29,7 +29,9 @@ class Settings(BaseSettings):
     valkey_url: str = "redis://localhost:6379/0"
     # allowlist مبدأهای CORS — با کاما جدا شود (env: MP_CORS_ORIGINS)
     # در production باید صریح تنظیم شود؛ خالی = هیچ مبدأ مرورگری (fail-closed)
-    cors_origins: str = "http://localhost:5173,http://localhost:5174,http://127.0.0.1:5173,http://127.0.0.1:5174"
+    cors_origins: str = (
+        "http://localhost:5173,http://localhost:5174,http://127.0.0.1:5173,http://127.0.0.1:5174"
+    )
     backend_dir: Path = Path(__file__).resolve().parent.parent
 
 

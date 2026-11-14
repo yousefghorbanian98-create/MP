@@ -199,11 +199,23 @@ def test_jp7_computation(client, auth):
     }
     r = client.post(
         "/api/v1/assessments/jp7",
-        json={"member_id": member["id"], "age": 30, "gender": "male", "skinfolds_mm": skinfolds},
+        json={
+            "member_id": member["id"],
+            "age": 30,
+            "gender": "male",
+            "skinfolds_mm": skinfolds,
+            "quality": "good",
+            "method": "caliper",
+        },
         headers=coach,
     )
     assert r.status_code == 200
-    assert 5 < r.json()["body_fat_pct"] < 40
+    # E07/D-012: محاسبهٔ درصد چربی قفل است — دادهٔ خام + نسخهٔ قفل ثبت می‌شود
+    assert r.json()["body_fat_pct"] is None
+    assert r.json()["equation_version"].startswith("LOCKED")
+    assert r.json()["quality"] == "good"
+    assert r.json()["method"] == "caliper"
+    assert "chest" in r.json()["skinfolds_mm"]
 
 
 def test_face_enroll_requires_consent(client, auth):
