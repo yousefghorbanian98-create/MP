@@ -15,6 +15,7 @@ from modules.notification.router import router as notifications_router
 from modules.nutrition.router import router as nutrition_router
 from modules.payments.router import router as payments_router
 from modules.programs.router import router as programs_router
+from modules.reporting.router import router as reporting_router
 from modules.updates.router import router as updates_router
 
 api_router = APIRouter()
@@ -23,6 +24,7 @@ api_router.include_router(members_router)
 api_router.include_router(payments_router)
 api_router.include_router(assessment_router)
 api_router.include_router(programs_router)
+api_router.include_router(reporting_router)
 api_router.include_router(nutrition_router)
 api_router.include_router(face_router)
 api_router.include_router(notifications_router)
