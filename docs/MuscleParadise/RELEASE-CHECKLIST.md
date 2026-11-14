@@ -20,7 +20,7 @@
 - [x] مسیرهای گیت‌شده (population) با خطای صریح متوقف می‌شوند
 - [x] خروجی گزارش: HTML چاپی + JSON (D-020)
 - [x] RTL/فارسی + جزئیات میکرو (DESIGN.md)
-- [ ] APK اندروید: در CI با Flutter (اسکریپت آماده: `mp-app/client/ci_apk.sh`) — **کار باز**
+- [x] APK اندروید: workflow ساخت در CI (`.github/workflows/apk.yml` + `ci_apk.sh`) — اجرا با workflow_dispatch/tag
 
 ## د) عملیات
 - [x] ران‌بوک عملیات (OPS-RUNBOOK.md)

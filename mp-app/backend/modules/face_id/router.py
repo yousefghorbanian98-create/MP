@@ -52,3 +52,11 @@ from modules.face_id.privacy import PRIVACY_NOTICE  # noqa: E402
 @router.get("/privacy-notice", summary="متن حریم خصوصی بیومتریک (M31)")
 def privacy_notice():
     return PRIVACY_NOTICE
+
+
+from modules.face_id.deep import lock_status  # noqa: E402
+
+
+@router.get("/deep-status", summary="وضعیت مدل عمیق چهره (model_lock)")
+def deep_status():
+    return lock_status()

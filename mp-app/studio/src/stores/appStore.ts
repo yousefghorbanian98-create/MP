@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { members as mockMembers, type MemberRow } from "../data/mock";
 
-export type PageId = "dashboard" | "members" | "programs" | "checkin" | "settings";
+export type PageId = "dashboard" | "members" | "programs" | "checkin" | "finance" | "settings";
 
 interface AppState {
   page: PageId;

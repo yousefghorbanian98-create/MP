@@ -81,3 +81,11 @@ endpoint عمومی `GET /updates/manifest` (بدون auth — پیش از ور�
 ## D-021. (loop-plan) تصویب نقشهٔ لوپ M22–M31 با ایجنت‌های ECC و مراحل کیفی S1–S9
 کاربر همهٔ موارد صف + ۲۱ کمبود جدید را به لوپ اضافه کرد و خواستار طرح‌ریزی دقیق با مأموریت مرحله‌به‌مرحلهٔ ایجنت‌های ECC + مراحل کیفی از منابع تحقیق‌شده شد. منابع واقعاً بررسی شدند: ادغام (Vercel guidelines، DESIGN.md، Finn-loop، Hermes، scientific-skills الگویی، find-skills، Dokploy، Strix/Browser-use اختیاری)، مرجع (Skiper/Vengeance/21st.dev/vgpu/Casberry/Originkit/AgentMemory/OmniRoute/n8n)، رد (Animaster=پولی، DaisyUI=تعارض با shadcn)، نامعلوم (Soup). فرایند از Finn-loop (spec→build→review→merge) + Hermes (L0–L5 + بازرس) پیروی می‌کند. سطح استقلال فعلی: L2.
 
+
+
+## D-022. (consult-3) LICENSE: مالکیتی (Proprietary) — جایگزین D-015
+کاربر در تاریخ ۲۰۲۶-۱۱-۱۴ «مالکیتی (Proprietary)» را انتخاب کرد. D-015 (بدون مجوز) منسوخ است.
+- `LICENSE` در ریشهٔ مخزن: حقوق محفوظ + اجازهٔ غیرانحصاری/غیرقابل‌انتقال به سازمان مشتری برای بهره‌برداری داخلی.
+- `NOTICE-THIRD-PARTY.md`: فهرست اجزای OSS با مجوزها (E12).
+- اثر بر model_lock (D-008): مانع مجوز توزیع رفع شد؛ مانع باقی‌مانده = تأمین وزن مدل از منبع معتبر + تأیید جمعیتی — تا آن زمان قفل پابرجاست.
+- E12/E08: ورود هر OSS جدید قبل از بررسی مجوز به محصول ممنوع (همان قاعده، حالا با مرجع مجوز صریح).

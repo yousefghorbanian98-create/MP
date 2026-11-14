@@ -130,3 +130,10 @@
 - `tests/integration/test_e2e_dataflow.py`: جریان کامل ورودی‌های عدد/اسم ← توابع ← خروجی‌ها (۱۲ مرحله) — به گیت‌های همیشگی افزوده شد.
 - اجرای زندهٔ HTTP + بار فیک (Locust): `finn/reports/audit/2026-11-14-dataflow-audit.md` — صفر 5xx.
 - گیت‌ها: ۱۸۵ pytest سبز، ruff صفر، semgrep صفر.
+
+## 2026-11-14 — بستن کارهای باز (مسیر ۲ + LICENSE مالکیتی) [finn]
+- **D-022**: LICENSE مالکیتی (`LICENSE` + `NOTICE-THIRD-PARTY.md`) — جایگزین D-015.
+- **APK در CI**: `.github/workflows/apk.yml` (Flutter action + ci_apk.sh + آرتیفکت APK/SHA256).
+- **Face-ID عمیق**: `modules/face_id/deep.py` — آداپتور ONNX + نگهبان‌های تست‌شده (رد HTML جعلی/حجم مشکوک/قفل چهارشرطه) + `GET /face/deep-status` (۷ تست).
+- **UI مالی استودیو**: صفحهٔ Finance — خلاصهٔ مالی، کمیسیون مربی، دانلود CSV با خروجی واقعی/خطای صریح + رفع خطای tsc (vite-env.d.ts).
+- گیت‌ها: ۱۹۲ pytest سبز، ruff صفر، semgrep صفر، ۱۵ تست استودیو سبز، tsc پاک.

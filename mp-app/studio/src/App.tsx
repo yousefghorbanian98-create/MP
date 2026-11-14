@@ -2,6 +2,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Sidebar } from "./components/Sidebar";
 import { TopBar } from "./components/TopBar";
 import { CheckIn } from "./pages/CheckIn";
+import { Finance } from "./pages/Finance";
 import { Dashboard } from "./pages/Dashboard";
 import { Members } from "./pages/Members";
 import { Programs } from "./pages/Programs";
@@ -13,6 +14,7 @@ const pages = {
   members: Members,
   programs: Programs,
   checkin: CheckIn,
+  finance: Finance,
   settings: Settings,
 } as const;
 

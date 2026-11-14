@@ -1,0 +1,35 @@
+# Muscle Paradise — ساخت APK اندروید (M28/باز-۱)
+# فقط روی درخواست دستی/tag — چون Flutter toolchain سنگین است و CI سریع می‌ماند.
+name: mp-apk
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_number:
+        description: "شمارهٔ build"
+        required: false
+        default: "1"
+  push:
+    tags: ["v*"]
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Build APK (analyze → test → build + SHA256)
+        env:
+          BUILD_NUMBER: ${{ github.event.inputs.build_number || github.run_number }}
+        run: bash mp-app/client/ci_apk.sh
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: muscleparadise-apk
+          path: |
+            mp-app/client/build/app/outputs/flutter-apk/*.apk
+            mp-app/client/build/app/outputs/flutter-apk/*.sha256
+          if-no-files-found: error

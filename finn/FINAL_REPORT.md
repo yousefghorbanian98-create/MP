@@ -122,4 +122,4 @@ TOTAL   2209   246   89%
 | M31 | Face-ID/انتشار | f85c865 | faceid-privacy-1.0 + چک‌لیست انتشار |
 
 **وضعیت نهایی:** ۱۸۴ تست بک‌اند سبز، ruff صفر، semgrep صفر، Locust بدون 5xx — چرخه‌های M22–M31 بسته شد.
-کارهای باز صریح (در RELEASE-CHECKLIST): ساخت APK در CI با Flutter، LICENSE (D-018)، Face-ID عمیق پشت model_lock.
+کارهای باز: ساخت APK در CI (workflow آماده — اجرا با Flutter runner)، Face-ID عمیق (آداپتور تست‌شده، تزریق وزن در استقرار)، درگاه SMS واقعی (credential مشتری). LICENSE با D-022 (مالکیتی) بسته شد.

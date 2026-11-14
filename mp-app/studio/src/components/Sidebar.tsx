@@ -6,6 +6,7 @@ const items: { id: PageId; label: string; icon: string }[] = [
   { id: "members", label: "اعضا", icon: "◉" },
   { id: "programs", label: "برنامه‌ها", icon: "▤" },
   { id: "checkin", label: "حضور", icon: "◎" },
+  { id: "finance", label: "مالی", icon: "◈" },
   { id: "settings", label: "تنظیمات", icon: "⚙" },
 ];
 
