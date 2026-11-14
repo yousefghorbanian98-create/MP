@@ -64,3 +64,12 @@ def init_db(url: str | None = None) -> None:
     from db import models  # noqa: F401  (import برای ثبت مدل‌ها روی Base)
 
     Base.metadata.create_all(bind=get_engine(url))
+
+
+def reset_engine() -> None:
+    """بازنشانی engine/session سراسری (برای تست‌ها)."""
+    global _engine, _SessionLocal
+    if _engine is not None:
+        _engine.dispose()
+    _engine = None
+    _SessionLocal = None

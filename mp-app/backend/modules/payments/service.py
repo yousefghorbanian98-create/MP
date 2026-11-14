@@ -1,0 +1,93 @@
+"""سرویس payments — پرداخت و کیف‌پول."""
+
+from __future__ import annotations
+
+import secrets
+from datetime import UTC, datetime
+
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+
+from app.errors import ApiError, NotFoundError
+from db.models import Member, Payment, WalletTransaction
+
+
+def create_payment(
+    db: Session,
+    member_id: int,
+    amount_rial: int,
+    method: str = "zarinpal",
+    description: str = "",
+) -> Payment:
+    if db.get(Member, member_id) is None:
+        raise NotFoundError("عضو یافت نشد")
+    payment = Payment(
+        member_id=member_id,
+        amount_rial=amount_rial,
+        method=method,
+        description=description,
+        branch_id=1,
+    )
+    db.add(payment)
+    db.commit()
+    db.refresh(payment)
+    return payment
+
+
+def verify_payment(db: Session, payment_id: int, reference_id: str = "") -> Payment:
+    """تأیید پرداخت (callback درگاه یا تأیید پذیرش). فقط pending قابل تأیید است."""
+    payment = db.get(Payment, payment_id)
+    if payment is None:
+        raise NotFoundError("پرداخت یافت نشد")
+    if payment.status != "pending":
+        raise ApiError("این پرداخت قبلاً پردازش شده است", code="already_processed")
+    payment.status = "paid"
+    payment.paid_at = datetime.now(UTC)
+    payment.reference_id = reference_id or f"ref-{secrets.token_hex(6)}"
+    db.commit()
+    db.refresh(payment)
+    return payment
+
+
+def fail_payment(db: Session, payment_id: int) -> Payment:
+    payment = db.get(Payment, payment_id)
+    if payment is None:
+        raise NotFoundError("پرداخت یافت نشد")
+    if payment.status != "pending":
+        raise ApiError("این پرداخت قبلاً پردازش شده است", code="already_processed")
+    payment.status = "failed"
+    db.commit()
+    db.refresh(payment)
+    return payment
+
+
+def list_payments(
+    db: Session, member_id: int | None = None, status: str | None = None
+) -> list[Payment]:
+    stmt = select(Payment).order_by(Payment.id.desc())
+    if member_id is not None:
+        stmt = stmt.where(Payment.member_id == member_id)
+    if status is not None:
+        stmt = stmt.where(Payment.status == status)
+    return list(db.scalars(stmt))
+
+
+def wallet_charge(
+    db: Session, member_id: int, amount_rial: int, description: str = ""
+) -> WalletTransaction:
+    if amount_rial <= 0:
+        raise ApiError("مبلغ شارژ باید مثبت باشد")
+    if db.get(Member, member_id) is None:
+        raise NotFoundError("عضو یافت نشد")
+    tx = WalletTransaction(
+        member_id=member_id, amount_rial=amount_rial, kind="credit", description=description
+    )
+    db.add(tx)
+    db.commit()
+    db.refresh(tx)
+    return tx
+
+
+def wallet_balance(db: Session, member_id: int) -> int:
+    rows = db.scalars(select(WalletTransaction).where(WalletTransaction.member_id == member_id))
+    return sum(t.amount_rial for t in rows)

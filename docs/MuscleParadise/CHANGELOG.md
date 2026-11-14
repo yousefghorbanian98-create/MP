@@ -4,6 +4,12 @@
 
 ## [Unreleased]
 
+### Added — M04 (2026-11-14)
+- قرارداد REST نسخه‌دار `/api/v1` — ۹ خانواده endpoint با اسکیمای Pydantic کامل
+- app factory + قالب خطای یکپارچه + JWT (access/refresh با rotation) + slowapi روی OTP/لاگین
+- جریان کامل OTP (هش‌شده)، عضو/اشتراک/پرداخت/ارزیابی ۱۴ دامنه/JP7/چهره/چک‌این/اعلان/audit/flags
+- ۱۵ تست قرارداد — مجموعاً ۵۰ تست، پوشش ۸۴٪
+
 ### Added — M03 (2026-11-14)
 - مدل‌های SQLAlchemy 2.x (۲۵ مدل، ۲۶ جدول) با branch_id از روز اول + ایندکس‌ها
 - migration اولیهٔ Alembic (upgrade از صفر/downgrade تست‌شده) — `db/migrations/`
