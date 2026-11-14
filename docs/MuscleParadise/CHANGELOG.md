@@ -4,6 +4,12 @@
 
 ## [Unreleased]
 
+### Added — M03 (2026-11-14)
+- مدل‌های SQLAlchemy 2.x (۲۵ مدل، ۲۶ جدول) با branch_id از روز اول + ایندکس‌ها
+- migration اولیهٔ Alembic (upgrade از صفر/downgrade تست‌شده) — `db/migrations/`
+- `security/crypto.py` — رمزنگاری FaceTemplate با PyNaCl (NFR-3)
+- ۳۵ تست (واحد/یکپارچگی/رگریشن) — پوشش ۹۶٪
+
 ### Added — M02 (2026-11-14)
 - `docs/MuscleParadise/adr/001..004` — مونولیت ماژولار، SQLite→Postgres، موتور قواعد (G8)، YuNet/SFace
 - `docs/MuscleParadise/architecture/c4.md` — دیاگرام‌های C4 (Mermaid) در ۴ سطح
