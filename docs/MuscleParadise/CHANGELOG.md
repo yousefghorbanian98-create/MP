@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+### Added — M02 (2026-11-14)
+- `docs/MuscleParadise/adr/001..004` — مونولیت ماژولار، SQLite→Postgres، موتور قواعد (G8)، YuNet/SFace
+- `docs/MuscleParadise/architecture/c4.md` — دیاگرام‌های C4 (Mermaid) در ۴ سطح
+- `docs/MuscleParadise/architecture/module-map.md` — مرز ۱۱ ماژول backend + جریان‌های حیاتی
+
 ### Added — M01 (2026-11-14)
 - `docs/MuscleParadise/PRD.md` — نیازمندی‌های کامل محصول: پرسوناها، تفکیک MVP (F1–F3) از Full (F4–F7)، زنجیره‌های عملیاتی ضدابهام، NFRها، KPIها
 - `docs/MuscleParadise/user-stories/{member,coach,reception,manager}.md` — ۲۵ داستان با معیار پذیرش Given/When/Then
