@@ -109,3 +109,8 @@
 - `modules/admin/kpis.py` + `GET /api/v1/admin/kpis`: KPI های واقعی (اعضای فعال از اشتراک‌های active، اعضای ۳۰ روز، درآمد، نرخ پر شدن کلاس — ناشناخته ≠ صفر).
 - RBAC: نقش `admin` به سیاست casbin اضافه شد.
 - گیت‌ها: ۱۸۱ pytest سبز، ruff صفر، semgrep صفر.
+
+## 2026-11-14 — M30 [finn]
+- تست مانور بکاپ/بازیابی (`test_backup_drill.py`): بکاپ ← حذف ← بازیابی ← تأیید SHA256 و داده.
+- `docs/MuscleParadise/OPS-RUNBOOK.md`: سرویس‌ها، پشتیبان روزانه، بازیابی فاجعه (RTO < ۳۰ دقیقه)، پایش، انتشار دلتا.
+- اجرای دوم Locust (۵۰ کاربر/۳۰ ثانیه): ۰ خطا 5xx — `finn/reports/load/M30-smoke-report.md`.
