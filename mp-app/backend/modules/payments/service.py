@@ -46,6 +46,9 @@ def verify_payment(db: Session, payment_id: int, reference_id: str = "") -> Paym
     payment.reference_id = reference_id or f"ref-{secrets.token_hex(6)}"
     db.commit()
     db.refresh(payment)
+    from modules.admin.service import audit
+
+    audit(db, None, "payment_verified", "payment", payment.id, {"amount_rial": payment.amount_rial})
     return payment
 
 
@@ -58,6 +61,9 @@ def fail_payment(db: Session, payment_id: int) -> Payment:
     payment.status = "failed"
     db.commit()
     db.refresh(payment)
+    from modules.admin.service import audit
+
+    audit(db, None, "payment_failed", "payment", payment.id, {})
     return payment
 
 

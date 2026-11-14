@@ -4,6 +4,12 @@
 
 ## [Unreleased]
 
+### Added — M09 (2026-11-14)
+- هدرهای امنیتی (CSP/HSTS/nosniff/...) با middleware + تست
+- audit log در عملیات حساس (پرداخت، برنامه، چهره، logout-all) — US-406
+- چک‌لیست OWASP Top 10 + سیاست دادهٔ بیومتریک (`docs/MuscleParadise/security/`)
+- `.env.example` — رفع بحرانی‌های npm (tinypool override) — ۹۶ تست، پوشش ۸۶٪
+
 ### Added — M08 (2026-11-14)
 - RBAC با casbin — ماتریس نقش/اجازهٔ ۴ نقش + guard سطح روتر (`require_permission`)
 - سخت‌سازی auth: تست نفوذ سطحی (401/403)، rotation refresh، خروج از همهٔ دستگاه‌ها (US-404)

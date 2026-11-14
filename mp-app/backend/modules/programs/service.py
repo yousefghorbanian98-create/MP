@@ -42,6 +42,9 @@ def approve_program(db: Session, program_id: int, coach_id: int) -> WorkoutProgr
     p.approved_by = coach_id
     db.commit()
     db.refresh(p)
+    from modules.admin.service import audit
+
+    audit(db, coach_id, "program_approved", "workout_program", p.id, {})
     return p
 
 
@@ -56,6 +59,9 @@ def reject_program(db: Session, program_id: int, coach_id: int, reason: str) -> 
     p.approved_by = coach_id
     db.commit()
     db.refresh(p)
+    from modules.admin.service import audit
+
+    audit(db, coach_id, "program_rejected", "workout_program", p.id, {"reason": reason})
     return p
 
 

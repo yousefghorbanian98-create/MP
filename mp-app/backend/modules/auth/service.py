@@ -122,6 +122,9 @@ def logout_all(db: Session, user_id: int) -> dict:
         .values(revoked_at=datetime.now(UTC))
     )
     db.commit()
+    from modules.admin.service import audit
+
+    audit(db, user_id, "logout_all", "user", user_id, {})
     return {"status": "all_sessions_revoked"}
 
 

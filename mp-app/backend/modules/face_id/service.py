@@ -67,6 +67,9 @@ def enroll_face(db: Session, member_id: int, embedding: bytes) -> FaceTemplate:
     db.add(ft)
     db.commit()
     db.refresh(ft)
+    from modules.admin.service import audit
+
+    audit(db, None, "face_enrolled", "face_template", ft.id, {"member_id": member_id})
     return ft
 
 
@@ -76,6 +79,9 @@ def delete_face(db: Session, member_id: int) -> dict:
     if ft is not None:
         db.delete(ft)
         db.commit()
+        from modules.admin.service import audit
+
+        audit(db, None, "face_deleted", "face_template", None, {"member_id": member_id})
     return {"status": "face_deleted"}
 
 

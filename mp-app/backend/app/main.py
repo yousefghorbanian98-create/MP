@@ -55,6 +55,10 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
+    from app.security.headers import SecurityHeadersMiddleware
+
+    app.add_middleware(SecurityHeadersMiddleware, production=settings.environment == "production")
+
     app.add_exception_handler(ApiError, api_error_handler)
     app.add_exception_handler(RequestValidationError, validation_error_handler)
 
