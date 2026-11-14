@@ -45,6 +45,13 @@ jobs:
           cd mp-app/client
           flutter test 2>&1 | tee /tmp/step-test.txt
 
+      - name: Scaffold android platform (idempotent)
+        run: |
+          cd mp-app/client
+          if [ ! -d android ]; then
+            flutter create --platforms=android --org ir.muscleparadise --project-name mp_client .
+          fi
+
       - name: Build APK + SHA256
         env:
           BUILD_NUMBER: ${{ github.event.inputs.build_number || github.run_number }}
@@ -60,9 +67,10 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          ISSUE=$(gh issue list --label apk-diagnostics --state open --json number -q '.[0].number')
+          gh label create apk-diagnostics --color D93F0B --description "گزارش خطاهای ساخت APK" 2>/dev/null || true
+          ISSUE=$(gh issue list --label apk-diagnostics --state open --json number -q '.[0].number' 2>/dev/null || true)
           if [ -z "$ISSUE" ]; then
-            ISSUE=$(gh issue create --title "apk-ci diagnostics" --label apk-diagnostics --body "گزارش خودکار خطاهای ساخت APK" -q .number --match-title "apk-ci diagnostics")
+            ISSUE=$(gh issue create --title "apk-ci diagnostics" --label apk-diagnostics --body "گزارش خودکار خطاهای ساخت APK" --json number -q .number)
           fi
           {
             echo "## خطا در اجرای ${{ github.run_id }} (${{ github.ref_name }})"
@@ -88,7 +96,7 @@ jobs:
           cp mp-app/client/build/app/outputs/flutter-apk/*.apk mp-app/client/release/ 2>/dev/null || true
           cp mp-app/client/build/app/outputs/flutter-apk/*.sha256 mp-app/client/release/ 2>/dev/null || true
           echo "built-from: ${{ github.sha }} run: ${{ github.run_id }}" > mp-app/client/release/BUILD-INFO.txt
-          git add mp-app/client/release
+          git add mp-app/client/release mp-app/client/android 2>/dev/null || git add mp-app/client/release
           git commit -m "mp(apk): deliver APK build ${{ github.run_number }} [skip ci]" || echo "no changes"
           git push origin "$BRANCH"
 
