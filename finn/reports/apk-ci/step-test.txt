@@ -1,34 +1,35 @@
 
-test/api_client_test.dart:42:28: Error: The method 'readAsString' isn't defined for the type 'Request'.
- - 'Request' is from 'package:http/src/request.dart' ('../../../../../.pub-cache/hosted/pub.dev/http-1.6.0/lib/src/request.dart').
-Try correcting the name to the name of an existing method, or defining a method named 'readAsString'.
-      body = await request.readAsString();
-                           ^^^^^^^^^^^^
-::group::❌ loading /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart (failed)
-Failed to load "/home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart":
-Compilation failed for testPath=/home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart: test/api_client_test.dart:42:28: Error: The method 'readAsString' isn't defined for the type 'Request'.
- - 'Request' is from 'package:http/src/request.dart' ('../../../../../.pub-cache/hosted/pub.dev/http-1.6.0/lib/src/request.dart').
-Try correcting the name to the name of an existing method, or defining a method named 'readAsString'.
-      body = await request.readAsString();
-                           ^^^^^^^^^^^^
-.
-
+::group::✅ Passing tests
+✅ /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart: GET موفق JSON برمی‌گرداند + هدر Authorization
 ::endgroup::
-::group::❌ loading /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart (failed after test completion)
-Error: The Dart compiler exited unexpectedly.
-package:flutter_tools/src/base/common.dart 36:3  throwToolExit
-package:flutter_tools/src/compile.dart 1029:11   DefaultResidentCompiler._compile.<fn>
-dart:async/future_impl.dart 961:45               Future._propagateToListeners.handleValueCallback
-dart:async/future_impl.dart 990:13               Future._propagateToListeners
-dart:async/future_impl.dart 874:9                Future._propagateToListeners
-dart:async/future_impl.dart 732:5                Future._completeWithValue
-dart:async/future_impl.dart 816:7                Future._asyncCompleteWithValue.<fn>
-dart:async/zone.dart 474:14                      Zone.runGuarded
-dart:async/zone.dart 604:18                      Zone.bindCallbackGuarded.<fn>
-dart:async/schedule_microtask.dart 40:35         _microtaskLoop
-dart:async/schedule_microtask.dart 49:5          _startMicrotaskLoop
-dart:isolate-patch/isolate_patch.dart 127:13     _runPendingImmediateCallback
-dart:isolate-patch/isolate_patch.dart 193:5      _RawReceivePort._handleMessage
+::group::❌ /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart: خطای سرور با پیام فارسی detail بالا می‌آید (failed)
+Expected: throws <Instance of 'ApiException'> with `message`: 'کاربر فعال نیست'
+  Actual: <Instance of 'Future<Map<String, dynamic>>'>
+   Which: threw ArgumentError:<Invalid argument (string): Contains invalid characters.: "{\"detail\":\"کاربر فعال نیست\"}">
+          stack dart:convert                                       Latin1Codec.encode
+                package:http/src/response.dart 39:49               new Response
+                test/api_client_test.dart 31:19                    main.<fn>.<fn>
+                package:http/src/mock_client.dart 54:36            new MockClient.<fn>
+                ===== asynchronous gap ===========================
+                package:matcher                                    expectLater
+                package:flutter_test/src/widget_tester.dart 507:8  expectLater
+                test/api_client_test.dart 34:11                    main.<fn>
+                
+          which is not an instance of 'ApiException'
+
+package:matcher                                    expectLater
+package:flutter_test/src/widget_tester.dart 507:8  expectLater
+test/api_client_test.dart 34:11                    main.<fn>
+::endgroup::
+::group::✅ Passing tests
+✅ /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart: POST بدنهٔ JSON می‌فرستد
+::endgroup::
+::group::❌ /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart: AuthController ورود OTP توکن را نگه می‌دارد (failed)
+Invalid argument (string): Contains invalid characters.: "{\"access_token\":\"A1\",\"refresh_token\":\"R1\",\"user\":{\"id\":9,\"full_name\":\"کاربر تست\",\"phone\":\"09\",\"role\":\"member\"}}"
+dart:convert                             Latin1Codec.encode
+package:http/src/response.dart 39:49     new Response
+test/api_client_test.dart 56:21          main.<fn>.<fn>
+package:http/src/mock_client.dart 54:36  new MockClient.<fn>
 ::endgroup::
 ::group::✅ Passing tests
 ✅ /home/runner/work/MP/MP/mp-app/client/test/today_controller_test.dart: progress starts at zero and updates on toggle
@@ -40,4 +41,4 @@ dart:isolate-patch/isolate_patch.dart 193:5      _RawReceivePort._handleMessage
 ✅ /home/runner/work/MP/MP/mp-app/client/test/home_page_test.dart: چک‌این سریع در خانه
 ::endgroup::
 
-::error::7 tests passed, 1 failed.
+::error::9 tests passed, 2 failed.

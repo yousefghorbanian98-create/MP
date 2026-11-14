@@ -59,7 +59,6 @@ Analyzing client...
    info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/intake/intake_page.dart:263:20 • prefer_const_constructors
    info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/intake/intake_page.dart:329:9 • prefer_const_constructors
    info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/intake/intake_page.dart:330:20 • prefer_const_constructors
-warning • The value of the local variable 'levels' isn't used. Try removing the variable or using it • lib/features/intake/intake_page.dart:357:15 • unused_local_variable
    info • 'package:flutter/material.dart' is deprecated and shouldn't be used. Use package:material_ui/material_ui.dart instead. This feature was deprecated after v3.47.0-0.0.pre. Try replacing the use of the deprecated member with the replacement • lib/features/intake/program_result.dart:4:1 • deprecated_member_use
    info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/intake/program_result.dart:53:31 • prefer_const_constructors
    info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/intake/program_result.dart:119:24 • prefer_const_constructors
@@ -110,9 +109,8 @@ warning • The value of the local variable 'levels' isn't used. Try removing th
    info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement • lib/shared/widgets/glass_card.dart:25:37 • deprecated_member_use
    info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement • lib/shared/widgets/glass_card.dart:27:56 • deprecated_member_use
    info • Dangling library doc comment. Add a 'library' directive after the library comment • test/api_client_test.dart:1:1 • dangling_library_doc_comments
-  error • The method 'readAsString' isn't defined for the type 'Request'. Try correcting the name to the name of an existing method, or defining a method named 'readAsString' • test/api_client_test.dart:43:28 • undefined_method
    info • 'package:flutter/material.dart' is deprecated and shouldn't be used. Use package:material_ui/material_ui.dart instead. This feature was deprecated after v3.47.0-0.0.pre. Try replacing the use of the deprecated member with the replacement • test/home_page_test.dart:1:1 • deprecated_member_use
    info • Dangling library doc comment. Add a 'library' directive after the library comment • test/home_page_test.dart:1:1 • dangling_library_doc_comments
    info • 'package:flutter/material.dart' is deprecated and shouldn't be used. Use package:material_ui/material_ui.dart instead. This feature was deprecated after v3.47.0-0.0.pre. Try replacing the use of the deprecated member with the replacement • test/today_page_test.dart:4:1 • deprecated_member_use
 
-114 issues found. (ran in 5.7s)
+112 issues found. (ran in 5.7s)
