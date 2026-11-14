@@ -9,7 +9,7 @@ void main() {
 
   testWidgets('گرید ۸ بخش نمایش داده می‌شود', (tester) async {
     await tester.pumpWidget(wrap());
-    for (final label in ['برنامهٔ من', 'پیکرسنجی', 'تغذیه', 'چک‌این', 'کیف پول', 'پیشرفت', 'کلاس‌ها', 'فروشگاه']) {
+    for (final label in ['برنامهٔ اختصاصی من', 'پیکرسنجی', 'تغذیه', 'چک‌این', 'کیف پول', 'پیشرفت', 'کلاس‌ها', 'فروشگاه']) {
       expect(find.text(label), findsOneWidget, reason: 'بخش $label باید باشد');
     }
   });

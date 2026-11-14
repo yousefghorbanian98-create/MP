@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, Query
+from pydantic import BaseModel
+from sqlalchemy import select
 
 from app.deps import CurrentUser, DbSession, require_permission
 from modules.membership import service
@@ -43,6 +45,68 @@ def list_members(
     return service.list_members(db, offset=offset, limit=limit, user=user)
 
 
+# ── پروفایل شخصی (کلاینت عضو) — ساخت/ویرایش واقعی [finn] ──
+
+
+class MeUpdate(BaseModel):
+    full_name: str | None = None
+    goal: str | None = None
+    gender: str | None = None
+    height_cm: int | None = None
+    constraints: str | None = None
+
+
+def _me_dict(m, u) -> dict:
+    return {
+        "id": m.id,
+        "user_id": u.id,
+        "full_name": u.full_name,
+        "phone": u.phone,
+        "goal": m.goal,
+        "gender": m.gender,
+        "height_cm": m.height_cm,
+        "constraints": m.constraints,
+    }
+
+
+@router.get("/me", summary="پروفایل من (ساخت خودکار در اولین ورود)")
+def get_me(db: DbSession, user: CurrentUser):
+    from db.models import Member
+
+    m = db.scalar(select(Member).where(Member.user_id == user.id))
+    if m is None:
+        m = Member(user_id=user.id, branch_id=1)
+        db.add(m)
+        db.commit()
+        db.refresh(m)
+    return _me_dict(m, user)
+
+
+@router.put("/me", summary="ویرایش پروفایل من (نام/هدف/جنس/قد/محدودیت‌ها)")
+def update_me(payload: MeUpdate, db: DbSession, user: CurrentUser):
+    from db.models import Member, User
+
+    m = db.scalar(select(Member).where(Member.user_id == user.id))
+    if m is None:
+        m = Member(user_id=user.id, branch_id=1)
+        db.add(m)
+    if payload.full_name is not None:
+        u = db.get(User, user.id)
+        u.full_name = payload.full_name
+    if payload.goal is not None:
+        m.goal = payload.goal
+    if payload.gender is not None:
+        m.gender = payload.gender
+    if payload.height_cm is not None:
+        m.height_cm = payload.height_cm
+    if payload.constraints is not None:
+        m.constraints = payload.constraints
+    db.commit()
+    db.refresh(m)
+    db.refresh(user)
+    return _me_dict(m, user)
+
+
 @router.get("/{member_id}", response_model=MemberOut, summary="پروفایل عضو")
 def get_member(member_id: int, db: DbSession, user: CurrentUser):
     return service.get_member(db, member_id, user=user)
@@ -78,7 +142,6 @@ def member_memberships(member_id: int, db: DbSession, user: CurrentUser):
     from app.security.ownership import ensure_member_scope
 
     ensure_member_scope(db, user, member_id)
-    from sqlalchemy import select
 
     from db.models import Membership
 

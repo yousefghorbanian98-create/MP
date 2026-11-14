@@ -58,11 +58,9 @@ class WebMagfaProvider:
             log.error("[SMS] sms_api_url must be https")
             return False
         try:
-            with (
-                urllib.request.urlopen(  # nosec B310,nosemgrep — URL از تنظیمات اپراتور + اجبار https
-                    req, timeout=10
-                ) as resp
-            ):
+            with urllib.request.urlopen(  # nosec B310,nosemgrep — URL از تنظیمات اپراتور + اجبار https
+                req, timeout=10
+            ) as resp:
                 return 200 <= resp.status < 300
         except (urllib.error.URLError, TimeoutError) as exc:
             log.error("[SMS-MAGFA] failed: %s", exc)
@@ -87,11 +85,9 @@ class KavenegarProvider:
             log.error("[SMS] sms_api_url must be https")
             return False
         try:
-            with (
-                urllib.request.urlopen(  # nosec B310,nosemgrep — URL از تنظیمات اپراتور + اجبار https
-                    url, data=data, timeout=10
-                ) as resp
-            ):
+            with urllib.request.urlopen(  # nosec B310,nosemgrep — URL از تنظیمات اپراتور + اجبار https
+                url, data=data, timeout=10
+            ) as resp:
                 return 200 <= resp.status < 300
         except (urllib.error.URLError, TimeoutError) as exc:
             log.error("[SMS-KAVENEGAR] failed: %s", exc)

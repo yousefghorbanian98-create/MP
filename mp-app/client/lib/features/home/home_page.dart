@@ -176,7 +176,7 @@ class _SectionsGrid extends StatelessWidget {
   const _SectionsGrid();
 
   static const _items = <_SectionItem>[
-    _SectionItem('برنامهٔ من', Icons.fitness_center, [Color(0xFF00B86A), Color(0xFF00995A)], '/today'),
+    _SectionItem('برنامهٔ اختصاصی من', Icons.fitness_center, [Color(0xFF00B86A), Color(0xFF00995A)], '/intake'),
     _SectionItem('پیکرسنجی', Icons.show_chart, [Color(0xFF38BDF8), Color(0xFF0EA5E9)], '/bodycomp'),
     _SectionItem('تغذیه', Icons.restaurant, [Color(0xFFF59E0B), Color(0xFFD97706)], '/nutrition'),
     _SectionItem('چک‌این', Icons.qr_code, [Color(0xFF34D399), Color(0xFF059669)], '/checkin'),

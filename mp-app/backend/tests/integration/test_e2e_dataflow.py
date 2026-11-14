@@ -233,3 +233,25 @@ def test_full_dataflow_inputs_computed_and_visible_in_outputs(client, auth):
         "/api/v1/members", json={"phone": "09123456780", "full_name": "ا"}, headers=h
     )
     assert bad2.status_code == 422  # اسم کوتاه رد می‌شود
+
+
+def test_me_profile_self_service(client, auth):
+    """پروفایل شخصی عضو: ساخت خودکار + ویرایش واقعی [finn]."""
+    h = auth("member")
+    me = client.get("/api/v1/members/me", headers=h).json()
+    assert me["id"] > 0 and me["goal"] == ""  # پروفایل خام ساخته شد
+    updated = client.put(
+        "/api/v1/members/me",
+        json={
+            "full_name": "بهرام کوهنورد",
+            "goal": "fitness",
+            "gender": "male",
+            "height_cm": 178,
+            "constraints": '["کمردرد"]',
+        },
+        headers=h,
+    ).json()
+    assert updated["full_name"] == "بهرام کوهنورد"
+    assert updated["goal"] == "fitness" and updated["height_cm"] == 178
+    again = client.get("/api/v1/members/me", headers=h).json()
+    assert again["constraints"] == '["کمردرد"]'

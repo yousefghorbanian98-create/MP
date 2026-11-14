@@ -12,6 +12,8 @@ import '../features/classes/classes_page.dart';
 import '../features/nutrition/nutrition_page.dart';
 import '../features/profile/profile_page.dart';
 import '../features/progress/progress_page.dart';
+import '../features/auth/otp_page.dart';
+import '../features/intake/intake_page.dart';
 import '../features/shell/app_shell.dart';
 import '../features/shop/shop_page.dart';
 import '../features/today/today_page.dart';
@@ -37,10 +39,18 @@ class _PushedSection extends StatelessWidget {
   }
 }
 
-final GoRouter mpRouter = GoRouter(
-  initialLocation: '/home',
+GoRouter createMpRouter({String initialLocation = '/home'}) => GoRouter(
+  initialLocation: initialLocation,
   routes: [
     // شل تبی — خانه/برنامه/پیشرفت/پروفایل درون AppShell
+    GoRoute(
+      path: '/otp',
+      pageBuilder: (context, state) => const NoTransitionPage(child: OtpPage()),
+    ),
+    GoRoute(
+      path: '/intake',
+      pageBuilder: (context, state) => const NoTransitionPage(child: IntakePage()),
+    ),
     GoRoute(
       path: '/home',
       pageBuilder: (context, state) => const NoTransitionPage(child: AppShell()),

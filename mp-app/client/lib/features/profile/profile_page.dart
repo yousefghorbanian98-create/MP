@@ -1,101 +1,225 @@
-/// پروفایل کلاینت — فقط دادهٔ خود کاربر (M18).
+/// پروفایل واقعی کاربر — داده از `/members/me` + ویرایش زنده (M32).
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/session.dart';
 import '../../core/theme.dart';
 import '../../shared/widgets/glass_card.dart';
 
-class ProfilePage extends StatelessWidget {
+final meProvider = FutureProvider<Map<String, dynamic>>((ref) async {
+  final api = ref.watch(apiClientProvider);
+  return api.get('/members/me');
+});
+
+class ProfilePage extends ConsumerStatefulWidget {
   const ProfilePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-        children: [
-          Center(
-            child: Column(
-              children: [
-                Container(
-                  width: 96,
-                  height: 96,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      colors: [MpColors.primary, MpColors.primary.withOpacity(0.5)],
-                      begin: Alignment.topRight,
-                      end: Alignment.bottomLeft,
-                    ),
-                    boxShadow: [BoxShadow(color: MpColors.primary.withOpacity(0.35), blurRadius: 20)],
-                  ),
-                  child: const Icon(Icons.person, size: 48, color: Colors.white),
-                ),
-                const SizedBox(height: 12),
-                const Text('علی رضایی', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: MpColors.textPrimary)),
-                const SizedBox(height: 6),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-                  decoration: BoxDecoration(
-                    color: MpColors.accent.withOpacity(0.12),
-                    borderRadius: BorderRadius.circular(999),
-                    border: Border.all(color: MpColors.accent.withOpacity(0.4)),
-                  ),
-                  child: const Text('عضو طلایی ✨', style: TextStyle(fontSize: 12, color: MpColors.accentSoft, fontWeight: FontWeight.w700)),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-          GlassCard(
-            child: Column(
-              children: const [
-                _ProfileRow('اشتراک', 'سالانه — تا ۱۴ آبان ۱۴۰۶', Icons.workspace_premium),
-                Divider(height: 1),
-                _ProfileRow('تاریخ تولد', '۲۵/۰۵/۱۳۷۰', Icons.cake),
-                Divider(height: 1),
-                _ProfileRow('شمارهٔ تماس', '۰۹۱۲••••۳۴۵', Icons.phone),
-              ],
-            ),
-          ),
-          const SizedBox(height: 12),
-          GlassCard(
-            child: Column(
-              children: const [
-                _ProfileRow('اعلان‌ها', 'فعال', Icons.notifications_outlined),
-                Divider(height: 1),
-                _ProfileRow('حریم خصوصی و داده‌ها', 'مدیریت رضایت بیومتریک', Icons.shield_outlined),
-                Divider(height: 1),
-                _ProfileRow('خروج از حساب', '', Icons.logout),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  ConsumerState<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _ProfileRow extends StatelessWidget {
-  const _ProfileRow(this.title, this.value, this.icon);
+class _ProfilePageState extends ConsumerState<ProfilePage> {
+  final _name = TextEditingController();
+  final _height = TextEditingController();
+  String _goal = '';
+  String _gender = 'unknown';
+  bool _editing = false;
+  bool _busy = false;
+  String? _error;
 
-  final String title;
-  final String value;
-  final IconData icon;
+  @override
+  void dispose() {
+    _name.dispose();
+    _height.dispose();
+    super.dispose();
+  }
+
+  Future<void> _save() async {
+    setState(() {
+      _busy = true;
+      _error = null;
+    });
+    try {
+      final api = ref.read(apiClientProvider);
+      await api.put('/members/me', {
+        'full_name': _name.text.trim(),
+        'goal': _goal,
+        'gender': _gender,
+        if (_height.text.trim().isNotEmpty)
+          'height_cm': int.tryParse(_height.text.trim()),
+      });
+      ref.invalidate(meProvider);
+      await ref.read(authProvider.notifier).refreshMe();
+      setState(() => _editing = false);
+    } catch (e) {
+      setState(() => _error = e.toString());
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final me = ref.watch(meProvider);
+    return SafeArea(
+      child: me.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('خطا در دریافت پروفایل: $e',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: Colors.redAccent)),
+                const SizedBox(height: 12),
+                OutlinedButton(
+                  onPressed: () => ref.invalidate(meProvider),
+                  child: const Text('تلاش دوباره'),
+                ),
+              ],
+            ),
+          ),
+        ),
+        data: (m) {
+          _name.text = _editing ? _name.text : (m['full_name'] as String? ?? '');
+          _height.text = _editing
+              ? _height.text
+              : ((m['height_cm'] as int?)?.toString() ?? '');
+          _goal = _editing ? _goal : (m['goal'] as String? ?? '');
+          _gender = _editing ? _gender : (m['gender'] as String? ?? 'unknown');
+          return Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 560),
+              child: ListView(
+                padding: const EdgeInsets.all(16),
+                children: [
+                  Center(
+                    child: Column(
+                      children: [
+                        Container(
+                          width: 96,
+                          height: 96,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: LinearGradient(
+                              colors: [MpColors.primary, MpColors.primary.withOpacity(0.5)],
+                              begin: Alignment.topRight,
+                              end: Alignment.bottomLeft,
+                            ),
+                          ),
+                          child: const Icon(Icons.person, size: 48, color: Colors.white),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(m['full_name'] as String? ?? 'بدون نام',
+                            style: const TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.w900)),
+                        const SizedBox(height: 4),
+                        Text(m['phone'] as String? ?? '',
+                            style: TextStyle(color: MpColors.textSecondary)),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  GlassCard(
+                    child: _editing ? _editForm() : _viewForm(m),
+                  ),
+                  const SizedBox(height: 12),
+                  if (_error != null)
+                    Text(_error!,
+                        style: const TextStyle(color: Colors.redAccent)),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _editing
+                            ? FilledButton(
+                                onPressed: _busy ? null : _save,
+                                child: Text(_busy ? 'در حال ذخیره…' : 'ذخیرهٔ تغییرات'),
+                              )
+                            : OutlinedButton.icon(
+                                onPressed: () => setState(() => _editing = true),
+                                icon: const Icon(Icons.edit),
+                                label: const Text('ویرایش پروفایل'),
+                              ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _viewForm(Map<String, dynamic> m) {
+    const goals = {
+      'hypertrophy': 'افزایش حجم',
+      'strength': 'قدرت',
+      'weight_loss': 'کاهش وزن',
+      'fitness': 'آمادگی جسمانی',
+    };
+    return Column(
+      children: [
+        _row('هدف تمرینی', goals[m['goal'] as String?] ?? '—'),
+        _row('جنس', (m['gender'] as String?) == 'female' ? 'زن' : ((m['gender'] as String?) == 'male' ? 'مرد' : '—')),
+        _row('قد', m['height_cm'] != null ? '${m['height_cm']} سانتی‌متر' : '—'),
+        _row('محدودیت‌ها', (m['constraints'] as String?) ?? '—'),
+      ],
+    );
+  }
+
+  Widget _editForm() {
+    return Column(
+      children: [
+        TextField(
+          controller: _name,
+          decoration: const InputDecoration(labelText: 'نام کامل', border: OutlineInputBorder()),
+        ),
+        const SizedBox(height: 12),
+        DropdownButtonFormField<String>(
+          initialValue: _goal.isEmpty ? null : _goal,
+          decoration: const InputDecoration(labelText: 'هدف تمرینی', border: OutlineInputBorder()),
+          items: const [
+            DropdownMenuItem(value: 'hypertrophy', child: Text('افزایش حجم')),
+            DropdownMenuItem(value: 'strength', child: Text('قدرت')),
+            DropdownMenuItem(value: 'weight_loss', child: Text('کاهش وزن')),
+            DropdownMenuItem(value: 'fitness', child: Text('آمادگی جسمانی')),
+          ],
+          onChanged: (v) => setState(() => _goal = v ?? ''),
+        ),
+        const SizedBox(height: 12),
+        DropdownButtonFormField<String>(
+          initialValue: _gender,
+          decoration: const InputDecoration(labelText: 'جنس', border: OutlineInputBorder()),
+          items: const [
+            DropdownMenuItem(value: 'male', child: Text('مرد')),
+            DropdownMenuItem(value: 'female', child: Text('زن')),
+          ],
+          onChanged: (v) => setState(() => _gender = v ?? 'unknown'),
+        ),
+        const SizedBox(height: 12),
+        TextField(
+          controller: _height,
+          keyboardType: TextInputType.number,
+          decoration: const InputDecoration(labelText: 'قد (سانتی‌متر)', border: OutlineInputBorder()),
+        ),
+      ],
+    );
+  }
+
+  Widget _row(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 13),
+      padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
         children: [
-          Icon(icon, size: 20, color: MpColors.primaryLight),
-          const SizedBox(width: 12),
-          Expanded(child: Text(title, style: const TextStyle(fontSize: 13.5, color: MpColors.textPrimary, fontWeight: FontWeight.w600))),
-          Text(value, style: const TextStyle(fontSize: 12, color: MpColors.textSecondary)),
-          const SizedBox(width: 4),
-          const Icon(Icons.chevron_left, size: 18, color: MpColors.textSecondary),
+          SizedBox(width: 110, child: Text(label, style: TextStyle(color: MpColors.textSecondary))),
+          Expanded(child: Text(value)),
         ],
       ),
     );

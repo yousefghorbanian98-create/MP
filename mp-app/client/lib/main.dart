@@ -5,14 +5,25 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/router.dart';
+import 'core/session.dart';
 import 'core/theme.dart';
 
-void main() {
-  runApp(const ProviderScope(child: MpClientApp()));
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final container = ProviderContainer();
+  final loggedIn = await container.read(authProvider.notifier).restore();
+  runApp(
+    UncontrolledProviderScope(
+      container: container,
+      child: MpClientApp(initialRoute: loggedIn ? '/home' : '/otp'),
+    ),
+  );
 }
 
 class MpClientApp extends StatelessWidget {
-  const MpClientApp({super.key});
+  const MpClientApp({super.key, this.initialRoute = '/home'});
+
+  final String initialRoute;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +33,7 @@ class MpClientApp extends StatelessWidget {
       theme: mpTheme(),
       darkTheme: mpTheme(),
       themeMode: ThemeMode.dark, // حالت تاریک default (برند MP)
-      routerConfig: mpRouter,
+      routerConfig: createMpRouter(initialLocation: initialRoute),
       locale: const Locale('fa', 'IR'),
       supportedLocales: const [Locale('fa', 'IR'), Locale('en', 'US')],
       localizationsDelegates: const [
