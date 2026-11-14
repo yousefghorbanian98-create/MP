@@ -9,7 +9,7 @@
 from __future__ import annotations
 
 import json
-from datetime import date, datetime, timezone
+from datetime import UTC, date, datetime
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -48,7 +48,7 @@ def build_confidential_report(db: Session, member_id: int) -> dict:
         "gender": member.gender or "unknown",
         "birth_date": _iso(member.birth_date) or "unknown",
         "height_cm": member.height_cm if member.height_cm else "unknown",
-        "report_generated_at": datetime.now(timezone.utc).isoformat(),
+        "report_generated_at": datetime.now(UTC).isoformat(),
         "report_version": REPORT_VERSION,
     }
 

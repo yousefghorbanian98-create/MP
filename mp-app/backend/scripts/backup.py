@@ -16,7 +16,7 @@ import shutil
 import sys
 import tarfile
 import tempfile
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
@@ -30,7 +30,7 @@ def _sha256(p: Path) -> str:
 
 def backup(out_dir: Path, db_path: Path = DEFAULT_DB) -> Path:
     out_dir.mkdir(parents=True, exist_ok=True)
-    stamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+    stamp = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
     archive = out_dir / f"mp_backup_{stamp}.tar.gz"
     manifest = {"created_at": stamp, "files": {}}
     with tempfile.TemporaryDirectory() as tmp:
