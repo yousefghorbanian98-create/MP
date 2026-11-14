@@ -1,0 +1,60 @@
+# Muscle Paradise — اجرای کامل با Docker Compose (M32/استقرار)
+# اجرا: docker compose up -d --build
+# داده: ولوم mp-data (mp.db) + mp-backups — حذف کانتینر داده را از بین نمی‌برد.
+
+services:
+  backend:
+    build:
+      context: ..
+      dockerfile: backend/Dockerfile
+    image: ghcr.io/YOUR_ORG/mp-backend:latest   # پس از push در CI جایگزین شود
+    restart: unless-stopped
+    environment:
+      MP_DATABASE_URL: sqlite:////data/mp.db
+      MP_JWT_SECRET: ${MP_JWT_SECRET:?تنظیم کنید — openssl rand -hex 32}
+      MP_CORS_ORIGINS: ${MP_CORS_ORIGINS:-http://localhost:8080}
+      # پیامک (M28) — اختیاری؛ بدون آن حالت dev (کد در پاسخ OTP)
+      MP_SMS_PROVIDER: ${MP_SMS_PROVIDER:-dev}
+      MP_SMS_API_URL: ${MP_SMS_API_URL:-}
+      MP_SMS_API_KEY: ${MP_SMS_API_KEY:-}
+      MP_SMS_USERNAME: ${MP_SMS_USERNAME:-}
+      MP_SMS_PASSWORD: ${MP_SMS_PASSWORD:-}
+      MP_SMS_ORIGINATOR: ${MP_SMS_ORIGINATOR:-}
+    volumes:
+      - mp-data:/data
+      - mp-backups:/backups
+    expose:
+      - "8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  studio:
+    build:
+      context: ..
+      dockerfile: studio/Dockerfile
+    image: ghcr.io/YOUR_ORG/mp-studio:latest
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  # پشتیبان‌گیری روزانه (runbook عملیات)
+  backup:
+    image: python:3.11-slim
+    restart: unless-stopped
+    depends_on:
+      - backend
+    entrypoint: ["sh", "-c", "while true; do sleep 86400 && python /srv/backup.py backup --out /backups; done"]
+    volumes:
+      - mp-data:/data
+      - mp-backups:/backups
+      - ../backend/scripts/backup.py:/srv/backup.py:ro
+
+volumes:
+  mp-data:
+  mp-backups:

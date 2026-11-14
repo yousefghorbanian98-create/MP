@@ -1,0 +1,42 @@
+# Muscle Paradise — ساخت و push ایمیج‌های Docker به GHCR
+name: mp-container
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  build-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build & push backend
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: mp-app/backend/Dockerfile
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ github.repository_owner }}/mp-backend:latest
+            ${{ env.REGISTRY }}/${{ github.repository_owner }}/mp-backend:${{ github.ref_name }}
+      - name: Build & push studio
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: mp-app/studio/Dockerfile
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ github.repository_owner }}/mp-studio:latest
+            ${{ env.REGISTRY }}/${{ github.repository_owner }}/mp-studio:${{ github.ref_name }}
