@@ -1,0 +1,2 @@
+Method,Name,Error,Occurrences,First Seen,Last Seen
+POST,/auth/otp/request,HTTPError('429 Client Error: Too Many Requests for url: /auth/otp/request'),234,2026-11-14T12:32:10Z,2026-11-14T12:32:27Z

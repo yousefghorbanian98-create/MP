@@ -25,6 +25,8 @@
 | S1 spec | ردیف نیازمندی + شاهد مورد انتظار + حدود (الگوی spec فین-لوپ) | finna/Finn-loop |
 | S2 build | «اول موجود» — بدون بازنویسی قابلیت سالم؛ هر OSS ورودی ← ثبت E12 | دستور کاربر + E12 |
 | S3 gates | pytest+ruff+bandit+pip-audit / vitest+eslint / flutter analyze+test | موجود |
+| S3b **بازبینی خروجی‌ها (اجباری)** | هر دکمه/فرم/مسیر جدید ← خروجی ملموس + ثبت در `OUTPUT-AUDIT` + تست دودی در گزارش | درخواست کاربر ۲۰۲۶-۱۱-۱۴ |
+| S3c **دود بار** | هر میکرو با endpoint/مسیر جدید ← Locust کوتاه (۱۰ کاربر/۱۰s) — «کرش زیر بار» ممنوع | `tests/load/locustfile.py` + گزارش M22-smoke |
 | S4 design | بازبینی UI: DESIGN.md + چک‌لیست Vercel + taste/motion (وب) یا §۶ (فلاتر) | vercel-labs/web-interface-guidelines، Leonxlnx/taste-skill، nextlevelbuilder/ui-ux-pro-max-skill، اصول motion |
 | S5 security | semgrep rulepack + (اختیاری) Strix headless در محیط دارای LLM محلی | semgrep/semgrep-rules، usestrix/strix |
 | S6 science | چک‌لیست E01–E14 + «بدون ادعای بدون شاهد» + زنجیرهٔ داده←قاعده←شاهد←تصمیم | k-dense-ai/scientific-agent-skills (الگوها) |
