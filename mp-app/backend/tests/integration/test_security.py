@@ -80,12 +80,15 @@ def test_audit_log_face_delete(client, auth):
     member = client.post(
         "/api/v1/members", json={"phone": "09120002222", "full_name": "face"}, headers=coach
     ).json()
-    client.post("/api/v1/face/consent", json={"member_id": member["id"]}, headers=auth("member"))
+    from app.security.jwt import create_access_token
+
+    own = {"Authorization": f"Bearer {create_access_token(member['user_id'], 'member')}"}
+    client.post("/api/v1/face/consent", json={"member_id": member["id"]}, headers=own)
     emb = base64.b64encode(b"\x02" * 128).decode()
     client.post(
         "/api/v1/face/enroll", json={"member_id": member["id"], "embedding_b64": emb}, headers=coach
     )
-    client.delete(f"/api/v1/face/enroll/{member['id']}", headers=auth("member"))
+    client.delete(f"/api/v1/face/enroll/{member['id']}", headers=own)
     logs = client.get("/api/v1/admin/audit?action=face_deleted", headers=auth("manager")).json()
     assert len(logs) >= 1
 

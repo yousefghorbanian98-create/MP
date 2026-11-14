@@ -218,12 +218,15 @@ def test_face_enroll_requires_consent(client, auth):
         "/api/v1/face/enroll", json={"member_id": member["id"], "embedding_b64": emb}, headers=coach
     )
     assert r.status_code == 403  # بدون رضایت
-    client.post("/api/v1/face/consent", json={"member_id": member["id"]}, headers=auth("member"))
+    from app.security.jwt import create_access_token
+
+    own = {"Authorization": f"Bearer {create_access_token(member['user_id'], 'member')}"}
+    client.post("/api/v1/face/consent", json={"member_id": member["id"]}, headers=own)
     r2 = client.post(
         "/api/v1/face/enroll", json={"member_id": member["id"], "embedding_b64": emb}, headers=coach
     )
     assert r2.status_code == 200
-    r3 = client.delete(f"/api/v1/face/enroll/{member['id']}", headers=auth("member"))
+    r3 = client.delete(f"/api/v1/face/enroll/{member['id']}", headers=own)
     assert r3.status_code == 200
 
 

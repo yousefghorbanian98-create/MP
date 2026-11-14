@@ -44,7 +44,10 @@ def create_member(
     return member
 
 
-def get_member(db: Session, member_id: int) -> Member:
+def get_member(db: Session, member_id: int, user=None) -> Member:
+    from app.security.ownership import ensure_member_scope
+
+    ensure_member_scope(db, user, member_id)  # قبل از کش — کش نباید مالکیت را دور بزند
     from cache.keys import member_profile_key
     from cache.store import get_cache
     from modules.membership.repository import MemberRepository
@@ -66,12 +69,19 @@ def get_member(db: Session, member_id: int) -> Member:
     return member
 
 
-def list_members(db: Session, offset: int = 0, limit: int = 50) -> list[Member]:
+def list_members(db: Session, offset: int = 0, limit: int = 50, user=None) -> list[Member]:
+    from app.security.ownership import ensure_member_scope, get_own_member
     from cache.keys import members_list_key
     from cache.store import get_cache
     from db.models import Member as MemberModel
     from modules.membership.repository import MemberRepository
 
+    if user is not None and user.role == "member":
+        ensure_member_scope(
+            db, user, get_own_member(db, user).id if get_own_member(db, user) else -1
+        )
+        own = get_own_member(db, user)
+        return [own] if own else []
     cache = get_cache()
     key = members_list_key(offset, limit)
     cached = cache.get(key)
@@ -82,8 +92,8 @@ def list_members(db: Session, offset: int = 0, limit: int = 50) -> list[Member]:
     return members
 
 
-def update_member(db: Session, member_id: int, **fields) -> Member:
-    member = get_member(db, member_id)
+def update_member(db: Session, member_id: int, user=None, **fields) -> Member:
+    member = get_member(db, member_id, user=user)
     for key, value in fields.items():
         if value is not None and hasattr(member, key):
             setattr(member, key, value)

@@ -15,14 +15,20 @@ from app.errors import ApiError, NotFoundError
 from db.models import ProgramExercise, ProgramWeek, WorkoutProgram
 
 
-def get_program(db: Session, program_id: int) -> WorkoutProgram:
+def get_program(db: Session, program_id: int, user=None) -> WorkoutProgram:
     p = db.get(WorkoutProgram, program_id)
+    from app.security.ownership import ensure_record_scope
+
+    ensure_record_scope(db, user, p)
     if p is None:
         raise NotFoundError("برنامه یافت نشد")
     return p
 
 
-def list_member_programs(db: Session, member_id: int) -> list[WorkoutProgram]:
+def list_member_programs(db: Session, member_id: int, user=None) -> list[WorkoutProgram]:
+    from app.security.ownership import ensure_member_scope
+
+    ensure_member_scope(db, user, member_id)
     return list(
         db.scalars(
             select(WorkoutProgram)

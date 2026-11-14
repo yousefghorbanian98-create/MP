@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends
 
-from app.deps import DbSession, require_permission
+from app.deps import CurrentUser, DbSession, require_permission
 from modules.assessment import service
 from modules.assessment.schemas import AssessmentCreate, AssessmentOut, Jp7In, Jp7Out
 
@@ -24,8 +24,8 @@ def create_assessment(payload: AssessmentCreate, db: DbSession):
 
 
 @router.get("/{assessment_id}", response_model=AssessmentOut, summary="جزئیات ارزیابی")
-def get_assessment(assessment_id: int, db: DbSession):
-    return service.get_assessment(db, assessment_id)
+def get_assessment(assessment_id: int, db: DbSession, user: CurrentUser):
+    return service.get_assessment(db, assessment_id, user=user)
 
 
 @router.get(
@@ -33,8 +33,8 @@ def get_assessment(assessment_id: int, db: DbSession):
     response_model=list[AssessmentOut],
     summary="تاریخچهٔ ارزیابی‌های عضو",
 )
-def list_member_assessments(member_id: int, db: DbSession):
-    return service.list_member_assessments(db, member_id)
+def list_member_assessments(member_id: int, db: DbSession, user: CurrentUser):
+    return service.list_member_assessments(db, member_id, user=user)
 
 
 @router.post("/jp7", response_model=Jp7Out, summary="ثبت اندازه‌گیری JP7 (US-202)")

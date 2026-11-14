@@ -41,6 +41,11 @@ POLICIES: list[tuple[str, str, str]] = [
     ("member", "/api/v1/notifications/*", "GET"),
     ("member", "/api/v1/notifications/*", "POST"),
     ("member", "/api/v1/programs/*", "GET"),
+    ("member", "/api/v1/assessments/*", "GET"),
+    ("member", "/api/v1/payments", "GET"),
+    ("member", "/api/v1/payments/*", "GET"),
+    ("member", "/api/v1/payments/wallet/pay", "POST"),
+    ("member", "/api/v1/nutrition/*", "GET"),
     # مربی: ارزیابی/برنامه/اعضا (خواندن+نوشتن برنامه)
     ("coach", "/api/v1/members", "GET"),
     ("coach", "/api/v1/members", "POST"),

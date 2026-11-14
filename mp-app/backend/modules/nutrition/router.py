@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends
 
-from app.deps import DbSession, require_permission
+from app.deps import CurrentUser, DbSession, require_permission
 from modules.nutrition import service
 from modules.nutrition.schemas import PlanFromEngineIn, PlanOut
 
@@ -26,5 +26,5 @@ def approve_plan(plan_id: int, db: DbSession):
 @router.get(
     "/plans/member/{member_id}", response_model=list[PlanOut], summary="برنامه‌های تغذیهٔ عضو"
 )
-def list_member_plans(member_id: int, db: DbSession):
-    return service.list_member_plans(db, member_id)
+def list_member_plans(member_id: int, db: DbSession, user: CurrentUser):
+    return service.list_member_plans(db, member_id, user=user)

@@ -6,7 +6,7 @@ import base64
 
 from fastapi import APIRouter, Depends
 
-from app.deps import DbSession, require_permission
+from app.deps import CurrentUser, DbSession, require_permission
 from modules.face_id import service
 from modules.face_id.schemas import (
     CheckInIn,
@@ -21,26 +21,26 @@ router = APIRouter(prefix="/face", tags=["face-id"], dependencies=[Depends(requi
 
 
 @router.post("/consent", response_model=ConsentOut, summary="ثبت رضایت بیومتریک (US-108)")
-def grant_consent(payload: ConsentIn, db: DbSession):
-    return service.grant_consent(db, payload.member_id, payload.policy_version)
+def grant_consent(payload: ConsentIn, db: DbSession, user: CurrentUser):
+    return service.grant_consent(db, payload.member_id, payload.policy_version, user=user)
 
 
 @router.post("/consent/revoke", summary="پس‌گرفتن رضایت + حذف چهره (US-108)")
-def revoke_consent(payload: ConsentIn, db: DbSession):
-    return service.revoke_consent(db, payload.member_id)
+def revoke_consent(payload: ConsentIn, db: DbSession, user: CurrentUser):
+    return service.revoke_consent(db, payload.member_id, user=user)
 
 
 @router.post("/enroll", response_model=FaceTemplateOut, summary="ثبت چهره (رمزنگاری‌شده)")
-def enroll(payload: FaceEnroll, db: DbSession):
+def enroll(payload: FaceEnroll, db: DbSession, user: CurrentUser):
     embedding = base64.b64decode(payload.embedding_b64)
-    return service.enroll_face(db, payload.member_id, embedding)
+    return service.enroll_face(db, payload.member_id, embedding, user=user)
 
 
 @router.delete("/enroll/{member_id}", summary="حذف قطعی چهره (US-108)")
-def delete_face(member_id: int, db: DbSession):
-    return service.delete_face(db, member_id)
+def delete_face(member_id: int, db: DbSession, user: CurrentUser):
+    return service.delete_face(db, member_id, user=user)
 
 
 @router.post("/checkin", response_model=CheckInOut, summary="چک‌این (US-106)")
-def check_in(payload: CheckInIn, db: DbSession):
-    return service.check_in(db, payload.member_id, payload.method)
+def check_in(payload: CheckInIn, db: DbSession, user: CurrentUser):
+    return service.check_in(db, payload.member_id, payload.method, user=user)

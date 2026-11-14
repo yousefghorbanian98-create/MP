@@ -10,11 +10,14 @@ from app.errors import NotFoundError
 from db.models import Member, Payment, WalletTransaction
 
 
-def build_receipt(db: Session, payment_id: int) -> dict:
+def build_receipt(db: Session, payment_id: int, user=None) -> dict:
     """رسید پرداخت — برای نمایش/چاپ (US-303)."""
     payment = db.get(Payment, payment_id)
     if payment is None:
         raise NotFoundError("پرداخت یافت نشد")
+    from app.security.ownership import ensure_record_scope
+
+    ensure_record_scope(db, user, payment)
     member = db.get(Member, payment.member_id)
     return {
         "receipt_no": f"R-{payment.id:06d}",
@@ -30,7 +33,12 @@ def build_receipt(db: Session, payment_id: int) -> dict:
     }
 
 
-def build_invoice(db: Session, member_id: int, from_date: datetime | None = None) -> dict:
+def build_invoice(
+    db: Session, member_id: int, from_date: datetime | None = None, user=None
+) -> dict:
+    from app.security.ownership import ensure_member_scope
+
+    ensure_member_scope(db, user, member_id)
     """فاکتور تجمعی عضو — مجموع پرداخت‌ها + کیف‌پول (US-403)."""
     from sqlalchemy import select
 

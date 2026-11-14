@@ -15,7 +15,12 @@ from db.models import BiometricConsent, CheckIn, FaceTemplate, Member, Membershi
 from security.crypto import FaceEmbeddingCipher
 
 
-def grant_consent(db: Session, member_id: int, policy_version: str = "v1") -> BiometricConsent:
+def grant_consent(
+    db: Session, member_id: int, policy_version: str = "v1", user=None
+) -> BiometricConsent:
+    from app.security.ownership import ensure_member_scope
+
+    ensure_member_scope(db, user, member_id)
     if db.get(Member, member_id) is None:
         raise NotFoundError("عضو یافت نشد")
     c = BiometricConsent(member_id=member_id, policy_version=policy_version)
@@ -25,7 +30,10 @@ def grant_consent(db: Session, member_id: int, policy_version: str = "v1") -> Bi
     return c
 
 
-def revoke_consent(db: Session, member_id: int) -> dict:
+def revoke_consent(db: Session, member_id: int, user=None) -> dict:
+    from app.security.ownership import ensure_member_scope
+
+    ensure_member_scope(db, user, member_id)
     """پس‌گرفتن رضایت = حذف قطعی چهره (US-108)."""
     delete_face(db, member_id)
     for c in db.scalars(
@@ -49,7 +57,10 @@ def _has_active_consent(db: Session, member_id: int) -> bool:
     )
 
 
-def enroll_face(db: Session, member_id: int, embedding: bytes) -> FaceTemplate:
+def enroll_face(db: Session, member_id: int, embedding: bytes, user=None) -> FaceTemplate:
+    from app.security.ownership import ensure_member_scope
+
+    ensure_member_scope(db, user, member_id)
     """ثبت چهره — فقط با رضایت صریح و embedding رمزنگاری‌شده."""
     if db.get(Member, member_id) is None:
         raise NotFoundError("عضو یافت نشد")
@@ -73,7 +84,10 @@ def enroll_face(db: Session, member_id: int, embedding: bytes) -> FaceTemplate:
     return ft
 
 
-def delete_face(db: Session, member_id: int) -> dict:
+def delete_face(db: Session, member_id: int, user=None) -> dict:
+    from app.security.ownership import ensure_member_scope
+
+    ensure_member_scope(db, user, member_id)
     """حذف قطعی چهره (حق حذف — US-108)."""
     ft = db.scalar(select(FaceTemplate).where(FaceTemplate.member_id == member_id))
     if ft is not None:
@@ -102,8 +116,11 @@ def _distance(a: bytes, b: bytes) -> float:
 
 
 def check_in(
-    db: Session, member_id: int, method: str, result: str = "ok", denial_reason: str = ""
+    db: Session, member_id: int, method: str, result: str = "ok", denial_reason: str = "", user=None
 ) -> CheckIn:
+    from app.security.ownership import ensure_member_scope
+
+    ensure_member_scope(db, user, member_id)
     """ثبت چک‌این (US-106) — ورود فقط با اشتراک فعال."""
     if db.get(Member, member_id) is None:
         raise NotFoundError("عضو یافت نشد")

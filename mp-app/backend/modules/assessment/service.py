@@ -58,14 +58,20 @@ def create_assessment(
     return assessment
 
 
-def get_assessment(db: Session, assessment_id: int) -> Assessment14Domain:
+def get_assessment(db: Session, assessment_id: int, user=None) -> Assessment14Domain:
     a = db.get(Assessment14Domain, assessment_id)
     if a is None:
         raise NotFoundError("ارزیابی یافت نشد")
+    from app.security.ownership import ensure_record_scope
+
+    ensure_record_scope(db, user, a)
     return a
 
 
-def list_member_assessments(db: Session, member_id: int) -> list[Assessment14Domain]:
+def list_member_assessments(db: Session, member_id: int, user=None) -> list[Assessment14Domain]:
+    from app.security.ownership import ensure_member_scope
+
+    ensure_member_scope(db, user, member_id)
     return list(
         db.scalars(
             select(Assessment14Domain)

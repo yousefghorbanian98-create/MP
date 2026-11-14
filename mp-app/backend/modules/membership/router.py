@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends, Query
 
-from app.deps import DbSession, require_permission
+from app.deps import CurrentUser, DbSession, require_permission
 from modules.membership import service
 from modules.membership.schemas import (
     MemberCreate,
@@ -36,20 +36,21 @@ def create_member(payload: MemberCreate, db: DbSession):
 @router.get("", response_model=list[MemberOut], summary="لیست اعضا (US-205)")
 def list_members(
     db: DbSession,
+    user: CurrentUser,
     offset: int = Query(0, ge=0),
     limit: int = Query(50, ge=1, le=200),
 ):
-    return service.list_members(db, offset=offset, limit=limit)
+    return service.list_members(db, offset=offset, limit=limit, user=user)
 
 
 @router.get("/{member_id}", response_model=MemberOut, summary="پروفایل عضو")
-def get_member(member_id: int, db: DbSession):
-    return service.get_member(db, member_id)
+def get_member(member_id: int, db: DbSession, user: CurrentUser):
+    return service.get_member(db, member_id, user=user)
 
 
 @router.patch("/{member_id}", response_model=MemberOut, summary="ویرایش پروفایل (US-102)")
-def update_member(member_id: int, payload: MemberUpdate, db: DbSession):
-    return service.update_member(db, member_id, **payload.model_dump(exclude_unset=True))
+def update_member(member_id: int, payload: MemberUpdate, db: DbSession, user: CurrentUser):
+    return service.update_member(db, member_id, user=user, **payload.model_dump(exclude_unset=True))
 
 
 @router.post(
@@ -73,7 +74,10 @@ def create_membership(payload: MembershipCreate, db: DbSession):
     response_model=list[MembershipOut],
     summary="تاریخچهٔ اشتراک‌های عضو",
 )
-def member_memberships(member_id: int, db: DbSession):
+def member_memberships(member_id: int, db: DbSession, user: CurrentUser):
+    from app.security.ownership import ensure_member_scope
+
+    ensure_member_scope(db, user, member_id)
     from sqlalchemy import select
 
     from db.models import Membership

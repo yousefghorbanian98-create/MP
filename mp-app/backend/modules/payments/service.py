@@ -68,8 +68,13 @@ def fail_payment(db: Session, payment_id: int) -> Payment:
 
 
 def list_payments(
-    db: Session, member_id: int | None = None, status: str | None = None
+    db: Session, member_id: int | None = None, status: str | None = None, user=None
 ) -> list[Payment]:
+    if user is not None and user.role == "member":
+        from app.security.ownership import get_own_member
+
+        own = get_own_member(db, user)
+        member_id = own.id if own else -1
     stmt = select(Payment).order_by(Payment.id.desc())
     if member_id is not None:
         stmt = stmt.where(Payment.member_id == member_id)
@@ -94,13 +99,21 @@ def wallet_charge(
     return tx
 
 
-def wallet_balance(db: Session, member_id: int) -> int:
+def wallet_balance(db: Session, member_id: int, user=None) -> int:
+    from app.security.ownership import ensure_member_scope
+
+    ensure_member_scope(db, user, member_id)
     """موجودی = مجموع credit − مجموع debit (مبالغ همیشه مثبت ذخیره می‌شوند)."""
     rows = db.scalars(select(WalletTransaction).where(WalletTransaction.member_id == member_id))
     return sum(t.amount_rial if t.kind == "credit" else -t.amount_rial for t in rows)
 
 
-def wallet_pay(db: Session, member_id: int, amount_rial: int, description: str = "") -> Payment:
+def wallet_pay(
+    db: Session, member_id: int, amount_rial: int, description: str = "", user=None
+) -> Payment:
+    from app.security.ownership import ensure_member_scope
+
+    ensure_member_scope(db, user, member_id)
     """پرداخت از کیف‌پول — اتمیک: بررسی موجودی + بدهکاری + پرداخت paid در یک تراکنش."""
     if amount_rial <= 0:
         raise ApiError("مبلغ پرداخت باید مثبت باشد")

@@ -56,7 +56,10 @@ def approve_plan(db: Session, plan_id: int, coach_id: int) -> NutritionPlan:
     return plan
 
 
-def list_member_plans(db: Session, member_id: int) -> list[NutritionPlan]:
+def list_member_plans(db: Session, member_id: int, user=None) -> list[NutritionPlan]:
+    from app.security.ownership import ensure_member_scope
+
+    ensure_member_scope(db, user, member_id)
     return list(
         db.scalars(
             select(NutritionPlan)

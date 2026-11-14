@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends
 
-from app.deps import DbSession, require_permission
+from app.deps import CurrentUser, DbSession, require_permission
 from modules.programs import service
 from modules.programs.schemas import ProgramFromEngineIn, ProgramOut, RejectIn
 
@@ -16,8 +16,8 @@ router = APIRouter(
 @router.get(
     "/member/{member_id}", response_model=list[ProgramOut], summary="برنامه‌های عضو (US-104)"
 )
-def list_member_programs(member_id: int, db: DbSession):
-    return service.list_member_programs(db, member_id)
+def list_member_programs(member_id: int, db: DbSession, user: CurrentUser):
+    return service.list_member_programs(db, member_id, user=user)
 
 
 @router.post(
@@ -32,8 +32,8 @@ def create_from_engine(payload: ProgramFromEngineIn, db: DbSession):
 
 
 @router.get("/{program_id}", response_model=ProgramOut, summary="جزئیات برنامه")
-def get_program(program_id: int, db: DbSession):
-    return service.get_program(db, program_id)
+def get_program(program_id: int, db: DbSession, user: CurrentUser):
+    return service.get_program(db, program_id, user=user)
 
 
 @router.post(

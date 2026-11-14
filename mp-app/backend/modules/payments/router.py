@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends, Query
 
-from app.deps import DbSession, require_permission
+from app.deps import CurrentUser, DbSession, require_permission
 from modules.payments import service
 from modules.payments.schemas import (
     PaymentCreate,
@@ -39,11 +39,12 @@ def fail_payment(payment_id: int, db: DbSession):
 
 @router.get("", response_model=list[PaymentOut], summary="لیست پرداخت‌ها (US-403)")
 def list_payments(
+    user: CurrentUser,
     db: DbSession,
     member_id: int | None = Query(None),
     status: str | None = Query(None, pattern="^(pending|paid|failed)$"),
 ):
-    return service.list_payments(db, member_id=member_id, status=status)
+    return service.list_payments(db, member_id=member_id, status=status, user=user)
 
 
 @router.post("/wallet/charge", response_model=WalletTxOut, summary="شارژ کیف‌پول")
@@ -52,26 +53,31 @@ def wallet_charge(payload: WalletCharge, db: DbSession):
 
 
 @router.post("/wallet/pay", response_model=PaymentOut, summary="پرداخت از کیف‌پول (M16)")
-def wallet_pay(payload: WalletCharge, db: DbSession):
-    return service.wallet_pay(db, payload.member_id, payload.amount_rial, payload.description)
+def wallet_pay(payload: WalletCharge, db: DbSession, user: CurrentUser):
+    return service.wallet_pay(
+        db, payload.member_id, payload.amount_rial, payload.description, user=user
+    )
 
 
 @router.get("/invoice/{member_id}", summary="فاکتور تجمعی عضو (US-403 — M16)")
-def invoice(member_id: int, db: DbSession):
+def invoice(member_id: int, db: DbSession, user: CurrentUser):
     from modules.payments.invoice import build_invoice
 
-    return build_invoice(db, member_id)
+    return build_invoice(db, member_id, user=user)
 
 
 @router.get("/{payment_id}/receipt", summary="رسید پرداخت (US-303 — M16)")
-def receipt(payment_id: int, db: DbSession):
+def receipt(payment_id: int, db: DbSession, user: CurrentUser):
     from modules.payments.invoice import build_receipt
 
-    return build_receipt(db, payment_id)
+    return build_receipt(db, payment_id, user=user)
 
 
 @router.get(
     "/wallet/{member_id}", response_model=WalletBalanceOut, summary="موجودی کیف‌پول (US-103)"
 )
-def wallet_balance(member_id: int, db: DbSession):
-    return {"member_id": member_id, "balance_rial": service.wallet_balance(db, member_id)}
+def wallet_balance(member_id: int, db: DbSession, user: CurrentUser):
+    return {
+        "member_id": member_id,
+        "balance_rial": service.wallet_balance(db, member_id, user=user),
+    }
