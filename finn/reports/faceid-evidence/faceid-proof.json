@@ -1,0 +1,52 @@
+{
+  "test_date": "2026-11-14",
+  "tooling": {
+    "lib": "face_recognition 1.3.0 (MIT)",
+    "engine": "dlib 20.0.1 (Boost)",
+    "detector": "HOG (+CNN fallback, downscaled)",
+    "embedder": "dlib ResNet 128-d",
+    "threshold": 0.6
+  },
+  "data_note": "synthetic AI-generated faces only; no real athlete data used",
+  "detection": {
+    "A": {
+      "faces_encoded": 1,
+      "fallback_used": true
+    },
+    "A2": {
+      "faces_encoded": 1,
+      "fallback_used": true
+    },
+    "B": {
+      "faces_encoded": 1,
+      "fallback_used": true
+    }
+  },
+  "verification": {
+    "A-A2": {
+      "distance": 0.5644,
+      "match": true
+    },
+    "A-B": {
+      "distance": 0.924,
+      "match": false
+    },
+    "A2-B": {
+      "distance": 0.7907,
+      "match": false
+    }
+  },
+  "identification": {
+    "query": "A2",
+    "gallery": [
+      "A",
+      "B"
+    ],
+    "best_match": "A",
+    "distances": {
+      "A": 0.5644,
+      "B": 0.7907
+    }
+  },
+  "passed": true
+}
