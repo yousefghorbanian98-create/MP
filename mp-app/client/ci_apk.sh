@@ -3,10 +3,13 @@
 set -euo pipefail
 
 cd "$(dirname "$0")"
+LOG="${BUILD_LOG:-/tmp/apk-build.log}"
+exec > >(tee "$LOG") 2>&1
 
 BUILD_NUMBER="${BUILD_NUMBER:-1}"
 echo "==> version: $(grep '^version:' pubspec.yaml) build=$BUILD_NUMBER"
 
+flutter --version
 flutter pub get
 flutter analyze --no-fatal-infos
 flutter test

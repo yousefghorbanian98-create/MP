@@ -1,5 +1,5 @@
 # Muscle Paradise — ساخت APK اندروید (M28/باز-۱)
-# فقط روی درخواست دستی/tag — چون Flutter toolchain سنگین است و CI سریع می‌ماند.
+# اجرا: workflow_dispatch یا push تگ v*
 name: mp-apk
 
 on:
@@ -21,11 +21,35 @@ jobs:
         with:
           channel: stable
           cache: true
-      - name: Build APK (analyze → test → build + SHA256)
+
+      - name: Flutter version + pub get
+        run: |
+          cd mp-app/client
+          flutter --version
+          flutter pub get
+
+      - name: Analyze
+        run: |
+          cd mp-app/client
+          flutter analyze --no-fatal-infos
+
+      - name: Test
+        run: |
+          cd mp-app/client
+          flutter test
+
+      - name: Build APK + SHA256
         env:
           BUILD_NUMBER: ${{ github.event.inputs.build_number || github.run_number }}
-        run: bash mp-app/client/ci_apk.sh
+        run: |
+          cd mp-app/client
+          flutter build apk --release --split-per-abi --build-number="$BUILD_NUMBER"
+          APK="build/app/outputs/flutter-apk/app-arm64-v8a-release.apk"
+          test -f "$APK"
+          sha256sum "$APK" | tee "$APK.sha256"
+
       - name: Upload APK artifact
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: muscleparadise-apk
@@ -33,3 +57,11 @@ jobs:
             mp-app/client/build/app/outputs/flutter-apk/*.apk
             mp-app/client/build/app/outputs/flutter-apk/*.sha256
           if-no-files-found: error
+
+      - name: Upload diagnostics on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: apk-diagnostics
+          path: mp-app/client/
+          retention-days: 3
