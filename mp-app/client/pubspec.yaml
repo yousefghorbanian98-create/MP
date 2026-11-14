@@ -17,7 +17,7 @@ dependencies:
   sqlite3_flutter_libs: ^0.5.20
   path_provider: ^2.1.4
   flutter_animate: ^4.5.0
-  intl: ^0.19.0
+  intl: any  # با flutter_localizations هماهنگ می‌شود (پین دقیق SDK)
 
 dev_dependencies:
   flutter_test:
