@@ -91,60 +91,117 @@ Loading local repository...
 [=====================                  ] 55% Unzipping... android-ndk-r28c/CHAN
 [=======================================] 100% Unzipping... android-ndk-r28c/CHA
 
-lib/features/shell/app_shell.dart:6:8: Error: Error when reading 'lib/features/core/theme.dart': No such file or directory
+lib/features/auth/otp_page.dart:8:8: Error: Error when reading 'lib/features/core/session.dart': No such file or directory
+import '../core/session.dart';
+       ^
+lib/features/intake/intake_page.dart:8:8: Error: Error when reading 'lib/features/core/session.dart': No such file or directory
+import '../core/session.dart';
+       ^
+lib/features/auth/otp_page.dart:9:8: Error: Error when reading 'lib/features/core/theme.dart': No such file or directory
 import '../core/theme.dart';
        ^
-lib/features/home/home_page.dart:180:36: Error: Member not found: 'monitoring'.
-    _SectionItem('پیکرسنجی', Icons.monitoring, [Color(0xFF38BDF8), Color(0xFF0EA5E9)], '/bodycomp'),
-                                   ^^^^^^^^^^
-lib/core/router.dart:30:26: Error: The getter 'MpColors' isn't defined for the type '_PushedSection'.
- - '_PushedSection' is from 'package:mp_client/core/router.dart' ('lib/core/router.dart').
+lib/features/intake/intake_page.dart:9:8: Error: Error when reading 'lib/features/core/theme.dart': No such file or directory
+import '../core/theme.dart';
+       ^
+lib/features/intake/program_result.dart:6:8: Error: Error when reading 'lib/features/core/theme.dart': No such file or directory
+import '../core/theme.dart';
+       ^
+lib/features/intake/program_result.dart:7:8: Error: Error when reading 'lib/features/shared/widgets/glass_card.dart': No such file or directory
+import '../shared/widgets/glass_card.dart';
+       ^
+lib/features/auth/otp_page.dart:39:28: Error: The getter 'apiClientProvider' isn't defined for the type '_OtpPageState'.
+ - '_OtpPageState' is from 'package:mp_client/features/auth/otp_page.dart' ('lib/features/auth/otp_page.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'apiClientProvider'.
+      final api = ref.read(apiClientProvider);
+                           ^^^^^^^^^^^^^^^^^
+lib/features/auth/otp_page.dart:58:22: Error: The getter 'authProvider' isn't defined for the type '_OtpPageState'.
+ - '_OtpPageState' is from 'package:mp_client/features/auth/otp_page.dart' ('lib/features/auth/otp_page.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'authProvider'.
+      await ref.read(authProvider.notifier).loginWithOtp(
+                     ^^^^^^^^^^^^
+lib/features/auth/otp_page.dart:88:45: Error: The getter 'MpColors' isn't defined for the type '_OtpPageState'.
+ - '_OtpPageState' is from 'package:mp_client/features/auth/otp_page.dart' ('lib/features/auth/otp_page.dart').
 Try correcting the name to the name of an existing getter, or defining a getter or field named 'MpColors'.
-        backgroundColor: MpColors.background,
-                         ^^^^^^^^
-lib/features/progress/progress_page.dart:22:81: Error: Member not found: 'monitoring'.
-              Expanded(child: _ProgressTile('چربی بدن', '۱۲٫۴٪', '−۱٫۲٪', Icons.monitoring, MpColors.primary)),
-                                                                                ^^^^^^^^^^
-lib/features/shell/app_shell.dart:74:16: Error: The getter 'MpColors' isn't defined for the type '_MpBottomNav'.
- - '_MpBottomNav' is from 'package:mp_client/features/shell/app_shell.dart' ('lib/features/shell/app_shell.dart').
+                    style: TextStyle(color: MpColors.textSecondary)),
+                                            ^^^^^^^^
+lib/features/intake/intake_page.dart:70:28: Error: The getter 'apiClientProvider' isn't defined for the type '_IntakePageState'.
+ - '_IntakePageState' is from 'package:mp_client/features/intake/intake_page.dart' ('lib/features/intake/intake_page.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'apiClientProvider'.
+      final api = ref.read(apiClientProvider);
+                           ^^^^^^^^^^^^^^^^^
+lib/features/intake/intake_page.dart:71:29: Error: The getter 'authProvider' isn't defined for the type '_IntakePageState'.
+ - '_IntakePageState' is from 'package:mp_client/features/intake/intake_page.dart' ('lib/features/intake/intake_page.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'authProvider'.
+      final auth = ref.read(authProvider);
+                            ^^^^^^^^^^^^
+lib/features/intake/intake_page.dart:73:24: Error: The getter 'authProvider' isn't defined for the type '_IntakePageState'.
+ - '_IntakePageState' is from 'package:mp_client/features/intake/intake_page.dart' ('lib/features/intake/intake_page.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'authProvider'.
+        await ref.read(authProvider.notifier).refreshMe();
+                       ^^^^^^^^^^^^
+lib/features/intake/intake_page.dart:75:33: Error: The getter 'authProvider' isn't defined for the type '_IntakePageState'.
+ - '_IntakePageState' is from 'package:mp_client/features/intake/intake_page.dart' ('lib/features/intake/intake_page.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'authProvider'.
+      final memberId = ref.read(authProvider).memberId;
+                                ^^^^^^^^^^^^
+lib/features/intake/intake_page.dart:99:31: Error: The getter 'authProvider' isn't defined for the type '_IntakePageState'.
+ - '_IntakePageState' is from 'package:mp_client/features/intake/intake_page.dart' ('lib/features/intake/intake_page.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'authProvider'.
+      final height = ref.read(authProvider).memberId != null
+                              ^^^^^^^^^^^^
+lib/features/intake/intake_page.dart:193:31: Error: The getter 'MpColors' isn't defined for the type '_IntakePageState'.
+ - '_IntakePageState' is from 'package:mp_client/features/intake/intake_page.dart' ('lib/features/intake/intake_page.dart').
 Try correcting the name to the name of an existing getter, or defining a getter or field named 'MpColors'.
-        color: MpColors.surface.withOpacity(0.92),
-               ^^^^^^^^
-lib/features/shell/app_shell.dart:75:47: Error: The getter 'MpColors' isn't defined for the type '_MpBottomNav'.
- - '_MpBottomNav' is from 'package:mp_client/features/shell/app_shell.dart' ('lib/features/shell/app_shell.dart').
+              color: active ? MpColors.primary : MpColors.surface,
+                              ^^^^^^^^
+lib/features/intake/intake_page.dart:193:50: Error: The getter 'MpColors' isn't defined for the type '_IntakePageState'.
+ - '_IntakePageState' is from 'package:mp_client/features/intake/intake_page.dart' ('lib/features/intake/intake_page.dart').
 Try correcting the name to the name of an existing getter, or defining a getter or field named 'MpColors'.
-        border: Border(top: BorderSide(color: MpColors.primary.withOpacity(0.18))),
-                                              ^^^^^^^^
-lib/features/shell/app_shell.dart:97:36: Error: The getter 'MpColors' isn't defined for the type '_MpBottomNav'.
- - '_MpBottomNav' is from 'package:mp_client/features/shell/app_shell.dart' ('lib/features/shell/app_shell.dart').
+              color: active ? MpColors.primary : MpColors.surface,
+                                                 ^^^^^^^^
+lib/features/intake/intake_page.dart:263:37: Error: The getter 'MpColors' isn't defined for the type '_IntakePageState'.
+ - '_IntakePageState' is from 'package:mp_client/features/intake/intake_page.dart' ('lib/features/intake/intake_page.dart').
 Try correcting the name to the name of an existing getter, or defining a getter or field named 'MpColors'.
-                            color: MpColors.primary,
-                                   ^^^^^^^^
-lib/features/shell/app_shell.dart:101:40: Error: The getter 'MpColors' isn't defined for the type '_MpBottomNav'.
- - '_MpBottomNav' is from 'package:mp_client/features/shell/app_shell.dart' ('lib/features/shell/app_shell.dart').
+            style: TextStyle(color: MpColors.textSecondary)),
+                                    ^^^^^^^^
+lib/features/intake/intake_page.dart:330:37: Error: The getter 'MpColors' isn't defined for the type '_IntakePageState'.
+ - '_IntakePageState' is from 'package:mp_client/features/intake/intake_page.dart' ('lib/features/intake/intake_page.dart').
 Try correcting the name to the name of an existing getter, or defining a getter or field named 'MpColors'.
-                                color: MpColors.primary.withOpacity(0.5),
-                                       ^^^^^^^^
-lib/features/shell/app_shell.dart:113:49: Error: The getter 'MpColors' isn't defined for the type '_MpBottomNav'.
- - '_MpBottomNav' is from 'package:mp_client/features/shell/app_shell.dart' ('lib/features/shell/app_shell.dart').
+            style: TextStyle(color: MpColors.textSecondary)),
+                                    ^^^^^^^^
+lib/features/intake/program_result.dart:42:65: Error: Not a constant expression.
+                        const Icon(Icons.fitness_center, color: MpColors.primary),
+                                                                ^^^^^^^^
+lib/features/intake/program_result.dart:53:48: Error: The getter 'MpColors' isn't defined for the type 'ProgramResult'.
+ - 'ProgramResult' is from 'package:mp_client/features/intake/program_result.dart' ('lib/features/intake/program_result.dart').
 Try correcting the name to the name of an existing getter, or defining a getter or field named 'MpColors'.
-                            color: i == index ? MpColors.primary : MpColors.textSecondary,
-                                                ^^^^^^^^
-lib/features/shell/app_shell.dart:113:68: Error: The getter 'MpColors' isn't defined for the type '_MpBottomNav'.
- - '_MpBottomNav' is from 'package:mp_client/features/shell/app_shell.dart' ('lib/features/shell/app_shell.dart').
+                              TextStyle(color: MpColors.textSecondary, fontSize: 12)),
+                                               ^^^^^^^^
+lib/features/intake/program_result.dart:36:15: Error: The method 'GlassCard' isn't defined for the type 'ProgramResult'.
+ - 'ProgramResult' is from 'package:mp_client/features/intake/program_result.dart' ('lib/features/intake/program_result.dart').
+Try correcting the name to the name of an existing method, or defining a method named 'GlassCard'.
+              GlassCard(
+              ^^^^^^^^^
+lib/features/intake/program_result.dart:86:14: Error: The method 'GlassCard' isn't defined for the type 'ProgramResult'.
+ - 'ProgramResult' is from 'package:mp_client/features/intake/program_result.dart' ('lib/features/intake/program_result.dart').
+Try correcting the name to the name of an existing method, or defining a method named 'GlassCard'.
+      child: GlassCard(
+             ^^^^^^^^^
+lib/features/intake/program_result.dart:119:55: Error: The getter 'MpColors' isn't defined for the type 'ProgramResult'.
+ - 'ProgramResult' is from 'package:mp_client/features/intake/program_result.dart' ('lib/features/intake/program_result.dart').
 Try correcting the name to the name of an existing getter, or defining a getter or field named 'MpColors'.
-                            color: i == index ? MpColors.primary : MpColors.textSecondary,
-                                                                   ^^^^^^^^
-lib/features/shell/app_shell.dart:122:49: Error: The getter 'MpColors' isn't defined for the type '_MpBottomNav'.
- - '_MpBottomNav' is from 'package:mp_client/features/shell/app_shell.dart' ('lib/features/shell/app_shell.dart').
+                style: TextStyle(fontSize: 13, color: MpColors.primary)),
+                                                      ^^^^^^^^
+lib/features/intake/program_result.dart:124:55: Error: The getter 'MpColors' isn't defined for the type 'ProgramResult'.
+ - 'ProgramResult' is from 'package:mp_client/features/intake/program_result.dart' ('lib/features/intake/program_result.dart').
 Try correcting the name to the name of an existing getter, or defining a getter or field named 'MpColors'.
-                            color: i == index ? MpColors.primary : MpColors.textSecondary,
-                                                ^^^^^^^^
-lib/features/shell/app_shell.dart:122:68: Error: The getter 'MpColors' isn't defined for the type '_MpBottomNav'.
- - '_MpBottomNav' is from 'package:mp_client/features/shell/app_shell.dart' ('lib/features/shell/app_shell.dart').
-Try correcting the name to the name of an existing getter, or defining a getter or field named 'MpColors'.
-                            color: i == index ? MpColors.primary : MpColors.textSecondary,
-                                                                   ^^^^^^^^
+                style: TextStyle(fontSize: 12, color: MpColors.textSecondary)),
+                                                      ^^^^^^^^
+lib/features/intake/program_result.dart:132:12: Error: The method 'GlassCard' isn't defined for the type 'ProgramResult'.
+ - 'ProgramResult' is from 'package:mp_client/features/intake/program_result.dart' ('lib/features/intake/program_result.dart').
+Try correcting the name to the name of an existing method, or defining a method named 'GlassCard'.
+    return GlassCard(
+           ^^^^^^^^^
 Target kernel_snapshot_program failed: Exception
 
 
@@ -160,6 +217,6 @@ Execution failed for task ':app:compileFlutterBuildRelease' (registered by plugi
 > Run with --scan to get full insights from a Build Scan (powered by Develocity).
 > Get more help at https://help.gradle.org.
 
-BUILD FAILED in 2m 46s
-Running Gradle task 'assembleRelease'...                          167.2s
+BUILD FAILED in 3m 5s
+Running Gradle task 'assembleRelease'...                          187.5s
 Gradle task assembleRelease failed with exit code 1
