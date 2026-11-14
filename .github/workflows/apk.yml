@@ -62,26 +62,21 @@ jobs:
           test -f "$APK"
           sha256sum "$APK" | tee "$APK.sha256"
 
-      - name: Diagnostics comment on failure
+      - name: Commit diagnostics on failure
         if: failure()
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: arena/a0408b29-mp
         run: |
-          gh label create apk-diagnostics --color D93F0B --description "گزارش خطاهای ساخت APK" 2>/dev/null || true
-          ISSUE=$(gh issue list --label apk-diagnostics --state open --json number -q '.[0].number' 2>/dev/null || true)
-          if [ -z "$ISSUE" ]; then
-            ISSUE=$(gh issue create --title "apk-ci diagnostics" --label apk-diagnostics --body "گزارش خودکار خطاهای ساخت APK" --json number -q .number)
-          fi
-          {
-            echo "## خطا در اجرای ${{ github.run_id }} (${{ github.ref_name }})"
-            for f in /tmp/step-*.txt; do
-              echo "### $(basename $f)"
-              echo '```'
-              tail -60 "$f" || true
-              echo '```'
-            done
-          } > /tmp/comment.md
-          gh issue comment "$ISSUE" --body-file /tmp/comment.md
+          git config user.name "mp-apk-ci"
+          git config user.email "ci@muscleparadise.local"
+          git fetch origin "$BRANCH"
+          git checkout -B "$BRANCH" "origin/$BRANCH"
+          mkdir -p finn/reports/apk-ci
+          cp /tmp/step-*.txt finn/reports/apk-ci/ 2>/dev/null || true
+          echo "run=${{ github.run_id }} ref=${{ github.ref_name }}" > finn/reports/apk-ci/RUN.txt
+          git add finn/reports/apk-ci
+          git commit -m "mp(apk): diagnostics run ${{ github.run_id }} [skip ci]" || true
+          git push origin "$BRANCH"
 
       - name: Commit APK into repo (delivery)
         if: success()
