@@ -141,3 +141,8 @@
 ## 2026-11-14 — APK واقعی + استقرار Docker [finn]
 - **APK ساخته شد (CI)**: `mp-app/client/release/` — سه ABI + SHA256 + BUILD-INFO (run 43617637282). رفع: تعارض intl، فونت وزیرمتن (دانلود از منبع رسمی OFL)، importهای theme، آیکن حذف‌شدهٔ Flutter 3.50، scaffold اندروید.
 - **استقرار**: Dockerfile (backend/studio) + docker-compose + workflow GHCR (`mp-container`) + `docs/MuscleParadise/DEPLOYMENT.md` (راهنمای مرحله‌به‌مرحله).
+
+## 2026-11-14 — کلاینت واقعی (M32) [finn]
+- `members/me` (GET/PUT): پروفایل شخصی واقعی — ساخت خودکار + ویرایش نام/هدف/جنس/قد/محدودیت‌ها (+تست).
+- کلاینت: `api_client.dart` + `session.dart` (نشست/توکن واقعی)، `otp_page.dart` (ورود پیامکی)، `intake_page.dart` (پرسش‌نامهٔ هدف/سطح/سابقه/بازهٔ عملکرد/محدودیت‌ها + گیت جمعیتی) + `program_result.dart` (برنامهٔ اختصاصی واقعی از موتور)، پروفایل زنده.
+- تست‌های کلاینت: MockClient برای API/نشست؛ مسیر «برنامهٔ اختصاصی» به جریان واقعی وصل شد.
