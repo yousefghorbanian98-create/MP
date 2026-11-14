@@ -3,8 +3,8 @@ library;
 
 import 'package:flutter/material.dart';
 
-import '../core/theme.dart';
-import '../shared/widgets/glass_card.dart';
+import '../../core/theme.dart';
+import '../../shared/widgets/glass_card.dart';
 
 class ProgramResult extends StatelessWidget {
   const ProgramResult({

@@ -5,8 +5,8 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../core/session.dart';
-import '../core/theme.dart';
+import '../../core/session.dart';
+import '../../core/theme.dart';
 import 'program_result.dart';
 
 class IntakePage extends ConsumerStatefulWidget {
