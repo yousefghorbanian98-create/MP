@@ -1,0 +1,38 @@
+
+::group::✅ Passing tests
+✅ /home/runner/work/MP/MP/mp-app/client/test/today_controller_test.dart: progress starts at zero and updates on toggle
+✅ /home/runner/work/MP/MP/mp-app/client/test/today_controller_test.dart: G8: exercises carry numeric load from rule engine fields only
+lib/features/home/home_page.dart:180:36: Error: Member not found: 'monitoring'.
+    _SectionItem('پیکرسنجی', Icons.monitoring, [Color(0xFF38BDF8), Color(0xFF0EA5E9)], '/bodycomp'),
+                                   ^^^^^^^^^^
+::endgroup::
+::group::❌ loading /home/runner/work/MP/MP/mp-app/client/test/home_page_test.dart (failed)
+Failed to load "/home/runner/work/MP/MP/mp-app/client/test/home_page_test.dart":
+Compilation failed for testPath=/home/runner/work/MP/MP/mp-app/client/test/home_page_test.dart: lib/features/home/home_page.dart:180:36: Error: Member not found: 'monitoring'.
+    _SectionItem('پیکرسنجی', Icons.monitoring, [Color(0xFF38BDF8), Color(0xFF0EA5E9)], '/bodycomp'),
+                                   ^^^^^^^^^^
+.
+
+::endgroup::
+::group::❌ loading /home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart (failed after test completion)
+Error: The Dart compiler exited unexpectedly.
+package:flutter_tools/src/base/common.dart 36:3  throwToolExit
+package:flutter_tools/src/compile.dart 1029:11   DefaultResidentCompiler._compile.<fn>
+dart:async/future_impl.dart 961:45               Future._propagateToListeners.handleValueCallback
+dart:async/future_impl.dart 990:13               Future._propagateToListeners
+dart:async/future_impl.dart 874:9                Future._propagateToListeners
+dart:async/future_impl.dart 732:5                Future._completeWithValue
+dart:async/future_impl.dart 816:7                Future._asyncCompleteWithValue.<fn>
+dart:async/zone.dart 474:14                      Zone.runGuarded
+dart:async/zone.dart 604:18                      Zone.bindCallbackGuarded.<fn>
+dart:async/schedule_microtask.dart 40:35         _microtaskLoop
+dart:async/schedule_microtask.dart 49:5          _startMicrotaskLoop
+dart:isolate-patch/isolate_patch.dart 127:13     _runPendingImmediateCallback
+dart:isolate-patch/isolate_patch.dart 193:5      _RawReceivePort._handleMessage
+::endgroup::
+::group::✅ Passing tests
+✅ /home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart: TodayPage renders exercises RTL with dark theme
+✅ /home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart: toggling an exercise updates the ring
+::endgroup::
+
+::error::4 tests passed, 2 failed.
