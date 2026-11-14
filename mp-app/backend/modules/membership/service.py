@@ -41,14 +41,18 @@ def create_member(
 
 
 def get_member(db: Session, member_id: int) -> Member:
-    member = db.get(Member, member_id)
+    from modules.membership.repository import MemberRepository
+
+    member = MemberRepository(db).get(member_id)
     if member is None:
         raise NotFoundError("عضو یافت نشد")
     return member
 
 
 def list_members(db: Session, offset: int = 0, limit: int = 50) -> list[Member]:
-    return list(db.scalars(select(Member).offset(offset).limit(limit)))
+    from modules.membership.repository import MemberRepository
+
+    return MemberRepository(db).list(offset=offset, limit=limit)
 
 
 def update_member(db: Session, member_id: int, **fields) -> Member:
@@ -96,16 +100,9 @@ def create_membership(
 
 
 def get_active_membership(db: Session, member_id: int) -> Membership | None:
-    now = datetime.now(UTC)
-    rows = db.scalars(
-        select(Membership)
-        .where(Membership.member_id == member_id, Membership.status == "active")
-        .order_by(Membership.expires_at.desc())
-    )
-    for row in rows:
-        if _aware(row.expires_at) > now:
-            return row
-    return None
+    from modules.membership.repository import MembershipRepository
+
+    return MembershipRepository(db).active_for_member(member_id)
 
 
 def _aware(dt: datetime) -> datetime:

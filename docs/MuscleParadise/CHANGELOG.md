@@ -4,6 +4,12 @@
 
 ## [Unreleased]
 
+### Added — M05 (2026-11-14)
+- jobهای APScheduler: انقضای اشتراک، یادآوری تمدید (dedup)، بازآزمایی ۶–۸ هفته
+- لاگ ساختاریافتهٔ structlog (JSON برای Grafana/Loki)
+- لایهٔ Repository برای membership/payments/assessment (Router→Service→Repository)
+- ۱۰ تست جدید (jobها + repositoryها) — مجموعاً ۶۰ تست، پوشش ۸۴٪
+
 ### Added — M04 (2026-11-14)
 - قرارداد REST نسخه‌دار `/api/v1` — ۹ خانواده endpoint با اسکیمای Pydantic کامل
 - app factory + قالب خطای یکپارچه + JWT (access/refresh با rotation) + slowapi روی OTP/لاگین
