@@ -74,6 +74,8 @@ POLICIES: list[tuple[str, str, str]] = [
     ("reception", "/api/v1/notifications/*", "*"),
     # مدیر: همه‌چیز
     ("manager", "/*", "*"),
+    # ادمین سیستم: دسترسی کامل (هم‌ارز manager در casbin)
+    ("admin", "/*", "*"),
 ]
 
 

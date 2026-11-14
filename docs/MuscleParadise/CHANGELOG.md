@@ -103,3 +103,9 @@
 - `docs/MuscleParadise/ANDROID-OFFLINE-PLAN.md`: مشخصات صف آفلاین (sync_queue + Idempotency-Key + ترتیب همگام‌سازی + پرداخت آفلاین‌ممنوع).
 - `mp-app/client/ci_apk.sh`: pipeline ساخت APK (analyze/test/build + SHA256) — برای CI با Flutter.
 - گیت‌ها: ۱۷۴ pytest سبز، ruff صفر، semgrep صفر.
+
+## 2026-11-14 — M29 [finn]
+- `engine/autoreg.py` (autoreg-1.0): قانون ۲-برای-۲ + RPE → increase/decrease/maintain با دلیل و نسخهٔ قاعده؛ `POST /api/v1/ai/suggest-weight`.
+- `modules/admin/kpis.py` + `GET /api/v1/admin/kpis`: KPI های واقعی (اعضای فعال از اشتراک‌های active، اعضای ۳۰ روز، درآمد، نرخ پر شدن کلاس — ناشناخته ≠ صفر).
+- RBAC: نقش `admin` به سیاست casbin اضافه شد.
+- گیت‌ها: ۱۸۱ pytest سبز، ruff صفر، semgrep صفر.

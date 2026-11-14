@@ -24,3 +24,11 @@ def get_flag(key: str, db: DbSession):
 @router.put("/flags", response_model=FeatureFlagOut, summary="تنظیم feature flag (US-405)")
 def set_flag(payload: FeatureFlagIn, db: DbSession):
     return service.set_flag(db, payload.key, payload.enabled, payload.description)
+
+
+from modules.admin.kpis import admin_kpis as _admin_kpis  # noqa: E402
+
+
+@router.get("/kpis", summary="KPI های واقعی داشبورد (M29)")
+def _kpis(db: DbSession):
+    return _admin_kpis(db)
