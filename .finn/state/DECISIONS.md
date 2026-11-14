@@ -41,3 +41,6 @@
 
 ## D-008. (M16) الگوی درگاه پرداخت + قرارداد کیف‌پول
 `GatewayAdapter` (Protocol) + `MockGateway` (قطعی برای dev/e2e) + `ZarinpalAdapter` (سند اجرا با sandbox). مبالغ کیف‌پول همیشه مثبت + `kind` تعیین‌کنندهٔ علامت. `wallet_pay` اتمیک (بررسی موجودی + debit + payment در یک commit) و double-spend رد می‌شود. توکن HMAC برای callback جلوی جعل مبلغ را می‌گیرد.
+
+## D-009. (M17) جایگزینی PyJWT با python-jose
+pip-audit سه آسیب بدون نسخهٔ رفع در python-jose/ecdsa گزارش کرد (مسیر ECDSA استفاده نمی‌شد اما وابستگی وجود داشت). با جایگزینی PyJWT (HS256 فقط، بدون ecdsa) اسکن به «No known vulnerabilities» رسید. ۱۴۱ تست بدون تغییر سبز ماند.

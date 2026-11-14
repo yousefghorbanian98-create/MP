@@ -6,7 +6,8 @@ import hashlib
 import secrets
 from datetime import UTC, datetime, timedelta
 
-from jose import JWTError, jwt
+import jwt as pyjwt
+from jwt import PyJWTError as JWTError
 
 from app.config import settings
 from app.errors import UnauthorizedError
@@ -23,7 +24,7 @@ def create_access_token(user_id: int, role: str) -> str:
         "iat": now,
         "exp": now + timedelta(minutes=settings.access_token_minutes),
     }
-    return jwt.encode(payload, settings.secret_key, algorithm=ALGORITHM)
+    return pyjwt.encode(payload, settings.secret_key, algorithm=ALGORITHM)
 
 
 def create_refresh_token() -> tuple[str, str, datetime]:
@@ -39,7 +40,7 @@ def hash_token(token: str) -> str:
 
 def decode_access_token(token: str) -> dict:
     try:
-        payload = jwt.decode(token, settings.secret_key, algorithms=[ALGORITHM])
+        payload = pyjwt.decode(token, settings.secret_key, algorithms=[ALGORITHM])
     except JWTError as exc:
         raise UnauthorizedError("توکن نامعتبر یا منقضی است") from exc
     if payload.get("type") != "access":
