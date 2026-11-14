@@ -4,11 +4,8 @@ Analyzing client...
    info • 'package:flutter/material.dart' is deprecated and shouldn't be used. Use package:material_ui/material_ui.dart instead. This feature was deprecated after v3.47.0-0.0.pre. Try replacing the use of the deprecated member with the replacement • lib/core/theme.dart:4:1 • deprecated_member_use
    info • The imported package 'crypto' isn't a dependency of the importing package. Try adding a dependency for 'crypto' in the 'pubspec.yaml' file • lib/core/updater/update_service.dart:10:8 • depend_on_referenced_packages
    info • 'package:flutter/material.dart' is deprecated and shouldn't be used. Use package:material_ui/material_ui.dart instead. This feature was deprecated after v3.47.0-0.0.pre. Try replacing the use of the deprecated member with the replacement • lib/features/auth/otp_page.dart:4:1 • deprecated_member_use
-  error • Target of URI doesn't exist: '../core/session.dart'. Try creating the file referenced by the URI, or try using a URI for a file that does exist • lib/features/auth/otp_page.dart:8:8 • uri_does_not_exist
-  error • Target of URI doesn't exist: '../core/theme.dart'. Try creating the file referenced by the URI, or try using a URI for a file that does exist • lib/features/auth/otp_page.dart:9:8 • uri_does_not_exist
-  error • Undefined name 'apiClientProvider'. Try correcting the name to one that is defined, or defining the name • lib/features/auth/otp_page.dart:39:28 • undefined_identifier
-  error • Undefined name 'authProvider'. Try correcting the name to one that is defined, or defining the name • lib/features/auth/otp_page.dart:58:22 • undefined_identifier
-  error • Undefined name 'MpColors'. Try correcting the name to one that is defined, or defining the name • lib/features/auth/otp_page.dart:88:45 • undefined_identifier
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/auth/otp_page.dart:86:17 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/auth/otp_page.dart:88:28 • prefer_const_constructors
    info • 'package:flutter/material.dart' is deprecated and shouldn't be used. Use package:material_ui/material_ui.dart instead. This feature was deprecated after v3.47.0-0.0.pre. Try replacing the use of the deprecated member with the replacement • lib/features/bodycomp/bodycomp_page.dart:4:1 • deprecated_member_use
    info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/bodycomp/bodycomp_page.dart:41:12 • prefer_const_constructors
    info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/bodycomp/bodycomp_page.dart:42:14 • prefer_const_constructors
@@ -59,29 +56,14 @@ Analyzing client...
    info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/home/home_page.dart:298:13 • prefer_const_constructors
    info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/home/home_page.dart:299:22 • prefer_const_constructors
    info • 'package:flutter/material.dart' is deprecated and shouldn't be used. Use package:material_ui/material_ui.dart instead. This feature was deprecated after v3.47.0-0.0.pre. Try replacing the use of the deprecated member with the replacement • lib/features/intake/intake_page.dart:5:1 • deprecated_member_use
-  error • Target of URI doesn't exist: '../core/session.dart'. Try creating the file referenced by the URI, or try using a URI for a file that does exist • lib/features/intake/intake_page.dart:8:8 • uri_does_not_exist
-  error • Target of URI doesn't exist: '../core/theme.dart'. Try creating the file referenced by the URI, or try using a URI for a file that does exist • lib/features/intake/intake_page.dart:9:8 • uri_does_not_exist
-  error • Undefined name 'apiClientProvider'. Try correcting the name to one that is defined, or defining the name • lib/features/intake/intake_page.dart:70:28 • undefined_identifier
-  error • Undefined name 'authProvider'. Try correcting the name to one that is defined, or defining the name • lib/features/intake/intake_page.dart:71:29 • undefined_identifier
-  error • Undefined name 'authProvider'. Try correcting the name to one that is defined, or defining the name • lib/features/intake/intake_page.dart:73:24 • undefined_identifier
-  error • Undefined name 'authProvider'. Try correcting the name to one that is defined, or defining the name • lib/features/intake/intake_page.dart:75:33 • undefined_identifier
-  error • Undefined name 'authProvider'. Try correcting the name to one that is defined, or defining the name • lib/features/intake/intake_page.dart:99:31 • undefined_identifier
-  error • Undefined name 'MpColors'. Try correcting the name to one that is defined, or defining the name • lib/features/intake/intake_page.dart:193:31 • undefined_identifier
-  error • Undefined name 'MpColors'. Try correcting the name to one that is defined, or defining the name • lib/features/intake/intake_page.dart:193:50 • undefined_identifier
-  error • Undefined name 'MpColors'. Try correcting the name to one that is defined, or defining the name • lib/features/intake/intake_page.dart:263:37 • undefined_identifier
-  error • Undefined name 'MpColors'. Try correcting the name to one that is defined, or defining the name • lib/features/intake/intake_page.dart:330:37 • undefined_identifier
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/intake/intake_page.dart:263:20 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/intake/intake_page.dart:329:9 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/intake/intake_page.dart:330:20 • prefer_const_constructors
 warning • The value of the local variable 'levels' isn't used. Try removing the variable or using it • lib/features/intake/intake_page.dart:357:15 • unused_local_variable
    info • 'package:flutter/material.dart' is deprecated and shouldn't be used. Use package:material_ui/material_ui.dart instead. This feature was deprecated after v3.47.0-0.0.pre. Try replacing the use of the deprecated member with the replacement • lib/features/intake/program_result.dart:4:1 • deprecated_member_use
-  error • Target of URI doesn't exist: '../core/theme.dart'. Try creating the file referenced by the URI, or try using a URI for a file that does exist • lib/features/intake/program_result.dart:6:8 • uri_does_not_exist
-  error • Target of URI doesn't exist: '../shared/widgets/glass_card.dart'. Try creating the file referenced by the URI, or try using a URI for a file that does exist • lib/features/intake/program_result.dart:7:8 • uri_does_not_exist
-  error • The method 'GlassCard' isn't defined for the type 'ProgramResult'. Try correcting the name to the name of an existing method, or defining a method named 'GlassCard' • lib/features/intake/program_result.dart:36:15 • undefined_method
-  error • Invalid constant value • lib/features/intake/program_result.dart:42:65 • invalid_constant
-  error • Undefined name 'MpColors'. Try correcting the name to one that is defined, or defining the name • lib/features/intake/program_result.dart:42:65 • undefined_identifier
-  error • Undefined name 'MpColors'. Try correcting the name to one that is defined, or defining the name • lib/features/intake/program_result.dart:53:48 • undefined_identifier
-  error • The method 'GlassCard' isn't defined for the type 'ProgramResult'. Try correcting the name to the name of an existing method, or defining a method named 'GlassCard' • lib/features/intake/program_result.dart:86:14 • undefined_method
-  error • Undefined name 'MpColors'. Try correcting the name to one that is defined, or defining the name • lib/features/intake/program_result.dart:119:55 • undefined_identifier
-  error • Undefined name 'MpColors'. Try correcting the name to one that is defined, or defining the name • lib/features/intake/program_result.dart:124:55 • undefined_identifier
-  error • The method 'GlassCard' isn't defined for the type 'ProgramResult'. Try correcting the name to the name of an existing method, or defining a method named 'GlassCard' • lib/features/intake/program_result.dart:132:12 • undefined_method
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/intake/program_result.dart:53:31 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/intake/program_result.dart:119:24 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/intake/program_result.dart:124:24 • prefer_const_constructors
    info • 'package:flutter/material.dart' is deprecated and shouldn't be used. Use package:material_ui/material_ui.dart instead. This feature was deprecated after v3.47.0-0.0.pre. Try replacing the use of the deprecated member with the replacement • lib/features/nutrition/nutrition_page.dart:4:1 • deprecated_member_use
    info • Use 'const' literals as arguments to constructors of '@immutable' classes. Try adding 'const' before the literal • lib/features/nutrition/nutrition_page.dart:18:19 • prefer_const_literals_to_create_immutables
    info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/nutrition/nutrition_page.dart:19:11 • prefer_const_constructors
@@ -133,4 +115,4 @@ warning • The value of the local variable 'levels' isn't used. Try removing th
    info • Dangling library doc comment. Add a 'library' directive after the library comment • test/home_page_test.dart:1:1 • dangling_library_doc_comments
    info • 'package:flutter/material.dart' is deprecated and shouldn't be used. Use package:material_ui/material_ui.dart instead. This feature was deprecated after v3.47.0-0.0.pre. Try replacing the use of the deprecated member with the replacement • test/today_page_test.dart:4:1 • deprecated_member_use
 
-132 issues found. (ran in 6.7s)
+114 issues found. (ran in 5.1s)
