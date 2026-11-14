@@ -29,12 +29,14 @@ router = APIRouter(prefix="/auth", tags=["auth"])
     response_model=OtpRequestResponse,
     summary="درخواست کد OTP",
 )
+@limiter.limit(settings.otp_burst_limit)
 @limiter.limit(settings.otp_rate_limit)
 def otp_request(payload: OtpRequest, request: Request, db: DbSession):
     return service.request_otp(db, payload.phone)
 
 
 @router.post("/otp/verify", response_model=TokenPair, summary="تأیید OTP و ورود")
+@limiter.limit(settings.otp_burst_limit)
 @limiter.limit(settings.otp_rate_limit)
 def otp_verify(payload: OtpVerify, request: Request, db: DbSession):
     return service.verify_otp(db, payload.phone, payload.code)

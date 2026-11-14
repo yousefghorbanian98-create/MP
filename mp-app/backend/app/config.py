@@ -23,7 +23,8 @@ class Settings(BaseSettings):
     refresh_token_days: int = 14
     otp_ttl_seconds: int = 120
     otp_max_attempts: int = 5
-    otp_rate_limit: str = "5/minute"
+    otp_rate_limit: str = "10/minute"
+    otp_burst_limit: str = "3/second"  # سقف انفجاری — ساعت اوج باشگاه (M22-c3)
     login_rate_limit: str = "10/minute"
     valkey_url: str = "redis://localhost:6379/0"
     # allowlist مبدأهای CORS — با کاما جدا شود (env: MP_CORS_ORIGINS)
