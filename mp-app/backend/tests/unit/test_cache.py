@@ -70,3 +70,35 @@ def test_stale_member_list_not_served_after_create(session, make_member):
     assert cache.get(f"members:profile:{m1.id}") is None
 
     reset_cache(None)
+
+
+def test_timer_observes_duration():
+    from app.metrics import Timer, metrics
+
+    with Timer("mp_timer_test_seconds", layer="unit"):
+        pass
+    text = metrics.render()
+    assert "_count 1" in text
+
+
+def test_checkin_slo_ok_without_data_and_breach():
+    from app.metrics import Metrics
+
+    m = Metrics()
+    assert m.checkin_slo_ok() is True  # بدون داده = سالم
+    m.observe("mp_checkin_duration_seconds", 0.5)
+    m.observe("mp_checkin_duration_seconds", 1.0)
+    assert m.checkin_slo_ok() is True
+    m.observe("mp_checkin_duration_seconds", 5.0)
+    assert m.checkin_slo_ok() is False  # نمونهٔ کند → p99 از SLO عبور کرد
+
+
+def test_valkey_fallback_ttl_and_prefix():
+    from cache.store import ValkeyCache
+
+    c = ValkeyCache(url="redis://127.0.0.1:1/0")
+    c.set("a:1", 1, ttl=1)
+    c.set("a:2", 2, ttl=1)
+    c.set("b:1", 3, ttl=1)
+    c.invalidate_prefix("a:")
+    assert c.get("a:1") is None and c.get("b:1") == 3

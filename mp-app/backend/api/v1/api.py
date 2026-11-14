@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter
 
+from api.v1.monitoring import router as monitoring_router
 from modules.admin.router import router as admin_router
 from modules.assessment.router import router as assessment_router
 from modules.auth.router import router as auth_router
@@ -24,3 +25,4 @@ api_router.include_router(nutrition_router)
 api_router.include_router(face_router)
 api_router.include_router(notifications_router)
 api_router.include_router(admin_router)
+api_router.include_router(monitoring_router)

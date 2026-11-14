@@ -126,6 +126,9 @@ def check_in(
     db.add(ci)
     db.commit()
     db.refresh(ci)
+    from app.metrics import metrics
+
+    metrics.inc("mp_checkins_total", method=method, result=result)
     return ci
 
 

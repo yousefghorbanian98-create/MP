@@ -1,0 +1,30 @@
+groups:
+  - name: mp-slo
+    rules:
+      # SLO گیت ورود: ۹۹٪ زیر ۲ ثانیه — نقض = صفحه
+      - alert: CheckinSLOBreach
+        expr: |
+          histogram_quantile(0.99, rate(mp_checkin_duration_seconds_bucket[5m])) >= 2
+        for: 5m
+        labels: {severity: page}
+        annotations:
+          summary: "SLO گیت ورود نقض شد (p99 ≥ ۲s)"
+          runbook: "docs/MuscleParadise/runbooks/incident.md"
+      - alert: BackendDown
+        expr: up{job="mp-backend"} == 0
+        for: 1m
+        labels: {severity: page}
+        annotations:
+          summary: "بک‌اند پاسخ نمی‌دهد"
+      - alert: High5xxRate
+        expr: rate(mp_http_errors_total[5m]) > 0.05
+        for: 5m
+        labels: {severity: warn}
+        annotations:
+          summary: "نرخ خطای 5xx بالای ۵٪"
+      - alert: ValkeyDown
+        expr: up{job="valkey"} == 0
+        for: 2m
+        labels: {severity: warn}
+        annotations:
+          summary: "Valkey قطع — کش fallback (NFR-6 نقض)"
