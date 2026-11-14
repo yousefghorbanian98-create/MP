@@ -22,6 +22,14 @@ class Settings(BaseSettings):
     access_token_minutes: int = 30
     refresh_token_days: int = 14
     otp_ttl_seconds: int = 120
+    # M28 — لایهٔ پیامک (app/sms.py): dev | webmagfa | kavenegar
+    sms_provider: str = "dev"
+    sms_api_url: str = ""
+    sms_api_key: str = ""
+    sms_username: str = ""
+    sms_password: str = ""
+    sms_originator: str = ""
+
     otp_max_attempts: int = 5
     otp_rate_limit: str = "10/minute"
     otp_burst_limit: str = "3/second"  # سقف انفجاری — ساعت اوج باشگاه (M22-c3)

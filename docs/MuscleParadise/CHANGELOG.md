@@ -97,3 +97,9 @@
 - `modules/payments/finance.py` + مسیرهای `/payments/finance/{summary,export.csv,commission}`: خلاصهٔ مالی، CSV حسابداری (ضد CSV-injection)، کمیسیون مربی (payment.coach_id).
 - یافته‌های semgrep رفع شد (۰ findings): Escape HTML در render_html، nosem مستند برای ستون‌های SQLAlchemy.
 - گیت‌ها: ۱۶۹ pytest سبز، ruff صفر، semgrep صفر، Locust بدون 5xx (429 = لیمیتر فعال).
+
+## 2026-11-14 — M28 [finn]
+- `app/sms.py`: Adapter پیامک (dev|webmagfa|kavenegar) + اجبار https + خطا `sms_failed` (بی‌صدا قورت نمی‌دهد). `dev_code` فقط در حالت dev.
+- `docs/MuscleParadise/ANDROID-OFFLINE-PLAN.md`: مشخصات صف آفلاین (sync_queue + Idempotency-Key + ترتیب همگام‌سازی + پرداخت آفلاین‌ممنوع).
+- `mp-app/client/ci_apk.sh`: pipeline ساخت APK (analyze/test/build + SHA256) — برای CI با Flutter.
+- گیت‌ها: ۱۷۴ pytest سبز، ruff صفر، semgrep صفر.

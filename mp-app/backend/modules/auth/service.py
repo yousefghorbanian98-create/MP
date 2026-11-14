@@ -39,7 +39,18 @@ def request_otp(db: Session, phone: str) -> dict:
     db.add(otp)
     db.commit()
     # ارسال واقعی پیامک در M13/M15 (provider) — خروجی dev فقط لاگ ساختاریافته است
-    return {"phone": phone, "expires_in": settings.otp_ttl_seconds, "dev_code": code}
+    from app.sms import get_sms_provider
+
+    provider = get_sms_provider()
+    sent = provider.send(phone, f"کد تایید MuscleParadise: {code}")
+    if not sent:
+        from app.errors import ApiError
+
+        raise ApiError("ارسال پیامک ناموفق بود؛ دوباره تلاش کنید", code="sms_failed")
+    out = {"phone": phone, "expires_in": settings.otp_ttl_seconds}
+    if provider.name == "dev":
+        out["dev_code"] = code  # فقط در حالت توسعه
+    return out
 
 
 def verify_otp(db: Session, phone: str, code: str) -> dict:
