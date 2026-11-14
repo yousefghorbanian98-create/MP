@@ -354,7 +354,6 @@ class _IntakePageState extends ConsumerState<IntakePage> {
       selected: selected,
       onSelected: (_) => setState(() {
         const goals = ['hypertrophy', 'strength', 'weight_loss', 'fitness'];
-        const levels = ['beginner', 'intermediate', 'advanced'];
         if (goals.contains(value)) {
           goal = value;
         } else {

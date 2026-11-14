@@ -40,7 +40,7 @@ void main() {
   test('POST بدنهٔ JSON می‌فرستد', () async {
     late String body;
     final mock = MockClient((request) async {
-      body = await request.readAsString();
+      body = request.body;
       return http.Response(jsonEncode({'ok': true}), 200);
     });
     final api = ApiClient(httpClient: mock, baseUrl: 'http://test/api/v1');
