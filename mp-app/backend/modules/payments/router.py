@@ -51,6 +51,25 @@ def wallet_charge(payload: WalletCharge, db: DbSession):
     return service.wallet_charge(db, payload.member_id, payload.amount_rial, payload.description)
 
 
+@router.post("/wallet/pay", response_model=PaymentOut, summary="پرداخت از کیف‌پول (M16)")
+def wallet_pay(payload: WalletCharge, db: DbSession):
+    return service.wallet_pay(db, payload.member_id, payload.amount_rial, payload.description)
+
+
+@router.get("/invoice/{member_id}", summary="فاکتور تجمعی عضو (US-403 — M16)")
+def invoice(member_id: int, db: DbSession):
+    from modules.payments.invoice import build_invoice
+
+    return build_invoice(db, member_id)
+
+
+@router.get("/{payment_id}/receipt", summary="رسید پرداخت (US-303 — M16)")
+def receipt(payment_id: int, db: DbSession):
+    from modules.payments.invoice import build_receipt
+
+    return build_receipt(db, payment_id)
+
+
 @router.get(
     "/wallet/{member_id}", response_model=WalletBalanceOut, summary="موجودی کیف‌پول (US-103)"
 )

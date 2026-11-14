@@ -95,5 +95,42 @@ def wallet_charge(
 
 
 def wallet_balance(db: Session, member_id: int) -> int:
+    """موجودی = مجموع credit − مجموع debit (مبالغ همیشه مثبت ذخیره می‌شوند)."""
     rows = db.scalars(select(WalletTransaction).where(WalletTransaction.member_id == member_id))
-    return sum(t.amount_rial for t in rows)
+    return sum(t.amount_rial if t.kind == "credit" else -t.amount_rial for t in rows)
+
+
+def wallet_pay(db: Session, member_id: int, amount_rial: int, description: str = "") -> Payment:
+    """پرداخت از کیف‌پول — اتمیک: بررسی موجودی + بدهکاری + پرداخت paid در یک تراکنش."""
+    if amount_rial <= 0:
+        raise ApiError("مبلغ پرداخت باید مثبت باشد")
+    if db.get(Member, member_id) is None:
+        raise NotFoundError("عضو یافت نشد")
+    balance = wallet_balance(db, member_id)
+    if balance < amount_rial:
+        raise ApiError("موجودی کیف‌پول کافی نیست", code="insufficient_balance")
+    tx = WalletTransaction(
+        member_id=member_id,
+        amount_rial=amount_rial,
+        kind="debit",
+        description=description or "پرداخت از کیف‌پول",
+    )
+    db.add(tx)
+    db.flush()
+    payment = Payment(
+        member_id=member_id,
+        amount_rial=amount_rial,
+        method="wallet",
+        description=description,
+        status="paid",
+        paid_at=datetime.now(UTC),
+        reference_id=f"wallet-{secrets.token_hex(6)}",
+        branch_id=1,
+    )
+    db.add(payment)
+    db.commit()
+    db.refresh(payment)
+    from modules.admin.service import audit
+
+    audit(db, None, "wallet_spent", "payment", payment.id, {"amount_rial": amount_rial})
+    return payment

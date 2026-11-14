@@ -14,6 +14,9 @@ class Settings(BaseSettings):
     environment: str = "development"
     database_url: str = "sqlite:///./mp.db"
     secret_key: str = "dev-secret-change-in-production"
+    payment_gateway: str = "mock"  # mock | zarinpal
+    zarinpal_merchant_id: str = ""
+    payment_sandbox: bool = True
     # کلید رمزنگاری FaceTemplate — در production حتماً از env تزریق می‌شود (base64, 32 bytes)
     biometric_key: str = ""
     access_token_minutes: int = 30

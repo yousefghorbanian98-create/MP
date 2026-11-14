@@ -38,3 +38,6 @@
 
 ## D-007. (M15) معماری هوش مصنوعی: موتور قواعد قطعی + توضیح متنی
 اعداد تمرین/تغذیه فقط از `engine/workout.py` + `engine/nutrition.py` (جدول‌های قطعی + Mifflin-St Jeor) می‌آیند؛ `llm_explanation` فقط متن قالبی/LLM است (G8). اسلات Ollama برای آینده با fallback قالبی — هیچ عددی از LLM خوانده نمی‌شود.
+
+## D-008. (M16) الگوی درگاه پرداخت + قرارداد کیف‌پول
+`GatewayAdapter` (Protocol) + `MockGateway` (قطعی برای dev/e2e) + `ZarinpalAdapter` (سند اجرا با sandbox). مبالغ کیف‌پول همیشه مثبت + `kind` تعیین‌کنندهٔ علامت. `wallet_pay` اتمیک (بررسی موجودی + debit + payment در یک commit) و double-spend رد می‌شود. توکن HMAC برای callback جلوی جعل مبلغ را می‌گیرد.
