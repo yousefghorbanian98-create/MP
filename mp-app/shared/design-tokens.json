@@ -1,0 +1,37 @@
+{
+  "name": "Muscle Paradise",
+  "version": "1.0.0",
+  "description": "Design tokens مشترک بین MP Studio (React) و MP Client (Flutter)",
+  "color": {
+    "background": "#0B0F14",
+    "surface": "#111827",
+    "surfaceGlass": "rgba(17, 24, 39, 0.55)",
+    "border": "rgba(0, 184, 106, 0.18)",
+    "primary": "#00B86A",
+    "primaryDark": "#00995A",
+    "primaryLight": "#34D399",
+    "accent": "#FFD700",
+    "accentSoft": "#FDE68A",
+    "textPrimary": "#F3F6F8",
+    "textSecondary": "#9CA3AF",
+    "danger": "#F87171",
+    "warning": "#FBBF24",
+    "info": "#38BDF8"
+  },
+  "typography": {
+    "fontFamily": "Vazirmatn Variable, Vazirmatn, system-ui, sans-serif",
+    "display": 32,
+    "title": 24,
+    "heading": 18,
+    "body": 14,
+    "caption": 12
+  },
+  "spacing": { "xs": 4, "sm": 8, "md": 16, "lg": 24, "xl": 32 },
+  "radius": { "sm": 8, "md": 12, "lg": 16, "full": 999 },
+  "motion": {
+    "fast": 150,
+    "base": 250,
+    "slow": 450,
+    "spring": "stiffness 260, damping 24"
+  }
+}

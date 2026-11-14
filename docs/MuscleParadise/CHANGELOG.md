@@ -4,6 +4,13 @@
 
 ## [Unreleased]
 
+### Added — M06 (2026-11-14)
+- **MP Studio**: React+Vite+Zustand+Tailwind+Framer Motion — داشبورد KPI، نمودار حضور، جدول اعضا + پنل ۱۴ دامنه، برنامه‌ها، چک‌این زنده، تنظیمات (feature flags) — RTL فارسی، حالت تاریک، glassmorphism، میکرو-ترنزیشن‌ها
+- **MP Client (Flutter)**: اپ «برنامهٔ امروز» + چک‌این با Riverpod/flutter_animate + تست‌های ویجت/واحد
+- `mp-app/shared/design-tokens.json` — توکن‌های مشترک React/Flutter
+- بازرسی UI: موکاپ‌های `docs/MuscleParadise/ui-previews/` قبل از ساخت نمایش داده شد + Live Preview
+- کنتراست WCAG برند: همه PASS
+
 ### Added — M05 (2026-11-14)
 - jobهای APScheduler: انقضای اشتراک، یادآوری تمدید (dedup)، بازآزمایی ۶–۸ هفته
 - لاگ ساختاریافتهٔ structlog (JSON برای Grafana/Loki)
