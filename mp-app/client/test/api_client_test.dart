@@ -21,7 +21,8 @@ void main() {
     api.accessToken = 'tok-123';
     final r = await api.get('/members/me');
     expect(r['id'], 7);
-    expect(seen.headers['Authorization'], 'Bearer tok-123');
+    final authHeader = seen.headers.map((k, v) => MapEntry(k.toLowerCase(), v))['authorization'];
+    expect(authHeader, 'Bearer tok-123');
     expect(seen.url.toString(), 'http://test/api/v1/members/me');
   });
 
@@ -30,8 +31,8 @@ void main() {
       return http.Response(jsonEncode({'detail': 'کاربر فعال نیست'}), 401);
     });
     final api = ApiClient(httpClient: mock, baseUrl: 'http://test/api/v1');
-    expect(
-      () => api.get('/members/me'),
+    await expectLater(
+      api.get('/members/me'),
       throwsA(isA<ApiException>().having((e) => e.message, 'message', 'کاربر فعال نیست')),
     );
   });
