@@ -41,6 +41,23 @@ unformatted: File would be reformatted
    |
 
 unformatted: File would be reformatted
+  --> db/migrations/versions/e5f6a1b2c3d4_m33_review_columns.py:16:26
+   |
+15 |     with op.batch_alter_table("catalog_exercises") as batch:
+   -         batch.add_column(sa.Column("name_fa", sa.String(length=160), nullable=False, server_default=""))
+   -         batch.add_column(sa.Column("review_status", sa.String(length=16), nullable=False, server_default="candidate"))
+16 +         batch.add_column(
+17 +             sa.Column("name_fa", sa.String(length=160), nullable=False, server_default="")
+18 +         )
+19 +         batch.add_column(
+20 +             sa.Column(
+21 +                 "review_status", sa.String(length=16), nullable=False, server_default="candidate"
+22 +             )
+23 +         )
+24 |         batch.add_column(sa.Column("review_meta", sa.Text(), nullable=False, server_default="{}"))
+   |
+
+unformatted: File would be reformatted
   --> scripts/import_exercise_catalog.py:31:40
    |
 30 | DEFAULT_DATA = (
@@ -52,6 +69,667 @@ unformatted: File would be reformatted
 35 +     / "exercises.json"
 36 | )
    |
+
+unformatted: File would be reformatted
+   --> scripts/tag_axis_coverage.py:68:26
+    |
+67  |     cat_rules = {
+    -         "strength": Rule("cat-strength", "دستهٔ قدرتی ← قدرت عملکردی + استقامت عضلانی", {"3": 0.7, "5": 0.5}),
+    -         "powerlifting": Rule("cat-powerlift", "پاورلیفتینگ ← قدرت/مکانیک بلند کردن/گرفتن", {"3": 0.9, "9": 0.7, "10": 0.4}),
+    -         "olympic weightlifting": Rule("cat-oly", "وزنه‌برداری المپیک ← قدرت/هماهنگی/مکانیک/تعادل", {"3": 0.8, "8": 0.7, "9": 0.8, "2": 0.4}),
+    -         "strongman": Rule("cat-strongman", "استرانگ‌من ← قدرت/مکانیک/گرفتن/استقامت عضلانی", {"3": 0.9, "9": 0.9, "10": 0.7, "5": 0.5}),
+    -         "cardio": Rule("cat-cardio", "کاردیو ← استقامت قلبی + بازیابی", {"4": 0.9, "5": 0.4, "12": 0.2}),
+    -         "stretching": Rule("cat-stretch", "کششی ← تحرک/انعطاف + تعادل عضلانی + آگاهی بدن", {"1": 0.9, "6": 0.4, "13": 0.3}),
+    -         "plyometrics": Rule("cat-plyo", "پلایومتریک ← قدرت/هماهنگی/تعادل/کاردیو", {"3": 0.5, "8": 0.6, "2": 0.5, "4": 0.3}),
+68  +         "strength": Rule(
+69  +             "cat-strength", "دستهٔ قدرتی ← قدرت عملکردی + استقامت عضلانی", {"3": 0.7, "5": 0.5}
+70  +         ),
+71  +         "powerlifting": Rule(
+72  +             "cat-powerlift",
+73  +             "پاورلیفتینگ ← قدرت/مکانیک بلند کردن/گرفتن",
+74  +             {"3": 0.9, "9": 0.7, "10": 0.4},
+75  +         ),
+76  +         "olympic weightlifting": Rule(
+77  +             "cat-oly",
+78  +             "وزنه‌برداری المپیک ← قدرت/هماهنگی/مکانیک/تعادل",
+79  +             {"3": 0.8, "8": 0.7, "9": 0.8, "2": 0.4},
+80  +         ),
+81  +         "strongman": Rule(
+82  +             "cat-strongman",
+83  +             "استرانگ‌من ← قدرت/مکانیک/گرفتن/استقامت عضلانی",
+84  +             {"3": 0.9, "9": 0.9, "10": 0.7, "5": 0.5},
+85  +         ),
+86  +         "cardio": Rule(
+87  +             "cat-cardio", "کاردیو ← استقامت قلبی + بازیابی", {"4": 0.9, "5": 0.4, "12": 0.2}
+88  +         ),
+89  +         "stretching": Rule(
+90  +             "cat-stretch",
+91  +             "کششی ← تحرک/انعطاف + تعادل عضلانی + آگاهی بدن",
+92  +             {"1": 0.9, "6": 0.4, "13": 0.3},
+93  +         ),
+94  +         "plyometrics": Rule(
+95  +             "cat-plyo",
+96  +             "پلایومتریک ← قدرت/هماهنگی/تعادل/کاردیو",
+97  +             {"3": 0.5, "8": 0.6, "2": 0.5, "4": 0.3},
+98  +         ),
+99  |     }
+--------------------------------------------------------------------------------
+104 |     if mechanic == "compound":
+    -         rules.append(Rule("mech-compound", "حرکت ترکیبی ← پایداری مرکز + مکانیک بدن", {"7": 0.4, "9": 0.3}))
+105 +         rules.append(
+106 +             Rule("mech-compound", "حرکت ترکیبی ← پایداری مرکز + مکانیک بدن", {"7": 0.4, "9": 0.3})
+107 +         )
+108 |     if mechanic == "isolation":
+109 |         rules.append(Rule("mech-isolation", "ایزوله ← تعادل عضلانی", {"6": 0.3}))
+110 |     if force == "static":
+    -         rules.append(Rule("force-static", "ایزومتریک ← استقامت عضلانی/مرکز/کنترل تنفس", {"5": 0.5, "7": 0.4, "11": 0.2}))
+111 +         rules.append(
+112 +             Rule(
+113 +                 "force-static",
+114 +                 "ایزومتریک ← استقامت عضلانی/مرکز/کنترل تنفس",
+115 +                 {"5": 0.5, "7": 0.4, "11": 0.2},
+116 +             )
+117 +         )
+118 |     if force == "pull":
+--------------------------------------------------------------------------------
+122 |     if muscles & {"abdominals", "lower back"}:
+    -         rules.append(Rule("muscle-core", "تمرکز شکم/کمر ← پایداری مرکز + وضعیت بدنی", {"7": 0.5, "6": 0.2}))
+123 +         rules.append(
+124 +             Rule("muscle-core", "تمرکز شکم/کمر ← پایداری مرکز + وضعیت بدنی", {"7": 0.5, "6": 0.2})
+125 +         )
+126 |     if "forearms" in muscles:
+--------------------------------------------------------------------------------
+133 |         "exercise ball": Rule("equip-ball", "توپ تعادل ← تعادل/مرکز", {"2": 0.4, "7": 0.3}),
+    -         "kettlebells": Rule("equip-kb", "کتل‌بل ← قدرت/هماهنگی/گرفتن", {"3": 0.2, "8": 0.2, "10": 0.2}),
+    -         "foam roll": Rule("equip-foam", "رول فوم ← بازیابی/تحرک/آگاهی بدن", {"12": 0.5, "1": 0.3, "13": 0.2}),
+134 +         "kettlebells": Rule(
+135 +             "equip-kb", "کتل‌بل ← قدرت/هماهنگی/گرفتن", {"3": 0.2, "8": 0.2, "10": 0.2}
+136 +         ),
+137 +         "foam roll": Rule(
+138 +             "equip-foam", "رول فوم ← بازیابی/تحرک/آگاهی بدن", {"12": 0.5, "1": 0.3, "13": 0.2}
+139 +         ),
+140 |         "bands": Rule("equip-band", "کش ← تحرک/پیشگیری آسیب (فعال‌سازی)", {"1": 0.2, "13": 0.2}),
+--------------------------------------------------------------------------------
+147 |     if level == "beginner":
+    -         rules.append(Rule("level-beginner", "سطح مبتدی ← یادگیری الگو/آگاهی بدن/مهارت پایه", {"13": 0.2, "14": 0.2}))
+148 +         rules.append(
+149 +             Rule(
+150 +                 "level-beginner",
+151 +                 "سطح مبتدی ← یادگیری الگو/آگاهی بدن/مهارت پایه",
+152 +                 {"13": 0.2, "14": 0.2},
+153 +             )
+154 +         )
+155 |     if level == "expert":
+--------------------------------------------------------------------------------
+185 |     if category in {"cardio", "plyometrics"}:
+    -         return "moderate"
+    -     return {"beginner": "low", "intermediate": "moderate", "expert": "high"}.get(level, "moderate")
+    -
+    -
+    - # --- واژه‌نامهٔ فارسی نام‌ها (candidate — تا review انسانی) ---
+    - PHRASES_FA: list[tuple[str, str]] = [
+    -     ("bench press", "پرس سینه"), ("push up", "شنای سوئدی"), ("push ups", "شنای سوئدی"),
+    -     ("pull up", "بارفیکس"), ("pull ups", "بارفیکس"), ("chin up", "زیر بارفیکس"),
+    -     ("sit up", "دراز و نشست"), ("sit ups", "دراز و نشست"), ("dead lift", "ددلیفت"),
+    -     ("lateral raise", "نشر جانبی"), ("front raise", "نشر جلو"), ("upright row", "زیر گردن"),
+    -     ("pulldown", "زیر بغل سیم‌کش"), ("pull down", "زیر بغل سیم‌کش"),
+    -     ("leg press", "پرس پا"), ("leg extension", "جلو ران"), ("leg curl", "پشت ران"),
+    -     ("calf raise", "ساق پا"), ("lunge", "لانج"), ("split squat", "اسکوات پرشی"),
+    -     ("box jump", "پرش جعبه"), ("jump squat", "اسکوات پرشی"), ("kettlebell swing", "کتل‌بل سوئینگ"),
+    -     ("turkish get up", "برخاست ترکی"), ("farmer", "کشاورز"),
+    - ]
+    - TOKENS_FA: dict[str, str] = {
+    -     "press": "پرس", "dumbbell": "دمبل", "barbell": "هالتر", "cable": "سیم‌کش",
+    -     "machine": "دستگاه", "smith": "اسمیت", "kettlebell": "کتل‌بل", "kettlebells": "کتل‌بل",
+    -     "band": "کش", "bands": "کش‌ها", "ball": "توپ", "rope": "طناب", "plate": "صفحه",
+    -     "ez": "ایزی", "bar": "میله", "sled": "سورتمه", "chain": "زنجیر", "chains": "زنجیرها",
+    -     "stretch": "کشش", "stretching": "کششی", "curl": "جلو بازو", "curls": "جلو بازو",
+    -     "extension": "اکستنشن", "row": "روئینگ", "rows": "روئینگ", "raise": "نشر",
+    -     "raises": "نشر", "squat": "اسکوات", "squats": "اسکوات", "deadlift": "ددلیفت",
+    -     "shrug": "شراگ", "shrugs": "شراگ", "flyes": "فلای", "fly": "فلای",
+    -     "crunch": "کرانچ", "crunches": "کرانچ", "plank": "پلانک", "dip": "دیپ",
+    -     "dips": "دیپ", "jump": "پرش", "jumps": "پرش", "throw": "پرتاب", "clean": "کلین",
+    -     "snatch": "یک‌ضرب", "jerk": "ضرب", "hang": "معلق", "pull": "کشش", "push": "فشار",
+    -     "grip": "گرفتن", "hold": "نگه‌داشتن", "carry": "حمل", "carrys": "حمل",
+    -     "rotation": "چرخش", "rotations": "چرخش", "circles": "دایره", "circle": "دایره",
+    -     "arm": "بازو", "arms": "بازوها", "leg": "پا", "legs": "پاها", "chest": "سینه",
+    -     "back": "کمر", "shoulder": "شانه", "shoulders": "شانه‌ها", "neck": "گردن",
+    -     "wrist": "مچ", "wrists": "مچ‌ها", "hip": "لگن", "hips": "لگن", "knee": "زانو",
+    -     "knees": "زانوها", "ankle": "مچ پا", "head": "سر", "body": "بدن",
+    -     "triceps": "پشت بازو", "tricep": "پشت بازو", "biceps": "جلو بازو", "bicep": "جلو بازو",
+    -     "delt": "دلتوئید", "delts": "دلتوئید", "quad": "چهارسر", "quads": "چهارسر",
+    -     "hamstring": "همسترینگ", "hamstrings": "همسترینگ", "glute": "سرینی", "glutes": "سرینی",
+    -     "calf": "ساق", "calves": "ساق", "abs": "شکم", "ab": "شکم", "oblique": "مایل شکم",
+    -     "obliques": "مایل شکم", "groin": "کشاله ران", "adductor": "نزدیک‌کننده ران",
+    -     "adductors": "نزدیک‌کننده ران", "abductor": "دورکننده ران", "abductors": "دورکننده ران",
+    -     "forearm": "ساعد", "forearms": "ساعد", "trap": "کول", "traps": "کول", "lats": "زیر بغل",
+    -     "lat": "زیر بغل", "incline": "شیب‌دار", "decline": "سرشیب", "standing": "ایستاده",
+    -     "seated": "نشسته", "lying": "خوابیده", "kneeling": "زانو زده", "walking": "در حال حرکت",
+    -     "running": "دویدن", "one": "تک", "single": "تک", "double": "دوبل", "two": "دو",
+    -     "alternating": "یکی در میان", "alternate": "یکی در میان", "wide": "پهن", "close": "باریک",
+    -     "high": "بالا", "low": "پایین", "front": "جلو", "rear": "عقب", "side": "جانبی",
+    -     "over": "بالای سر", "overhead": "بالای سر", "underhand": "زیردست", "palms": "کف دست",
+    -     "power": "قدرت", "weighted": "با وزنه", "bent": "خمیده",
+    -     "straight": "صاف", "reverse": "معکوس", "preacher": "پریچر", "hack": "هک",
+    -     "lever": "اهرم", "leverage": "اهرم", "floor": "کف",
+    -     "ground": "زمین", "wall": "دیوار", "chair": "صندلی", "bench": "نیمکت",
+    -     "box": "جعبه", "step": "پله", "stair": "پله", "stairs": "پله‌ها",
+    -     "swim": "شنا", "swimming": "شنا", "bike": "دوچرخه", "bicycle": "دوچرخه",
+    -     "climb": "کوهنوردی", "climbing": "کوهنوردی", "crawl": "چهار دست و پا",
+    -     "twist": "پیچش", "twists": "پیچش", "bend": "خم شدن", "bends": "خم شدن",
+    -     "good": "خوب", "morning": "صبحگاهی", "windmill": "آسیاب بادی", "sit": "نشست",
+    -     "get": "برخاست", "up": "بالا", "down": "پایین", "in": "درون", "out": "بیرون",
+    -     "on": "روی", "from": "از", "with": "با", "and": "و", "the": "", "a": "", "to": "به",
+    -     "of": "", "for": "", "smr": "رول فوم", "self": "خود", "massage": "ماساژ",
+    -     "release": "رهاسازی", "activation": "فعال‌سازی", "warm": "گرم", "cool": "سرد",
+    -     "downs": "پایین", "march": "رژه", "marches": "رژه", "jog": "دو آرام",
+    -     "jogging": "دو آرام", "sprint": "اسپرینت", "sprints": "اسپرینت",
+186 +         return "moderate"
+187 +     return {"beginner": "low", "intermediate": "moderate", "expert": "high"}.get(level, "moderate")
+188 +
+189 +
+190 + # --- واژه‌نامهٔ فارسی نام‌ها (candidate — تا review انسانی) ---
+191 + PHRASES_FA: list[tuple[str, str]] = [
+192 +     ("bench press", "پرس سینه"),
+193 +     ("push up", "شنای سوئدی"),
+194 +     ("push ups", "شنای سوئدی"),
+195 +     ("pull up", "بارفیکس"),
+196 +     ("pull ups", "بارفیکس"),
+197 +     ("chin up", "زیر بارفیکس"),
+198 +     ("sit up", "دراز و نشست"),
+199 +     ("sit ups", "دراز و نشست"),
+200 +     ("dead lift", "ددلیفت"),
+201 +     ("lateral raise", "نشر جانبی"),
+202 +     ("front raise", "نشر جلو"),
+203 +     ("upright row", "زیر گردن"),
+204 +     ("pulldown", "زیر بغل سیم‌کش"),
+205 +     ("pull down", "زیر بغل سیم‌کش"),
+206 +     ("leg press", "پرس پا"),
+207 +     ("leg extension", "جلو ران"),
+208 +     ("leg curl", "پشت ران"),
+209 +     ("calf raise", "ساق پا"),
+210 +     ("lunge", "لانج"),
+211 +     ("split squat", "اسکوات پرشی"),
+212 +     ("box jump", "پرش جعبه"),
+213 +     ("jump squat", "اسکوات پرشی"),
+214 +     ("kettlebell swing", "کتل‌بل سوئینگ"),
+215 +     ("turkish get up", "برخاست ترکی"),
+216 +     ("farmer", "کشاورز"),
+217 + ]
+218 + TOKENS_FA: dict[str, str] = {
+219 +     "press": "پرس",
+220 +     "dumbbell": "دمبل",
+221 +     "barbell": "هالتر",
+222 +     "cable": "سیم‌کش",
+223 +     "machine": "دستگاه",
+224 +     "smith": "اسمیت",
+225 +     "kettlebell": "کتل‌بل",
+226 +     "kettlebells": "کتل‌بل",
+227 +     "band": "کش",
+228 +     "bands": "کش‌ها",
+229 +     "ball": "توپ",
+230 +     "rope": "طناب",
+231 +     "plate": "صفحه",
+232 +     "ez": "ایزی",
+233 +     "bar": "میله",
+234 +     "sled": "سورتمه",
+235 +     "chain": "زنجیر",
+236 +     "chains": "زنجیرها",
+237 +     "stretch": "کشش",
+238 +     "stretching": "کششی",
+239 +     "curl": "جلو بازو",
+240 +     "curls": "جلو بازو",
+241 +     "extension": "اکستنشن",
+242 +     "row": "روئینگ",
+243 +     "rows": "روئینگ",
+244 +     "raise": "نشر",
+245 +     "raises": "نشر",
+246 +     "squat": "اسکوات",
+247 +     "squats": "اسکوات",
+248 +     "deadlift": "ددلیفت",
+249 +     "shrug": "شراگ",
+250 +     "shrugs": "شراگ",
+251 +     "flyes": "فلای",
+252 +     "fly": "فلای",
+253 +     "crunch": "کرانچ",
+254 +     "crunches": "کرانچ",
+255 +     "plank": "پلانک",
+256 +     "dip": "دیپ",
+257 +     "dips": "دیپ",
+258 +     "jump": "پرش",
+259 +     "jumps": "پرش",
+260 +     "throw": "پرتاب",
+261 +     "clean": "کلین",
+262 +     "snatch": "یک‌ضرب",
+263 +     "jerk": "ضرب",
+264 +     "hang": "معلق",
+265 +     "pull": "کشش",
+266 +     "push": "فشار",
+267 +     "grip": "گرفتن",
+268 +     "hold": "نگه‌داشتن",
+269 +     "carry": "حمل",
+270 +     "carrys": "حمل",
+271 +     "rotation": "چرخش",
+272 +     "rotations": "چرخش",
+273 +     "circles": "دایره",
+274 +     "circle": "دایره",
+275 +     "arm": "بازو",
+276 +     "arms": "بازوها",
+277 +     "leg": "پا",
+278 +     "legs": "پاها",
+279 +     "chest": "سینه",
+280 +     "back": "کمر",
+281 +     "shoulder": "شانه",
+282 +     "shoulders": "شانه‌ها",
+283 +     "neck": "گردن",
+284 +     "wrist": "مچ",
+285 +     "wrists": "مچ‌ها",
+286 +     "hip": "لگن",
+287 +     "hips": "لگن",
+288 +     "knee": "زانو",
+289 +     "knees": "زانوها",
+290 +     "ankle": "مچ پا",
+291 +     "head": "سر",
+292 +     "body": "بدن",
+293 +     "triceps": "پشت بازو",
+294 +     "tricep": "پشت بازو",
+295 +     "biceps": "جلو بازو",
+296 +     "bicep": "جلو بازو",
+297 +     "delt": "دلتوئید",
+298 +     "delts": "دلتوئید",
+299 +     "quad": "چهارسر",
+300 +     "quads": "چهارسر",
+301 +     "hamstring": "همسترینگ",
+302 +     "hamstrings": "همسترینگ",
+303 +     "glute": "سرینی",
+304 +     "glutes": "سرینی",
+305 +     "calf": "ساق",
+306 +     "calves": "ساق",
+307 +     "abs": "شکم",
+308 +     "ab": "شکم",
+309 +     "oblique": "مایل شکم",
+310 +     "obliques": "مایل شکم",
+311 +     "groin": "کشاله ران",
+312 +     "adductor": "نزدیک‌کننده ران",
+313 +     "adductors": "نزدیک‌کننده ران",
+314 +     "abductor": "دورکننده ران",
+315 +     "abductors": "دورکننده ران",
+316 +     "forearm": "ساعد",
+317 +     "forearms": "ساعد",
+318 +     "trap": "کول",
+319 +     "traps": "کول",
+320 +     "lats": "زیر بغل",
+321 +     "lat": "زیر بغل",
+322 +     "incline": "شیب‌دار",
+323 +     "decline": "سرشیب",
+324 +     "standing": "ایستاده",
+325 +     "seated": "نشسته",
+326 +     "lying": "خوابیده",
+327 +     "kneeling": "زانو زده",
+328 +     "walking": "در حال حرکت",
+329 +     "running": "دویدن",
+330 +     "one": "تک",
+331 +     "single": "تک",
+332 +     "double": "دوبل",
+333 +     "two": "دو",
+334 +     "alternating": "یکی در میان",
+335 +     "alternate": "یکی در میان",
+336 +     "wide": "پهن",
+337 +     "close": "باریک",
+338 +     "high": "بالا",
+339 +     "low": "پایین",
+340 +     "front": "جلو",
+341 +     "rear": "عقب",
+342 +     "side": "جانبی",
+343 +     "over": "بالای سر",
+344 +     "overhead": "بالای سر",
+345 +     "underhand": "زیردست",
+346 +     "palms": "کف دست",
+347 +     "power": "قدرت",
+348 +     "weighted": "با وزنه",
+349 +     "bent": "خمیده",
+350 +     "straight": "صاف",
+351 +     "reverse": "معکوس",
+352 +     "preacher": "پریچر",
+353 +     "hack": "هک",
+354 +     "lever": "اهرم",
+355 +     "leverage": "اهرم",
+356 +     "floor": "کف",
+357 +     "ground": "زمین",
+358 +     "wall": "دیوار",
+359 +     "chair": "صندلی",
+360 +     "bench": "نیمکت",
+361 +     "box": "جعبه",
+362 +     "step": "پله",
+363 +     "stair": "پله",
+364 +     "stairs": "پله‌ها",
+365 +     "swim": "شنا",
+366 +     "swimming": "شنا",
+367 +     "bike": "دوچرخه",
+368 +     "bicycle": "دوچرخه",
+369 +     "climb": "کوهنوردی",
+370 +     "climbing": "کوهنوردی",
+371 +     "crawl": "چهار دست و پا",
+372 +     "twist": "پیچش",
+373 +     "twists": "پیچش",
+374 +     "bend": "خم شدن",
+375 +     "bends": "خم شدن",
+376 +     "good": "خوب",
+377 +     "morning": "صبحگاهی",
+378 +     "windmill": "آسیاب بادی",
+379 +     "sit": "نشست",
+380 +     "get": "برخاست",
+381 +     "up": "بالا",
+382 +     "down": "پایین",
+383 +     "in": "درون",
+384 +     "out": "بیرون",
+385 +     "on": "روی",
+386 +     "from": "از",
+387 +     "with": "با",
+388 +     "and": "و",
+389 +     "the": "",
+390 +     "a": "",
+391 +     "to": "به",
+392 +     "of": "",
+393 +     "for": "",
+394 +     "smr": "رول فوم",
+395 +     "self": "خود",
+396 +     "massage": "ماساژ",
+397 +     "release": "رهاسازی",
+398 +     "activation": "فعال‌سازی",
+399 +     "warm": "گرم",
+400 +     "cool": "سرد",
+401 +     "downs": "پایین",
+402 +     "march": "رژه",
+403 +     "marches": "رژه",
+404 +     "jog": "دو آرام",
+405 +     "jogging": "دو آرام",
+406 +     "sprint": "اسپرینت",
+407 +     "sprints": "اسپرینت",
+408 | }
+--------------------------------------------------------------------------------
+416 |     """
+    -     tokens = [t.strip(".").lower() for t in name.replace("/", " ").replace("-", " ").split() if t.strip()]
+417 +     tokens = [
+418 +         t.strip(".").lower() for t in name.replace("/", " ").replace("-", " ").split() if t.strip()
+419 +     ]
+420 |     phrases = sorted(PHRASES_FA, key=lambda p: -len(p[0].split()))
+--------------------------------------------------------------------------------
+484 |     sample_rows = [
+    -         {"name": "Barbell Squat", "category": "strength", "level": "beginner", "force": "push", "mechanic": "compound", "equipment": "barbell", "primary_muscles": ["quadriceps"]},
+    -         {"name": "Bench Press", "category": "powerlifting", "level": "intermediate", "force": "push", "mechanic": "compound", "equipment": "barbell", "primary_muscles": ["chest"]},
+    -         {"name": "Plank", "category": "strength", "level": "beginner", "force": "static", "mechanic": "isolation", "equipment": "body only", "primary_muscles": ["abdominals"]},
+    -         {"name": "Clean", "category": "olympic weightlifting", "level": "expert", "force": "pull", "mechanic": "compound", "equipment": "barbell", "primary_muscles": ["quadriceps"]},
+    -         {"name": "Atlas Stone", "category": "strongman", "level": "expert", "force": "pull", "mechanic": "compound", "equipment": "other", "primary_muscles": ["lower back"]},
+    -         {"name": "Run", "category": "cardio", "level": "beginner", "force": None, "mechanic": None, "equipment": "body only", "primary_muscles": ["quadriceps"]},
+    -         {"name": "Hamstring Stretch", "category": "stretching", "level": "beginner", "force": "static", "mechanic": None, "equipment": "body only", "primary_muscles": ["hamstrings"]},
+    -         {"name": "Box Jump", "category": "plyometrics", "level": "intermediate", "force": "push", "mechanic": "compound", "equipment": "body only", "primary_muscles": ["quadriceps"]},
+    -         {"name": "Face Pull", "category": "strength", "level": "intermediate", "force": "pull", "mechanic": "isolation", "equipment": "cable", "primary_muscles": ["shoulders"]},
+    -         {"name": "Wrist Curl", "category": "strength", "level": "beginner", "force": "pull", "mechanic": "isolation", "equipment": "barbell", "primary_muscles": ["forearms"]},
+    -         {"name": "Neck Curl", "category": "strength", "level": "beginner", "force": "pull", "mechanic": "isolation", "equipment": "body only", "primary_muscles": ["neck"]},
+    -         {"name": "Stability Ball Crunch", "category": "strength", "level": "beginner", "force": "pull", "mechanic": "isolation", "equipment": "exercise ball", "primary_muscles": ["abdominals"]},
+    -         {"name": "Kettlebell Swing", "category": "strength", "level": "intermediate", "force": "pull", "mechanic": "compound", "equipment": "kettlebells", "primary_muscles": ["glutes"]},
+    -         {"name": "Hammer Foam Roll", "category": "stretching", "level": "beginner", "force": "static", "mechanic": None, "equipment": "foam roll", "primary_muscles": ["calves"]},
+    -         {"name": "Band Pull-Apart", "category": "strength", "level": "beginner", "force": "pull", "mechanic": "isolation", "equipment": "bands", "primary_muscles": ["shoulders"]},
+    -         {"name": "Medicine Ball Slam", "category": "plyometrics", "level": "intermediate", "force": "pull", "mechanic": "compound", "equipment": "medicine ball", "primary_muscles": ["abdominals"]},
+    -         {"name": "Snatch Balance", "category": "olympic weightlifting", "level": "expert", "force": "push", "mechanic": "compound", "equipment": "barbell", "primary_muscles": ["shoulders"]},
+    -         {"name": "Balance Board Squat", "category": "strength", "level": "intermediate", "force": "push", "mechanic": "compound", "equipment": "other", "primary_muscles": ["quadriceps"]},
+    -         {"name": "Breathing Exercise", "category": "cardio", "level": "beginner", "force": "static", "mechanic": None, "equipment": "body only", "primary_muscles": ["abdominals"]},
+485 +         {
+486 +             "name": "Barbell Squat",
+487 +             "category": "strength",
+488 +             "level": "beginner",
+489 +             "force": "push",
+490 +             "mechanic": "compound",
+491 +             "equipment": "barbell",
+492 +             "primary_muscles": ["quadriceps"],
+493 +         },
+494 +         {
+495 +             "name": "Bench Press",
+496 +             "category": "powerlifting",
+497 +             "level": "intermediate",
+498 +             "force": "push",
+499 +             "mechanic": "compound",
+500 +             "equipment": "barbell",
+501 +             "primary_muscles": ["chest"],
+502 +         },
+503 +         {
+504 +             "name": "Plank",
+505 +             "category": "strength",
+506 +             "level": "beginner",
+507 +             "force": "static",
+508 +             "mechanic": "isolation",
+509 +             "equipment": "body only",
+510 +             "primary_muscles": ["abdominals"],
+511 +         },
+512 +         {
+513 +             "name": "Clean",
+514 +             "category": "olympic weightlifting",
+515 +             "level": "expert",
+516 +             "force": "pull",
+517 +             "mechanic": "compound",
+518 +             "equipment": "barbell",
+519 +             "primary_muscles": ["quadriceps"],
+520 +         },
+521 +         {
+522 +             "name": "Atlas Stone",
+523 +             "category": "strongman",
+524 +             "level": "expert",
+525 +             "force": "pull",
+526 +             "mechanic": "compound",
+527 +             "equipment": "other",
+528 +             "primary_muscles": ["lower back"],
+529 +         },
+530 +         {
+531 +             "name": "Run",
+532 +             "category": "cardio",
+533 +             "level": "beginner",
+534 +             "force": None,
+535 +             "mechanic": None,
+536 +             "equipment": "body only",
+537 +             "primary_muscles": ["quadriceps"],
+538 +         },
+539 +         {
+540 +             "name": "Hamstring Stretch",
+541 +             "category": "stretching",
+542 +             "level": "beginner",
+543 +             "force": "static",
+544 +             "mechanic": None,
+545 +             "equipment": "body only",
+546 +             "primary_muscles": ["hamstrings"],
+547 +         },
+548 +         {
+549 +             "name": "Box Jump",
+550 +             "category": "plyometrics",
+551 +             "level": "intermediate",
+552 +             "force": "push",
+553 +             "mechanic": "compound",
+554 +             "equipment": "body only",
+555 +             "primary_muscles": ["quadriceps"],
+556 +         },
+557 +         {
+558 +             "name": "Face Pull",
+559 +             "category": "strength",
+560 +             "level": "intermediate",
+561 +             "force": "pull",
+562 +             "mechanic": "isolation",
+563 +             "equipment": "cable",
+564 +             "primary_muscles": ["shoulders"],
+565 +         },
+566 +         {
+567 +             "name": "Wrist Curl",
+568 +             "category": "strength",
+569 +             "level": "beginner",
+570 +             "force": "pull",
+571 +             "mechanic": "isolation",
+572 +             "equipment": "barbell",
+573 +             "primary_muscles": ["forearms"],
+574 +         },
+575 +         {
+576 +             "name": "Neck Curl",
+577 +             "category": "strength",
+578 +             "level": "beginner",
+579 +             "force": "pull",
+580 +             "mechanic": "isolation",
+581 +             "equipment": "body only",
+582 +             "primary_muscles": ["neck"],
+583 +         },
+584 +         {
+585 +             "name": "Stability Ball Crunch",
+586 +             "category": "strength",
+587 +             "level": "beginner",
+588 +             "force": "pull",
+589 +             "mechanic": "isolation",
+590 +             "equipment": "exercise ball",
+591 +             "primary_muscles": ["abdominals"],
+592 +         },
+593 +         {
+594 +             "name": "Kettlebell Swing",
+595 +             "category": "strength",
+596 +             "level": "intermediate",
+597 +             "force": "pull",
+598 +             "mechanic": "compound",
+599 +             "equipment": "kettlebells",
+600 +             "primary_muscles": ["glutes"],
+601 +         },
+602 +         {
+603 +             "name": "Hammer Foam Roll",
+604 +             "category": "stretching",
+605 +             "level": "beginner",
+606 +             "force": "static",
+607 +             "mechanic": None,
+608 +             "equipment": "foam roll",
+609 +             "primary_muscles": ["calves"],
+610 +         },
+611 +         {
+612 +             "name": "Band Pull-Apart",
+613 +             "category": "strength",
+614 +             "level": "beginner",
+615 +             "force": "pull",
+616 +             "mechanic": "isolation",
+617 +             "equipment": "bands",
+618 +             "primary_muscles": ["shoulders"],
+619 +         },
+620 +         {
+621 +             "name": "Medicine Ball Slam",
+622 +             "category": "plyometrics",
+623 +             "level": "intermediate",
+624 +             "force": "pull",
+625 +             "mechanic": "compound",
+626 +             "equipment": "medicine ball",
+627 +             "primary_muscles": ["abdominals"],
+628 +         },
+629 +         {
+630 +             "name": "Snatch Balance",
+631 +             "category": "olympic weightlifting",
+632 +             "level": "expert",
+633 +             "force": "push",
+634 +             "mechanic": "compound",
+635 +             "equipment": "barbell",
+636 +             "primary_muscles": ["shoulders"],
+637 +         },
+638 +         {
+639 +             "name": "Balance Board Squat",
+640 +             "category": "strength",
+641 +             "level": "intermediate",
+642 +             "force": "push",
+643 +             "mechanic": "compound",
+644 +             "equipment": "other",
+645 +             "primary_muscles": ["quadriceps"],
+646 +         },
+647 +         {
+648 +             "name": "Breathing Exercise",
+649 +             "category": "cardio",
+650 +             "level": "beginner",
+651 +             "force": "static",
+652 +             "mechanic": None,
+653 +             "equipment": "body only",
+654 +             "primary_muscles": ["abdominals"],
+655 +         },
+656 |     ]
+    |
+
+unformatted: File would be reformatted
+   --> tests/unit/test_axis_tagging.py:34:10
+    |
+33  |     coverage, rule_ids = tag_exercise(
+    -         {"name": "Hamstring Stretch", "category": "stretching", "level": "beginner",
+    -          "force": "static", "mechanic": None, "equipment": "body only", "primary_muscles": ["hamstrings"]}
+34  +         {
+35  +             "name": "Hamstring Stretch",
+36  +             "category": "stretching",
+37  +             "level": "beginner",
+38  +             "force": "static",
+39  +             "mechanic": None,
+40  +             "equipment": "body only",
+41  +             "primary_muscles": ["hamstrings"],
+42  +         }
+43  |     )
+--------------------------------------------------------------------------------
+51  |     assert len(ids) == 23
+    -     assert {"cat-strength", "cat-cardio", "force-static", "muscle-forearm", "equip-foam", "name-breath"} <= ids
+52  +     assert {
+53  +         "cat-strength",
+54  +         "cat-cardio",
+55  +         "force-static",
+56  +         "muscle-forearm",
+57  +         "equip-foam",
+58  +         "name-breath",
+59  +     } <= ids
+60  |
+--------------------------------------------------------------------------------
+73  |     assert intensity_band({**SQUAT}) == "high"  # barbell
+    -     assert intensity_band({"category": "stretching", "level": "intermediate", "equipment": "body only"}) == "low"
+    -     assert intensity_band({"category": "strength", "level": "beginner", "equipment": "body only"}) == "low"
+74  +     assert (
+75  +         intensity_band(
+76  +             {"category": "stretching", "level": "intermediate", "equipment": "body only"}
+77  +         )
+78  +         == "low"
+79  +     )
+80  +     assert (
+81  +         intensity_band({"category": "strength", "level": "beginner", "equipment": "body only"})
+82  +         == "low"
+83  +     )
+84  |
+85  |
+86  | def test_tag_all_on_db(session) -> None:
+    -     session.add(CatalogExercise(external_id="x-1", name="Barbell Squat", source_id=1,
+    -                                 category="strength", level="beginner", force="push",
+    -                                 mechanic="compound", equipment="barbell",
+    -                                 primary_muscles=json.dumps(["quadriceps"])))
+    -     session.add(CatalogExercise(external_id="x-2", name="Bench Press", source_id=1,
+    -                                 category="powerlifting", level="intermediate", force="push",
+    -                                 mechanic="compound", equipment="barbell",
+    -                                 primary_muscles=json.dumps(["chest"])))
+87  +     session.add(
+88  +         CatalogExercise(
+89  +             external_id="x-1",
+90  +             name="Barbell Squat",
+91  +             source_id=1,
+92  +             category="strength",
+93  +             level="beginner",
+94  +             force="push",
+95  +             mechanic="compound",
+96  +             equipment="barbell",
+97  +             primary_muscles=json.dumps(["quadriceps"]),
+98  +         )
+99  +     )
+100 +     session.add(
+101 +         CatalogExercise(
+102 +             external_id="x-2",
+103 +             name="Bench Press",
+104 +             source_id=1,
+105 +             category="powerlifting",
+106 +             level="intermediate",
+107 +             force="push",
+108 +             mechanic="compound",
+109 +             equipment="barbell",
+110 +             primary_muscles=json.dumps(["chest"]),
+111 +         )
+112 +     )
+113 |     session.commit()
+    |
 
 unformatted: File would be reformatted
   --> tests/unit/test_catalog_import.py:54:11
@@ -66,4 +744,4 @@ unformatted: File would be reformatted
 55 |     assert row.category == "strength"
    |
 
-4 files would be reformatted, 159 files already formatted
+7 files would be reformatted, 159 files already formatted
