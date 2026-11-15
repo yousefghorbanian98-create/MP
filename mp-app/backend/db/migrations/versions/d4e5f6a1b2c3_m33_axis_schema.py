@@ -14,8 +14,12 @@ depends_on = None
 def upgrade() -> None:
     with op.batch_alter_table("catalog_exercises") as batch:
         batch.add_column(sa.Column("axis_coverage", sa.Text(), nullable=False, server_default="{}"))
-        batch.add_column(sa.Column("intensity_band", sa.String(length=20), nullable=False, server_default=""))
-        batch.add_column(sa.Column("progression_key", sa.String(length=60), nullable=False, server_default=""))
+        batch.add_column(
+            sa.Column("intensity_band", sa.String(length=20), nullable=False, server_default="")
+        )
+        batch.add_column(
+            sa.Column("progression_key", sa.String(length=60), nullable=False, server_default="")
+        )
 
 
 def downgrade() -> None:

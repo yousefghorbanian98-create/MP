@@ -4,8 +4,8 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mp_app/features/feedback/feedback_providers.dart';
-import 'package:mp_app/features/feedback/set_feedback_sheet.dart';
+import 'package:mp_client/features/feedback/feedback_providers.dart';
+import 'package:mp_client/features/feedback/set_feedback_sheet.dart';
 
 void main() {
   Future<void> pumpSheet(WidgetTester tester, {List<Map<String, dynamic>>? captured}) async {

@@ -112,14 +112,21 @@ def test_member_crud(client, auth):
     h = auth("reception")
     r = client.post(
         "/api/v1/members",
-        json={"phone": "09123334455", "full_name": "علی رضایی", "gender": "male", "goal": "hypertrophy"},
+        json={
+            "phone": "09123334455",
+            "full_name": "علی رضایی",
+            "gender": "male",
+            "goal": "hypertrophy",
+        },
         headers=h,
     )
     assert r.status_code == 200
     member = r.json()
     assert member["branch_id"] == 1
     r2 = client.post(
-        "/api/v1/members", json={"phone": "09123334455", "full_name": "تکراری", "gender": "male"}, headers=h
+        "/api/v1/members",
+        json={"phone": "09123334455", "full_name": "تکراری", "gender": "male"},
+        headers=h,
     )
     assert r2.status_code == 409
     r3 = client.get(f"/api/v1/members/{member['id']}", headers=auth("coach"))
@@ -168,7 +175,9 @@ def test_payment_flow(client, auth):
 def test_assessment_requires_14_domains(client, auth):
     coach = auth("coach")
     member = client.post(
-        "/api/v1/members", json={"phone": "09126667788", "full_name": "عضو ارزیابی", "gender": "male"}, headers=coach
+        "/api/v1/members",
+        json={"phone": "09126667788", "full_name": "عضو ارزیابی", "gender": "male"},
+        headers=coach,
     ).json()
     bad = [{"domain": i, "score": 3} for i in range(1, 14)]
     r = client.post(
@@ -186,7 +195,9 @@ def test_assessment_requires_14_domains(client, auth):
 def test_jp7_computation(client, auth):
     coach = auth("coach")
     member = client.post(
-        "/api/v1/members", json={"phone": "09127778899", "full_name": "عضو JP7", "gender": "male"}, headers=coach
+        "/api/v1/members",
+        json={"phone": "09127778899", "full_name": "عضو JP7", "gender": "male"},
+        headers=coach,
     ).json()
     skinfolds = {
         "chest": 12,
@@ -223,7 +234,9 @@ def test_face_enroll_requires_consent(client, auth):
 
     coach = auth("coach")
     member = client.post(
-        "/api/v1/members", json={"phone": "09128889900", "full_name": "عضو چهره", "gender": "male"}, headers=coach
+        "/api/v1/members",
+        json={"phone": "09128889900", "full_name": "عضو چهره", "gender": "male"},
+        headers=coach,
     ).json()
     emb = base64.b64encode(b"\x01" * 128).decode()
     r = client.post(
@@ -277,7 +290,9 @@ def test_feature_flags_manager_only(client, auth):
 def test_program_approve_reject(client, auth):
     coach = auth("coach")
     member = client.post(
-        "/api/v1/members", json={"phone": "09131112233", "full_name": "عضو برنامه", "gender": "male"}, headers=coach
+        "/api/v1/members",
+        json={"phone": "09131112233", "full_name": "عضو برنامه", "gender": "male"},
+        headers=coach,
     ).json()
     from db.base import get_session_factory as gsf
     from db.models import WorkoutProgram

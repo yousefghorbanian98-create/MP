@@ -19,9 +19,19 @@ from engine.axis_rules import decide_axis  # noqa: E402
 REPORTS = Path(__file__).resolve().parents[3] / "finn" / "reports" / "eval"
 
 CATALOG = [
-    {"external_id": "pushup-l1", "name_fa": "شنای سوئدی سطح ۱", "axis_coverage": {"3": 0.7, "5": 0.6, "7": 0.4}, "level": 1},
+    {
+        "external_id": "pushup-l1",
+        "name_fa": "شنای سوئدی سطح ۱",
+        "axis_coverage": {"3": 0.7, "5": 0.6, "7": 0.4},
+        "level": 1,
+    },
     {"external_id": "plank", "name_fa": "پلانک", "axis_coverage": {"7": 0.9, "5": 0.5}, "level": 1},
-    {"external_id": "deadlift", "name_fa": "ددلیفت", "axis_coverage": {"9": 0.8, "3": 0.7, "10": 0.4}, "level": 2},
+    {
+        "external_id": "deadlift",
+        "name_fa": "ددلیفت",
+        "axis_coverage": {"9": 0.8, "3": 0.7, "10": 0.4},
+        "level": 2,
+    },
     {"external_id": "stretch", "name_fa": "کشش", "axis_coverage": {"1": 0.9, "6": 0.4}, "level": 1},
     {"external_id": "run", "name_fa": "دو", "axis_coverage": {"4": 0.8, "5": 0.3}, "level": 1},
 ]
@@ -42,7 +52,9 @@ def run_prescription_eval() -> dict:
             coverage_errors.append(f"axis {plan['axis']}: direct بدون حرکت/شکاف")
         if plan["state"] in ("refer", "unknown") and plan["movement_ids"]:
             coverage_errors.append(f"axis {plan['axis']}: {plan['state']} با حرکت تجویزشده!")
-    checks.append({"name": "axis_coverage", "passed": not coverage_errors, "errors": coverage_errors[:5]})
+    checks.append(
+        {"name": "axis_coverage", "passed": not coverage_errors, "errors": coverage_errors[:5]}
+    )
 
     # (۲) بازاعتبارسنجی گیت جمعیتی: مسیر ارجاع هرگز تجویز نمی‌گیرد
     gate_errors = []
@@ -52,16 +64,16 @@ def run_prescription_eval() -> dict:
         plan7 = [p for p in r["axis_plans"] if p["axis"] == 7][0]
         if plan7["movement_ids"]:
             gate_errors.append(f"red-flag «{flag}» تجویز گرفت")
-    checks.append({"name": "population_gates", "passed": not gate_errors, "errors": gate_errors[:5]})
+    checks.append(
+        {"name": "population_gates", "passed": not gate_errors, "errors": gate_errors[:5]}
+    )
 
     # (۳) حسابداری بار: خستگی یک‌بار + بودجه
     load_errors = []
     if result["load"]["total_fatigue"] != sum(m["sets"] for m in result["selected"]):
         load_errors.append("خستگی ≠ جمع ست‌ها (دوباره‌شماری؟)")
     # بودجهٔ تنگ: بالاتر از کف ست‌های مستقیم (هرگز بریده نمی‌شوند) ولی کمتر از کل
-    direct_floor = sum(
-        m["sets"] for m in result["selected"] if m["sets"] >= 3
-    )
+    direct_floor = sum(m["sets"] for m in result["selected"] if m["sets"] >= 3)
     tight_budget = direct_floor + 1.0
     tight = prescribe_axis_work(decisions=scores, movements=CATALOG, fatigue_budget=tight_budget)
     if tight["load"]["total_fatigue"] > tight_budget:

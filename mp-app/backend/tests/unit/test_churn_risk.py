@@ -14,11 +14,13 @@ def test_no_data_is_unknown_not_zero() -> None:
 
 
 def test_inactive_plus_expired_is_high() -> None:
-    result = assess_member_risk(facts={
-        "last_checkin_days_ago": 30,
-        "days_to_expiry": -3,
-        "overdue_payments": 1,
-    })
+    result = assess_member_risk(
+        facts={
+            "last_checkin_days_ago": 30,
+            "days_to_expiry": -3,
+            "overdue_payments": 1,
+        }
+    )
     assert result["band"] == "high"
     assert result["risk_score"] == 5 + 3 + 2
     reasons = " ".join(s["reason"] for s in result["signals"])
@@ -27,15 +29,17 @@ def test_inactive_plus_expired_is_high() -> None:
 
 
 def test_protective_factors_reduce_risk() -> None:
-    result = assess_member_risk(facts={
-        "last_checkin_days_ago": 2,
-        "days_to_expiry": 25,
-        "overdue_payments": 0,
-        "visits_30d": 10,
-        "visits_prev_30d": 8,
-        "has_active_program": True,
-        "days_since_feedback": 3,
-    })
+    result = assess_member_risk(
+        facts={
+            "last_checkin_days_ago": 2,
+            "days_to_expiry": 25,
+            "overdue_payments": 0,
+            "visits_30d": 10,
+            "visits_prev_30d": 8,
+            "has_active_program": True,
+            "days_since_feedback": 3,
+        }
+    )
     assert result["band"] == "low"
     assert result["risk_score"] == -3  # ۳ عامل محافظ
 
@@ -47,10 +51,12 @@ def test_visit_drop_flags_risk() -> None:
 
 
 def test_rank_members_high_first_unknown_last() -> None:
-    rows = rank_members({
-        1: {},  # unknown
-        2: {"last_checkin_days_ago": 30, "days_to_expiry": -1},
-        3: {"visits_30d": 12, "has_active_program": True, "days_since_feedback": 2},
-    })
+    rows = rank_members(
+        {
+            1: {},  # unknown
+            2: {"last_checkin_days_ago": 30, "days_to_expiry": -1},
+            3: {"visits_30d": 12, "has_active_program": True, "days_since_feedback": 2},
+        }
+    )
     assert rows[0]["member_id"] == 2
     assert rows[-1]["band"] == "unknown"

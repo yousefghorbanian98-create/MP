@@ -31,3 +31,17 @@
 | e2e-api | ⏭️ skip (وابستهٔ backend) | بعد از سبزی backend |
 
 تست واقعی: backend `298 passed`، client `17 passed / 1 failed-to-load` → **کد سالم است، قرمزی از فرمت و نام پکیج است.**
+
+## M45 — استودیو روی API واقعی (2026-11-15) ✅
+
+| جزء | شاهد |
+|---|---|
+| `GET /admin/attendance` (سری روزانه، جلسه باز/بسته) | ۹ تست در `test_m45_admin_attendance.py` |
+| `GET /admin/members-summary` (وضعیت اشتراک + days_left سقف‌دار) | همان فایل |
+| `GET /admin/checkins` (جریان ورودها، شامل ردشده) | ۵ تست در `test_m45_checkin_feed.py` |
+| `GET /programs` (فهرست با نام عضو + شمارش وضعیت) | ۵ تست در `test_m45_programs_list.py` |
+| استودیو: `src/data/mock.ts` **حذف شد** | REA evidence `ev_a3e81c13…` — ۲۶ منبع سورس، بدون mock |
+| استودیو: Dashboard/Members/Programs/CheckIn روی API | ۳۰ تست vitest + tsc صفر خطا |
+
+**گیت‌ها:** backend ۳۱۷ تست سبز · ruff check/format ۰ · studio tsc ۰ · vitest ۳۰.
+**نکتهٔ صادقانه:** `alembic check` drift نشان می‌دهد (۲ نبود-index + nullable ناسازگار) — این drift **قبل از M45** وجود داشت، من مدلی اضافه نکردم. برای M46 در صف است.

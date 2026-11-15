@@ -26,15 +26,22 @@ def run_scoring_eval() -> dict:
     round_trip_errors = []
     for row in NORMS:
         for key, value in row.percentiles.items():
-            est = estimate_percentile(raw_value=value, percentiles=row.percentiles, direction=row.direction)
+            est = estimate_percentile(
+                raw_value=value, percentiles=row.percentiles, direction=row.direction
+            )
             expected = float(key) if row.direction == "higher_better" else 100.0 - float(key)
             if est["percentile"] != expected:
                 round_trip_errors.append(
                     f"{row.test_key}/{row.sex}/{row.age_min}-{row.age_max}: "
                     f"raw={value} → {est['percentile']} != {expected}"
                 )
-    checks.append({"name": "round_trip_documented_points", "passed": not round_trip_errors,
-                   "errors": round_trip_errors[:5]})
+    checks.append(
+        {
+            "name": "round_trip_documented_points",
+            "passed": not round_trip_errors,
+            "errors": round_trip_errors[:5],
+        }
+    )
 
     # (۲) محدوده‌ها و اکوتونی: نمره همیشه ۰..۱۰۰؛ برای higher_better صعودی، برای lower_better نزولی
     bounds_errors = []
@@ -44,7 +51,9 @@ def run_scoring_eval() -> dict:
         prev = -1.0
         for step in range(21):
             raw = lo - (hi - lo) * 0.2 + (hi - lo) * 1.4 * step / 20
-            est = estimate_percentile(raw_value=raw, percentiles=row.percentiles, direction=row.direction)
+            est = estimate_percentile(
+                raw_value=raw, percentiles=row.percentiles, direction=row.direction
+            )
             if not 0 <= est["percentile"] <= 100:
                 bounds_errors.append(f"{row.test_key}: {est['percentile']} out of bounds")
             if row.direction == "higher_better" and est["percentile"] < prev:
@@ -52,8 +61,9 @@ def run_scoring_eval() -> dict:
             if row.direction == "lower_better" and prev >= 0 and est["percentile"] > prev:
                 bounds_errors.append(f"{row.test_key}: non-monotonic (lower_better) at raw={raw}")
             prev = est["percentile"]
-    checks.append({"name": "bounds_and_monotonic", "passed": not bounds_errors,
-                   "errors": bounds_errors[:5]})
+    checks.append(
+        {"name": "bounds_and_monotonic", "passed": not bounds_errors, "errors": bounds_errors[:5]}
+    )
 
     # (۳) صداقت کیفیت: جدول ناقص (فقط ۲۵/۷۵) هرگز exact نمی‌گوید
     sparse_errors = []
@@ -63,12 +73,16 @@ def run_scoring_eval() -> dict:
                 est = estimate_percentile(raw_value=raw, percentiles=row.percentiles)
                 if est["quality"] in ("exact", "interpolated"):
                     sparse_errors.append(f"{row.test_key}: sparse labeled {est['quality']}")
-    checks.append({"name": "sparse_never_exact", "passed": not sparse_errors,
-                   "errors": sparse_errors[:5]})
+    checks.append(
+        {"name": "sparse_never_exact", "passed": not sparse_errors, "errors": sparse_errors[:5]}
+    )
 
     # (۴) گیت SDC
     sdc_pairs = [
-        (20, 22, 9.0, False), (20, 30, 9.0, True), (20, 25, 5.0, True), (20, 23, 5.0, False),
+        (20, 22, 9.0, False),
+        (20, 30, 9.0, True),
+        (20, 25, 5.0, True),
+        (20, 23, 5.0, False),
     ]
     sdc_errors = []
     for old, new, sdc, expected in sdc_pairs:

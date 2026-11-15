@@ -77,6 +77,9 @@ POLICIES: list[tuple[str, str, str]] = [
     ("coach", "/api/v1/axis-assessments", "POST"),
     ("coach", "/api/v1/axis-assessments/*", "*"),
     ("coach", "/api/v1/programs", "GET"),
+    ("reception", "/api/v1/programs", "GET"),
+    ("coach", "/api/v1/admin/attendance", "GET"),
+    ("coach", "/api/v1/admin/checkins", "GET"),
     ("coach", "/api/v1/programs/*", "*"),
     # M43-c3 (D-004): مسیرهای مهاجرت‌داده‌شده از require_roles
     ("coach", "/api/v1/ai/program/generate", "POST"),
@@ -87,6 +90,13 @@ POLICIES: list[tuple[str, str, str]] = [
     ("coach", "/api/v1/classes/book", "POST"),
     ("coach", "/api/v1/classes/cancel", "POST"),
     ("coach", "/api/v1/reports/*", "*"),
+    # M45: دادهٔ واقعی استودیو — حضور و خلاصهٔ اعضا برای مربی/مدیر/پذیرش/مالک
+    ("coach", "/api/v1/admin/attendance", "GET"),
+    ("coach", "/api/v1/admin/checkins", "GET"),
+    ("coach", "/api/v1/admin/members-summary", "GET"),
+    ("reception", "/api/v1/admin/attendance", "GET"),
+    ("reception", "/api/v1/admin/checkins", "GET"),
+    ("reception", "/api/v1/admin/members-summary", "GET"),
     ("coach", "/api/v1/nutrition/*", "*"),
     ("coach", "/api/v1/nutrition/plans", "POST"),
     ("coach", "/api/v1/face/*", "*"),

@@ -15,8 +15,19 @@ def upgrade() -> None:
     op.create_table(
         "set_feedbacks",
         sa.Column("id", sa.Integer(), primary_key=True),
-        sa.Column("member_id", sa.Integer(), sa.ForeignKey("members.id", ondelete="CASCADE"), nullable=False, index=True),
-        sa.Column("program_id", sa.Integer(), sa.ForeignKey("workout_programs.id", ondelete="SET NULL"), nullable=True),
+        sa.Column(
+            "member_id",
+            sa.Integer(),
+            sa.ForeignKey("members.id", ondelete="CASCADE"),
+            nullable=False,
+            index=True,
+        ),
+        sa.Column(
+            "program_id",
+            sa.Integer(),
+            sa.ForeignKey("workout_programs.id", ondelete="SET NULL"),
+            nullable=True,
+        ),
         sa.Column("branch_id", sa.Integer(), nullable=False, server_default="1", index=True),
         sa.Column("movement_id", sa.String(length=60), nullable=False),
         sa.Column("weight", sa.Float(), nullable=False),
@@ -25,8 +36,12 @@ def upgrade() -> None:
         sa.Column("rir", sa.Float(), nullable=True),
         sa.Column("soreness", sa.Integer(), nullable=True),
         sa.Column("notes", sa.Text(), nullable=False, server_default=""),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
-        sa.Column("updated_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
+        sa.Column(
+            "created_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False
+        ),
+        sa.Column(
+            "updated_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False
+        ),
     )
 
 

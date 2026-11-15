@@ -53,7 +53,9 @@ def test_grant_and_revoke_admin_pass_with_audit(client) -> None:
     target_id, _ = _make_user("member")
 
     # اعطا: member ← coach
-    res = client.post(f"/api/v1/admin/users/{target_id}/role", json={"role": "coach"}, headers=owner_h)
+    res = client.post(
+        f"/api/v1/admin/users/{target_id}/role", json={"role": "coach"}, headers=owner_h
+    )
     assert res.status_code == 200, res.text
     assert res.json()["changed"] is True
 
@@ -81,14 +83,20 @@ def test_only_super_admin_and_no_self_change(client) -> None:
     owner_id, owner_h = _make_user("super_admin")
     target_id, _ = _make_user("member")
 
-    res = client.post(f"/api/v1/admin/users/{target_id}/role", json={"role": "coach"}, headers=manager_h)
+    res = client.post(
+        f"/api/v1/admin/users/{target_id}/role", json={"role": "coach"}, headers=manager_h
+    )
     assert res.status_code == 403
 
-    res = client.post(f"/api/v1/admin/users/{owner_id}/role", json={"role": "member"}, headers=owner_h)
+    res = client.post(
+        f"/api/v1/admin/users/{owner_id}/role", json={"role": "member"}, headers=owner_h
+    )
     assert res.status_code == 400
     assert res.json()["error"]["code"] == "self_role_change"
 
-    res = client.post(f"/api/v1/admin/users/{target_id}/role", json={"role": "boss"}, headers=owner_h)
+    res = client.post(
+        f"/api/v1/admin/users/{target_id}/role", json={"role": "boss"}, headers=owner_h
+    )
     assert res.status_code == 400
     assert res.json()["error"]["code"] == "invalid_role"
 

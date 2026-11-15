@@ -37,7 +37,7 @@ jobs:
       - name: Commit backend diagnostics (on failure)
         if: failure()
         env:
-          BRANCH: arena/a0408b29-mp
+          BRANCH: ${{ github.head_ref || github.ref_name }}
         run: |
           set -o pipefail
           cd mp-app/backend
@@ -106,7 +106,7 @@ jobs:
       - name: Commit client diagnostics (on failure)
         if: failure()
         env:
-          BRANCH: arena/a0408b29-mp
+          BRANCH: ${{ github.head_ref || github.ref_name }}
         run: |
           set -o pipefail
           cd mp-app/client

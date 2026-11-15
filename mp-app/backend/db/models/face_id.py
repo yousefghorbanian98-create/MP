@@ -61,6 +61,4 @@ class CheckIn(BranchMixin, Base):
         DateTime(timezone=True), nullable=False, server_default=func.now(), index=True
     )
     # M42-c2: ثبت خروج — طول جلسه = checked_out_at − created_at (نامعلوم تا ثبت خروج)
-    checked_out_at: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True), nullable=True
-    )
+    checked_out_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)

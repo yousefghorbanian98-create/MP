@@ -96,8 +96,7 @@ def assess_member_risk(*, facts: dict) -> dict:
         "band": band,
         "signals": signals,
         "reason": (
-            f"{len(signals)} سیگنال از {known} عامل شناخته‌شده — "
-            f"امتیاز {score} ← ریسک {band}"
+            f"{len(signals)} سیگنال از {known} عامل شناخته‌شده — امتیاز {score} ← ریسک {band}"
         ),
         "rule_version": CHURN_VERSION,
     }

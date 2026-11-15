@@ -36,15 +36,15 @@ MATRIX = [
     ("manager", "/api/v1/payments", "GET", True),
     ("manager", "/api/v1/whatever", "DELETE", True),
     # M43-c3 (D-004) — معناشناسی یکپارچه‌شدهٔ casbin:
-    ("member", "/api/v1/ai/program/generate", "POST", True),   # فرم ورودی عضو (باگ REA فیکس شد)
-    ("member", "/api/v1/population/gate-check", "POST", True), # فرم ورودی عضو (باگ REA فیکس شد)
+    ("member", "/api/v1/ai/program/generate", "POST", True),  # فرم ورودی عضو (باگ REA فیکس شد)
+    ("member", "/api/v1/population/gate-check", "POST", True),  # فرم ورودی عضو (باگ REA فیکس شد)
     ("member", "/api/v1/classes/book", "POST", True),
-    ("member", "/api/v1/classes", "POST", False),              # ایجاد کلاس = staff
+    ("member", "/api/v1/classes", "POST", False),  # ایجاد کلاس = staff
     ("reception", "/api/v1/population/intake/next", "POST", True),
-    ("reception", "/api/v1/classes/book", "POST", False),      # رزرو برای عضو/کادر، نه پذیرش
+    ("reception", "/api/v1/classes/book", "POST", False),  # رزرو برای عضو/کادر، نه پذیرش
     ("coach", "/api/v1/reports/confidential/3", "GET", True),
     ("coach", "/api/v1/axis-assessments/4/review", "POST", False),  # بازبینی = manager/admin
-    ("manager", "/api/v1/reports/confidential/3", "GET", False),    # ردِ صریح (DENIES)
+    ("manager", "/api/v1/reports/confidential/3", "GET", False),  # ردِ صریح (DENIES)
     ("manager", "/api/v1/axis-assessments/4/review", "POST", True),
     ("super_admin", "/api/v1/reports/confidential/3", "GET", True),
 ]

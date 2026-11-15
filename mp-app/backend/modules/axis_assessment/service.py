@@ -25,10 +25,14 @@ from engine.scoring import SCORE_VERSION, estimate_percentile
 def _member_age_sex(member: Member) -> tuple[int, str]:
     """سن و جنس عضو برای نگاشت نُرم — هر کدام نامعلوم ← خطای صریح."""
     if member.birth_date is None:
-        raise ApiError("تاریخ تولد عضو ثبت نشده — داده ناشناخته است نه صفر", code="missing_birthdate")
+        raise ApiError(
+            "تاریخ تولد عضو ثبت نشده — داده ناشناخته است نه صفر", code="missing_birthdate"
+        )
     today = date.today()
-    age = today.year - member.birth_date.year - (
-        (today.month, today.day) < (member.birth_date.month, member.birth_date.day)
+    age = (
+        today.year
+        - member.birth_date.year
+        - ((today.month, today.day) < (member.birth_date.month, member.birth_date.day))
     )
     gender = (member.gender or "").lower()
     if gender in ("male", "m", "مرد"):
@@ -197,7 +201,11 @@ def get_matrix(db: Session, assessment_id: int, user=None) -> dict:
         "status": assessment.status,
         "axes": axes,
         "summary": summary,
-        "rule_versions": {"score": SCORE_VERSION, "axis_map": AXIS_MAP_VERSION, "decision": "axis-decision-1.0"},
+        "rule_versions": {
+            "score": SCORE_VERSION,
+            "axis_map": AXIS_MAP_VERSION,
+            "decision": "axis-decision-1.0",
+        },
     }
 
 

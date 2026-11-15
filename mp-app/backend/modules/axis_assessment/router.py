@@ -29,7 +29,9 @@ def create_assessment(payload: AssessmentCreate, db: DbSession, user: CurrentUse
     )
 
 
-@router.get("/{assessment_id}/matrix", response_model=MatrixOut, summary="ماتریس درصد ۱۴ محور + تصمیم")
+@router.get(
+    "/{assessment_id}/matrix", response_model=MatrixOut, summary="ماتریس درصد ۱۴ محور + تصمیم"
+)
 def get_matrix(assessment_id: int, db: DbSession, user: CurrentUser):
     return service.get_matrix(db, assessment_id, user=user)
 

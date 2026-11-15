@@ -11,8 +11,8 @@ from engine.autoreg import suggest_next_weight
 
 SET_FEEDBACK_VERSION = "set-feedback-1.0"
 
-SORENESS_DELOAD = 7      # درد شدید ← کاهش حجم
-SORENESS_OK = 3          # درد خفیف/بدون درد ← حجم عادی
+SORENESS_DELOAD = 7  # درد شدید ← کاهش حجم
+SORENESS_OK = 3  # درد خفیف/بدون درد ← حجم عادی
 
 
 def _rpe_from_rir(rir: float | None) -> float | None:
@@ -67,15 +67,17 @@ def process_set_feedback(*, entries: list[dict]) -> dict:
             volume_action = "keep"
             next_sets = len(sets)
             volume_reason = f"درد عضلانی {max_soreness}/۱۰ در محدودهٔ قابل قبول ← حجم حفظ می‌شود"
-        suggestions.append({
-            "movement_id": mid,
-            "next_weight": weight_rule["next_weight"],
-            "weight_action": weight_rule["action"],
-            "next_sets": next_sets,
-            "volume_action": volume_action,
-            "reason": f"{weight_rule['reason']}؛ {volume_reason}",
-            "rule_version": SET_FEEDBACK_VERSION,
-        })
+        suggestions.append(
+            {
+                "movement_id": mid,
+                "next_weight": weight_rule["next_weight"],
+                "weight_action": weight_rule["action"],
+                "next_sets": next_sets,
+                "volume_action": volume_action,
+                "reason": f"{weight_rule['reason']}؛ {volume_reason}",
+                "rule_version": SET_FEEDBACK_VERSION,
+            }
+        )
     return {
         "suggestions": suggestions,
         "reason": f"{len(entries)} ست از {len(per_movement)} حرکت پردازش شد (G1 — بدون عدد از LLM)",

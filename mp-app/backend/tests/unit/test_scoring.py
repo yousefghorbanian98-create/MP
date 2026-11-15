@@ -51,8 +51,12 @@ def test_lower_better_direction() -> None:
 
 def test_score_test_carries_reason_and_version() -> None:
     norm = {
-        "test_key": "pushup_1min", "sex": "m", "age_min": 20, "age_max": 29,
-        "percentiles": PUSHUP_M_2029, "source": "https://fitnessnorms.com/strength/push-ups/",
+        "test_key": "pushup_1min",
+        "sex": "m",
+        "age_min": 20,
+        "age_max": 29,
+        "percentiles": PUSHUP_M_2029,
+        "source": "https://fitnessnorms.com/strength/push-ups/",
     }
     result = score_test(raw_value=25, norm=norm)
     assert result["score"] == 50.0

@@ -41,7 +41,9 @@ def list_members(
     user: CurrentUser,
     offset: int = Query(0, ge=0),
     limit: int = Query(50, ge=1, le=200),
-    gender: str | None = Query(None, pattern="^(male|female)$", description="فیلتر تفکیک جنسیت (M41-c1)"),
+    gender: str | None = Query(
+        None, pattern="^(male|female)$", description="فیلتر تفکیک جنسیت (M41-c1)"
+    ),
 ):
     return service.list_members(db, offset=offset, limit=limit, user=user, gender=gender)
 
@@ -178,4 +180,3 @@ def member_memberships(member_id: int, db: DbSession, user: CurrentUser):
             .order_by(Membership.id.desc())
         )
     )
-

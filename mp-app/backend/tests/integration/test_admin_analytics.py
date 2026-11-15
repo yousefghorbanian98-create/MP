@@ -77,22 +77,28 @@ def test_leaderboards_from_real_data(client) -> None:
         aa2 = AxisAssessment(member_id=a2, status="draft")
         s.add_all([aa1, aa2])
         s.flush()
-        s.add_all([
-            AxisScore(assessment_id=aa1.id, axis=1, score=90.0, quality="high"),
-            AxisScore(assessment_id=aa1.id, axis=2, score=80.0, quality="high"),
-            AxisScore(assessment_id=aa2.id, axis=1, score=60.0, quality="medium"),
-            AxisScore(assessment_id=aa2.id, axis=2, score=None, quality="missing"),
-        ])
+        s.add_all(
+            [
+                AxisScore(assessment_id=aa1.id, axis=1, score=90.0, quality="high"),
+                AxisScore(assessment_id=aa1.id, axis=2, score=80.0, quality="high"),
+                AxisScore(assessment_id=aa2.id, axis=1, score=60.0, quality="medium"),
+                AxisScore(assessment_id=aa2.id, axis=2, score=None, quality="missing"),
+            ]
+        )
         # پرداخت‌ها: s1 بیشترین جمع paid؛ یک pending نباید بشمارد
-        s.add_all([
-            Payment(member_id=s1, amount_rial=5_000_000, status="paid", paid_at=now),
-            Payment(member_id=s1, amount_rial=3_000_000, status="paid", paid_at=now),
-            Payment(member_id=s1, amount_rial=9_000_000, status="pending", paid_at=None),
-            Payment(member_id=a1, amount_rial=2_000_000, status="paid", paid_at=now),
-        ])
+        s.add_all(
+            [
+                Payment(member_id=s1, amount_rial=5_000_000, status="paid", paid_at=now),
+                Payment(member_id=s1, amount_rial=3_000_000, status="paid", paid_at=now),
+                Payment(member_id=s1, amount_rial=9_000_000, status="pending", paid_at=None),
+                Payment(member_id=a1, amount_rial=2_000_000, status="paid", paid_at=now),
+            ]
+        )
         # چک‌این‌ها: v1 بیشترین مراجعه
         for i in range(6):
-            s.add(CheckIn(member_id=v1, method="qr", result="ok", created_at=now - timedelta(days=i)))
+            s.add(
+                CheckIn(member_id=v1, method="qr", result="ok", created_at=now - timedelta(days=i))
+            )
         s.add(CheckIn(member_id=v1, method="qr", result="denied", created_at=now))
         s.add(CheckIn(member_id=a1, method="face", result="ok", created_at=now))
         s.commit()
@@ -146,13 +152,28 @@ def test_most_time_and_checkout_flow(client) -> None:
     m2 = _seed_member("کم‌حضور")
     now = datetime.now(UTC)
     with get_session_factory()() as s:
-        c1 = CheckIn(member_id=m1, method="qr", result="ok",
-                     created_at=now - timedelta(hours=3), checked_out_at=now - timedelta(hours=1))
-        c2 = CheckIn(member_id=m1, method="qr", result="ok",
-                     created_at=now - timedelta(days=1, hours=2), checked_out_at=now - timedelta(days=1))
+        c1 = CheckIn(
+            member_id=m1,
+            method="qr",
+            result="ok",
+            created_at=now - timedelta(hours=3),
+            checked_out_at=now - timedelta(hours=1),
+        )
+        c2 = CheckIn(
+            member_id=m1,
+            method="qr",
+            result="ok",
+            created_at=now - timedelta(days=1, hours=2),
+            checked_out_at=now - timedelta(days=1),
+        )
         c3 = CheckIn(member_id=m1, method="qr", result="ok", created_at=now)  # باز — بدون دقیقه
-        c4 = CheckIn(member_id=m2, method="qr", result="ok",
-                     created_at=now - timedelta(hours=2), checked_out_at=now - timedelta(hours=1))
+        c4 = CheckIn(
+            member_id=m2,
+            method="qr",
+            result="ok",
+            created_at=now - timedelta(hours=2),
+            checked_out_at=now - timedelta(hours=1),
+        )
         s.add_all([c1, c2, c3, c4])
         s.commit()
         open_id = c3.id
@@ -191,11 +212,25 @@ def test_churn_risk_endpoint_with_real_facts(client) -> None:
     ghost = _seed_member("بدون داده")
     now = datetime.now(UTC)
     with get_session_factory()() as s:
-        s.add(CheckIn(member_id=risky, method="qr", result="ok", created_at=now - timedelta(days=35)))
-        s.add(Membership(member_id=risky, plan_name="m", started_at=now - timedelta(days=70),
-                         expires_at=now - timedelta(days=5), status="active", price_rial=1))
+        s.add(
+            CheckIn(member_id=risky, method="qr", result="ok", created_at=now - timedelta(days=35))
+        )
+        s.add(
+            Membership(
+                member_id=risky,
+                plan_name="m",
+                started_at=now - timedelta(days=70),
+                expires_at=now - timedelta(days=5),
+                status="active",
+                price_rial=1,
+            )
+        )
         for i in range(9):
-            s.add(CheckIn(member_id=loyal, method="qr", result="ok", created_at=now - timedelta(days=i)))
+            s.add(
+                CheckIn(
+                    member_id=loyal, method="qr", result="ok", created_at=now - timedelta(days=i)
+                )
+            )
         s.commit()
 
     h = _headers("manager")

@@ -14,3 +14,8 @@
 | R-007 | `.finn/ecc-commit.txt` باید با `git -C .finn/ecc rev-parse HEAD` و بالادست `affaan-m/ECC` بخواند | D-025: انحراف منبع ECC | 2026-11-15 | ✅ فعال |
 | R-008 | وجود `.claude/agents/{planner,architect,tdd-guide,code-reviewer,security-reviewer,build-error-resolver,e2e-runner,refactor-cleaner,doc-updater}.md` | D-025: نصب ناقص ایجنت‌ها | 2026-11-15 | ✅ فعال (خود اسکریپت هم چک می‌کند) |
 | R-009 | وجود `.claude/skills/reverse-engineer-anything/SKILL.md` | D-026: REA بدون skill | 2026-11-15 | ✅ فعال |
+| R-010 | `tests/integration/test_m45_admin_attendance.py` (۹ تست) | M45: endpoint حضور/خلاصهٔ اعضا نبود؛ `days_left` کف می‌گرفت (۳ روز → ۲) | 2026-11-15 | ✅ فعال |
+| R-011 | `tests/integration/test_m45_programs_list.py` (۵ تست) | M45: صفحهٔ برنامه‌ها mock بود و فهرست برنامه در API نبود | 2026-11-15 | ✅ فعال |
+| R-012 | `tests/integration/test_m45_checkin_feed.py` (۵ تست) | M45: جریان ورودها mock بود؛ ورود رد‌شده پنهان می‌شد | 2026-11-15 | ✅ فعال |
+| R-013 | `tests/api.test.ts` (۷ تست استودیو) | M45: کلاینت API نباید در خطا به mock برگردد؛ null ≠ ۰ | 2026-11-15 | ✅ فعال |
+| R-014 | assistant هیچ‌کدام از workflowها نباید شاخهٔ ثابت داشته باشد | CI به `arena/a0408b29-mp` هاردکد بود → روی شاخهٔ جاری diagnostics را push نمی‌کرد | 2026-11-15 | ✅ فعال (`github.head_ref \|\| github.ref_name`) |

@@ -28,7 +28,11 @@ SOURCE_URL = "https://github.com/yuhonas/free-exercise-db"
 SOURCE_COMMIT = "f00c92c7dcf1216a928a52c3706c7ce8e2f71ed5"
 SOURCE_LICENSE = "Unlicense"
 DEFAULT_DATA = (
-    Path(__file__).resolve().parents[1] / "data" / "external" / "free_exercise_db" / "exercises.json"
+    Path(__file__).resolve().parents[1]
+    / "data"
+    / "external"
+    / "free_exercise_db"
+    / "exercises.json"
 )
 EXPECTED_DIGEST = "5bb747e3fc658f095a60dcbf6d53c96627acdcc6ffb6fffde86f7e26995d40bf"
 

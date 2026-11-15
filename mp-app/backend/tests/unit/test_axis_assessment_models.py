@@ -12,16 +12,41 @@ from security.rbac import enforce
 def test_axis_assessment_models_roundtrip(session, make_user, make_member):
     user = make_user()
     member = make_member(user=user)
-    assessment = AxisAssessment(member_id=member.id, status="draft", meta='{"rules":"axis-decision-1.0"}')
+    assessment = AxisAssessment(
+        member_id=member.id, status="draft", meta='{"rules":"axis-decision-1.0"}'
+    )
     session.add(assessment)
     session.flush()
-    session.add(AxisScore(assessment_id=assessment.id, axis=7, score=32.5, quality="interpolated",
-                          rule_version="axis-test-map-1.0"))
-    session.add(AxisScore(assessment_id=assessment.id, axis=12, score=None, quality="missing",
-                          rule_version="axis-test-map-1.0"))
-    session.add(FieldTestResult(assessment_id=assessment.id, test_key="pushup_1min", raw_value=23.5,
-                                unit="reps", percentile=37.5, quality="interpolated",
-                                rule_version="axis-score-1.0", norm_source="https://fitnessnorms.com/strength/push-ups/"))
+    session.add(
+        AxisScore(
+            assessment_id=assessment.id,
+            axis=7,
+            score=32.5,
+            quality="interpolated",
+            rule_version="axis-test-map-1.0",
+        )
+    )
+    session.add(
+        AxisScore(
+            assessment_id=assessment.id,
+            axis=12,
+            score=None,
+            quality="missing",
+            rule_version="axis-test-map-1.0",
+        )
+    )
+    session.add(
+        FieldTestResult(
+            assessment_id=assessment.id,
+            test_key="pushup_1min",
+            raw_value=23.5,
+            unit="reps",
+            percentile=37.5,
+            quality="interpolated",
+            rule_version="axis-score-1.0",
+            norm_source="https://fitnessnorms.com/strength/push-ups/",
+        )
+    )
     session.commit()
 
     got = session.get(AxisAssessment, assessment.id)

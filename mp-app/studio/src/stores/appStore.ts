@@ -1,11 +1,23 @@
 import { create } from "zustand";
-import { members as mockMembers, type MemberRow } from "../data/mock";
 
-export type PageId = "dashboard" | "members" | "programs" | "checkin" | "finance" | "analytics" | "settings";
+/**
+ * وضعیت UI استودیو — **هیچ دادهٔ دامنه‌ای اینجا نیست** (M45-c1).
+ *
+ * قبلاً `members` از `data/mock.ts` می‌آمد و هر صفحه‌ای که آن را می‌خواند
+ * دادهٔ ساختگی نشان می‌داد. از M45، داده فقط از API می‌آید و این استور
+ * محدود به انتخاب صفحه/جست‌وجو/فیلتر است.
+ */
+export type PageId =
+  | "dashboard"
+  | "members"
+  | "programs"
+  | "checkin"
+  | "finance"
+  | "analytics"
+  | "settings";
 
 interface AppState {
   page: PageId;
-  members: MemberRow[];
   selectedMemberId: number | null;
   search: string;
   genderFilter: "all" | "male" | "female";
@@ -13,12 +25,10 @@ interface AppState {
   setPage: (page: PageId) => void;
   selectMember: (id: number | null) => void;
   setSearch: (q: string) => void;
-  filteredMembers: () => MemberRow[];
 }
 
-export const useAppStore = create<AppState>((set, get) => ({
+export const useAppStore = create<AppState>((set) => ({
   page: "dashboard",
-  members: mockMembers,
   selectedMemberId: null,
   search: "",
   genderFilter: "all",
@@ -26,14 +36,4 @@ export const useAppStore = create<AppState>((set, get) => ({
   setPage: (page) => set({ page, selectedMemberId: null }),
   selectMember: (id) => set({ selectedMemberId: id }),
   setSearch: (search) => set({ search }),
-  filteredMembers: () => {
-    const { members, search, genderFilter } = get();
-    const q = search.trim();
-    if (!q) return members;
-    return members.filter(
-      (m) =>
-        (m.name.includes(q) || m.phone.includes(q)) &&
-        (genderFilter === "all" || m.gender === genderFilter),
-    );
-  },
 }));

@@ -20,8 +20,22 @@ class FeedbackUser(HttpUser):
             json={
                 "member_id": int(os.environ.get("S3C_MEMBER", "1")),
                 "entries": [
-                    {"movement_id": "pushup-l1", "weight": 0, "target_reps": 10, "reps_done": 12, "rir": 3, "soreness": 2},
-                    {"movement_id": "plank", "weight": 0, "target_reps": 3, "reps_done": 3, "rir": 1, "soreness": 8},
+                    {
+                        "movement_id": "pushup-l1",
+                        "weight": 0,
+                        "target_reps": 10,
+                        "reps_done": 12,
+                        "rir": 3,
+                        "soreness": 2,
+                    },
+                    {
+                        "movement_id": "plank",
+                        "weight": 0,
+                        "target_reps": 3,
+                        "reps_done": 3,
+                        "rir": 1,
+                        "soreness": 8,
+                    },
                 ],
             },
             headers=HEADERS,

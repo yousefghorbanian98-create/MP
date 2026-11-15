@@ -31,8 +31,15 @@ def test_tag_exercise_max_merge_and_bounds() -> None:
 
 def test_tag_exercise_stretching_hits_mobility() -> None:
     coverage, rule_ids = tag_exercise(
-        {"name": "Hamstring Stretch", "category": "stretching", "level": "beginner",
-         "force": "static", "mechanic": None, "equipment": "body only", "primary_muscles": ["hamstrings"]}
+        {
+            "name": "Hamstring Stretch",
+            "category": "stretching",
+            "level": "beginner",
+            "force": "static",
+            "mechanic": None,
+            "equipment": "body only",
+            "primary_muscles": ["hamstrings"],
+        }
     )
     assert "cat-stretch" in rule_ids
     assert coverage["1"] == 0.9
@@ -42,7 +49,14 @@ def test_registry_covers_all_rules() -> None:
     registry = dump_rules()
     ids = {r["rule_id"] for r in registry}
     assert len(ids) == 23
-    assert {"cat-strength", "cat-cardio", "force-static", "muscle-forearm", "equip-foam", "name-breath"} <= ids
+    assert {
+        "cat-strength",
+        "cat-cardio",
+        "force-static",
+        "muscle-forearm",
+        "equip-foam",
+        "name-breath",
+    } <= ids
 
 
 def test_name_fa_generation_quality() -> None:
@@ -57,19 +71,45 @@ def test_name_fa_generation_quality() -> None:
 
 def test_intensity_band_rules() -> None:
     assert intensity_band({**SQUAT}) == "high"  # barbell
-    assert intensity_band({"category": "stretching", "level": "intermediate", "equipment": "body only"}) == "low"
-    assert intensity_band({"category": "strength", "level": "beginner", "equipment": "body only"}) == "low"
+    assert (
+        intensity_band(
+            {"category": "stretching", "level": "intermediate", "equipment": "body only"}
+        )
+        == "low"
+    )
+    assert (
+        intensity_band({"category": "strength", "level": "beginner", "equipment": "body only"})
+        == "low"
+    )
 
 
 def test_tag_all_on_db(session) -> None:
-    session.add(CatalogExercise(external_id="x-1", name="Barbell Squat", source_id=1,
-                                category="strength", level="beginner", force="push",
-                                mechanic="compound", equipment="barbell",
-                                primary_muscles=json.dumps(["quadriceps"])))
-    session.add(CatalogExercise(external_id="x-2", name="Bench Press", source_id=1,
-                                category="powerlifting", level="intermediate", force="push",
-                                mechanic="compound", equipment="barbell",
-                                primary_muscles=json.dumps(["chest"])))
+    session.add(
+        CatalogExercise(
+            external_id="x-1",
+            name="Barbell Squat",
+            source_id=1,
+            category="strength",
+            level="beginner",
+            force="push",
+            mechanic="compound",
+            equipment="barbell",
+            primary_muscles=json.dumps(["quadriceps"]),
+        )
+    )
+    session.add(
+        CatalogExercise(
+            external_id="x-2",
+            name="Bench Press",
+            source_id=1,
+            category="powerlifting",
+            level="intermediate",
+            force="push",
+            mechanic="compound",
+            equipment="barbell",
+            primary_muscles=json.dumps(["chest"]),
+        )
+    )
     session.commit()
     stats = tag_all(session)
     assert stats == {"rows": 2, "with_axis": 2, "with_fa": 2, "rules_hit": stats["rules_hit"]}

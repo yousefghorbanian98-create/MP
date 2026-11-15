@@ -70,8 +70,10 @@ def estimate_percentile(
 
     for index, (value, pct) in enumerate(pts):
         if raw_value == value and f"{value:g}" in exact_keys:
-            return {"percentile": pct if direction == "higher_better" else 100.0 - pct,
-                    "quality": "exact" if not sparse else "range_estimate"}
+            return {
+                "percentile": pct if direction == "higher_better" else 100.0 - pct,
+                "quality": "exact" if not sparse else "range_estimate",
+            }
         if index + 1 < len(pts):
             low_val, low_pct = pts[index]
             high_val, high_pct = pts[index + 1]
@@ -84,7 +86,10 @@ def estimate_percentile(
                     "quality": "interpolated" if not sparse else "range_estimate",
                 }
     # مقدار دقیقاً برابر آخرین نقطه
-    return {"percentile": finalize(pts[-1][1]), "quality": "exact" if not sparse else "range_estimate"}
+    return {
+        "percentile": finalize(pts[-1][1]),
+        "quality": "exact" if not sparse else "range_estimate",
+    }
 
 
 def score_test(
@@ -138,7 +143,11 @@ def is_real_change(
         "delta": delta,
         "reason": (
             f"تغییر {delta} در برابر SDC={sdc} ← "
-            + ("تغییر واقعی (فراتر از نویز بازتست)" if real else "در محدودهٔ نویز بازتست — بهبود/افت اعلام نشود")
+            + (
+                "تغییر واقعی (فراتر از نویز بازتست)"
+                if real
+                else "در محدودهٔ نویز بازتست — بهبود/افت اعلام نشود"
+            )
         ),
         "rule_version": SCORE_VERSION,
     }

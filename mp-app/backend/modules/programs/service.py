@@ -152,3 +152,56 @@ def record_set_feedback(
         )
     db.commit()
     return process_set_feedback(entries=entries)
+
+
+PROGRAMS_SUMMARY_VERSION = "programs-summary-1.0"
+
+
+def list_programs_summary(db, *, status: str | None = None, limit: int = 200) -> dict:
+    """فهرست برنامه‌های باشگاه با نام عضو — برای صفحهٔ «برنامه‌ها» در استودیو.
+
+    فقط برنامه‌های واقعی برمی‌گردند؛ فهرست خالی یعنی «برنامه‌ای ثبت نشده»،
+    نه اینکه با داده‌ی نمایشی پر شود.
+    """
+    from sqlalchemy import select
+
+    from db.models import Member, User, WorkoutProgram
+
+    stmt = select(WorkoutProgram).order_by(WorkoutProgram.id.desc()).limit(limit)
+    if status:
+        stmt = stmt.where(WorkoutProgram.status == status)
+    programs = db.scalars(stmt).all()
+
+    member_ids = {p.member_id for p in programs}
+    names: dict[int, str] = {}
+    if member_ids:
+        rows = db.execute(
+            select(Member.id, User.full_name)
+            .join(User, User.id == Member.user_id)
+            .where(Member.id.in_(member_ids))
+        ).all()
+        names = dict(rows)
+
+    items = [
+        {
+            "id": p.id,
+            "member_id": p.member_id,
+            "member_name": names.get(p.member_id, ""),
+            "status": p.status,
+            "goal": p.goal,
+            "engine_version": p.engine_version,
+            "weeks_count": len(p.weeks) if p.weeks is not None else 0,
+            "llm_explanation": p.llm_explanation,
+            "reject_reason": p.reject_reason,
+            "approved_at": p.approved_at.isoformat() if p.approved_at else None,
+            "created_at": p.created_at.isoformat() if p.created_at else None,
+        }
+        for p in programs
+    ]
+    return {
+        "items": items,
+        "rule_version": PROGRAMS_SUMMARY_VERSION,
+        "counts_by_status": {
+            s: sum(1 for i in items if i["status"] == s) for s in {i["status"] for i in items}
+        },
+    }

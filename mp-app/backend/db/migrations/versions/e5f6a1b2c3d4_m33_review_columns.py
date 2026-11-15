@@ -13,8 +13,14 @@ depends_on = None
 
 def upgrade() -> None:
     with op.batch_alter_table("catalog_exercises") as batch:
-        batch.add_column(sa.Column("name_fa", sa.String(length=160), nullable=False, server_default=""))
-        batch.add_column(sa.Column("review_status", sa.String(length=16), nullable=False, server_default="candidate"))
+        batch.add_column(
+            sa.Column("name_fa", sa.String(length=160), nullable=False, server_default="")
+        )
+        batch.add_column(
+            sa.Column(
+                "review_status", sa.String(length=16), nullable=False, server_default="candidate"
+            )
+        )
         batch.add_column(sa.Column("review_meta", sa.Text(), nullable=False, server_default="{}"))
 
 

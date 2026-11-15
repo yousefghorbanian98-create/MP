@@ -46,23 +46,37 @@ def test_full_loop_dry_run(client, monkeypatch) -> None:
         seed_criteria(s)
         from db.models import CatalogExercise
 
-        s.add_all([
-            CatalogExercise(
-                source_id=1, external_id="squat-l1", name="Bodyweight Squat", name_fa="اسکوات وزن‌بدن",
-                level="beginner", intensity_band="low",
-                axis_coverage='{"1": 0.8, "3": 0.6, "5": 0.5}',
-            ),
-            CatalogExercise(
-                source_id=1, external_id="plank", name="Plank", name_fa="پلانک",
-                level="beginner", intensity_band="low",
-                axis_coverage='{"7": 0.9, "5": 0.5}',
-            ),
-            CatalogExercise(
-                source_id=1, external_id="deadlift", name="Deadlift", name_fa="ددلیفت",
-                level="intermediate", intensity_band="high",
-                axis_coverage='{"9": 0.8, "3": 0.7, "10": 0.4}',
-            ),
-        ])
+        s.add_all(
+            [
+                CatalogExercise(
+                    source_id=1,
+                    external_id="squat-l1",
+                    name="Bodyweight Squat",
+                    name_fa="اسکوات وزن‌بدن",
+                    level="beginner",
+                    intensity_band="low",
+                    axis_coverage='{"1": 0.8, "3": 0.6, "5": 0.5}',
+                ),
+                CatalogExercise(
+                    source_id=1,
+                    external_id="plank",
+                    name="Plank",
+                    name_fa="پلانک",
+                    level="beginner",
+                    intensity_band="low",
+                    axis_coverage='{"7": 0.9, "5": 0.5}',
+                ),
+                CatalogExercise(
+                    source_id=1,
+                    external_id="deadlift",
+                    name="Deadlift",
+                    name_fa="ددلیفت",
+                    level="intermediate",
+                    intensity_band="high",
+                    axis_coverage='{"9": 0.8, "3": 0.7, "10": 0.4}',
+                ),
+            ]
+        )
         s.commit()
     n = next(_counter)
     with get_session_factory()() as s:
@@ -71,7 +85,9 @@ def test_full_loop_dry_run(client, monkeypatch) -> None:
         s.flush()
         from datetime import date
 
-        m = Member(user_id=u.id, gender="female", birth_date=date(1995, 6, 15), goal="general_fitness")
+        m = Member(
+            user_id=u.id, gender="female", birth_date=date(1995, 6, 15), goal="general_fitness"
+        )
         s.add(m)
         s.commit()
         member_id = m.id
@@ -80,7 +96,9 @@ def test_full_loop_dry_run(client, monkeypatch) -> None:
     # ۱) ثبت آزمون — همهٔ ۱۴ محور مقدار دارند (هیچ نامعلوم)
     unique_keys = sorted({key for mapping in AXIS_TEST_MAP.values() for key, _w in mapping})
     tests = [{"test_key": key, "raw_value": 60.0} for key in unique_keys]
-    res = client.post("/api/v1/axis-assessments", json={"member_id": member_id, "tests": tests}, headers=h)
+    res = client.post(
+        "/api/v1/axis-assessments", json={"member_id": member_id, "tests": tests}, headers=h
+    )
     assert res.status_code == 200, res.text
     assessment_id = res.json()["assessment_id"]
 
@@ -96,7 +114,9 @@ def test_full_loop_dry_run(client, monkeypatch) -> None:
         assert axis["decision_reason"]
 
     # ۳) تجویز محور-آگاه — برای هر direct حرکت یا شکاف صریح؛ refer بدون حرکت
-    decisions = {a["axis"]: {"state": a["decision_state"], "reason": a["decision_reason"]} for a in axes}
+    decisions = {
+        a["axis"]: {"state": a["decision_state"], "reason": a["decision_reason"]} for a in axes
+    }
     import json as _json
 
     from db.models import CatalogExercise
@@ -120,10 +140,23 @@ def test_full_loop_dry_run(client, monkeypatch) -> None:
             assert not p["movement_ids"]
 
     # ۴) بازخورد ست ← پیشنهاد جلسهٔ بعد (G1)
-    res = client.post("/api/v1/programs/set-feedback", json={
-        "member_id": member_id,
-        "entries": [{"movement_id": "squat-l1", "weight": 40, "target_reps": 10, "reps_done": 12, "rir": 3, "soreness": 2}],
-    }, headers=h)
+    res = client.post(
+        "/api/v1/programs/set-feedback",
+        json={
+            "member_id": member_id,
+            "entries": [
+                {
+                    "movement_id": "squat-l1",
+                    "weight": 40,
+                    "target_reps": 10,
+                    "reps_done": 12,
+                    "rir": 3,
+                    "soreness": 2,
+                }
+            ],
+        },
+        headers=h,
+    )
     assert res.status_code == 200, res.text
     suggestion = res.json()["suggestions"][0]
     assert suggestion["next_weight"] and suggestion["reason"]
@@ -134,6 +167,9 @@ def test_full_loop_dry_run(client, monkeypatch) -> None:
         s.add(mg)
         s.commit()
         mg_h = {"Authorization": f"Bearer {create_access_token(mg.id, mg.role)}"}
-    res = client.post(f"/api/v1/axis-assessments/{assessment_id}/review",
-                      json={"action": "approve", "reason": "پایلوت dry-run"}, headers=mg_h)
+    res = client.post(
+        f"/api/v1/axis-assessments/{assessment_id}/review",
+        json={"action": "approve", "reason": "پایلوت dry-run"},
+        headers=mg_h,
+    )
     assert res.status_code == 200

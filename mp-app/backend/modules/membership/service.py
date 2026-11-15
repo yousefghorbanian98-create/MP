@@ -69,7 +69,9 @@ def get_member(db: Session, member_id: int, user=None) -> Member:
     return member
 
 
-def list_members(db: Session, offset: int = 0, limit: int = 50, user=None, gender: str | None = None) -> list[Member]:
+def list_members(
+    db: Session, offset: int = 0, limit: int = 50, user=None, gender: str | None = None
+) -> list[Member]:
     from app.security.ownership import ensure_member_scope, get_own_member
     from cache.keys import members_list_key
     from cache.store import get_cache

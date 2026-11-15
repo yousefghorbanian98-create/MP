@@ -230,7 +230,9 @@ def test_full_dataflow_inputs_computed_and_visible_in_outputs(client, auth):
     )
     assert bad.status_code == 422
     bad2 = client.post(
-        "/api/v1/members", json={"phone": "09123456780", "full_name": "ا", "gender": "male"}, headers=h
+        "/api/v1/members",
+        json={"phone": "09123456780", "full_name": "ا", "gender": "male"},
+        headers=h,
     )
     assert bad2.status_code == 422  # اسم کوتاه رد می‌شود
 

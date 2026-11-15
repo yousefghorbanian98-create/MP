@@ -64,10 +64,14 @@ def test_member_cannot_read_other_members_data(client):
     staff, _ = _user_headers(client, "manager")
     # دو عضو واقعی
     client.post(
-        "/api/v1/members/", json={"phone": "09121110001", "full_name": "عضو الف", "gender": "male"}, headers=staff
+        "/api/v1/members/",
+        json={"phone": "09121110001", "full_name": "عضو الف", "gender": "male"},
+        headers=staff,
     )
     b = client.post(
-        "/api/v1/members/", json={"phone": "09121110002", "full_name": "عضو ب", "gender": "male"}, headers=staff
+        "/api/v1/members/",
+        json={"phone": "09121110002", "full_name": "عضو ب", "gender": "male"},
+        headers=staff,
     ).json()
     # اشتراک + ارزیابی + پرداخت برای B
     client.post(
@@ -218,7 +222,9 @@ def test_member_checkin_only_self(client):
     """عضو نمی‌تواند به‌جای دیگری چک‌این کند یا کیف پولش را خرج کند."""
     staff, _ = _user_headers(client, "manager")
     b = client.post(
-        "/api/v1/members/", json={"phone": "09124440001", "full_name": "قربانی", "gender": "male"}, headers=staff
+        "/api/v1/members/",
+        json={"phone": "09124440001", "full_name": "قربانی", "gender": "male"},
+        headers=staff,
     ).json()
     h, mid = _user_headers(client, "member", member_phone="09124440002")
     # چک‌این به‌جای دیگری
@@ -243,7 +249,9 @@ def test_staff_accesses_all(client):
     """ادمین به همهٔ داده‌ها دسترسی دارد (قاعدهٔ مالک)."""
     staff, _ = _user_headers(client, "manager")
     b = client.post(
-        "/api/v1/members/", json={"phone": "09125550001", "full_name": "هر کسی", "gender": "male"}, headers=staff
+        "/api/v1/members/",
+        json={"phone": "09125550001", "full_name": "هر کسی", "gender": "male"},
+        headers=staff,
     ).json()
     assert client.get(f"/api/v1/members/{b['id']}", headers=staff).status_code == 200
     assert client.get(f"/api/v1/payments/invoice/{b['id']}", headers=staff).status_code == 200

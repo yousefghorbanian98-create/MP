@@ -13,6 +13,18 @@ router = APIRouter(
 )
 
 
+# ── M45-c2: فهرست برنامه‌های باشگاه برای استودیو (جایگزین mock) [finn] ──
+
+
+@router.get("", summary="فهرست برنامه‌های باشگاه با وضعیت گردش کاری (M45-c2)")
+def list_programs(
+    db: DbSession,
+    status: str | None = None,
+    limit: int = 200,
+):
+    return service.list_programs_summary(db, status=status, limit=limit)
+
+
 @router.get(
     "/member/{member_id}", response_model=list[ProgramOut], summary="برنامه‌های عضو (US-104)"
 )

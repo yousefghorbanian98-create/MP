@@ -12,7 +12,9 @@ depends_on = None
 
 
 def upgrade() -> None:
-    op.add_column("checkins", sa.Column("checked_out_at", sa.DateTime(timezone=True), nullable=True))
+    op.add_column(
+        "checkins", sa.Column("checked_out_at", sa.DateTime(timezone=True), nullable=True)
+    )
 
 
 def downgrade() -> None:

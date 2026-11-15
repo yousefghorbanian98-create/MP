@@ -51,11 +51,7 @@ def test_import_catalog_idempotent(session) -> None:
 
 def test_import_catalog_row_fields(session) -> None:
     import_catalog(session)
-    row = (
-        session.query(CatalogExercise)
-        .filter(CatalogExercise.name.ilike("%3/4 sit-up%"))
-        .one()
-    )
+    row = session.query(CatalogExercise).filter(CatalogExercise.name.ilike("%3/4 sit-up%")).one()
     assert row.category == "strength"
     assert row.level == "beginner"
     assert json.loads(row.primary_muscles) == ["abdominals"]

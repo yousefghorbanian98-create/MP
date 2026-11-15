@@ -1,5 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { MemberTable } from "../components/MemberTable";
+import { fetchAssessmentHistory, fetchAssessmentMatrix, fetchMembersSummary } from "../lib/api";
+import { fa, useApi } from "../lib/useApi";
 import { useAppStore } from "../stores/appStore";
 
 const domains = [
@@ -15,8 +17,26 @@ const genderTabs = [
 ];
 
 export function Members() {
-  const { selectedMemberId, selectMember, members, genderFilter, setGenderFilter } = useAppStore();
-  const member = members.find((m) => m.id === selectedMemberId) ?? null;
+  const { selectedMemberId, selectMember, genderFilter, setGenderFilter } = useAppStore();
+  // داده از API می‌آید (MemberTable خودش می‌خواند)؛ اینجا فقط برای پنل جزئیات
+  const { data } = useApi((s) => fetchMembersSummary(undefined, s), []);
+  const member = data?.items.find((m) => m.member_id === selectedMemberId) ?? null;
+
+  const history = useApi(
+    (s) => (member ? fetchAssessmentHistory(member.member_id, undefined, s) : Promise.resolve([])),
+    [member?.member_id],
+  );
+  const latestAssessment = history.data?.[0] ?? null;
+  const matrixState = useApi(
+    (s) =>
+      latestAssessment
+        ? fetchAssessmentMatrix(latestAssessment.assessment_id, undefined, s)
+        : Promise.resolve(null),
+    [latestAssessment?.assessment_id],
+  );
+  const matrix = matrixState.data;
+  const historyLoading = history.loading || matrixState.loading;
+  const matrixError = matrixState.error ?? "ماتریس ارزیابی دریافت نشد";
 
   return (
     <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
@@ -43,7 +63,7 @@ export function Members() {
       <AnimatePresence mode="wait">
         {member ? (
           <motion.div
-            key={member.id}
+            key={member.member_id}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
@@ -53,14 +73,16 @@ export function Members() {
             <div className="flex items-center gap-3">
               <div
                 className="flex h-14 w-14 items-center justify-center rounded-2xl text-lg font-bold text-white"
-                style={{ background: `linear-gradient(135deg, hsl(${member.avatarHue} 60% 38%), hsl(${member.avatarHue} 55% 22%))` }}
+                style={{
+                  background: `linear-gradient(135deg, hsl(${(member.member_id * 47) % 360} 60% 38%), hsl(${(member.member_id * 47) % 360} 55% 22%))`,
+                }}
               >
-                {member.name.slice(0, 1)}
+                {(member.full_name || "?").slice(0, 1)}
               </div>
               <div>
-                <h3 className="text-lg font-bold">{member.name}</h3>
+                <h3 className="text-lg font-bold">{member.full_name || "بدون نام"}</h3>
                 <p className="text-xs text-ink-dim">
-                  {member.phone} · هدف: {member.goal} ·{" "}
+                  {member.phone || "—"} · هدف: {member.goal} ·{" "}
                   <span className={member.gender === "female" ? "text-pink-400" : "text-sky-400"}>
                     {member.gender === "female" ? "بانو" : "آقا"}
                   </span>
@@ -70,35 +92,59 @@ export function Members() {
 
             <div className="mt-5 grid grid-cols-2 gap-3">
               <div className="rounded-xl bg-surface/70 p-3 text-center">
-                <p className="text-2xl font-bold text-primary-light">{member.daysLeft.toLocaleString("fa-IR")}</p>
+                <p className="text-2xl font-bold text-primary-light">
+                  {member.days_left == null ? "—" : fa(member.days_left)}
+                </p>
                 <p className="text-xs text-ink-dim">روز باقی‌مانده</p>
               </div>
               <div className="rounded-xl bg-surface/70 p-3 text-center">
-                <p className="text-2xl font-bold text-accent-soft">۸۶٪</p>
-                <p className="text-xs text-ink-dim">پایبندی برنامه</p>
+                <p className="text-2xl font-bold text-accent-soft">
+                  {member.plan_name ?? "—"}
+                </p>
+                <p className="text-xs text-ink-dim">پلن فعلی</p>
               </div>
             </div>
 
-            <h4 className="mt-5 text-sm font-semibold">ارزیابی ۱۴ دامنه</h4>
-            <div className="mt-3 space-y-2">
-              {domains.map((d, i) => {
-                const score = ((member.id * 7 + i * 3) % 5) + 1;
-                return (
-                  <div key={d} className="flex items-center gap-2">
-                    <span className="w-28 shrink-0 text-[11px] text-ink-dim">{d}</span>
+            <h4 className="mt-5 text-sm font-semibold">
+              ارزیابی ۱۴ محور
+              {matrix && (
+                <span className="mr-2 text-[11px] font-normal text-ink-dim">
+                  {matrix.status} · {matrix.rule_versions?.score}
+                </span>
+              )}
+            </h4>
+            {historyLoading ? (
+              <p className="mt-3 text-xs text-ink-dim">در حال دریافت…</p>
+            ) : !latestAssessment ? (
+              <p className="mt-3 rounded-lg bg-surface/50 p-3 text-xs text-ink-dim">
+                این عضو هیچ ارزیابی ثبت‌شده‌ای ندارد — نمره‌ای نمایش داده نمی‌شود.
+              </p>
+            ) : matrix ? (
+              <div className="mt-3 space-y-2">
+                {matrix.axes.map((axis, i) => (
+                  <div key={axis.axis} className="flex items-center gap-2">
+                    <span className="w-28 shrink-0 text-[11px] text-ink-dim">{axis.name_fa}</span>
                     <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-surface">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: `${(score / 5) * 100}%` }}
-                        transition={{ delay: i * 0.04, duration: 0.5 }}
-                        className="h-full rounded-full bg-gradient-to-l from-primary to-primary-light"
-                      />
+                      {axis.score == null ? (
+                        <div className="h-full w-full bg-[repeating-linear-gradient(45deg,rgba(156,163,175,0.25)_0_4px,transparent_4px_8px)]" />
+                      ) : (
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: `${axis.score}%` }}
+                          transition={{ delay: i * 0.04, duration: 0.5 }}
+                          className="h-full rounded-full bg-gradient-to-l from-primary to-primary-light"
+                        />
+                      )}
                     </div>
-                    <span className="w-6 text-left text-[11px] text-ink-dim">{score.toLocaleString("fa-IR")}</span>
+                    <span className="w-10 text-left text-[11px] text-ink-dim">
+                      {axis.score == null ? "نامعلوم" : fa(axis.score)}
+                    </span>
                   </div>
-                );
-              })}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <p className="mt-3 text-xs text-danger">{matrixError}</p>
+            )}
 
             <div className="mt-5 flex gap-2">
               <button className="btn-primary flex-1">ساخت برنامه</button>

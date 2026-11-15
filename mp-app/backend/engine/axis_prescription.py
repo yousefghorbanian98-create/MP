@@ -27,15 +27,17 @@ DEFAULT_FATIGUE_BUDGET = 14.0
 
 def _covering(movements: list[dict], axis: int, min_weight: float) -> list[dict]:
     return [
-        m for m in movements
-        if float(m.get("axis_coverage", {}).get(str(axis), 0.0)) >= min_weight
+        m for m in movements if float(m.get("axis_coverage", {}).get(str(axis), 0.0)) >= min_weight
     ]
 
 
 def _pick_level(movers: list[dict], prefer_low: bool) -> dict | None:
     if not movers:
         return None
-    return sorted(movers, key=lambda m: (m.get("level", 99) if prefer_low else -m.get("level", 0), m["external_id"]))[0]
+    return sorted(
+        movers,
+        key=lambda m: (m.get("level", 99) if prefer_low else -m.get("level", 0), m["external_id"]),
+    )[0]
 
 
 def prescribe_axis_work(
@@ -51,7 +53,10 @@ def prescribe_axis_work(
         raise ApiError("کاتالوگ حرکات خالی است", code="missing_movements")
     for m in movements:
         if "external_id" not in m or not m.get("axis_coverage"):
-            raise ApiError("حرکت بدون external_id یا بردار پوشش — داده ناشناخته است نه صفر", code="invalid_movement")
+            raise ApiError(
+                "حرکت بدون external_id یا بردار پوشش — داده ناشناخته است نه صفر",
+                code="invalid_movement",
+            )
 
     axis_plans: dict[int, dict] = {}
     selected: dict[str, dict] = {}  # external_id → movement (dedup)
@@ -79,7 +84,11 @@ def prescribe_axis_work(
     # پاس ۱: direct + maintain (تا پوشش‌ها در پاس ۲ دیده شوند)؛ پاس ۲: covered
     pass1 = [a for a in sorted(decisions) if decisions[a].get("state") in ("direct", "maintain")]
     pass2 = [a for a in sorted(decisions) if decisions[a].get("state") == "covered"]
-    pass3 = [a for a in sorted(decisions) if decisions[a].get("state") not in ("direct", "maintain", "covered")]
+    pass3 = [
+        a
+        for a in sorted(decisions)
+        if decisions[a].get("state") not in ("direct", "maintain", "covered")
+    ]
 
     for axis in pass1 + pass2 + pass3:
         d = decisions[axis]
@@ -99,7 +108,8 @@ def prescribe_axis_work(
                 plan_for_axis["sets"] = MAINTAIN_SETS
         elif state == "covered":
             carriers = [
-                m for m in selected.values()
+                m
+                for m in selected.values()
                 if float(m.get("axis_coverage", {}).get(str(axis), 0.0)) >= COVERED_MIN_WEIGHT
             ]
             if carriers:
@@ -108,8 +118,10 @@ def prescribe_axis_work(
                 plan_for_axis["reason"] += " — پوشش از حرکات منتخب دیگر"
             else:
                 multi = [
-                    m for m in _covering(movements, axis, COVERED_MIN_WEIGHT)
-                    if sum(1 for w in m["axis_coverage"].values() if float(w) >= COVERED_MIN_WEIGHT) >= 2
+                    m
+                    for m in _covering(movements, axis, COVERED_MIN_WEIGHT)
+                    if sum(1 for w in m["axis_coverage"].values() if float(w) >= COVERED_MIN_WEIGHT)
+                    >= 2
                 ]
                 mover = _pick_level(multi, prefer_low=True)
                 if mover is not None:
@@ -143,15 +155,28 @@ def prescribe_axis_work(
             for mid, sets in sets_by_movement.items()
             if sets > 0
         ]
-    load = tally_weekly_load(entries) if entries else {
-        "total_fatigue": 0.0, "axis_totals": {}, "movements_counted": 0,
-        "reason": "هیچ حرکتی تجویز نشد", "rule_version": LOAD_RULES_VERSION,
-    }
+    load = (
+        tally_weekly_load(entries)
+        if entries
+        else {
+            "total_fatigue": 0.0,
+            "axis_totals": {},
+            "movements_counted": 0,
+            "reason": "هیچ حرکتی تجویز نشد",
+            "rule_version": LOAD_RULES_VERSION,
+        }
+    )
     return {
         "axis_plans": [axis_plans[a] for a in sorted(axis_plans)],
         "selected": [
-            {**{k: selected[mid][k] for k in ("external_id", "name_fa", "intensity_band", "progression_key") if k in selected[mid]},
-             "sets": sets_by_movement.get(mid, 0.0)}
+            {
+                **{
+                    k: selected[mid][k]
+                    for k in ("external_id", "name_fa", "intensity_band", "progression_key")
+                    if k in selected[mid]
+                },
+                "sets": sets_by_movement.get(mid, 0.0),
+            }
             for mid in selected
         ],
         "load": load,

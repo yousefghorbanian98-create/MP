@@ -32,10 +32,10 @@ AXES_FA: dict[int, str] = {
 }
 
 # حالت‌های چهارگانه (کلیدهای پایدار)
-STATE_DIRECT = "direct"        # تمرین مستقیم
-STATE_COVERED = "covered"      # پوشش در تکلیف دیگر
-STATE_MAINTAIN = "maintain"    # نگهداری
-STATE_REFER = "refer"          # ارجاع
+STATE_DIRECT = "direct"  # تمرین مستقیم
+STATE_COVERED = "covered"  # پوشش در تکلیف دیگر
+STATE_MAINTAIN = "maintain"  # نگهداری
+STATE_REFER = "refer"  # ارجاع
 
 STATE_LABELS_FA = {
     STATE_DIRECT: "تمرین مستقیم",
@@ -45,7 +45,7 @@ STATE_LABELS_FA = {
 }
 
 # آستانه‌ها (نسخه‌دار — تا بازبینی در M40)
-THRESH_DIRECT_MAX = 40    # score < 40 ← تمرین مستقیم
+THRESH_DIRECT_MAX = 40  # score < 40 ← تمرین مستقیم
 THRESH_MAINTAIN_MIN = 75  # score ≥ 75 ← نگهداری؛ بین ← پوشش در تکلیف دیگر
 
 
@@ -125,7 +125,9 @@ def decide_program_axes(
     decisions = []
     for axis in sorted(AXES_FA):
         if axis not in scores:
-            raise ApiError(f"نمرهٔ محور {axis} ثبت نشده — داده ناشناخته است نه صفر", code="missing_score")
+            raise ApiError(
+                f"نمرهٔ محور {axis} ثبت نشده — داده ناشناخته است نه صفر", code="missing_score"
+            )
         decisions.append(
             decide_axis(
                 axis=axis,
@@ -201,7 +203,9 @@ def tally_weekly_load(entries: list[dict]) -> dict:
     movements_seen: list[str] = []
     for entry in entries:
         if entry.get("rule_version") != LOAD_RULES_VERSION:
-            raise ApiError("entry با نسخهٔ قاعدهٔ ناشناخته — از attribute_load استفاده کن", code="invalid_entry")
+            raise ApiError(
+                "entry با نسخهٔ قاعدهٔ ناشناخته — از attribute_load استفاده کن", code="invalid_entry"
+            )
         total_fatigue += entry["fatigue_units"]
         movements_seen.append(entry["movement_id"])
         for axis, credit in entry["axis_credit"].items():

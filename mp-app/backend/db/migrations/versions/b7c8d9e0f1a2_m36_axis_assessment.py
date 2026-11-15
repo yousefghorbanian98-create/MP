@@ -15,19 +15,35 @@ def upgrade() -> None:
     op.create_table(
         "axis_assessments",
         sa.Column("id", sa.Integer(), primary_key=True),
-        sa.Column("member_id", sa.Integer(), sa.ForeignKey("members.id", ondelete="CASCADE"), nullable=False, index=True),
+        sa.Column(
+            "member_id",
+            sa.Integer(),
+            sa.ForeignKey("members.id", ondelete="CASCADE"),
+            nullable=False,
+            index=True,
+        ),
         sa.Column("coach_id", sa.Integer(), sa.ForeignKey("users.id"), nullable=True),
         sa.Column("branch_id", sa.Integer(), nullable=False, server_default="1", index=True),
         sa.Column("status", sa.String(length=16), nullable=False, server_default="draft"),
         sa.Column("notes", sa.Text(), nullable=False, server_default=""),
         sa.Column("meta", sa.Text(), nullable=False, server_default="{}"),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
-        sa.Column("updated_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
+        sa.Column(
+            "created_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False
+        ),
+        sa.Column(
+            "updated_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False
+        ),
     )
     op.create_table(
         "axis_scores",
         sa.Column("id", sa.Integer(), primary_key=True),
-        sa.Column("assessment_id", sa.Integer(), sa.ForeignKey("axis_assessments.id", ondelete="CASCADE"), nullable=False, index=True),
+        sa.Column(
+            "assessment_id",
+            sa.Integer(),
+            sa.ForeignKey("axis_assessments.id", ondelete="CASCADE"),
+            nullable=False,
+            index=True,
+        ),
         sa.Column("axis", sa.Integer(), nullable=False),
         sa.Column("score", sa.Float(), nullable=True),
         sa.Column("quality", sa.String(length=20), nullable=False, server_default="missing"),
@@ -37,7 +53,13 @@ def upgrade() -> None:
     op.create_table(
         "field_test_results",
         sa.Column("id", sa.Integer(), primary_key=True),
-        sa.Column("assessment_id", sa.Integer(), sa.ForeignKey("axis_assessments.id", ondelete="CASCADE"), nullable=False, index=True),
+        sa.Column(
+            "assessment_id",
+            sa.Integer(),
+            sa.ForeignKey("axis_assessments.id", ondelete="CASCADE"),
+            nullable=False,
+            index=True,
+        ),
         sa.Column("test_key", sa.String(length=40), nullable=False, index=True),
         sa.Column("raw_value", sa.Float(), nullable=False),
         sa.Column("unit", sa.String(length=20), nullable=False, server_default=""),

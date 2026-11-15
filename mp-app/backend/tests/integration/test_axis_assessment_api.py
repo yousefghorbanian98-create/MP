@@ -135,7 +135,10 @@ def test_missing_axis_scores_are_unknown_not_zero(client, auth, member_ids):
     h = auth("coach")
     res = client.post(
         "/api/v1/axis-assessments",
-        json={"member_id": member_ids["member_id"], "tests": [{"test_key": "pushup_1min", "raw_value": 18.0}]},
+        json={
+            "member_id": member_ids["member_id"],
+            "tests": [{"test_key": "pushup_1min", "raw_value": 18.0}],
+        },
         headers=h,
     )
     assert res.status_code == 200, res.text
@@ -168,7 +171,10 @@ def test_validation_unknown_test_and_missing_birthdate(client, auth, member_ids,
     # آزمون ناشناخته
     res = client.post(
         "/api/v1/axis-assessments",
-        json={"member_id": member_ids["member_id"], "tests": [{"test_key": "mystery_test", "raw_value": 5}]},
+        json={
+            "member_id": member_ids["member_id"],
+            "tests": [{"test_key": "mystery_test", "raw_value": 5}],
+        },
         headers=h,
     )
     assert res.status_code == 400
@@ -176,7 +182,10 @@ def test_validation_unknown_test_and_missing_birthdate(client, auth, member_ids,
     # rubric خارج بازه
     res2 = client.post(
         "/api/v1/axis-assessments",
-        json={"member_id": member_ids["member_id"], "tests": [{"test_key": "rubric_balance", "raw_value": 150}]},
+        json={
+            "member_id": member_ids["member_id"],
+            "tests": [{"test_key": "rubric_balance", "raw_value": 150}],
+        },
         headers=h,
     )
     assert res2.status_code == 400
@@ -259,8 +268,22 @@ def test_set_feedback_endpoint_g1(client, auth, member_ids):
         json={
             "member_id": member_ids["member_id"],
             "entries": [
-                {"movement_id": "pushup-l1", "weight": 0, "target_reps": 10, "reps_done": 12, "rir": 3, "soreness": 2},
-                {"movement_id": "pushup-l1", "weight": 0, "target_reps": 10, "reps_done": 11, "rir": 2, "soreness": 8},
+                {
+                    "movement_id": "pushup-l1",
+                    "weight": 0,
+                    "target_reps": 10,
+                    "reps_done": 12,
+                    "rir": 3,
+                    "soreness": 2,
+                },
+                {
+                    "movement_id": "pushup-l1",
+                    "weight": 0,
+                    "target_reps": 10,
+                    "reps_done": 11,
+                    "rir": 2,
+                    "soreness": 8,
+                },
             ],
         },
         headers=h,

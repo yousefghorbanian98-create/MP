@@ -1,32 +1,94 @@
 import { motion } from "framer-motion";
+import { useState } from "react";
+import { fetchProgramsSummary } from "../lib/api";
+import { fa, useApi } from "../lib/useApi";
 
-const programs = [
-  { id: 1, member: "علی رضایی", goal: "حجم‌سازی", status: "draft", engine: "rules-1.0", weeks: 4 },
-  { id: 2, member: "سارا محمدی", goal: "کاهش وزن", status: "approved", engine: "rules-1.0", weeks: 6 },
-  { id: 3, member: "رضا کریمی", goal: "آمادگی جسمانی", status: "draft", engine: "rules-1.0", weeks: 4 },
-  { id: 4, member: "نگار صادقی", goal: "کاهش وزن", status: "rejected", engine: "rules-1.0", weeks: 4 },
-];
-
+/**
+ * برنامه‌ها (M45-c2) — از `GET /programs` واقعی، نه mock.
+ *
+ * فقط برنامه‌های ثبت‌شده در DB نمایش داده می‌شوند. برچسب‌های عضلانی قبلی
+ * («سینه/پا/پشت/بازو») ساختگی بودند چون داده‌شان در پاسخ نبود و حذف شدند.
+ */
 const statusMap: Record<string, { label: string; cls: string }> = {
   draft: { label: "در انتظار تأیید مربی", cls: "pill-gold" },
   approved: { label: "تأییدشده", cls: "pill-green" },
   rejected: { label: "ردشده", cls: "pill-red" },
 };
 
-/** برنامه‌ها — خروجی موتور قواعد در انتظار تأیید مربی (G8). */
+const filters = [
+  { key: null as string | null, label: "همه" },
+  { key: "draft", label: "در انتظار" },
+  { key: "approved", label: "تأییدشده" },
+  { key: "rejected", label: "ردشده" },
+];
+
 export function Programs() {
+  const [status, setStatus] = useState<string | null>(null);
+  const { data, loading, error, needsToken, reload } = useApi(
+    (s) => fetchProgramsSummary(status, undefined, s),
+    [status],
+  );
+
+  const items = data?.items ?? [];
+
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="space-y-4"
+    >
       <div className="glass-card flex items-center gap-3 border-accent/25 p-4">
         <span className="text-xl">⚖️</span>
         <p className="text-sm text-ink-dim">
-          اعداد بار/ست/تکرار فقط از <b className="text-accent-soft">موتور قواعد قطعی</b> تولید می‌شوند (قانون G8)؛
-          مربی پیش از نمایش به عضو، برنامه را تأیید می‌کند.
+          اعداد بار/ست/تکرار فقط از <b className="text-accent-soft">موتور قواعد قطعی</b> تولید
+          می‌شوند (قانون G8)؛ مربی پیش از نمایش به عضو، برنامه را تأیید می‌کند.
         </p>
       </div>
 
+      <div className="flex flex-wrap items-center gap-2">
+        {filters.map((f) => (
+          <button
+            key={f.label}
+            onClick={() => setStatus(f.key)}
+            className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-colors ${
+              status === f.key
+                ? "bg-primary text-white"
+                : "bg-surface/70 text-ink-dim hover:text-ink"
+            }`}
+          >
+            {f.label}
+            {f.key && data?.counts_by_status?.[f.key] != null
+              ? ` (${fa(data.counts_by_status[f.key])})`
+              : ""}
+          </button>
+        ))}
+        {data && (
+          <span className="mr-auto text-[11px] text-ink-dim">قاعده: {data.rule_version}</span>
+        )}
+      </div>
+
+      {needsToken && (
+        <div className="glass-card border border-gold/30 p-4 text-sm text-gold">
+          توکن مدیر لازم است — برنامه‌ها از API واقعی خوانده می‌شوند.
+        </div>
+      )}
+      {error && !needsToken && (
+        <div className="glass-card flex items-center justify-between border border-danger/30 p-4">
+          <p className="text-sm text-danger">{error}</p>
+          <button onClick={reload} className="text-xs text-primary-light underline">
+            تلاش دوباره
+          </button>
+        </div>
+      )}
+      {loading && <p className="text-sm text-ink-dim">در حال دریافت…</p>}
+      {!loading && !error && items.length === 0 && (
+        <p className="glass-card p-10 text-center text-sm text-ink-dim">
+          هیچ برنامه‌ای با این فیلتر ثبت نشده — دادهٔ نمایشی ساخته نمی‌شود.
+        </p>
+      )}
+
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        {programs.map((p, i) => (
+        {items.map((p, i) => (
           <motion.div
             key={p.id}
             initial={{ opacity: 0, y: 16 }}
@@ -37,19 +99,34 @@ export function Programs() {
           >
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="font-semibold">{p.member}</h3>
-                <p className="text-xs text-ink-dim">هدف: {p.goal} · {p.weeks.toLocaleString("fa-IR")} هفته · نسخهٔ موتور {p.engine}</p>
+                <h3 className="font-semibold">{p.member_name || "بدون نام"}</h3>
+                <p className="text-xs text-ink-dim">
+                  هدف: {p.goal || "—"} · {fa(p.weeks_count)} هفته · نسخهٔ موتور{" "}
+                  {p.engine_version || "—"}
+                </p>
               </div>
-              <span className={statusMap[p.status].cls}>{statusMap[p.status].label}</span>
+              <span className={(statusMap[p.status] ?? statusMap.draft).cls}>
+                {(statusMap[p.status] ?? { label: p.status }).label}
+              </span>
             </div>
-            <div className="mt-4 flex items-center justify-between">
-              <div className="flex -space-x-2 space-x-reverse">
-                {["سینه", "پا", "پشت", "بازو"].map((g, j) => (
-                  <span key={g} className="rounded-lg border border-primary/15 bg-surface/80 px-2 py-1 text-[11px] text-ink-dim">
-                    {g}
-                  </span>
-                ))}
-              </div>
+
+            {p.llm_explanation && (
+              <p className="mt-3 rounded-lg bg-surface/60 p-3 text-xs text-ink-dim">
+                {p.llm_explanation}
+              </p>
+            )}
+            {p.reject_reason && (
+              <p className="mt-3 rounded-lg bg-danger/10 p-3 text-xs text-danger">
+                دلیل رد: {p.reject_reason}
+              </p>
+            )}
+
+            <div className="mt-4 flex items-center justify-between text-[11px] text-ink-dim">
+              <span>
+                {p.approved_at
+                  ? `تأیید: ${new Date(p.approved_at).toLocaleDateString("fa-IR")}`
+                  : "تأیید نشده"}
+              </span>
               {p.status === "draft" && (
                 <div className="flex gap-2">
                   <button className="btn-primary px-3 py-1.5 text-xs">تأیید</button>

@@ -21,8 +21,12 @@ def upgrade() -> None:
         sa.Column("license", sa.String(length=40), nullable=False, server_default=""),
         sa.Column("digest", sa.String(length=64), nullable=False, server_default=""),
         sa.Column("exercise_count", sa.Integer(), nullable=False, server_default="0"),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
-        sa.Column("updated_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
+        sa.Column(
+            "created_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False
+        ),
+        sa.Column(
+            "updated_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False
+        ),
     )
     op.create_table(
         "catalog_exercises",
@@ -39,8 +43,12 @@ def upgrade() -> None:
         sa.Column("secondary_muscles", sa.Text(), nullable=False, server_default="[]"),
         sa.Column("instructions", sa.Text(), nullable=False, server_default="[]"),
         sa.Column("image_refs", sa.Text(), nullable=False, server_default="[]"),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
-        sa.Column("updated_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
+        sa.Column(
+            "created_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False
+        ),
+        sa.Column(
+            "updated_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False
+        ),
     )
 
 

@@ -42,7 +42,9 @@ def aggregate_axis_scores(test_scores: dict[str, dict]) -> dict[int, dict]:
             if entry and entry.get("score") is not None:
                 weighted.append((float(entry["score"]) * weight, entry.get("quality", "")))
         total_weight = sum(
-            weight for test_key, weight in mapping if test_scores.get(test_key, {}).get("score") is not None
+            weight
+            for test_key, weight in mapping
+            if test_scores.get(test_key, {}).get("score") is not None
         )
         if not weighted or total_weight <= 0:
             out[axis] = {"score": None, "quality": "missing"}

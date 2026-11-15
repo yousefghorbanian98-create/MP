@@ -76,7 +76,7 @@ jobs:
       - name: Commit diagnostics on failure
         if: failure()
         env:
-          BRANCH: arena/a0408b29-mp
+          BRANCH: ${{ github.head_ref || github.ref_name }}
         run: |
           set -o pipefail
           git config user.name "mp-apk-ci"
@@ -96,7 +96,7 @@ jobs:
       - name: Commit APK into repo (delivery)
         if: success()
         env:
-          BRANCH: arena/a0408b29-mp
+          BRANCH: ${{ github.head_ref || github.ref_name }}
         run: |
           set -o pipefail
           git config user.name "mp-apk-ci"

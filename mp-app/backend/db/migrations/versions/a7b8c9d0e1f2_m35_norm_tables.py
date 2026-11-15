@@ -28,8 +28,12 @@ def upgrade() -> None:
         sa.Column("sdc_note", sa.String(length=200), nullable=False, server_default=""),
         sa.Column("source", sa.String(length=300), nullable=False),
         sa.Column("source_version", sa.String(length=60), nullable=False, server_default=""),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
-        sa.Column("updated_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
+        sa.Column(
+            "created_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False
+        ),
+        sa.Column(
+            "updated_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False
+        ),
         sa.UniqueConstraint("test_key", "sex", "age_min", "age_max", name="uq_norm_test_sex_age"),
     )
 

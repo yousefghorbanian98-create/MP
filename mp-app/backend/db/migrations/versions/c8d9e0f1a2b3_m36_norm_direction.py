@@ -13,7 +13,11 @@ depends_on = None
 
 def upgrade() -> None:
     with op.batch_alter_table("norm_entries") as batch:
-        batch.add_column(sa.Column("direction", sa.String(length=20), nullable=False, server_default="higher_better"))
+        batch.add_column(
+            sa.Column(
+                "direction", sa.String(length=20), nullable=False, server_default="higher_better"
+            )
+        )
 
 
 def downgrade() -> None:
