@@ -172,6 +172,87 @@ unformatted: File would be reformatted
    |
 
 unformatted: File would be reformatted
+   --> engine/axis_prescription.py:30:29
+    |
+29  |     return [
+    -         m for m in movements
+    -         if float(m.get("axis_coverage", {}).get(str(axis), 0.0)) >= min_weight
+30  +         m for m in movements if float(m.get("axis_coverage", {}).get(str(axis), 0.0)) >= min_weight
+31  |     ]
+--------------------------------------------------------------------------------
+36  |         return None
+    -     return sorted(movers, key=lambda m: (m.get("level", 99) if prefer_low else -m.get("level", 0), m["external_id"]))[0]
+37  +     return sorted(
+38  +         movers,
+39  +         key=lambda m: (m.get("level", 99) if prefer_low else -m.get("level", 0), m["external_id"]),
+40  +     )[0]
+41  |
+--------------------------------------------------------------------------------
+55  |         if "external_id" not in m or not m.get("axis_coverage"):
+    -             raise ApiError("حرکت بدون external_id یا بردار پوشش — داده ناشناخته است نه صفر", code="invalid_movement")
+56  +             raise ApiError(
+57  +                 "حرکت بدون external_id یا بردار پوشش — داده ناشناخته است نه صفر",
+58  +                 code="invalid_movement",
+59  +             )
+60  |
+--------------------------------------------------------------------------------
+86  |     pass2 = [a for a in sorted(decisions) if decisions[a].get("state") == "covered"]
+    -     pass3 = [a for a in sorted(decisions) if decisions[a].get("state") not in ("direct", "maintain", "covered")]
+87  +     pass3 = [
+88  +         a
+89  +         for a in sorted(decisions)
+90  +         if decisions[a].get("state") not in ("direct", "maintain", "covered")
+91  +     ]
+92  |
+--------------------------------------------------------------------------------
+110 |             carriers = [
+    -                 m for m in selected.values()
+111 +                 m
+112 +                 for m in selected.values()
+113 |                 if float(m.get("axis_coverage", {}).get(str(axis), 0.0)) >= COVERED_MIN_WEIGHT
+--------------------------------------------------------------------------------
+120 |                 multi = [
+    -                     m for m in _covering(movements, axis, COVERED_MIN_WEIGHT)
+    -                     if sum(1 for w in m["axis_coverage"].values() if float(w) >= COVERED_MIN_WEIGHT) >= 2
+121 +                     m
+122 +                     for m in _covering(movements, axis, COVERED_MIN_WEIGHT)
+123 +                     if sum(1 for w in m["axis_coverage"].values() if float(w) >= COVERED_MIN_WEIGHT)
+124 +                     >= 2
+125 |                 ]
+--------------------------------------------------------------------------------
+155 |         ]
+    -     load = tally_weekly_load(entries) if entries else {
+    -         "total_fatigue": 0.0, "axis_totals": {}, "movements_counted": 0,
+    -         "reason": "هیچ حرکتی تجویز نشد", "rule_version": LOAD_RULES_VERSION,
+    -     }
+156 +     load = (
+157 +         tally_weekly_load(entries)
+158 +         if entries
+159 +         else {
+160 +             "total_fatigue": 0.0,
+161 +             "axis_totals": {},
+162 +             "movements_counted": 0,
+163 +             "reason": "هیچ حرکتی تجویز نشد",
+164 +             "rule_version": LOAD_RULES_VERSION,
+165 +         }
+166 +     )
+167 |     return {
+168 |         "axis_plans": [axis_plans[a] for a in sorted(axis_plans)],
+169 |         "selected": [
+    -             {**{k: selected[mid][k] for k in ("external_id", "name_fa", "intensity_band", "progression_key") if k in selected[mid]},
+    -              "sets": sets_by_movement.get(mid, 0.0)}
+170 +             {
+171 +                 **{
+172 +                     k: selected[mid][k]
+173 +                     for k in ("external_id", "name_fa", "intensity_band", "progression_key")
+174 +                     if k in selected[mid]
+175 +                 },
+176 +                 "sets": sets_by_movement.get(mid, 0.0),
+177 +             }
+178 |             for mid in selected
+    |
+
+unformatted: File would be reformatted
    --> engine/axis_rules.py:35:26
     |
 34  | # حالت‌های چهارگانه (کلیدهای پایدار)
@@ -1556,4 +1637,4 @@ unformatted: File would be reformatted
 60 |     }
    |
 
-23 files would be reformatted, 166 files already formatted
+24 files would be reformatted, 167 files already formatted
