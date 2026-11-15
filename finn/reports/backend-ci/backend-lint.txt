@@ -90,6 +90,19 @@ unformatted: File would be reformatted
    |
 
 unformatted: File would be reformatted
+  --> db/migrations/versions/c8d9e0f1a2b3_m36_norm_direction.py:16:26
+   |
+15 |     with op.batch_alter_table("norm_entries") as batch:
+   -         batch.add_column(sa.Column("direction", sa.String(length=20), nullable=False, server_default="higher_better"))
+16 +         batch.add_column(
+17 +             sa.Column(
+18 +                 "direction", sa.String(length=20), nullable=False, server_default="higher_better"
+19 +             )
+20 +         )
+21 |
+   |
+
+unformatted: File would be reformatted
   --> db/migrations/versions/d4e5f6a1b2c3_m33_axis_schema.py:17:26
    |
 16 |         batch.add_column(sa.Column("axis_coverage", sa.Text(), nullable=False, server_default="{}"))
@@ -145,6 +158,17 @@ unformatted: File would be reformatted
 41 +             "updated_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False
 42 +         ),
 43 |     )
+   |
+
+unformatted: File would be reformatted
+  --> engine/axis_map.py:45:19
+   |
+44 |         total_weight = sum(
+   -             weight for test_key, weight in mapping if test_scores.get(test_key, {}).get("score") is not None
+45 +             weight
+46 +             for test_key, weight in mapping
+47 +             if test_scores.get(test_key, {}).get("score") is not None
+48 |         )
    |
 
 unformatted: File would be reformatted
@@ -233,6 +257,44 @@ unformatted: File would be reformatted
 78 +         (20, 23, 5.0, False),
 79 |     ]
    |
+
+unformatted: File would be reformatted
+  --> modules/axis_assessment/router.py:29:13
+   |
+28 |
+   - @router.get("/{assessment_id}/matrix", response_model=MatrixOut, summary="ماتریس درصد ۱۴ محور + تصمیم")
+29 + @router.get(
+30 +     "/{assessment_id}/matrix", response_model=MatrixOut, summary="ماتریس درصد ۱۴ محور + تصمیم"
+31 + )
+32 | def get_matrix(assessment_id: int, db: DbSession, user: CurrentUser):
+   |
+
+unformatted: File would be reformatted
+   --> modules/axis_assessment/service.py:28:24
+    |
+27  |     if member.birth_date is None:
+    -         raise ApiError("تاریخ تولد عضو ثبت نشده — داده ناشناخته است نه صفر", code="missing_birthdate")
+28  +         raise ApiError(
+29  +             "تاریخ تولد عضو ثبت نشده — داده ناشناخته است نه صفر", code="missing_birthdate"
+30  +         )
+31  |     today = date.today()
+    -     age = today.year - member.birth_date.year - (
+    -         (today.month, today.day) < (member.birth_date.month, member.birth_date.day)
+32  +     age = (
+33  +         today.year
+34  +         - member.birth_date.year
+35  +         - ((today.month, today.day) < (member.birth_date.month, member.birth_date.day))
+36  |     )
+--------------------------------------------------------------------------------
+203 |         "summary": summary,
+    -         "rule_versions": {"score": SCORE_VERSION, "axis_map": AXIS_MAP_VERSION, "decision": "axis-decision-1.0"},
+204 +         "rule_versions": {
+205 +             "score": SCORE_VERSION,
+206 +             "axis_map": AXIS_MAP_VERSION,
+207 +             "decision": "axis-decision-1.0",
+208 +         },
+209 |     }
+    |
 
 unformatted: File would be reformatted
    --> scripts/build_progressions.py:43:12
@@ -476,31 +538,121 @@ unformatted: File would be reformatted
    |
 
 unformatted: File would be reformatted
-   --> scripts/seed_norms.py:47:13
-    |
-46  |
-    - def _pushup(sex: str, age_min: int, age_max: int, p5: float, p25: float, p50: float, p75: float, p95: float) -> NormRow:
-47  + def _pushup(
-48  +     sex: str, age_min: int, age_max: int, p5: float, p25: float, p50: float, p75: float, p95: float
-49  + ) -> NormRow:
-50  |     return NormRow(
+  --> scripts/seed_criteria.py:25:24
+   |
+24 | RUBRICS: dict[str, tuple[int, str, dict]] = {
+   -     "rubric_balance": (2, "تعادل (تک‌پا + دامنهٔ حرکتی)", {"0-39": "ضعیف", "40-69": "متوسط", "70-89": "خوب", "90-100": "عالی"}),
+   -     "rubric_posture": (6, "وضعیت بدنی و تعادل عضلانی (چک‌لیست)", {"0-39": "ضعیف", "40-69": "متوسط", "70-89": "خوب", "90-100": "عالی"}),
+   -     "plank_secs": (7, "پلانک (ایزومتریک مرکز)", {"0-29": "ضعیف", "30-59": "متوسط", "60-119": "خوب", "120+": "عالی"}),
+   -     "rubric_coordination": (8, "هماهنگی و مهارت حرکتی (چک‌لیست)", {"0-39": "ضعیف", "40-69": "متوسط", "70-89": "خوب", "90-100": "عالی"}),
+   -     "rubric_lifting": (9, "مکانیک بدن و بلند کردن بار (چک‌لیست تکنیک)", {"0-39": "پرخطر", "40-69": "نیازمند اصلاح", "70-89": "قابل قبول", "90-100": "درست"}),
+   -     "rubric_breath": (11, "تنفس و کنترل فشار (مقیاس)", {"0-39": "ضعیف", "40-69": "متوسط", "70-89": "خوب", "90-100": "عالی"}),
+   -     "rubric_recovery": (12, "بازیابی/خواب/مدیریت بار (خودگزارش)", {"0-39": "نیازمند توجه", "40-69": "متوسط", "70-89": "خوب", "90-100": "عالی"}),
+   -     "rubric_body_awareness": (13, "پیشگیری آسیب و آگاهی بدن (چک‌لیست)", {"0-39": "ضعیف", "40-69": "متوسط", "70-89": "خوب", "90-100": "عالی"}),
+   -     "rubric_foundational": (14, "مهارت‌های پایهٔ زندگی ورزشی (چک‌لیست)", {"0-39": "ضعیف", "40-69": "متوسط", "70-89": "خوب", "90-100": "عالی"}),
+25 +     "rubric_balance": (
+26 +         2,
+27 +         "تعادل (تک‌پا + دامنهٔ حرکتی)",
+28 +         {"0-39": "ضعیف", "40-69": "متوسط", "70-89": "خوب", "90-100": "عالی"},
+29 +     ),
+30 +     "rubric_posture": (
+31 +         6,
+32 +         "وضعیت بدنی و تعادل عضلانی (چک‌لیست)",
+33 +         {"0-39": "ضعیف", "40-69": "متوسط", "70-89": "خوب", "90-100": "عالی"},
+34 +     ),
+35 +     "plank_secs": (
+36 +         7,
+37 +         "پلانک (ایزومتریک مرکز)",
+38 +         {"0-29": "ضعیف", "30-59": "متوسط", "60-119": "خوب", "120+": "عالی"},
+39 +     ),
+40 +     "rubric_coordination": (
+41 +         8,
+42 +         "هماهنگی و مهارت حرکتی (چک‌لیست)",
+43 +         {"0-39": "ضعیف", "40-69": "متوسط", "70-89": "خوب", "90-100": "عالی"},
+44 +     ),
+45 +     "rubric_lifting": (
+46 +         9,
+47 +         "مکانیک بدن و بلند کردن بار (چک‌لیست تکنیک)",
+48 +         {"0-39": "پرخطر", "40-69": "نیازمند اصلاح", "70-89": "قابل قبول", "90-100": "درست"},
+49 +     ),
+50 +     "rubric_breath": (
+51 +         11,
+52 +         "تنفس و کنترل فشار (مقیاس)",
+53 +         {"0-39": "ضعیف", "40-69": "متوسط", "70-89": "خوب", "90-100": "عالی"},
+54 +     ),
+55 +     "rubric_recovery": (
+56 +         12,
+57 +         "بازیابی/خواب/مدیریت بار (خودگزارش)",
+58 +         {"0-39": "نیازمند توجه", "40-69": "متوسط", "70-89": "خوب", "90-100": "عالی"},
+59 +     ),
+60 +     "rubric_body_awareness": (
+61 +         13,
+62 +         "پیشگیری آسیب و آگاهی بدن (چک‌لیست)",
+63 +         {"0-39": "ضعیف", "40-69": "متوسط", "70-89": "خوب", "90-100": "عالی"},
+64 +     ),
+65 +     "rubric_foundational": (
+66 +         14,
+67 +         "مهارت‌های پایهٔ زندگی ورزشی (چک‌لیست)",
+68 +         {"0-39": "ضعیف", "40-69": "متوسط", "70-89": "خوب", "90-100": "عالی"},
+69 +     ),
+70 | }
 --------------------------------------------------------------------------------
-64  |
+86 |             "direction": "higher_better",
+   -             "bands": json.dumps({"axis": axis, "labels": bands}, ensure_ascii=False, sort_keys=True),
+87 +             "bands": json.dumps(
+88 +                 {"axis": axis, "labels": bands}, ensure_ascii=False, sort_keys=True
+89 +             ),
+90 |             "sdc": None,
+   |
+
+unformatted: File would be reformatted
+   --> scripts/seed_norms.py:50:13
+    |
+49  |
+    - def _pushup(sex: str, age_min: int, age_max: int, p5: float, p25: float, p50: float, p75: float, p95: float) -> NormRow:
+50  + def _pushup(
+51  +     sex: str, age_min: int, age_max: int, p5: float, p25: float, p50: float, p75: float, p95: float
+52  + ) -> NormRow:
+53  |     return NormRow(
+--------------------------------------------------------------------------------
+67  |
     - def _reach(sex: str, age_min: int, age_max: int, p25: float, p75: float,
     -            p5: float | None = None, p50: float | None = None, p95: float | None = None) -> NormRow:
-65  + def _reach(
-66  +     sex: str,
-67  +     age_min: int,
-68  +     age_max: int,
-69  +     p25: float,
-70  +     p75: float,
-71  +     p5: float | None = None,
-72  +     p50: float | None = None,
-73  +     p95: float | None = None,
-74  + ) -> NormRow:
-75  |     percentiles: dict[str, float] = {"25": p25, "75": p75}
+68  + def _reach(
+69  +     sex: str,
+70  +     age_min: int,
+71  +     age_max: int,
+72  +     p25: float,
+73  +     p75: float,
+74  +     p5: float | None = None,
+75  +     p50: float | None = None,
+76  +     p95: float | None = None,
+77  + ) -> NormRow:
+78  |     percentiles: dict[str, float] = {"25": p25, "75": p75}
 --------------------------------------------------------------------------------
-109 |     # --- نشست و رسیدن (۲۵ و ۷۵ برای همه؛ ۵/۵۰/۹۵ فقط ۶۰+ مستند است) ---
+99  |
+    - def _grip(sex: str, age_min: int, age_max: int, p25: float, p75: float,
+    -           p5: float | None = None, p50: float | None = None, p95: float | None = None) -> NormRow:
+100 + def _grip(
+101 +     sex: str,
+102 +     age_min: int,
+103 +     age_max: int,
+104 +     p25: float,
+105 +     p75: float,
+106 +     p5: float | None = None,
+107 +     p50: float | None = None,
+108 +     p95: float | None = None,
+109 + ) -> NormRow:
+110 |     percentiles: dict[str, float] = {"25": p25, "75": p75}
+--------------------------------------------------------------------------------
+131 |
+    - def _cooper(sex: str, age_min: int, age_max: int, p5: float, p25: float, p50: float, p75: float, p95: float) -> NormRow:
+132 + def _cooper(
+133 +     sex: str, age_min: int, age_max: int, p5: float, p25: float, p50: float, p75: float, p95: float
+134 + ) -> NormRow:
+135 |     # زمان‌ها به ثانیه تبدیل شده‌اند (منبع mm:ss) — کمتر بهتر
+--------------------------------------------------------------------------------
+164 |     # --- نشست و رسیدن (۲۵ و ۷۵ برای همه؛ ۵/۵۰/۹۵ فقط ۶۰+ مستند است) ---
     -     _reach("m", 20, 24, 15.5, 33.5), _reach("f", 20, 24, 22.9, 38.8),
     -     _reach("m", 25, 29, 15.4, 33.4), _reach("f", 25, 29, 22.5, 39.1),
     -     _reach("m", 30, 34, 15.3, 32.9), _reach("f", 30, 34, 22.0, 39.3),
@@ -509,37 +661,101 @@ unformatted: File would be reformatted
     -     _reach("m", 45, 49, 14.6, 30.7), _reach("f", 45, 49, 20.1, 38.3),
     -     _reach("m", 50, 54, 14.3, 29.8), _reach("f", 50, 54, 19.6, 37.8),
     -     _reach("m", 55, 59, 14.0, 28.9), _reach("f", 55, 59, 19.2, 37.5),
-110 +     _reach("m", 20, 24, 15.5, 33.5),
-111 +     _reach("f", 20, 24, 22.9, 38.8),
-112 +     _reach("m", 25, 29, 15.4, 33.4),
-113 +     _reach("f", 25, 29, 22.5, 39.1),
-114 +     _reach("m", 30, 34, 15.3, 32.9),
-115 +     _reach("f", 30, 34, 22.0, 39.3),
-116 +     _reach("m", 35, 39, 15.1, 32.3),
-117 +     _reach("f", 35, 39, 21.4, 39.2),
-118 +     _reach("m", 40, 44, 14.9, 31.6),
-119 +     _reach("f", 40, 44, 20.8, 38.8),
-120 +     _reach("m", 45, 49, 14.6, 30.7),
-121 +     _reach("f", 45, 49, 20.1, 38.3),
-122 +     _reach("m", 50, 54, 14.3, 29.8),
-123 +     _reach("f", 50, 54, 19.6, 37.8),
-124 +     _reach("m", 55, 59, 14.0, 28.9),
-125 +     _reach("f", 55, 59, 19.2, 37.5),
-126 |     _reach("m", 60, 64, 13.7, 28.0, p5=7.6, p50=20.9, p95=34.1),
+165 +     _reach("m", 20, 24, 15.5, 33.5),
+166 +     _reach("f", 20, 24, 22.9, 38.8),
+167 +     _reach("m", 25, 29, 15.4, 33.4),
+168 +     _reach("f", 25, 29, 22.5, 39.1),
+169 +     _reach("m", 30, 34, 15.3, 32.9),
+170 +     _reach("f", 30, 34, 22.0, 39.3),
+171 +     _reach("m", 35, 39, 15.1, 32.3),
+172 +     _reach("f", 35, 39, 21.4, 39.2),
+173 +     _reach("m", 40, 44, 14.9, 31.6),
+174 +     _reach("f", 40, 44, 20.8, 38.8),
+175 +     _reach("m", 45, 49, 14.6, 30.7),
+176 +     _reach("f", 45, 49, 20.1, 38.3),
+177 +     _reach("m", 50, 54, 14.3, 29.8),
+178 +     _reach("f", 50, 54, 19.6, 37.8),
+179 +     _reach("m", 55, 59, 14.0, 28.9),
+180 +     _reach("f", 55, 59, 19.2, 37.5),
+181 |     _reach("m", 60, 64, 13.7, 28.0, p5=7.6, p50=20.9, p95=34.1),
 --------------------------------------------------------------------------------
-152 |         if existing is None:
+185 |     # --- قدرت گرفتن (kg) — بازهٔ ۲۵/۷۵؛ ۵/۵۰/۹۵ فقط ۶۵-۶۹ مرد مستند است ---
+    -     _grip("m", 20, 24, 41.9, 54.5), _grip("f", 20, 24, 24.9, 32.6),
+    -     _grip("m", 25, 29, 43.5, 55.3), _grip("f", 25, 29, 25.4, 33.6),
+    -     _grip("m", 30, 34, 43.6, 55.9), _grip("f", 30, 34, 25.4, 34.2),
+    -     _grip("m", 35, 39, 43.0, 56.0), _grip("f", 35, 39, 25.1, 34.3),
+    -     _grip("m", 40, 44, 42.0, 55.5), _grip("f", 40, 44, 24.8, 34.1),
+    -     _grip("m", 45, 49, 40.6, 54.5), _grip("f", 45, 49, 24.1, 33.6),
+    -     _grip("m", 50, 54, 39.0, 53.2), _grip("f", 50, 54, 23.4, 32.9),
+    -     _grip("m", 55, 59, 37.2, 51.5), _grip("f", 55, 59, 22.6, 31.9),
+    -     _grip("m", 60, 64, 35.2, 49.5), _grip("f", 60, 64, 21.6, 30.8),
+    -     _grip("m", 65, 69, 33.1, 47.2, p5=23.7, p50=40.1, p95=56.8), _grip("f", 65, 69, 20.6, 29.4),
+    -     _grip("m", 70, 74, 30.9, 44.7), _grip("f", 70, 74, 19.3, 27.9),
+    -     _grip("m", 75, 79, 28.4, 41.9), _grip("f", 75, 79, 17.9, 26.2),
+    -     _grip("m", 80, 84, 25.9, 39.0), _grip("f", 80, 84, 16.4, 24.4),
+    -     _grip("m", 85, 89, 23.2, 35.9), _grip("f", 85, 89, 14.8, 22.4),
+186 +     _grip("m", 20, 24, 41.9, 54.5),
+187 +     _grip("f", 20, 24, 24.9, 32.6),
+188 +     _grip("m", 25, 29, 43.5, 55.3),
+189 +     _grip("f", 25, 29, 25.4, 33.6),
+190 +     _grip("m", 30, 34, 43.6, 55.9),
+191 +     _grip("f", 30, 34, 25.4, 34.2),
+192 +     _grip("m", 35, 39, 43.0, 56.0),
+193 +     _grip("f", 35, 39, 25.1, 34.3),
+194 +     _grip("m", 40, 44, 42.0, 55.5),
+195 +     _grip("f", 40, 44, 24.8, 34.1),
+196 +     _grip("m", 45, 49, 40.6, 54.5),
+197 +     _grip("f", 45, 49, 24.1, 33.6),
+198 +     _grip("m", 50, 54, 39.0, 53.2),
+199 +     _grip("f", 50, 54, 23.4, 32.9),
+200 +     _grip("m", 55, 59, 37.2, 51.5),
+201 +     _grip("f", 55, 59, 22.6, 31.9),
+202 +     _grip("m", 60, 64, 35.2, 49.5),
+203 +     _grip("f", 60, 64, 21.6, 30.8),
+204 +     _grip("m", 65, 69, 33.1, 47.2, p5=23.7, p50=40.1, p95=56.8),
+205 +     _grip("f", 65, 69, 20.6, 29.4),
+206 +     _grip("m", 70, 74, 30.9, 44.7),
+207 +     _grip("f", 70, 74, 19.3, 27.9),
+208 +     _grip("m", 75, 79, 28.4, 41.9),
+209 +     _grip("f", 75, 79, 17.9, 26.2),
+210 +     _grip("m", 80, 84, 25.9, 39.0),
+211 +     _grip("f", 80, 84, 16.4, 24.4),
+212 +     _grip("m", 85, 89, 23.2, 35.9),
+213 +     _grip("f", 85, 89, 14.8, 22.4),
+214 |     # --- دوی ۱٫۵ مایل کوپر (ثانیه — کمتر بهتر) ---
+    -     _cooper("m", 20, 29, 550, 634, 718, 805, 1006), _cooper("f", 20, 29, 620, 727, 855, 1003, 1265),
+    -     _cooper("m", 30, 39, 571, 659, 745, 850, 1050), _cooper("f", 30, 39, 668, 788, 914, 1058, 1317),
+    -     _cooper("m", 40, 49, 587, 692, 785, 900, 1119), _cooper("f", 40, 49, 695, 838, 973, 1119, 1407),
+    -     _cooper("m", 50, 59, 627, 757, 873, 986, 1300), _cooper("f", 50, 59, 796, 947, 1085, 1255, 1575),
+    -     _cooper("m", 60, 69, 680, 838, 979, 1150, 1558), _cooper("f", 60, 69, 868, 1054, 1208, 1400, 1746),
+    -     _cooper("m", 70, 79, 745, 938, 1119, 1342, 1834), _cooper("f", 70, 79, 873, 1119, 1342, 1575, 2012),
+215 +     _cooper("m", 20, 29, 550, 634, 718, 805, 1006),
+216 +     _cooper("f", 20, 29, 620, 727, 855, 1003, 1265),
+217 +     _cooper("m", 30, 39, 571, 659, 745, 850, 1050),
+218 +     _cooper("f", 30, 39, 668, 788, 914, 1058, 1317),
+219 +     _cooper("m", 40, 49, 587, 692, 785, 900, 1119),
+220 +     _cooper("f", 40, 49, 695, 838, 973, 1119, 1407),
+221 +     _cooper("m", 50, 59, 627, 757, 873, 986, 1300),
+222 +     _cooper("f", 50, 59, 796, 947, 1085, 1255, 1575),
+223 +     _cooper("m", 60, 69, 680, 838, 979, 1150, 1558),
+224 +     _cooper("f", 60, 69, 868, 1054, 1208, 1400, 1746),
+225 +     _cooper("m", 70, 79, 745, 938, 1119, 1342, 1834),
+226 +     _cooper("f", 70, 79, 873, 1119, 1342, 1575, 2012),
+227 | )
+--------------------------------------------------------------------------------
+250 |         if existing is None:
     -             session.add(NormEntry(test_key=row.test_key, sex=row.sex,
     -                                   age_min=row.age_min, age_max=row.age_max, **payload))
-153 +             session.add(
-154 +                 NormEntry(
-155 +                     test_key=row.test_key,
-156 +                     sex=row.sex,
-157 +                     age_min=row.age_min,
-158 +                     age_max=row.age_max,
-159 +                     **payload,
-160 +                 )
-161 +             )
-162 |             stats["inserted"] += 1
+251 +             session.add(
+252 +                 NormEntry(
+253 +                     test_key=row.test_key,
+254 +                     sex=row.sex,
+255 +                     age_min=row.age_min,
+256 +                     age_max=row.age_max,
+257 +                     **payload,
+258 +                 )
+259 +             )
+260 |             stats["inserted"] += 1
     |
 
 unformatted: File would be reformatted
@@ -1122,6 +1338,34 @@ unformatted: File would be reformatted
     |
 
 unformatted: File would be reformatted
+   --> tests/integration/test_axis_assessment_api.py:138:15
+    |
+137 |         "/api/v1/axis-assessments",
+    -         json={"member_id": member_ids["member_id"], "tests": [{"test_key": "pushup_1min", "raw_value": 18.0}]},
+138 +         json={
+139 +             "member_id": member_ids["member_id"],
+140 +             "tests": [{"test_key": "pushup_1min", "raw_value": 18.0}],
+141 +         },
+142 |         headers=h,
+--------------------------------------------------------------------------------
+173 |         "/api/v1/axis-assessments",
+    -         json={"member_id": member_ids["member_id"], "tests": [{"test_key": "mystery_test", "raw_value": 5}]},
+174 +         json={
+175 +             "member_id": member_ids["member_id"],
+176 +             "tests": [{"test_key": "mystery_test", "raw_value": 5}],
+177 +         },
+178 |         headers=h,
+--------------------------------------------------------------------------------
+184 |         "/api/v1/axis-assessments",
+    -         json={"member_id": member_ids["member_id"], "tests": [{"test_key": "rubric_balance", "raw_value": 150}]},
+185 +         json={
+186 +             "member_id": member_ids["member_id"],
+187 +             "tests": [{"test_key": "rubric_balance", "raw_value": 150}],
+188 +         },
+189 |         headers=h,
+    |
+
+unformatted: File would be reformatted
   --> tests/unit/test_axis_assessment_models.py:15:33
    |
 14 |     member = make_member(user=user)
@@ -1281,4 +1525,4 @@ unformatted: File would be reformatted
 57 |     }
    |
 
-17 files would be reformatted, 164 files already formatted
+23 files would be reformatted, 166 files already formatted
