@@ -47,3 +47,38 @@ class PlanOut(BaseModel):
     meals: list[MealItemOut] = []
 
     model_config = {"from_attributes": True}
+
+
+# ── G5 — ثبت غذای روزانه ──
+
+from datetime import date as _date  # noqa: E402
+
+
+class FoodLogEntryIn(BaseModel):
+    food_id: int = Field(ge=1)
+    grams: float = Field(gt=0, le=5000)
+    meal_slot: str = Field(default="snack", max_length=20)
+    logged_for_date: _date | None = None
+    notes: str = ""
+
+
+class FoodLogIn(BaseModel):
+    member_id: int = Field(ge=1)
+    entries: list[FoodLogEntryIn] = Field(min_length=1, max_length=50)
+
+
+class FoodLogOut(BaseModel):
+    logged: int
+    rejected: list[dict]
+    reason: str
+    rule_version: str
+
+
+class FoodSearchRow(BaseModel):
+    id: int
+    name_fa: str
+    category: str
+    kcal_per_100g: int
+    protein_g_per_100g: float
+    carbs_g_per_100g: float
+    fat_g_per_100g: float
