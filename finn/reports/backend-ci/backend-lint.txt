@@ -1634,6 +1634,116 @@ unformatted: File would be reformatted
     |
 
 unformatted: File would be reformatted
+   --> tests/integration/test_pilot_dry_run.py:49:19
+    |
+48  |
+    -         s.add_all([
+    -             CatalogExercise(
+    -                 source_id=1, external_id="squat-l1", name="Bodyweight Squat", name_fa="اسکوات وزن‌بدن",
+    -                 level="beginner", intensity_band="low",
+    -                 axis_coverage='{"1": 0.8, "3": 0.6, "5": 0.5}',
+    -             ),
+    -             CatalogExercise(
+    -                 source_id=1, external_id="plank", name="Plank", name_fa="پلانک",
+    -                 level="beginner", intensity_band="low",
+    -                 axis_coverage='{"7": 0.9, "5": 0.5}',
+    -             ),
+    -             CatalogExercise(
+    -                 source_id=1, external_id="deadlift", name="Deadlift", name_fa="ددلیفت",
+    -                 level="intermediate", intensity_band="high",
+    -                 axis_coverage='{"9": 0.8, "3": 0.7, "10": 0.4}',
+    -             ),
+    -         ])
+49  +         s.add_all(
+50  +             [
+51  +                 CatalogExercise(
+52  +                     source_id=1,
+53  +                     external_id="squat-l1",
+54  +                     name="Bodyweight Squat",
+55  +                     name_fa="اسکوات وزن‌بدن",
+56  +                     level="beginner",
+57  +                     intensity_band="low",
+58  +                     axis_coverage='{"1": 0.8, "3": 0.6, "5": 0.5}',
+59  +                 ),
+60  +                 CatalogExercise(
+61  +                     source_id=1,
+62  +                     external_id="plank",
+63  +                     name="Plank",
+64  +                     name_fa="پلانک",
+65  +                     level="beginner",
+66  +                     intensity_band="low",
+67  +                     axis_coverage='{"7": 0.9, "5": 0.5}',
+68  +                 ),
+69  +                 CatalogExercise(
+70  +                     source_id=1,
+71  +                     external_id="deadlift",
+72  +                     name="Deadlift",
+73  +                     name_fa="ددلیفت",
+74  +                     level="intermediate",
+75  +                     intensity_band="high",
+76  +                     axis_coverage='{"9": 0.8, "3": 0.7, "10": 0.4}',
+77  +                 ),
+78  +             ]
+79  +         )
+80  |         s.commit()
+--------------------------------------------------------------------------------
+87  |
+    -         m = Member(user_id=u.id, gender="female", birth_date=date(1995, 6, 15), goal="general_fitness")
+88  +         m = Member(
+89  +             user_id=u.id, gender="female", birth_date=date(1995, 6, 15), goal="general_fitness"
+90  +         )
+91  |         s.add(m)
+--------------------------------------------------------------------------------
+98  |     tests = [{"test_key": key, "raw_value": 60.0} for key in unique_keys]
+    -     res = client.post("/api/v1/axis-assessments", json={"member_id": member_id, "tests": tests}, headers=h)
+99  +     res = client.post(
+100 +         "/api/v1/axis-assessments", json={"member_id": member_id, "tests": tests}, headers=h
+101 +     )
+102 |     assert res.status_code == 200, res.text
+--------------------------------------------------------------------------------
+116 |     # ۳) تجویز محور-آگاه — برای هر direct حرکت یا شکاف صریح؛ refer بدون حرکت
+    -     decisions = {a["axis"]: {"state": a["decision_state"], "reason": a["decision_reason"]} for a in axes}
+117 +     decisions = {
+118 +         a["axis"]: {"state": a["decision_state"], "reason": a["decision_reason"]} for a in axes
+119 +     }
+120 |     import json as _json
+--------------------------------------------------------------------------------
+142 |     # ۴) بازخورد ست ← پیشنهاد جلسهٔ بعد (G1)
+    -     res = client.post("/api/v1/programs/set-feedback", json={
+    -         "member_id": member_id,
+    -         "entries": [{"movement_id": "squat-l1", "weight": 40, "target_reps": 10, "reps_done": 12, "rir": 3, "soreness": 2}],
+    -     }, headers=h)
+143 +     res = client.post(
+144 +         "/api/v1/programs/set-feedback",
+145 +         json={
+146 +             "member_id": member_id,
+147 +             "entries": [
+148 +                 {
+149 +                     "movement_id": "squat-l1",
+150 +                     "weight": 40,
+151 +                     "target_reps": 10,
+152 +                     "reps_done": 12,
+153 +                     "rir": 3,
+154 +                     "soreness": 2,
+155 +                 }
+156 +             ],
+157 +         },
+158 +         headers=h,
+159 +     )
+160 |     assert res.status_code == 200, res.text
+--------------------------------------------------------------------------------
+169 |         mg_h = {"Authorization": f"Bearer {create_access_token(mg.id, mg.role)}"}
+    -     res = client.post(f"/api/v1/axis-assessments/{assessment_id}/review",
+    -                       json={"action": "approve", "reason": "پایلوت dry-run"}, headers=mg_h)
+170 +     res = client.post(
+171 +         f"/api/v1/axis-assessments/{assessment_id}/review",
+172 +         json={"action": "approve", "reason": "پایلوت dry-run"},
+173 +         headers=mg_h,
+174 +     )
+175 |     assert res.status_code == 200
+    |
+
+unformatted: File would be reformatted
   --> tests/unit/test_axis_assessment_models.py:15:33
    |
 14 |     member = make_member(user=user)
@@ -1884,4 +1994,4 @@ unformatted: File would be reformatted
 93 +         )
    |
 
-30 files would be reformatted, 169 files already formatted
+31 files would be reformatted, 169 files already formatted
