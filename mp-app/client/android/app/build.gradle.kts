@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
@@ -33,7 +35,7 @@ android {
         // امضای پایدار انتشار (MP) — همهٔ نسخه‌ها با یک کلید امضا می‌شوند
         // تا نصبِ روی نسخهٔ قبلی بدون حذف، ممکن بماند (رفع «نصب پکیج شکست خورد»).
         create("release") {
-            val props = java.util.Properties()
+            val props = Properties()
             val f = file("../keystore/keystore.properties")
             if (f.exists()) {
                 f.inputStream().use { props.load(it) }
