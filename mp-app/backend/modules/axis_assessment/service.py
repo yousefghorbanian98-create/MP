@@ -219,3 +219,53 @@ def list_member_history(db: Session, member_id: int, user=None) -> list[dict]:
         }
         for a in assessments
     ]
+
+
+def review_assessment(
+    db: Session,
+    assessment_id: int,
+    *,
+    action: str,
+    reason: str = "",
+    user=None,
+) -> dict:
+    """بازبینی ادمین (M36-c3): completed ← reviewed | rejected — همیشه با AuditLog.
+
+    جدایی وظیفه (الگوی بازرس مستقل Hermes): ثبت‌کننده ≠ تأییدکننده — فقط manager/admin.
+    """
+    from app.errors import ForbiddenError
+    from db.models.admin import AuditLog
+
+    if user is None or getattr(user, "role", "") not in ("manager", "admin"):
+        raise ForbiddenError("بازبینی فقط با نقش manager/admin مجاز است (جدایی وظیفه)")
+    if action not in ("approve", "reject"):
+        raise ApiError("action فقط approve یا reject", code="invalid_action")
+    assessment = db.get(AxisAssessment, assessment_id)
+    if assessment is None:
+        raise NotFoundError("ارزیابی یافت نشد")
+    if assessment.status not in ("completed", "draft"):
+        raise ApiError(
+            f"ارزیابی در وضعیت {assessment.status} قابل بازبینی نیست", code="invalid_state"
+        )
+    if action == "reject" and not reason.strip():
+        raise ApiError("رد کردن بدون دلیل ممنوع است — reason الزامی", code="missing_reason")
+
+    assessment.status = "reviewed" if action == "approve" else "rejected"
+    if reason.strip():
+        assessment.notes = (assessment.notes + f"\n[review:{action}] {reason}").strip()
+    db.add(
+        AuditLog(
+            actor_user_id=getattr(user, "id", None),
+            action=f"axis_assessment_{action}",
+            entity_type="axis_assessment",
+            entity_id=assessment.id,
+            detail=json.dumps({"reason": reason, "status": assessment.status}, ensure_ascii=False),
+        )
+    )
+    db.commit()
+    return {
+        "assessment_id": assessment.id,
+        "status": assessment.status,
+        "action": action,
+        "reason": reason,
+    }

@@ -192,3 +192,57 @@ def test_validation_unknown_test_and_missing_birthdate(client, auth, member_ids,
     )
     assert res3.status_code == 400
     assert "تولد" in res3.json()["error"]["message"]
+
+
+def test_review_flow_audit_and_separation_of_duties(client, auth, member_ids, seeded_norms):
+    """M36-c3: تأیید/رد با دلیل + AuditLog + جدایی وظیفه (coach نمی‌تواند بازبینی کند)."""
+    from db.base import get_session_factory
+    from db.models import AuditLog
+
+    h_coach = auth("coach")
+    res = client.post(
+        "/api/v1/axis-assessments",
+        json={"member_id": member_ids["member_id"], "tests": FULL_TESTS},
+        headers=h_coach,
+    )
+    assert res.status_code == 200
+    aid = res.json()["assessment_id"]
+
+    # جدایی وظیفه: مربی که ثبت کرده نمی‌تواند تأیید کند
+    res2 = client.post(
+        f"/api/v1/axis-assessments/{aid}/review",
+        json={"action": "approve"},
+        headers=h_coach,
+    )
+    assert res2.status_code == 403
+
+    # رد بدون دلیل ممنوع
+    h_manager = auth("manager")
+    res3 = client.post(
+        f"/api/v1/axis-assessments/{aid}/review",
+        json={"action": "reject", "reason": ""},
+        headers=h_manager,
+    )
+    assert res3.status_code == 400
+
+    # تأیید با مدیر
+    res4 = client.post(
+        f"/api/v1/axis-assessments/{aid}/review",
+        json={"action": "approve", "reason": "تأیید نهایی"},
+        headers=h_manager,
+    )
+    assert res4.status_code == 200
+    assert res4.json()["status"] == "reviewed"
+
+    # AuditLog ثبت شده
+    with get_session_factory()() as s:
+        logs = s.query(AuditLog).filter_by(action="axis_assessment_approve", entity_id=aid).all()
+        assert len(logs) == 1
+
+    # بازبینی مجدد ممنوع
+    res5 = client.post(
+        f"/api/v1/axis-assessments/{aid}/review",
+        json={"action": "approve"},
+        headers=h_manager,
+    )
+    assert res5.status_code == 400

@@ -1,0 +1,20 @@
+{
+  "rule_id": "M36c3-review-audit",
+  "date": "2026-11-14",
+  "status": "verified",
+  "method": "بازبینی ادمین: completed ← reviewed|rejected — جدایی وظیفه (ثبت‌کننده ≠ تأییدکننده، الگوی بازرس مستقل Hermes) + رد بدون دلیل ممنوع + AuditLog غیرقابل‌حذف",
+  "output_audit": {
+    "m36_outputs": [
+      "POST /api/v1/axis-assessments ← ماتریس ۱۴ محور (نمره/کیفیت/تصمیم+دلیل)",
+      "GET /api/v1/axis-assessments/{id}/matrix ← بازخوانی ماتریس",
+      "GET /api/v1/axis-assessments/member/{id} ← تاریخچه",
+      "POST /api/v1/axis-assessments/{id}/review ← وضعیت + AuditLog",
+      "finn/reports/load/M36c2-smoke_stats.csv ← دود بار (۱۴٫۹ rps، صفر 5xx)"
+    ],
+    "smoke": "تست‌های یکپارچه ۵/۵ + کل مجموعه ۲۴۸ سبز"
+  },
+  "verified_by": "finn (ECC-2 + ECC-5), S3b چرخهٔ M36-c3",
+  "evidence": [
+    "tests/integration/test_axis_assessment_api.py::test_review_flow_audit_and_separation_of_duties"
+  ]
+}

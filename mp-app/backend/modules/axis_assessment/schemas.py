@@ -52,3 +52,8 @@ class AssessmentOut(BaseModel):
     notes: str = ""
     tests: list[TestOut] = []
     scores: list[AxisScoreOut] = []
+
+
+class ReviewIn(BaseModel):
+    action: str = Field(pattern="^(approve|reject)$")
+    reason: str = ""

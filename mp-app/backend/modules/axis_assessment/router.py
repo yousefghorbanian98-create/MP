@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
+from typing import Annotated
+
 from fastapi import APIRouter, Depends
 
-from app.deps import CurrentUser, DbSession, require_permission
+from app.deps import CurrentUser, DbSession, require_permission, require_roles
+from db.models.auth import User
 from modules.axis_assessment import service
-from modules.axis_assessment.schemas import AssessmentCreate, MatrixOut
+from modules.axis_assessment.schemas import AssessmentCreate, MatrixOut, ReviewIn
 
 router = APIRouter(
     prefix="/axis-assessments",
@@ -34,3 +37,15 @@ def get_matrix(assessment_id: int, db: DbSession, user: CurrentUser):
 @router.get("/member/{member_id}", summary="تاریخچهٔ ارزیابی‌های ۱۴ توانایی عضو")
 def list_member_history(member_id: int, db: DbSession, user: CurrentUser):
     return service.list_member_history(db, member_id, user=user)
+
+
+@router.post("/{assessment_id}/review", summary="بازبینی ادمین: تأیید/رد با دلیل + audit log")
+def review_assessment(
+    assessment_id: int,
+    payload: ReviewIn,
+    db: DbSession,
+    user: Annotated[User, Depends(require_roles("manager", "admin"))],
+):
+    return service.review_assessment(
+        db, assessment_id, action=payload.action, reason=payload.reason, user=user
+    )

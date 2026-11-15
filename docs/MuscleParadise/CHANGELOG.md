@@ -4,6 +4,9 @@
 
 ## [Unreleased]
 
+### Added — M36-c3 (2026-11-14) — بازبینی ادمین + audit
+- endpoint بازبینی (approve/reject با دلیل اجباری) + AuditLog + جدایی وظیفه (manager/admin فقط) — ۵ تست یکپارچه
+
 ### Added — M36-c1/c2 (2026-11-14) — API ارزیابی ۱۴ توانایی
 - مدل‌ها + مهاجرت (axis_assessments/axis_scores/field_test_results) + سیاست‌های RBAC
 - ماژول `axis_assessment`: ثبت جلسهٔ آزمون ← ماتریس درصد ۱۴ محور + تصمیم چهارگانه + تاریخچه — «نامعلوم ≠ صفر»

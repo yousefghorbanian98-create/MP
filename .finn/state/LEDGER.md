@@ -7,6 +7,7 @@
 | 2 | 2026-11-14 | M00 | تصمیم | Flutter/Docker/مرورگر در محیط نیستند (D-002..004) | هرگز گیت اجرایی قابل‌اجرا در محیط را به «بعداً» موکول نکن — مسیر جایگزین + CI تعریف کن | — |
 | 3 | 2026-11-14 | M03 | باگ | server_default="CURRENT_TIMESTAMP" به‌صورت رشتهٔ خام ذخیره می‌شود (ValueError isoformat) | هرگز server_default رشته‌ای برای DateTime استفاده نکن — فقط func.now() یا sa.text() | R-002 (OTP hash) + تست‌های مدل |
 | 9 | 2026-11-14 | M33-c2 | درس | اجرای alembic با DATABASE_URL بی‌اثر است (prefix تنظیمات MP_ است) ← برخورد با mp.db موجود (init_db بدون نسخهٔ alembic) | هرگز مهاجرت را بدون MP_DATABASE_URL روی دیتابیس تازه اجرا/آزمایی نکن | اجرای upgrade head روی DB تازه در گزارش M33-c2 |
+| 10 | 2026-11-14 | M36-c2 | باگ فرایندی | `pytest | tail -1` کد خروجی را می‌پوشاند — ۳ تست شکسته commit/push شد | هرگز زنجیرهٔ گیت را بدون `set -o pipefail` با pipe نبند — exit code واقعی لازم است | اصلاحیهٔ 8696566 (semantics lower_better هم در همین حین پیدا شد) |
 | 4 | 2026-11-14 | M08 | باگ | Annotated["User", ...] با TYPE_CHECKING در FastAPI resolve نمی‌شود (query param شد) + keyMatch2 فقط «/*» وایلدکارت دارد | هرگز forward-ref رشته‌ای در CurrentUser استفاده نکن — import واقعی؛ هرگز «foo*» به‌جای «foo/*» در policy casbin ننویس | R-004 + تست‌های RBAC |
 
 ## ۵. (M14) DB فایل بین اجراها زنده می‌ماند
