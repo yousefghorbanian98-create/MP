@@ -15,7 +15,8 @@ final myAssessmentsProvider = FutureProvider<List<dynamic>>((ref) async {
   if (memberId == null) return [];
   try {
     final r = await api.get('/assessments/member/$memberId');
-    return (r is List ? r : const []);
+    if (r is List) return r;
+    return [];
   } catch (_) {
     return [];
   }

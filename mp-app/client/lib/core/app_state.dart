@@ -3,7 +3,6 @@ library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'api_client.dart';
 import 'session.dart';
 
 /// برنامه‌های عضو (آخرین برنامه مبنا است).
@@ -13,7 +12,9 @@ final myProgramsProvider = FutureProvider<List<dynamic>>((ref) async {
   final memberId = auth.memberId;
   if (memberId == null) return [];
   final r = await api.get('/programs/member/$memberId');
-  return (r is List ? r : (r['programs'] as List? ?? const []));
+  if (r is List) return r;
+  if (r is Map && r['programs'] is List) return r['programs'] as List<dynamic>;
+  return [];
 });
 
 /// آخرین برنامهٔ تأییدشده/پیش‌نویس.
@@ -57,7 +58,8 @@ final walletProvider = FutureProvider<Map<String, dynamic>>((ref) async {
 final classesProvider = FutureProvider<List<dynamic>>((ref) async {
   final api = ref.watch(apiClientProvider);
   final r = await api.get('/classes');
-  return (r is List ? r : const []);
+  if (r is List) return r;
+  return [];
 });
 
 /// برنامهٔ غذایی فعال عضو.
@@ -68,9 +70,8 @@ final nutritionProvider = FutureProvider<Map<String, dynamic>?>((ref) async {
   if (memberId == null) return null;
   try {
     final r = await api.get('/nutrition/plans/member/$memberId');
-    final list = (r is List ? r : const []);
-    if (list.isEmpty) return null;
-    return list.first as Map<String, dynamic>;
+    if (r is List && r.isNotEmpty) return Map<String, dynamic>.from(r.first as Map);
+    return null;
   } catch (_) {
     return null;
   }

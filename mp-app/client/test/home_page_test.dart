@@ -9,6 +9,7 @@ void main() {
 
   testWidgets('گرید ۸ بخش نمایش داده می‌شود', (tester) async {
     await tester.pumpWidget(wrap());
+    await tester.pumpAndSettle();
     for (final label in ['برنامهٔ اختصاصی من', 'پیکرسنجی', 'تغذیه', 'چک‌این', 'کیف پول', 'پیشرفت', 'کلاس‌ها', 'فروشگاه']) {
       expect(find.text(label), findsOneWidget, reason: 'بخش $label باید باشد');
     }
@@ -16,12 +17,14 @@ void main() {
 
   testWidgets('جست‌وجو و بنر موجودند', (tester) async {
     await tester.pumpWidget(wrap());
+    await tester.pumpAndSettle();
     expect(find.byType(TextField), findsOneWidget);
     expect(find.text('تولدت مبارک! 🎂'), findsOneWidget);
   });
 
   testWidgets('چک‌این سریع در خانه', (tester) async {
     await tester.pumpWidget(wrap());
+    await tester.pumpAndSettle();
     expect(find.text('چک‌این سریع'), findsOneWidget);
   });
 }

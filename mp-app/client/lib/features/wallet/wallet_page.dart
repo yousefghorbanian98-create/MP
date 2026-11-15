@@ -38,7 +38,7 @@ class WalletPage extends ConsumerWidget {
               ]),
             ),
             data: (w) {
-              final balance = ((w ?? const {})['balance_rial'] as num? ?? 0).toInt();
+              final balance = (w['balance_rial'] as num? ?? 0).toInt();
               return GlassCard(
                 child: Column(
                   children: [
