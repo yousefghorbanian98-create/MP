@@ -1,4 +1,5 @@
 import { Jp7TrendPanel } from "../components/Jp7TrendPanel";
+import { SegmentalPanel } from "../components/SegmentalPanel";
 import { useAppStore } from "../stores/appStore";
 
 /**
@@ -21,6 +22,7 @@ export function Assessment() {
   return (
     <div className="space-y-4">
       <Jp7TrendPanel memberId={memberId} />
+      <SegmentalPanel />
     </div>
   );
 }

@@ -6,7 +6,13 @@ from fastapi import APIRouter, Depends
 
 from app.deps import CurrentUser, DbSession, require_permission
 from modules.assessment import service
-from modules.assessment.schemas import AssessmentCreate, AssessmentOut, Jp7In, Jp7Out
+from modules.assessment.schemas import (
+    AssessmentCreate,
+    AssessmentOut,
+    Jp7In,
+    Jp7Out,
+    LimbMeasurementIn,
+)
 
 router = APIRouter(
     prefix="/assessments", tags=["assessment"], dependencies=[Depends(require_permission())]
@@ -59,3 +65,27 @@ def record_jp7(payload: Jp7In, db: DbSession):
 )
 def jp7_trend(member_id: int, db: DbSession, user: CurrentUser):
     return service.jp7_trend(db, member_id=member_id, user=user)
+
+
+# ── M54-c1 — آنالیز سگمنتال آنتروپومتریک (D-024) ──
+
+
+@router.post("/limb", summary="ثبت محیط اندام (سگمنتال آنتروپومتریک)")
+def record_limb(payload: LimbMeasurementIn, db: DbSession, user: CurrentUser):
+    row = service.record_limb_measurement(
+        db,
+        member_id=payload.member_id,
+        values=payload.model_dump(exclude={"member_id", "quality", "notes"}),
+        user=user,
+        quality=payload.quality,
+        notes=payload.notes,
+    )
+    return service.limb_dict(row)
+
+
+@router.get(
+    "/limb/member/{member_id}/report",
+    summary="تحلیل سگمنتال + روند محیط اندام",
+)
+def segmental_report(member_id: int, db: DbSession, user: CurrentUser):
+    return service.segmental_report(db, member_id=member_id, user=user)

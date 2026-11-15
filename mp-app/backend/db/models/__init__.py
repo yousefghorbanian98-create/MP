@@ -28,6 +28,7 @@ from db.models.notification import Notification
 from db.models.nutrition import BodyWeightLog, FoodLog, MealItem, NutritionPlan
 from db.models.payments import Payment, WalletTransaction
 from db.models.programs import ProgramExercise, ProgramWeek, SetFeedback, WorkoutProgram
+from db.models.segment import LimbMeasurement
 
 __all__ = [
     "Assessment14Domain",
@@ -51,6 +52,7 @@ __all__ = [
     "BodyWeightLog",
     "Conversation",
     "Message",
+    "LimbMeasurement",
     "FoodLog",
     "MealItem",
     "Member",

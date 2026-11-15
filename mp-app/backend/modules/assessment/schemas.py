@@ -64,3 +64,21 @@ class Jp7Out(BaseModel):
     measured_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+class LimbMeasurementIn(BaseModel):
+    """M54-c1 — محیط اندام (cm). همه اختیاری؛ حداقل یکی لازم است."""
+
+    member_id: int = Field(ge=1)
+    neck_cm: float | None = Field(default=None, gt=0, le=300)
+    chest_cm: float | None = Field(default=None, gt=0, le=300)
+    waist_cm: float | None = Field(default=None, gt=0, le=300)
+    hip_cm: float | None = Field(default=None, gt=0, le=300)
+    upper_arm_right_cm: float | None = Field(default=None, gt=0, le=300)
+    upper_arm_left_cm: float | None = Field(default=None, gt=0, le=300)
+    thigh_right_cm: float | None = Field(default=None, gt=0, le=300)
+    thigh_left_cm: float | None = Field(default=None, gt=0, le=300)
+    calf_right_cm: float | None = Field(default=None, gt=0, le=300)
+    calf_left_cm: float | None = Field(default=None, gt=0, le=300)
+    quality: str | None = Field(default=None, max_length=32)
+    notes: str = Field(default="", max_length=500)

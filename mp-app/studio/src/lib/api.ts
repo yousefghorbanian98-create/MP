@@ -774,3 +774,96 @@ export function markConversationRead(conversationId: number, token = getToken())
     token,
   );
 }
+
+// ── M54-c1 — آنالیز سگمنتال آنتروپومتریک (D-024) ──
+
+export interface LimbMeasurement {
+  id: number;
+  member_id: number;
+  measured_at: string | null;
+  neck_cm: number | null;
+  chest_cm: number | null;
+  waist_cm: number | null;
+  hip_cm: number | null;
+  upper_arm_right_cm: number | null;
+  upper_arm_left_cm: number | null;
+  thigh_right_cm: number | null;
+  thigh_left_cm: number | null;
+  calf_right_cm: number | null;
+  calf_left_cm: number | null;
+  quality: string | null;
+  notes: string;
+}
+
+export interface SegmentalRatio {
+  value: number | null;
+  band: string;
+  reason: string;
+  threshold: number;
+}
+
+export interface SegmentalAsymmetry {
+  right_cm: number;
+  left_cm: number;
+  delta_cm: number;
+  dominant_side: "right" | "left" | "equal";
+  band: "normal" | "mild" | "notable";
+  reason: string;
+  threshold_cm: number;
+}
+
+export interface SegmentalReport {
+  member_id: number;
+  latest: LimbMeasurement | null;
+  analysis: {
+    ratios: {
+      waist_to_height: SegmentalRatio;
+      waist_to_hip: SegmentalRatio;
+      arm_to_waist: SegmentalRatio;
+    };
+    asymmetry: {
+      upper_arm: SegmentalAsymmetry | null;
+      thigh: SegmentalAsymmetry | null;
+      calf: SegmentalAsymmetry | null;
+    };
+    headline: string;
+    missing: string[];
+    note: string;
+    rule_version: string;
+  } | null;
+  trend: {
+    span_days: number;
+    changes_cm: Record<string, number | null>;
+    biggest_change: string | null;
+    headline: string;
+    rule_version: string;
+  } | null;
+  measurements_count: number;
+  reason: string;
+  note: string;
+  rule_version: string;
+}
+
+export function fetchSegmentalReport(
+  memberId: number,
+  token = getToken(),
+  signal?: AbortSignal,
+) {
+  return getJson<SegmentalReport>(
+    `/assessments/limb/member/${memberId}/report`,
+    token,
+    signal,
+  );
+}
+
+export function recordLimbMeasurement(
+  memberId: number,
+  values: Record<string, number | null>,
+  token = getToken(),
+) {
+  const body: Record<string, unknown> = { member_id: memberId };
+  for (const [k, v] of Object.entries(values)) {
+    if (v !== null && v !== undefined && !Number.isNaN(v)) body[k] = v;
+  }
+  return postJson<LimbMeasurement>("/assessments/limb", body, token);
+}

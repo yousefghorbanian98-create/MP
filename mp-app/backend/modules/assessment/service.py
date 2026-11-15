@@ -8,7 +8,13 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.errors import ApiError, NotFoundError
-from db.models import Assessment14Domain, DomainScore, JacksonPollockMeasurement, Member
+from db.models import (
+    Assessment14Domain,
+    DomainScore,
+    JacksonPollockMeasurement,
+    LimbMeasurement,
+    Member,
+)
 
 SKINFOLD_SITES = ["chest", "triceps", "subscapular", "suprailiac", "abdomen", "thigh", "calf"]
 
@@ -290,4 +296,127 @@ def jp7_trend(db: Session, *, member_id: int, user=None) -> dict:
             "مرجع مستقل قفل است (D-012). روند از مجموع چین خام ساخته می‌شود."
         ),
         "rule_version": JP7_TREND_VERSION,
+    }
+
+
+# ── M54-c1 — آنالیز سگمنتال آنتروپومتریک (D-024) ──
+
+SEGMENTAL_REPORT_VERSION = "segmental-report-1.0"
+
+LIMB_FIELDS = (
+    "neck_cm",
+    "chest_cm",
+    "waist_cm",
+    "hip_cm",
+    "upper_arm_right_cm",
+    "upper_arm_left_cm",
+    "thigh_right_cm",
+    "thigh_left_cm",
+    "calf_right_cm",
+    "calf_left_cm",
+)
+
+
+def record_limb_measurement(
+    db: Session,
+    *,
+    member_id: int,
+    values: dict,
+    user=None,
+    quality: str | None = None,
+    notes: str = "",
+) -> LimbMeasurement:
+    """ثبت محیط‌های اندام. حداقل یک محیط لازم است — رکورد خالی معنا ندارد."""
+    from app.errors import ApiError
+    from app.security.ownership import ensure_member_scope
+    from db.models import LimbMeasurement, Member
+
+    ensure_member_scope(db, user, member_id)
+    if db.get(Member, member_id) is None:
+        raise NotFoundError("عضو یافت نشد")
+
+    clean = {k: values.get(k) for k in LIMB_FIELDS}
+    if all(v is None for v in clean.values()):
+        raise ApiError("حداقل یک محیط اندام باید ثبت شود", code="no_measurement")
+    for k, v in clean.items():
+        if v is not None and (v <= 0 or v > 300):
+            raise ApiError(f"مقدار {k} خارج از بازهٔ معقول است", code="out_of_range")
+
+    row = LimbMeasurement(
+        member_id=member_id,
+        quality=quality,
+        notes=notes or "",
+        measured_by=getattr(user, "id", None),
+        **clean,
+    )
+    db.add(row)
+    db.commit()
+    db.refresh(row)
+    return row
+
+
+def limb_dict(row: LimbMeasurement) -> dict:
+    return {
+        "id": row.id,
+        "member_id": row.member_id,
+        "measured_at": row.measured_at.isoformat() if row.measured_at else None,
+        **{k: getattr(row, k) for k in LIMB_FIELDS},
+        "quality": row.quality,
+        "notes": row.notes,
+    }
+
+
+def segmental_report(db: Session, *, member_id: int, user=None) -> dict:
+    """آخرین اندازه‌گیری + تحلیل + روند بین همهٔ اندازه‌گیری‌ها."""
+    from app.security.ownership import ensure_member_scope
+    from db.models import LimbMeasurement, Member
+    from engine import segmental
+
+    ensure_member_scope(db, user, member_id)
+    member = db.get(Member, member_id)
+    if member is None:
+        raise NotFoundError("عضو یافت نشد")
+
+    rows = list(
+        db.scalars(
+            select(LimbMeasurement)
+            .where(LimbMeasurement.member_id == member_id)
+            .order_by(LimbMeasurement.measured_at.asc(), LimbMeasurement.id.asc())
+        ).all()
+    )
+
+    if not rows:
+        return {
+            "member_id": member_id,
+            "latest": None,
+            "analysis": None,
+            "trend": None,
+            "measurements_count": 0,
+            "reason": "هیچ اندازه‌گیری محیط اندامی برای این عضو ثبت نشده است",
+            "note": "برای نمایش تحلیل، حداقل یک اندازه‌گیری محیطی لازم است",
+            "rule_version": SEGMENTAL_REPORT_VERSION,
+        }
+
+    latest = rows[-1]
+    points = [
+        {
+            "measured_at": r.measured_at,
+            **{k: getattr(r, k) for k in LIMB_FIELDS},
+        }
+        for r in rows
+    ]
+    analysis = segmental.analyze(
+        {k: getattr(latest, k) for k in LIMB_FIELDS},
+        height_cm=member.height_cm,
+        gender=member.gender,
+    )
+    return {
+        "member_id": member_id,
+        "latest": limb_dict(latest),
+        "analysis": analysis,
+        "trend": segmental.trend(points),
+        "measurements_count": len(rows),
+        "reason": "تحلیل بر پایهٔ آخرین اندازه‌گیری",
+        "note": analysis["note"],
+        "rule_version": SEGMENTAL_REPORT_VERSION,
     }
