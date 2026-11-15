@@ -118,6 +118,39 @@ unformatted: File would be reformatted
    |
 
 unformatted: File would be reformatted
+  --> db/migrations/versions/e0f1a2b3c4d5_m38_set_feedback.py:18:19
+   |
+17 |         sa.Column("id", sa.Integer(), primary_key=True),
+   -         sa.Column("member_id", sa.Integer(), sa.ForeignKey("members.id", ondelete="CASCADE"), nullable=False, index=True),
+   -         sa.Column("program_id", sa.Integer(), sa.ForeignKey("workout_programs.id", ondelete="SET NULL"), nullable=True),
+18 +         sa.Column(
+19 +             "member_id",
+20 +             sa.Integer(),
+21 +             sa.ForeignKey("members.id", ondelete="CASCADE"),
+22 +             nullable=False,
+23 +             index=True,
+24 +         ),
+25 +         sa.Column(
+26 +             "program_id",
+27 +             sa.Integer(),
+28 +             sa.ForeignKey("workout_programs.id", ondelete="SET NULL"),
+29 +             nullable=True,
+30 +         ),
+31 |         sa.Column("branch_id", sa.Integer(), nullable=False, server_default="1", index=True),
+--------------------------------------------------------------------------------
+38 |         sa.Column("notes", sa.Text(), nullable=False, server_default=""),
+   -         sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
+   -         sa.Column("updated_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
+39 +         sa.Column(
+40 +             "created_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False
+41 +         ),
+42 +         sa.Column(
+43 +             "updated_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False
+44 +         ),
+45 |     )
+   |
+
+unformatted: File would be reformatted
   --> db/migrations/versions/e5f6a1b2c3d4_m33_review_columns.py:16:26
    |
 15 |     with op.batch_alter_table("catalog_exercises") as batch:
@@ -315,6 +348,40 @@ unformatted: File would be reformatted
 150 +             )
 151 |         ),
     |
+
+unformatted: File would be reformatted
+  --> engine/set_feedback.py:14:22
+   |
+13 |
+   - SORENESS_DELOAD = 7      # درد شدید ← کاهش حجم
+   - SORENESS_OK = 3          # درد خفیف/بدون درد ← حجم عادی
+14 + SORENESS_DELOAD = 7  # درد شدید ← کاهش حجم
+15 + SORENESS_OK = 3  # درد خفیف/بدون درد ← حجم عادی
+16 |
+--------------------------------------------------------------------------------
+69 |             volume_reason = f"درد عضلانی {max_soreness}/۱۰ در محدودهٔ قابل قبول ← حجم حفظ می‌شود"
+   -         suggestions.append({
+   -             "movement_id": mid,
+   -             "next_weight": weight_rule["next_weight"],
+   -             "weight_action": weight_rule["action"],
+   -             "next_sets": next_sets,
+   -             "volume_action": volume_action,
+   -             "reason": f"{weight_rule['reason']}؛ {volume_reason}",
+   -             "rule_version": SET_FEEDBACK_VERSION,
+   -         })
+70 +         suggestions.append(
+71 +             {
+72 +                 "movement_id": mid,
+73 +                 "next_weight": weight_rule["next_weight"],
+74 +                 "weight_action": weight_rule["action"],
+75 +                 "next_sets": next_sets,
+76 +                 "volume_action": volume_action,
+77 +                 "reason": f"{weight_rule['reason']}؛ {volume_reason}",
+78 +                 "rule_version": SET_FEEDBACK_VERSION,
+79 +             }
+80 +         )
+81 |     return {
+   |
 
 unformatted: File would be reformatted
   --> eval/scoring_eval.py:29:39
@@ -1475,6 +1542,27 @@ unformatted: File would be reformatted
 187 +             "tests": [{"test_key": "rubric_balance", "raw_value": 150}],
 188 +         },
 189 |         headers=h,
+--------------------------------------------------------------------------------
+270 |             "entries": [
+    -                 {"movement_id": "pushup-l1", "weight": 0, "target_reps": 10, "reps_done": 12, "rir": 3, "soreness": 2},
+    -                 {"movement_id": "pushup-l1", "weight": 0, "target_reps": 10, "reps_done": 11, "rir": 2, "soreness": 8},
+271 +                 {
+272 +                     "movement_id": "pushup-l1",
+273 +                     "weight": 0,
+274 +                     "target_reps": 10,
+275 +                     "reps_done": 12,
+276 +                     "rir": 3,
+277 +                     "soreness": 2,
+278 +                 },
+279 +                 {
+280 +                     "movement_id": "pushup-l1",
+281 +                     "weight": 0,
+282 +                     "target_reps": 10,
+283 +                     "reps_done": 11,
+284 +                     "rir": 2,
+285 +                     "soreness": 8,
+286 +                 },
+287 |             ],
     |
 
 unformatted: File would be reformatted
@@ -1637,4 +1725,87 @@ unformatted: File would be reformatted
 60 |     }
    |
 
-24 files would be reformatted, 167 files already formatted
+unformatted: File would be reformatted
+  --> tests/unit/test_set_feedback.py:13:35
+   |
+12 |     # ۲ تکرار بیشتر از هدف با RIR ۳ (RPE ۷) ← قانون ۲ برای ۲ ← افزایش
+   -     result = process_set_feedback(entries=[
+   -         {"movement_id": "squat", "weight": 60, "target_reps": 8, "reps_done": 10, "rir": 3, "soreness": 2},
+   -     ])
+13 +     result = process_set_feedback(
+14 +         entries=[
+15 +             {
+16 +                 "movement_id": "squat",
+17 +                 "weight": 60,
+18 +                 "target_reps": 8,
+19 +                 "reps_done": 10,
+20 +                 "rir": 3,
+21 +                 "soreness": 2,
+22 +             },
+23 +         ]
+24 +     )
+25 |     s = result["suggestions"][0]
+--------------------------------------------------------------------------------
+32 | def test_high_soreness_triggers_deload() -> None:
+   -     result = process_set_feedback(entries=[
+   -         {"movement_id": "press", "weight": 40, "target_reps": 10, "reps_done": 10, "rir": 1, "soreness": 8},
+   -         {"movement_id": "press", "weight": 40, "target_reps": 10, "reps_done": 9, "rir": 1, "soreness": 7},
+   -     ])
+33 +     result = process_set_feedback(
+34 +         entries=[
+35 +             {
+36 +                 "movement_id": "press",
+37 +                 "weight": 40,
+38 +                 "target_reps": 10,
+39 +                 "reps_done": 10,
+40 +                 "rir": 1,
+41 +                 "soreness": 8,
+42 +             },
+43 +             {
+44 +                 "movement_id": "press",
+45 +                 "weight": 40,
+46 +                 "target_reps": 10,
+47 +                 "reps_done": 9,
+48 +                 "rir": 1,
+49 +                 "soreness": 7,
+50 +             },
+51 +         ]
+52 +     )
+53 |     s = result["suggestions"][0]
+--------------------------------------------------------------------------------
+59 | def test_failed_reps_decrease_weight() -> None:
+   -     result = process_set_feedback(entries=[
+   -         {"movement_id": "row", "weight": 50, "target_reps": 8, "reps_done": 5, "rir": 0, "soreness": 2},
+   -     ])
+60 +     result = process_set_feedback(
+61 +         entries=[
+62 +             {
+63 +                 "movement_id": "row",
+64 +                 "weight": 50,
+65 +                 "target_reps": 8,
+66 +                 "reps_done": 5,
+67 +                 "rir": 0,
+68 +                 "soreness": 2,
+69 +             },
+70 +         ]
+71 +     )
+72 |     s = result["suggestions"][0]
+--------------------------------------------------------------------------------
+82 |     with pytest.raises(ApiError, match="درد"):
+   -         process_set_feedback(entries=[
+   -             {"movement_id": "x", "weight": 40, "target_reps": 8, "reps_done": 8, "soreness": 11},
+   -         ])
+83 +         process_set_feedback(
+84 +             entries=[
+85 +                 {
+86 +                     "movement_id": "x",
+87 +                     "weight": 40,
+88 +                     "target_reps": 8,
+89 +                     "reps_done": 8,
+90 +                     "soreness": 11,
+91 +                 },
+92 +             ]
+93 +         )
+   |
+
+27 files would be reformatted, 167 files already formatted
