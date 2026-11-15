@@ -82,7 +82,7 @@ jobs:
           git config user.name "mp-apk-ci"
           git config user.email "ci@muscleparadise.local"
           git fetch origin "$BRANCH"
-          git checkout -B "$BRANCH" "origin/$BRANCH"
+          git reset --hard "origin/$BRANCH"
           mkdir -p finn/reports/apk-ci
           cp /tmp/step-*.txt finn/reports/apk-ci/ 2>/dev/null || true
           echo "run=${{ github.run_id }} ref=${{ github.ref_name }}" > finn/reports/apk-ci/RUN.txt
@@ -102,7 +102,7 @@ jobs:
           git config user.name "mp-apk-ci"
           git config user.email "ci@muscleparadise.local"
           git fetch origin "$BRANCH"
-          git checkout -B "$BRANCH" "origin/$BRANCH"
+          git reset --hard "origin/$BRANCH"
           mkdir -p mp-app/client/release
           cp mp-app/client/build/app/outputs/flutter-apk/*.apk mp-app/client/release/ 2>/dev/null || true
           cp mp-app/client/build/app/outputs/flutter-apk/*.sha256 mp-app/client/release/ 2>/dev/null || true
