@@ -1,6 +1,5 @@
 Analyzing client...                                             
 
-  error • The returned type 'Future<dynamic>' isn't returnable from a 'Future<Map<String, dynamic>>' function, as required by the closure's context • lib/core/app_state.dart:54:10 • return_of_invalid_type_from_closure
    info • 'package:flutter/material.dart' is deprecated and shouldn't be used. Use package:material_ui/material_ui.dart instead. This feature was deprecated after v3.47.0-0.0.pre. Try replacing the use of the deprecated member with the replacement • lib/core/router.dart:4:1 • deprecated_member_use
    info • 'package:flutter/material.dart' is deprecated and shouldn't be used. Use package:material_ui/material_ui.dart instead. This feature was deprecated after v3.47.0-0.0.pre. Try replacing the use of the deprecated member with the replacement • lib/core/theme.dart:4:1 • deprecated_member_use
    info • The imported package 'crypto' isn't a dependency of the importing package. Try adding a dependency for 'crypto' in the 'pubspec.yaml' file • lib/core/updater/update_service.dart:10:8 • depend_on_referenced_packages
@@ -24,10 +23,9 @@ Analyzing client...
    info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement • lib/features/bodycomp/bodycomp_page.dart:231:51 • deprecated_member_use
    info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/bodycomp/bodycomp_page.dart:233:14 • prefer_const_constructors
    info • 'package:flutter/material.dart' is deprecated and shouldn't be used. Use package:material_ui/material_ui.dart instead. This feature was deprecated after v3.47.0-0.0.pre. Try replacing the use of the deprecated member with the replacement • lib/features/checkin/checkin_page.dart:6:1 • deprecated_member_use
-  error • The returned type 'Future<dynamic>' isn't returnable from a 'Future<Map<String, dynamic>>' function, as required by the closure's context • lib/features/checkin/checkin_page.dart:18:10 • return_of_invalid_type_from_closure
-   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/checkin/checkin_page.dart:109:38 • prefer_const_constructors
-   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/checkin/checkin_page.dart:128:25 • prefer_const_constructors
-   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/checkin/checkin_page.dart:129:36 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/checkin/checkin_page.dart:110:38 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/checkin/checkin_page.dart:129:25 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/checkin/checkin_page.dart:130:36 • prefer_const_constructors
    info • 'package:flutter/material.dart' is deprecated and shouldn't be used. Use package:material_ui/material_ui.dart instead. This feature was deprecated after v3.47.0-0.0.pre. Try replacing the use of the deprecated member with the replacement • lib/features/classes/classes_page.dart:4:1 • deprecated_member_use
    info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement • lib/features/classes/classes_page.dart:109:41 • deprecated_member_use
    info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/classes/classes_page.dart:124:28 • prefer_const_constructors
@@ -71,10 +69,9 @@ Analyzing client...
    info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/nutrition/nutrition_page.dart:53:36 • prefer_const_constructors
    info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/nutrition/nutrition_page.dart:97:32 • prefer_const_constructors
    info • 'package:flutter/material.dart' is deprecated and shouldn't be used. Use package:material_ui/material_ui.dart instead. This feature was deprecated after v3.47.0-0.0.pre. Try replacing the use of the deprecated member with the replacement • lib/features/profile/profile_page.dart:4:1 • deprecated_member_use
-  error • The returned type 'Future<dynamic>' isn't returnable from a 'Future<Map<String, dynamic>>' function, as required by the closure's context • lib/features/profile/profile_page.dart:13:10 • return_of_invalid_type_from_closure
-   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement • lib/features/profile/profile_page.dart:109:75 • deprecated_member_use
-   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/profile/profile_page.dart:122:36 • prefer_const_constructors
-   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/profile/profile_page.dart:221:58 • prefer_const_constructors
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement • lib/features/profile/profile_page.dart:110:75 • deprecated_member_use
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/profile/profile_page.dart:123:36 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/profile/profile_page.dart:222:58 • prefer_const_constructors
    info • 'package:flutter/material.dart' is deprecated and shouldn't be used. Use package:material_ui/material_ui.dart instead. This feature was deprecated after v3.47.0-0.0.pre. Try replacing the use of the deprecated member with the replacement • lib/features/progress/progress_page.dart:4:1 • deprecated_member_use
    info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/progress/progress_page.dart:35:11 • prefer_const_constructors
    info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/progress/progress_page.dart:36:20 • prefer_const_constructors
@@ -121,4 +118,4 @@ Analyzing client...
    info • Dangling library doc comment. Add a 'library' directive after the library comment • test/home_page_test.dart:1:1 • dangling_library_doc_comments
    info • 'package:flutter/material.dart' is deprecated and shouldn't be used. Use package:material_ui/material_ui.dart instead. This feature was deprecated after v3.47.0-0.0.pre. Try replacing the use of the deprecated member with the replacement • test/today_page_test.dart:4:1 • deprecated_member_use
 
-120 issues found. (ran in 5.1s)
+117 issues found. (ran in 5.4s)
