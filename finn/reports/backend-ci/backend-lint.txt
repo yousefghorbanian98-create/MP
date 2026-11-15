@@ -562,15 +562,15 @@ unformatted: File would be reformatted
     |
 
 unformatted: File would be reformatted
-  --> modules/admin/router.py:32:13
+  --> modules/admin/router.py:34:13
    |
-31 |
+33 |
    - @router.get("/analytics/leaderboards", summary="لیدربوردهای مدیریتی: بهترین ورزشکار/بیشترین هزینه/بیشترین مراجعه (M42-c1)")
-32 + @router.get(
-33 +     "/analytics/leaderboards",
-34 +     summary="لیدربوردهای مدیریتی: بهترین ورزشکار/بیشترین هزینه/بیشترین مراجعه (M42-c1)",
-35 + )
-36 | def _leaderboards(
+34 + @router.get(
+35 +     "/analytics/leaderboards",
+36 +     summary="لیدربوردهای مدیریتی: بهترین ورزشکار/بیشترین هزینه/بیشترین مراجعه (M42-c1)",
+37 + )
+38 | def _leaderboards(
    |
 
 unformatted: File would be reformatted
@@ -1787,6 +1787,37 @@ unformatted: File would be reformatted
     |
 
 unformatted: File would be reformatted
+   --> tests/integration/test_admin_pass.py:56:23
+    |
+55  |     # اعطا: member ← coach
+    -     res = client.post(f"/api/v1/admin/users/{target_id}/role", json={"role": "coach"}, headers=owner_h)
+56  +     res = client.post(
+57  +         f"/api/v1/admin/users/{target_id}/role", json={"role": "coach"}, headers=owner_h
+58  +     )
+59  |     assert res.status_code == 200, res.text
+--------------------------------------------------------------------------------
+85  |
+    -     res = client.post(f"/api/v1/admin/users/{target_id}/role", json={"role": "coach"}, headers=manager_h)
+86  +     res = client.post(
+87  +         f"/api/v1/admin/users/{target_id}/role", json={"role": "coach"}, headers=manager_h
+88  +     )
+89  |     assert res.status_code == 403
+90  |
+    -     res = client.post(f"/api/v1/admin/users/{owner_id}/role", json={"role": "member"}, headers=owner_h)
+91  +     res = client.post(
+92  +         f"/api/v1/admin/users/{owner_id}/role", json={"role": "member"}, headers=owner_h
+93  +     )
+94  |     assert res.status_code == 400
+95  |     assert res.json()["error"]["code"] == "self_role_change"
+96  |
+    -     res = client.post(f"/api/v1/admin/users/{target_id}/role", json={"role": "boss"}, headers=owner_h)
+97  +     res = client.post(
+98  +         f"/api/v1/admin/users/{target_id}/role", json={"role": "boss"}, headers=owner_h
+99  +     )
+100 |     assert res.status_code == 400
+    |
+
+unformatted: File would be reformatted
   --> tests/integration/test_ai_engine.py:51:28
    |
 50 |     return client.post(
@@ -2141,6 +2172,27 @@ unformatted: File would be reformatted
     |
 
 unformatted: File would be reformatted
+  --> tests/regression/test_rbac.py:39:63
+   |
+38 |     # M43-c3 (D-004) — معناشناسی یکپارچه‌شدهٔ casbin:
+   -     ("member", "/api/v1/ai/program/generate", "POST", True),   # فرم ورودی عضو (باگ REA فیکس شد)
+   -     ("member", "/api/v1/population/gate-check", "POST", True), # فرم ورودی عضو (باگ REA فیکس شد)
+39 +     ("member", "/api/v1/ai/program/generate", "POST", True),  # فرم ورودی عضو (باگ REA فیکس شد)
+40 +     ("member", "/api/v1/population/gate-check", "POST", True),  # فرم ورودی عضو (باگ REA فیکس شد)
+41 |     ("member", "/api/v1/classes/book", "POST", True),
+   -     ("member", "/api/v1/classes", "POST", False),              # ایجاد کلاس = staff
+42 +     ("member", "/api/v1/classes", "POST", False),  # ایجاد کلاس = staff
+43 |     ("reception", "/api/v1/population/intake/next", "POST", True),
+   -     ("reception", "/api/v1/classes/book", "POST", False),      # رزرو برای عضو/کادر، نه پذیرش
+44 +     ("reception", "/api/v1/classes/book", "POST", False),  # رزرو برای عضو/کادر، نه پذیرش
+45 |     ("coach", "/api/v1/reports/confidential/3", "GET", True),
+46 |     ("coach", "/api/v1/axis-assessments/4/review", "POST", False),  # بازبینی = manager/admin
+   -     ("manager", "/api/v1/reports/confidential/3", "GET", False),    # ردِ صریح (DENIES)
+47 +     ("manager", "/api/v1/reports/confidential/3", "GET", False),  # ردِ صریح (DENIES)
+48 |     ("manager", "/api/v1/axis-assessments/4/review", "POST", True),
+   |
+
+unformatted: File would be reformatted
   --> tests/unit/test_axis_assessment_models.py:15:33
    |
 14 |     member = make_member(user=user)
@@ -2391,4 +2443,4 @@ unformatted: File would be reformatted
 93 +         )
    |
 
-48 files would be reformatted, 159 files already formatted
+50 files would be reformatted, 159 files already formatted
