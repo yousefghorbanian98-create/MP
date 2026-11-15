@@ -52,6 +52,8 @@ Thumbs.db
 mp-app/studio/dist/
 mp-app/studio/release/
 mp-app/backend/*.db
+mp-app/backend/*.db-shm
+mp-app/backend/*.db-wal
 mp-app/backend/*.sqlite3
 tmp/
 _ref/

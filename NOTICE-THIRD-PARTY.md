@@ -41,4 +41,4 @@
 
 | منبع | مجوز | کاربرد | ردیابی |
 |---|---|---|---|
-| [yuhonas/free-exercise-db](https://github.com/yuhonas/free-exercise-db) | **The Unlicense** (مالکیت عمومی) | کاتالوگ ۸۷۶ حرکتی سامانهٔ ۱۴ توانایی (M33) | `mp-app/backend/data/external/free_exercise_db/SOURCE.md` — commit `f00c92c` + sha256 |
+| [yuhonas/free-exercise-db](https://github.com/yuhonas/free-exercise-db) | **The Unlicense** (مالکیت عمومی) | کاتالوگ ۸۷۶ حرکتی سامانهٔ ۱۴ توانایی (M33) | `mp-app/backend/data/external/free_exercise_db/SOURCE.md` — commit `f00c92c` + sha256. **G9:** ۱۷ حرکت × ۲ فریم (۳۰۰×۳۰۰، بازفشرده از همان commit) در `mp-app/backend/static/exercises/` — همان Unlicense |

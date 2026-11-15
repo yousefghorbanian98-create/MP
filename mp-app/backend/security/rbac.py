@@ -60,6 +60,8 @@ POLICIES: list[tuple[str, str, str]] = [
     ("member", "/api/v1/payments/*", "GET"),
     ("member", "/api/v1/payments/wallet/pay", "POST"),
     ("member", "/api/v1/nutrition/*", "GET"),
+    # G9 — کتابخانهٔ حرکات با تصویر: شاگرد باید حرکت برنامهٔ خودش را ببیند.
+    ("member", "/api/v1/library/*", "GET"),
     # G8 (M51-c1) — چت: عضو باید بتواند گفتگوی خودش را ببیند و پیام بدهد.
     # دامنهٔ دقیق، نه `*`: فقط زیرمسیرهای گفتگو. کنترل «کدام گفتگو»
     # در chat_service._load_conversation است (مالکیت بررسی می‌شود).
@@ -91,6 +93,7 @@ POLICIES: list[tuple[str, str, str]] = [
     ("coach", "/api/v1/admin/attendance", "GET"),
     ("coach", "/api/v1/admin/checkins", "GET"),
     ("coach", "/api/v1/programs/*", "*"),
+    ("coach", "/api/v1/library/*", "GET"),
     # M43-c3 (D-004): مسیرهای مهاجرت‌داده‌شده از require_roles
     ("coach", "/api/v1/ai/program/generate", "POST"),
     ("coach", "/api/v1/ai/nutrition/generate", "POST"),

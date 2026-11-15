@@ -470,6 +470,33 @@ export function fetchMemberVolume(
   );
 }
 
+// ── G9 — کتابخانهٔ حرکات با تصویر (free-exercise-db، Unlicense) ──
+
+export interface ExerciseRow {
+  exercise_id: number;
+  name_fa: string;
+  name_en: string;
+  muscle_group: string;
+  equipment: string;
+  difficulty: string;
+  instructions_fa: string;
+  image_url: string;
+  image_url_alt: string;
+}
+
+export function browseExercises(
+  muscleGroup: string | null = null,
+  query = "",
+  token = getToken(),
+  signal?: AbortSignal,
+) {
+  const params = new URLSearchParams();
+  if (muscleGroup) params.set("muscle_group", muscleGroup);
+  if (query) params.set("q", query);
+  const qs = params.toString();
+  return getJson<ExerciseRow[]>(`/library/exercises${qs ? `?${qs}` : ""}`, token, signal);
+}
+
 export type VolumeLevel = "beginner" | "intermediate" | "advanced";
 
 // ── G5 — ثبت غذای روزانه ──

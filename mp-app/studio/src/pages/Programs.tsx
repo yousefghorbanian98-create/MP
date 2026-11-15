@@ -4,6 +4,7 @@ import { approveProgram, fetchProgramsSummary, rejectProgram } from "../lib/api"
 import { SafetyBadge, parseSafety } from "../components/SafetyBadge";
 import { ReadinessPanel } from "../components/ReadinessPanel";
 import { VolumePanel } from "../components/VolumePanel";
+import { ExerciseLibrary } from "../components/ExerciseLibrary";
 import { fa, useApi } from "../lib/useApi";
 
 /**
@@ -217,6 +218,9 @@ export function Programs() {
         <ReadinessPanel />
       </div>
     )}
+    <div className="mt-4">
+      <ExerciseLibrary />
+    </div>
     </>
   );
 }

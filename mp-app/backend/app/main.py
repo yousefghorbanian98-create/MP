@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
@@ -91,7 +92,15 @@ def create_app() -> FastAPI:
     app.state.limiter = limiter
     app.add_exception_handler(RateLimitExceeded, _rate_limit_handler)
 
+    # تصاویر کتابخانهٔ حرکات (G9) — از خود اپ سرو می‌شوند تا PWA آفلاین
+    # هم تصویر داشته باشد؛ هیچ وابستگی به سرور بیرونی نیست.
+    from fastapi.staticfiles import StaticFiles
+
     from api.v1.api import api_router
+
+    _static = Path(__file__).resolve().parents[1] / "static"
+    if _static.is_dir():
+        app.mount("/static", StaticFiles(directory=_static), name="static")
 
     app.include_router(api_router, prefix="/api/v1")
     app.add_api_route("/health", health, methods=["GET"], tags=["health"], summary="سلامت سیستم")
