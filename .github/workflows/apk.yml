@@ -89,7 +89,7 @@ jobs:
           git add finn/reports/apk-ci
           git commit -m "mp(apk): diagnostics run ${{ github.run_id }} [skip ci]" || true
           for i in 1 2 3 4 5; do
-            git pull --rebase origin "$BRANCH" && git push origin "$BRANCH" && break
+            git pull --rebase origin "$BRANCH" && git push origin "HEAD:$BRANCH" && break
             sleep 6
           done
 
