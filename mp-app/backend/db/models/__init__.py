@@ -26,7 +26,7 @@ from db.models.membership import Member, Membership
 from db.models.notification import Notification
 from db.models.nutrition import MealItem, NutritionPlan
 from db.models.payments import Payment, WalletTransaction
-from db.models.programs import ProgramExercise, ProgramWeek, WorkoutProgram
+from db.models.programs import ProgramExercise, ProgramWeek, SetFeedback, WorkoutProgram
 
 __all__ = [
     "Assessment14Domain",
@@ -62,6 +62,7 @@ __all__ = [
     "ProgressionStep",
     "RefreshToken",
     "RuleRun",
+    "SetFeedback",
     "User",
     "WalletTransaction",
     "WorkoutProgram",

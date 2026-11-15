@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from sqlalchemy import DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy import DateTime, Float, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from db.base import Base, BranchMixin, TimestampMixin
@@ -80,3 +80,25 @@ class ProgramExercise(Base):
     notes: Mapped[str] = mapped_column(Text, default="", nullable=False)
 
     week: Mapped[ProgramWeek] = relationship(back_populates="exercises")
+
+
+class SetFeedback(TimestampMixin, BranchMixin, Base):
+    """بازخورد ست‌به‌ست (G1 — M38-c2): RIR/درد هر ست برای تنظیم هفتگی."""
+
+    __tablename__ = "set_feedbacks"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    member_id: Mapped[int] = mapped_column(
+        ForeignKey("members.id", ondelete="CASCADE"), index=True, nullable=False
+    )
+    program_id: Mapped[int | None] = mapped_column(
+        ForeignKey("workout_programs.id", ondelete="SET NULL"), nullable=True
+    )
+    movement_id: Mapped[str] = mapped_column(String(60), nullable=False)
+    weight: Mapped[float] = mapped_column(Float, nullable=False)
+    target_reps: Mapped[int] = mapped_column(Integer, nullable=False)
+    reps_done: Mapped[int] = mapped_column(Integer, nullable=False)
+    # RIR (تکرار ذخیره) و درد عضلانی ۰..۱۰ — خودگزارش
+    rir: Mapped[float | None] = mapped_column(Float, nullable=True)
+    soreness: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    notes: Mapped[str] = mapped_column(Text, default="", nullable=False)

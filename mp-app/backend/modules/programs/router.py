@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends
 
 from app.deps import CurrentUser, DbSession, require_permission
 from modules.programs import service
-from modules.programs.schemas import ProgramFromEngineIn, ProgramOut, RejectIn
+from modules.programs.schemas import ProgramFromEngineIn, ProgramOut, RejectIn, SetFeedbackIn
 
 router = APIRouter(
     prefix="/programs", tags=["programs"], dependencies=[Depends(require_permission())]
@@ -48,3 +48,14 @@ def approve_program(program_id: int, db: DbSession):
 )
 def reject_program(program_id: int, payload: RejectIn, db: DbSession):
     return service.reject_program(db, program_id, coach_id=0, reason=payload.reason)
+
+
+@router.post("/set-feedback", summary="ثبت بازخورد ست‌به‌ست (RIR/درد) + پیشنهاد جلسهٔ بعد (G1)")
+def set_feedback(payload: SetFeedbackIn, db: DbSession, user: CurrentUser):
+    return service.record_set_feedback(
+        db,
+        member_id=payload.member_id,
+        program_id=payload.program_id,
+        entries=[e.model_dump() for e in payload.entries],
+        user=user,
+    )

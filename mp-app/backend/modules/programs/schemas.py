@@ -72,3 +72,19 @@ class ProgramFromEngineIn(BaseModel):
     engine_version: str = Field("", max_length=20)
     llm_explanation: str = Field("", max_length=5000)  # فقط متن — هرگز عدد (G8)
     weeks: list[EngineWeekIn] = Field(default_factory=list)
+
+
+class SetFeedbackEntryIn(BaseModel):
+    movement_id: str = Field(min_length=1, max_length=60)
+    weight: float = Field(ge=0)  # صفر = حرکت وزن‌بدن
+    target_reps: int = Field(ge=1)
+    reps_done: int = Field(ge=0)
+    rir: float | None = Field(default=None, ge=0, le=10)
+    soreness: int | None = Field(default=None, ge=0, le=10)
+    notes: str = ""
+
+
+class SetFeedbackIn(BaseModel):
+    member_id: int
+    program_id: int | None = None
+    entries: list[SetFeedbackEntryIn] = Field(min_length=1)

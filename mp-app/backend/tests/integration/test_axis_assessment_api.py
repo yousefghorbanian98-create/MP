@@ -246,3 +246,28 @@ def test_review_flow_audit_and_separation_of_duties(client, auth, member_ids, se
         headers=h_manager,
     )
     assert res5.status_code == 400
+
+
+def test_set_feedback_endpoint_g1(client, auth, member_ids):
+    """M38-c2 — G1: بازخورد ست از کلاینت ← پیشنهاد جلسهٔ بعد (بدون عدد از LLM)."""
+    from db.base import get_session_factory
+    from db.models import SetFeedback
+
+    h = auth("coach")
+    res = client.post(
+        "/api/v1/programs/set-feedback",
+        json={
+            "member_id": member_ids["member_id"],
+            "entries": [
+                {"movement_id": "pushup-l1", "weight": 0, "target_reps": 10, "reps_done": 12, "rir": 3, "soreness": 2},
+                {"movement_id": "pushup-l1", "weight": 0, "target_reps": 10, "reps_done": 11, "rir": 2, "soreness": 8},
+            ],
+        },
+        headers=h,
+    )
+    assert res.status_code == 200, res.text
+    body = res.json()
+    assert body["suggestions"][0]["volume_action"] == "deload"
+    with get_session_factory()() as s:
+        rows = s.query(SetFeedback).filter_by(movement_id="pushup-l1").all()
+        assert len(rows) == 2

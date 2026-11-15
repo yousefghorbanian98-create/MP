@@ -120,3 +120,35 @@ def create_program_from_engine_output(
     db.commit()
     db.refresh(program)
     return program
+
+
+def record_set_feedback(
+    db: Session,
+    *,
+    member_id: int,
+    program_id: int | None,
+    entries: list[dict],
+    user=None,
+) -> dict:
+    """ثبت بازخورد ست‌ها + پیشنهاد جلسهٔ بعد (G1 — M38-c2)."""
+    from app.security.ownership import ensure_member_scope
+    from db.models.programs import SetFeedback
+    from engine.set_feedback import process_set_feedback
+
+    ensure_member_scope(db, user, member_id)
+    for entry in entries:
+        db.add(
+            SetFeedback(
+                member_id=member_id,
+                program_id=program_id,
+                movement_id=entry["movement_id"],
+                weight=entry["weight"],
+                target_reps=entry["target_reps"],
+                reps_done=entry["reps_done"],
+                rir=entry.get("rir"),
+                soreness=entry.get("soreness"),
+                notes=entry.get("notes", ""),
+            )
+        )
+    db.commit()
+    return process_set_feedback(entries=entries)
