@@ -120,6 +120,6 @@ Script compilation errors:
 > Run with --scan to get full insights from a Build Scan (powered by Develocity).
 > Get more help at https://help.gradle.org.
 
-BUILD FAILED in 1m 55s
-Running Gradle task 'assembleRelease'...                          118.2s
+BUILD FAILED in 1m 46s
+Running Gradle task 'assembleRelease'...                          106.7s
 Gradle task assembleRelease failed with exit code 1
