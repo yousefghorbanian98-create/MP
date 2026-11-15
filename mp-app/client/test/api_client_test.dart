@@ -23,7 +23,7 @@ void main() {
     expect(r['id'], 7);
     final authHeader = seen.headers.map((k, v) => MapEntry(k.toLowerCase(), v))['authorization'];
     expect(authHeader, 'Bearer tok-123');
-    expect(seen.url.toString(), 'http://test/api/v1/members/me');
+    expect(seen.url.toString(), 'http://10.0.2.2:8000/api/v1/members/me');
   });
 
   test('خطای سرور با پیام فارسی detail بالا می‌آید', () async {
