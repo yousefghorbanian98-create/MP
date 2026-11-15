@@ -163,19 +163,15 @@ class _ExerciseTile extends ConsumerWidget {
               ref.read(todayControllerProvider.notifier).toggle(index),
           child: Row(
             children: [
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 250),
-                width: 34,
-                height: 34,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: done ? MpColors.primary : MpColors.surface,
-                  border: Border.all(
-                      color: done ? MpColors.primary : MpColors.textSecondary),
+              AnimatedScale(
+                scale: done ? 1.12 : 1.0,
+                duration: const Duration(milliseconds: 220),
+                curve: Curves.easeOutBack,
+                child: Icon(
+                  done ? Icons.check_circle : Icons.circle_outlined,
+                  size: 30,
+                  color: done ? MpColors.primary : MpColors.textSecondary,
                 ),
-                child: done
-                    ? const Icon(Icons.check, size: 20, color: Colors.white)
-                    : null,
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -183,7 +179,8 @@ class _ExerciseTile extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'حرکت ${exercise['exercise_id']} — روز ${exercise['day']}',
+                      (exercise['exercise_name'] as String?) ??
+                          'حرکت ${exercise['exercise_id'] ?? ''}',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         decoration: done ? TextDecoration.lineThrough : null,
