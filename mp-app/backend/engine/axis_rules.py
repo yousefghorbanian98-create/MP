@@ -144,3 +144,75 @@ def decide_program_axes(
 
 def api_error_no_scores() -> ApiError:
     return ApiError("هیچ نمره‌ای ثبت نشده — داده ناشناخته است نه صفر", code="missing_score")
+
+
+# --- M34-c3: قانون «یک حرکت، چند محور، یک‌بار بار» (نسخهٔ load-attribution-1.0) ---
+
+LOAD_RULES_VERSION = "load-attribution-1.0"
+
+
+def attribute_load(
+    *,
+    movement_id: str,
+    axis_coverage: dict[str, float],
+    sets: float,
+) -> dict:
+    """انتساب بار یک حرکت: خستگی «یک‌بار» شمرده می‌شود، اعتبار پوشش «به‌ازای هر محور».
+
+    - خستگی (fatigue_units) = تعداد ست‌ها — مستقل از تعداد محورهای پوشش‌داده.
+    - اعتبار محور (axis_credit) = وزن پوشش × ست‌ها — برای پرسش «آیا این محور کار کافی گرفت؟».
+    - حرکت بدون بردار پوشش ← خطای صریح (داده ناشناخته است نه صفر).
+    """
+    if not movement_id:
+        raise ApiError("movement_id الزامی است", code="invalid_input")
+    if not axis_coverage:
+        raise ApiError(
+            f"حرکت {movement_id} بردار پوشش ندارد — داده ناشناخته است نه صفر",
+            code="missing_coverage",
+        )
+    if sets is None or not isinstance(sets, (int, float)) or isinstance(sets, bool) or sets < 0:
+        raise ApiError("تعداد ست نامعتبر — داده ناشناخته است نه صفر", code="invalid_sets")
+
+    axis_credit = {
+        axis: round(float(weight) * sets, 4) for axis, weight in sorted(axis_coverage.items())
+    }
+    return {
+        "movement_id": movement_id,
+        "fatigue_units": sets,  # فقط یک‌بار — نه به‌ازای هر محور
+        "axis_credit": axis_credit,
+        "reason": (
+            f"حرکت {movement_id} با {sets} ست و پوشش {len(axis_coverage)} محور ← "
+            f"خستگی یک‌بار ({sets})؛ اعتبار محورها جدا شمرده می‌شود"
+        ),
+        "rule_version": LOAD_RULES_VERSION,
+    }
+
+
+def tally_weekly_load(entries: list[dict]) -> dict:
+    """جمع هفتگی: خستگی هر ستِ هر حرکت یک‌بار؛ اعتبار محورها جمع می‌شود.
+
+    هر entry خروجی `attribute_load` است. اگر یک حرکت چند بار ثبت شود (چند جلسه)،
+    خستگی هر بار جدا شمرده می‌شود — اما هیچ‌وقت «به‌ازای هر محور» ضرب نمی‌شود.
+    """
+    if not entries:
+        raise ApiError("هیچ entry باری ثبت نشده — داده ناشناخته است نه صفر", code="missing_entries")
+    total_fatigue = 0.0
+    axis_totals: dict[str, float] = {}
+    movements_seen: list[str] = []
+    for entry in entries:
+        if entry.get("rule_version") != LOAD_RULES_VERSION:
+            raise ApiError("entry با نسخهٔ قاعدهٔ ناشناخته — از attribute_load استفاده کن", code="invalid_entry")
+        total_fatigue += entry["fatigue_units"]
+        movements_seen.append(entry["movement_id"])
+        for axis, credit in entry["axis_credit"].items():
+            axis_totals[axis] = round(axis_totals.get(axis, 0.0) + credit, 4)
+    return {
+        "total_fatigue": round(total_fatigue, 4),
+        "axis_totals": dict(sorted(axis_totals.items())),
+        "movements_counted": len(movements_seen),
+        "reason": (
+            f"{len(movements_seen)} حرکت ← خستگی جمعاً {round(total_fatigue, 4)} (هر ست یک‌بار)؛ "
+            f"اعتبار {len(axis_totals)} محور جدا جمع شد"
+        ),
+        "rule_version": LOAD_RULES_VERSION,
+    }

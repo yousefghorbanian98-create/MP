@@ -1,0 +1,14 @@
+{
+  "rule_id": "M34c3-load-attribution",
+  "date": "2026-11-14",
+  "status": "verified",
+  "method": "engine/axis_rules.py نسخهٔ load-attribution-1.0 — خستگی هر ستِ هر حرکت «یک‌بار» شمرده می‌شود؛ اعتبار پوشش به‌ازای هر محور جدا جمع می‌شود (قانون «یک حرکت، چند محور، یک‌بار بار»)",
+  "boundaries": [
+    "حرکت بدون بردار پوشش ← خطای صریح (داده ناشناخته است نه صفر)",
+    "entry با نسخهٔ قاعدهٔ ناشناخته پذیرفته نمی‌شود"
+  ],
+  "verified_by": "finn (ECC-3), S6 چرخهٔ M34-c3",
+  "evidence": [
+    "tests/unit/test_load_attribution.py (5 tests)"
+  ]
+}
