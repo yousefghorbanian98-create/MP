@@ -2,37 +2,10 @@
 The event loop scope for asynchronous fixtures will default to the fixture scope. Future versions of pytest-asyncio will default the loop scope for asynchronous fixtures to "function" scope. Set the default fixture loop scope explicitly in order to avoid unexpected behavior in the future. Valid fixture loop scopes are: "function", "class", "module", "package", "session". Set it to "fixture-scope" to keep the current behavior.
 
   warnings.warn(PytestDeprecationWarning(_DEFAULT_FIXTURE_LOOP_SCOPE_UNSET))
-....F................................................................... [ 29%]
+........................................................................ [ 29%]
 ........................................................................ [ 58%]
 ........................................................................ [ 87%]
-.....F.F.......................                                          [100%]
-=================================== FAILURES ===================================
-______________________ test_scoring_eval_all_checks_pass _______________________
-tests/evaluation/test_scoring_eval.py:18: in test_scoring_eval_all_checks_pass
-    assert result["norm_rows"] == 30
-E   assert 70 == 30
-________________ test_norms_have_sources_and_valid_percentiles _________________
-tests/unit/test_norms.py:14: in test_norms_have_sources_and_valid_percentiles
-    assert len(NORMS) == 30
-E   AssertionError: assert 70 == 30
-E    +  where 70 = len((NormRow(test_key='pushup_1min', name_fa='شنای سوئدی یک دقیقه\u200cای', unit='reps', sex='m', age_min=20, age_max=29, .../www.instituteofpersonaltrainers.com/', source_version='fitnessnorms-2026 + ACSM-SDC', direction='higher_better'), ...))
-_________________________ test_seed_upsert_idempotent __________________________
-tests/unit/test_norms.py:34: in test_seed_upsert_idempotent
-    assert first == {"inserted": 30, "updated": 0}
-E   AssertionError: assert {'inserted': 70, 'updated': 0} == {'inserted': 30, 'updated': 0}
-E     
-E     Omitting 1 identical items, use -vv to show
-E     Differing items:
-E     {'inserted': 70} != {'inserted': 30}
-E     
-E     Full diff: (-: missing in left side, +: extra in left side)
-E       {
-E     -     'inserted': 30,
-E     ?                 ^
-E     +     'inserted': 70,
-E     ?                 ^
-E           'updated': 0,
-E       }
+...............................                                          [100%]
 =============================== warnings summary ===============================
 ../../../../../../../opt/hostedtoolcache/Python/3.11.18/x64/lib/python3.11/site-packages/fastapi/testclient.py:1
   /opt/hostedtoolcache/Python/3.11.18/x64/lib/python3.11/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
@@ -79,22 +52,4 @@ tests/integration/test_updates.py: 1 warning
     response = await handler(conn, exc)  # type: ignore[arg-type]
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-=========================== short test summary info ============================
-FAILED tests/evaluation/test_scoring_eval.py::test_scoring_eval_all_checks_pass - assert 70 == 30
-FAILED tests/unit/test_norms.py::test_norms_have_sources_and_valid_percentiles - AssertionError: assert 70 == 30
- +  where 70 = len((NormRow(test_key='pushup_1min', name_fa='شنای سوئدی یک دقیقه\u200cای', unit='reps', sex='m', age_min=20, age_max=29, .../www.instituteofpersonaltrainers.com/', source_version='fitnessnorms-2026 + ACSM-SDC', direction='higher_better'), ...))
-FAILED tests/unit/test_norms.py::test_seed_upsert_idempotent - AssertionError: assert {'inserted': 70, 'updated': 0} == {'inserted': 30, 'updated': 0}
-  
-  Omitting 1 identical items, use -vv to show
-  Differing items:
-  {'inserted': 70} != {'inserted': 30}
-  
-  Full diff: (-: missing in left side, +: extra in left side)
-    {
-  -     'inserted': 30,
-  ?                 ^
-  +     'inserted': 70,
-  ?                 ^
-        'updated': 0,
-    }
-3 failed, 244 passed, 238 warnings in 23.44s
+247 passed, 238 warnings in 18.81s

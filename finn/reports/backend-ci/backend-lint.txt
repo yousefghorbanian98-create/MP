@@ -206,56 +206,87 @@ unformatted: File would be reformatted
     |
 
 unformatted: File would be reformatted
-   --> engine/scoring.py:136:16
+   --> engine/scoring.py:73:21
     |
-135 |             f"تغییر {delta} در برابر SDC={sdc} ← "
+72  |         if raw_value == value and f"{value:g}" in exact_keys:
+    -             return {"percentile": pct if direction == "higher_better" else 100.0 - pct,
+    -                     "quality": "exact" if not sparse else "range_estimate"}
+73  +             return {
+74  +                 "percentile": pct if direction == "higher_better" else 100.0 - pct,
+75  +                 "quality": "exact" if not sparse else "range_estimate",
+76  +             }
+77  |         if index + 1 < len(pts):
+--------------------------------------------------------------------------------
+88  |     # مقدار دقیقاً برابر آخرین نقطه
+    -     return {"percentile": finalize(pts[-1][1]), "quality": "exact" if not sparse else "range_estimate"}
+89  +     return {
+90  +         "percentile": finalize(pts[-1][1]),
+91  +         "quality": "exact" if not sparse else "range_estimate",
+92  +     }
+93  |
+--------------------------------------------------------------------------------
+145 |             f"تغییر {delta} در برابر SDC={sdc} ← "
     -             + ("تغییر واقعی (فراتر از نویز بازتست)" if real else "در محدودهٔ نویز بازتست — بهبود/افت اعلام نشود")
-136 +             + (
-137 +                 "تغییر واقعی (فراتر از نویز بازتست)"
-138 +                 if real
-139 +                 else "در محدودهٔ نویز بازتست — بهبود/افت اعلام نشود"
-140 +             )
-141 |         ),
+146 +             + (
+147 +                 "تغییر واقعی (فراتر از نویز بازتست)"
+148 +                 if real
+149 +                 else "در محدودهٔ نویز بازتست — بهبود/افت اعلام نشود"
+150 +             )
+151 |         ),
     |
 
 unformatted: File would be reformatted
-  --> eval/scoring_eval.py:35:19
+  --> eval/scoring_eval.py:29:39
    |
-34 |                 )
+28 |         for key, value in row.percentiles.items():
+   -             est = estimate_percentile(raw_value=value, percentiles=row.percentiles, direction=row.direction)
+29 +             est = estimate_percentile(
+30 +                 raw_value=value, percentiles=row.percentiles, direction=row.direction
+31 +             )
+32 |             expected = float(key) if row.direction == "higher_better" else 100.0 - float(key)
+--------------------------------------------------------------------------------
+37 |                 )
    -     checks.append({"name": "round_trip_documented_points", "passed": not round_trip_errors,
    -                    "errors": round_trip_errors[:5]})
-35 +     checks.append(
-36 +         {
-37 +             "name": "round_trip_documented_points",
-38 +             "passed": not round_trip_errors,
-39 +             "errors": round_trip_errors[:5],
-40 +         }
-41 +     )
-42 |
+38 +     checks.append(
+39 +         {
+40 +             "name": "round_trip_documented_points",
+41 +             "passed": not round_trip_errors,
+42 +             "errors": round_trip_errors[:5],
+43 +         }
+44 +     )
+45 |
 --------------------------------------------------------------------------------
-56 |             prev = est["percentile"]
+53 |             raw = lo - (hi - lo) * 0.2 + (hi - lo) * 1.4 * step / 20
+   -             est = estimate_percentile(raw_value=raw, percentiles=row.percentiles, direction=row.direction)
+54 +             est = estimate_percentile(
+55 +                 raw_value=raw, percentiles=row.percentiles, direction=row.direction
+56 +             )
+57 |             if not 0 <= est["percentile"] <= 100:
+--------------------------------------------------------------------------------
+63 |             prev = est["percentile"]
    -     checks.append({"name": "bounds_and_monotonic", "passed": not bounds_errors,
    -                    "errors": bounds_errors[:5]})
-57 +     checks.append(
-58 +         {"name": "bounds_and_monotonic", "passed": not bounds_errors, "errors": bounds_errors[:5]}
-59 +     )
-60 |
+64 +     checks.append(
+65 +         {"name": "bounds_and_monotonic", "passed": not bounds_errors, "errors": bounds_errors[:5]}
+66 +     )
+67 |
 --------------------------------------------------------------------------------
-68 |                     sparse_errors.append(f"{row.test_key}: sparse labeled {est['quality']}")
+75 |                     sparse_errors.append(f"{row.test_key}: sparse labeled {est['quality']}")
    -     checks.append({"name": "sparse_never_exact", "passed": not sparse_errors,
    -                    "errors": sparse_errors[:5]})
-69 +     checks.append(
-70 +         {"name": "sparse_never_exact", "passed": not sparse_errors, "errors": sparse_errors[:5]}
-71 +     )
-72 |
-73 |     # (۴) گیت SDC
-74 |     sdc_pairs = [
+76 +     checks.append(
+77 +         {"name": "sparse_never_exact", "passed": not sparse_errors, "errors": sparse_errors[:5]}
+78 +     )
+79 |
+80 |     # (۴) گیت SDC
+81 |     sdc_pairs = [
    -         (20, 22, 9.0, False), (20, 30, 9.0, True), (20, 25, 5.0, True), (20, 23, 5.0, False),
-75 +         (20, 22, 9.0, False),
-76 +         (20, 30, 9.0, True),
-77 +         (20, 25, 5.0, True),
-78 +         (20, 23, 5.0, False),
-79 |     ]
+82 +         (20, 22, 9.0, False),
+83 +         (20, 30, 9.0, True),
+84 +         (20, 25, 5.0, True),
+85 +         (20, 23, 5.0, False),
+86 |     ]
    |
 
 unformatted: File would be reformatted
@@ -1511,18 +1542,18 @@ unformatted: File would be reformatted
    |
 
 unformatted: File would be reformatted
-  --> tests/unit/test_scoring.py:51:35
+  --> tests/unit/test_scoring.py:54:35
    |
-50 |     norm = {
+53 |     norm = {
    -         "test_key": "pushup_1min", "sex": "m", "age_min": 20, "age_max": 29,
    -         "percentiles": PUSHUP_M_2029, "source": "https://fitnessnorms.com/strength/push-ups/",
-51 +         "test_key": "pushup_1min",
-52 +         "sex": "m",
-53 +         "age_min": 20,
-54 +         "age_max": 29,
-55 +         "percentiles": PUSHUP_M_2029,
-56 +         "source": "https://fitnessnorms.com/strength/push-ups/",
-57 |     }
+54 +         "test_key": "pushup_1min",
+55 +         "sex": "m",
+56 +         "age_min": 20,
+57 +         "age_max": 29,
+58 +         "percentiles": PUSHUP_M_2029,
+59 +         "source": "https://fitnessnorms.com/strength/push-ups/",
+60 |     }
    |
 
 23 files would be reformatted, 166 files already formatted
