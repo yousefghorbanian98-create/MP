@@ -55,3 +55,6 @@ mp-app/backend/*.db
 mp-app/backend/*.sqlite3
 tmp/
 _ref/
+
+# --- Agent MCP registrations (مسیرهای مطلق و محیط‌محلی) ---
+.mcp.json

@@ -50,18 +50,40 @@
 
 **ECC = Everything Claude Code** — `github.com/WorldFlowAI/everything-claude-code` (MIT، ۶۰۰۰+ ستاره؛ مجموعهٔ ایجنت‌ها، فرمان‌ها، اسکیل‌ها، قوانین و هوک‌های Claude Code).
 
+### ۳.۰ دو ابزار اجباری فاز ۰ (به‌روزرسانی ۲۰۲۶-۱۱-۱۵)
+
+| ابزار | منبع رسمی | نقش در لوپ | نصب |
+|---|---|---|---|
+| **ECC** | `github.com/affaan-m/ECC` (MIT) | هارنس ایجنت: ۷۱ ایجنت، ۳۱۴ اسکیل، ۹۸ فرمان، ۲۳ بستهٔ قوانین، هوک‌ها | `.finn/ecc` (پین‌شده) + `.claude/` |
+| **REA** | `github.com/morluto/rea` (MIT) — پکیج `rea-agents` | بازبینی: کشف گپ/باگ/رفتار رقبا با شاهد (Evidence)، تحلیل APK/Flutter/JS/SQLite/وب | `~/toolchain/rea` + skill در `.claude/skills/reverse-engineer-anything` |
+
+> **تصحیح مهم:** نصب قبلی از فورک `WorldFlowAI/everything-claude-code` (کامیت `432485ba`، ۲۰۲۶-۰۱-۲۳) انجام شده بود که
+> فقط ۹ ایجنت و ۱۱ اسکیل داشت و ۱۰ ماه از بالادست عقب بود. از این پس منبع رسمی `affaan-m/ECC` است.
+> REA هم قبلاً به‌صورت «نقش‌آفرینی متنی» اجرا می‌شد (سند `REA-REVIEW-2026-11-15.md` خودِ عامل نوشته بود)؛
+> حالا ابزار واقعی با شاهد قابل‌استناد در دسترس است.
+
 ### ۳.۱ نصب خودکار (روش پیش‌فرض — یک دستور)
 
 ```bash
-bash docs/MuscleParadise/finn/install-ecc.sh
+# هر دو ابزار
+bash docs/MuscleParadise/finn/install-toolchain.sh
+
+# فقط یکی
+bash docs/MuscleParadise/finn/install-toolchain.sh ecc
+bash docs/MuscleParadise/finn/install-toolchain.sh rea
 ```
 
-اسکریپت: ECC را در `.finn/ecc/` کلون می‌کند (کامیت در `.finn/ecc-commit.txt` ثبت می‌شود)، مؤلفه‌ها را در `.claude/` نصب می‌کند، فایل‌های وضعیت لوپ را در `.finn/state/` می‌سازد و وجود ۹ ایجنت را تأیید می‌کند.
+اسکریپت idempotent است و:
+1. ECC را از منبع رسمی در `.finn/ecc/` کلون می‌کند (کامیت در `.finn/ecc-commit.txt`)، مؤلفه‌ها را در `.claude/` نصب می‌کند، ۹ ایجنت قرارداد FINN را تأیید می‌کند و حجم غیرلازم (assets/docs/tests) را حذف می‌کند.
+2. Node سازگار با REA را تضمین می‌کند (اگر Node سیستم `<22.23.4` بود، نسخهٔ portable 24.x را در `~/toolchain` می‌گذارد).
+3. `rea-agents` را در `~/toolchain/rea` نصب می‌کند، skill را در `.claude/skills/` می‌گذارد و MCP را در `.mcp.json` ثبت می‌کند (این فایل چون مسیر مطلق دارد gitignore است).
+
+`install-ecc.sh` قدیمی برای سازگاری باقی است اما **منبع آن فورک قدیمی است؛ استفاده نکنید.**
 
 ### ۳.۲ روش دستی (اگر اسکریپت اجرا نشد)
 
 ```bash
-git clone --depth 1 https://github.com/WorldFlowAI/everything-claude-code.git .finn/ecc
+git clone --depth 1 https://github.com/affaan-m/ECC.git .finn/ecc
 cp -R .finn/ecc/agents   .claude/agents
 cp -R .finn/ecc/commands .claude/commands
 cp -R .finn/ecc/skills   .claude/skills
@@ -71,7 +93,8 @@ cp -R .finn/ecc/hooks    .claude/hooks
 
 ### ۳.۳ روش پلاگین (در محیط‌های Claude Code)
 
-`/plugin marketplace add WorldFlowAI/everything-claude-code` سپس نصب پلاگین — معادل روش بالا.
+`/plugin marketplace add affaan-m/ECC` سپس نصب پلاگین `ecc@ecc` — معادل روش بالا.
+برای REA در Claude Code: `npx rea-agents@latest setup` (پلاگین `rea` را خودش ثبت می‌کند).
 
 ### ۳.۴ قاعدهٔ «فراخوانی ایجنت» در هر محیط
 

@@ -9,3 +9,8 @@
 
 ## R-005. کش، چک مالکیت را دور می‌زد (M18)
 مسیر early-return کش در `get_member` قبل از `ensure_member_scope` اجرا می‌شد ← عضو با کش گرم می‌توانست پروفایل دیگران را بخواند (۲۰۰ به‌جای ۴۰۳). تست دائمی: `test_member_cannot_read_other_members_data`. قانون: **هر گارد دسترسی باید قبل از هر cache-read باشد.**
+
+| R-006 | `docs/MuscleParadise/finn/install-toolchain.sh` (خودآزمای `bash -n` + اجرای واقعی) | D-025: پین روی فورک منسوخ + نبود بازتولیدپذیری ابزار | 2026-11-15 | ✅ فعال — در فاز ۰ هر نشست اجرا/بررسی می‌شود |
+| R-007 | `.finn/ecc-commit.txt` باید با `git -C .finn/ecc rev-parse HEAD` و بالادست `affaan-m/ECC` بخواند | D-025: انحراف منبع ECC | 2026-11-15 | ✅ فعال |
+| R-008 | وجود `.claude/agents/{planner,architect,tdd-guide,code-reviewer,security-reviewer,build-error-resolver,e2e-runner,refactor-cleaner,doc-updater}.md` | D-025: نصب ناقص ایجنت‌ها | 2026-11-15 | ✅ فعال (خود اسکریپت هم چک می‌کند) |
+| R-009 | وجود `.claude/skills/reverse-engineer-anything/SKILL.md` | D-026: REA بدون skill | 2026-11-15 | ✅ فعال |
