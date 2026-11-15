@@ -31,7 +31,19 @@ export function RemindersPanel() {
     setLoading(true);
     setError(null);
     try {
-      setReport(await fetchReminders(selectedMemberId));
+      const data = await fetchReminders(selectedMemberId);
+      // پاسخ ناقص نباید کل پنل را با استثنا از کار بیندازد: هر فیلد به
+      // مقدار امن فروکاسته می‌شود، ولی به‌عنوان دادهٔ واقعی جعل نمی‌شود.
+      setReport({
+        ...data,
+        reminders: data.reminders ?? [],
+        skipped: data.skipped ?? [],
+        thresholds: {
+          renewal_lead_days: data.thresholds?.renewal_lead_days ?? 0,
+          inactivity_days: data.thresholds?.inactivity_days ?? 0,
+          reassess_days: data.thresholds?.reassess_days ?? 0,
+        },
+      });
     } catch (e) {
       setError((e as Error).message);
     } finally {

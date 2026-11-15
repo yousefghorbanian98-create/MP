@@ -127,3 +127,21 @@ describe("RemindersPanel (G11)", () => {
     expect(screen.queryByText("فوری")).toBeNull();
   });
 });
+
+describe("RemindersPanel — مقاومت به پاسخ ناقص", () => {
+  it("does not crash when the API returns an unrelated shape", async () => {
+    // رگرسیون کشف‌شده در CI: پنل با پاسخ نامرتبط (مثلاً از endpoint دیگر)
+    // کل درخت را با TypeError از کار می‌انداخت — «Errors 1» در Vitest.
+    stub({ data: [], points: [] });
+    render(<RemindersPanel />);
+
+    await waitFor(() => expect(screen.getByText(/یادآوری‌ای لازم نیست/)).toBeTruthy());
+    expect(screen.queryByRole("alert")).toBeNull();
+  });
+
+  it("does not crash when thresholds are missing", async () => {
+    stub({ member_id: 1, reminders: [], skipped: [] });
+    render(<RemindersPanel />);
+    await waitFor(() => expect(screen.getByText(/آستانه‌ها/)).toBeTruthy());
+  });
+});
