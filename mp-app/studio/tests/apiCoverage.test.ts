@@ -8,8 +8,7 @@
  *
  * استثناها باید **دلیل** داشته باشند، نه سکوت.
  */
-import { execFileSync } from "node:child_process";
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
@@ -55,19 +54,21 @@ const NON_STUDIO_CONSUMERS: Record<string, string> = {
   "/api/v1/population/paths": "مسیرهای جمعیت — پنل تحلیل",
 };
 
+/**
+ * فهرست مسیرها از artifact داخل ریپو خوانده می‌شود، نه از اجرای پایتون:
+ * جابِ studio در CI پایتون/venv ندارد و تست آنجا می‌شکست.
+ * تولید مجدد: `python scripts/export_routes.py` (در جابِ backend و pre-commit).
+ */
+const ROUTES_FILE = join(__dirname, "..", "..", "backend", "api", "routes.json");
+
 function backendRoutes(): string[] {
-  const py = join(BACKEND, ".venv", "bin", "python");
-  const code = [
-    "from app.main import create_app",
-    "s = create_app().openapi()['paths']",
-    "print('\\n'.join(sorted(s)))",
-  ].join("\n");
-  const out = execFileSync(py, ["-c", code], {
-    cwd: BACKEND,
-    encoding: "utf8",
-    env: { ...process.env, PYTHONPATH: "." },
-  });
-  return out.trim().split("\n").filter(Boolean);
+  if (!existsSync(ROUTES_FILE)) {
+    throw new Error(
+      "api/routes.json نیست — python scripts/export_routes.py را اجرا کنید",
+    );
+  }
+  const parsed = JSON.parse(readFileSync(ROUTES_FILE, "utf8")) as { paths: string[] };
+  return parsed.paths;
 }
 
 function studioSource(): string {
