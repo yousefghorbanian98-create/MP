@@ -579,6 +579,7 @@ def sync_set_feedback(db: Session, *, member_id: int, items: list[dict], user=No
         if row is None:
             row = SetFeedback(
                 member_id=member_id,
+                program_id=data.get("program_id"),
                 movement_id=str(data.get("movement_id", "")),
                 weight=float(data.get("weight", 0)),
                 target_reps=int(data.get("target_reps", 0)),

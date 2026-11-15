@@ -63,6 +63,9 @@ class EngineExerciseIn(BaseModel):
     load_pct: int = Field(0, ge=0, le=120)
     rest_seconds: int = Field(60, ge=0, le=600)
     notes: str = Field("", max_length=300)
+    # Q7 — الگوی حرکتی (مثلاً "squat"). بدون این، دروازهٔ ایمنی نمی‌تواند
+    # تشخیص دهد برنامه با محدودیت عضو ناسازگار است یا نه.
+    movement: str = Field("", max_length=60)
 
 
 class EngineWeekIn(BaseModel):

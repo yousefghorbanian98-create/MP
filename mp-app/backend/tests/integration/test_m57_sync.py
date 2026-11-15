@@ -260,3 +260,62 @@ def test_member_role_has_sync_policy() -> None:
     from security.rbac import enforce
 
     assert enforce("member", "/api/v1/programs/sync/set-feedback", "POST")
+
+
+def test_synced_feedback_links_to_the_program(client: TestClient) -> None:
+    """باگ E2E: بازخورد آفلاین هیچ‌گاه به برنامه وصل نمی‌شد.
+
+    نتیجه: G13 برای همان شاگرد می‌گفت «هیچ بازخورد ستی برای این برنامه
+    ثبت نشده». یعنی چرخهٔ بازخورد در حالت آفلاین **بسته نمی‌شد** — دقیقاً
+    همان حالتی که برای آن طراحی شده بود.
+    """
+    from db.base import get_session_factory
+    from db.models import Member, SetFeedback, User
+    from modules.programs.service import create_program_from_engine_output
+
+    h = _staff()
+    mid = _member()
+
+    with get_session_factory()() as s:
+        program = create_program_from_engine_output(
+            s,
+            mid,
+            {
+                "goal": "hypertrophy",
+                "engine_version": "t",
+                "weeks": [
+                    {
+                        "week_number": 1,
+                        "exercises": [
+                            {
+                                "exercise_id": 1,
+                                "day": 1,
+                                "order": 0,
+                                "sets": 3,
+                                "reps": "8-12",
+                                "movement": "squat",
+                            }
+                        ],
+                    }
+                ],
+            },
+        )
+        program_id = program.id
+
+    item = _item("p1", "phone-1", 10)
+    item["program_id"] = program_id
+    client.post(
+        "/api/v1/programs/sync/set-feedback",
+        json={"member_id": mid, "items": [item]},
+        headers=h,
+    )
+
+    with get_session_factory()() as s:
+        row = s.query(SetFeedback).filter(SetFeedback.member_id == mid).one()
+        assert row.program_id == program_id
+
+    readiness = client.get(f"/api/v1/programs/member/{mid}/readiness", headers=h).json()
+    assert readiness["readiness"] is not None, readiness["reason"]
+    assert readiness["data_counts"]["feedback_rows"] >= 1
+
+    _ = (Member, User)

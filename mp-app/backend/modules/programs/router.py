@@ -111,6 +111,9 @@ def set_feedback(payload: SetFeedbackIn, db: DbSession, user: CurrentUser):
 
 class SyncItemIn(BaseModel):
     client_id: str = Field(min_length=1, max_length=64)
+    # برنامه‌ای که این ست به آن تعلق دارد — بدون آن، بازخورد آفلاین
+    # هیچ‌گاه به برنامه وصل نمی‌شد و G13 آمادگی برایش null می‌داد.
+    program_id: int | None = None
     device_id: str = Field(min_length=1, max_length=64)
     updated_at: datetime
     movement_id: str = Field(default="", max_length=60)
