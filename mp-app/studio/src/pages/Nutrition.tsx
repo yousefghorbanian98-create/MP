@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import { fetchDailyNutrition, logFood, searchFoods, type FoodRow } from "../lib/api";
+import { AdaptiveNutritionPanel } from "../components/AdaptiveNutritionPanel";
 import { useAppStore } from "../stores/appStore";
 import { fa, useApi } from "../lib/useApi";
 
@@ -221,6 +222,8 @@ export function Nutrition() {
           )}
         </div>
       )}
+
+      <AdaptiveNutritionPanel memberId={memberId} />
 
       {/* ثبت وعده */}
       <div className="glass-card space-y-3 p-5">

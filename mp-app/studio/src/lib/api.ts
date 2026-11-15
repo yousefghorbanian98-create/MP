@@ -508,3 +508,67 @@ export function fetchDailyNutrition(
     signal,
   );
 }
+
+// ── G3 — تغذیهٔ سازگار ──
+
+export interface AdaptiveReport {
+  member_id: number;
+  goal: string;
+  current_target_kcal: number | null;
+  plan_id: number | null;
+  estimate: {
+    tdee_kcal: number | null;
+    confidence: "high" | "medium" | "low" | "insufficient" | string;
+    data_state: string;
+    mean_intake_kcal: number | null;
+    weight_change_kcal_per_day?: number;
+    reason: string;
+    trend: {
+      slope_kg_per_week: number | null;
+      smoothed_start_kg: number | null;
+      smoothed_end_kg: number | null;
+      days_used: number;
+      span_days: number;
+      confidence: string;
+      reason: string;
+      notes: string[];
+    };
+    assumptions?: string[];
+    rule_version: string;
+  };
+  suggestion: {
+    suggested_target_kcal: number | null;
+    delta_kcal: number;
+    action: "increase" | "decrease" | "keep" | "none" | string;
+    capped?: boolean;
+    reason: string;
+    rule_version: string;
+  };
+  data_counts: { weight_entries: number; intake_days: number };
+  latest_weight_kg: number | null;
+  rule_version: string;
+}
+
+export interface WeightLogResult {
+  logged: number;
+  updated: number;
+  rejected: { index: number; reason: string }[];
+  reason: string;
+  rule_version: string;
+}
+
+export function fetchAdaptiveReport(memberId: number, token = getToken(), signal?: AbortSignal) {
+  return getJson<AdaptiveReport>(
+    `/nutrition/member/${memberId}/adaptive`,
+    token,
+    signal,
+  );
+}
+
+export function logWeight(
+  memberId: number,
+  entries: { weight_kg: number; logged_for_date: string }[],
+  token = getToken(),
+) {
+  return postJson<WeightLogResult>("/nutrition/weight-logs", { member_id: memberId, entries }, token);
+}
