@@ -137,6 +137,58 @@ jobs:
             sleep 6
           done
 
+  # اثبات واقعی «فرانت و بک‌اند با هم کار می‌کنند»: کلاینت TypeScript
+  # استودیو روی یک سرور زندهٔ uvicorn اجرا می‌شود. تست‌های mock این را
+  # اثبات نمی‌کنند — یک تغییر نام فیلد در بک‌اند همه‌شان را سبز می‌گذارد
+  # (و همین شد: full_name عدد برمی‌گرداند و هیچ تستی نگرفت).
+  live-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install backend
+        run: pip install -e "mp-app/backend[dev]"
+      - name: Seed + run API
+        run: |
+          cd mp-app/backend
+          python - <<'EOF'
+          from db.base import init_db, get_session_factory
+          from db.models import Member, User, Exercise
+          from security.crypto import FaceEmbeddingCipher  # noqa: F401
+          init_db()
+          with get_session_factory()() as s:
+              u = User(phone="09120000001", full_name="Admin", role="manager")
+              s.add(u); s.commit()
+              s.add(Member(user_id=u.id, gender="male", goal="hypertrophy", branch_id=1,
+                           emergency_contact=""))
+              s.commit()
+              for i in range(1, 18):
+                  s.add(Exercise(id=i, external_id=f"e{i}", name_fa=f"حرکت {i}",
+                                 name_en=f"ex {i}", muscle_group="legs",
+                                 video_url=f"/static/exercises/{i}_0.jpg"))
+              s.commit()
+          print("seeded")
+          EOF
+          nohup python -m uvicorn app.main:create_app --factory --port 8000 \
+            --host 127.0.0.1 > /tmp/api.log 2>&1 &
+          for i in $(seq 1 40); do
+            curl -sf http://127.0.0.1:8000/health > /dev/null && break || sleep 1
+          done
+          curl -sf http://127.0.0.1:8000/health
+      - name: Install studio
+        working-directory: mp-app/studio
+        run: npm ci || npm install
+      - name: Live contract (studio TS client × real API)
+        working-directory: mp-app/studio
+        run: |
+          TOKEN=$(cd ../backend && python -c "from app.security.jwt import create_access_token; print(create_access_token(1,'manager'))")
+          MP_API_BASE=http://127.0.0.1:8000 MP_TOKEN="$TOKEN" npm test -- tests/liveContract.test.ts
+
   e2e-api:
     runs-on: ubuntu-latest
     needs: [backend]

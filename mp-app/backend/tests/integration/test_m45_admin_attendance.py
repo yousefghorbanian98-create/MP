@@ -198,3 +198,42 @@ def test_members_summary_expiring_window(client: TestClient) -> None:
     assert row["status"] == "expiring"
     assert row["days_left"] == 3
     assert row["full_name"]
+
+
+def test_members_summary_returns_the_real_name_and_phone(client: TestClient) -> None:
+    """رگرسیون باگ جابه‌جایی ستون‌ها.
+
+    کوئری با `select(User.id, User.full_name, User.phone, ...)` اجرا می‌شد
+    ولی مقادیر با ایندکس عددی خوانده می‌شدند: `full_name` در واقع id بود
+    و `phone` در واقع نام کاربر. در استودیو یعنی جدول اعضا نام کاربر را
+    به‌شکل `۱` و تلفن را به‌شکل `مربی مهدی` نشان می‌داد.
+
+    تست قبلی فقط `assert row["full_name"]` داشت و id=1 هم truthy است،
+    پس باگ زنده ماند. تست قرارداد زنده آن را گرفت و این‌جا تثبیت می‌شود.
+    """
+    member_id, user_id = _seed_member_and_checkins(count=0, closed=0)
+    from db.base import get_session_factory
+    from db.models import User
+
+    with get_session_factory()() as s:
+        u = s.get(User, user_id)
+        u.full_name = "زهرا احمدی"
+        u.phone = "09121112233"
+        s.commit()
+
+    body = client.get("/api/v1/admin/members-summary", headers=_headers("manager")).json()
+    row = next(i for i in body["items"] if i["member_id"] == member_id)
+    assert row["full_name"] == "زهرا احمدی"
+    assert row["phone"] == "09121112233"
+    assert row["user_id"] == user_id
+    assert isinstance(row["full_name"], str)
+    assert isinstance(row["is_active"], bool)
+
+
+def test_members_summary_never_leaks_the_id_as_a_name(client: TestClient) -> None:
+    """هیچ ردیفی نباید نامِ عددی داشته باشد."""
+    _seed_member_and_checkins(count=1, closed=1)
+    body = client.get("/api/v1/admin/members-summary", headers=_headers("manager")).json()
+    for row in body["items"]:
+        assert not isinstance(row["full_name"], int), f"نام عددی برای عضو {row['member_id']}"
+        assert row["phone"] == "" or not isinstance(row["phone"], int)

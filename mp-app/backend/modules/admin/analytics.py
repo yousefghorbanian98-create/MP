@@ -358,13 +358,19 @@ def members_summary(db: Session, *, limit: int = 200) -> dict:
         }
 
     member_ids = [m.id for m in members]
+    # کلید = id؛ مقدار = نگاشت نام‌دار. با ایندکس عددی (row[1]) یک بار
+    # نام کاربر با id و تلفن با نام جابه‌جا شد و استودیو «۱» و «مربی مهدی»
+    # را در ستون نام/تلفن نشان می‌داد — تست قرارداد زنده همین را گرفت.
     users = {
-        row[0]: row
+        row["id"]: row
         for row in db.execute(
-            select(User.id, User.full_name, User.phone, User.is_active).where(
-                User.id.in_([m.user_id for m in members])
-            )
-        ).all()
+            select(
+                User.id,
+                User.full_name,
+                User.phone,
+                User.is_active,
+            ).where(User.id.in_([m.user_id for m in members]))
+        ).mappings()
     }
 
     latest: dict[int, Membership] = {}
@@ -378,8 +384,8 @@ def members_summary(db: Session, *, limit: int = 200) -> dict:
     items = []
     for m in members:
         user_row = users.get(m.user_id)
-        full_name = user_row[0] if user_row else ""
-        phone = user_row[1] if user_row else ""
+        full_name = user_row["full_name"] if user_row else ""
+        phone = user_row["phone"] if user_row else ""
         ms = latest.get(m.id)
         if ms is None:
             status = "unknown"
@@ -411,7 +417,7 @@ def members_summary(db: Session, *, limit: int = 200) -> dict:
                 "status": status,
                 "days_left": days_left,
                 "expires_at": expires_at,
-                "is_active": bool(user_row[2]) if user_row else True,
+                "is_active": bool(user_row["is_active"]) if user_row else True,
             }
         )
     return {
