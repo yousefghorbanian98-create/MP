@@ -4,6 +4,7 @@ library;
 import 'package:flutter/material.dart';
 
 import '../../core/theme.dart';
+import '../assessment14/assessment14_page.dart';
 import '../home/home_page.dart';
 import '../profile/profile_page.dart';
 import '../progress/progress_page.dart';
@@ -22,6 +23,7 @@ class _AppShellState extends State<AppShell> {
   static const _tabs = <Widget>[
     HomePage(),
     TodayPage(),
+    Assessment14Page(),
     ProgressPage(),
     ProfilePage(),
   ];
@@ -66,6 +68,7 @@ class _MpBottomNav extends StatelessWidget {
     const items = <({IconData icon, IconData active, String label})>[
       (icon: Icons.home_outlined, active: Icons.home, label: 'خانه'),
       (icon: Icons.fitness_center_outlined, active: Icons.fitness_center, label: 'برنامه'),
+      (icon: Icons.insights_outlined, active: Icons.insights, label: 'توانایی‌ها'),
       (icon: Icons.trending_up_outlined, active: Icons.trending_up, label: 'پیشرفت'),
       (icon: Icons.person_outline, active: Icons.person, label: 'پروفایل'),
     ];
