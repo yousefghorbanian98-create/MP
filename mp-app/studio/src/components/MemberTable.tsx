@@ -39,7 +39,8 @@ export function MemberTable({ onSelect }: { onSelect?: (id: number) => void }) {
   return (
     <div className="glass-card overflow-hidden">
       <div className="flex items-center justify-between border-b border-primary/10 px-5 py-4">
-        <h3 className="text-base font-semibold">اعضا</h3>
+        {/* h2 نه h3: صفحه یک h1 دارد (TopBar)، و پرش h1→h3 برای صفحه‌خوان خطاست */}
+        <h2 className="text-base font-semibold">اعضا</h2>
         <span className="text-xs text-ink-dim">
           {loading ? "در حال دریافت…" : `${fa(filtered.length)} عضو`}
           {data ? ` · قاعدهٔ ${data.rule_version}` : ""}

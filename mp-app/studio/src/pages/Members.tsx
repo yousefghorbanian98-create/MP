@@ -102,7 +102,7 @@ export function Members() {
                 {(member.full_name || "?").slice(0, 1)}
               </div>
               <div>
-                <h3 className="text-lg font-bold">{member.full_name || "بدون نام"}</h3>
+                <h2 className="text-lg font-bold">{member.full_name || "بدون نام"}</h2>
                 <p className="text-xs text-ink-dim">
                   {member.phone || "—"} · هدف: {member.goal} ·{" "}
                   <span className={member.gender === "female" ? "text-pink-400" : "text-sky-400"}>
