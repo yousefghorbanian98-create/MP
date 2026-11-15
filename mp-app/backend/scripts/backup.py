@@ -52,7 +52,15 @@ def backup(out_dir: Path, db_path: Path = DEFAULT_DB) -> Path:
 def restore(archive: Path, db_path: Path = DEFAULT_DB) -> dict:
     with tempfile.TemporaryDirectory() as tmp:
         with tarfile.open(archive, "r:gz") as tar:
-            tar.extractall(tmp)  # noqa: S202 — بکاپ خودی
+            base = Path(tmp).resolve()
+            for member in tar.getmembers():
+                target = (base / member.name).resolve()
+                if not str(target).startswith(str(base)):
+                    raise ValueError(f"مسیر ناامن در آرشیو بکاپ: {member.name}")
+            try:
+                tar.extractall(tmp, filter="data")  # noqa: S202 — اعتبارسنجی اعضا بالا
+            except TypeError:  # پایتون < 3.11.4
+                tar.extractall(tmp)  # nosec B202 — اعضا اعتبارسنجی شدند
         tmp_path = Path(tmp)
         manifest = json.loads((tmp_path / "manifest.json").read_text(encoding="utf-8"))
         for name, expected in manifest["files"].items():

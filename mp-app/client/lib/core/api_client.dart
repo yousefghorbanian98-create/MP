@@ -32,12 +32,12 @@ class ApiClient {
         if (accessToken != null) 'Authorization': 'Bearer $accessToken',
       };
 
-  Future<Map<String, dynamic>> get(String path) async {
+  Future<dynamic> get(String path) async {
     final r = await _http.get(Uri.parse('$baseUrl$path'), headers: _headers);
     return _decode(r);
   }
 
-  Future<Map<String, dynamic>> post(String path, Map<String, dynamic> body) async {
+  Future<dynamic> post(String path, Map<String, dynamic> body) async {
     final r = await _http.post(
       Uri.parse('$baseUrl$path'),
       headers: _headers,
