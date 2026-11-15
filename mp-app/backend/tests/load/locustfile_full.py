@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import os
 import random
+from datetime import UTC, datetime
 
 from locust import HttpUser, between, task
 
@@ -111,6 +112,43 @@ class MemberUser(BaseUser):  # type: ignore[misc]
     @task(1)
     def wallet(self) -> None:
         self._get("/api/v1/payments/wallet/1", name="/api/v1/payments/wallet/[id]")
+
+    @task(2)
+    def exercise_library(self) -> None:
+        """G9 — کتابخانهٔ حرکات: پنجرهٔ تصویر + فیلتر (خواندن + فایل استاتیک)."""
+        self._get("/api/v1/library/exercises?muscle_group=legs")
+        self._get("/api/v1/library/exercises/1", name="/api/v1/library/exercises/[id]")
+        self._get("/static/exercises/1_0.jpg", name="/static/exercises/[img]")
+
+    @task(2)
+    def readiness(self) -> None:
+        """G13 — آمادگی: چند aggregate روی بازخورد ست‌ها."""
+        self._get(
+            "/api/v1/programs/member/1/readiness", name="/api/v1/programs/member/[id]/readiness"
+        )
+
+    @task(1)
+    def offline_sync(self) -> None:
+        """G7 — سنک آفلاین: نوشتن با کلید idempotent؛ تکرار بی‌اثر است."""
+        cid = f"load-{random.randint(1, 10**9)}"
+        payload = {
+            "member_id": 1,
+            "items": [
+                {
+                    "client_id": cid,
+                    "device_id": "load-test",
+                    "updated_at": datetime.now(UTC).isoformat(),
+                    "movement_id": "back_squat",
+                    "weight": 60.0,
+                    "target_reps": 10,
+                    "reps_done": 9,
+                    "rir": 2.0,
+                    "soreness": 3,
+                    "program_id": 1,
+                }
+            ],
+        }
+        self._post("/api/v1/programs/sync/set-feedback", payload)
 
     @task(1)
     def health(self) -> None:

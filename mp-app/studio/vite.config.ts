@@ -1,7 +1,10 @@
-import { defineConfig } from "vite";
+import { createRequire } from "node:module";
 import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
 
-import pkg from "./package.json";
+// خواندن نسخه با require — import JSON در بعضی محیط‌های CI با
+// resolveJsonModule کار نمی‌کند و build/test را می‌شکند.
+const pkg = createRequire(import.meta.url)("./package.json") as { version: string };
 
 export default defineConfig({
   plugins: [react()],
