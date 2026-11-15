@@ -760,6 +760,31 @@ unformatted: File would be reformatted
    |
 
 unformatted: File would be reformatted
+  --> scripts/locust_m39c3.py:23:22
+   |
+22 |                 "entries": [
+   -                     {"movement_id": "pushup-l1", "weight": 0, "target_reps": 10, "reps_done": 12, "rir": 3, "soreness": 2},
+   -                     {"movement_id": "plank", "weight": 0, "target_reps": 3, "reps_done": 3, "rir": 1, "soreness": 8},
+23 +                     {
+24 +                         "movement_id": "pushup-l1",
+25 +                         "weight": 0,
+26 +                         "target_reps": 10,
+27 +                         "reps_done": 12,
+28 +                         "rir": 3,
+29 +                         "soreness": 2,
+30 +                     },
+31 +                     {
+32 +                         "movement_id": "plank",
+33 +                         "weight": 0,
+34 +                         "target_reps": 3,
+35 +                         "reps_done": 3,
+36 +                         "rir": 1,
+37 +                         "soreness": 8,
+38 +                     },
+39 |                 ],
+   |
+
+unformatted: File would be reformatted
   --> scripts/seed_criteria.py:25:24
    |
 24 | RUBRICS: dict[str, tuple[int, str, dict]] = {
@@ -1754,6 +1779,14 @@ unformatted: File would be reformatted
    |
 
 unformatted: File would be reformatted
+ --> tests/unit/test_rbac_policies.py:1:1
+  |
+  -
+  -
+1 | def test_member_and_super_admin_set_feedback_policy() -> None:
+  |
+
+unformatted: File would be reformatted
   --> tests/unit/test_scoring.py:54:35
    |
 53 |     norm = {
@@ -1851,4 +1884,4 @@ unformatted: File would be reformatted
 93 +         )
    |
 
-28 files would be reformatted, 168 files already formatted
+30 files would be reformatted, 169 files already formatted
