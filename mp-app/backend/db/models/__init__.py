@@ -5,7 +5,7 @@ from db.models.ai import RuleRun
 from db.models.assessment import Assessment14Domain, DomainScore, JacksonPollockMeasurement
 from db.models.auth import OtpCode, RefreshToken, User
 from db.models.classes import ClassBooking, GymClass
-from db.models.content import Exercise, FoodItem
+from db.models.content import CatalogExercise, CatalogSource, Exercise, FoodItem
 from db.models.face_id import BiometricConsent, CheckIn, FaceTemplate
 from db.models.membership import Member, Membership
 from db.models.notification import Notification
@@ -18,6 +18,8 @@ __all__ = [
     "AuditLog",
     "BiometricConsent",
     "Campaign",
+    "CatalogExercise",
+    "CatalogSource",
     "ClassBooking",
     "CheckIn",
     "DomainScore",

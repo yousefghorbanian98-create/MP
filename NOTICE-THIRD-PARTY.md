@@ -36,3 +36,9 @@
 
 ## مدل‌های هوش مصنوعی
 هیچ مدل وزن‌داری در مخزن موجود نیست (سیاست `model_lock` — D-008). پیش از استقرار، مجوز هر مدل جداگانه تأمین و در همین فایل اضافه می‌شود.
+
+## داده‌ها و کاتالوگ‌های ورودی
+
+| منبع | مجوز | کاربرد | ردیابی |
+|---|---|---|---|
+| [yuhonas/free-exercise-db](https://github.com/yuhonas/free-exercise-db) | **The Unlicense** (مالکیت عمومی) | کاتالوگ ۸۷۶ حرکتی سامانهٔ ۱۴ توانایی (M33) | `mp-app/backend/data/external/free_exercise_db/SOURCE.md` — commit `f00c92c` + sha256 |

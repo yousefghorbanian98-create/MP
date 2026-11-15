@@ -26,6 +26,42 @@ class Exercise(TimestampMixin, Base):
     instructions_fa: Mapped[str] = mapped_column(Text, default="", nullable=False)
 
 
+class CatalogSource(TimestampMixin, Base):
+    """منبع خارجیِ کاتالوگ حرکات (E12 — پیش از هر ادغام ثبت می‌شود)."""
+
+    __tablename__ = "catalog_sources"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(80), nullable=False, unique=True)
+    upstream_url: Mapped[str] = mapped_column(String(300), default="", nullable=False)
+    upstream_commit: Mapped[str] = mapped_column(String(40), default="", nullable=False)
+    license: Mapped[str] = mapped_column(String(40), default="", nullable=False)
+    # sha256 فایل دادهٔ ورودی — ردیابی یکپارچگی (بدون دادهٔ واقعی کاربران)
+    digest: Mapped[str] = mapped_column(String(64), default="", nullable=False)
+    exercise_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+
+
+class CatalogExercise(TimestampMixin, Base):
+    """حرکت واردشده از کاتالوگ خارجی — بدون برچسب محوری (از M33-c3)."""
+
+    __tablename__ = "catalog_exercises"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    source_id: Mapped[int] = mapped_column(nullable=False, index=True)
+    external_id: Mapped[str] = mapped_column(String(60), nullable=False, index=True)
+    name: Mapped[str] = mapped_column(String(160), nullable=False, index=True)
+    category: Mapped[str] = mapped_column(String(40), default="", nullable=False)
+    level: Mapped[str] = mapped_column(String(20), default="", nullable=False)
+    force: Mapped[str] = mapped_column(String(20), default="", nullable=False)
+    mechanic: Mapped[str] = mapped_column(String(20), default="", nullable=False)
+    equipment: Mapped[str] = mapped_column(String(40), default="", nullable=False)
+    # JSON متنی — فهرست‌ها (E02: بدون نرمال‌سازی زیادی)
+    primary_muscles: Mapped[str] = mapped_column(Text, default="[]", nullable=False)
+    secondary_muscles: Mapped[str] = mapped_column(Text, default="[]", nullable=False)
+    instructions: Mapped[str] = mapped_column(Text, default="[]", nullable=False)
+    image_refs: Mapped[str] = mapped_column(Text, default="[]", nullable=False)
+
+
 class FoodItem(TimestampMixin, Base):
     """مادهٔ غذایی — همگام با Open Food Facts/USDA یا جدول ایرانی دستی."""
 

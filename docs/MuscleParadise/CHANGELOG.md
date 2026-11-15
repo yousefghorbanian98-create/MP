@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+### Added — M33-c1 (2026-11-14) — سامانهٔ ۱۴ توانایی، میکرو-لوپ نخست
+- ورود کاتالوگ `free-exercise-db` (۸۷۶ حرکت، Unlicense) — جدول‌های `catalog_sources` + `catalog_exercises`، اسکریپت idempotent `scripts/import_exercise_catalog.py` + راستی‌آزمایی sha256
+- ثبت مجوز در `NOTICE-THIRD-PARTY.md` + سند منبع (`data/external/free_exercise_db/SOURCE.md`) + rule-evidence (`finn/reports/evidence/M33c1-free-exercise-db.rule-evidence.json`)
+- ۵ تست جدید (۲۰۲ کل) — ruff/bandit/pip-audit پاک
+
 ### Added — M21 (2026-11-14) — پایان دور دوم
 - یکپارچه‌سازی: ۱۵۲ تست بک‌اند (۸۹٪) + ۱۵ تست استودیو — bandit/pip-audit صفر
 - گزارش‌های بازبینی M19–M21 + به‌روزرسانی FINAL_REPORT (بخش دور دوم)
