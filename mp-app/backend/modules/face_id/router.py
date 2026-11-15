@@ -63,7 +63,6 @@ def deep_status():
     return lock_status()
 
 
-
 # ── چک‌این با QR (M32) — توکن امضاشده، بدون واسط [finn] ──
 
 
