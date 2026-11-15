@@ -20,12 +20,19 @@ void main() {
                   'movement_id': 'pushup-l1',
                   'next_weight': 0,
                   'weight_action': 'keep_bodyweight',
-                  'next_sets': 2,
+                  'next_sets': null, // M48-c1: deload عدد مطلق نمی‌دهد
                   'volume_action': 'deload',
                   'reason': 'درد عضلانی ۸/۱۰ ≥ ۷ ← کاهش یک ست جلسهٔ بعد (بازیابی)',
                   'rule_version': 'set-feedback-1.0',
                 }
               ],
+              'applied': {
+                'weeks_updated': 2,
+                'rows_changed': 4,
+                'matched': [],
+                'unmatched_movements': <String>[],
+                'rule_version': 'feedback-apply-1.0',
+              },
             };
           }),
         ],
@@ -40,7 +47,8 @@ void main() {
   testWidgets('renders feedback form with sliders and submit', (tester) async {
     await pumpSheet(tester);
     expect(find.textContaining('بازخورد ست — شنای سوئدی سطح ۱'), findsOneWidget);
-    expect(find.byType(TextField), findsOneWidget);
+    // M48-c1 — دو فیلد: وزنه + تکرار (پیش‌تر فقط تکرار بود و weight همیشه ۰ می‌رفت)
+    expect(find.byType(TextField), findsNWidgets(2));
     expect(find.byType(Slider), findsNWidgets(2));
     expect(find.widgetWithText(FilledButton, 'ثبت بازخورد'), findsOneWidget);
   });
@@ -48,7 +56,8 @@ void main() {
   testWidgets('submit shows why-card with data-rule-decision chain', (tester) async {
     final captured = <Map<String, dynamic>>[];
     await pumpSheet(tester, captured: captured);
-    await tester.enterText(find.byType(TextField), '12');
+    // فیلد دوم = تکرار (فیلد اول وزنه است)
+    await tester.enterText(find.byType(TextField).at(1), '12');
     await tester.tap(find.widgetWithText(FilledButton, 'ثبت بازخورد'));
     await tester.pumpAndSettle();
     expect(find.textContaining('چرا این تغییر؟'), findsOneWidget);
@@ -65,5 +74,24 @@ void main() {
     await tester.pump(const Duration(milliseconds: 300));
     expect(captured, isEmpty);
     expect(find.textContaining('چرا این تغییر؟'), findsNothing);
+  });
+
+  testWidgets('M48-c1: shows that the suggestion was actually applied', (tester) async {
+    await pumpSheet(tester);
+    await tester.enterText(find.byType(TextField).at(1), '12');
+    await tester.tap(find.widgetWithText(FilledButton, 'ثبت بازخورد'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('اعمال شد'), findsOneWidget);
+    expect(find.textContaining('۲ هفته'), findsOneWidget);
+  });
+
+  testWidgets('M48-c1: sends the real weight, not hardcoded zero', (tester) async {
+    final captured = <Map<String, dynamic>>[];
+    await pumpSheet(tester, captured: captured);
+    await tester.enterText(find.byType(TextField).at(0), '62.5');
+    await tester.enterText(find.byType(TextField).at(1), '8');
+    await tester.tap(find.widgetWithText(FilledButton, 'ثبت بازخورد'));
+    await tester.pumpAndSettle();
+    expect(captured.first['weight'], 62.5);
   });
 }

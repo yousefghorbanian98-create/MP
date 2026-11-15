@@ -149,7 +149,8 @@ def record_set_feedback(
     """ثبت بازخورد ست‌ها + پیشنهاد جلسهٔ بعد (G1 — M38-c2)."""
     from app.security.ownership import ensure_member_scope
     from db.models.programs import SetFeedback
-    from engine.set_feedback import process_set_feedback
+    from engine.feedback_apply import apply_suggestions
+    from engine.set_feedback import process_set_feedback as _process
 
     ensure_member_scope(db, user, member_id)
     for entry in entries:
@@ -167,7 +168,25 @@ def record_set_feedback(
             )
         )
     db.commit()
-    return process_set_feedback(entries=entries)
+
+    result = _process(entries=entries)
+
+    # M48-c1 — G1 تا اینجا نیمه‌کاره بود: پیشنهاد ساخته می‌شد ولی هیچ ردیفی
+    # در برنامه تغییر نمی‌کرد. اینجا پیشنهاد واقعاً روی هفتهٔ بعد اعمال می‌شود.
+    from db.models import WorkoutProgram
+
+    program = None
+    if program_id is not None:
+        program = db.get(WorkoutProgram, program_id)
+    else:
+        program = db.scalar(
+            select(WorkoutProgram)
+            .where(WorkoutProgram.member_id == member_id)
+            .order_by(WorkoutProgram.id.desc())
+        )
+
+    result["applied"] = apply_suggestions(db, program=program, suggestions=result["suggestions"])
+    return result
 
 
 PROGRAMS_SUMMARY_VERSION = "programs-summary-1.0"

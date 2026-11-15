@@ -52,7 +52,11 @@ def test_high_soreness_triggers_deload() -> None:
     )
     s = result["suggestions"][0]
     assert s["volume_action"] == "deload"
-    assert s["next_sets"] == 1  # ۲ ست − ۱
+    # M48-c1 — `next_sets` در حالت deload دیگر عدد مطلق نمی‌دهد.
+    # دلیل: تعداد ست‌های *گزارش‌شده* با ست‌های *برنامه* یکی نیست؛ اگر عضو
+    # فقط ۲ ست از برنامهٔ ۴ ستی گزارش کند، «۲−۱=۱» برنامه را دو ست کم می‌کرد.
+    # کاهش، در لایهٔ اعمال (engine.feedback_apply) و نسبت به خود برنامه انجام می‌شود.
+    assert s["next_sets"] is None
     assert "کاهش یک ست" in s["reason"]
 
 

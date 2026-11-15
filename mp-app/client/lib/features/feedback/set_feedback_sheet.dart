@@ -21,6 +21,7 @@ class SetFeedbackSheet extends ConsumerStatefulWidget {
 
 class _SetFeedbackSheetState extends ConsumerState<SetFeedbackSheet> {
   final _repsController = TextEditingController();
+  final _weightController = TextEditingController();
   double _rir = 2;
   double _soreness = 2;
   bool _submitting = false;
@@ -29,6 +30,7 @@ class _SetFeedbackSheetState extends ConsumerState<SetFeedbackSheet> {
   @override
   void dispose() {
     _repsController.dispose();
+    _weightController.dispose();
     super.dispose();
   }
 
@@ -44,7 +46,9 @@ class _SetFeedbackSheetState extends ConsumerState<SetFeedbackSheet> {
     final result = await ref.read(submitSetFeedbackProvider)([
       {
         'movement_id': widget.movementName,
-        'weight': 0,
+        // M48-c1 — پیش‌تر همیشه 0 بود، پس autoreg هرگز فعال نمی‌شد و
+        // همهٔ حرکات «وزن بدن» تلقی می‌شدند.
+        'weight': double.tryParse(_weightController.text.trim()) ?? 0,
         'target_reps': reps,
         'reps_done': reps,
         'rir': _rir,
@@ -76,6 +80,15 @@ class _SetFeedbackSheetState extends ConsumerState<SetFeedbackSheet> {
           const Text('RIR یعنی چند تکرار در تانک داشتید؛ درد عضلانی فردا را ۰ تا ۱۰ بسنجید',
               style: TextStyle(fontSize: 11, color: MpColors.textSecondary)),
           const SizedBox(height: 14),
+          TextField(
+            controller: _weightController,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            decoration: const InputDecoration(
+              labelText: 'وزنه (کیلوگرم) — برای وزن بدن خالی بگذارید',
+              border: OutlineInputBorder(),
+            ),
+          ),
+          const SizedBox(height: 10),
           TextField(
             controller: _repsController,
             keyboardType: TextInputType.number,
@@ -125,6 +138,31 @@ class _WhyCard extends StatelessWidget {
 
   final Map<String, dynamic> result;
 
+  /// آیا پیشنهاد واقعاً روی برنامه اعمال شد یا فقط محاسبه شد؟
+  List<Widget> _appliedLine(Map<String, dynamic> result) {
+    final applied = result['applied'] as Map<String, dynamic>?;
+    if (applied == null) return const [];
+    final weeks = applied['weeks_updated'] as int? ?? 0;
+    final rows = applied['rows_changed'] as int? ?? 0;
+    final unmatched = (applied['unmatched_movements'] as List?)?.cast<String>() ?? [];
+    if (weeks == 0) {
+      return [
+        Text(
+          unmatched.isEmpty
+              ? 'اعمال نشد — هیچ هفتهٔ آینده‌ای نبود'
+              : 'اعمال نشد — حرکت در برنامه پیدا نشد: ${unmatched.join('، ')}',
+          style: const TextStyle(fontSize: 11, color: MpColors.textSecondary),
+        ),
+      ];
+    }
+    return [
+      Text(
+        'اعمال شد: $rows ردیف در $weeks هفتهٔ آینده به‌روز شد',
+        style: const TextStyle(fontSize: 11, color: MpColors.textSecondary),
+      ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     final suggestions = (result['suggestions'] as List?)?.cast<Map<String, dynamic>>() ?? [];
@@ -151,13 +189,31 @@ class _WhyCard extends StatelessWidget {
           const SizedBox(height: 8),
           Text('وزن بعد: ${s['next_weight']} (${s['weight_action']})',
               style: const TextStyle(fontSize: 13)),
-          Text('ست بعد: ${s['next_sets']} (${s['volume_action']})',
-              style: const TextStyle(fontSize: 13)),
+          Text(
+            s['next_sets'] == null
+                // M48-c1 — در حالت deload عدد مطلق نداریم؛ کاهش نسبت به
+                // خودِ برنامه اعمال می‌شود، نه نسبت به تعداد گزارش‌شده.
+                ? 'ست بعد: یک ست کمتر از برنامهٔ فعلی (${s['volume_action']})'
+                : 'ست بعد: ${s['next_sets']} (${s['volume_action']})',
+            style: const TextStyle(fontSize: 13),
+          ),
           const Divider(height: 16),
+          ..._appliedLine(result),
           Text(
             'دلیل: ${s['reason']}',
             style: const TextStyle(fontSize: 12, color: MpColors.textSecondary),
           ),
+          if (s['volume_action'] == 'deload' && s['weight_action'] == 'increase')
+            const Padding(
+              padding: EdgeInsets.only(top: 6),
+              child: Text(
+                // دو سیگنال مستقل: ست راحت بود (بار برود بالا) ولی درد زیاد است
+                // (حجم بیاید پایین). این تناقض نیست — تفکیک بار از حجم است.
+                'بار و حجم دو سیگنال جدا هستند: بار بالا می‌رود چون ست راحت بود، '
+                'حجم پایین می‌آید چون درد زیاد است.',
+                style: TextStyle(fontSize: 10, color: MpColors.textSecondary),
+              ),
+            ),
           Text(
             'قاعده: ${s['rule_version']} — عدد از موتور قواعد، نه هوش مصنوعی',
             style: const TextStyle(fontSize: 10, color: MpColors.textSecondary),
