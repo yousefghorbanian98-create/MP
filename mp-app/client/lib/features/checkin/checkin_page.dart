@@ -15,7 +15,8 @@ import '../../shared/widgets/glass_card.dart';
 
 final qrTokenProvider = FutureProvider<Map<String, dynamic>>((ref) async {
   final api = ref.watch(apiClientProvider);
-  return api.get('/face/qr-token');
+  final r = await api.get('/face/qr-token');
+  return Map<String, dynamic>.from(r as Map);
 });
 
 class CheckInPage extends ConsumerStatefulWidget {

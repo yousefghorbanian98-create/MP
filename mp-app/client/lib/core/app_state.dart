@@ -51,7 +51,8 @@ final walletProvider = FutureProvider<Map<String, dynamic>>((ref) async {
   final auth = ref.watch(authProvider);
   final memberId = auth.memberId;
   if (memberId == null) return {'balance_rial': 0};
-  return api.get('/payments/wallet/$memberId');
+  final r = await api.get('/payments/wallet/$memberId');
+  return Map<String, dynamic>.from(r as Map);
 });
 
 /// کلاس‌های باشگاه.

@@ -10,7 +10,8 @@ import '../../shared/widgets/glass_card.dart';
 
 final meProvider = FutureProvider<Map<String, dynamic>>((ref) async {
   final api = ref.watch(apiClientProvider);
-  return api.get('/members/me');
+  final r = await api.get('/members/me');
+  return Map<String, dynamic>.from(r as Map);
 });
 
 class ProfilePage extends ConsumerStatefulWidget {
