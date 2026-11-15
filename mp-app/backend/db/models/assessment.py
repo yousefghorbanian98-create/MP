@@ -102,3 +102,68 @@ class NormEntry(TimestampMixin, Base):
     sdc_note: Mapped[str] = mapped_column(String(200), default="", nullable=False)
     source: Mapped[str] = mapped_column(String(300), nullable=False)
     source_version: Mapped[str] = mapped_column(String(60), default="", nullable=False)
+
+
+class AxisAssessment(TimestampMixin, BranchMixin, Base):
+    """جلسهٔ ارزیابی ۱۴ توانایی (M36) — درصد محورها از آزمون‌های میدانی."""
+
+    __tablename__ = "axis_assessments"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    member_id: Mapped[int] = mapped_column(
+        ForeignKey("members.id", ondelete="CASCADE"), index=True, nullable=False
+    )
+    coach_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
+    status: Mapped[str] = mapped_column(String(16), default="draft", nullable=False)
+    notes: Mapped[str] = mapped_column(Text, default="", nullable=False)
+    # JSON: متادیتای جلسه (نسخهٔ قواعد، شرایط، ...) — E02
+    meta: Mapped[str] = mapped_column(Text, default="{}", nullable=False)
+
+    scores: Mapped[list[AxisScore]] = relationship(
+        back_populates="assessment", cascade="all, delete-orphan"
+    )
+    tests: Mapped[list[FieldTestResult]] = relationship(
+        back_populates="assessment", cascade="all, delete-orphan"
+    )
+
+
+class AxisScore(Base):
+    """نمرهٔ درصدی یک محور (۰..۱۰۰) + کیفیت — نمرهٔ نامعلوم = missing، هرگز صفر."""
+
+    __tablename__ = "axis_scores"
+    __table_args__ = (UniqueConstraint("assessment_id", "axis", name="uq_axis_score"),)
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    assessment_id: Mapped[int] = mapped_column(
+        ForeignKey("axis_assessments.id", ondelete="CASCADE"), index=True, nullable=False
+    )
+    axis: Mapped[int] = mapped_column(Integer, nullable=False)  # 1..14
+    score: Mapped[float | None] = mapped_column(Float, nullable=True)  # None = missing
+    quality: Mapped[str] = mapped_column(String(20), default="missing", nullable=False)
+    # نسخهٔ قاعدهٔ نگاشت آزمون←محور (AXIS_TEST_MAP)
+    rule_version: Mapped[str] = mapped_column(String(40), default="", nullable=False)
+
+    assessment: Mapped[AxisAssessment] = relationship(back_populates="scores")
+
+
+class FieldTestResult(Base):
+    """نتیجهٔ خام یک آزمون میدانی + درصدک برآوردشده (M36)."""
+
+    __tablename__ = "field_test_results"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    assessment_id: Mapped[int] = mapped_column(
+        ForeignKey("axis_assessments.id", ondelete="CASCADE"), index=True, nullable=False
+    )
+    test_key: Mapped[str] = mapped_column(String(40), nullable=False, index=True)
+    raw_value: Mapped[float] = mapped_column(Float, nullable=False)
+    unit: Mapped[str] = mapped_column(String(20), default="", nullable=False)
+    percentile: Mapped[float | None] = mapped_column(Float, nullable=True)
+    quality: Mapped[str] = mapped_column(String(20), default="", nullable=False)
+    # نسخهٔ موتور امتیازدهی + منبع نُرم (E13)
+    rule_version: Mapped[str] = mapped_column(String(40), default="", nullable=False)
+    norm_source: Mapped[str] = mapped_column(String(300), default="", nullable=False)
+    measured_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
+    notes: Mapped[str] = mapped_column(Text, default="", nullable=False)
+
+    assessment: Mapped[AxisAssessment] = relationship(back_populates="tests")

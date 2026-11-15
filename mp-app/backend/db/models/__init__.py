@@ -4,7 +4,10 @@ from db.models.admin import AuditLog, Campaign, FeatureFlag, Offer
 from db.models.ai import RuleRun
 from db.models.assessment import (
     Assessment14Domain,
+    AxisAssessment,
+    AxisScore,
     DomainScore,
+    FieldTestResult,
     JacksonPollockMeasurement,
     NormEntry,
 )
@@ -28,6 +31,8 @@ from db.models.programs import ProgramExercise, ProgramWeek, WorkoutProgram
 __all__ = [
     "Assessment14Domain",
     "AuditLog",
+    "AxisAssessment",
+    "AxisScore",
     "BiometricConsent",
     "Campaign",
     "CatalogExercise",
@@ -37,6 +42,7 @@ __all__ = [
     "DomainScore",
     "Exercise",
     "FaceTemplate",
+    "FieldTestResult",
     "FeatureFlag",
     "FoodItem",
     "GymClass",
