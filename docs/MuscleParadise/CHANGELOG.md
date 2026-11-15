@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Added — M39 (2026-11-14) — بازخورد ست در کلاینت + «چرا این تغییر؟»
+- SetFeedbackSheet (RIR/درد هر ست) روی «برنامهٔ امروز» + _WhyCard زنجیرهٔ داده←قاعده←تصمیم+دلیل
+- S3c: ۱۳۷ rps صفر خطا + رفع دو شکاف casbin (member set-feedback، super_admin) با تست regression
+
 ### Added — M37/M38 (2026-11-14) — UI ارزیابی + موتور تجویز محور-آگاه
 - کلاینت: صفحهٔ «توانایی‌ها» (ثبت آزمون + ماتریس ۱۴ محور با چیپ‌های چهار وضعیت، نامعلوم = «—») + تب ناوبری + ۴ تست ویجت
 - `engine/axis_prescription.py` (axis-prescription-1.0): انتخاب حرکت از تصمیم چهارگانه + dedup چندمحوره + خستگی-یک‌بار + بودجه (maintain←carrier، هرگز direct)

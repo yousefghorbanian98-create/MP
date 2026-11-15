@@ -10,6 +10,7 @@ import '../../core/app_state.dart';
 import '../../core/session.dart';
 import '../../core/theme.dart';
 import '../../shared/widgets/glass_card.dart';
+import '../feedback/set_feedback_sheet.dart';
 import 'today_controller.dart';
 
 class TodayPage extends ConsumerWidget {
@@ -194,6 +195,19 @@ class _ExerciseTile extends ConsumerWidget {
                           fontSize: 12, color: MpColors.textSecondary),
                     ),
                   ],
+                ),
+              ),
+              IconButton(
+                tooltip: 'بازخورد ست',
+                icon: const Icon(Icons.rate_review_outlined,
+                    size: 20, color: MpColors.textSecondary),
+                onPressed: () => showModalBottomSheet<void>(
+                  context: context,
+                  isScrollControlled: true,
+                  builder: (_) => SetFeedbackSheet(
+                    movementName: (exercise['exercise_name'] as String?) ??
+                        'حرکت ${exercise['exercise_id'] ?? ''}',
+                  ),
                 ),
               ),
               Container(

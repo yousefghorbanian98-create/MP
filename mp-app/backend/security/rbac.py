@@ -46,6 +46,7 @@ POLICIES: list[tuple[str, str, str]] = [
     ("member", "/api/v1/notifications/*", "GET"),
     ("member", "/api/v1/notifications/*", "POST"),
     ("member", "/api/v1/programs/*", "GET"),
+    ("member", "/api/v1/programs/set-feedback", "POST"),
     ("member", "/api/v1/assessments/*", "GET"),
     ("member", "/api/v1/axis-assessments", "GET"),
     ("member", "/api/v1/axis-assessments/*", "GET"),
@@ -89,6 +90,8 @@ POLICIES: list[tuple[str, str, str]] = [
     ("manager", "/*", "*"),
     # ادمین سیستم: دسترسی کامل (هم‌ارز manager در casbin)
     ("admin", "/*", "*"),
+    # مالک سیستم: دسترسی کامل (M39-c3 — شکاف policy پیدا شد: super_admin ثبت نشده بود)
+    ("super_admin", "/*", "*"),
 ]
 
 

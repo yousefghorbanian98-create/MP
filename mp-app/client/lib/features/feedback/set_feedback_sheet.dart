@@ -1,0 +1,169 @@
+/// فرم بازخورد هر ست (M39-c1) + نمای «چرا این تغییر؟» (M39-c2).
+///
+/// زنجیرهٔ نمایش‌داده‌شده: داده (ست شما) ← قاعده (autoreg/درد) ← تصمیم + دلیل.
+/// عدد پیشنهادی از backend می‌آید — هیچ عددی در کلاینت ساخته نمی‌شود (E04).
+library;
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../core/theme.dart';
+import 'feedback_providers.dart';
+
+class SetFeedbackSheet extends ConsumerStatefulWidget {
+  const SetFeedbackSheet({super.key, required this.movementName});
+
+  final String movementName;
+
+  @override
+  ConsumerState<SetFeedbackSheet> createState() => _SetFeedbackSheetState();
+}
+
+class _SetFeedbackSheetState extends ConsumerState<SetFeedbackSheet> {
+  final _repsController = TextEditingController();
+  double _rir = 2;
+  double _soreness = 2;
+  bool _submitting = false;
+  Map<String, dynamic>? _result;
+
+  @override
+  void dispose() {
+    _repsController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    final reps = int.tryParse(_repsController.text.trim());
+    if (reps == null) {
+      return;
+    }
+    setState(() {
+      _submitting = true;
+      _result = null;
+    });
+    final result = await ref.read(submitSetFeedbackProvider)([
+      {
+        'movement_id': widget.movementName,
+        'weight': 0,
+        'target_reps': reps,
+        'reps_done': reps,
+        'rir': _rir,
+        'soreness': _soreness.round(),
+      },
+    ]);
+    setState(() {
+      _submitting = false;
+      _result = result;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(
+        left: 20,
+        right: 20,
+        top: 20,
+        bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('بازخورد ست — ${widget.movementName}',
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          const SizedBox(height: 4),
+          const Text('RIR یعنی چند تکرار در تانک داشتید؛ درد عضلانی فردا را ۰ تا ۱۰ بسنجید',
+              style: TextStyle(fontSize: 11, color: MpColors.textSecondary)),
+          const SizedBox(height: 14),
+          TextField(
+            controller: _repsController,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(
+              labelText: 'تکرار انجام‌شده',
+              border: OutlineInputBorder(),
+            ),
+          ),
+          const SizedBox(height: 14),
+          Text('تکرار ذخیره (RIR): ${_rir.round()}'),
+          Slider(
+            value: _rir,
+            min: 0,
+            max: 5,
+            divisions: 5,
+            onChanged: (v) => setState(() => _rir = v),
+          ),
+          Text('درد عضلانی: ${_soreness.round()}'),
+          Slider(
+            value: _soreness,
+            min: 0,
+            max: 10,
+            divisions: 10,
+            onChanged: (v) => setState(() => _soreness = v),
+          ),
+          const SizedBox(height: 10),
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton(
+              onPressed: _submitting ? null : _submit,
+              child: Text(_submitting ? 'در حال پردازش…' : 'ثبت بازخورد'),
+            ),
+          ),
+          if (_result != null) ...[
+            const SizedBox(height: 16),
+            _WhyCard(result: _result!),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// «چرا این تغییر؟» — داده ← قاعده ← تصمیم + دلیل (M39-c2).
+class _WhyCard extends StatelessWidget {
+  const _WhyCard({required this.result});
+
+  final Map<String, dynamic> result;
+
+  @override
+  Widget build(BuildContext context) {
+    final suggestions = (result['suggestions'] as List?)?.cast<Map<String, dynamic>>() ?? [];
+    if (suggestions.isEmpty) return const SizedBox.shrink();
+    final s = suggestions.first;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: MpColors.primary.withOpacity(0.10),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: MpColors.primary.withOpacity(0.30)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Row(
+            children: [
+              Icon(Icons.help_outline, size: 18, color: MpColors.primary),
+              SizedBox(width: 6),
+              Text('چرا این تغییر؟', style: TextStyle(fontWeight: FontWeight.bold)),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text('وزن بعد: ${s['next_weight']} (${s['weight_action']})',
+              style: const TextStyle(fontSize: 13)),
+          Text('ست بعد: ${s['next_sets']} (${s['volume_action']})',
+              style: const TextStyle(fontSize: 13)),
+          const Divider(height: 16),
+          Text(
+            'دلیل: ${s['reason']}',
+            style: const TextStyle(fontSize: 12, color: MpColors.textSecondary),
+          ),
+          Text(
+            'قاعده: ${s['rule_version']} — عدد از موتور قواعد، نه هوش مصنوعی',
+            style: const TextStyle(fontSize: 10, color: MpColors.textSecondary),
+          ),
+        ],
+      ),
+    );
+  }
+}
