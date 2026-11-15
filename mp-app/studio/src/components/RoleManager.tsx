@@ -56,7 +56,15 @@ export function RoleManager() {
       <p className="mt-0.5 text-[11px] text-ink-dim">
         فقط مالک سیستم (super_admin) می‌تواند نقش بدهد؛ تغییر نقش خودتان ممنوع است؛ هر تغییر در لاگ ممیزی ثبت می‌شود
       </p>
-      {error && <p className="mt-2 text-xs text-red-400">{error}</p>}
+      {error && (
+        <p className="mt-2 rounded-lg bg-rose-500/10 px-3 py-2 text-xs text-rose-300" role="alert">
+          {error}
+          <span className="mt-1 block text-[11px] text-ink-dim">
+            این بخش فقط برای مالک سیستم (super_admin) باز است؛ مدیر معمولی ۴۰۳ می‌گیرد و
+            لیست خالی نشان داده نمی‌شود.
+          </span>
+        </p>
+      )}
       <div className="mt-3 space-y-2">
         {users.map((u) => (
           <div key={u.id} className="flex items-center gap-3 rounded-xl bg-surface/60 px-3 py-2">
