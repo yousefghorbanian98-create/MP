@@ -108,6 +108,13 @@ unformatted: File would be reformatted
 129 +                 f"نمرهٔ محور {axis} ثبت نشده — داده ناشناخته است نه صفر", code="missing_score"
 130 +             )
 131 |         decisions.append(
+--------------------------------------------------------------------------------
+205 |         if entry.get("rule_version") != LOAD_RULES_VERSION:
+    -             raise ApiError("entry با نسخهٔ قاعدهٔ ناشناخته — از attribute_load استفاده کن", code="invalid_entry")
+206 +             raise ApiError(
+207 +                 "entry با نسخهٔ قاعدهٔ ناشناخته — از attribute_load استفاده کن", code="invalid_entry"
+208 +             )
+209 |         total_fatigue += entry["fatigue_units"]
     |
 
 unformatted: File would be reformatted
@@ -1025,4 +1032,4 @@ unformatted: File would be reformatted
 55 |     assert row.category == "strength"
    |
 
-10 files would be reformatted, 161 files already formatted
+10 files would be reformatted, 162 files already formatted
