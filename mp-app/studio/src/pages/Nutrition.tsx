@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 import { fetchDailyNutrition, logFood, searchFoods, type FoodRow } from "../lib/api";
 import { AdaptiveNutritionPanel } from "../components/AdaptiveNutritionPanel";
+import { FoodLibrary } from "../components/FoodLibrary";
 import { useAppStore } from "../stores/appStore";
 import { fa, useApi } from "../lib/useApi";
 
@@ -320,6 +321,8 @@ export function Nutrition() {
           </p>
         )}
       </div>
+
+      <FoodLibrary />
     </div>
   );
 }

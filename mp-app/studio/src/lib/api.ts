@@ -614,3 +614,17 @@ export interface Jp7Trend {
 export function fetchJp7Trend(memberId: number, token = getToken(), signal?: AbortSignal) {
   return getJson<Jp7Trend>(`/assessments/jp7/member/${memberId}/trend`, token, signal);
 }
+
+/** G12 — مرور جدول غذایی با فیلتر دسته (بدون جستجو = همهٔ غذاها). */
+export function browseFoods(
+  query: string,
+  limit = 100,
+  token = getToken(),
+  signal?: AbortSignal,
+) {
+  return getJson<FoodRow[]>(
+    `/nutrition/foods?q=${encodeURIComponent(query)}&limit=${limit}`,
+    token,
+    signal,
+  );
+}
