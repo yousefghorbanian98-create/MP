@@ -12,6 +12,7 @@ from db.models.assessment import (
     NormEntry,
 )
 from db.models.auth import OtpCode, RefreshToken, User
+from db.models.chat import Conversation, Message
 from db.models.classes import ClassBooking, GymClass
 from db.models.content import (
     CatalogExercise,
@@ -48,6 +49,8 @@ __all__ = [
     "GymClass",
     "JacksonPollockMeasurement",
     "BodyWeightLog",
+    "Conversation",
+    "Message",
     "FoodLog",
     "MealItem",
     "Member",

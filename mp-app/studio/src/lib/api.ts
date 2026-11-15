@@ -668,3 +668,82 @@ export interface ReadinessReport {
 export function fetchReadiness(memberId: number, token = getToken(), signal?: AbortSignal) {
   return getJson<ReadinessReport>(`/programs/member/${memberId}/readiness`, token, signal);
 }
+
+// ── G8 — چت مربی–شاگرد ──
+
+export interface ChatConversation {
+  id: number;
+  member_id: number;
+  coach_id: number;
+  subject: string;
+  status: "open" | "closed" | string;
+  last_message_at: string | null;
+  created_at: string | null;
+}
+
+export interface ChatMessage {
+  id: number;
+  conversation_id: number;
+  sender_id: number;
+  sender_role: "member" | "coach" | string;
+  body: string;
+  is_system: boolean;
+  read_at: string | null;
+  created_at: string | null;
+}
+
+export interface ChatMessages {
+  conversation_id: number;
+  messages: ChatMessage[];
+  unread_count: number;
+  rule_version: string;
+}
+
+export function fetchConversations(memberId?: number, token = getToken(), signal?: AbortSignal) {
+  const q = memberId !== undefined ? `?member_id=${memberId}` : "";
+  return getJson<ChatConversation[]>(`/chat/conversations${q}`, token, signal);
+}
+
+export function openConversation(
+  memberId: number,
+  subject: string,
+  token = getToken(),
+) {
+  return postJson<ChatConversation>(
+    "/chat/conversations",
+    { member_id: memberId, subject },
+    token,
+  );
+}
+
+export function fetchMessages(
+  conversationId: number,
+  token = getToken(),
+  signal?: AbortSignal,
+) {
+  return getJson<ChatMessages>(
+    `/chat/conversations/${conversationId}/messages`,
+    token,
+    signal,
+  );
+}
+
+export function sendMessage(
+  conversationId: number,
+  body: string,
+  token = getToken(),
+) {
+  return postJson<ChatMessage>(
+    `/chat/conversations/${conversationId}/messages`,
+    { body },
+    token,
+  );
+}
+
+export function markConversationRead(conversationId: number, token = getToken()) {
+  return postJson<{ marked_read: number; rule_version: string }>(
+    `/chat/conversations/${conversationId}/read`,
+    {},
+    token,
+  );
+}

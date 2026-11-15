@@ -14,6 +14,7 @@ from modules.axis_assessment.router import router as axis_assessment_router
 from modules.classes.router import router as classes_router
 from modules.face_id.router import router as face_router
 from modules.membership.router import router as members_router
+from modules.notification.chat_router import router as chat_router
 from modules.notification.router import router as notifications_router
 from modules.nutrition.router import router as nutrition_router
 from modules.payments.router import router as payments_router
@@ -35,6 +36,7 @@ api_router.include_router(population_router)
 api_router.include_router(nutrition_router)
 api_router.include_router(face_router)
 api_router.include_router(notifications_router)
+api_router.include_router(chat_router)
 api_router.include_router(admin_router)
 api_router.include_router(ai_router)
 api_router.include_router(monitoring_router)

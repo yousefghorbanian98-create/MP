@@ -57,6 +57,13 @@ POLICIES: list[tuple[str, str, str]] = [
     ("member", "/api/v1/payments/*", "GET"),
     ("member", "/api/v1/payments/wallet/pay", "POST"),
     ("member", "/api/v1/nutrition/*", "GET"),
+    # G8 (M51-c1) — چت: عضو باید بتواند گفتگوی خودش را ببیند و پیام بدهد.
+    # دامنهٔ دقیق، نه `*`: فقط زیرمسیرهای گفتگو. کنترل «کدام گفتگو»
+    # در chat_service._load_conversation است (مالکیت بررسی می‌شود).
+    ("member", "/api/v1/chat/conversations", "GET"),
+    ("member", "/api/v1/chat/conversations", "POST"),
+    ("member", "/api/v1/chat/conversations/*", "GET"),
+    ("member", "/api/v1/chat/conversations/*", "POST"),
     # M43-c3 (D-004): مسیرهای مهاجرت‌داده‌شده از require_roles — عضو در فرم ورودی خودش
     # (باگ REA: نبود policy برای /ai و /population ← ۴۰۳ در مسیر ثبت‌نام واقعی)
     ("member", "/api/v1/ai/program/generate", "POST"),
@@ -98,6 +105,10 @@ POLICIES: list[tuple[str, str, str]] = [
     ("reception", "/api/v1/admin/checkins", "GET"),
     ("reception", "/api/v1/admin/members-summary", "GET"),
     ("coach", "/api/v1/nutrition/*", "*"),
+    # G8 — مربی طرف گفتگو
+    ("coach", "/api/v1/chat/conversations", "GET"),
+    ("coach", "/api/v1/chat/conversations", "POST"),
+    ("coach", "/api/v1/chat/conversations/*", "*"),
     ("coach", "/api/v1/nutrition/plans", "POST"),
     ("coach", "/api/v1/face/*", "*"),
     ("reception", "/api/v1/face/privacy-notice", "GET"),

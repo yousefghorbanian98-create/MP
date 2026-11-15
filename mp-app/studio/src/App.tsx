@@ -7,6 +7,7 @@ import { Analytics } from "./pages/Analytics";
 import { Dashboard } from "./pages/Dashboard";
 import { Members } from "./pages/Members";
 import { Assessment } from "./pages/Assessment";
+import { Chat } from "./pages/Chat";
 import { Nutrition } from "./pages/Nutrition";
 import { Programs } from "./pages/Programs";
 import { Settings } from "./pages/Settings";
@@ -18,6 +19,7 @@ const pages = {
   programs: Programs,
   nutrition: Nutrition,
   assessment: Assessment,
+  chat: Chat,
   checkin: CheckIn,
   finance: Finance,
   analytics: Analytics,
