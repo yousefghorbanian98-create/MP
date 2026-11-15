@@ -33,6 +33,9 @@ class WorkoutProgram(TimestampMixin, BranchMixin, Base):
         Text, default="", nullable=False
     )  # فقط متن — هرگز عدد
     reject_reason: Mapped[str] = mapped_column(Text, default="", nullable=False)
+    # Q7 — نتیجهٔ غربالگری ایمنی به‌صورت JSON (safety-1.0).
+    # "{}" یعنی غربالگری انجام نشده؛ با "status: unknown" یکی نیست.
+    safety_flags: Mapped[str] = mapped_column(Text, default="{}", nullable=False)
     approved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     approved_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
 

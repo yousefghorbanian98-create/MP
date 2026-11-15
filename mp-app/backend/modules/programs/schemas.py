@@ -42,6 +42,9 @@ class ProgramOut(BaseModel):
     approved_at: datetime | None
     # M46-c4 — چه کسی تأیید/رد کرد؛ پیش‌تر در پاسخ نبود و UI نمی‌توانست نشان دهد
     approved_by: int | None = None
+    # Q7 — نتیجهٔ غربالگری ایمنی به‌صورت متن JSON (safety-1.0).
+    # «{}» یعنی غربالگری انجام نشده — با «بی‌خطر» یکی نیست.
+    safety_flags: str = "{}"
     weeks: list[ProgramWeekOut] = []
 
     model_config = {"from_attributes": True}

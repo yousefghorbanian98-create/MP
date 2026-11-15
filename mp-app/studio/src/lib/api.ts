@@ -191,6 +191,8 @@ export interface ProgramSummaryRow {
   reject_reason: string;
   approved_at: string | null;
   created_at: string | null;
+  /** Q7 — JSON غربالگری ایمنی؛ «{}» یعنی غربالگری نشده، نه بی‌خطر. */
+  safety_flags?: string;
 }
 
 export interface ProgramsSummary {

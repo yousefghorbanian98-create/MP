@@ -12,7 +12,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.errors import ApiError, NotFoundError
-from db.models import ProgramExercise, ProgramWeek, WorkoutProgram
+from db.models import Member, ProgramExercise, ProgramWeek, WorkoutProgram
 
 
 def get_program(db: Session, program_id: int, user=None) -> WorkoutProgram:
@@ -84,6 +84,13 @@ def create_program_from_engine_output(
         {'exercise_id': 1, 'day': 1, 'order': 0, 'sets': 3, 'reps': '8-12',
          'load_pct': 70, 'rest_seconds': 90, 'notes': ''}]}]}
     """
+    # Q7 — غربالگری ایمنی پیش از ثبت برنامه.
+    # برنامه‌ای که با محدودیت پزشکی عضو ناسازگار است باید در وضعیت
+    # `flagged` ثبت شود تا مربی ببیند، نه بی‌صدا تأیید شود.
+    import json as _json
+
+    safety = _safety_gate(db, member_id, engine_output)
+
     program = WorkoutProgram(
         member_id=member_id,
         coach_id=coach_id,
@@ -92,6 +99,7 @@ def create_program_from_engine_output(
         llm_explanation=engine_output.get("llm_explanation", ""),  # فقط متن — هرگز عدد (G8)
         status="draft",
         branch_id=1,
+        safety_flags=_json.dumps(safety, ensure_ascii=False),
     )
     db.add(program)
     db.flush()
@@ -238,6 +246,7 @@ def list_programs_summary(db, *, status: str | None = None, limit: int = 200) ->
             "reject_reason": p.reject_reason,
             "approved_at": p.approved_at.isoformat() if p.approved_at else None,
             "created_at": p.created_at.isoformat() if p.created_at else None,
+            "safety_flags": p.safety_flags or "{}",
         }
         for p in programs
     ]
@@ -457,3 +466,44 @@ def readiness_report(db, *, member_id: int) -> dict:
         ),
         "rule_version": READINESS_REPORT_VERSION,
     }
+
+
+# ── Q7 — غربالگری ایمنی ──
+
+
+def _safety_gate(db: Session, member_id: int, engine_output: dict) -> dict:
+    """بررسی ناسازگاری برنامه با محدودیت‌های پزشکی عضو.
+
+    الگوهای حرکتی از حرکت‌های برنامه استخراج می‌شوند (`exercise_id` به
+    نام حرکت نگاشت می‌شود) و با موتور ایمنی سنجیده می‌شوند. خروجی در
+    `llm_explanation` نمی‌نشیند — آن فیلد فقط متن است؛ پرچم ایمنی جای
+    جدا دارد.
+    """
+    import json
+
+    from engine.safety import screen
+
+    member = db.get(Member, member_id)
+    if member is None:
+        return {"status": "unknown", "reason": "عضو یافت نشد"}
+
+    try:
+        constraints = json.loads(member.constraints or "[]")
+    except (ValueError, TypeError):
+        constraints = []
+    if not isinstance(constraints, list):
+        constraints = []
+
+    patterns: list[str] = []
+    for week in engine_output.get("weeks", []) or []:
+        for ex in week.get("exercises", []) or []:
+            name = ex.get("movement") or ex.get("pattern") or ""
+            if name:
+                patterns.append(str(name))
+
+    return screen(
+        constraints=[str(c) for c in constraints],
+        planned_patterns=patterns,
+        age=None,  # سن در پروفایل عضو نگه‌داری نمی‌شود؛ ادعای بی‌پشتوانه نمی‌کنیم
+        has_medical_clearance=None,
+    )

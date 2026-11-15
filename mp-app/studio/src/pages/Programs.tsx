@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { approveProgram, fetchProgramsSummary, rejectProgram } from "../lib/api";
+import { SafetyBadge, parseSafety } from "../components/SafetyBadge";
 import { ReadinessPanel } from "../components/ReadinessPanel";
 import { VolumePanel } from "../components/VolumePanel";
 import { fa, useApi } from "../lib/useApi";
@@ -147,10 +148,27 @@ export function Programs() {
                   {p.engine_version || "—"}
                 </p>
               </div>
-              <span className={(statusMap[p.status] ?? statusMap.draft).cls}>
-                {(statusMap[p.status] ?? { label: p.status }).label}
-              </span>
+              <div className="flex items-center gap-2">
+                <SafetyBadge flags={parseSafety(p.safety_flags)} />
+                <span className={(statusMap[p.status] ?? statusMap.draft).cls}>
+                  {(statusMap[p.status] ?? { label: p.status }).label}
+                </span>
+              </div>
             </div>
+            {(() => {
+              const safety = parseSafety(p.safety_flags);
+              if (!safety?.blocked?.length) return null;
+              return (
+                <div className="mt-3 space-y-1 rounded-lg bg-danger/10 p-3 text-[11px] text-danger">
+                  {safety.blocked.map((b) => (
+                    <p key={b.constraint}>
+                      {b.label_fa}: {b.blocked_exercises.join("، ")} ممنوع — جایگزین:{" "}
+                      {b.alternatives.join("، ")}
+                    </p>
+                  ))}
+                </div>
+              );
+            })()}
 
             {p.llm_explanation && (
               <p className="mt-3 rounded-lg bg-surface/60 p-3 text-xs text-ink-dim">
