@@ -1,2 +1,54 @@
 All checks passed!
-151 files already formatted
+unformatted: File would be reformatted
+  --> db/migrations/versions/c3d4e5f6a1b2_m33_exercise_catalog.py:24:19
+   |
+23 |         sa.Column("exercise_count", sa.Integer(), nullable=False, server_default="0"),
+   -         sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
+   -         sa.Column("updated_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
+24 +         sa.Column(
+25 +             "created_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False
+26 +         ),
+27 +         sa.Column(
+28 +             "updated_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False
+29 +         ),
+30 |     )
+--------------------------------------------------------------------------------
+45 |         sa.Column("image_refs", sa.Text(), nullable=False, server_default="[]"),
+   -         sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
+   -         sa.Column("updated_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
+46 +         sa.Column(
+47 +             "created_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False
+48 +         ),
+49 +         sa.Column(
+50 +             "updated_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False
+51 +         ),
+52 |     )
+   |
+
+unformatted: File would be reformatted
+  --> scripts/import_exercise_catalog.py:31:40
+   |
+30 | DEFAULT_DATA = (
+   -     Path(__file__).resolve().parents[1] / "data" / "external" / "free_exercise_db" / "exercises.json"
+31 +     Path(__file__).resolve().parents[1]
+32 +     / "data"
+33 +     / "external"
+34 +     / "free_exercise_db"
+35 +     / "exercises.json"
+36 | )
+   |
+
+unformatted: File would be reformatted
+  --> tests/unit/test_catalog_import.py:54:11
+   |
+53 |     import_catalog(session)
+   -     row = (
+   -         session.query(CatalogExercise)
+   -         .filter(CatalogExercise.name.ilike("%3/4 sit-up%"))
+   -         .one()
+   -     )
+54 +     row = session.query(CatalogExercise).filter(CatalogExercise.name.ilike("%3/4 sit-up%")).one()
+55 |     assert row.category == "strength"
+   |
+
+3 files would be reformatted, 158 files already formatted
