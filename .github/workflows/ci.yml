@@ -36,9 +36,12 @@ jobs:
       # قواعد پروژه‌ای semgrep (`.semgrep/project-rules.yml`) — بدون نیاز به
       # semgrep.dev؛ همان قواعدی که یافتهٔ «تأیید پرداخت بدون درگاه» را داد.
       - name: Semgrep (project rules)
+        # semgrep در venv مجزا نصب می‌شود: در venv پروژه با opentelemetry
+        # تعارض می‌کند و با ImportError کرش می‌کند (یک بار در CI همین شد).
         run: |
-          pip install -q semgrep
-          semgrep --config=.semgrep/project-rules.yml --error \
+          python -m venv /tmp/sgvenv
+          /tmp/sgvenv/bin/pip install -q semgrep
+          /tmp/sgvenv/bin/semgrep --config=.semgrep/project-rules.yml --error \
             --exclude=.venv --exclude=node_modules --exclude=__pycache__ mp-app
 
       - name: Commit backend diagnostics (on failure)
