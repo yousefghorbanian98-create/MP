@@ -2,9 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime
-
-from sqlalchemy import DateTime, ForeignKey, Integer, String, UniqueConstraint, func
+from sqlalchemy import ForeignKey, Integer, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
 from db.base import Base, BranchMixin, TimestampMixin
@@ -38,6 +36,7 @@ class ClassBooking(TimestampMixin, BranchMixin, Base):
     status: Mapped[str] = mapped_column(
         String(20), nullable=False, default="confirmed"
     )  # confirmed|waitlisted|cancelled
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), nullable=False
-    )
+    # M47-c1 — created_at/updated_at از TimestampMixin می‌آیند.
+    # پیش‌تر created_at اینجا دوباره تعریف شده بود و index=True را از
+    # mixin بازنویسی می‌کرد؛ نتیجه: ایندکس موجود بود ولی مدل نمی‌خواست
+    # (و برعکسش هم قابل تصور بود) — یک ناسازگاریِ خاموش در schema.
