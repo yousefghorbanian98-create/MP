@@ -1,4 +1,5 @@
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { UpdateBanner } from "./components/UpdateBanner";
 import { Sidebar } from "./components/Sidebar";
 import { TopBar } from "./components/TopBar";
 import { CheckIn } from "./pages/CheckIn";
@@ -48,6 +49,7 @@ export default function App() {
             <Page />
           </motion.div>
         </AnimatePresence>
+        <UpdateBanner current={__APP_VERSION__} />
         <footer className="mt-10 pb-2 text-center text-xs text-ink-dim">
           Muscle Paradise — سیستم‌عامل باشگاه · ساخته‌شده با عشق به جزئیات 💚
         </footer>

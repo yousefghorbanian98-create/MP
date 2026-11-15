@@ -5,6 +5,7 @@ import { SafetyBadge, parseSafety } from "../components/SafetyBadge";
 import { ReadinessPanel } from "../components/ReadinessPanel";
 import { VolumePanel } from "../components/VolumePanel";
 import { ExerciseLibrary } from "../components/ExerciseLibrary";
+import { AutoregPanel } from "../components/AutoregPanel";
 import { fa, useApi } from "../lib/useApi";
 
 /**
@@ -218,7 +219,8 @@ export function Programs() {
         <ReadinessPanel />
       </div>
     )}
-    <div className="mt-4">
+    <div className="mt-4 space-y-4">
+      <AutoregPanel />
       <ExerciseLibrary />
     </div>
     </>

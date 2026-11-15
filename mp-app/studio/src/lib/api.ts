@@ -470,6 +470,22 @@ export function fetchMemberVolume(
   );
 }
 
+// ── autoreg-1.0 — وزنهٔ پیشنهادی ست بعدی (POST /ai/suggest-weight) ──
+
+export interface WeightSuggestion {
+  next_weight: number;
+  action: "increase" | "decrease" | "hold";
+  reason: string;
+  rule_version: string;
+}
+
+export function suggestNextWeight(
+  payload: { last_weight: number; reps_done: number; target_reps: number; rpe?: number | null },
+  token = getToken(),
+) {
+  return postJson<WeightSuggestion>("/ai/suggest-weight", payload, token);
+}
+
 // ── G9 — کتابخانهٔ حرکات با تصویر (free-exercise-db، Unlicense) ──
 
 export interface ExerciseRow {

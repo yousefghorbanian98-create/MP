@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { AttendanceChart } from "../components/AttendanceChart";
+import { KpiCard } from "../components/KpiCard";
 import { MemberTable } from "../components/MemberTable";
 import { ScheduleTimeline } from "../components/ScheduleTimeline";
 import { fetchAttendance, fetchKpis } from "../lib/api";
@@ -71,33 +72,23 @@ export function Dashboard() {
       )}
 
       <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {cards.map((c, i) => (
-          <motion.div
-            key={c.id}
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.08, type: "spring", stiffness: 240, damping: 22 }}
-            className="glass-card-hover relative overflow-hidden p-5"
-          >
-            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-l from-transparent via-primary/40 to-transparent" />
-            <p className="text-sm text-ink-dim">{c.label}</p>
-            <div className="mt-2 text-3xl font-bold tracking-tight">
-              {kpis.loading ? (
-                <span className="text-ink-dim">…</span>
-              ) : c.value == null ? (
-                <span className="text-lg text-ink-dim">نامعلوم</span>
-              ) : (
-                <>
-                  {fa(c.value)}
-                  {c.unit ? (
-                    <span className="mr-1 text-base font-medium text-ink-dim">{c.unit}</span>
-                  ) : null}
-                </>
-              )}
+        {cards.map((c, i) =>
+          kpis.loading ? (
+            <div key={c.id} className="glass-card p-5">
+              <p className="text-sm text-ink-dim">{c.label}</p>
+              <div className="mt-2 text-3xl font-bold text-ink-dim">…</div>
             </div>
-            <p className="mt-2 text-[11px] text-ink-dim">{c.hint}</p>
-          </motion.div>
-        ))}
+          ) : (
+            <KpiCard
+              key={c.id}
+              label={c.label}
+              value={c.value}
+              unit={c.unit ?? ""}
+              hint={c.hint}
+              index={i}
+            />
+          ),
+        )}
       </section>
 
       <section className="grid grid-cols-1 gap-6 xl:grid-cols-3">
