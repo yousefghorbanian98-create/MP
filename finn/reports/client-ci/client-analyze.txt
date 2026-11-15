@@ -1,10 +1,9 @@
 Analyzing client...                                             
 
-warning • Unused import: 'api_client.dart'. Try removing the import directive • lib/core/app_state.dart:6:8 • unused_import
-  error • The returned type 'Object' isn't returnable from a 'Future<List<dynamic>>' function, as required by the closure's context • lib/core/app_state.dart:16:10 • return_of_invalid_type_from_closure
-  error • The returned type 'Object' isn't returnable from a 'Future<List<dynamic>>' function, as required by the closure's context • lib/core/app_state.dart:60:10 • return_of_invalid_type_from_closure
-  error • The getter 'isEmpty' isn't defined for the type 'Object'. Try importing the library that defines 'isEmpty', correcting the name to the name of an existing getter, or defining a getter or field named 'isEmpty' • lib/core/app_state.dart:72:14 • undefined_getter
-  error • The getter 'first' isn't defined for the type 'Object'. Try importing the library that defines 'first', correcting the name to the name of an existing getter, or defining a getter or field named 'first' • lib/core/app_state.dart:73:17 • undefined_getter
+  error • The returned type 'Map<String, dynamic>' isn't returnable from a 'Future<List<dynamic>>' function, as required by the closure's context • lib/core/app_state.dart:15:25 • return_of_invalid_type_from_closure
+warning • Unnecessary type check; the result is always 'true'. Try correcting the type check, or removing the type check • lib/core/app_state.dart:16:7 • unnecessary_type_check
+  error • The returned type 'Map<String, dynamic>' isn't returnable from a 'Future<List<dynamic>>' function, as required by the closure's context • lib/core/app_state.dart:61:25 • return_of_invalid_type_from_closure
+  error • The getter 'first' isn't defined for the type 'Map<String, dynamic>'. Try importing the library that defines 'first', correcting the name to the name of an existing getter, or defining a getter or field named 'first' • lib/core/app_state.dart:73:71 • undefined_getter
    info • 'package:flutter/material.dart' is deprecated and shouldn't be used. Use package:material_ui/material_ui.dart instead. This feature was deprecated after v3.47.0-0.0.pre. Try replacing the use of the deprecated member with the replacement • lib/core/router.dart:4:1 • deprecated_member_use
    info • 'package:flutter/material.dart' is deprecated and shouldn't be used. Use package:material_ui/material_ui.dart instead. This feature was deprecated after v3.47.0-0.0.pre. Try replacing the use of the deprecated member with the replacement • lib/core/theme.dart:4:1 • deprecated_member_use
    info • The imported package 'crypto' isn't a dependency of the importing package. Try adding a dependency for 'crypto' in the 'pubspec.yaml' file • lib/core/updater/update_service.dart:10:8 • depend_on_referenced_packages
@@ -78,20 +77,20 @@ warning • Unused import: 'api_client.dart'. Try removing the import directive 
    info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/profile/profile_page.dart:122:36 • prefer_const_constructors
    info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/profile/profile_page.dart:221:58 • prefer_const_constructors
    info • 'package:flutter/material.dart' is deprecated and shouldn't be used. Use package:material_ui/material_ui.dart instead. This feature was deprecated after v3.47.0-0.0.pre. Try replacing the use of the deprecated member with the replacement • lib/features/progress/progress_page.dart:4:1 • deprecated_member_use
-  error • The returned type 'Object' isn't returnable from a 'Future<List<dynamic>>' function, as required by the closure's context • lib/features/progress/progress_page.dart:18:12 • return_of_invalid_type_from_closure
-   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/progress/progress_page.dart:34:11 • prefer_const_constructors
-   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/progress/progress_page.dart:35:20 • prefer_const_constructors
-   info • Use 'const' literals as arguments to constructors of '@immutable' classes. Try adding 'const' before the literal • lib/features/progress/progress_page.dart:36:25 • prefer_const_literals_to_create_immutables
-   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/progress/progress_page.dart:39:17 • prefer_const_constructors
-   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/progress/progress_page.dart:40:26 • prefer_const_constructors
-   info • Use 'const' literals as arguments to constructors of '@immutable' classes. Try adding 'const' before the literal • lib/features/progress/progress_page.dart:42:31 • prefer_const_literals_to_create_immutables
-   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/progress/progress_page.dart:45:23 • prefer_const_constructors
-   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/progress/progress_page.dart:46:34 • prefer_const_constructors
-   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/progress/progress_page.dart:65:24 • prefer_const_constructors
-   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/progress/progress_page.dart:66:26 • prefer_const_constructors
-   info • Use 'const' literals as arguments to constructors of '@immutable' classes. Try adding 'const' before the literal • lib/features/progress/progress_page.dart:67:31 • prefer_const_literals_to_create_immutables
-   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/progress/progress_page.dart:73:23 • prefer_const_constructors
-   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/progress/progress_page.dart:74:34 • prefer_const_constructors
+  error • The returned type 'Map<String, dynamic>' isn't returnable from a 'Future<List<dynamic>>' function, as required by the closure's context • lib/features/progress/progress_page.dart:18:27 • return_of_invalid_type_from_closure
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/progress/progress_page.dart:35:11 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/progress/progress_page.dart:36:20 • prefer_const_constructors
+   info • Use 'const' literals as arguments to constructors of '@immutable' classes. Try adding 'const' before the literal • lib/features/progress/progress_page.dart:37:25 • prefer_const_literals_to_create_immutables
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/progress/progress_page.dart:40:17 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/progress/progress_page.dart:41:26 • prefer_const_constructors
+   info • Use 'const' literals as arguments to constructors of '@immutable' classes. Try adding 'const' before the literal • lib/features/progress/progress_page.dart:43:31 • prefer_const_literals_to_create_immutables
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/progress/progress_page.dart:46:23 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/progress/progress_page.dart:47:34 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/progress/progress_page.dart:66:24 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/progress/progress_page.dart:67:26 • prefer_const_constructors
+   info • Use 'const' literals as arguments to constructors of '@immutable' classes. Try adding 'const' before the literal • lib/features/progress/progress_page.dart:68:31 • prefer_const_literals_to_create_immutables
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/progress/progress_page.dart:74:23 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/progress/progress_page.dart:75:34 • prefer_const_constructors
    info • 'package:flutter/material.dart' is deprecated and shouldn't be used. Use package:material_ui/material_ui.dart instead. This feature was deprecated after v3.47.0-0.0.pre. Try replacing the use of the deprecated member with the replacement • lib/features/shell/app_shell.dart:4:1 • deprecated_member_use
    info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement • lib/features/shell/app_shell.dart:74:33 • deprecated_member_use
    info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement • lib/features/shell/app_shell.dart:75:64 • deprecated_member_use
@@ -104,15 +103,7 @@ warning • Unused import: 'api_client.dart'. Try removing the import directive 
    info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/today/today_page.dart:114:36 • prefer_const_constructors
    info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/today/today_page.dart:196:30 • prefer_const_constructors
    info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement • lib/features/today/today_page.dart:206:43 • deprecated_member_use
-warning • The declaration '_Ring' isn't referenced. Try removing the declaration of '_Ring' • lib/features/today/today_page.dart:222:7 • unused_element
-warning • The declaration '_TodayEmpty' isn't referenced. Try removing the declaration of '_TodayEmpty' • lib/features/today/today_page.dart:251:7 • unused_element
-   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/today/today_page.dart:256:12 • prefer_const_constructors
-   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/today/today_page.dart:257:14 • prefer_const_constructors
-   info • Use 'const' literals as arguments to constructors of '@immutable' classes. Try adding 'const' before the literal • lib/features/today/today_page.dart:259:19 • prefer_const_literals_to_create_immutables
-   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/today/today_page.dart:265:11 • prefer_const_constructors
-   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/today/today_page.dart:266:22 • prefer_const_constructors
    info • 'package:flutter/material.dart' is deprecated and shouldn't be used. Use package:material_ui/material_ui.dart instead. This feature was deprecated after v3.47.0-0.0.pre. Try replacing the use of the deprecated member with the replacement • lib/features/wallet/wallet_page.dart:4:1 • deprecated_member_use
-warning • The left operand can't be null, so the right operand is never executed. Try removing the operator and the right operand • lib/features/wallet/wallet_page.dart:41:38 • dead_null_aware_expression
    info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/wallet/wallet_page.dart:45:21 • prefer_const_constructors
    info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/wallet/wallet_page.dart:46:32 • prefer_const_constructors
    info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/wallet/wallet_page.dart:61:11 • prefer_const_constructors
@@ -132,4 +123,4 @@ warning • The left operand can't be null, so the right operand is never execut
    info • Dangling library doc comment. Add a 'library' directive after the library comment • test/home_page_test.dart:1:1 • dangling_library_doc_comments
    info • 'package:flutter/material.dart' is deprecated and shouldn't be used. Use package:material_ui/material_ui.dart instead. This feature was deprecated after v3.47.0-0.0.pre. Try replacing the use of the deprecated member with the replacement • test/today_page_test.dart:4:1 • deprecated_member_use
 
-131 issues found. (ran in 5.1s)
+122 issues found. (ran in 5.3s)
