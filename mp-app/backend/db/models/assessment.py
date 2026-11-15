@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from sqlalchemy import DateTime, ForeignKey, Integer, String, Text, UniqueConstraint, func
+from sqlalchemy import DateTime, Float, ForeignKey, Integer, String, Text, UniqueConstraint, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from db.base import Base, BranchMixin, TimestampMixin
@@ -74,3 +74,31 @@ class JacksonPollockMeasurement(BranchMixin, Base):
     quality: Mapped[str | None] = mapped_column(String(32), nullable=True)  # E02: کیفیت اندازه‌گیری
     method: Mapped[str | None] = mapped_column(String(64), nullable=True)  # E02: روش/ابزار
     measured_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
+
+
+class NormEntry(TimestampMixin, Base):
+    """ردیف نُرم یک آزمون میدانی (M35-c1) — صدکی یا معیاری، همیشه با منبع (E13)."""
+
+    __tablename__ = "norm_entries"
+    __table_args__ = (
+        UniqueConstraint("test_key", "sex", "age_min", "age_max", name="uq_norm_test_sex_age"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    test_key: Mapped[str] = mapped_column(String(40), nullable=False, index=True)
+    name_fa: Mapped[str] = mapped_column(String(120), nullable=False)
+    unit: Mapped[str] = mapped_column(String(20), nullable=False)  # reps | cm | sec | ...
+    # percentile: جدول صدکی واقعی | criterion: باند معیاری (candidate تا منبع مستقل)
+    method: Mapped[str] = mapped_column(String(20), nullable=False, default="percentile")
+    sex: Mapped[str] = mapped_column(String(10), nullable=False)  # m | f | all
+    age_min: Mapped[int] = mapped_column(Integer, nullable=False)
+    age_max: Mapped[int] = mapped_column(Integer, nullable=False)
+    # JSON: {"5": x, "25": y, "50": z, "75": w, "95": v} — ممکن است ناقص باشد (quality در امتیازدهی)
+    percentiles: Mapped[str] = mapped_column(Text, default="{}", nullable=False)
+    # JSON باندهای معیاری برای method=criterion
+    bands: Mapped[str] = mapped_column(Text, default="{}", nullable=False)
+    # کوچک‌ترین تغییر واقعی (SDC) — گیت «تغییر واقعی» در امتیازدهی مجدد
+    sdc: Mapped[float | None] = mapped_column(Float, nullable=True)
+    sdc_note: Mapped[str] = mapped_column(String(200), default="", nullable=False)
+    source: Mapped[str] = mapped_column(String(300), nullable=False)
+    source_version: Mapped[str] = mapped_column(String(60), default="", nullable=False)
