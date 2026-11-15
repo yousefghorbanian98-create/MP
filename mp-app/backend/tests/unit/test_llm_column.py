@@ -98,3 +98,39 @@ class TestCompare:
     def test_version_is_reported(self) -> None:
         r = compare(rule_problems=[], llm=LlmResult(False, "x", "offline"), forbidden=[])
         assert r["rule_version"] == llm_column.LLM_COLUMN_VERSION
+
+
+class TestSchemeGuard:
+    """CI شکست: bandit B310 روی urlopen.
+
+    یافتهٔ درست بود: با OLLAMA_BASE_URL=file:///etc/passwd می‌شد فایل
+    محلی خواند. اکنون scheme محدود شده و bandit پاک است.
+    """
+
+    def test_file_scheme_is_rejected(self) -> None:
+        import pytest
+
+        from eval.llm_column import _url
+
+        with pytest.raises(ValueError):
+            _url("file:///etc/passwd", "")
+
+    def test_ftp_scheme_is_rejected(self) -> None:
+        import pytest
+
+        from eval.llm_column import _url
+
+        with pytest.raises(ValueError):
+            _url("ftp://example.com", "/x")
+
+    def test_http_and_https_are_allowed(self) -> None:
+        from eval.llm_column import _url
+
+        assert _url("http://127.0.0.1:11434", "/api/tags").startswith("http://")
+        assert _url("https://llm.example", "/api/tags").startswith("https://")
+
+    def test_availability_fails_closed_on_a_bad_scheme(self) -> None:
+        from eval.llm_column import availability
+
+        r = availability("file:///etc/passwd")
+        assert r.available is False

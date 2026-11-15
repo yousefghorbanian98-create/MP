@@ -18,8 +18,24 @@ from __future__ import annotations
 import json
 import os
 import urllib.error
+import urllib.parse
 import urllib.request
 from dataclasses import dataclass
+
+# فقط http/https پذیرفته می‌شود. بدون این بررسی، هر کسی می‌تواند با
+# OLLAMA_BASE_URL=file:///etc/passwd محتوای فایل محلی را بخواند
+# (bandit B310).
+ALLOWED_SCHEMES = ("http", "https")
+
+
+def _url(base: str, path: str) -> str:
+    """URL امن می‌سازد؛ scheme غیرمجاز را رد می‌کند."""
+    full = f"{base.rstrip('/')}{path}"
+    scheme = urllib.parse.urlparse(full).scheme
+    if scheme not in ALLOWED_SCHEMES:
+        raise ValueError(f"scheme «{scheme}» مجاز نیست — فقط http/https")
+    return full
+
 
 LLM_COLUMN_VERSION = "llm-column-1.0"
 DEFAULT_MODEL = os.environ.get("MP_LLM_MODEL", "llama3.1")
@@ -39,7 +55,8 @@ class LlmResult:
 def availability(base_url: str = DEFAULT_BASE) -> LlmResult:
     """بررسی در دسترس بودن Ollama — بدون فرض."""
     try:
-        with urllib.request.urlopen(f"{base_url}/api/tags", timeout=5) as r:
+        tags_url = _url(base_url, "/api/tags")  # scheme در _url محدود شده
+        with urllib.request.urlopen(tags_url, timeout=5) as r:  # nosec B310
             data = json.loads(r.read().decode())
         models = [m.get("name", "") for m in data.get("models", [])]
         return LlmResult(
@@ -81,13 +98,13 @@ def query_llm(
         {"model": model, "prompt": build_prompt(scenario), "stream": False, "format": "json"}
     ).encode()
     req = urllib.request.Request(
-        f"{base_url}/api/generate",
+        _url(base_url, "/api/generate"),
         data=payload,
         headers={"Content-Type": "application/json"},
         method="POST",
     )
     try:
-        with urllib.request.urlopen(req, timeout=TIMEOUT_SECONDS) as r:
+        with urllib.request.urlopen(req, timeout=TIMEOUT_SECONDS) as r:  # nosec B310
             body = json.loads(r.read().decode())
     except (urllib.error.URLError, TimeoutError, OSError, ValueError) as e:
         return LlmResult(
