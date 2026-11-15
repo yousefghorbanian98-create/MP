@@ -88,8 +88,8 @@ def checkin_qr(payload: dict, db: DbSession):
 
     try:
         data = decode_access_token(payload.get("payload", ""))
-    except Exception:
-        raise ApiError("توکن QR نامعتبر است", code="qr_invalid")
+    except Exception as err:
+        raise ApiError("توکن QR نامعتبر است", code="qr_invalid") from err
     if data.get("role") != "checkin-qr":
         raise ApiError("توکن QR نیست", code="qr_invalid")
     member_id = int(data.get("sub", 0))
