@@ -35,4 +35,4 @@ tests/integration/test_m46_security_matrix.py::test_wrong_signature_rejected
     return self._jws.encode(
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-617 passed, 24 warnings in 30.26s
+617 passed, 24 warnings in 33.70s
