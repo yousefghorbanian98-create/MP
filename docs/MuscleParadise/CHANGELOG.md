@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+### Added — M34-c1 (2026-11-14) — نردبان‌های پیشرفت
+- ۱۰ نردبان پیشرفت (pushup/squat/pullup/plank/hinge/lunge/dip/row/core/glute-bridge) با ۳۶ پله — هر پله پیوند واقعی به catalog_exercises
+- جدول‌های progression_ladders + progression_steps + مهاجرت f6a1b2c3d4e5 + نگهبان check_names + rule-evidence
+- ۵ تست (۲۱۶ کل)
+
 ### Added — M33-c3 (2026-11-14) — برچسب‌زنی محوری + برچسب فارسی
 - موتور برچسب‌زنی دترمینیستیک `scripts/tag_axis_coverage.py`: ۲۳ قاعدهٔ ثبت‌شده (max-merge) → بردار پوشش ۱۴محوره برای ۸۷۶/۸۷۶ حرکت
 - نام فارسی candidate (۸۶٪ پوشش واژه‌نامه) + وضعیت review (candidate/verified) + rule-evidence (`M33c3-axis-tagging`)

@@ -74,6 +74,32 @@ class CatalogExercise(TimestampMixin, Base):
     review_meta: Mapped[str] = mapped_column(Text, default="{}", nullable=False)
 
 
+class ProgressionLadder(TimestampMixin, Base):
+    """نردبان پیشرفت یک خانوادهٔ حرکتی (M34-c1) — پیوند به catalog با progression_key."""
+
+    __tablename__ = "progression_ladders"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    key: Mapped[str] = mapped_column(String(60), nullable=False, unique=True)
+    name_fa: Mapped[str] = mapped_column(String(120), nullable=False)
+    # JSON: محورهای هدف با وزن — مثلاً {"3": 0.8, "7": 0.5}
+    axis_focus: Mapped[str] = mapped_column(Text, default="{}", nullable=False)
+    note: Mapped[str] = mapped_column(Text, default="", nullable=False)
+
+
+class ProgressionStep(TimestampMixin, Base):
+    """یک پلهٔ نردبان — همیشه به ردیف واقعی catalog_exercises (external_id) پیوند دارد."""
+
+    __tablename__ = "progression_steps"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    ladder_key: Mapped[str] = mapped_column(String(60), nullable=False, index=True)
+    step_no: Mapped[int] = mapped_column(Integer, nullable=False)
+    catalog_external_id: Mapped[str] = mapped_column(String(60), nullable=False, index=True)
+    name_fa: Mapped[str] = mapped_column(String(120), default="", nullable=False)
+    note: Mapped[str] = mapped_column(Text, default="", nullable=False)
+
+
 class FoodItem(TimestampMixin, Base):
     """مادهٔ غذایی — همگام با Open Food Facts/USDA یا جدول ایرانی دستی."""
 
