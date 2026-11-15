@@ -1,25 +1,23 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import {
+  fetchCommission,
+  fetchFinanceSummary,
+  fetchPaymentsCsv,
+  type CommissionResult,
+  type FinanceSummary,
+} from "../lib/api";
+import { fa } from "../lib/useApi";
 
-interface CommissionResult {
-  coach_id: number;
-  coach_name: string;
-  rate: number;
-  attributed_payments_rial: number;
-  commission_rial: number;
-}
-
-interface FinanceSummary {
-  total_paid_rial: number;
-  total_pending_rial: number;
-  paid_count: number;
-}
-
-const fmt = (n: number) => n.toLocaleString("fa-IR");
+const fmt = (n: number) => fa(n);
 
 /**
  * مالی — خلاصه، کمیسیون مربی، خروجی CSV (M27/باز-۴).
- * هر دکمه خروجی واقعی می‌دهد؛ خطا صریح نمایش داده می‌شود (هرگز بی‌صدا).
+ *
+ * باگ M52-c1: این صفحه با `fetch` خام و **بدون هدر Authorization** صدا
+ * می‌زد، پس هر سه دکمه در عمل ۴۰۱ می‌گرفتند — صفحهٔ مالی کاملاً مرده بود.
+ * حالا از لایهٔ مشترک api استفاده می‌شود که توکن را می‌گذارد و ۴۰۱/۴۰۳
+ * را به AuthError تبدیل می‌کند تا پیام «نیاز به توکن» نشان داده شود.
  */
 export function Finance() {
   const [coachId, setCoachId] = useState("");
@@ -43,28 +41,31 @@ export function Finance() {
 
   const fetchSummary = () =>
     call(async () => {
-      const r = await fetch("/api/v1/payments/finance/summary");
-      if (!r.ok) throw new Error(`خلاصهٔ مالی دریافت نشد (HTTP ${r.status})`);
-      setSummary(await r.json());
+      setSummary(await fetchFinanceSummary());
     });
 
-  const fetchCommission = () =>
+  // خلاصه هنگام باز شدن صفحه بارگذاری می‌شود — صفحهٔ مالی نباید تا کلیک
+  // کاربر خالی بماند و «خراب» به نظر برسد.
+  useEffect(() => {
+    void fetchSummary();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const calculateCommission = () =>
     call(async () => {
       if (!coachId.trim()) throw new Error("شناسهٔ مربی را وارد کنید");
-      const r = await fetch("/api/v1/payments/finance/commission", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ coach_id: Number(coachId), rate: Number(rate) / 100 }),
-      });
-      if (!r.ok) throw new Error(`محاسبه ناموفق (HTTP ${r.status})`);
-      setCommission(await r.json());
+      const id = Number(coachId);
+      if (!Number.isFinite(id) || id < 1) throw new Error("شناسهٔ مربی باید عدد مثبت باشد");
+      const pct = Number(rate);
+      if (!Number.isFinite(pct) || pct < 0 || pct > 100) {
+        throw new Error("درصد کمیسیون باید بین ۰ تا ۱۰۰ باشد");
+      }
+      setCommission(await fetchCommission(id, pct / 100));
     });
 
   const downloadCsv = () =>
     call(async () => {
-      const r = await fetch("/api/v1/payments/finance/export.csv");
-      if (!r.ok) throw new Error(`CSV دریافت نشد (HTTP ${r.status})`);
-      const blob = await r.blob();
+      const blob = await fetchPaymentsCsv();
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
@@ -120,7 +121,7 @@ export function Finance() {
             inputMode="decimal"
             className="focus-ring w-24 rounded-xl border border-primary/30 bg-transparent px-3 py-2 text-sm"
           />
-          <button onClick={fetchCommission} disabled={busy} className="focus-ring rounded-xl bg-primary px-4 py-2 text-sm text-white transition-transform hover:scale-[1.02] active:scale-95">
+          <button onClick={calculateCommission} disabled={busy} className="focus-ring rounded-xl bg-primary px-4 py-2 text-sm text-white transition-transform hover:scale-[1.02] active:scale-95">
             محاسبه
           </button>
         </div>

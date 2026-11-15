@@ -45,6 +45,22 @@ async function getJson<T>(path: string, token: string | null, signal?: AbortSign
   return (await resp.json()) as T;
 }
 
+/** دانلود فایل با هدر توکن — `fetch` خام توکن ندارد و ۴۰۱ می‌گیرد. */
+async function getBlob(path: string, token: string | null): Promise<Blob> {
+  let resp: Response;
+  try {
+    resp = await fetch(`${API_BASE}${path}`, { headers: authHeaders(token) });
+  } catch (err) {
+    if (err instanceof DOMException && err.name === "AbortError") throw err;
+    throw new ApiError("اتصال به سرور برقرار نشد — آیا بک‌اند روی ۸۷۵۱ اجراست؟", 0);
+  }
+  if (resp.status === 401 || resp.status === 403) {
+    throw new AuthError("نشست معتبر نیست — توکن مدیر را وارد کنید");
+  }
+  if (!resp.ok) throw new ApiError(`دریافت فایل ناموفق (HTTP ${resp.status})`, resp.status);
+  return resp.blob();
+}
+
 // ── KPI داشبورد (GET /admin/kpis — M29) ──
 
 export interface BackendKpis {
@@ -127,6 +143,30 @@ export interface FinanceSummary {
 
 export function fetchFinanceSummary(token = getToken(), signal?: AbortSignal) {
   return getJson<FinanceSummary>("/payments/finance/summary", token, signal);
+}
+
+export interface CommissionResult {
+  coach_id: number;
+  coach_name: string;
+  rate: number;
+  attributed_payments_rial: number;
+  commission_rial: number;
+}
+
+export function fetchCommission(
+  coachId: number,
+  rate: number,
+  token = getToken(),
+): Promise<CommissionResult> {
+  return postJson<CommissionResult>(
+    "/payments/finance/commission",
+    { coach_id: coachId, rate },
+    token,
+  );
+}
+
+export function fetchPaymentsCsv(token = getToken()): Promise<Blob> {
+  return getBlob("/payments/finance/export.csv", token);
 }
 
 // ── برنامه‌ها (GET /programs/member/{id}) — هیچ endpoint فهرست همهٔ برنامه‌ها وجود ندارد ──
