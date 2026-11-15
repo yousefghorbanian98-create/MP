@@ -40,7 +40,17 @@ async function getJson<T>(path: string, token: string | null, signal?: AbortSign
     throw new AuthError("نشست معتبر نیست — توکن مدیر را وارد کنید");
   }
   if (!resp.ok) {
-    throw new ApiError(`خطای ${resp.status} در ${path}`, resp.status);
+    // پیام فارسیِ سرور را نگه می‌داریم: «عضو یافت نشد» به کاربر کمک می‌کند،
+    // «خطای ۴۰۴ در /notifications/reminders/…» نه. اگر بدنه JSON نبود،
+    // به پیام عمومی برمی‌گردیم.
+    let detail = "";
+    try {
+      const body = (await resp.json()) as { error?: { message?: string } };
+      detail = body.error?.message ?? "";
+    } catch {
+      /* بدنه JSON نیست */
+    }
+    throw new ApiError(detail || `خطای ${resp.status} در ${path}`, resp.status);
   }
   return (await resp.json()) as T;
 }
@@ -866,4 +876,48 @@ export function recordLimbMeasurement(
     if (v !== null && v !== undefined && !Number.isNaN(v)) body[k] = v;
   }
   return postJson<LimbMeasurement>("/assessments/limb", body, token);
+}
+
+// ── G11 — یادآوری‌های پویا ──
+
+export interface Reminder {
+  key: string;
+  priority: "high" | "normal";
+  title: string;
+  body: string;
+  due_in_days: number;
+  rule: string;
+}
+
+export interface ReminderSkipped {
+  key: string;
+  reason: string;
+}
+
+export interface RemindersReport {
+  member_id: number;
+  generated_at: string;
+  reminders: Reminder[];
+  skipped: ReminderSkipped[];
+  counts: { due: number; skipped: number };
+  thresholds: {
+    renewal_lead_days: number;
+    inactivity_days: number;
+    reassess_days: number;
+  };
+  rule_version: string;
+  created_notifications: number;
+  data_sources: Record<string, boolean>;
+}
+
+export function fetchReminders(
+  memberId: number,
+  token = getToken(),
+  signal?: AbortSignal,
+) {
+  return getJson<RemindersReport>(
+    `/notifications/reminders/member/${memberId}`,
+    token,
+    signal,
+  );
 }

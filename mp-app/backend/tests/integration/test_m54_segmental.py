@@ -121,9 +121,7 @@ def test_empty_measurement_is_rejected(client: TestClient) -> None:
 def test_absurd_value_is_rejected(client: TestClient) -> None:
     h = _staff()
     mid = _member()
-    r = client.post(
-        "/api/v1/assessments/limb", json={"member_id": mid, "waist_cm": 999}, headers=h
-    )
+    r = client.post("/api/v1/assessments/limb", json={"member_id": mid, "waist_cm": 999}, headers=h)
     assert r.status_code == 422  # Pydantic le=300
 
 
@@ -141,9 +139,7 @@ def test_no_measurements_gives_200_with_a_reason(client: TestClient) -> None:
 
 def test_unknown_member_is_404(client: TestClient) -> None:
     h = _staff()
-    assert (
-        client.get("/api/v1/assessments/limb/member/999999/report", headers=h).status_code == 404
-    )
+    assert client.get("/api/v1/assessments/limb/member/999999/report", headers=h).status_code == 404
 
 
 def test_member_cannot_read_another_members_report(client: TestClient) -> None:
@@ -164,7 +160,9 @@ def test_member_cannot_read_another_members_report(client: TestClient) -> None:
         intruder_h = {"Authorization": f"Bearer {create_access_token(u.id, 'member')}"}
 
     assert (
-        client.get(f"/api/v1/assessments/limb/member/{victim}/report", headers=intruder_h).status_code
+        client.get(
+            f"/api/v1/assessments/limb/member/{victim}/report", headers=intruder_h
+        ).status_code
         == 403
     )
 
@@ -183,7 +181,9 @@ def test_trend_appears_after_two_measurements(client: TestClient) -> None:
             LimbMeasurement(
                 member_id=mid,
                 waist_cm=95.0,
-                measured_at=__import__("datetime").datetime(2026, 9, 1, tzinfo=__import__("datetime").UTC),
+                measured_at=__import__("datetime").datetime(
+                    2026, 9, 1, tzinfo=__import__("datetime").UTC
+                ),
             )
         )
         s.commit()

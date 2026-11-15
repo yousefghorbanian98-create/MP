@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends, Query
 
-from app.deps import DbSession, require_permission
+from app.deps import CurrentUser, DbSession, require_permission
 from modules.notification import service
 from modules.notification.schemas import NotificationOut, NotificationSend
 
@@ -26,3 +26,14 @@ def list_notifications(member_id: int, db: DbSession, unread_only: bool = Query(
 @router.post("/{notification_id}/read", response_model=NotificationOut, summary="خواندن اعلان")
 def mark_read(notification_id: int, db: DbSession):
     return service.mark_read(db, notification_id)
+
+
+# ── G11 — یادآوری‌های پویا ──
+
+
+@router.get(
+    "/reminders/member/{member_id}",
+    summary="یادآوری‌های لازم عضو از دادهٔ واقعی (G11)",
+)
+def member_reminders(member_id: int, db: DbSession, user: CurrentUser):
+    return service.member_reminders(db, member_id, user=user)
