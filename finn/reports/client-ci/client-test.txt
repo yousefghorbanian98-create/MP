@@ -4,75 +4,54 @@
 ✅ /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart: خطای سرور با پیام فارسی detail بالا می‌آید
 ✅ /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart: POST بدنهٔ JSON می‌فرستد
 ✅ /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart: AuthController ورود OTP توکن را نگه می‌دارد
-✅ /home/runner/work/MP/MP/mp-app/client/test/today_controller_test.dart: progress starts at zero and updates on toggle
-✅ /home/runner/work/MP/MP/mp-app/client/test/today_controller_test.dart: progress handles zero-total safely (no division by zero)
-✅ /home/runner/work/MP/MP/mp-app/client/test/today_controller_test.dart: reset clears done set
+✅ /home/runner/work/MP/MP/mp-app/client/test/assessment14_page_test.dart: empty state shows prompt when no assessment exists
+✅ /home/runner/work/MP/MP/mp-app/client/test/assessment14_page_test.dart: matrix renders axes with scores, dashes and decision chips
+✅ /home/runner/work/MP/MP/mp-app/client/test/assessment14_page_test.dart: submitting a test posts data and confirms
+✅ /home/runner/work/MP/MP/mp-app/client/test/assessment14_page_test.dart: invalid submit shows validation message
+Error: Couldn't resolve the package 'mp_app' in 'package:mp_app/features/feedback/feedback_providers.dart'.
+Error: Couldn't resolve the package 'mp_app' in 'package:mp_app/features/feedback/set_feedback_sheet.dart'.
+test/set_feedback_sheet_test.dart:7:8: Error: Not found: 'package:mp_app/features/feedback/feedback_providers.dart'
+import 'package:mp_app/features/feedback/feedback_providers.dart';
+       ^
+test/set_feedback_sheet_test.dart:8:8: Error: Not found: 'package:mp_app/features/feedback/set_feedback_sheet.dart'
+import 'package:mp_app/features/feedback/set_feedback_sheet.dart';
+       ^
+test/set_feedback_sheet_test.dart:15:11: Error: Undefined name 'submitSetFeedbackProvider'.
+          submitSetFeedbackProvider.overrideWithValue((entries) async {
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+test/set_feedback_sheet_test.dart:33:32: Error: Method not found: 'SetFeedbackSheet'.
+          home: Scaffold(body: SetFeedbackSheet(movementName: 'شنای سوئدی سطح ۱')),
+                               ^^^^^^^^^^^^^^^^
 ::endgroup::
-::group::❌ /home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart: TodayPage renders real exercises RTL with dark theme (failed)
-══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
-The following TestFailure was thrown running a test:
-Expected: exactly one matching candidate
-  Actual: _TextWidgetFinder:<Found 0 widgets with text "اسکوات هالتر": []>
-   Which: means none were found but one was expected
-
-When the exception was thrown, this was the stack:
-#4      main.<anonymous closure> (file:///home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart:47:5)
-<asynchronous suspension>
-#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
-<asynchronous suspension>
-#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1968:5)
-<asynchronous suspension>
-<asynchronous suspension>
-(elided one frame from package:stack_trace)
-
-This was caught by the test expectation on the following line:
-  file:///home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart line 47
-The test description was:
-  TodayPage renders real exercises RTL with dark theme
-════════════════════════════════════════════════════════════════════════════════════════════════════
-Warning: At least one test in this suite creates an HttpClient. When running a test suite that uses
-TestWidgetsFlutterBinding, all HTTP requests will return status code 400, and no network request
-will actually be made. Any test expecting a real network connection and status code will fail.
-To test code that needs an HttpClient, provide your own HttpClient implementation to the code under
-test, so that your test can consistently provide a testable response to the code under test.
-Test failed. See exception logs above.
-The test description was: TodayPage renders real exercises RTL with dark theme
-
-::endgroup::
-::group::❌ /home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart: toggling an exercise updates completion state (failed)
-══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
-The following StateError was thrown running a test:
-Bad state: No element
-
-When the exception was thrown, this was the stack:
-#0      Iterable.first (dart:core/iterable.dart:663:7)
-#1      _FirstFinderMixin.filter (package:flutter_test/src/finders.dart:1383:28)
-#3      _AncestorFinderMixin.allCandidates (package:flutter_test/src/finders.dart:1855:49)
-#4      FinderBase.evaluate (package:flutter_test/src/finders.dart:1030:76)
-#5      WidgetController.widgetList (package:flutter_test/src/controller.dart:847:19)
-#6      WidgetController._maybeViewOf (package:flutter_test/src/controller.dart:794:34)
-#7      WidgetController.tap (package:flutter_test/src/controller.dart:1077:31)
-#8      main.<anonymous closure> (file:///home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart:58:18)
-<asynchronous suspension>
-#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
-<asynchronous suspension>
-#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1968:5)
-<asynchronous suspension>
-<asynchronous suspension>
-(elided 2 frames from dart:async-patch and package:stack_trace)
-
-The test description was:
-  toggling an exercise updates completion state
-════════════════════════════════════════════════════════════════════════════════════════════════════
-Test failed. See exception logs above.
-The test description was: toggling an exercise updates completion state
+::group::❌ loading /home/runner/work/MP/MP/mp-app/client/test/set_feedback_sheet_test.dart (failed)
+Failed to load "/home/runner/work/MP/MP/mp-app/client/test/set_feedback_sheet_test.dart":
+Compilation failed for testPath=/home/runner/work/MP/MP/mp-app/client/test/set_feedback_sheet_test.dart: Error: Couldn't resolve the package 'mp_app' in 'package:mp_app/features/feedback/feedback_providers.dart'.
+Error: Couldn't resolve the package 'mp_app' in 'package:mp_app/features/feedback/set_feedback_sheet.dart'.
+test/set_feedback_sheet_test.dart:7:8: Error: Not found: 'package:mp_app/features/feedback/feedback_providers.dart'
+import 'package:mp_app/features/feedback/feedback_providers.dart';
+       ^
+test/set_feedback_sheet_test.dart:8:8: Error: Not found: 'package:mp_app/features/feedback/set_feedback_sheet.dart'
+import 'package:mp_app/features/feedback/set_feedback_sheet.dart';
+       ^
+test/set_feedback_sheet_test.dart:15:11: Error: Undefined name 'submitSetFeedbackProvider'.
+          submitSetFeedbackProvider.overrideWithValue((entries) async {
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+test/set_feedback_sheet_test.dart:33:32: Error: Method not found: 'SetFeedbackSheet'.
+          home: Scaffold(body: SetFeedbackSheet(movementName: 'شنای سوئدی سطح ۱')),
+                               ^^^^^^^^^^^^^^^^
+.
 
 ::endgroup::
 ::group::✅ Passing tests
+✅ /home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart: TodayPage renders real exercises RTL with dark theme
+✅ /home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart: toggling an exercise updates completion state
 ✅ /home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart: empty state shows when no workout is planned
+✅ /home/runner/work/MP/MP/mp-app/client/test/today_controller_test.dart: progress starts at zero and updates on toggle
+✅ /home/runner/work/MP/MP/mp-app/client/test/today_controller_test.dart: progress handles zero-total safely (no division by zero)
+✅ /home/runner/work/MP/MP/mp-app/client/test/today_controller_test.dart: reset clears done set
 ✅ /home/runner/work/MP/MP/mp-app/client/test/home_page_test.dart: گرید ۸ بخش نمایش داده می‌شود
 ✅ /home/runner/work/MP/MP/mp-app/client/test/home_page_test.dart: جست‌وجو و بنر موجودند
 ✅ /home/runner/work/MP/MP/mp-app/client/test/home_page_test.dart: چک‌این سریع در خانه
 ::endgroup::
 
-::error::11 tests passed, 2 failed.
+::error::17 tests passed, 1 failed.
