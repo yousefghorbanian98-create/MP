@@ -26,6 +26,21 @@ unformatted: File would be reformatted
    |
 
 unformatted: File would be reformatted
+  --> db/migrations/versions/d4e5f6a1b2c3_m33_axis_schema.py:17:26
+   |
+16 |         batch.add_column(sa.Column("axis_coverage", sa.Text(), nullable=False, server_default="{}"))
+   -         batch.add_column(sa.Column("intensity_band", sa.String(length=20), nullable=False, server_default=""))
+   -         batch.add_column(sa.Column("progression_key", sa.String(length=60), nullable=False, server_default=""))
+17 +         batch.add_column(
+18 +             sa.Column("intensity_band", sa.String(length=20), nullable=False, server_default="")
+19 +         )
+20 +         batch.add_column(
+21 +             sa.Column("progression_key", sa.String(length=60), nullable=False, server_default="")
+22 +         )
+23 |
+   |
+
+unformatted: File would be reformatted
   --> scripts/import_exercise_catalog.py:31:40
    |
 30 | DEFAULT_DATA = (
@@ -51,4 +66,4 @@ unformatted: File would be reformatted
 55 |     assert row.category == "strength"
    |
 
-3 files would be reformatted, 158 files already formatted
+4 files would be reformatted, 159 files already formatted
