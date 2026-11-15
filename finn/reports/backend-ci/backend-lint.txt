@@ -519,6 +519,42 @@ unformatted: File would be reformatted
     |
 
 unformatted: File would be reformatted
+   --> modules/membership/router.py:44:32
+    |
+43  |     limit: int = Query(50, ge=1, le=200),
+    -     gender: str | None = Query(None, pattern="^(male|female)$", description="فیلتر تفکیک جنسیت (M41-c1)"),
+44  +     gender: str | None = Query(
+45  +         None, pattern="^(male|female)$", description="فیلتر تفکیک جنسیت (M41-c1)"
+46  +     ),
+47  | ):
+--------------------------------------------------------------------------------
+182 |     )
+    -
+    |
+
+unformatted: File would be reformatted
+  --> modules/membership/schemas.py:15:47
+   |
+14 |     goal: str = Field("", max_length=30)
+   -     gender: Literal["male", "female"] = Field(..., description="جنسیت اجباری — تفکیک آقایان/بانوان (M41-c1)")
+15 +     gender: Literal["male", "female"] = Field(
+16 +         ..., description="جنسیت اجباری — تفکیک آقایان/بانوان (M41-c1)"
+17 +     )
+18 |     height_cm: int | None = Field(None, ge=100, le=250)
+   |
+
+unformatted: File would be reformatted
+  --> modules/membership/service.py:72:18
+   |
+71 |
+   - def list_members(db: Session, offset: int = 0, limit: int = 50, user=None, gender: str | None = None) -> list[Member]:
+72 + def list_members(
+73 +     db: Session, offset: int = 0, limit: int = 50, user=None, gender: str | None = None
+74 + ) -> list[Member]:
+75 |     from app.security.ownership import ensure_member_scope, get_own_member
+   |
+
+unformatted: File would be reformatted
    --> scripts/build_progressions.py:43:12
     |
 42  | LADDERS: tuple[Ladder, ...] = (
@@ -1585,6 +1621,66 @@ unformatted: File would be reformatted
     |
 
 unformatted: File would be reformatted
+  --> tests/integration/test_ai_engine.py:51:28
+   |
+50 |     return client.post(
+   -         "/api/v1/members/", json={"phone": "09125550001", "full_name": "عضو هوش مصنوعی", "gender": "male"}, headers=h
+51 +         "/api/v1/members/",
+52 +         json={"phone": "09125550001", "full_name": "عضو هوش مصنوعی", "gender": "male"},
+53 +         headers=h,
+54 |     ).json()["id"]
+   |
+
+unformatted: File would be reformatted
+   --> tests/integration/test_api_contract.py:115:15
+    |
+114 |         "/api/v1/members",
+    -         json={"phone": "09123334455", "full_name": "علی رضایی", "gender": "male", "goal": "hypertrophy"},
+115 +         json={
+116 +             "phone": "09123334455",
+117 +             "full_name": "علی رضایی",
+118 +             "gender": "male",
+119 +             "goal": "hypertrophy",
+120 +         },
+121 |         headers=h,
+--------------------------------------------------------------------------------
+126 |     r2 = client.post(
+    -         "/api/v1/members", json={"phone": "09123334455", "full_name": "تکراری", "gender": "male"}, headers=h
+127 +         "/api/v1/members",
+128 +         json={"phone": "09123334455", "full_name": "تکراری", "gender": "male"},
+129 +         headers=h,
+130 |     )
+--------------------------------------------------------------------------------
+177 |     member = client.post(
+    -         "/api/v1/members", json={"phone": "09126667788", "full_name": "عضو ارزیابی", "gender": "male"}, headers=coach
+178 +         "/api/v1/members",
+179 +         json={"phone": "09126667788", "full_name": "عضو ارزیابی", "gender": "male"},
+180 +         headers=coach,
+181 |     ).json()
+--------------------------------------------------------------------------------
+197 |     member = client.post(
+    -         "/api/v1/members", json={"phone": "09127778899", "full_name": "عضو JP7", "gender": "male"}, headers=coach
+198 +         "/api/v1/members",
+199 +         json={"phone": "09127778899", "full_name": "عضو JP7", "gender": "male"},
+200 +         headers=coach,
+201 |     ).json()
+--------------------------------------------------------------------------------
+236 |     member = client.post(
+    -         "/api/v1/members", json={"phone": "09128889900", "full_name": "عضو چهره", "gender": "male"}, headers=coach
+237 +         "/api/v1/members",
+238 +         json={"phone": "09128889900", "full_name": "عضو چهره", "gender": "male"},
+239 +         headers=coach,
+240 |     ).json()
+--------------------------------------------------------------------------------
+292 |     member = client.post(
+    -         "/api/v1/members", json={"phone": "09131112233", "full_name": "عضو برنامه", "gender": "male"}, headers=coach
+293 +         "/api/v1/members",
+294 +         json={"phone": "09131112233", "full_name": "عضو برنامه", "gender": "male"},
+295 +         headers=coach,
+296 |     ).json()
+    |
+
+unformatted: File would be reformatted
    --> tests/integration/test_axis_assessment_api.py:138:15
     |
 137 |         "/api/v1/axis-assessments",
@@ -1632,6 +1728,102 @@ unformatted: File would be reformatted
 286 +                 },
 287 |             ],
     |
+
+unformatted: File would be reformatted
+   --> tests/integration/test_battle.py:55:28
+    |
+54  |     member = client.post(
+    -         "/api/v1/members/", json={"phone": "09123334444", "full_name": "نبرد طلایی", "gender": "male"}, headers=h
+55  +         "/api/v1/members/",
+56  +         json={"phone": "09123334444", "full_name": "نبرد طلایی", "gender": "male"},
+57  +         headers=h,
+58  |     ).json()
+--------------------------------------------------------------------------------
+155 |     resp = client.post(
+    -         "/api/v1/members/", json={"phone": "09123335555", "full_name": "ن", "gender": "male" * 300}, headers=h
+156 +         "/api/v1/members/",
+157 +         json={"phone": "09123335555", "full_name": "ن", "gender": "male" * 300},
+158 +         headers=h,
+159 |     )
+--------------------------------------------------------------------------------
+165 |     member = client.post(
+    -         "/api/v1/members/", json={"phone": "09123336666", "full_name": "منفی", "gender": "male"}, headers=h
+166 +         "/api/v1/members/",
+167 +         json={"phone": "09123336666", "full_name": "منفی", "gender": "male"},
+168 +         headers=h,
+169 |     ).json()
+--------------------------------------------------------------------------------
+205 |     member = client.post(
+    -         "/api/v1/members/", json={"phone": "09123338888", "full_name": "بدون اشتراک", "gender": "male"}, headers=h
+206 +         "/api/v1/members/",
+207 +         json={"phone": "09123338888", "full_name": "بدون اشتراک", "gender": "male"},
+208 +         headers=h,
+209 |     ).json()
+    |
+
+unformatted: File would be reformatted
+  --> tests/integration/test_classes_finance.py:52:27
+   |
+51 |     return client.post(
+   -         "/api/v1/members", json={"phone": phone, "full_name": "عضو کلاس", "gender": "male"}, headers=h
+52 +         "/api/v1/members",
+53 +         json={"phone": phone, "full_name": "عضو کلاس", "gender": "male"},
+54 +         headers=h,
+55 |     ).json()
+   |
+
+unformatted: File would be reformatted
+   --> tests/integration/test_e2e_dataflow.py:233:27
+    |
+232 |     bad2 = client.post(
+    -         "/api/v1/members", json={"phone": "09123456780", "full_name": "ا", "gender": "male"}, headers=h
+233 +         "/api/v1/members",
+234 +         json={"phone": "09123456780", "full_name": "ا", "gender": "male"},
+235 +         headers=h,
+236 |     )
+    |
+
+unformatted: File would be reformatted
+   --> tests/integration/test_ownership.py:67:28
+    |
+66  |     client.post(
+    -         "/api/v1/members/", json={"phone": "09121110001", "full_name": "عضو الف", "gender": "male"}, headers=staff
+67  +         "/api/v1/members/",
+68  +         json={"phone": "09121110001", "full_name": "عضو الف", "gender": "male"},
+69  +         headers=staff,
+70  |     )
+71  |     b = client.post(
+    -         "/api/v1/members/", json={"phone": "09121110002", "full_name": "عضو ب", "gender": "male"}, headers=staff
+72  +         "/api/v1/members/",
+73  +         json={"phone": "09121110002", "full_name": "عضو ب", "gender": "male"},
+74  +         headers=staff,
+75  |     ).json()
+--------------------------------------------------------------------------------
+224 |     b = client.post(
+    -         "/api/v1/members/", json={"phone": "09124440001", "full_name": "قربانی", "gender": "male"}, headers=staff
+225 +         "/api/v1/members/",
+226 +         json={"phone": "09124440001", "full_name": "قربانی", "gender": "male"},
+227 +         headers=staff,
+228 |     ).json()
+--------------------------------------------------------------------------------
+251 |     b = client.post(
+    -         "/api/v1/members/", json={"phone": "09125550001", "full_name": "هر کسی", "gender": "male"}, headers=staff
+252 +         "/api/v1/members/",
+253 +         json={"phone": "09125550001", "full_name": "هر کسی", "gender": "male"},
+254 +         headers=staff,
+255 |     ).json()
+    |
+
+unformatted: File would be reformatted
+  --> tests/integration/test_payments_deep.py:51:28
+   |
+50 |     return client.post(
+   -         "/api/v1/members/", json={"phone": phone, "full_name": "عضو مالی", "gender": "male"}, headers=h
+51 +         "/api/v1/members/",
+52 +         json={"phone": phone, "full_name": "عضو مالی", "gender": "male"},
+53 +         headers=h,
+54 |     ).json()["id"]
+   |
 
 unformatted: File would be reformatted
    --> tests/integration/test_pilot_dry_run.py:49:19
@@ -1741,6 +1933,45 @@ unformatted: File would be reformatted
 173 +         headers=mg_h,
 174 +     )
 175 |     assert res.status_code == 200
+    |
+
+unformatted: File would be reformatted
+  --> tests/integration/test_reporting.py:74:15
+   |
+73 |         "/api/v1/members",
+   -         json={"phone": "09125550001", "full_name": "ورزشکار نمونه", "gender": "male", "goal": "hypertrophy"},
+74 +         json={
+75 +             "phone": "09125550001",
+76 +             "full_name": "ورزشکار نمونه",
+77 +             "gender": "male",
+78 +             "goal": "hypertrophy",
+79 +         },
+80 |         headers=coach,
+   |
+
+unformatted: File would be reformatted
+   --> tests/integration/test_security.py:64:27
+    |
+63  |     member = client.post(
+    -         "/api/v1/members", json={"phone": "09120001111", "full_name": "aud", "gender": "male"}, headers=reception
+64  +         "/api/v1/members",
+65  +         json={"phone": "09120001111", "full_name": "aud", "gender": "male"},
+66  +         headers=reception,
+67  |     ).json()
+--------------------------------------------------------------------------------
+82  |     member = client.post(
+    -         "/api/v1/members", json={"phone": "09120002222", "full_name": "face", "gender": "male"}, headers=coach
+83  +         "/api/v1/members",
+84  +         json={"phone": "09120002222", "full_name": "face", "gender": "male"},
+85  +         headers=coach,
+86  |     ).json()
+--------------------------------------------------------------------------------
+102 |     member = client.post(
+    -         "/api/v1/members", json={"phone": "09120003333", "full_name": "prog", "gender": "male"}, headers=coach
+103 +         "/api/v1/members",
+104 +         json={"phone": "09120003333", "full_name": "prog", "gender": "male"},
+105 +         headers=coach,
+106 |     ).json()
     |
 
 unformatted: File would be reformatted
@@ -1994,4 +2225,4 @@ unformatted: File would be reformatted
 93 +         )
    |
 
-31 files would be reformatted, 169 files already formatted
+43 files would be reformatted, 160 files already formatted
