@@ -1,0 +1,37 @@
+[manager]	WARNING	Test in comment: nosemgrep is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: URL is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: https is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: nosemgrep is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: URL is not a test name or id, ignoring
+[manager]	WARNING	Test in comment: https is not a test name or id, ignoring
+Run started:2026-11-15 05:36:15.052087+00:00
+
+Test results:
+>> Issue: [B202:tarfile_unsafe_members] tarfile.extractall used without any validation. Please check and discard dangerous members.
+   Severity: High   Confidence: High
+   CWE: CWE-22 (https://cwe.mitre.org/data/definitions/22.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b202_tarfile_unsafe_members.html
+   Location: ./scripts/backup.py:55:12
+54	        with tarfile.open(archive, "r:gz") as tar:
+55	            tar.extractall(tmp)  # noqa: S202 — بکاپ خودی
+56	        tmp_path = Path(tmp)
+
+--------------------------------------------------
+
+Code scanned:
+	Total lines of code: 8632
+	Total lines skipped (#nosec): 2
+	Total potential issues skipped due to specifically being disabled (e.g., #nosec BXXX): 0
+
+Run metrics:
+	Total issues (by severity):
+		Undefined: 0
+		Low: 406
+		Medium: 0
+		High: 1
+	Total issues (by confidence):
+		Undefined: 0
+		Low: 0
+		Medium: 2
+		High: 405
+Files skipped (0):
