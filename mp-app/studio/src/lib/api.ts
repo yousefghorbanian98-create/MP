@@ -301,3 +301,78 @@ export interface Me {
 export function fetchMe(token = getToken(), signal?: AbortSignal) {
   return getJson<Me>("/members/me", token, signal);
 }
+
+// ── تولید برنامه از موتور قواعد (POST /ai/program/generate — G8) ──
+
+export interface GeneratedProgram {
+  id: number;
+  member_id: number;
+  goal: string;
+  engine_version: string;
+  status: string;
+  llm_explanation: string;
+  weeks_count?: number;
+}
+
+export async function generateProgram(
+  memberId: number,
+  opts: { goal?: string; level?: string; days_per_week?: number; weeks_count?: number } = {},
+  token = getToken(),
+): Promise<GeneratedProgram> {
+  let resp: Response;
+  try {
+    resp = await fetch(`${API_BASE}/ai/program/generate`, {
+      method: "POST",
+      headers: { ...authHeaders(token), "Content-Type": "application/json" },
+      body: JSON.stringify({
+        member_id: memberId,
+        goal: opts.goal ?? "hypertrophy",
+        level: opts.level ?? "beginner",
+        days_per_week: opts.days_per_week ?? 3,
+        weeks_count: opts.weeks_count ?? 4,
+        constraints: [],
+      }),
+    });
+  } catch {
+    throw new ApiError("اتصال به سرور برقرار نشد", 0);
+  }
+  if (resp.status === 401 || resp.status === 403) {
+    throw new AuthError("نشست معتبر نیست — توکن مدیر را وارد کنید");
+  }
+  if (!resp.ok) {
+    const detail = await resp.json().catch(() => null);
+    throw new ApiError(detail?.error?.message ?? `خطای ${resp.status} در تولید برنامه`, resp.status);
+  }
+  return (await resp.json()) as GeneratedProgram;
+}
+
+// ── گردش تأیید برنامه (US-203) ──
+
+async function postJson<T>(path: string, body: unknown, token: string | null): Promise<T> {
+  let resp: Response;
+  try {
+    resp = await fetch(`${API_BASE}${path}`, {
+      method: "POST",
+      headers: { ...authHeaders(token), "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+  } catch {
+    throw new ApiError("اتصال به سرور برقرار نشد", 0);
+  }
+  if (resp.status === 401 || resp.status === 403) {
+    throw new AuthError("نشست معتبر نیست — توکن مدیر را وارد کنید");
+  }
+  if (!resp.ok) {
+    const detail = await resp.json().catch(() => null);
+    throw new ApiError(detail?.error?.message ?? `خطای ${resp.status}`, resp.status);
+  }
+  return (await resp.json()) as T;
+}
+
+export function approveProgram(programId: number, token = getToken()) {
+  return postJson<ProgramSummaryRow>(`/programs/${programId}/approve`, {}, token);
+}
+
+export function rejectProgram(programId: number, reason: string, token = getToken()) {
+  return postJson<ProgramSummaryRow>(`/programs/${programId}/reject`, { reason }, token);
+}

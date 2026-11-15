@@ -113,3 +113,42 @@ def test_cors_does_not_allow_wildcard(client: TestClient) -> None:
     """مبدأ ناشناس نباید allow-origin بگیرد."""
     r = client.get("/health", headers={"Origin": "http://evil.example"})
     assert r.headers.get("access-control-allow-origin") in (None, "")
+
+
+def test_approve_records_real_coach_not_zero(client: TestClient) -> None:
+    """M46-c4 — پیش‌تر approved_by=0 بود (TODO رهاشده). حالا باید JWT واقعی باشد."""
+    from db.base import get_session_factory
+    from db.models import User, WorkoutProgram
+
+    h = _headers("admin")
+    n = next(_counter)
+    created = client.post(
+        "/api/v1/members",
+        json={"phone": f"09{n:09d}", "full_name": f"عضو {n}", "gender": "male"},
+        headers=h,
+    )
+    assert created.status_code in (200, 201), created.text
+    mid = created.json()["id"]  # شناسهٔ عضو، نه شناسهٔ کاربر
+    r = client.post(
+        "/api/v1/ai/program/generate",
+        json={
+            "member_id": mid,
+            "goal": "hypertrophy",
+            "level": "beginner",
+            "days_per_week": 3,
+            "weeks_count": 2,
+            "constraints": [],
+        },
+        headers=h,
+    )
+    assert r.status_code == 200, r.text
+    pid = r.json()["id"]
+
+    body = client.post(f"/api/v1/programs/{pid}/approve", headers=h).json()
+    assert body["status"] == "approved"
+    assert body["approved_by"] is not None and body["approved_by"] != 0
+
+    with get_session_factory()() as s:
+        row = s.get(WorkoutProgram, pid)
+        assert row.approved_by is not None and row.approved_by != 0
+        assert s.get(User, row.approved_by) is not None, "approved_by باید به کاربر موجود اشاره کند"

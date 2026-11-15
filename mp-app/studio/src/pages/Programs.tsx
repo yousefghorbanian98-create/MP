@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { fetchProgramsSummary } from "../lib/api";
+import { approveProgram, fetchProgramsSummary, rejectProgram } from "../lib/api";
 import { fa, useApi } from "../lib/useApi";
 
 /**
@@ -23,6 +23,35 @@ const filters = [
 ];
 
 export function Programs() {
+  const [busyId, setBusyId] = useState<number | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [actionMsg, setActionMsg] = useState<string | null>(null);
+
+  async function act(id: number, kind: "approve" | "reject") {
+    setBusyId(id);
+    setActionError(null);
+    setActionMsg(null);
+    try {
+      if (kind === "approve") {
+        await approveProgram(id);
+        setActionMsg(`برنامهٔ #${id} تأیید شد.`);
+      } else {
+        const reason = window.prompt("دلیل رد برنامه (الزامی):", "") ?? "";
+        if (!reason.trim()) {
+          setActionError("رد برنامه بدون دلیل ثبت نمی‌شود.");
+          return;
+        }
+        await rejectProgram(id, reason.trim());
+        setActionMsg(`برنامهٔ #${id} رد شد.`);
+      }
+      reload();
+    } catch (e) {
+      setActionError((e as Error).message);
+    } finally {
+      setBusyId(null);
+    }
+  }
+
   const [status, setStatus] = useState<string | null>(null);
   const { data, loading, error, needsToken, reload } = useApi(
     (s) => fetchProgramsSummary(status, undefined, s),
@@ -32,11 +61,22 @@ export function Programs() {
   const items = data?.items ?? [];
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="space-y-4"
-    >
+    <>
+      {actionMsg && (
+        <p className="mb-3 rounded-lg bg-emerald-500/10 px-3 py-2 text-xs text-emerald-300">
+          {actionMsg}
+        </p>
+      )}
+      {actionError && (
+        <p className="mb-3 rounded-lg bg-rose-500/10 px-3 py-2 text-xs text-rose-300" role="alert">
+          {actionError}
+        </p>
+      )}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="space-y-4"
+      >
       <div className="glass-card flex items-center gap-3 border-accent/25 p-4">
         <span className="text-xl">⚖️</span>
         <p className="text-sm text-ink-dim">
@@ -129,8 +169,20 @@ export function Programs() {
               </span>
               {p.status === "draft" && (
                 <div className="flex gap-2">
-                  <button className="btn-primary px-3 py-1.5 text-xs">تأیید</button>
-                  <button className="btn-ghost px-3 py-1.5 text-xs">رد</button>
+                  <button
+                    onClick={() => void act(p.id, "approve")}
+                    disabled={busyId === p.id}
+                    className="btn-primary px-3 py-1.5 text-xs disabled:opacity-50"
+                  >
+                    تأیید
+                  </button>
+                  <button
+                    onClick={() => void act(p.id, "reject")}
+                    disabled={busyId === p.id}
+                    className="btn-ghost px-3 py-1.5 text-xs disabled:opacity-50"
+                  >
+                    رد
+                  </button>
                 </div>
               )}
             </div>
@@ -138,5 +190,6 @@ export function Programs() {
         ))}
       </div>
     </motion.div>
+    </>
   );
 }

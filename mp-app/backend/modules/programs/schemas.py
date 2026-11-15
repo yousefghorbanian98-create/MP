@@ -40,6 +40,8 @@ class ProgramOut(BaseModel):
     llm_explanation: str
     reject_reason: str
     approved_at: datetime | None
+    # M46-c4 — چه کسی تأیید/رد کرد؛ پیش‌تر در پاسخ نبود و UI نمی‌توانست نشان دهد
+    approved_by: int | None = None
     weeks: list[ProgramWeekOut] = []
 
     model_config = {"from_attributes": True}

@@ -1,6 +1,7 @@
+import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { MemberTable } from "../components/MemberTable";
-import { fetchAssessmentHistory, fetchAssessmentMatrix, fetchMembersSummary } from "../lib/api";
+import { generateProgram, fetchAssessmentHistory, fetchAssessmentMatrix, fetchMembersSummary } from "../lib/api";
 import { fa, useApi } from "../lib/useApi";
 import { useAppStore } from "../stores/appStore";
 
@@ -17,7 +18,28 @@ const genderTabs = [
 ];
 
 export function Members() {
-  const { selectedMemberId, selectMember, genderFilter, setGenderFilter } = useAppStore();
+  const { selectedMemberId, selectMember, genderFilter, setGenderFilter, setPage } =
+    useAppStore();
+  const [busy, setBusy] = useState(false);
+  const [genMsg, setGenMsg] = useState<string | null>(null);
+  const [genError, setGenError] = useState<string | null>(null);
+
+  async function buildProgram() {
+    if (!member) return;
+    setBusy(true);
+    setGenError(null);
+    setGenMsg(null);
+    try {
+      const p = await generateProgram(member.member_id, { goal: "hypertrophy" });
+      setGenMsg(
+        `برنامهٔ #${p.id} به‌صورت draft ساخته شد (موتور ${p.engine_version}) — برای تأیید به صفحهٔ برنامه‌ها بروید.`,
+      );
+    } catch (e) {
+      setGenError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
   // داده از API می‌آید (MemberTable خودش می‌خواند)؛ اینجا فقط برای پنل جزئیات
   const { data } = useApi((s) => fetchMembersSummary(undefined, s), []);
   const member = data?.items.find((m) => m.member_id === selectedMemberId) ?? null;
@@ -146,9 +168,33 @@ export function Members() {
               <p className="mt-3 text-xs text-danger">{matrixError}</p>
             )}
 
-            <div className="mt-5 flex gap-2">
-              <button className="btn-primary flex-1">ساخت برنامه</button>
-              <button className="btn-ghost flex-1">ثبت ارزیابی</button>
+            <div className="mt-5 space-y-2">
+              <div className="flex gap-2">
+                <button
+                  onClick={() => void buildProgram()}
+                  disabled={busy || !member}
+                  className="btn-primary flex-1 disabled:opacity-50"
+                >
+                  {busy ? "در حال ساخت…" : "ساخت برنامه از موتور قواعد"}
+                </button>
+                <button
+                  onClick={() => setPage("programs")}
+                  className="btn-ghost flex-1"
+                  title="ثبت ارزیابی در صفحهٔ برنامه‌ها و ارزیابی انجام می‌شود"
+                >
+                  دیدن برنامه‌ها
+                </button>
+              </div>
+              {genMsg && (
+                <p className="rounded-lg bg-emerald-500/10 px-3 py-2 text-xs text-emerald-300">
+                  {genMsg}
+                </p>
+              )}
+              {genError && (
+                <p className="rounded-lg bg-rose-500/10 px-3 py-2 text-xs text-rose-300" role="alert">
+                  {genError}
+                </p>
+              )}
             </div>
           </motion.div>
         ) : (
