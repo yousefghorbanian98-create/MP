@@ -11,7 +11,7 @@ VALID_P_KEYS = {"5", "25", "50", "75", "95"}
 
 
 def test_norms_have_sources_and_valid_percentiles() -> None:
-    assert len(NORMS) == 30
+    assert len(NORMS) == 70
     for row in NORMS:
         assert row.source.startswith("https://")
         assert set(row.percentiles) <= VALID_P_KEYS
@@ -31,9 +31,9 @@ def test_pushup_sdc_differs_by_sex() -> None:
 def test_seed_upsert_idempotent(session) -> None:
     first = seed(session)
     second = seed(session)
-    assert first == {"inserted": 30, "updated": 0}
-    assert second == {"inserted": 0, "updated": 30}
-    assert session.query(NormEntry).count() == 30
+    assert first == {"inserted": 70, "updated": 0}
+    assert second == {"inserted": 0, "updated": 70}
+    assert session.query(NormEntry).count() == 70
     row = (
         session.query(NormEntry)
         .filter_by(test_key="pushup_1min", sex="m", age_min=20, age_max=29)

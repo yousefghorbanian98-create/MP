@@ -64,9 +64,14 @@ def estimate_percentile(
         return {"percentile": 99.0 if not sparse else 95.0, "quality": clamp_quality()}
 
     # روی یک نقطه یا بین دو نقطه
+    def finalize(pct: float) -> float:
+        # نمره = درصدک «عملکرد»: برای lower_better (زمان/خطا)، درصدک توزیع خام وارون می‌شود
+        return round(100.0 - pct, 1) if direction == "lower_better" else round(pct, 1)
+
     for index, (value, pct) in enumerate(pts):
         if raw_value == value and f"{value:g}" in exact_keys:
-            return {"percentile": pct, "quality": "exact" if not sparse else "range_estimate"}
+            return {"percentile": pct if direction == "higher_better" else 100.0 - pct,
+                    "quality": "exact" if not sparse else "range_estimate"}
         if index + 1 < len(pts):
             low_val, low_pct = pts[index]
             high_val, high_pct = pts[index + 1]
@@ -75,11 +80,11 @@ def estimate_percentile(
                 ratio = (raw_value - low_val) / (high_val - low_val)
                 pct = low_pct + ratio * (high_pct - low_pct)
                 return {
-                    "percentile": round(pct, 1),
+                    "percentile": finalize(pct),
                     "quality": "interpolated" if not sparse else "range_estimate",
                 }
     # مقدار دقیقاً برابر آخرین نقطه
-    return {"percentile": pts[-1][1], "quality": "exact" if not sparse else "range_estimate"}
+    return {"percentile": finalize(pts[-1][1]), "quality": "exact" if not sparse else "range_estimate"}
 
 
 def score_test(

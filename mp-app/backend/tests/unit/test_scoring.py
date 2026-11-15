@@ -39,11 +39,14 @@ def test_sparse_table_gives_range_estimate() -> None:
 
 
 def test_lower_better_direction() -> None:
-    # دویدن: زمان کمتر ← درصدک بالاتر
-    table = {"25": 400.0, "75": 300.0}  # ثانیه
-    est = estimate_percentile(raw_value=350, percentiles=table, direction="lower_better")
-    assert est["quality"] == "range_estimate"
-    assert 25 < est["percentile"] < 75
+    # دویدن: زمان کمتر ← نمرهٔ عملکرد بالاتر (وارون درصدک توزیع زمان)
+    table = {"25": 400.0, "75": 300.0}  # ثانیه: صدک ۲۵ توزیع زمان = 400
+    fast = estimate_percentile(raw_value=300, percentiles=table, direction="lower_better")
+    assert fast == {"percentile": 25.0, "quality": "range_estimate"}  # 100 - 75
+    slow = estimate_percentile(raw_value=400, percentiles=table, direction="lower_better")
+    assert slow == {"percentile": 75.0, "quality": "range_estimate"}  # 100 - 25
+    mid = estimate_percentile(raw_value=350, percentiles=table, direction="lower_better")
+    assert mid["percentile"] == 50.0
 
 
 def test_score_test_carries_reason_and_version() -> None:

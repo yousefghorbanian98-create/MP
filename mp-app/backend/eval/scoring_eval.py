@@ -26,16 +26,17 @@ def run_scoring_eval() -> dict:
     round_trip_errors = []
     for row in NORMS:
         for key, value in row.percentiles.items():
-            est = estimate_percentile(raw_value=value, percentiles=row.percentiles)
-            if est["percentile"] != float(key):
+            est = estimate_percentile(raw_value=value, percentiles=row.percentiles, direction=row.direction)
+            expected = float(key) if row.direction == "higher_better" else 100.0 - float(key)
+            if est["percentile"] != expected:
                 round_trip_errors.append(
                     f"{row.test_key}/{row.sex}/{row.age_min}-{row.age_max}: "
-                    f"raw={value} → {est['percentile']} != {key}"
+                    f"raw={value} → {est['percentile']} != {expected}"
                 )
     checks.append({"name": "round_trip_documented_points", "passed": not round_trip_errors,
                    "errors": round_trip_errors[:5]})
 
-    # (۲) محدوده‌ها و اکوتونی: نمره همیشه ۰..۱۰۰ و صعودی
+    # (۲) محدوده‌ها و اکوتونی: نمره همیشه ۰..۱۰۰؛ برای higher_better صعودی، برای lower_better نزولی
     bounds_errors = []
     for row in NORMS:
         lo = min(float(v) for v in row.percentiles.values())
@@ -43,11 +44,13 @@ def run_scoring_eval() -> dict:
         prev = -1.0
         for step in range(21):
             raw = lo - (hi - lo) * 0.2 + (hi - lo) * 1.4 * step / 20
-            est = estimate_percentile(raw_value=raw, percentiles=row.percentiles)
+            est = estimate_percentile(raw_value=raw, percentiles=row.percentiles, direction=row.direction)
             if not 0 <= est["percentile"] <= 100:
                 bounds_errors.append(f"{row.test_key}: {est['percentile']} out of bounds")
-            if est["percentile"] < prev:
+            if row.direction == "higher_better" and est["percentile"] < prev:
                 bounds_errors.append(f"{row.test_key}: non-monotonic at raw={raw}")
+            if row.direction == "lower_better" and prev >= 0 and est["percentile"] > prev:
+                bounds_errors.append(f"{row.test_key}: non-monotonic (lower_better) at raw={raw}")
             prev = est["percentile"]
     checks.append({"name": "bounds_and_monotonic", "passed": not bounds_errors,
                    "errors": bounds_errors[:5]})

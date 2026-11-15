@@ -15,4 +15,4 @@ def test_scoring_eval_all_checks_pass() -> None:
         "sparse_never_exact",
         "sdc_gate",
     }
-    assert result["norm_rows"] == 30
+    assert result["norm_rows"] == 70
