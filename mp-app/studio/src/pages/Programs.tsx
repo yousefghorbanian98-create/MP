@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { approveProgram, fetchProgramsSummary, rejectProgram } from "../lib/api";
+import { VolumePanel } from "../components/VolumePanel";
 import { fa, useApi } from "../lib/useApi";
 
 /**
@@ -190,6 +191,12 @@ export function Programs() {
         ))}
       </div>
     </motion.div>
+
+    {items.length > 0 && (
+      <div className="mt-4">
+        <VolumePanel memberId={items[0].member_id} />
+      </div>
+    )}
     </>
   );
 }

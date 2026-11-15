@@ -376,3 +376,59 @@ export function approveProgram(programId: number, token = getToken()) {
 export function rejectProgram(programId: number, reason: string, token = getToken()) {
   return postJson<ProgramSummaryRow>(`/programs/${programId}/reject`, { reason }, token);
 }
+
+// ── G2 — گزارش حجم هفتگی (volume-landmarks-1.0) ──
+
+export interface VolumeLandmarks {
+  muscle: string;
+  level: string;
+  mv: number;
+  mev: number;
+  mav_min: number;
+  mav_max: number;
+  mrv: number;
+  hard_set_max_rir: number;
+  source: string;
+  rule_version: string;
+}
+
+export interface VolumeMuscleRow {
+  muscle: string;
+  level: string;
+  planned_sets: number;
+  effective_sets: number;
+  source_of_number: "planned" | "reported_hard_sets" | string;
+  data_state: "no_feedback" | "reported" | string;
+  hard_sets: number;
+  soft_sets: number;
+  unknown_rir_sets: number;
+  landmarks: VolumeLandmarks;
+  status: string;
+  suggestion: { delta_sets: number; reason: string; rule_version: string };
+  rule_version: string;
+}
+
+export interface VolumeReport {
+  member_id: number;
+  program_id: number | null;
+  week_number?: number;
+  level: string;
+  muscles: VolumeMuscleRow[];
+  reason: string;
+  rule_version: string;
+}
+
+export function fetchMemberVolume(
+  memberId: number,
+  level: VolumeLevel = "intermediate",
+  token = getToken(),
+  signal?: AbortSignal,
+) {
+  return getJson<VolumeReport>(
+    `/programs/member/${memberId}/volume?level=${level}`,
+    token,
+    signal,
+  );
+}
+
+export type VolumeLevel = "beginner" | "intermediate" | "advanced";
