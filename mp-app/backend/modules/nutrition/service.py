@@ -310,3 +310,148 @@ def search_foods(db: Session, *, query: str = "", limit: int = 30) -> list[dict]
         }
         for f in db.scalars(stmt).all()
     ]
+
+
+# ── G3 — تغذیهٔ سازگار (adaptive-nutrition-1.0) [finn] ──
+
+
+def log_weight(db: Session, *, member_id: int, entries: list[dict], user=None) -> dict:
+    """ثبت وزن روزانه. یک رکورد در روز: ثبت دوباره = به‌روزرسانی."""
+    from app.security.ownership import ensure_member_scope
+    from db.models import BodyWeightLog
+
+    ensure_member_scope(db, user, member_id)
+    rejected: list[dict] = []
+    accepted = 0
+    updated = 0
+
+    for idx, e in enumerate(entries):
+        day = e.get("logged_for_date")
+        kg = e.get("weight_kg")
+        if not day or len(str(day)) != 10:
+            rejected.append({"index": idx, "reason": "تاریخ باید YYYY-MM-DD باشد"})
+            continue
+        if kg is None or not (20 <= float(kg) <= 400):
+            rejected.append({"index": idx, "reason": "وزن باید بین ۲۰ و ۴۰۰ کیلوگرم باشد"})
+            continue
+        existing = db.scalar(
+            select(BodyWeightLog).where(
+                BodyWeightLog.member_id == member_id,
+                BodyWeightLog.logged_for_date == str(day),
+            )
+        )
+        if existing is not None:
+            existing.weight_kg = float(kg)
+            existing.source = e.get("source", "member")
+            existing.notes = (e.get("notes") or "").strip()
+            updated += 1
+        else:
+            db.add(
+                BodyWeightLog(
+                    member_id=member_id,
+                    logged_for_date=str(day),
+                    weight_kg=float(kg),
+                    source=e.get("source", "member"),
+                    notes=(e.get("notes") or "").strip(),
+                    branch_id=1,
+                )
+            )
+            accepted += 1
+    db.commit()
+
+    return {
+        "logged": accepted,
+        "updated": updated,
+        "rejected": rejected,
+        "reason": f"{accepted} وزن ثبت شد، {updated} به‌روزرسانی"
+        + (f"؛ {len(rejected)} ردیف رد شد" if rejected else ""),
+        "rule_version": FOOD_LOG_VERSION,
+    }
+
+
+def adaptive_nutrition_report(db: Session, *, member_id: int, user=None) -> dict:
+    """G3 — TDEE واقعی + پیشنهاد اصلاح کالری، از دادهٔ ثبت‌شدهٔ خود عضو.
+
+    سه منبع داده، هر سه از DB واقعی:
+      وزن  ← body_weight_logs
+      مصرف ← food_logs (فقط روزهای ثبت‌شده)
+      هدف  ← آخرین برنامهٔ تغذیهٔ approved
+
+    اگر هر کدام کم باشد، به‌جای حدس زدن صریح گفته می‌شود.
+    """
+    from app.security.ownership import ensure_member_scope
+    from db.models import BodyWeightLog, FoodItem, FoodLog
+    from engine.adaptive_nutrition import (
+        estimate_tdee,
+        suggest_calorie_adjustment,
+    )
+
+    ensure_member_scope(db, user, member_id)
+
+    weight_rows = list(
+        db.scalars(
+            select(BodyWeightLog)
+            .where(BodyWeightLog.member_id == member_id)
+            .order_by(BodyWeightLog.logged_for_date)
+        ).all()
+    )
+    weight_points = [(r.logged_for_date, r.weight_kg) for r in weight_rows]
+
+    # مصرف روزانه از food_logs + جدول غذایی
+    log_rows = list(db.scalars(select(FoodLog).where(FoodLog.member_id == member_id)).all())
+    food_ids = {r.food_id for r in log_rows}
+    foods = (
+        {f.id: f for f in db.scalars(select(FoodItem).where(FoodItem.id.in_(food_ids))).all()}
+        if food_ids
+        else {}
+    )
+    intake: dict[str, float] = {}
+    for r in log_rows:
+        food = foods.get(r.food_id)
+        if food is None:
+            continue
+        intake[r.logged_for_date] = intake.get(r.logged_for_date, 0.0) + (
+            food.kcal_per_100g * (r.grams / 100.0)
+        )
+
+    plan = db.scalar(
+        select(NutritionPlan)
+        .where(NutritionPlan.member_id == member_id, NutritionPlan.status == "approved")
+        .order_by(NutritionPlan.id.desc())
+    )
+    current_target = plan.daily_kcal if plan is not None else None
+
+    est = estimate_tdee(
+        weight_points=weight_points,
+        intake_by_date=intake,
+        current_target_kcal=current_target,
+    )
+
+    from db.models import Member
+
+    member = db.get(Member, member_id)
+    goal = (member.goal if member is not None else "") or "fitness"
+    latest_weight = weight_points[-1][1] if weight_points else None
+
+    adj = suggest_calorie_adjustment(
+        tdee_kcal=est["tdee_kcal"],
+        current_target_kcal=current_target,
+        goal=goal,
+        body_weight_kg=latest_weight,
+        slope_kg_per_week=est["trend"]["slope_kg_per_week"],
+    )
+
+    return {
+        "member_id": member_id,
+        "goal": goal,
+        "current_target_kcal": current_target,
+        "plan_id": plan.id if plan is not None else None,
+        "estimate": est,
+        "suggestion": adj,
+        "data_counts": {
+            "weight_entries": len(weight_points),
+            "intake_days": len([v for v in intake.values() if v > 0]),
+        },
+        "latest_weight_kg": latest_weight,
+        "rule_version": "adaptive-nutrition-1.0",
+    }

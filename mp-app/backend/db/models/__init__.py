@@ -24,7 +24,7 @@ from db.models.content import (
 from db.models.face_id import BiometricConsent, CheckIn, FaceTemplate
 from db.models.membership import Member, Membership
 from db.models.notification import Notification
-from db.models.nutrition import FoodLog, MealItem, NutritionPlan
+from db.models.nutrition import BodyWeightLog, FoodLog, MealItem, NutritionPlan
 from db.models.payments import Payment, WalletTransaction
 from db.models.programs import ProgramExercise, ProgramWeek, SetFeedback, WorkoutProgram
 
@@ -47,6 +47,7 @@ __all__ = [
     "FoodItem",
     "GymClass",
     "JacksonPollockMeasurement",
+    "BodyWeightLog",
     "FoodLog",
     "MealItem",
     "Member",

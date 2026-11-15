@@ -85,3 +85,27 @@ class FoodLog(TimestampMixin, BranchMixin, Base):
         String(20), default="member", nullable=False
     )  # member | coach
     notes: Mapped[str] = mapped_column(Text, default="", nullable=False)
+
+
+class BodyWeightLog(TimestampMixin, BranchMixin, Base):
+    """وزن ثبت‌شدهٔ عضو در یک روز — ورودی دادهٔ G3 (تغذیهٔ سازگار).
+
+    یک ردیف در روز (unique با عضو+تاریخ): وزن چند بار در روز نوسان دارد و
+    «میانگین وزنی هفته» فقط با یک عدد در روز معنا دارد.
+
+    `measured_at` ساعت اندازه‌گیری است، چون وزن صبح ناشتا با وزن شب
+    تفاوت چند صد گرمی دارد و این را باید بتوان جدا کرد.
+    """
+
+    __tablename__ = "body_weight_logs"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    member_id: Mapped[int] = mapped_column(
+        ForeignKey("members.id", ondelete="CASCADE"), index=True, nullable=False
+    )
+    logged_for_date: Mapped[str] = mapped_column(String(10), nullable=False, index=True)
+    weight_kg: Mapped[float] = mapped_column(Float, nullable=False)
+    source: Mapped[str] = mapped_column(
+        String(20), default="member", nullable=False
+    )  # member | coach | device
+    notes: Mapped[str] = mapped_column(Text, default="", nullable=False)

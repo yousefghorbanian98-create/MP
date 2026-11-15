@@ -12,6 +12,8 @@ from modules.nutrition.schemas import (
     FoodSearchRow,
     PlanFromEngineIn,
     PlanOut,
+    WeightLogIn,
+    WeightLogOut,
 )
 
 router = APIRouter(
@@ -72,3 +74,28 @@ def log_food(payload: FoodLogIn, db: DbSession, user: CurrentUser):
 )
 def daily_summary(member_id: int, db: DbSession, user: CurrentUser, date: str | None = None):
     return service.daily_summary(db, member_id=member_id, day=date, user=user)
+
+
+# ── G3 — تغذیهٔ سازگار [finn] ──
+
+
+@router.post(
+    "/weight-logs",
+    response_model=WeightLogOut,
+    summary="ثبت وزن روزانه (ورودی دادهٔ G3)",
+)
+def log_weight(payload: WeightLogIn, db: DbSession, user: CurrentUser):
+    entries = []
+    for e in payload.entries:
+        d = e.model_dump()
+        d["logged_for_date"] = e.logged_for_date.isoformat()
+        entries.append(d)
+    return service.log_weight(db, member_id=payload.member_id, entries=entries, user=user)
+
+
+@router.get(
+    "/member/{member_id}/adaptive",
+    summary="TDEE واقعی از روند وزن + پیشنهاد اصلاح کالری (G3)",
+)
+def adaptive_report(member_id: int, db: DbSession, user: CurrentUser):
+    return service.adaptive_nutrition_report(db, member_id=member_id, user=user)

@@ -83,3 +83,22 @@ class FoodSearchRow(BaseModel):
     carbs_g_per_100g: float
     fat_g_per_100g: float
     dry_or_raw: bool = False
+
+
+class WeightLogEntryIn(BaseModel):
+    weight_kg: float = Field(ge=20, le=400)
+    logged_for_date: _date
+    notes: str = ""
+
+
+class WeightLogIn(BaseModel):
+    member_id: int = Field(ge=1)
+    entries: list[WeightLogEntryIn] = Field(min_length=1, max_length=60)
+
+
+class WeightLogOut(BaseModel):
+    logged: int
+    updated: int
+    rejected: list[dict]
+    reason: str
+    rule_version: str
