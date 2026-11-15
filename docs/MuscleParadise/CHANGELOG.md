@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+### Added — M44 (2026-11-15) — موتور ریسک ریزش (churn)
+- `engine/churn_risk.py` (churn-risk-1.0): ۹ قاعدهٔ شفاف (بی‌فعالیتی/انقضای نزدیک/بدهی/افت مراجعه + ۳ عامل محافظ) با وزن + دلیل فارسی
+- `GET /admin/analytics/churn-risk` — واقعیت‌ها از DB؛ «نامعلوم ≠ صفر» (عضو بدون داده = unknown)
+- کارت «در خطر ریزش» در صفحهٔ تحلیل‌های استودیو + rule-evidence
+
 ### Added — M43 (2026-11-15) — admin pass + یکسان‌سازی مجوز
 - API اعطا/ابطال نقش (`POST/DELETE /admin/users/{id}/role`) — فقط super_admin + جلوگیری از تغییر نقش خود + AuditLog
 - استودیو: RoleManager در تنظیمات (فهرست کاربران + تغییر نقش + لاگ تغییرات)

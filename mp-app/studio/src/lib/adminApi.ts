@@ -95,3 +95,24 @@ export async function fetchAudit(action: string | null = null, base = "/api/v1",
   if (!resp.ok) throw new Error(`خطای ${resp.status}`);
   return (await resp.json()) as AuditRow[];
 }
+
+
+// ── M44: ریسک ریزش [finn] ──
+
+export interface ChurnRow {
+  member_id: number;
+  full_name: string;
+  risk_score: number | null;
+  band: "high" | "medium" | "low" | "unknown";
+  signals: { weight: number; reason: string }[];
+  reason: string;
+  rule_version: string;
+}
+
+export async function fetchChurnRisk(base = "/api/v1", token: string | null = localStorage.getItem("mp_token")): Promise<ChurnRow[]> {
+  const resp = await fetch(`${base}/admin/analytics/churn-risk`, { headers: authHeaders(token) });
+  if (resp.status === 401 || resp.status === 403) throw new AuthError("فقط مدیریت");
+  if (!resp.ok) throw new Error(`خطای ${resp.status}`);
+  const body = (await resp.json()) as { risk_rows: ChurnRow[] };
+  return body.risk_rows;
+}

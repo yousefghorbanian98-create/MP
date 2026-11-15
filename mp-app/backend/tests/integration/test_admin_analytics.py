@@ -179,3 +179,35 @@ def test_most_time_and_checkout_flow(client) -> None:
     most = res.json()["most_time"]
     assert most[0]["open_sessions"] == 0
     assert most[0]["closed_sessions"] == 3
+
+
+def test_churn_risk_endpoint_with_real_facts(client) -> None:
+    """M44-c2 — ریسک ریزش از دادهٔ واقعی؛ بدون داده = unknown نه صفر."""
+    from db.base import get_session_factory
+    from db.models import CheckIn, Membership
+
+    risky = _seed_member("در خطر ریزش")
+    loyal = _seed_member("وفادار")
+    ghost = _seed_member("بدون داده")
+    now = datetime.now(UTC)
+    with get_session_factory()() as s:
+        s.add(CheckIn(member_id=risky, method="qr", result="ok", created_at=now - timedelta(days=35)))
+        s.add(Membership(member_id=risky, plan_name="m", started_at=now - timedelta(days=70),
+                         expires_at=now - timedelta(days=5), status="active", price_rial=1))
+        for i in range(9):
+            s.add(CheckIn(member_id=loyal, method="qr", result="ok", created_at=now - timedelta(days=i)))
+        s.commit()
+
+    h = _headers("manager")
+    res = client.get("/api/v1/admin/analytics/churn-risk", headers=h)
+    assert res.status_code == 200, res.text
+    body = res.json()
+    rows = {row["member_id"]: row for row in body["risk_rows"]}
+
+    assert rows[risky]["band"] == "high"
+    assert rows[risky]["signals"]
+    assert rows[loyal]["band"] == "low"
+    assert rows[ghost]["band"] == "unknown"  # نامعلوم ≠ صفر
+    assert rows[ghost]["risk_score"] is None
+    # ترتیب: high اول
+    assert body["risk_rows"][0]["member_id"] == risky

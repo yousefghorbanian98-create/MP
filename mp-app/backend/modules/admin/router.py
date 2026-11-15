@@ -42,6 +42,13 @@ def _leaderboards(
     return leaderboards(db, limit=limit, window_days=window_days)
 
 
+@router.get("/analytics/churn-risk", summary="ریسک ریزش اعضا — قاعده‌محور با دلیل (M44-c2)")
+def _churn_risk(db: DbSession, limit: int = Query(20, ge=1, le=100), window_days: int = Query(30, ge=7, le=120)):
+    from modules.admin.analytics import churn_risk
+
+    return churn_risk(db, limit=limit, window_days=window_days)
+
+
 @router.get("/kpis", summary="KPI های واقعی داشبورد (M29)")
 def _kpis(db: DbSession):
     return _admin_kpis(db)

@@ -46,3 +46,16 @@ describe("adminApi role management (M43)", () => {
     await expect(revokeUserRole(7, "/api/v1", "tok")).rejects.toBeInstanceOf(AuthError);
   });
 });
+
+describe("adminApi churn risk (M44)", () => {
+  it("parses risk rows including unknown band", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => ({
+      ok: true, status: 200,
+      json: async () => ({ risk_rows: [{ member_id: 1, full_name: "x", risk_score: null, band: "unknown", signals: [], reason: "r", rule_version: "churn-risk-1.0" }] }),
+    })));
+    const { fetchChurnRisk } = await import("../src/lib/adminApi");
+    const rows = await fetchChurnRisk("/api/v1", "tok");
+    expect(rows[0].band).toBe("unknown");
+    expect(rows[0].risk_score).toBeNull();
+  });
+});

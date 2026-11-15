@@ -11,7 +11,7 @@ from datetime import UTC, datetime, timedelta
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from db.models import AxisAssessment, AxisScore, CheckIn, Payment, User
+from db.models import AxisAssessment, AxisScore, CheckIn, Member, Payment, User
 
 ANALYTICS_VERSION = "admin-analytics-1.0"
 DEFAULT_WINDOW_DAYS = 30
@@ -183,5 +183,89 @@ def leaderboards(db: Session, *, limit: int = 10, window_days: int = DEFAULT_WIN
         "most_time": most_time(db, limit=limit, window_days=window_days),
         "window_days": window_days,
         "rule_version": ANALYTICS_VERSION,
+        "generated_at": datetime.now(UTC).isoformat(),
+    }
+
+
+def collect_member_facts(db: Session, *, window_days: int = DEFAULT_WINDOW_DAYS) -> dict[int, dict]:
+    """واقعیت‌های ریسک ریزش هر عضو از DB — هر مقدار ممکن است None (ناشناخته)."""
+    from db.models import Membership, SetFeedback, WorkoutProgram
+
+    now = datetime.now(UTC)
+    since30 = now - timedelta(days=window_days)
+    since60 = now - timedelta(days=2 * window_days)
+    facts: dict[int, dict] = {}
+
+    def entry(mid: int) -> dict:
+        return facts.setdefault(mid, {
+            "last_checkin_days_ago": None,
+            "days_to_expiry": None,
+            "overdue_payments": None,
+            "visits_30d": None,
+            "visits_prev_30d": None,
+            "has_active_program": None,
+            "days_since_feedback": None,
+        })
+
+    # همهٔ اعضا حاضرند — حتی بدون هیچ سیگنالی (unknown ≠ نبود در فهرست)
+    for mid, in db.execute(select(Member.id)).all():
+        entry(mid)
+
+    for mid, created in db.execute(
+        select(CheckIn.member_id, func.max(CheckIn.created_at)).where(CheckIn.result == "ok").group_by(CheckIn.member_id)
+    ).all():
+        ts = created if created.tzinfo else created.replace(tzinfo=UTC)
+        entry(mid)["last_checkin_days_ago"] = (now - ts).days
+
+    for mid, count in db.execute(
+        select(CheckIn.member_id, func.count(CheckIn.id))
+        .where(CheckIn.result == "ok", CheckIn.created_at >= since30)
+        .group_by(CheckIn.member_id)
+    ).all():
+        entry(mid)["visits_30d"] = int(count)
+
+    for mid, count in db.execute(
+        select(CheckIn.member_id, func.count(CheckIn.id))
+        .where(CheckIn.result == "ok", CheckIn.created_at >= since60, CheckIn.created_at < since30)
+        .group_by(CheckIn.member_id)
+    ).all():
+        entry(mid)["visits_prev_30d"] = int(count)
+
+    for mid, expires in db.execute(
+        select(Membership.member_id, func.max(Membership.expires_at)).group_by(Membership.member_id)
+    ).all():
+        ts = expires if expires.tzinfo else expires.replace(tzinfo=UTC)
+        entry(mid)["days_to_expiry"] = (ts - now).days
+
+    for mid, count in db.execute(
+        select(Payment.member_id, func.count(Payment.id))
+        .where(Payment.status == "pending")
+        .group_by(Payment.member_id)
+    ).all():
+        entry(mid)["overdue_payments"] = int(count)
+
+    for mid, in db.execute(
+        select(WorkoutProgram.member_id).where(WorkoutProgram.status == "approved").distinct()
+    ).all():
+        entry(mid)["has_active_program"] = True
+
+    for mid, last in db.execute(
+        select(SetFeedback.member_id, func.max(SetFeedback.created_at)).group_by(SetFeedback.member_id)
+    ).all():
+        ts = last if last.tzinfo else last.replace(tzinfo=UTC)
+        entry(mid)["days_since_feedback"] = (now - ts).days
+
+    return facts
+
+
+def churn_risk(db: Session, *, limit: int = 20, window_days: int = DEFAULT_WINDOW_DAYS) -> dict:
+    from engine.churn_risk import CHURN_VERSION, rank_members
+
+    ranked = rank_members(collect_member_facts(db, window_days=window_days))
+    names = _member_names(db, [row["member_id"] for row in ranked[:limit]])
+    return {
+        "risk_rows": [{**row, "full_name": names.get(row["member_id"], "")} for row in ranked[:limit]],
+        "window_days": window_days,
+        "rule_version": CHURN_VERSION,
         "generated_at": datetime.now(UTC).isoformat(),
     }

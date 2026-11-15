@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { AuthError, fetchLeaderboards, type Leaderboards } from "../lib/adminApi";
+import { AuthError, fetchChurnRisk, fetchLeaderboards, type ChurnRow, type Leaderboards } from "../lib/adminApi";
 
 const sections: { key: keyof Leaderboards; title: string; hint: string }[] = [
   { key: "top_athletes", title: "بهترین ورزشکارها", hint: "میانگین نمرهٔ ۱۴ محور آخرین ارزیابی" },
@@ -15,11 +15,16 @@ export function Analytics() {
   const [error, setError] = useState<string | null>(null);
   const [needsToken, setNeedsToken] = useState(false);
   const [tokenInput, setTokenInput] = useState("");
+  const [churn, setChurn] = useState<ChurnRow[]>([]);
 
   const load = () => {
     setError(null);
     fetchLeaderboards()
-      .then(setData)
+      .then((d) => {
+        setData(d);
+        return fetchChurnRisk();
+      })
+      .then(setChurn)
       .catch((e) => {
         if (e instanceof AuthError) {
           setNeedsToken(true);
@@ -67,6 +72,35 @@ export function Analytics() {
       )}
 
       {error && !needsToken && <div className="glass-card p-4 text-sm text-red-400">{error}</div>}
+
+      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-5">
+        <h3 className="text-sm font-bold">در خطر ریزش (churn)</h3>
+        <p className="mt-0.5 text-[11px] text-ink-dim">
+          قواعد شفاف: بی‌فعالیتی/انقضای نزدیک/بدهی/افت مراجعه با دلیل — بدون داده = نامعلوم (نه صفر)
+        </p>
+        <div className="mt-3 space-y-2">
+          {churn.length === 0 && <p className="text-xs text-ink-dim">داده‌ای نیست</p>}
+          {churn.slice(0, 8).map((row) => (
+            <div key={row.member_id} className="flex items-start gap-3 rounded-xl bg-surface/60 px-3 py-2">
+              <span
+                className={`mt-0.5 rounded-full px-2 py-0.5 text-[10px] ${
+                  row.band === "high" ? "bg-red-500/15 text-red-400"
+                  : row.band === "medium" ? "bg-amber-500/15 text-amber-400"
+                  : row.band === "unknown" ? "bg-surface text-ink-dim"
+                  : "bg-green-500/15 text-green-400"
+                }`}
+              >
+                {row.band === "high" ? "ریسک بالا" : row.band === "medium" ? "ریسک متوسط" : row.band === "unknown" ? "نامعلوم" : "ریسک پایین"}
+              </span>
+              <div className="flex-1">
+                <p className="text-sm">{row.full_name || `عضو ${row.member_id}`}</p>
+                <p className="text-[11px] text-ink-dim">{row.reason}</p>
+              </div>
+              <span className="text-xs text-ink-dim">{row.risk_score ?? "—"}</span>
+            </div>
+          ))}
+        </div>
+      </motion.div>
 
       <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
         {sections.map((sec) => (

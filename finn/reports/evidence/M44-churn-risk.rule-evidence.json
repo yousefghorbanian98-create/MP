@@ -1,0 +1,21 @@
+{
+  "micro": "M44-c1/c2/c3",
+  "gate": "S6 (rule-evidence) + S8",
+  "date": "2026-11-15",
+  "rule_version": "churn-risk-1.0",
+  "rules": [
+    {"id": "inactive_mid", "condition": "last_checkin >= 14d", "weight": 3, "reason": "بی‌فعالیتی"},
+    {"id": "inactive_high", "condition": "last_checkin >= 28d", "weight": 5, "reason": "بی‌فعالیتی شدید"},
+    {"id": "expired", "condition": "days_to_expiry < 0", "weight": 3},
+    {"id": "expiry_near", "condition": "0 <= days_to_expiry <= 7", "weight": 2},
+    {"id": "overdue_payment", "condition": "overdue_payments > 0", "weight": 2},
+    {"id": "visit_drop", "condition": "visits_30d < 0.5 * visits_prev_30d", "weight": 2},
+    {"id": "protective_visits", "condition": "visits_30d >= 8", "weight": -1},
+    {"id": "protective_program", "condition": "has_active_program", "weight": -1},
+    {"id": "protective_feedback", "condition": "days_since_feedback <= 7", "weight": -1}
+  ],
+  "bands": {"high": ">= 6", "medium": "3..5", "low": "< 3", "unknown": "بدون هیچ سیگنال"},
+  "honesty": "نامعلوم ≠ صفر — عضو بدون داده band=unknown با risk_score=null (E05)؛ هیچ عددی از LLM نمی‌آید (E04)",
+  "implementation": "engine/churn_risk.py + modules/admin/analytics.py (collect_member_facts از DB) + GET /admin/analytics/churn-risk + کارت «در خطر ریزش» استودیو",
+  "tests": "tests/unit/test_churn_risk.py (5) + tests/integration/test_admin_analytics.py (1)"
+}
