@@ -253,36 +253,36 @@ unformatted: File would be reformatted
 124 +                     >= 2
 125 |                 ]
 --------------------------------------------------------------------------------
-155 |         ]
+157 |         ]
     -     load = tally_weekly_load(entries) if entries else {
     -         "total_fatigue": 0.0, "axis_totals": {}, "movements_counted": 0,
     -         "reason": "هیچ حرکتی تجویز نشد", "rule_version": LOAD_RULES_VERSION,
     -     }
-156 +     load = (
-157 +         tally_weekly_load(entries)
-158 +         if entries
-159 +         else {
-160 +             "total_fatigue": 0.0,
-161 +             "axis_totals": {},
-162 +             "movements_counted": 0,
-163 +             "reason": "هیچ حرکتی تجویز نشد",
-164 +             "rule_version": LOAD_RULES_VERSION,
-165 +         }
-166 +     )
-167 |     return {
-168 |         "axis_plans": [axis_plans[a] for a in sorted(axis_plans)],
-169 |         "selected": [
+158 +     load = (
+159 +         tally_weekly_load(entries)
+160 +         if entries
+161 +         else {
+162 +             "total_fatigue": 0.0,
+163 +             "axis_totals": {},
+164 +             "movements_counted": 0,
+165 +             "reason": "هیچ حرکتی تجویز نشد",
+166 +             "rule_version": LOAD_RULES_VERSION,
+167 +         }
+168 +     )
+169 |     return {
+170 |         "axis_plans": [axis_plans[a] for a in sorted(axis_plans)],
+171 |         "selected": [
     -             {**{k: selected[mid][k] for k in ("external_id", "name_fa", "intensity_band", "progression_key") if k in selected[mid]},
     -              "sets": sets_by_movement.get(mid, 0.0)}
-170 +             {
-171 +                 **{
-172 +                     k: selected[mid][k]
-173 +                     for k in ("external_id", "name_fa", "intensity_band", "progression_key")
-174 +                     if k in selected[mid]
-175 +                 },
-176 +                 "sets": sets_by_movement.get(mid, 0.0),
-177 +             }
-178 |             for mid in selected
+172 +             {
+173 +                 **{
+174 +                     k: selected[mid][k]
+175 +                     for k in ("external_id", "name_fa", "intensity_band", "progression_key")
+176 +                     if k in selected[mid]
+177 +                 },
+178 +                 "sets": sets_by_movement.get(mid, 0.0),
+179 +             }
+180 |             for mid in selected
     |
 
 unformatted: File would be reformatted
@@ -381,6 +381,49 @@ unformatted: File would be reformatted
 79 +             }
 80 +         )
 81 |     return {
+   |
+
+unformatted: File would be reformatted
+  --> eval/prescription_eval.py:22:6
+   |
+21 | CATALOG = [
+   -     {"external_id": "pushup-l1", "name_fa": "شنای سوئدی سطح ۱", "axis_coverage": {"3": 0.7, "5": 0.6, "7": 0.4}, "level": 1},
+22 +     {
+23 +         "external_id": "pushup-l1",
+24 +         "name_fa": "شنای سوئدی سطح ۱",
+25 +         "axis_coverage": {"3": 0.7, "5": 0.6, "7": 0.4},
+26 +         "level": 1,
+27 +     },
+28 |     {"external_id": "plank", "name_fa": "پلانک", "axis_coverage": {"7": 0.9, "5": 0.5}, "level": 1},
+   -     {"external_id": "deadlift", "name_fa": "ددلیفت", "axis_coverage": {"9": 0.8, "3": 0.7, "10": 0.4}, "level": 2},
+29 +     {
+30 +         "external_id": "deadlift",
+31 +         "name_fa": "ددلیفت",
+32 +         "axis_coverage": {"9": 0.8, "3": 0.7, "10": 0.4},
+33 +         "level": 2,
+34 +     },
+35 |     {"external_id": "stretch", "name_fa": "کشش", "axis_coverage": {"1": 0.9, "6": 0.4}, "level": 1},
+--------------------------------------------------------------------------------
+54 |             coverage_errors.append(f"axis {plan['axis']}: {plan['state']} با حرکت تجویزشده!")
+   -     checks.append({"name": "axis_coverage", "passed": not coverage_errors, "errors": coverage_errors[:5]})
+55 +     checks.append(
+56 +         {"name": "axis_coverage", "passed": not coverage_errors, "errors": coverage_errors[:5]}
+57 +     )
+58 |
+--------------------------------------------------------------------------------
+66 |             gate_errors.append(f"red-flag «{flag}» تجویز گرفت")
+   -     checks.append({"name": "population_gates", "passed": not gate_errors, "errors": gate_errors[:5]})
+67 +     checks.append(
+68 +         {"name": "population_gates", "passed": not gate_errors, "errors": gate_errors[:5]}
+69 +     )
+70 |
+--------------------------------------------------------------------------------
+75 |     # بودجهٔ تنگ: بالاتر از کف ست‌های مستقیم (هرگز بریده نمی‌شوند) ولی کمتر از کل
+   -     direct_floor = sum(
+   -         m["sets"] for m in result["selected"] if m["sets"] >= 3
+   -     )
+76 +     direct_floor = sum(m["sets"] for m in result["selected"] if m["sets"] >= 3)
+77 |     tight_budget = direct_floor + 1.0
    |
 
 unformatted: File would be reformatted
@@ -1808,4 +1851,4 @@ unformatted: File would be reformatted
 93 +         )
    |
 
-27 files would be reformatted, 167 files already formatted
+28 files would be reformatted, 168 files already formatted
