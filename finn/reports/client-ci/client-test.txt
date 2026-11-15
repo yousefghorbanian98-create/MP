@@ -1,44 +1,20 @@
 
-lib/core/app_state.dart:15:25: Error: A value of type 'Map<String, dynamic>' can't be returned from an async function with return type 'Future<List<dynamic>>'.
- - 'Map' is from 'dart:core'.
+lib/core/app_state.dart:54:14: Error: A value of type 'Future<dynamic>' can't be returned from an async function with return type 'Future<Map<String, dynamic>>'.
  - 'Future' is from 'dart:async'.
- - 'List' is from 'dart:core'.
-  if (r is List) return r;
-                        ^
-lib/core/app_state.dart:61:25: Error: A value of type 'Map<String, dynamic>' can't be returned from an async function with return type 'Future<List<dynamic>>'.
  - 'Map' is from 'dart:core'.
- - 'Future' is from 'dart:async'.
- - 'List' is from 'dart:core'.
-  if (r is List) return r;
-                        ^
-lib/core/app_state.dart:73:71: Error: The getter 'first' isn't defined for the type 'Map<String, dynamic>'.
- - 'Map' is from 'dart:core'.
-Try correcting the name to the name of an existing getter, or defining a getter or field named 'first'.
-    if (r is List && r.isNotEmpty) return Map<String, dynamic>.from(r.first as Map);
-                                                                      ^^^^^
+  return api.get('/payments/wallet/$memberId');
+             ^
 ::group::❌ loading /home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart (failed)
 Failed to load "/home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart":
-Compilation failed for testPath=/home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart: lib/core/app_state.dart:15:25: Error: A value of type 'Map<String, dynamic>' can't be returned from an async function with return type 'Future<List<dynamic>>'.
- - 'Map' is from 'dart:core'.
+Compilation failed for testPath=/home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart: lib/core/app_state.dart:54:14: Error: A value of type 'Future<dynamic>' can't be returned from an async function with return type 'Future<Map<String, dynamic>>'.
  - 'Future' is from 'dart:async'.
- - 'List' is from 'dart:core'.
-  if (r is List) return r;
-                        ^
-lib/core/app_state.dart:61:25: Error: A value of type 'Map<String, dynamic>' can't be returned from an async function with return type 'Future<List<dynamic>>'.
  - 'Map' is from 'dart:core'.
- - 'Future' is from 'dart:async'.
- - 'List' is from 'dart:core'.
-  if (r is List) return r;
-                        ^
-lib/core/app_state.dart:73:71: Error: The getter 'first' isn't defined for the type 'Map<String, dynamic>'.
- - 'Map' is from 'dart:core'.
-Try correcting the name to the name of an existing getter, or defining a getter or field named 'first'.
-    if (r is List && r.isNotEmpty) return Map<String, dynamic>.from(r.first as Map);
-                                                                      ^^^^^
+  return api.get('/payments/wallet/$memberId');
+             ^
 .
 
 ::endgroup::
-::group::❌ loading /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart (failed)
+::group::❌ loading /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart (failed after test completion)
 Error: The Dart compiler exited unexpectedly.
 package:flutter_tools/src/base/common.dart 36:3  throwToolExit
 package:flutter_tools/src/compile.dart 1029:11   DefaultResidentCompiler._compile.<fn>
@@ -59,43 +35,19 @@ dart:isolate-patch/isolate_patch.dart 193:5      _RawReceivePort._handleMessage
 ✅ /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart: خطای سرور با پیام فارسی detail بالا می‌آید
 ✅ /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart: POST بدنهٔ JSON می‌فرستد
 ✅ /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart: AuthController ورود OTP توکن را نگه می‌دارد
-lib/core/app_state.dart:15:25: Error: A value of type 'Map<String, dynamic>' can't be returned from an async function with return type 'Future<List<dynamic>>'.
- - 'Map' is from 'dart:core'.
+lib/core/app_state.dart:54:14: Error: A value of type 'Future<dynamic>' can't be returned from an async function with return type 'Future<Map<String, dynamic>>'.
  - 'Future' is from 'dart:async'.
- - 'List' is from 'dart:core'.
-  if (r is List) return r;
-                        ^
-lib/core/app_state.dart:61:25: Error: A value of type 'Map<String, dynamic>' can't be returned from an async function with return type 'Future<List<dynamic>>'.
  - 'Map' is from 'dart:core'.
- - 'Future' is from 'dart:async'.
- - 'List' is from 'dart:core'.
-  if (r is List) return r;
-                        ^
-lib/core/app_state.dart:73:71: Error: The getter 'first' isn't defined for the type 'Map<String, dynamic>'.
- - 'Map' is from 'dart:core'.
-Try correcting the name to the name of an existing getter, or defining a getter or field named 'first'.
-    if (r is List && r.isNotEmpty) return Map<String, dynamic>.from(r.first as Map);
-                                                                      ^^^^^
+  return api.get('/payments/wallet/$memberId');
+             ^
 ::endgroup::
 ::group::❌ loading /home/runner/work/MP/MP/mp-app/client/test/today_controller_test.dart (failed)
 Failed to load "/home/runner/work/MP/MP/mp-app/client/test/today_controller_test.dart":
-Compilation failed for testPath=/home/runner/work/MP/MP/mp-app/client/test/today_controller_test.dart: lib/core/app_state.dart:15:25: Error: A value of type 'Map<String, dynamic>' can't be returned from an async function with return type 'Future<List<dynamic>>'.
- - 'Map' is from 'dart:core'.
+Compilation failed for testPath=/home/runner/work/MP/MP/mp-app/client/test/today_controller_test.dart: lib/core/app_state.dart:54:14: Error: A value of type 'Future<dynamic>' can't be returned from an async function with return type 'Future<Map<String, dynamic>>'.
  - 'Future' is from 'dart:async'.
- - 'List' is from 'dart:core'.
-  if (r is List) return r;
-                        ^
-lib/core/app_state.dart:61:25: Error: A value of type 'Map<String, dynamic>' can't be returned from an async function with return type 'Future<List<dynamic>>'.
  - 'Map' is from 'dart:core'.
- - 'Future' is from 'dart:async'.
- - 'List' is from 'dart:core'.
-  if (r is List) return r;
-                        ^
-lib/core/app_state.dart:73:71: Error: The getter 'first' isn't defined for the type 'Map<String, dynamic>'.
- - 'Map' is from 'dart:core'.
-Try correcting the name to the name of an existing getter, or defining a getter or field named 'first'.
-    if (r is List && r.isNotEmpty) return Map<String, dynamic>.from(r.first as Map);
-                                                                      ^^^^^
+  return api.get('/payments/wallet/$memberId');
+             ^
 .
 
 ::endgroup::
