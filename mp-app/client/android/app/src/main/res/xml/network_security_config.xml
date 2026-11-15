@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  سیاست شبکهٔ کلاینت MP — معماری «سرور محلی روی LAN» (D-016/ANDROID-OFFLINE-PLAN).
+
+  هدف: اپ فقط با سرور محلی باشگاه (همان شبکه) حرف می‌زند؛ بنابراین HTTP برای
+  آدرسهای محلی مجاز است (targetSdk 36 به‌طور پیش‌فرض cleartext را می‌بندد —
+  نبود این فایل یعنی قطعی کامل ارتباط). برای استقرار با HTTPS داخلی (M28)
+  کافی است base-config به true-only تغییر کند و گواهی سرور نصب شود.
+
+  REA-audit 2026-11-14: این مورد + INTERNET + allowBackup از دل مانیفست
+  release بیرون کشیده شد (قبلاً فقط در debug وجود داشت).
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

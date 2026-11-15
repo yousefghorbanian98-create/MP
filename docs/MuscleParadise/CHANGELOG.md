@@ -154,3 +154,9 @@
 - **UI**: نام حرکت در کاشی (قبلاً شمارهٔ id نشان می‌داد)، آیکون انجام/انجام‌نشده، انیمیشن‌های ورود، لوگوی حرفه‌ای + آیکون لانچر در CI.
 - **کیفیت**: ۱۹۳ pytest + ۱۳ تست کلاینت + analyze پاک + چهار job سبز (backend/studio/client/e2e) + بیلد release سبز.
 - ساختار REA (mکانیزم امضا/کیفیت) مطالعه و اعمال شد.
+
+## [0.2.0-client3] — ۲۴ آبان ۱۴۰۵ — رفع‌های ارزیابی ساختاری REA
+- **R1**: مجوز `INTERNET` به مانیفست release اضافه شد (فقط در debug بود — قطعی کامل API روی دستگاه).
+- **R2**: `network_security_config.xml` برای معماری سرور محلی/LAN (targetSdk 36 بدون آن cleartext را می‌بست).
+- **R3**: `allowBackup="false"` (حفاظت دادهٔ محلی/توکن‌ها — NFR-3).
+- شواهد: `finn/reports/rea/REA-AUDIT.md` · صف جدید: `docs/MuscleParadise/BUILD-QUEUE.md`
