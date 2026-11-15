@@ -3,6 +3,7 @@ import { Sidebar } from "./components/Sidebar";
 import { TopBar } from "./components/TopBar";
 import { CheckIn } from "./pages/CheckIn";
 import { Finance } from "./pages/Finance";
+import { Analytics } from "./pages/Analytics";
 import { Dashboard } from "./pages/Dashboard";
 import { Members } from "./pages/Members";
 import { Programs } from "./pages/Programs";
@@ -15,6 +16,7 @@ const pages = {
   programs: Programs,
   checkin: CheckIn,
   finance: Finance,
+  analytics: Analytics,
   settings: Settings,
 } as const;
 

@@ -29,6 +29,17 @@ def set_flag(payload: FeatureFlagIn, db: DbSession):
 from modules.admin.kpis import admin_kpis as _admin_kpis  # noqa: E402
 
 
+@router.get("/analytics/leaderboards", summary="لیدربوردهای مدیریتی: بهترین ورزشکار/بیشترین هزینه/بیشترین مراجعه (M42-c1)")
+def _leaderboards(
+    db: DbSession,
+    limit: int = Query(10, ge=1, le=50),
+    window_days: int = Query(30, ge=1, le=365),
+):
+    from modules.admin.analytics import leaderboards
+
+    return leaderboards(db, limit=limit, window_days=window_days)
+
+
 @router.get("/kpis", summary="KPI های واقعی داشبورد (M29)")
 def _kpis(db: DbSession):
     return _admin_kpis(db)

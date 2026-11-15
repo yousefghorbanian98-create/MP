@@ -98,3 +98,31 @@ def checkin_qr(payload: dict, db: DbSession):
     db.add(c)
     db.commit()
     return {"status": "ok", "method": "qr", "member_id": member_id}
+
+
+@router.post("/checkins/{checkin_id}/exit", summary="ثبت خروج — طول جلسهٔ حضور (M42-c2)")
+def checkin_exit(checkin_id: int, db: DbSession, user: CurrentUser):
+    from datetime import UTC, datetime
+
+    from app.errors import ApiError, ForbiddenError, NotFoundError
+    from db.models import CheckIn, Member
+
+    ci = db.get(CheckIn, checkin_id)
+    if ci is None:
+        raise NotFoundError("چک‌این یافت نشد")
+    if user.role == "member":
+        from sqlalchemy import select
+
+        member = db.scalar(select(Member).where(Member.user_id == user.id))
+        if member is None or member.id != ci.member_id:
+            raise ForbiddenError("فقط خروج خودتان ثبت می‌شود")
+    if ci.checked_out_at is not None:
+        raise ApiError("خروج این چک‌این قبلاً ثبت شده", code="already_checked_out")
+    ci.checked_out_at = datetime.now(UTC)
+    db.commit()
+    return {
+        "checkin_id": ci.id,
+        "member_id": ci.member_id,
+        "checked_in_at": ci.created_at.isoformat(),
+        "checked_out_at": ci.checked_out_at.isoformat(),
+    }
