@@ -30,7 +30,9 @@ Widget _wrap(Widget child) => ProviderScope(
         todayExercisesProvider.overrideWith((ref) => _fakeExercises()),
       ],
       child: MaterialApp(
-        home: Directionality(textDirection: TextDirection.rtl, child: child),
+        home: Scaffold(
+          body: Directionality(textDirection: TextDirection.rtl, child: child),
+        ),
       ),
     );
 
@@ -62,7 +64,9 @@ void main() {
           todayExercisesProvider.overrideWith((ref) => <Map<String, dynamic>>[]),
         ],
         child: const MaterialApp(
-          home: Directionality(textDirection: TextDirection.rtl, child: TodayPage()),
+          home: Scaffold(
+            body: Directionality(textDirection: TextDirection.rtl, child: TodayPage()),
+          ),
         ),
       ),
     );
