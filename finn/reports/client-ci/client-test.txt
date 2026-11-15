@@ -22,7 +22,6 @@ test/set_feedback_sheet_test.dart:15:11: Error: Undefined name 'submitSetFeedbac
 test/set_feedback_sheet_test.dart:33:32: Error: Method not found: 'SetFeedbackSheet'.
           home: Scaffold(body: SetFeedbackSheet(movementName: 'شنای سوئدی سطح ۱')),
                                ^^^^^^^^^^^^^^^^
-✅ /home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart: TodayPage renders real exercises RTL with dark theme
 ::endgroup::
 ::group::❌ loading /home/runner/work/MP/MP/mp-app/client/test/set_feedback_sheet_test.dart (failed)
 Failed to load "/home/runner/work/MP/MP/mp-app/client/test/set_feedback_sheet_test.dart":
@@ -44,6 +43,7 @@ test/set_feedback_sheet_test.dart:33:32: Error: Method not found: 'SetFeedbackSh
 
 ::endgroup::
 ::group::✅ Passing tests
+✅ /home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart: TodayPage renders real exercises RTL with dark theme
 ✅ /home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart: toggling an exercise updates completion state
 ✅ /home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart: empty state shows when no workout is planned
 ✅ /home/runner/work/MP/MP/mp-app/client/test/today_controller_test.dart: progress starts at zero and updates on toggle
