@@ -97,6 +97,14 @@ class MemberUser(BaseUser):  # type: ignore[misc]
         self._get("/api/v1/programs/member/1", name="/api/v1/programs/member/[id]")
 
     @task(2)
+    def volume_report(self) -> None:
+        """G2 — سنگین‌ترین مسیر خواندن: چند join + محاسبهٔ نشانگرها."""
+        self._get(
+            "/api/v1/programs/member/1/volume",
+            name="/api/v1/programs/member/[id]/volume",
+        )
+
+    @task(2)
     def my_assessments(self) -> None:
         self._get("/api/v1/axis-assessments/member/1", name="/api/v1/axis-assessments/member/[id]")
 

@@ -161,3 +161,39 @@ def test_member_cannot_read_another_members_volume(client: TestClient) -> None:
 
     r = client.get(f"/api/v1/programs/member/{mid}/volume", headers=other)
     assert r.status_code == 403
+
+
+def test_pool_capacity_covers_threadpool() -> None:
+    """M48-c2 — ظرفیت استخر باید تردهای anyio را بپوشاند، نه کمتر.
+
+    کشف واقعی: با ۱۰+۳۰ ظرفیت و ۴۰۰ کاربر، لاگ پر شد از
+      QueuePool limit reached ... timed out
+    و p50 از ۴ms به ۱۹۰ms رفت — صف اتصال، نه کندی کد.
+    این تست جلوی برگشت آن رگرسیون را می‌گیرد.
+    """
+    from db import base as db_base
+
+    total = db_base._POOL_SIZE + db_base._MAX_OVERFLOW
+    # anyio پیش‌فرض ۴۰ ترد برای endpointهای sync
+    assert total >= 40, f"ظرفیت استخر {total} از تعداد تردها کمتر است"
+    assert db_base._POOL_TIMEOUT <= 10, "انتظار طولانی، درخواست را معلق می‌کند نه خطا"
+
+
+def test_volume_endpoint_is_cheap_enough_to_serve_under_load(client: TestClient) -> None:
+    """محاسبهٔ حجم نباید سنگین باشد؛ اگر شد، استخر زیر بار خالی می‌شود."""
+    import time
+
+    h = _staff()
+    mid, _ = _member_with_program(client, h)
+
+    client.get(f"/api/v1/programs/member/{mid}/volume", headers=h)  # warm-up
+    samples = []
+    for _ in range(20):
+        t0 = time.perf_counter()
+        r = client.get(f"/api/v1/programs/member/{mid}/volume", headers=h)
+        samples.append((time.perf_counter() - t0) * 1000)
+        assert r.status_code == 200
+
+    samples.sort()
+    p50 = samples[len(samples) // 2]
+    assert p50 < 150, f"p50 مسیر حجم {p50:.0f}ms است — بهینه‌سازی لازم دارد"

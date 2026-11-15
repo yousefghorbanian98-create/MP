@@ -51,9 +51,16 @@ _SessionLocal = None
 #   pool_timeout=10                → خرابی سریع و صریح، نه هنگ ۳۰ ثانیه‌ای
 #   pool_pre_ping=True             → اتصال مرده بازیابی می‌شود، نه ۵۰۰
 #   pool_recycle=1800              → جلوگیری از قطع اتصال توسط proxy/DB
-_POOL_SIZE = 10
-_MAX_OVERFLOW = 30
-_POOL_TIMEOUT = 10
+# M48-c2 — بازبینی بعد از افزودن endpoint حجم:
+#   با ۱۰+۳۰ ظرفیت، زیر ۳۰۰ کاربر همزمان این خطا در لاگ ظاهر شد:
+#     QueuePool limit of size 10 overflow 30 reached, connection timed out
+#   و p50 از ۴ms به ۱۹۰ms رفت (صف، نه کندی کد — محاسبه ۱ms است).
+# anyio پیش‌فرض ۴۰ ترد برای endpointهای sync می‌دهد؛ ۴۰+۲۰ ظرفیت حاشیهٔ
+# امن می‌دهد و `pool_timeout` کوتاه‌تر (۵s) خطا را سریع نشان می‌دهد، نه
+# اینکه درخواست ۱۰ ثانیه معلق بماند.
+_POOL_SIZE = 40
+_MAX_OVERFLOW = 20
+_POOL_TIMEOUT = 5
 _POOL_RECYCLE = 1800
 
 

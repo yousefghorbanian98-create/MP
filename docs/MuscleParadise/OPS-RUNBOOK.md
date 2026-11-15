@@ -3,7 +3,7 @@
 ## ۱. سرویس‌ها
 | سرویس | دستور اجرا | پورت | یادداشت |
 |---|---|---|---|
-| API (FastAPI) | `mp-app/backend` ← `uvicorn app.main:app --host 0.0.0.0 --port 8000` | 8000 | مستندات /docs |
+| API (FastAPI) | `mp-app/backend` ← `uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4` | 8000 | مستندات /docs · **۴ worker الزامی است، نه تنظیم** |
 | Studio (admin) | `mp-app/studio` ← `npm run dev` | 5173 | داخلی/هتلینگ |
 | Client (Flutter) | اندروید APK (`mp-app/client/ci_apk.sh`) | — | offline-first |
 
