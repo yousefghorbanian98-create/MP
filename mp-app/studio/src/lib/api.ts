@@ -169,19 +169,6 @@ export function fetchPaymentsCsv(token = getToken()): Promise<Blob> {
   return getBlob("/payments/finance/export.csv", token);
 }
 
-// ── برنامه‌ها (GET /programs/member/{id}) — هیچ endpoint فهرست همهٔ برنامه‌ها وجود ندارد ──
-
-export interface ProgramRow {
-  id: number;
-  member_id: number;
-  status?: string;
-  [key: string]: unknown;
-}
-
-export function fetchMemberPrograms(memberId: number, token = getToken(), signal?: AbortSignal) {
-  return getJson<ProgramRow[]>(`/programs/member/${memberId}`, token, signal);
-}
-
 export interface ProgramSummaryRow {
   id: number;
   member_id: number;
