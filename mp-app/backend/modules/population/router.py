@@ -12,7 +12,9 @@ from modules.population.intake import next_questions
 router = APIRouter(
     prefix="/population",
     tags=["programs"],
-    dependencies=[Depends(require_roles("admin", "coach", "manager"))],
+    # member/reception هم مجاز: فرم ورودی کلاینت (intake) با نقش عضو gate-check می‌زند
+    # (باگ REA-2026-11-15 — ۴۰۳ برای عضو در مسیر ثبت‌نام).
+    dependencies=[Depends(require_roles("admin", "coach", "manager", "member", "reception"))],
 )
 
 

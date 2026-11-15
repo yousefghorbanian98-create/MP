@@ -51,10 +51,14 @@ CurrentUser = Annotated[User, Depends(get_current_user)]
 
 
 def require_roles(*roles: str):
-    """guard نقش ساده — فقط نقش‌های مشخص‌شده (compat)."""
+    """guard نقش ساده — فقط نقش‌های مشخص‌شده (compat).
+
+    `super_admin` (مالک سیستم) همیشه مجاز است — هم‌راستا با سیاست casbin
+    («super_admin، همه‌چیز») — باگ REA-2026-11-15: قفل شدن مالک از مسیرهای require_roles.
+    """
 
     def _guard(user: CurrentUser) -> User:
-        if user.role not in roles:
+        if user.role not in roles and user.role != "super_admin":
             raise ForbiddenError(f"نقش {user.role} مجاز نیست")
         return user
 
