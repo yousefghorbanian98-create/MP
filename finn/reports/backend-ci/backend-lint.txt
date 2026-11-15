@@ -290,14 +290,14 @@ unformatted: File would be reformatted
    |
 
 unformatted: File would be reformatted
-  --> modules/axis_assessment/router.py:29:13
+  --> modules/axis_assessment/router.py:32:13
    |
-28 |
+31 |
    - @router.get("/{assessment_id}/matrix", response_model=MatrixOut, summary="ماتریس درصد ۱۴ محور + تصمیم")
-29 + @router.get(
-30 +     "/{assessment_id}/matrix", response_model=MatrixOut, summary="ماتریس درصد ۱۴ محور + تصمیم"
-31 + )
-32 | def get_matrix(assessment_id: int, db: DbSession, user: CurrentUser):
+32 + @router.get(
+33 +     "/{assessment_id}/matrix", response_model=MatrixOut, summary="ماتریس درصد ۱۴ محور + تصمیم"
+34 + )
+35 | def get_matrix(assessment_id: int, db: DbSession, user: CurrentUser):
    |
 
 unformatted: File would be reformatted
