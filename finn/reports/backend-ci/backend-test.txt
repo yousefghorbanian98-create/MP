@@ -49,4 +49,4 @@ tests/integration/test_updates.py: 1 warning
     response = await handler(conn, exc)  # type: ignore[arg-type]
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-202 passed, 224 warnings in 16.64s
+202 passed, 224 warnings in 15.17s
