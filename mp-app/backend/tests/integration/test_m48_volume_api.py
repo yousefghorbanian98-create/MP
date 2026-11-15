@@ -197,3 +197,26 @@ def test_volume_endpoint_is_cheap_enough_to_serve_under_load(client: TestClient)
     samples.sort()
     p50 = samples[len(samples) // 2]
     assert p50 < 150, f"p50 مسیر حجم {p50:.0f}ms است — بهینه‌سازی لازم دارد"
+
+
+def test_secret_key_meets_rfc7518_minimum() -> None:
+    """M48-c2 — کلید HMAC کمتر از ۳۲ بایت، هشدار PyJWT در هر درخواست می‌داد.
+
+    آن هشدار در لاگ تولید هم می‌آمد. مقدار پیش‌فرض ۳۱ بایت بود (یک کاراکتر کم).
+    """
+    from app.config import MIN_SECRET_BYTES, settings
+
+    assert len(settings.secret_key.encode("utf-8")) >= MIN_SECRET_BYTES
+
+
+def test_production_refuses_default_secret() -> None:
+    """کلید توسعه نباید بتواند به production برسد — در زمان راه‌اندازی می‌شکند."""
+    import os
+    from unittest.mock import patch
+
+    from app.config import DEFAULT_DEV_SECRET, Settings
+
+    with patch.dict(os.environ, {"MP_ENVIRONMENT": "production"}, clear=False):
+        with pytest.raises(Exception) as exc:
+            Settings(secret_key=DEFAULT_DEV_SECRET)
+        assert "کلید" in str(exc.value)
