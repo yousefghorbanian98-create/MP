@@ -1,44 +1,18 @@
 
 ::group::✅ Passing tests
 ✅ /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart: GET موفق JSON برمی‌گرداند + هدر Authorization
-::endgroup::
-::group::❌ /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart: خطای سرور با پیام فارسی detail بالا می‌آید (failed)
-Expected: throws <Instance of 'ApiException'> with `message`: 'کاربر فعال نیست'
-  Actual: <Instance of 'Future<Map<String, dynamic>>'>
-   Which: threw ArgumentError:<Invalid argument (string): Contains invalid characters.: "{\"detail\":\"کاربر فعال نیست\"}">
-          stack dart:convert                                       Latin1Codec.encode
-                package:http/src/response.dart 39:49               new Response
-                test/api_client_test.dart 31:19                    main.<fn>.<fn>
-                package:http/src/mock_client.dart 54:36            new MockClient.<fn>
-                ===== asynchronous gap ===========================
-                package:matcher                                    expectLater
-                package:flutter_test/src/widget_tester.dart 507:8  expectLater
-                test/api_client_test.dart 34:11                    main.<fn>
-                
-          which is not an instance of 'ApiException'
-
-package:matcher                                    expectLater
-package:flutter_test/src/widget_tester.dart 507:8  expectLater
-test/api_client_test.dart 34:11                    main.<fn>
-::endgroup::
-::group::✅ Passing tests
+✅ /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart: خطای سرور با پیام فارسی detail بالا می‌آید
 ✅ /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart: POST بدنهٔ JSON می‌فرستد
-::endgroup::
-::group::❌ /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart: AuthController ورود OTP توکن را نگه می‌دارد (failed)
-Invalid argument (string): Contains invalid characters.: "{\"access_token\":\"A1\",\"refresh_token\":\"R1\",\"user\":{\"id\":9,\"full_name\":\"کاربر تست\",\"phone\":\"09\",\"role\":\"member\"}}"
-dart:convert                             Latin1Codec.encode
-package:http/src/response.dart 39:49     new Response
-test/api_client_test.dart 56:21          main.<fn>.<fn>
-package:http/src/mock_client.dart 54:36  new MockClient.<fn>
-::endgroup::
-::group::✅ Passing tests
+✅ /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart: AuthController ورود OTP توکن را نگه می‌دارد
 ✅ /home/runner/work/MP/MP/mp-app/client/test/today_controller_test.dart: progress starts at zero and updates on toggle
-✅ /home/runner/work/MP/MP/mp-app/client/test/today_controller_test.dart: G8: exercises carry numeric load from rule engine fields only
-✅ /home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart: TodayPage renders exercises RTL with dark theme
-✅ /home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart: toggling an exercise updates the ring
+✅ /home/runner/work/MP/MP/mp-app/client/test/today_controller_test.dart: progress handles zero-total safely (no division by zero)
+✅ /home/runner/work/MP/MP/mp-app/client/test/today_controller_test.dart: reset clears done set
+✅ /home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart: TodayPage renders real exercises RTL with dark theme
+✅ /home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart: toggling an exercise updates completion state
+✅ /home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart: empty state shows when no workout is planned
 ✅ /home/runner/work/MP/MP/mp-app/client/test/home_page_test.dart: گرید ۸ بخش نمایش داده می‌شود
 ✅ /home/runner/work/MP/MP/mp-app/client/test/home_page_test.dart: جست‌وجو و بنر موجودند
 ✅ /home/runner/work/MP/MP/mp-app/client/test/home_page_test.dart: چک‌این سریع در خانه
 ::endgroup::
 
-::error::9 tests passed, 2 failed.
+🎉 13 tests passed.

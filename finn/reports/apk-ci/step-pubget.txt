@@ -1,11 +1,12 @@
 Flutter 3.50.0 • channel stable • https://github.com/flutter/flutter.git
-Framework • revision ab2912035e (5 days ago) • 2026-11-09 08:50:21 -0800
+Framework • revision ab2912035e (6 days ago) • 2026-11-09 08:50:21 -0800
 Engine • hash bf601093ad255aaf5c6d0fc5c4f9acfa60943b2a (revision 371f77202a) (5 days ago) • 2026-11-09 15:57:36.000Z
 Tools • Dart 3.14.0 • DevTools 2.61.0
 Resolving dependencies...
 Downloading packages...
 + _fe_analyzer_shared 111.0.0
 + analyzer 14.7.0
++ archive 4.7.1
 + args 2.7.0
 + async 2.13.1
 + boolean_selector 2.1.2
@@ -18,11 +19,12 @@ Downloading packages...
 + characters 1.4.1
 + charcode 1.4.0
 + checked_yaml 2.0.4
-+ cli_util 0.6.0
++ cli_util 0.4.2 (0.6.0 available)
 + clock 1.1.3
 + code_assets 2.2.0
 + collection 1.19.1
 + convert 3.1.2
++ cross_file 0.3.5+5 (0.4.0 available)
 + crypto 3.0.8
 + dart_style 3.1.14
 + drift 2.35.4
@@ -30,11 +32,17 @@ Downloading packages...
 + fake_async 1.3.3
 + ffi 2.2.0
 + file 7.0.1
++ file_selector_linux 0.9.4+1
++ file_selector_macos 0.9.5+2
++ file_selector_platform_interface 2.7.0
++ file_selector_windows 0.9.3+6
 + fixnum 1.1.1
 + flutter 0.0.0 from sdk flutter
 + flutter_animate 4.5.2
++ flutter_launcher_icons 0.14.4
 + flutter_lints 4.0.0 (6.0.0 available)
 + flutter_localizations 0.0.0 from sdk flutter
++ flutter_plugin_android_lifecycle 2.0.35
 + flutter_riverpod 2.6.1 (3.5.0 available)
 + flutter_shaders 0.1.5
 + flutter_test 0.0.0 from sdk flutter
@@ -46,6 +54,15 @@ Downloading packages...
 + http 1.6.0
 + http_multi_server 3.2.3
 + http_parser 4.1.2
++ image 4.13.1
++ image_picker 1.2.4
++ image_picker_android 0.8.13+25
++ image_picker_for_web 3.1.1
++ image_picker_ios 0.8.13+15
++ image_picker_linux 0.2.2
++ image_picker_macos 0.2.2+1
++ image_picker_platform_interface 2.11.2
++ image_picker_windows 0.2.2
 + intl 0.20.3
 + io 1.1.0
 + jni 1.1.2
@@ -75,9 +92,12 @@ Downloading packages...
 + platform 3.2.0
 + plugin_platform_interface 2.1.8
 + pool 1.5.3
++ posix 6.5.4
 + process 5.0.6
 + pub_semver 2.2.1
 + pubspec_parse 1.7.0
++ qr 3.0.3 (4.0.1 available)
++ qr_flutter 4.1.0
 + recase 4.1.0
 + record_use 1.1.1
 + riverpod 2.6.1 (3.5.0 available)
@@ -113,7 +133,7 @@ Downloading packages...
 + xdg_directories 1.1.0
 + yaml 3.1.4
 + yaml_edit 2.2.4
-Changed 109 dependencies!
-9 packages have newer versions incompatible with dependency constraints.
+Changed 129 dependencies!
+12 packages have newer versions incompatible with dependency constraints.
 Try `flutter pub outdated` for more information.
 Upgrading analysis_options.yaml to exclude build and platform directories.
