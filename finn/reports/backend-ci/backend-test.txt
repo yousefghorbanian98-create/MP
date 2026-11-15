@@ -2,14 +2,15 @@
 The event loop scope for asynchronous fixtures will default to the fixture scope. Future versions of pytest-asyncio will default the loop scope for asynchronous fixtures to "function" scope. Set the default fixture loop scope explicitly in order to avoid unexpected behavior in the future. Valid fixture loop scopes are: "function", "class", "module", "package", "session". Set it to "fixture-scope" to keep the current behavior.
 
   warnings.warn(PytestDeprecationWarning(_DEFAULT_FIXTURE_LOOP_SCOPE_UNSET))
-........................................................................ [ 14%]
-........................................................................ [ 28%]
-........................................................................ [ 42%]
-........................................................................ [ 56%]
-........................................................................ [ 70%]
-........................................................................ [ 84%]
+........................................................................ [ 12%]
+........................................................................ [ 24%]
+........................................................................ [ 37%]
+........................................................................ [ 49%]
+........................................................................ [ 61%]
+........................................................................ [ 74%]
+........................................................................ [ 86%]
 ........................................................................ [ 98%]
-..........                                                               [100%]
+......                                                                   [100%]
 =============================== warnings summary ===============================
 ../../../../../../../opt/hostedtoolcache/Python/3.11.18/x64/lib/python3.11/site-packages/fastapi/testclient.py:1
   /opt/hostedtoolcache/Python/3.11.18/x64/lib/python3.11/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
@@ -33,4 +34,4 @@ tests/integration/test_m46_security_matrix.py::test_wrong_signature_rejected
     return self._jws.encode(
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-514 passed, 23 warnings in 46.36s
+582 passed, 23 warnings in 37.11s
