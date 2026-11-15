@@ -14,14 +14,57 @@ class ApiException implements Exception {
   String toString() => message;
 }
 
+/// آدرس‌های مجاز برای HTTP بدون TLS — فقط loopback و بازه‌هایِ خصوصی RFC1918.
+///
+/// چرا: `network_security_config` اندروید بازهٔ IP نمی‌پذیرد و آدرس سرور باشگاه
+/// در build معلوم نیست؛ پس مهار در لایهٔ اپ انجام می‌شود. هر آدرس عمومی با
+/// HTTP رد می‌شود (HTTPS برای هر میزبانی مجاز است).
+bool isPrivateHost(String host) {
+  if (host == 'localhost' || host == '127.0.0.1' || host == '::1') return true;
+  final parts = host.split('.');
+  if (parts.length != 4) return false;
+  final octets = parts.map(int.tryParse).toList();
+  if (octets.any((o) => o == null || o < 0 || o > 255)) return false;
+  final a = octets[0]!, b = octets[1]!;
+  if (a == 10) return true; // 10.0.0.0/8
+  if (a == 172 && b >= 16 && b <= 31) return true; // 172.16.0.0/12
+  if (a == 192 && b == 168) return true; // 192.168.0.0/16
+  if (a == 10 && b == 0 && octets[2] == 2) return true; // 10.0.2.2 (emulator)
+  return false;
+}
+
+/// خطای پیکربندی — آدرس API با سیاست شبکه سازگار نیست.
+class InsecureBaseUrlError extends ArgumentError {
+  InsecureBaseUrlError(String baseUrl)
+      : super(
+          'آدرس API با HTTP روی میزبان عمومی مجاز نیست: $baseUrl — '
+          'یا از بازهٔ LAN استفاده کنید یا HTTPS بدهید.',
+        );
+}
+
 class ApiClient {
   ApiClient({http.Client? httpClient, String? baseUrl})
       : _http = httpClient ?? http.Client(),
-        baseUrl = baseUrl ??
-            const String.fromEnvironment(
-              'MP_API',
-              defaultValue: 'http://10.0.2.2:8000/api/v1',
-            );
+        baseUrl = _validated(
+          baseUrl ??
+              const String.fromEnvironment(
+                'MP_API',
+                defaultValue: 'http://10.0.2.2:8000/api/v1',
+              ),
+        );
+
+  /// اعتبارسنجی سیاست شبکه در زمان ساخت کلاینت (نه در اولین درخواست).
+  static String _validated(String url) {
+    final uri = Uri.tryParse(url);
+    if (uri == null || uri.host.isEmpty) {
+      throw ArgumentError('آدرس API نامعتبر است: $url');
+    }
+    if (uri.scheme == 'https') return url;
+    if (uri.scheme != 'http' || !isPrivateHost(uri.host)) {
+      throw InsecureBaseUrlError(url);
+    }
+    return url;
+  }
 
   final http.Client _http;
   final String baseUrl;

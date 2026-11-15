@@ -17,7 +17,7 @@ void main() {
       seen = request;
       return http.Response(jsonEncode({'id': 7, 'goal': 'strength'}), 200);
     });
-    final api = ApiClient(httpClient: mock, baseUrl: 'http://test/api/v1');
+    final api = ApiClient(httpClient: mock, baseUrl: 'http://10.0.2.2:8000/api/v1');
     api.accessToken = 'tok-123';
     final r = await api.get('/members/me');
     expect(r['id'], 7);
@@ -34,7 +34,7 @@ void main() {
         headers: {'content-type': 'application/json; charset=utf-8'},
       );
     });
-    final api = ApiClient(httpClient: mock, baseUrl: 'http://test/api/v1');
+    final api = ApiClient(httpClient: mock, baseUrl: 'http://10.0.2.2:8000/api/v1');
     try {
       await api.get('/members/me');
       fail('باید ApiException بدهد');
@@ -50,7 +50,7 @@ void main() {
       body = request.body;
       return http.Response(jsonEncode({'ok': true}), 200);
     });
-    final api = ApiClient(httpClient: mock, baseUrl: 'http://test/api/v1');
+    final api = ApiClient(httpClient: mock, baseUrl: 'http://10.0.2.2:8000/api/v1');
     await api.post('/ai/program/generate', {'member_id': 3, 'goal': 'fitness'});
     expect(jsonDecode(body)['member_id'], 3);
   });
@@ -76,11 +76,47 @@ void main() {
         headers: {'content-type': 'application/json; charset=utf-8'},
       );
     });
-    final api = ApiClient(httpClient: mock, baseUrl: 'http://test/api/v1');
+    final api = ApiClient(httpClient: mock, baseUrl: 'http://10.0.2.2:8000/api/v1');
     final auth = AuthController(api);
     await auth.loginWithOtp('09120000000', '123456');
     expect(auth.state.loggedIn, isTrue);
     expect(auth.state.accessToken, 'A1');
     expect(auth.state.memberId, 4);
+  });
+
+  group('سیاست شبکه (REA 2026-11-15)', () {
+    test('HTTP روی میزبان عمومی رد می‌شود', () {
+      expect(
+        () => ApiClient(httpClient: MockClient((_) async => http.Response('', 200)),
+            baseUrl: 'http://api.example.com/api/v1'),
+        throwsA(isA<InsecureBaseUrlError>()),
+      );
+    });
+
+    test('HTTPS روی هر میزبانی مجاز است', () {
+      final api = ApiClient(
+        httpClient: MockClient((_) async => http.Response('{}', 200)),
+        baseUrl: 'https://gym.example.com/api/v1',
+      );
+      expect(api.baseUrl, 'https://gym.example.com/api/v1');
+    });
+
+    test('بازه‌های RFC1918 مجازند', () {
+      for (final host in ['10.1.2.3', '192.168.1.50', '172.16.0.9', '127.0.0.1', '10.0.2.2']) {
+        final api = ApiClient(
+          httpClient: MockClient((_) async => http.Response('{}', 200)),
+          baseUrl: 'http://$host:8751/api/v1',
+        );
+        expect(api.baseUrl, contains(host));
+      }
+    });
+
+    test('آدرس نامعتبر باعث خطای صریح می‌شود، نه شکست مبهم', () {
+      expect(
+        () => ApiClient(
+            httpClient: MockClient((_) async => http.Response('', 200)), baseUrl: ''),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
   });
 }

@@ -2,13 +2,20 @@
 <!--
   سیاست شبکهٔ کلاینت MP — معماری «سرور محلی روی LAN» (D-016/ANDROID-OFFLINE-PLAN).
 
-  هدف: اپ فقط با سرور محلی باشگاه (همان شبکه) حرف می‌زند؛ بنابراین HTTP برای
-  آدرسهای محلی مجاز است (targetSdk 36 به‌طور پیش‌فرض cleartext را می‌بندد —
-  نبود این فایل یعنی قطعی کامل ارتباط). برای استقرار با HTTPS داخلی (M28)
-  کافی است base-config به true-only تغییر کند و گواهی سرور نصب شود.
+  واقعیتِ پلتفرم (مهم):
+  Android در network_security_config بازهٔ CIDR/IP را نمی‌پذیرد — فقط نام دامنه
+  (یا IP literal). آدرس سرور باشگاه در زمان build معلوم نیست و در runtime از
+  پرچم dart-define با کلید MP_API می‌آید. بنابراین «محدودکردن cleartext به بازهٔ LAN در
+  سطح مانیفست» با این پلتفرم ممکن نیست و هر ادعایی خلاف آن نادرست است.
 
-  REA-audit 2026-11-14: این مورد + INTERNET + allowBackup از دل مانیفست
-  release بیرون کشیده شد (قبلاً فقط در debug وجود داشت).
+  تصمیم (REA 2026-11-15): cleartext برای کل اپ مجاز می‌ماند، اما با دو مهار:
+    ۱) کامنت صادق — «فقط سرور محلی» در سطح مانیفست قابل اجرا نیست؛
+    ۲) مهار در لایهٔ اپ — ApiClient فقط به loopback و بازه‌های RFC1918 اجازهٔ
+       HTTP می‌دهد و هر آدرس عمومی را رد می‌کند (core/api_client.dart).
+  برای استقرار HTTPS داخلی (M28): base-config را false کن و گواهی سرور را نصب.
+
+  برای سخت‌گیری بیشتر بدون تغییر کد: dnsconfig/domain-config با نام میزبان
+  ثابت باشگاه (مثلاً gym.local) به‌جای IP.
 -->
 <network-security-config>
     <base-config cleartextTrafficPermitted="true">

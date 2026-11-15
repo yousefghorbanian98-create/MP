@@ -8,6 +8,16 @@
 - [x] مانور بکاپ/بازیابی سبز (`test_backup_drill.py`)
 - [x] مهاجرت‌ها: `alembic upgrade head` روی DB تمیز (M23/M27 تأییدشده)
 
+## الف-۲) بازبینی REA پیش از هر تگ (M45 — از ۲۰۲۶-۱۱-۱۵ اجباری)
+- [ ] `rea identify-flutter-build <apk>` — هش Dart snapshot + نسخهٔ engine ثبت شد
+- [ ] `rea inspect-apk-signature <apk>` — طرح‌های v1/v2/v3 و اثر انگشت گواهی ثبت شد
+- [ ] `rea audit-release-exposure <apk>` — هیچ source map / debug symbol / credential marker افشا نشد
+- [ ] `versionName` در APK با تگ ریلیز هم‌خوان است (خواندن مانیفست دودویی)
+- [ ] `INTERNET` و `networkSecurityConfig` در مانیفست **release** موجودند (نه فقط debug)
+- [ ] `android:debuggable="false"` صریحاً در مانیفست است (observation، نه inference)
+- [ ] `ApiClient` فقط loopback/RFC1918 را با HTTP می‌پذیرد (تست‌های `api_client_test.dart` سبز)
+- [ ] گزارش تأیید در `finn/reports/rea/<date>-REA-GAP-CLOSURE.md` نوشته شد
+
 ## ب) انطباق
 - [x] E07: هیچ معادلهٔ بدون منبع اجرا نمی‌شود (`equations.py` — قفل فعال)
 - [x] E10: نگهداری/حذف مستند (DATA-RETENTION.md)

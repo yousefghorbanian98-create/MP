@@ -68,7 +68,16 @@ jobs:
         run: |
           set -o pipefail
           cd mp-app/client
-          flutter build apk --release --split-per-abi --build-number="$BUILD_NUMBER" 2>&1 | tee /tmp/step-build.txt
+          # versionName باید با تگ ریلیز هم‌خوان باشد، وگرنه نسخهٔ نصب‌شده روی دستگاه
+          # قابل تشخیص نیست (REA 2026-11-15). تگ v0.2.0-client3 ← build-name 0.2.0-client3
+          TAG="${{ github.ref_name }}"
+          if [ -n "$TAG" ] && [ "${{ startsWith(github.ref, 'refs/tags/') }}" = "true" ]; then
+            BUILD_NAME="${TAG#v}"
+            echo "build-name=$BUILD_NAME (from tag $TAG)"
+            flutter build apk --release --split-per-abi --build-number="$BUILD_NUMBER" --build-name="$BUILD_NAME" 2>&1 | tee /tmp/step-build.txt
+          else
+            flutter build apk --release --split-per-abi --build-number="$BUILD_NUMBER" 2>&1 | tee /tmp/step-build.txt
+          fi
           APK="build/app/outputs/flutter-apk/app-arm64-v8a-release.apk"
           test -f "$APK"
           sha256sum "$APK" | tee "$APK.sha256"
