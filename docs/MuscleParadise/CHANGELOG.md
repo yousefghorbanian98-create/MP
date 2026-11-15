@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Added — M33-c2 (2026-11-14) — schema بردار ۱۴محوره
+- فیلدهای `axis_coverage` (بردار وزنی ۱..۱۴ با بازهٔ ۰..۱) + `intensity_band` + `progression_key` روی `catalog_exercises` + مهاجرت `d4e5f6a1b2c3`
+- نگهبان `validate_coverage` + ۳ تست مدل (۲۰۵ کل)
+
 ### Added — M33-c1 (2026-11-14) — سامانهٔ ۱۴ توانایی، میکرو-لوپ نخست
 - ورود کاتالوگ `free-exercise-db` (۸۷۶ حرکت، Unlicense) — جدول‌های `catalog_sources` + `catalog_exercises`، اسکریپت idempotent `scripts/import_exercise_catalog.py` + راستی‌آزمایی sha256
 - ثبت مجوز در `NOTICE-THIRD-PARTY.md` + سند منبع (`data/external/free_exercise_db/SOURCE.md`) + rule-evidence (`finn/reports/evidence/M33c1-free-exercise-db.rule-evidence.json`)

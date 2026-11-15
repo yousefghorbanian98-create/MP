@@ -60,6 +60,13 @@ class CatalogExercise(TimestampMixin, Base):
     secondary_muscles: Mapped[str] = mapped_column(Text, default="[]", nullable=False)
     instructions: Mapped[str] = mapped_column(Text, default="[]", nullable=False)
     image_refs: Mapped[str] = mapped_column(Text, default="[]", nullable=False)
+    # M33-c2: بردار پوشش ۱۴محوره — {"1": 0.0..1.0, ...} (وزن پوشش هر محور؛ خالی تا M33-c3)
+    # تصمیم طراحی: JSON روی همان ردیف (مقیاس ۸۷۶ حرکت؛ نرمال‌سازی جدا فقط در صورت نیاز آینده)
+    axis_coverage: Mapped[str] = mapped_column(Text, default="{}", nullable=False)
+    # باند شدت نسبی: low | moderate | high (از level/force منبع — از M33-c3)
+    intensity_band: Mapped[str] = mapped_column(String(20), default="", nullable=False)
+    # کلید خانوادهٔ نردبان پیشرفت (M34) — خالی = بدون نردبان
+    progression_key: Mapped[str] = mapped_column(String(60), default="", nullable=False)
 
 
 class FoodItem(TimestampMixin, Base):

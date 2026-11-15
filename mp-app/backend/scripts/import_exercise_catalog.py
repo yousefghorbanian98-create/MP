@@ -44,6 +44,23 @@ class ImportResult:
         return self.inserted + self.updated
 
 
+AXIS_IDS = frozenset(str(i) for i in range(1, 15))
+
+
+def validate_coverage(coverage: dict) -> bool:
+    """بردار پوشش ۱۴محوره: کلیدها فقط ۱..۱۴ و وزن‌ها فقط بازهٔ ۰..۱ (M33-c2)."""
+    if not isinstance(coverage, dict):
+        return False
+    for key, weight in coverage.items():
+        if str(key) not in AXIS_IDS:
+            return False
+        if not isinstance(weight, (int, float)) or isinstance(weight, bool):
+            return False
+        if not 0.0 <= float(weight) <= 1.0:
+            return False
+    return True
+
+
 def file_digest(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
