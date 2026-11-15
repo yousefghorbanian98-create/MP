@@ -28,6 +28,9 @@ List<Map<String, dynamic>> _fakeExercises() => [
 Widget _wrap(Widget child) => ProviderScope(
       overrides: [
         todayExercisesProvider.overrideWith((ref) => _fakeExercises()),
+        myProgramsProvider.overrideWith((ref) async => [
+              {'id': 1, 'weeks': const []},
+            ]),
       ],
       child: MaterialApp(
         home: Scaffold(
@@ -62,6 +65,9 @@ void main() {
       ProviderScope(
         overrides: [
           todayExercisesProvider.overrideWith((ref) => <Map<String, dynamic>>[]),
+          myProgramsProvider.overrideWith((ref) async => [
+                {'id': 1, 'weeks': const []},
+              ]),
         ],
         child: const MaterialApp(
           home: Scaffold(
