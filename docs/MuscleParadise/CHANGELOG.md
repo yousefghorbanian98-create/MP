@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Added — M35-c2 (2026-11-14) — موتور امتیازدهی
+- `engine/scoring.py` (axis-score-1.0): خام ← درصدک (درون‌یابی خطی) ← نمرهٔ ۰–۱۰۰ با کیفیت (exact/interpolated/range_estimate/clamped) + گیت SDC «تغییر واقعی»
+- ۸ تست (۲۳۹ کل) + rule-evidence
+
 ### Added — M35-c1 (2026-11-14) — جدول نُرم‌های آزمون‌های میدانی
 - مدل + مهاجرت `norm_entries` (a7b8c9d0e1f2): نُرم صدکی/معیاری با منبع اجباری (E13) + SDC
 - seed مستند: ۱۰ ردیف شنای سوئدی (صدک‌های ۵گانه، جنس×سن) + ۲۰ ردیف نشست و رسیدن — منبع: fitnessnorms (سبک ACSM) + SDC از گزارش‌های بازتست ACSM

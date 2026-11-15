@@ -1,0 +1,17 @@
+{
+  "rule_id": "M35c2-scoring-engine",
+  "date": "2026-11-14",
+  "status": "verified",
+  "method": "engine/scoring.py نسخهٔ axis-score-1.0 — نمره = درصدک برآوردشده (۰..۱۰۰) با برچسب کیفیت E02 (exact/interpolated/range_estimate/clamped)؛ درون‌یابی خطی بین نقاط مستند، بدون فراتر از جدول",
+  "quality_rules": {
+    "exact": "درست روی نقطهٔ مستند",
+    "interpolated": "بین دو نقطهٔ مستند",
+    "range_estimate": "جدول ناقص (فقط ۲۵/۷۵) — هرگز «دقیق» جعل نمی‌شود",
+    "clamped": "بیرون از پوشش جدول"
+  },
+  "sdc_gate": "تفاوت کمتر از SDC ← نویز بازتست؛ نمره/بهبود اعلام‌شده باید از این گیت بگذرد",
+  "verified_by": "finn (ECC-3), S6 چرخهٔ M35-c2",
+  "evidence": [
+    "tests/unit/test_scoring.py (8 tests)"
+  ]
+}
