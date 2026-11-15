@@ -124,13 +124,6 @@ Analyzing client...
    info • 'package:flutter/material.dart' is deprecated and shouldn't be used. Use package:material_ui/material_ui.dart instead. This feature was deprecated after v3.47.0-0.0.pre. Try replacing the use of the deprecated member with the replacement • test/home_page_test.dart:1:1 • deprecated_member_use
    info • Dangling library doc comment. Add a 'library' directive after the library comment • test/home_page_test.dart:1:1 • dangling_library_doc_comments
    info • 'package:flutter/material.dart' is deprecated and shouldn't be used. Use package:material_ui/material_ui.dart instead. This feature was deprecated after v3.47.0-0.0.pre. Try replacing the use of the deprecated member with the replacement • test/set_feedback_sheet_test.dart:4:1 • deprecated_member_use
-   info • The imported package 'mp_app' isn't a dependency of the importing package. Try adding a dependency for 'mp_app' in the 'pubspec.yaml' file • test/set_feedback_sheet_test.dart:7:8 • depend_on_referenced_packages
-  error • Target of URI doesn't exist: 'package:mp_app/features/feedback/feedback_providers.dart'. Try creating the file referenced by the URI, or try using a URI for a file that does exist • test/set_feedback_sheet_test.dart:7:8 • uri_does_not_exist
-   info • The imported package 'mp_app' isn't a dependency of the importing package. Try adding a dependency for 'mp_app' in the 'pubspec.yaml' file • test/set_feedback_sheet_test.dart:8:8 • depend_on_referenced_packages
-  error • Target of URI doesn't exist: 'package:mp_app/features/feedback/set_feedback_sheet.dart'. Try creating the file referenced by the URI, or try using a URI for a file that does exist • test/set_feedback_sheet_test.dart:8:8 • uri_does_not_exist
-  error • Undefined name 'submitSetFeedbackProvider'. Try correcting the name to one that is defined, or defining the name • test/set_feedback_sheet_test.dart:15:11 • undefined_identifier
-  error • Invalid constant value • test/set_feedback_sheet_test.dart:33:32 • invalid_constant
-  error • The function 'SetFeedbackSheet' isn't defined. Try importing the library that defines 'SetFeedbackSheet', correcting the name to the name of an existing function, or defining a function named 'SetFeedbackSheet' • test/set_feedback_sheet_test.dart:33:32 • undefined_function
    info • 'package:flutter/material.dart' is deprecated and shouldn't be used. Use package:material_ui/material_ui.dart instead. This feature was deprecated after v3.47.0-0.0.pre. Try replacing the use of the deprecated member with the replacement • test/today_page_test.dart:4:1 • deprecated_member_use
 
-132 issues found. (ran in 5.3s)
+125 issues found. (ran in 4.3s)

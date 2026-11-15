@@ -1,57 +1,41 @@
 
+::group::❌ /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart: GET موفق JSON برمی‌گرداند + هدر Authorization (failed)
+Expected: 'http://test/api/v1/members/me'
+  Actual: 'http://10.0.2.2:8000/api/v1/members/me'
+   Which: is different.
+          Expected: http://test/api/v ...
+            Actual: http://10.0.2.2:8 ...
+                           ^
+           Differ at offset 7
+
+package:matcher                                     expect
+package:flutter_test/src/widget_tester.dart 473:18  expect
+test/api_client_test.dart 26:5                      main.<fn>
+::endgroup::
 ::group::✅ Passing tests
-✅ /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart: GET موفق JSON برمی‌گرداند + هدر Authorization
 ✅ /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart: خطای سرور با پیام فارسی detail بالا می‌آید
 ✅ /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart: POST بدنهٔ JSON می‌فرستد
 ✅ /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart: AuthController ورود OTP توکن را نگه می‌دارد
+✅ /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart: سیاست شبکه (REA 2026-11-15) HTTP روی میزبان عمومی رد می‌شود
+✅ /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart: سیاست شبکه (REA 2026-11-15) HTTPS روی هر میزبانی مجاز است
+✅ /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart: سیاست شبکه (REA 2026-11-15) بازه‌های RFC1918 مجازند
+✅ /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart: سیاست شبکه (REA 2026-11-15) آدرس نامعتبر باعث خطای صریح می‌شود، نه شکست مبهم
 ✅ /home/runner/work/MP/MP/mp-app/client/test/assessment14_page_test.dart: empty state shows prompt when no assessment exists
 ✅ /home/runner/work/MP/MP/mp-app/client/test/assessment14_page_test.dart: matrix renders axes with scores, dashes and decision chips
 ✅ /home/runner/work/MP/MP/mp-app/client/test/assessment14_page_test.dart: submitting a test posts data and confirms
 ✅ /home/runner/work/MP/MP/mp-app/client/test/assessment14_page_test.dart: invalid submit shows validation message
-Error: Couldn't resolve the package 'mp_app' in 'package:mp_app/features/feedback/feedback_providers.dart'.
-Error: Couldn't resolve the package 'mp_app' in 'package:mp_app/features/feedback/set_feedback_sheet.dart'.
-test/set_feedback_sheet_test.dart:7:8: Error: Not found: 'package:mp_app/features/feedback/feedback_providers.dart'
-import 'package:mp_app/features/feedback/feedback_providers.dart';
-       ^
-test/set_feedback_sheet_test.dart:8:8: Error: Not found: 'package:mp_app/features/feedback/set_feedback_sheet.dart'
-import 'package:mp_app/features/feedback/set_feedback_sheet.dart';
-       ^
-test/set_feedback_sheet_test.dart:15:11: Error: Undefined name 'submitSetFeedbackProvider'.
-          submitSetFeedbackProvider.overrideWithValue((entries) async {
-          ^^^^^^^^^^^^^^^^^^^^^^^^^
-test/set_feedback_sheet_test.dart:33:32: Error: Method not found: 'SetFeedbackSheet'.
-          home: Scaffold(body: SetFeedbackSheet(movementName: 'شنای سوئدی سطح ۱')),
-                               ^^^^^^^^^^^^^^^^
 ✅ /home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart: TodayPage renders real exercises RTL with dark theme
 ✅ /home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart: toggling an exercise updates completion state
 ✅ /home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart: empty state shows when no workout is planned
-::endgroup::
-::group::❌ loading /home/runner/work/MP/MP/mp-app/client/test/set_feedback_sheet_test.dart (failed)
-Failed to load "/home/runner/work/MP/MP/mp-app/client/test/set_feedback_sheet_test.dart":
-Compilation failed for testPath=/home/runner/work/MP/MP/mp-app/client/test/set_feedback_sheet_test.dart: Error: Couldn't resolve the package 'mp_app' in 'package:mp_app/features/feedback/feedback_providers.dart'.
-Error: Couldn't resolve the package 'mp_app' in 'package:mp_app/features/feedback/set_feedback_sheet.dart'.
-test/set_feedback_sheet_test.dart:7:8: Error: Not found: 'package:mp_app/features/feedback/feedback_providers.dart'
-import 'package:mp_app/features/feedback/feedback_providers.dart';
-       ^
-test/set_feedback_sheet_test.dart:8:8: Error: Not found: 'package:mp_app/features/feedback/set_feedback_sheet.dart'
-import 'package:mp_app/features/feedback/set_feedback_sheet.dart';
-       ^
-test/set_feedback_sheet_test.dart:15:11: Error: Undefined name 'submitSetFeedbackProvider'.
-          submitSetFeedbackProvider.overrideWithValue((entries) async {
-          ^^^^^^^^^^^^^^^^^^^^^^^^^
-test/set_feedback_sheet_test.dart:33:32: Error: Method not found: 'SetFeedbackSheet'.
-          home: Scaffold(body: SetFeedbackSheet(movementName: 'شنای سوئدی سطح ۱')),
-                               ^^^^^^^^^^^^^^^^
-.
-
-::endgroup::
-::group::✅ Passing tests
 ✅ /home/runner/work/MP/MP/mp-app/client/test/today_controller_test.dart: progress starts at zero and updates on toggle
 ✅ /home/runner/work/MP/MP/mp-app/client/test/today_controller_test.dart: progress handles zero-total safely (no division by zero)
 ✅ /home/runner/work/MP/MP/mp-app/client/test/today_controller_test.dart: reset clears done set
+✅ /home/runner/work/MP/MP/mp-app/client/test/set_feedback_sheet_test.dart: renders feedback form with sliders and submit
+✅ /home/runner/work/MP/MP/mp-app/client/test/set_feedback_sheet_test.dart: submit shows why-card with data-rule-decision chain
+✅ /home/runner/work/MP/MP/mp-app/client/test/set_feedback_sheet_test.dart: empty reps sends nothing
 ✅ /home/runner/work/MP/MP/mp-app/client/test/home_page_test.dart: گرید ۸ بخش نمایش داده می‌شود
 ✅ /home/runner/work/MP/MP/mp-app/client/test/home_page_test.dart: جست‌وجو و بنر موجودند
 ✅ /home/runner/work/MP/MP/mp-app/client/test/home_page_test.dart: چک‌این سریع در خانه
 ::endgroup::
 
-::error::17 tests passed, 1 failed.
+::error::23 tests passed, 1 failed.
