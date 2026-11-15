@@ -1,10 +1,4 @@
-Found 3 known vulnerabilities in 1 package
-Name       Version ID                  Fix Versions
----------- ------- ------------------- ------------
-setuptools 79.0.1  PYSEC-2026-3447     83.0.0
-setuptools 79.0.1  PYSEC-2026-3447     83.0.0
-setuptools 79.0.1  GHSA-xmj3-9gf7-h52w 84.1.0
-
+No known vulnerabilities found
 Name       Skip Reason
 ---------- -------------------------------------------------------------------------
 mp-backend Dependency not found on PyPI and could not be audited: mp-backend (0.1.0)
