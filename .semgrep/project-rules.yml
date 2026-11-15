@@ -21,8 +21,8 @@ rules:
               # nosec
     paths:
       exclude:
-        - "*/tests/*"
-        - "*/migrations/*"
+        - "**/tests/*"
+        - "**/migrations/*"
 
   - id: mp-jwt-decode-without-verify
     languages: [python]
@@ -32,7 +32,7 @@ rules:
     patterns:
       - pattern: 'jwt.decode(..., options={"verify_signature": False}, ...)'
     paths:
-      exclude: ["*/tests/*"]
+      exclude: ["**/tests/*"]
 
   - id: mp-gateway-payment-verified-without-flag
     languages: [python]
@@ -46,23 +46,20 @@ rules:
       - pattern: verify_payment(...)
       - pattern-not: verify_payment(..., manual=True, ...)
     paths:
-      include: ["*/modules/payments/*"]
-      exclude: ["*/tests/*"]
+      include: ["**/modules/payments/*"]
+      exclude: ["**/tests/*"]
 
   - id: mp-member-path-without-ownership
     languages: [python]
     severity: WARNING
     message: >
-      مسیر با member_id در امضای تابع ولی بدون ensure_member_scope در بدنه:
-      عضو می‌تواند دادهٔ عضو دیگر را بخواند (D-005).
+      تابعی با پارامتر member_id ولی بدون ensure_member_scope: عضو می‌تواند
+      دادهٔ عضو دیگر را بخواند (D-005). اگر مالکیت با user= به سرویس واگذار
+      شده، این هشدار را با کامنت توضیح دهید.
     patterns:
       - pattern: |
-          @$ROUTER.$METHOD($PATH, ...)
-          def $F(..., $X: int, ...):
+          def $F(..., member_id: int, ...):
               ...
-      - metavariable-regex:
-          metavariable: $X
-          regex: "member_id"
       - pattern-not: |
           def $F(...):
               ...
@@ -71,11 +68,13 @@ rules:
       - pattern-not: |
           def $F(...):
               ...
-              user=user...
+              service.$M(...)
               ...
     paths:
-      include: ["*/modules/*/router.py"]
-
+      include:
+        - "**/modules/*/router.py"
+      exclude:
+        - "**/tests/*"
   - id: mp-hardcoded-secret
     languages: [python]
     severity: ERROR
@@ -90,7 +89,7 @@ rules:
           class $C:
               ...
     paths:
-      exclude: ["*/tests/*"]
+      exclude: ["**/tests/*"]
 
   - id: mp-eval-or-exec
     languages: [python]
@@ -100,7 +99,7 @@ rules:
       - pattern: eval(...)
       - pattern: exec(...)
     paths:
-      exclude: ["*/tests/*", "*/scripts/*"]
+      exclude: ["**/tests/*", "**/scripts/*"]
 
   - id: mp-pickle-loads
     languages: [python]
@@ -108,7 +107,7 @@ rules:
     message: pickle.loads روی دادهٔ بیرونی = اجرای کد دلخواه.
     pattern: pickle.loads(...)
     paths:
-      exclude: ["*/tests/*"]
+      exclude: ["**/tests/*"]
 
   - id: mp-react-dangerously-set-html
     languages: [typescript, javascript]

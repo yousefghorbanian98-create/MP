@@ -40,7 +40,15 @@ class FaceEmbeddingCipher:
             except Exception as exc:  # noqa: BLE001
                 raise BiometricCryptoError("MP_BIOMETRIC_KEY معتبر نیست (base64)") from exc
             return key
-        # محیط dev: مشتق از secret_key — در production هرگز (تست امنیتی چک می‌کند)
+        # محیط dev: مشتق از secret_key.
+        # در production این مسیر **بی‌صدا** رد نمی‌شود: بدون کلید اختصاصی،
+        # همهٔ قالب‌های چهره با کلیدی رمز می‌شدند که کنار خودِ سیستم است —
+        # یعنی رمزنگاری‌ای که فقط ظاهرش رمزنگاری است. باید صریحاً بشکند.
+        if settings.environment == "production":
+            raise BiometricCryptoError(
+                "MP_BIOMETRIC_KEY در production الزامی است (base64، ۳۲ بایت) — "
+                "بدون آن، دادهٔ بیومتریک با کلید مشتق‌شده از secret رمز می‌شود"
+            )
         return hashlib.sha256(settings.secret_key.encode("utf-8")).digest()
 
     def encrypt(self, embedding: bytes) -> bytes:

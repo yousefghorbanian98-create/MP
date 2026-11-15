@@ -20,6 +20,11 @@ def client(tmp_path, monkeypatch):
 
     monkeypatch.setattr(settings, "database_url", f"sqlite:///{tmp_path}/sec.db")
     monkeypatch.setattr(settings, "environment", "production")  # HSTS هم تست شود
+    # در production کلید بیومتریک اختصاصی الزامی است (D-028/تست crypto)؛
+    # این فایل هدفش HSTS/RBAC است، پس کلید آزمایشی می‌دهیم.
+    import base64 as _b64
+
+    monkeypatch.setattr(settings, "biometric_key", _b64.b64encode(b"t" * 32).decode())
     reset_engine()
     init_db()
     limiter.reset()

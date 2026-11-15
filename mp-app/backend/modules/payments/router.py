@@ -93,7 +93,11 @@ def wallet_pay(payload: WalletCharge, db: DbSession, user: CurrentUser):
     )
 
 
-@router.get("/invoice/{member_id}", summary="فاکتور تجمعی عضو (US-403 — M16)")
+# مالکیت داخل build_invoice ← ensure_member_scope(db, user, member_id)
+# بررسی می‌شود (user به سرویس پاس می‌شود).
+@router.get(  # nosemgrep: mp-member-path-without-ownership
+    "/invoice/{member_id}", summary="فاکتور تجمعی عضو (US-403 — M16)"
+)
 def invoice(member_id: int, db: DbSession, user: CurrentUser):
     from modules.payments.invoice import build_invoice
 

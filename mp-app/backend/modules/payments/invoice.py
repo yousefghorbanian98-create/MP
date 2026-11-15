@@ -34,10 +34,10 @@ def build_receipt(db: Session, payment_id: int, user=None) -> dict:
 
 
 def build_invoice(db: Session, member_id: int, user=None) -> dict:
+    """فاکتور تجمعی عضو — مجموع پرداخت‌ها + کیف‌پول (US-403)."""
     from app.security.ownership import ensure_member_scope
 
     ensure_member_scope(db, user, member_id)
-    """فاکتور تجمعی عضو — مجموع پرداخت‌ها + کیف‌پول (US-403)."""
     from sqlalchemy import select
 
     member = db.get(Member, member_id)

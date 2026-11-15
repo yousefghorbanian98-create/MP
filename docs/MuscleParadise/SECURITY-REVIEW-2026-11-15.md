@@ -52,6 +52,22 @@ query). در CI هم اجرا می‌شود.
 production با هر کِش محلی تکرار می‌شود. اکنون اعتبار از امضای HMAC
 داخل authority می‌آید (بی‌حالت) و تست رگرسیون دارد.
 
+## §۴٫۵ — یافته‌های بازبینی خط‌به‌خط (پس از §۱)
+
+| # | یافته | وضعیت |
+|---|---|---|
+| ۱ | بدون `MP_BIOMETRIC_KEY` در production، کلید از `secret_key` مشتق می‌شد → رمزنگاری ظاهری | **رفع** — `BiometricCryptoError` صریح؛ ۳ تست |
+| ۲ | `/reports/confidential/{member_id}` بدون `user` و بدون ممیزی | **رفع** — `ensure_member_scope` + audit |
+| ۳ | قاعدهٔ semgrep «مالکیت» الگوی نامعتبر داشت (هرگز اجرا نمی‌شد و CI را می‌شکست) | **رفع** — بازنویسی؛ حالا ۲ مسیر واقعی را یافت |
+| ۴ | docstring سه تابع face_id (و یک تابع پرداخت) به `__doc__` نمی‌رسید چون بعد از `ensure_member_scope` بود | **رفع** |
+| ۵ | semgrep حتی با ۰ یافته `EXIT=2` می‌داد (به‌خاطر خطای parse قاعده) → CI همیشه قرمز | **رفع** |
+
+بازبینی‌شده و **سالم**: `app/security/ownership.py`، `security/crypto.py`
+(SecretBox، authenticated)، `security/rbac.py` (policy دقیق، بدون
+wildcard خطرناک در مسیرهای عضو)، `modules/auth/service.py` (salt +
+قفل تلاش + انقضای OTP، همه با commit)، `modules/face_id/service.py`
+(رضایت اجباری، حذف قطعی).
+
 ## §۵ — آنچه **انجام نشد** (صادقانه)
 
 * **DAST با ابزار آماده** (ZAP/nuclei/nikto) — در این محیط نصب/اجرا

@@ -56,3 +56,39 @@ def test_privacy_notice_versioned_and_readable(client, auth):
     assert body["version"].startswith("faceid-privacy-")
     assert any("رضایت" in s["text"] or "رضایت" in s["heading"] for s in body["sections"])
     assert any("حذف" in s["text"] for s in body["sections"])  # حق حذف صریح
+
+
+def test_production_requires_a_dedicated_biometric_key(monkeypatch):
+    """باگ امنیتی: در production بدون MP_BIOMETRIC_KEY، کلید از secret مشتق می‌شد.
+
+    یعنی رمزنگاری‌ای که فقط ظاهرش رمزنگاری بود: هر کسی که به secret_key
+    دسترسی داشت (همان فایل تنظیمات) می‌توانست embedding چهره را بگشاید،
+    و مهاجرت کلید هرگز اجباری نمی‌شد. باید صریح بشکند، نه بی‌صدا.
+    """
+    from app.config import settings
+    from security.crypto import BiometricCryptoError, FaceEmbeddingCipher
+
+    monkeypatch.setattr(settings, "environment", "production")
+    monkeypatch.setattr(settings, "biometric_key", "")
+    with pytest.raises(BiometricCryptoError) as exc:
+        FaceEmbeddingCipher()
+    assert "MP_BIOMETRIC_KEY" in str(exc.value)
+
+
+def test_production_accepts_a_real_32_byte_key(monkeypatch):
+    import base64
+
+    from app.config import settings
+    from security.crypto import FaceEmbeddingCipher
+
+    monkeypatch.setattr(settings, "environment", "production")
+    monkeypatch.setattr(settings, "biometric_key", base64.b64encode(b"k" * 32).decode())
+    cipher = FaceEmbeddingCipher()
+    assert cipher.decrypt(cipher.encrypt(b"embedding")) == b"embedding"
+
+
+def test_rejected_key_length_still_fails():
+    from security.crypto import BiometricCryptoError, FaceEmbeddingCipher
+
+    with pytest.raises(BiometricCryptoError):
+        FaceEmbeddingCipher(key=b"short")

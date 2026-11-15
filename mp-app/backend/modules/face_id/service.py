@@ -31,10 +31,10 @@ def grant_consent(
 
 
 def revoke_consent(db: Session, member_id: int, user=None) -> dict:
+    """پس‌گرفتن رضایت = حذف قطعی چهره (US-108)."""
     from app.security.ownership import ensure_member_scope
 
     ensure_member_scope(db, user, member_id)
-    """پس‌گرفتن رضایت = حذف قطعی چهره (US-108)."""
     delete_face(db, member_id)
     for c in db.scalars(
         select(BiometricConsent).where(
@@ -58,10 +58,10 @@ def _has_active_consent(db: Session, member_id: int) -> bool:
 
 
 def enroll_face(db: Session, member_id: int, embedding: bytes, user=None) -> FaceTemplate:
+    """ثبت چهره — فقط با رضایت صریح و embedding رمزنگاری‌شده."""
     from app.security.ownership import ensure_member_scope
 
     ensure_member_scope(db, user, member_id)
-    """ثبت چهره — فقط با رضایت صریح و embedding رمزنگاری‌شده."""
     if db.get(Member, member_id) is None:
         raise NotFoundError("عضو یافت نشد")
     if not _has_active_consent(db, member_id):
@@ -85,10 +85,10 @@ def enroll_face(db: Session, member_id: int, embedding: bytes, user=None) -> Fac
 
 
 def delete_face(db: Session, member_id: int, user=None) -> dict:
+    """حذف قطعی چهره (حق حذف — US-108)."""
     from app.security.ownership import ensure_member_scope
 
     ensure_member_scope(db, user, member_id)
-    """حذف قطعی چهره (حق حذف — US-108)."""
     ft = db.scalar(select(FaceTemplate).where(FaceTemplate.member_id == member_id))
     if ft is not None:
         db.delete(ft)
@@ -118,10 +118,10 @@ def _distance(a: bytes, b: bytes) -> float:
 def check_in(
     db: Session, member_id: int, method: str, result: str = "ok", denial_reason: str = "", user=None
 ) -> CheckIn:
+    """ثبت چک‌این (US-106) — ورود فقط با اشتراک فعال."""
     from app.security.ownership import ensure_member_scope
 
     ensure_member_scope(db, user, member_id)
-    """ثبت چک‌این (US-106) — ورود فقط با اشتراک فعال."""
     if db.get(Member, member_id) is None:
         raise NotFoundError("عضو یافت نشد")
     if result == "ok":

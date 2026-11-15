@@ -194,10 +194,10 @@ def wallet_charge(
 
 
 def wallet_balance(db: Session, member_id: int, user=None) -> int:
+    """موجودی = مجموع credit − مجموع debit (مبالغ همیشه مثبت ذخیره می‌شوند)."""
     from app.security.ownership import ensure_member_scope
 
     ensure_member_scope(db, user, member_id)
-    """موجودی = مجموع credit − مجموع debit (مبالغ همیشه مثبت ذخیره می‌شوند)."""
     rows = db.scalars(select(WalletTransaction).where(WalletTransaction.member_id == member_id))
     return sum(t.amount_rial if t.kind == "credit" else -t.amount_rial for t in rows)
 
@@ -205,10 +205,10 @@ def wallet_balance(db: Session, member_id: int, user=None) -> int:
 def wallet_pay(
     db: Session, member_id: int, amount_rial: int, description: str = "", user=None
 ) -> Payment:
+    """پرداخت از کیف‌پول — اتمیک: بررسی موجودی + بدهکاری + پرداخت paid در یک تراکنش."""
     from app.security.ownership import ensure_member_scope
 
     ensure_member_scope(db, user, member_id)
-    """پرداخت از کیف‌پول — اتمیک: بررسی موجودی + بدهکاری + پرداخت paid در یک تراکنش."""
     if amount_rial <= 0:
         raise ApiError("مبلغ پرداخت باید مثبت باشد")
     if db.get(Member, member_id) is None:
