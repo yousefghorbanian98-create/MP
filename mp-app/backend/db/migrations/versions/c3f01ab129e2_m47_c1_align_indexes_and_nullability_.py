@@ -74,12 +74,15 @@ def upgrade() -> None:
         ("gym_classes", "updated_at"),
     ]
 
-    for table, col in nullable_fixes:
-        # backfill: ردیف‌های NULL باید مقدار بگیرند، وگرنه NOT NULL شکست می‌خورد
+    # backfill: ردیف‌های NULL باید مقدار بگیرند، وگرنه NOT NULL شکست می‌خورد.
+    # به‌جای SQL رشته‌ای، از ساختار جدول/ستون SQLAlchemy استفاده می‌شود تا
+    # نام‌ها از metadata بیایند و bandit (B608) هم چیزی برای اعتراض نداشته باشد.
+    for table_name, col_name in nullable_fixes:
+        tbl = sa.table(table_name, sa.column(col_name, sa.DateTime()))
         bind.execute(
-            sa.text(
-                f"UPDATE {table} SET {col} = CURRENT_TIMESTAMP WHERE {col} IS NULL"  # noqa: S608
-            )
+            tbl.update()
+            .where(tbl.c[col_name].is_(None))
+            .values({col_name: sa.func.current_timestamp()})
         )
 
     if is_sqlite:

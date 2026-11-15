@@ -82,7 +82,7 @@ void main() {
     await tester.tap(find.widgetWithText(FilledButton, 'ثبت بازخورد'));
     await tester.pumpAndSettle();
     expect(find.textContaining('اعمال شد'), findsOneWidget);
-    expect(find.textContaining('۲ هفته'), findsOneWidget);
+    expect(find.textContaining('2 هفته'), findsOneWidget);
   });
 
   testWidgets('M48-c1: sends the real weight, not hardcoded zero', (tester) async {

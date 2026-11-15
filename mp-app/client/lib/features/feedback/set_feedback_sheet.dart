@@ -70,10 +70,14 @@ class _SetFeedbackSheetState extends ConsumerState<SetFeedbackSheet> {
         top: 20,
         bottom: MediaQuery.of(context).viewInsets.bottom + 20,
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+      // M48-c1 — با اضافه‌شدن فیلد وزنه، ارتفاع از صفحهٔ گوشی‌های کوچک و
+      // از محیط تست بیشتر شد و Column سرریز می‌کرد. اسکرول، رفع واقعی است
+      // (نه کوچک‌کردن فونت یا حذف فیلد).
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
           Text('بازخورد ست — ${widget.movementName}',
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
           const SizedBox(height: 4),
@@ -122,11 +126,12 @@ class _SetFeedbackSheetState extends ConsumerState<SetFeedbackSheet> {
               child: Text(_submitting ? 'در حال پردازش…' : 'ثبت بازخورد'),
             ),
           ),
-          if (_result != null) ...[
-            const SizedBox(height: 16),
-            _WhyCard(result: _result!),
+            if (_result != null) ...[
+              const SizedBox(height: 16),
+              _WhyCard(result: _result!),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }
