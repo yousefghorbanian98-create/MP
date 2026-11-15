@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Added — M35-c3 (2026-11-14) — هارنس G4 امتیازدهی
+- `eval/scoring_eval.py`: ۴ سناریو (round-trip نقاط مستند، محدوده/اکوتونی، صداقت کیفیت جدول ناقص، گیت SDC) — ۴/۴ سبز
+- گزارش: `finn/reports/eval/2026-11-14-m35c3-scoring-eval.json` + تست هارنس
+
 ### Added — M35-c2 (2026-11-14) — موتور امتیازدهی
 - `engine/scoring.py` (axis-score-1.0): خام ← درصدک (درون‌یابی خطی) ← نمرهٔ ۰–۱۰۰ با کیفیت (exact/interpolated/range_estimate/clamped) + گیت SDC «تغییر واقعی»
 - ۸ تست (۲۳۹ کل) + rule-evidence

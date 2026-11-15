@@ -1,0 +1,28 @@
+{
+  "checks": [
+    {
+      "name": "round_trip_documented_points",
+      "passed": true,
+      "errors": []
+    },
+    {
+      "name": "bounds_and_monotonic",
+      "passed": true,
+      "errors": []
+    },
+    {
+      "name": "sparse_never_exact",
+      "passed": true,
+      "errors": []
+    },
+    {
+      "name": "sdc_gate",
+      "passed": true,
+      "errors": []
+    }
+  ],
+  "passed": 4,
+  "failed": 0,
+  "norm_rows": 30,
+  "rule_version": "g4-scoring-1.0"
+}
