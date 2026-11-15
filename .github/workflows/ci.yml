@@ -9,6 +9,8 @@ on:
 jobs:
   backend:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -31,6 +33,33 @@ jobs:
           cd mp-app/backend
           bandit -r . -ll -q
           pip-audit
+
+      - name: Commit backend diagnostics (on failure)
+        if: failure()
+        env:
+          BRANCH: arena/a0408b29-mp
+        run: |
+          set -o pipefail
+          cd mp-app/backend
+          ruff check . > /tmp/backend-lint.txt 2>&1 || true
+          ruff format --check . >> /tmp/backend-lint.txt 2>&1 || true
+          bandit -r . -ll -q > /tmp/backend-bandit.txt 2>&1 || true
+          pip-audit > /tmp/backend-pipaudit.txt 2>&1 || true
+          pytest tests -q --tb=short > /tmp/backend-test.txt 2>&1 || true
+          cd ../..
+          git config user.name "mp-apk-ci"
+          git config user.email "ci@muscleparadise.local"
+          git fetch origin "$BRANCH"
+          git reset --hard "origin/$BRANCH"
+          mkdir -p finn/reports/backend-ci
+          cp /tmp/backend-lint.txt /tmp/backend-bandit.txt /tmp/backend-pipaudit.txt /tmp/backend-test.txt finn/reports/backend-ci/
+          echo "run=${{ github.run_id }} job=backend" > finn/reports/backend-ci/RUN.txt
+          git add finn/reports/backend-ci
+          git commit -m "mp(apk): backend diagnostics run ${{ github.run_id }} [skip ci]" || true
+          for i in 1 2 3 4 5; do
+            git pull --rebase origin "$BRANCH" && git push origin "$BRANCH" && break
+            sleep 6
+          done
 
   studio:
     runs-on: ubuntu-latest
@@ -57,6 +86,8 @@ jobs:
 
   client-flutter:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
@@ -71,6 +102,30 @@ jobs:
       - name: flutter test
         working-directory: mp-app/client
         run: flutter test
+
+      - name: Commit client diagnostics (on failure)
+        if: failure()
+        env:
+          BRANCH: arena/a0408b29-mp
+        run: |
+          set -o pipefail
+          cd mp-app/client
+          flutter analyze --no-fatal-infos > /tmp/client-analyze.txt 2>&1 || true
+          flutter test > /tmp/client-test.txt 2>&1 || true
+          cd ../..
+          git config user.name "mp-apk-ci"
+          git config user.email "ci@muscleparadise.local"
+          git fetch origin "$BRANCH"
+          git reset --hard "origin/$BRANCH"
+          mkdir -p finn/reports/client-ci
+          cp /tmp/client-analyze.txt /tmp/client-test.txt finn/reports/client-ci/
+          echo "run=${{ github.run_id }} job=client-flutter" > finn/reports/client-ci/RUN.txt
+          git add finn/reports/client-ci
+          git commit -m "mp(apk): client diagnostics run ${{ github.run_id }} [skip ci]" || true
+          for i in 1 2 3 4 5; do
+            git pull --rebase origin "$BRANCH" && git push origin "$BRANCH" && break
+            sleep 6
+          done
 
   e2e-api:
     runs-on: ubuntu-latest
