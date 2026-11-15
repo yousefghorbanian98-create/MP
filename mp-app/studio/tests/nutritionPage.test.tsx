@@ -125,8 +125,10 @@ describe("Nutrition page (G5)", () => {
     vi.stubGlobal("fetch", routingFetch(loggedDay));
     render(<Nutrition />);
 
-    await waitFor(() => expect(screen.getByText("برنج سفید (خشک)")).toBeTruthy());
-    expect(screen.getByText(/وزن خشک\/خام/)).toBeTruthy();
+    // صفحهٔ تغذیه حالا FoodLibrary (G12) هم دارد، پس نام غذا چند جا می‌آید.
+    // چیزی که مهم است: هشدار «وزن خشک/خام» در ردیف روز دیده شود.
+    await waitFor(() => expect(screen.getAllByText("برنج سفید (خشک)").length).toBeGreaterThan(0));
+    expect(screen.getAllByText(/وزن خشک\/خام/).length).toBeGreaterThan(0);
   });
 
   it("searches the real catalog and reveals the dry flag", async () => {
