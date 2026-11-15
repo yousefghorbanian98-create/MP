@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+from datetime import datetime
+
 from fastapi import APIRouter, Depends
+from pydantic import BaseModel, Field
 
 from app.deps import CurrentUser, DbSession, require_permission
 from modules.programs import service
@@ -99,5 +102,36 @@ def set_feedback(payload: SetFeedbackIn, db: DbSession, user: CurrentUser):
         member_id=payload.member_id,
         program_id=payload.program_id,
         entries=[e.model_dump() for e in payload.entries],
+        user=user,
+    )
+
+
+# ── G7 — همگام‌سازی صف آفلاین ──
+
+
+class SyncItemIn(BaseModel):
+    client_id: str = Field(min_length=1, max_length=64)
+    device_id: str = Field(min_length=1, max_length=64)
+    updated_at: datetime
+    movement_id: str = Field(default="", max_length=60)
+    weight: float = Field(default=0, ge=0)
+    target_reps: int = Field(default=0, ge=0)
+    reps_done: int = Field(default=0, ge=0)
+    rir: float | None = None
+    soreness: int | None = None
+    notes: str = Field(default="", max_length=500)
+
+
+class SyncIn(BaseModel):
+    member_id: int = Field(ge=1)
+    items: list[SyncItemIn] = Field(default_factory=list, max_length=500)
+
+
+@router.post("/sync/set-feedback", summary="همگام‌سازی صف آفلاین بازخورد ست (G7 — LWW)")
+def sync_set_feedback(payload: SyncIn, db: DbSession, user: CurrentUser):
+    return service.sync_set_feedback(
+        db,
+        member_id=payload.member_id,
+        items=[i.model_dump() for i in payload.items],
         user=user,
     )

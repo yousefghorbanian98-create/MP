@@ -105,3 +105,13 @@ class SetFeedback(TimestampMixin, BranchMixin, Base):
     rir: Mapped[float | None] = mapped_column(Float, nullable=True)
     soreness: Mapped[int | None] = mapped_column(Integer, nullable=True)
     notes: Mapped[str] = mapped_column(Text, default="", nullable=False)
+    # G7 — همگام‌سازی LWW: از کدام دستگاه آمد و چه زمانی از دید کلاینت
+    # آخرین بار نوشته شد. `created_at` سمت سرور است و برای تعارض کافی نیست:
+    # رکوردی که یک بار در صف آفلاین ثبت و بعد ویرایش شده، created_at ثابت دارد.
+    # کلید محلی دستگاه (client_id در صف آفلاین) — بدون آن، ارسال دوبارهٔ صف
+    # یک رکورد تکراری می‌سازد چون سرور کلید کلاینت را نمی‌شناسد.
+    client_id: Mapped[str | None] = mapped_column(String(64), nullable=True, index=True)
+    device_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    client_updated_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )

@@ -51,6 +51,7 @@ POLICIES: list[tuple[str, str, str]] = [
     ("member", "/api/v1/notifications/*", "POST"),
     ("member", "/api/v1/programs/*", "GET"),
     ("member", "/api/v1/programs/set-feedback", "POST"),
+    ("member", "/api/v1/programs/sync/set-feedback", "POST"),
     ("member", "/api/v1/assessments/*", "GET"),
     ("member", "/api/v1/assessments/limb", "POST"),
     ("member", "/api/v1/axis-assessments", "GET"),

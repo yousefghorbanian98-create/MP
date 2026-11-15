@@ -507,3 +507,113 @@ def _safety_gate(db: Session, member_id: int, engine_output: dict) -> dict:
         age=None,  # سن در پروفایل عضو نگه‌داری نمی‌شود؛ ادعای بی‌پشتوانه نمی‌کنیم
         has_medical_clearance=None,
     )
+
+
+# ── G7 — همگام‌سازی صف آفلاین با LWW ──
+
+SYNC_VERSION = "sync-api-1.0"
+
+
+def sync_set_feedback(db: Session, *, member_id: int, items: list[dict], user=None) -> dict:
+    """دریافت صف آفلاین بازخورد ست و اعمال با حل تعارض LWW.
+
+    `items` هر آیتم: `client_id` (کلید محلی دستگاه)، `device_id`،
+    `updated_at`، و فیلدهای بازخورد. `client_id` به‌همراه `member_id` کلید
+    رکورد است تا صف یک دستگاه، رکورد دستگاه دیگر را نشکند.
+    """
+    from datetime import datetime as _dt
+
+    from app.security.ownership import ensure_member_scope
+    from db.models import SetFeedback
+    from engine.sync_lww import Versioned, resolve_batch
+
+    ensure_member_scope(db, user, member_id)
+    if db.get(Member, member_id) is None:
+        raise NotFoundError("عضو یافت نشد")
+
+    existing = list(db.scalars(select(SetFeedback).where(SetFeedback.member_id == member_id)).all())
+    server_rows: dict[tuple[str, str], Versioned] = {}
+    by_key: dict[str, SetFeedback] = {}
+    for row in existing:
+        key = f"{row.device_id or 'server'}:{row.client_id or row.id}"
+        server_rows[("set_feedback", key)] = Versioned(
+            entity="set_feedback",
+            entity_key=key,
+            updated_at=row.client_updated_at or row.created_at,
+            device_id=row.device_id or "",
+        )
+        by_key[key] = row
+
+    client_rows: list[Versioned] = []
+    payloads: dict[str, dict] = {}
+    for item in items:
+        key = f"{item['device_id']}:{item['client_id']}"
+        client_rows.append(
+            Versioned(
+                entity="set_feedback",
+                entity_key=key,
+                updated_at=item["updated_at"],
+                device_id=item["device_id"],
+                payload=item,
+            )
+        )
+        payloads[key] = item
+
+    outcome = resolve_batch(server_rows, client_rows)
+
+    applied_ids: list[str] = []
+    unchanged_ids: list[str] = []
+    for result in outcome["results"]:
+        key = result["entity_key"]
+        if result["action"] == "conflict_resolved" and result["winner"] == "server":
+            # تساوی کامل timestamp یعنی همان نوشتهٔ قبلی دوباره رسیده
+            # (تلاش مجدد شبکه). اعمال دوباره بی‌اثر است ولی «applied»
+            # شمردنش کاربر را گمراه می‌کند؛ جدا گزارش می‌شود.
+            unchanged_ids.append(key)
+            continue
+        if result["winner"] != "client":
+            continue
+        data = payloads[key]
+        stamp = _dt.fromisoformat(str(data["updated_at"]).replace("Z", "+00:00"))
+        row = by_key.get(key)
+        if row is None:
+            row = SetFeedback(
+                member_id=member_id,
+                movement_id=str(data.get("movement_id", "")),
+                weight=float(data.get("weight", 0)),
+                target_reps=int(data.get("target_reps", 0)),
+                reps_done=int(data.get("reps_done", 0)),
+                rir=data.get("rir"),
+                soreness=data.get("soreness"),
+                notes=str(data.get("notes", "")),
+                device_id=data["device_id"],
+                client_id=str(data["client_id"]),
+                client_updated_at=stamp,
+                branch_id=1,
+            )
+            db.add(row)
+        else:
+            row.weight = float(data.get("weight", row.weight))
+            row.reps_done = int(data.get("reps_done", row.reps_done))
+            row.rir = data.get("rir", row.rir)
+            row.soreness = data.get("soreness", row.soreness)
+            row.client_updated_at = stamp
+        applied_ids.append(key)
+
+    if applied_ids:
+        db.commit()
+
+    if unchanged_ids:
+        outcome["counts"]["unchanged"] = len(unchanged_ids)
+
+    return {
+        "member_id": member_id,
+        **outcome,
+        "applied_keys": applied_ids,
+        "unchanged_keys": unchanged_ids,
+        "note": (
+            "نوشته‌هایی که سرور جدیدتر می‌داند رد می‌شوند و در پاسخ با "
+            "action صریح گزارش می‌شوند — هیچ نوشته‌ای بی‌صدا دور ریخته نمی‌شود."
+        ),
+        "rule_version": SYNC_VERSION,
+    }
