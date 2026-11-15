@@ -257,3 +257,40 @@ def test_gateway_rejects_authority_for_a_different_amount():
     with pytest.raises(PaymentGatewayError) as exc:
         gw.verify(started.authority, 900_000)
     assert exc.value.code == "amount_mismatch"
+
+
+def test_manual_verify_cannot_pay_a_gateway_transaction(client, reception, member_id):
+    """یافتهٔ semgrep: مسیر تأیید دستی، پرداخت درگاهی را بدون درگاه «پرداخت‌شده» می‌کرد.
+
+    پذیرش فقط برای نقدی/کارت‌خوان مجاز است. برای پرداخت درگاهی، تأیید بدون
+    پاسخ امضاشدهٔ درگاه یعنی هر دارندهٔ توکن می‌توانست پول را «وصول‌شده»
+    اعلام کند.
+    """
+    h, _ = reception
+    r0 = client.post(
+        "/api/v1/payments",
+        json={"member_id": member_id, "amount_rial": 900_000, "method": "zarinpal"},
+        headers=h,
+    )
+    p = r0.json()
+    r = client.post(
+        f"/api/v1/payments/{p['id']}/verify", json={"reference_id": "fake-123"}, headers=h
+    )
+    assert r.status_code == 400, r.text
+    assert r.json()["error"]["code"] == "gateway_verification_required"
+
+    still = client.get(f"/api/v1/payments?member_id={member_id}", headers=h).json()[0]
+    assert still["status"] == "pending"
+
+
+def test_manual_verify_still_works_for_cash(client, reception, member_id):
+    h, _ = reception
+    r = client.post(
+        "/api/v1/payments",
+        json={"member_id": member_id, "amount_rial": 200_000, "method": "cash"},
+        headers=h,
+    )
+    pid = r.json()["id"]
+    ok = client.post(f"/api/v1/payments/{pid}/verify", json={"reference_id": "cash-1"}, headers=h)
+    assert ok.status_code == 200, ok.text
+    assert ok.json()["status"] == "paid"

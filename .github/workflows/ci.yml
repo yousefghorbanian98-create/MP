@@ -33,6 +33,13 @@ jobs:
           cd mp-app/backend
           bandit -r . -ll -q
           pip-audit
+      # قواعد پروژه‌ای semgrep (`.semgrep/project-rules.yml`) — بدون نیاز به
+      # semgrep.dev؛ همان قواعدی که یافتهٔ «تأیید پرداخت بدون درگاه» را داد.
+      - name: Semgrep (project rules)
+        run: |
+          pip install -q semgrep
+          semgrep --config=.semgrep/project-rules.yml --error \
+            --exclude=.venv --exclude=node_modules --exclude=__pycache__ mp-app
 
       - name: Commit backend diagnostics (on failure)
         if: failure()

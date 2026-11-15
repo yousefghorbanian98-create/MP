@@ -40,13 +40,27 @@ def create_payment(
     return payment
 
 
-def verify_payment(db: Session, payment_id: int, reference_id: str = "") -> Payment:
-    """تأیید پرداخت (callback درگاه یا تأیید پذیرش). فقط pending قابل تأیید است."""
+def verify_payment(
+    db: Session, payment_id: int, reference_id: str = "", *, manual: bool = False
+) -> Payment:
+    """تأیید پرداخت (callback درگاه یا تأیید پذیرش). فقط pending قابل تأیید است.
+
+    `manual=True` فقط برای نقدی/کارت‌خوان در پذیرش مجاز است: برای پرداخت
+    درگاهی، تأیید بدون پاسخ امضاشدهٔ درگاه یعنی هر کسی با توکن می‌توانست
+    پرداخت را «پرداخت‌شده» کند (یافتهٔ semgrep).
+    """
     payment = db.get(Payment, payment_id)
     if payment is None:
         raise NotFoundError("پرداخت یافت نشد")
     if payment.status != "pending":
         raise ApiError("این پرداخت قبلاً پردازش شده است", code="already_processed")
+    # `manual` یعنی «انسان در پذیرش دیده است» — فقط برای نقدی/کارت‌خوان.
+    # برای درگاه، حتی با manual هم باید پاسخ امضاشده وجود داشته باشد.
+    if payment.method in ("zarinpal", "wallet") and (not manual or not payment.gateway_authority):
+        raise ApiError(
+            "پرداخت درگاهی فقط از callback امضاشدهٔ درگاه تأیید می‌شود",
+            code="gateway_verification_required",
+        )
     payment.status = "paid"
     payment.paid_at = datetime.now(UTC)
     payment.reference_id = reference_id or f"ref-{secrets.token_hex(6)}"
@@ -127,7 +141,9 @@ def verify_with_gateway(
         raise ApiError(str(exc), code=exc.code) from exc
     if not result.ok:
         raise ApiError("درگاه تأیید نکرد", code="gateway_rejected")
-    return verify_payment(db, payment_id, reference_id=result.reference_id)
+    # manual=True فقط برای گذر از بررسیِ «مسیر دستی»؛ خودِ پاسخ درگاه
+    # همین لحظه و با امضا دریافت شد و authority در DB ثبت است.
+    return verify_payment(db, payment_id, reference_id=result.reference_id, manual=True)
 
 
 def fail_payment(db: Session, payment_id: int) -> Payment:

@@ -56,9 +56,14 @@ def gateway_callback(payment_id: int, payload: GatewayCallbackIn, db: DbSession)
     )
 
 
-@router.post("/{payment_id}/verify", response_model=PaymentOut, summary="تأیید دستی پرداخت (پذیرش)")
+@router.post(
+    "/{payment_id}/verify",
+    response_model=PaymentOut,
+    summary="تأیید دستی پرداخت نقدی/کارت‌خوان (پذیرش)",
+)
 def verify_payment(payment_id: int, payload: PaymentVerify, db: DbSession):
-    return service.verify_payment(db, payment_id, payload.reference_id)
+    # manual=True فقط برای نقدی و کارت‌خوان؛ پرداخت درگاهی مسیر امضاشده دارد.
+    return service.verify_payment(db, payment_id, payload.reference_id, manual=True)
 
 
 @router.post("/{payment_id}/fail", response_model=PaymentOut, summary="ناموفق‌شدن پرداخت")
