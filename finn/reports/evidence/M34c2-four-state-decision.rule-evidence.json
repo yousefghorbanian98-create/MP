@@ -1,0 +1,20 @@
+{
+  "rule_id": "M34c2-four-state-decision",
+  "date": "2026-11-14",
+  "status": "verified",
+  "method": "قواعد نسخه‌دار axis-decision-1.0 در engine/axis_rules.py — حالت‌های چهارگانهٔ اسپک پروژه (§8): تمرین مستقیم/پوشش در تکلیف دیگر/نگهداری/ارجاع؛ هر تصمیم reason + rule_version دارد",
+  "thresholds": {
+    "direct_max": 40,
+    "maintain_min": 75,
+    "note": "آستانه‌ها تصمیم کارشناسی نسخه‌دار — در M40 با دادهٔ پایلوت بازبینی می‌شود"
+  },
+  "overrides": [
+    "پرچم قرمز (درد/علائم) ← ارجاع با دلیل، مستقل از نمره (D-016)",
+    "خارج از دامنه ← ارجاع (هرگز «عمومی + هشدار»)",
+    "نمرهٔ نامعلوم ← خطای صریح (داده ناشناخته است نه صفر — E02)"
+  ],
+  "verified_by": "finn (ECC-3), S6 چرخهٔ M34-c2",
+  "evidence": [
+    "tests/unit/test_axis_rules.py (7 tests)"
+  ]
+}

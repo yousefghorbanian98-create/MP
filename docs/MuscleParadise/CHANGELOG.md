@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+### Added — M34-c2 (2026-11-14) — قواعد حالت چهارگانه
+- `engine/axis_rules.py` (نسخهٔ axis-decision-1.0): تمرین مستقیم/پوشش در تکلیف دیگر/نگهداری/ارجاع — هر تصمیم «دلیل + نسخه» (داده←قاعده←شاهد←تصمیم)
+- بازنویسی ارجاع: پرچم قرمز/خارج از دامنه ← ارجاع با دلیل (D-016)؛ نمرهٔ نامعلوم ← خطای صریح
+- ۷ تست (۲۲۳ کل) + rule-evidence
+
 ### Added — M34-c1 (2026-11-14) — نردبان‌های پیشرفت
 - ۱۰ نردبان پیشرفت (pushup/squat/pullup/plank/hinge/lunge/dip/row/core/glute-bridge) با ۳۶ پله — هر پله پیوند واقعی به catalog_exercises
 - جدول‌های progression_ladders + progression_steps + مهاجرت f6a1b2c3d4e5 + نگهبان check_names + rule-evidence
