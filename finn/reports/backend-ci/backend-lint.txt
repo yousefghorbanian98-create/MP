@@ -146,6 +146,46 @@ unformatted: File would be reformatted
     |
 
 unformatted: File would be reformatted
+  --> eval/scoring_eval.py:35:19
+   |
+34 |                 )
+   -     checks.append({"name": "round_trip_documented_points", "passed": not round_trip_errors,
+   -                    "errors": round_trip_errors[:5]})
+35 +     checks.append(
+36 +         {
+37 +             "name": "round_trip_documented_points",
+38 +             "passed": not round_trip_errors,
+39 +             "errors": round_trip_errors[:5],
+40 +         }
+41 +     )
+42 |
+--------------------------------------------------------------------------------
+56 |             prev = est["percentile"]
+   -     checks.append({"name": "bounds_and_monotonic", "passed": not bounds_errors,
+   -                    "errors": bounds_errors[:5]})
+57 +     checks.append(
+58 +         {"name": "bounds_and_monotonic", "passed": not bounds_errors, "errors": bounds_errors[:5]}
+59 +     )
+60 |
+--------------------------------------------------------------------------------
+68 |                     sparse_errors.append(f"{row.test_key}: sparse labeled {est['quality']}")
+   -     checks.append({"name": "sparse_never_exact", "passed": not sparse_errors,
+   -                    "errors": sparse_errors[:5]})
+69 +     checks.append(
+70 +         {"name": "sparse_never_exact", "passed": not sparse_errors, "errors": sparse_errors[:5]}
+71 +     )
+72 |
+73 |     # (۴) گیت SDC
+74 |     sdc_pairs = [
+   -         (20, 22, 9.0, False), (20, 30, 9.0, True), (20, 25, 5.0, True), (20, 23, 5.0, False),
+75 +         (20, 22, 9.0, False),
+76 +         (20, 30, 9.0, True),
+77 +         (20, 25, 5.0, True),
+78 +         (20, 23, 5.0, False),
+79 |     ]
+   |
+
+unformatted: File would be reformatted
    --> scripts/build_progressions.py:43:12
     |
 42  | LADDERS: tuple[Ladder, ...] = (
@@ -1142,4 +1182,4 @@ unformatted: File would be reformatted
 57 |     }
    |
 
-14 files would be reformatted, 163 files already formatted
+15 files would be reformatted, 164 files already formatted
