@@ -2,7 +2,12 @@
 
 from db.models.admin import AuditLog, Campaign, FeatureFlag, Offer
 from db.models.ai import RuleRun
-from db.models.assessment import Assessment14Domain, DomainScore, JacksonPollockMeasurement, NormEntry
+from db.models.assessment import (
+    Assessment14Domain,
+    DomainScore,
+    JacksonPollockMeasurement,
+    NormEntry,
+)
 from db.models.auth import OtpCode, RefreshToken, User
 from db.models.classes import ClassBooking, GymClass
 from db.models.content import (
