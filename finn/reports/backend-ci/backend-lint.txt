@@ -84,6 +84,33 @@ unformatted: File would be reformatted
    |
 
 unformatted: File would be reformatted
+   --> engine/axis_rules.py:35:26
+    |
+34  | # حالت‌های چهارگانه (کلیدهای پایدار)
+    - STATE_DIRECT = "direct"        # تمرین مستقیم
+    - STATE_COVERED = "covered"      # پوشش در تکلیف دیگر
+    - STATE_MAINTAIN = "maintain"    # نگهداری
+    - STATE_REFER = "refer"          # ارجاع
+35  + STATE_DIRECT = "direct"  # تمرین مستقیم
+36  + STATE_COVERED = "covered"  # پوشش در تکلیف دیگر
+37  + STATE_MAINTAIN = "maintain"  # نگهداری
+38  + STATE_REFER = "refer"  # ارجاع
+39  |
+--------------------------------------------------------------------------------
+47  | # آستانه‌ها (نسخه‌دار — تا بازبینی در M40)
+    - THRESH_DIRECT_MAX = 40    # score < 40 ← تمرین مستقیم
+48  + THRESH_DIRECT_MAX = 40  # score < 40 ← تمرین مستقیم
+49  | THRESH_MAINTAIN_MIN = 75  # score ≥ 75 ← نگهداری؛ بین ← پوشش در تکلیف دیگر
+--------------------------------------------------------------------------------
+127 |         if axis not in scores:
+    -             raise ApiError(f"نمرهٔ محور {axis} ثبت نشده — داده ناشناخته است نه صفر", code="missing_score")
+128 +             raise ApiError(
+129 +                 f"نمرهٔ محور {axis} ثبت نشده — داده ناشناخته است نه صفر", code="missing_score"
+130 +             )
+131 |         decisions.append(
+    |
+
+unformatted: File would be reformatted
    --> scripts/build_progressions.py:43:12
     |
 42  | LADDERS: tuple[Ladder, ...] = (
@@ -998,4 +1025,4 @@ unformatted: File would be reformatted
 55 |     assert row.category == "strength"
    |
 
-9 files would be reformatted, 160 files already formatted
+10 files would be reformatted, 161 files already formatted
