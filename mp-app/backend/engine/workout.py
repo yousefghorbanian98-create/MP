@@ -73,22 +73,82 @@ LIBRARY: dict[str, dict] = {
         "equipment": "barbell",
     },
     "calf_raise": {"exercise_id": 16, "name": "ساق پا", "pattern": "squat", "equipment": "machine"},
+    "machine_chest_press": {
+        "exercise_id": 17,
+        "name": "پرس سینه دستگاه",
+        "pattern": "push",
+        "equipment": "machine",
+    },
 }
 
 # جدول قواعد: هدف × سطح → (ست، تکرار، درصد ۱RM، استراحت)
 RULES: dict[tuple[str, str], dict] = {
-    ("hypertrophy", "beginner"): {"sets": 3, "reps": "10-12", "load_pct": 65, "rest": 90},
-    ("hypertrophy", "intermediate"): {"sets": 4, "reps": "8-12", "load_pct": 70, "rest": 90},
-    ("hypertrophy", "advanced"): {"sets": 4, "reps": "6-12", "load_pct": 75, "rest": 120},
-    ("strength", "beginner"): {"sets": 3, "reps": "5", "load_pct": 70, "rest": 120},
-    ("strength", "intermediate"): {"sets": 4, "reps": "5", "load_pct": 77, "rest": 150},
-    ("strength", "advanced"): {"sets": 5, "reps": "3", "load_pct": 85, "rest": 180},
-    ("weight_loss", "beginner"): {"sets": 2, "reps": "12-15", "load_pct": 55, "rest": 60},
-    ("weight_loss", "intermediate"): {"sets": 3, "reps": "12-15", "load_pct": 60, "rest": 60},
-    ("weight_loss", "advanced"): {"sets": 3, "reps": "10-15", "load_pct": 65, "rest": 60},
-    ("fitness", "beginner"): {"sets": 2, "reps": "12", "load_pct": 55, "rest": 60},
-    ("fitness", "intermediate"): {"sets": 3, "reps": "12", "load_pct": 60, "rest": 75},
-    ("fitness", "advanced"): {"sets": 3, "reps": "10-12", "load_pct": 65, "rest": 75},
+    ("hypertrophy", "beginner"): {
+        "sets": 3,
+        "reps": "10-12",
+        "load_pct": 65,
+        "rest": 90,
+        "load_cap": 72,
+    },
+    ("hypertrophy", "intermediate"): {
+        "sets": 4,
+        "reps": "8-12",
+        "load_pct": 70,
+        "rest": 90,
+        "load_cap": 80,
+    },
+    ("hypertrophy", "advanced"): {
+        "sets": 4,
+        "reps": "6-12",
+        "load_pct": 75,
+        "rest": 120,
+        "load_cap": 85,
+    },
+    ("strength", "beginner"): {"sets": 3, "reps": "5", "load_pct": 70, "rest": 120, "load_cap": 80},
+    ("strength", "intermediate"): {
+        "sets": 4,
+        "reps": "5",
+        "load_pct": 77,
+        "rest": 150,
+        "load_cap": 88,
+    },
+    ("strength", "advanced"): {"sets": 5, "reps": "3", "load_pct": 85, "rest": 180, "load_cap": 95},
+    ("weight_loss", "beginner"): {
+        "sets": 2,
+        "reps": "12-15",
+        "load_pct": 55,
+        "rest": 60,
+        "load_cap": 65,
+    },
+    ("weight_loss", "intermediate"): {
+        "sets": 3,
+        "reps": "12-15",
+        "load_pct": 60,
+        "rest": 60,
+        "load_cap": 72,
+    },
+    ("weight_loss", "advanced"): {
+        "sets": 3,
+        "reps": "10-15",
+        "load_pct": 65,
+        "rest": 60,
+        "load_cap": 78,
+    },
+    ("fitness", "beginner"): {"sets": 2, "reps": "12", "load_pct": 55, "rest": 60, "load_cap": 62},
+    ("fitness", "intermediate"): {
+        "sets": 3,
+        "reps": "12",
+        "load_pct": 60,
+        "rest": 75,
+        "load_cap": 68,
+    },
+    ("fitness", "advanced"): {
+        "sets": 3,
+        "reps": "10-12",
+        "load_pct": 65,
+        "rest": 75,
+        "load_cap": 72,
+    },
 }
 
 SPLITS: dict[int, list[str]] = {
@@ -112,7 +172,7 @@ CONSTRAINT_SWAPS: dict[str, dict[str, str]] = {
     "knee": {"back_squat": "leg_press", "lunge": "leg_press"},
     "shoulder": {"overhead_press": "face_pull", "bench_press": "lat_pulldown"},
     "lower_back": {"deadlift": "leg_curl", "back_squat": "leg_press"},
-    "wrist": {"bench_press": "push_up_placeholder", "barbell_row": "lat_pulldown"},
+    "wrist": {"bench_press": "machine_chest_press", "barbell_row": "lat_pulldown"},
 }
 
 
@@ -183,7 +243,7 @@ def generate_program(
     for wk in range(1, weeks_count + 1):
         # progression قطعی: هر ۳ هفته ۵٪ به لود اضافه می‌شود (نه LLM)
         wave = (wk - 1) // 3
-        load_pct = min(rule["load_pct"] + wave * 5, 95)
+        load_pct = min(rule["load_pct"] + wave * 5, rule.get("load_cap", 95))
         week = WeekPlan(week_number=wk, focus=goal)
         day_index = (wk - 1) % days_per_week  # شروع روز در گردش هفتگی
         for d in range(days_per_week):

@@ -24,7 +24,9 @@ def test_numbers_come_only_from_rules_table():
             assert ex.reps == rule["reps"]
             assert ex.rest_seconds == rule["rest"]
             # progression قطعی: هر ۳ هفته ۵٪ — نه تصادفی/LLM
-            expected = min(rule["load_pct"] + ((week.week_number - 1) // 3) * 5, 95)
+            expected = min(
+                rule["load_pct"] + ((week.week_number - 1) // 3) * 5, rule.get("load_cap", 95)
+            )
             assert ex.load_pct == expected
 
 
