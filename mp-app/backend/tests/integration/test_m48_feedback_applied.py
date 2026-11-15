@@ -320,3 +320,151 @@ def test_explicit_sets_done_is_honoured(client: TestClient) -> None:
     after = _week_rows(pid, 2)
     after_row = next(a for a in after if a["exercise_id"] == squat_id)
     assert after_row["sets"] == target["sets"] - 2
+
+
+# ── G13 — امتیاز آمادگی از بازخورد واقعی ──
+
+
+def test_readiness_report_is_insufficient_without_program(client: TestClient) -> None:
+    h = _staff()
+    n = next(_counter)
+    m = client.post(
+        "/api/v1/members",
+        json={"phone": f"09{n:09d}", "full_name": f"بی‌برنامه {n}", "gender": "male"},
+        headers=h,
+    )
+    mid = m.json()["id"]
+
+    body = client.get(f"/api/v1/programs/member/{mid}/readiness", headers=h).json()
+
+    assert body["program_id"] is None
+    assert body["readiness"] is None
+    assert "هیچ برنامه‌ای" in body["reason"]
+
+
+def test_readiness_report_is_insufficient_without_feedback(client: TestClient) -> None:
+    h = _staff()
+    mid, pid = _member_with_program(client, h)
+
+    body = client.get(f"/api/v1/programs/member/{mid}/readiness", headers=h).json()
+
+    assert body["program_id"] == pid
+    assert body["readiness"] is None
+    assert "هیچ بازخورد ستی" in body["reason"]
+
+
+def test_fatigued_feedback_lowers_readiness_and_recommends_deload(client: TestClient) -> None:
+    """افت تکرار + درد شدید + RIR پایین ⇒ کاهش خودکار حجم."""
+    h = _staff()
+    mid, pid = _member_with_program(client, h)
+
+    client.post(
+        "/api/v1/programs/set-feedback",
+        json={
+            "member_id": mid,
+            "program_id": pid,
+            "entries": [
+                {
+                    "movement_id": "back_squat",
+                    "weight": 70,
+                    "target_reps": 10,
+                    "reps_done": 4,
+                    "rir": 0,
+                    "soreness": 9,
+                }
+            ],
+        },
+        headers=h,
+    )
+
+    body = client.get(f"/api/v1/programs/member/{mid}/readiness", headers=h).json()
+    r = body["readiness"]
+
+    assert r is not None
+    assert r["score"] < 55
+    assert r["band"] == "fatigued"
+    assert r["recommendation"] == "deload"
+    assert r["volume_delta_sets"] == -1
+    assert r["actionable"] is True
+
+
+def test_clean_feedback_keeps_volume(client: TestClient) -> None:
+    h = _staff()
+    mid, pid = _member_with_program(client, h)
+
+    client.post(
+        "/api/v1/programs/set-feedback",
+        json={
+            "member_id": mid,
+            "program_id": pid,
+            "entries": [
+                {
+                    "movement_id": "back_squat",
+                    "weight": 60,
+                    "target_reps": 10,
+                    "reps_done": 10,
+                    "rir": 2,
+                    "soreness": 2,
+                }
+            ],
+        },
+        headers=h,
+    )
+
+    r = client.get(f"/api/v1/programs/member/{mid}/readiness", headers=h).json()["readiness"]
+
+    assert r["score"] >= 55
+    assert r["recommendation"] == "keep"
+    assert r["volume_delta_sets"] == 0
+
+
+def test_readiness_declares_unknown_rir_instead_of_guessing(client: TestClient) -> None:
+    """RIR هدف در برنامه ذخیره نمی‌شود — نباید از هوا ساخته شود."""
+    h = _staff()
+    mid, pid = _member_with_program(client, h)
+
+    client.post(
+        "/api/v1/programs/set-feedback",
+        json={
+            "member_id": mid,
+            "program_id": pid,
+            "entries": [
+                {
+                    "movement_id": "back_squat",
+                    "weight": 60,
+                    "target_reps": 10,
+                    "reps_done": 10,
+                    "rir": 2,
+                    "soreness": 2,
+                }
+            ],
+        },
+        headers=h,
+    )
+
+    body = client.get(f"/api/v1/programs/member/{mid}/readiness", headers=h).json()
+
+    assert "rir_mismatch" in body["readiness"]["missing_signals"]
+    assert "RIR هدف" in body["note"]
+    # سیگنال نامعلوم حذف شده، ولی بقیه امتیاز معتبر دارند
+    known = [s for s in body["readiness"]["signals"] if s["score"] is not None]
+    assert known, "حداقل یک سیگنال باید امتیاز داشته باشد"
+    assert body["readiness"]["score"] is not None
+
+
+def test_member_cannot_read_another_members_readiness(client: TestClient) -> None:
+    h = _staff()
+    mid, _ = _member_with_program(client, h)
+
+    from app.security.jwt import create_access_token
+    from db.base import get_session_factory
+    from db.models import User
+
+    n = next(_counter)
+    with get_session_factory()() as s:
+        u = User(phone=f"09{n:09d}", full_name=f"other-{n}", role="member")
+        s.add(u)
+        s.commit()
+        other = {"Authorization": f"Bearer {create_access_token(u.id, u.role)}"}
+
+    assert client.get(f"/api/v1/programs/member/{mid}/readiness", headers=other).status_code == 403

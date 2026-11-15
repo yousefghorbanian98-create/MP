@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { approveProgram, fetchProgramsSummary, rejectProgram } from "../lib/api";
+import { ReadinessPanel } from "../components/ReadinessPanel";
 import { VolumePanel } from "../components/VolumePanel";
 import { fa, useApi } from "../lib/useApi";
 
@@ -193,8 +194,9 @@ export function Programs() {
     </motion.div>
 
     {items.length > 0 && (
-      <div className="mt-4">
+      <div className="mt-4 space-y-4">
         <VolumePanel memberId={items[0].member_id} />
+        <ReadinessPanel />
       </div>
     )}
     </>

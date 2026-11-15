@@ -628,3 +628,43 @@ export function browseFoods(
     signal,
   );
 }
+
+// ── G13 — آمادگی/خستگی ──
+
+export interface ReadinessSignal {
+  name: string;
+  value: number | null;
+  score: number | null;
+  reason: string;
+}
+
+export interface ReadinessReport {
+  member_id: number;
+  program_id: number | null;
+  readiness: {
+    score: number | null;
+    band: "ready" | "monitor" | "fatigued" | "insufficient" | string;
+    recommendation: "increase" | "keep" | "deload" | "insufficient" | string;
+    volume_delta_sets: number;
+    signals: ReadinessSignal[];
+    missing_signals: string[];
+    reason: string;
+    weights: Record<string, number>;
+    thresholds: {
+      deload_below: number;
+      recovery_below: number;
+      rir_tolerance: number;
+      volume_spike_ratio: number;
+    };
+    actionable?: boolean;
+    rule_version: string;
+  } | null;
+  data_counts?: { feedback_rows: number; sets_last_7_days: number; sets_prior_7_days: number };
+  reason: string;
+  note?: string;
+  rule_version: string;
+}
+
+export function fetchReadiness(memberId: number, token = getToken(), signal?: AbortSignal) {
+  return getJson<ReadinessReport>(`/programs/member/${memberId}/readiness`, token, signal);
+}

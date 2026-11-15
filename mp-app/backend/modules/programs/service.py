@@ -350,3 +350,110 @@ def weekly_volume_report(db, *, member_id: int, level: str = "intermediate") -> 
         ),
         "rule_version": VOLUME_REPORT_VERSION,
     }
+
+
+# ── G13 — مدل آمادگی/خستگی برای یک برنامهٔ واقعی [finn] ──
+
+READINESS_REPORT_VERSION = "readiness-report-1.0"
+
+
+def readiness_report(db, *, member_id: int) -> dict:
+    """امتیاز آمادگی عضو از بازخوردهای واقعی ثبت‌شده.
+
+    داده‌ها همه از `SetFeedback` می‌آیند:
+      * آخرین ست گزارش‌شده ← تکرار و RIR (سیگنال اصلی)
+      * مجموع ست‌های گزارش‌شده در ۷ روز اخیر در برابر ۷ روز قبل ← پرش حجم
+      * حداکثر درد عضلانی ثبت‌شده ← سیگنال درد
+
+    هدف تکرار و RIR از خود برنامه (`ProgramExercise.reps` و `load_pct`)
+    نمی‌آید چون RIR هدف در برنامه ذخیره نمی‌شود؛ به‌جایش از
+    `target_reps` همان گزارش استفاده می‌شود — که دقیقاً همان چیزی است
+    که عضو در جلسه دیده. این صادقانه‌تر از حدس زدن یک RIR هدف است.
+    """
+    from datetime import UTC, datetime, timedelta
+
+    from db.models import SetFeedback, WorkoutProgram
+    from engine.readiness import assess_readiness
+
+    program = db.scalar(
+        select(WorkoutProgram)
+        .where(WorkoutProgram.member_id == member_id)
+        .order_by(WorkoutProgram.id.desc())
+    )
+    if program is None:
+        return {
+            "member_id": member_id,
+            "program_id": None,
+            "readiness": None,
+            "reason": "برای این عضو هیچ برنامه‌ای ثبت نشده — آمادگی سنجیده نمی‌شود",
+            "rule_version": READINESS_REPORT_VERSION,
+        }
+
+    rows = list(
+        db.scalars(
+            select(SetFeedback)
+            .where(SetFeedback.program_id == program.id)
+            .order_by(SetFeedback.id.desc())
+        ).all()
+    )
+    if not rows:
+        return {
+            "member_id": member_id,
+            "program_id": program.id,
+            "readiness": None,
+            "reason": "هیچ بازخورد ستی برای این برنامه ثبت نشده — آمادگی سنجیده نمی‌شود",
+            "rule_version": READINESS_REPORT_VERSION,
+        }
+
+    latest = rows[0]
+    now = datetime.now(UTC)
+    cutoff_recent = now - timedelta(days=7)
+    cutoff_prev = now - timedelta(days=14)
+
+    def _created(r):
+        c = r.created_at
+        if c is None:
+            return None
+        return c if c.tzinfo is not None else c.replace(tzinfo=UTC)
+
+    recent_sets = 0
+    prev_sets = 0
+    for r in rows:
+        c = _created(r)
+        if c is None:
+            continue
+        if c >= cutoff_recent:
+            recent_sets += 1
+        elif c >= cutoff_prev:
+            prev_sets += 1
+
+    max_soreness = max((r.soreness or 0 for r in rows), default=0) or None
+
+    result = assess_readiness(
+        target_reps=int(latest.target_reps or 0),
+        reps_done=int(latest.reps_done or 0),
+        target_rir=None,  # RIR هدف در برنامه ذخیره نمی‌شود — صادقانه None
+        actual_rir=latest.rir,
+        soreness=max_soreness,
+        this_week_sets=recent_sets,
+        last_week_sets=prev_sets,
+    )
+
+    payload = result.to_dict()
+    payload["actionable"] = result.recommendation == "deload" and result.volume_delta_sets < 0
+    return {
+        "member_id": member_id,
+        "program_id": program.id,
+        "readiness": payload,
+        "data_counts": {
+            "feedback_rows": len(rows),
+            "sets_last_7_days": recent_sets,
+            "sets_prior_7_days": prev_sets,
+        },
+        "reason": result.reason,
+        "note": (
+            "RIR هدف در برنامه ذخیره نمی‌شود، پس سیگنال «اختلاف RIR» نامعلوم می‌ماند "
+            "و وزنش به بقیهٔ سیگنال‌ها توزیع می‌شود — نه اینکه صفر فرض شود."
+        ),
+        "rule_version": READINESS_REPORT_VERSION,
+    }

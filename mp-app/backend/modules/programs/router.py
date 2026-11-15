@@ -66,6 +66,17 @@ def reject_program(program_id: int, payload: RejectIn, db: DbSession, user: Curr
 
 
 @router.get(
+    "/member/{member_id}/readiness",
+    summary="امتیاز آمادگی/خستگی از بازخورد واقعی + توصیهٔ کاهش خودکار حجم (G13)",
+)
+def member_readiness(member_id: int, db: DbSession, user: CurrentUser):
+    from app.security.ownership import ensure_member_scope
+
+    ensure_member_scope(db, user, member_id)
+    return service.readiness_report(db, member_id=member_id)
+
+
+@router.get(
     "/member/{member_id}/volume",
     summary="حجم هفتگی هر گروه عضلانی + نشانگرهای MV/MEV/MAV/MRV (G2)",
 )
