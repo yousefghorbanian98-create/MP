@@ -133,6 +133,19 @@ unformatted: File would be reformatted
     |
 
 unformatted: File would be reformatted
+   --> engine/scoring.py:136:16
+    |
+135 |             f"تغییر {delta} در برابر SDC={sdc} ← "
+    -             + ("تغییر واقعی (فراتر از نویز بازتست)" if real else "در محدودهٔ نویز بازتست — بهبود/افت اعلام نشود")
+136 +             + (
+137 +                 "تغییر واقعی (فراتر از نویز بازتست)"
+138 +                 if real
+139 +                 else "در محدودهٔ نویز بازتست — بهبود/افت اعلام نشود"
+140 +             )
+141 |         ),
+    |
+
+unformatted: File would be reformatted
    --> scripts/build_progressions.py:43:12
     |
 42  | LADDERS: tuple[Ladder, ...] = (
@@ -1114,4 +1127,19 @@ unformatted: File would be reformatted
 55 |     assert row.category == "strength"
    |
 
-12 files would be reformatted, 163 files already formatted
+unformatted: File would be reformatted
+  --> tests/unit/test_scoring.py:51:35
+   |
+50 |     norm = {
+   -         "test_key": "pushup_1min", "sex": "m", "age_min": 20, "age_max": 29,
+   -         "percentiles": PUSHUP_M_2029, "source": "https://fitnessnorms.com/strength/push-ups/",
+51 +         "test_key": "pushup_1min",
+52 +         "sex": "m",
+53 +         "age_min": 20,
+54 +         "age_max": 29,
+55 +         "percentiles": PUSHUP_M_2029,
+56 +         "source": "https://fitnessnorms.com/strength/push-ups/",
+57 |     }
+   |
+
+14 files would be reformatted, 163 files already formatted
