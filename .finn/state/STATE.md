@@ -58,3 +58,28 @@
 1. Flutter SDK محلی نیست → تست‌های Dart محلی اجرا نشدند (اولین اجرا در CI).
 2. `alembic check` drift دارد (۱۴ عملیات) — پیش از M45 بود؛ migration در M46.
 3. APK تازه با اصلاحات Android ساخته نشده.
+
+## M46 — بازبینی و ترمیم کامل (2026-11-15)
+HEAD `4ef7c08` · CI 43746770460 سبز ۴/۴ · **۱۵ باگ واقعی رفع شد**
+
+### رفع‌شده
+| # | باگ | کشف با |
+|---|---|---|
+| 1 | Settings کاملاً دکوری (flags در useState) | ممیزی UI |
+| 2 | `GET /admin/flags` نداشت | TDD |
+| 3 | `/members/me` نقش نمی‌داد | ممیزی TopBar |
+| 4 | جست‌وجو در ۶ صفحه بی‌اثر | grep |
+| 5 | عنوان finance/analytics گم | Sidebar vs TopBar |
+| 6 | هویت hardcoded «مربی مهدی» | خواندن کد |
+| 7 | `configure_logging` هرگز صدا زده نمی‌شد | vulture |
+| 8 | استخر اتصال ۱۵ < ۴۰ ترد | locust |
+| 9 | SQLite بدون WAL | locust |
+| 10 | **FK خاموش** → ۳ خرابیِ خاموش | PRAGMA foreign_keys=ON |
+| 11 | `exercise_id` بدون کاتالوگ | تست FK |
+| 12 | `approved_by=0` (TODO رهاشده) | تست FK |
+| 13 | vite بدون proxy → فرانت به بک نمی‌رسید | تست زنده |
+| 14 | ۴ دکمهٔ محصول بدون onClick | ممیزی دکمه‌ها |
+| 15 | `ProgramOut` بدون `approved_by` | تست زنده |
+
+### گیت‌ها
+backend ۳۵۱ · ruff پاک · bandit ۰H/۰M · tsc ۰ · vitest ۳۰ · semgrep ۰/۱۴۹ فایل
