@@ -127,15 +127,17 @@ def prescribe_axis_work(
     ]
     total = sum(e["fatigue_units"] for e in entries)
     if total > fatigue_budget:
-        for plan in axis_plans.values():
-            for mid, role in zip(plan["movement_ids"], plan["roles"], strict=True):
-                if total <= fatigue_budget:
-                    break
-                if role == "maintain" and sets_by_movement.get(mid, 0) > 0:
-                    cut = min(sets_by_movement[mid], total - fatigue_budget)
-                    sets_by_movement[mid] -= cut
-                    total -= cut
-                    trimmed.append(f"{mid}: -{cut} ست (بودجهٔ خستگی)")
+        # اول maintain، سپس carrier — هرگز direct (قاعدهٔ ثبت‌شده)
+        for role_cut in ("maintain", "carrier"):
+            for plan in axis_plans.values():
+                for mid, role in zip(plan["movement_ids"], plan["roles"], strict=True):
+                    if total <= fatigue_budget:
+                        break
+                    if role == role_cut and sets_by_movement.get(mid, 0) > 0:
+                        cut = min(sets_by_movement[mid], total - fatigue_budget)
+                        sets_by_movement[mid] -= cut
+                        total -= cut
+                        trimmed.append(f"{mid}: -{cut} ست (بودجهٔ خستگی — {role_cut})")
         entries = [
             attribute_load(movement_id=mid, axis_coverage=selected[mid]["axis_coverage"], sets=sets)
             for mid, sets in sets_by_movement.items()

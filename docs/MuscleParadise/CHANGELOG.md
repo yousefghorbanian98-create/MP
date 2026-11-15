@@ -4,6 +4,12 @@
 
 ## [Unreleased]
 
+### Added — M37/M38 (2026-11-14) — UI ارزیابی + موتور تجویز محور-آگاه
+- کلاینت: صفحهٔ «توانایی‌ها» (ثبت آزمون + ماتریس ۱۴ محور با چیپ‌های چهار وضعیت، نامعلوم = «—») + تب ناوبری + ۴ تست ویجت
+- `engine/axis_prescription.py` (axis-prescription-1.0): انتخاب حرکت از تصمیم چهارگانه + dedup چندمحوره + خستگی-یک‌بار + بودجه (maintain←carrier، هرگز direct)
+- G1: `engine/set_feedback.py` (set-feedback-1.0) + جدول set_feedbacks + API بازخورد ست (RIR/درد) + پیشنهاد جلسهٔ بعد
+- هارنس G4 تجویز: ۳/۳ سبز (پوشش/گیت جمعیتی/حسابداری بار)
+
 ### Added — M36-c3 (2026-11-14) — بازبینی ادمین + audit
 - endpoint بازبینی (approve/reject با دلیل اجباری) + AuditLog + جدایی وظیفه (manager/admin فقط) — ۵ تست یکپارچه
 
