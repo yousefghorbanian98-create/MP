@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+### Added — M33-c3 (2026-11-14) — برچسب‌زنی محوری + برچسب فارسی
+- موتور برچسب‌زنی دترمینیستیک `scripts/tag_axis_coverage.py`: ۲۳ قاعدهٔ ثبت‌شده (max-merge) → بردار پوشش ۱۴محوره برای ۸۷۶/۸۷۶ حرکت
+- نام فارسی candidate (۸۶٪ پوشش واژه‌نامه) + وضعیت review (candidate/verified) + rule-evidence (`M33c3-axis-tagging`)
+- مهاجرت `e5f6a1b2c3d4` (name_fa/review_status/review_meta) + ۶ تست (۲۱۱ کل)
+
 ### Added — M33-c2 (2026-11-14) — schema بردار ۱۴محوره
 - فیلدهای `axis_coverage` (بردار وزنی ۱..۱۴ با بازهٔ ۰..۱) + `intensity_band` + `progression_key` روی `catalog_exercises` + مهاجرت `d4e5f6a1b2c3`
 - نگهبان `validate_coverage` + ۳ تست مدل (۲۰۵ کل)

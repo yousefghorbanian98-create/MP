@@ -67,6 +67,11 @@ class CatalogExercise(TimestampMixin, Base):
     intensity_band: Mapped[str] = mapped_column(String(20), default="", nullable=False)
     # کلید خانوادهٔ نردبان پیشرفت (M34) — خالی = بدون نردبان
     progression_key: Mapped[str] = mapped_column(String(60), default="", nullable=False)
+    # M33-c3: نام فارسی candidate + وضعیت review (candidate تا بازبینی انسانی/ایجنت)
+    name_fa: Mapped[str] = mapped_column(String(160), default="", nullable=False)
+    review_status: Mapped[str] = mapped_column(String(16), default="candidate", nullable=False)
+    # JSON: {"name_quality": float, "rules": [rule_id], "tagger": str, "notes": str}
+    review_meta: Mapped[str] = mapped_column(Text, default="{}", nullable=False)
 
 
 class FoodItem(TimestampMixin, Base):
