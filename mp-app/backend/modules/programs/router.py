@@ -37,9 +37,10 @@ def list_member_programs(member_id: int, db: DbSession, user: CurrentUser):
     response_model=ProgramOut,
     summary="ثبت خروجی موتور قواعد به‌صورت draft (G8 — M15)",
 )
-def create_from_engine(payload: ProgramFromEngineIn, db: DbSession):
+def create_from_engine(payload: ProgramFromEngineIn, db: DbSession, user: CurrentUser):
+    # M46-c4 — coach_id از JWT واقعی، نه None/0 (بی‌صدا در FK خاموش گم می‌شد)
     return service.create_program_from_engine_output(
-        db, payload.member_id, payload.model_dump(), coach_id=None
+        db, payload.member_id, payload.model_dump(), coach_id=user.id
     )
 
 
@@ -51,15 +52,17 @@ def get_program(program_id: int, db: DbSession, user: CurrentUser):
 @router.post(
     "/{program_id}/approve", response_model=ProgramOut, summary="تأیید برنامه توسط مربی (US-203)"
 )
-def approve_program(program_id: int, db: DbSession):
-    return service.approve_program(db, program_id, coach_id=0)  # M08: coach_id واقعی از JWT
+def approve_program(program_id: int, db: DbSession, user: CurrentUser):
+    # M46-c4 — پیش‌تر `coach_id=0  # M08: coach_id واقعی از JWT` بود: یک TODO
+    # که هرگز انجام نشد و ستون approved_by را با ۰ (کاربر ناموجود) پر می‌کرد.
+    return service.approve_program(db, program_id, coach_id=user.id)
 
 
 @router.post(
     "/{program_id}/reject", response_model=ProgramOut, summary="رد برنامه با دلیل (US-203)"
 )
-def reject_program(program_id: int, payload: RejectIn, db: DbSession):
-    return service.reject_program(db, program_id, coach_id=0, reason=payload.reason)
+def reject_program(program_id: int, payload: RejectIn, db: DbSession, user: CurrentUser):
+    return service.reject_program(db, program_id, coach_id=user.id, reason=payload.reason)
 
 
 @router.post("/set-feedback", summary="ثبت بازخورد ست‌به‌ست (RIR/درد) + پیشنهاد جلسهٔ بعد (G1)")

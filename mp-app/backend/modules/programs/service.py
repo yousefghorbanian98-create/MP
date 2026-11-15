@@ -95,6 +95,22 @@ def create_program_from_engine_output(
     )
     db.add(program)
     db.flush()
+
+    # M46-c4 — پیش از درج حرکات، کاتالوگ را تضمین کن.
+    # `program_exercises.exercise_id` یک FK واقعی است و LIBRARY موتور
+    # هیچ seedی در DB نداشت؛ نتیجه ردیف یتیم (FK خاموش) یا ۵۰۰ (FK روشن).
+    from engine.catalog_sync import ensure_exercises
+
+    ensure_exercises(
+        db,
+        {
+            ex["exercise_id"]
+            for week in engine_output.get("weeks", [])
+            for ex in week.get("exercises", [])
+            if "exercise_id" in ex
+        },
+    )
+
     for week in engine_output.get("weeks", []):
         w = ProgramWeek(
             program_id=program.id,
