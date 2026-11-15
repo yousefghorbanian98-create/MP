@@ -35,10 +35,7 @@ const NON_STUDIO_CONSUMERS: Record<string, string> = {
   "/api/v1/classes/cancel": "اپ Dart — لغو رزرو در نقشهٔ راه؛ API آماده و تست‌شده",
   // پرداخت: D-024 پروژهٔ پژوهشی — درگاه واقعی خارج از دامنه
   "/api/v1/payments/wallet/charge": "شارژ کیف پول — نیاز به درگاه؛ فقط API + تست",
-  "/api/v1/payments/wallet/pay": "پرداخت از کیف پول — اپ Dart صفحهٔ کیف پول دارد، پرداخت در راه",
   "/api/v1/payments/invoice/{member_id}": "صورتحساب برای چاپ در پذیرش — API + تست",
-  "/api/v1/payments/{payment_id}/fail": "اعلام شکست تراکنش — callback درگاه (Q6 باز)",
-  "/api/v1/payments/{payment_id}/receipt": "رسید پرداخت — callback درگاه (Q6 باز)",
   "/api/v1/members/memberships/{membership_id}/invoice": "صورتحساب اشتراک — API + تست",
   "/api/v1/members/memberships/from-plan": "خرید اشتراک از پلن — درگاه لازم است",
   "/api/v1/members/memberships/plans": "پلن‌های جنسیت‌محور — اپ Dart از /members/memberships می‌خواند",

@@ -8,8 +8,11 @@ from pydantic import BaseModel
 from app.deps import CurrentUser, DbSession, require_permission
 from modules.payments import service
 from modules.payments.schemas import (
+    GatewayCallbackIn,
     PaymentCreate,
     PaymentOut,
+    PaymentStartIn,
+    PaymentStartOut,
     PaymentVerify,
     WalletBalanceOut,
     WalletCharge,
@@ -22,13 +25,38 @@ router = APIRouter(
 
 
 @router.post("", response_model=PaymentOut, summary="ایجاد پرداخت (US-302)")
-def create_payment(payload: PaymentCreate, db: DbSession):
+def create_payment(payload: PaymentCreate, db: DbSession, user: CurrentUser):
     return service.create_payment(
-        db, payload.member_id, payload.amount_rial, payload.method, payload.description
+        db,
+        payload.member_id,
+        payload.amount_rial,
+        payload.method,
+        payload.description,
+        user=user,
     )
 
 
-@router.post("/{payment_id}/verify", response_model=PaymentOut, summary="تأیید پرداخت")
+@router.post(
+    "/{payment_id}/start",
+    response_model=PaymentStartOut,
+    summary="آغاز پرداخت درگاه (authority + redirect) — Q6",
+)
+def start_payment(payment_id: int, payload: PaymentStartIn, db: DbSession):
+    return service.start_payment(db, payment_id, payload.callback_url)
+
+
+@router.post(
+    "/{payment_id}/callback",
+    response_model=PaymentOut,
+    summary="callback درگاه — تأیید با authority و امضای مبلغ",
+)
+def gateway_callback(payment_id: int, payload: GatewayCallbackIn, db: DbSession):
+    return service.verify_with_gateway(
+        db, payment_id, authority=payload.authority, callback_token=payload.callback_token
+    )
+
+
+@router.post("/{payment_id}/verify", response_model=PaymentOut, summary="تأیید دستی پرداخت (پذیرش)")
 def verify_payment(payment_id: int, payload: PaymentVerify, db: DbSession):
     return service.verify_payment(db, payment_id, payload.reference_id)
 

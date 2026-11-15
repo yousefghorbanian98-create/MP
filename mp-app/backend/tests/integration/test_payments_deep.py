@@ -139,8 +139,13 @@ def test_gateway_mock_flow_and_amount_mismatch():
         gw.verify(start.authority, 49999)  # مبلغ جعلی ← رد
     ok = gw.verify(start.authority, 50000)
     assert ok.ok and ok.reference_id.startswith("MOCKREF-")
-    with pytest.raises(PaymentGatewayError):
-        gw.verify(start.authority, 50000)  # reuse ← رد
+    # تکرار همان verify دیگر «خطا» نیست: درگاه بی‌حالت است و اعتبار از
+    # امضای داخل authority می‌آید (باگ چندپروسه‌ای: با حافظهٔ محلی،
+    # callback در worker دیگر «تراکنش یافت نشد» می‌گرفت). جلوگیری از
+    # تأیید دوبارهٔ **تراکنش** در service.verify_with_gateway است
+    # (status != pending ← already_processed) و در Q6 تست شده.
+    again = gw.verify(start.authority, 50000)
+    assert again.ok
 
 
 def test_signed_token_prevents_amount_forgery():

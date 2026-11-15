@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { PaymentPanel } from "../components/PaymentPanel";
 import { useEffect, useState } from "react";
 import {
   fetchCommission,
@@ -103,6 +104,8 @@ export function Finance() {
           </motion.div>
         )}
       </div>
+
+      <PaymentPanel />
 
       <div className="glass-card space-y-4 p-5">
         <h2 className="text-sm font-bold">کمیسیون مربی</h2>

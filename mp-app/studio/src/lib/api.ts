@@ -470,6 +470,73 @@ export function fetchMemberVolume(
   );
 }
 
+// ── Q6 — درگاه پرداخت (start / callback) ──
+
+export interface PaymentRow {
+  id: number;
+  member_id: number;
+  amount_rial: number;
+  method: string;
+  status: string;
+  reference_id: string;
+  gateway_authority?: string;
+  description: string;
+  paid_at: string | null;
+}
+
+export interface PaymentStart {
+  payment_id: number;
+  authority: string;
+  redirect_url: string;
+  amount_rial: number;
+  callback_token: string;
+}
+
+export function createPayment(
+  body: { member_id: number; amount_rial: number; method: string; description?: string },
+  token = getToken(),
+) {
+  return postJson<PaymentRow>("/payments", body, token);
+}
+
+export interface Receipt {
+  payment_id: number;
+  member_id: number;
+  amount_rial: number;
+  paid_at: string | null;
+  reference_id: string;
+  [k: string]: unknown;
+}
+
+export function fetchReceipt(paymentId: number, token = getToken(), signal?: AbortSignal) {
+  return getJson<Receipt>(`/payments/${paymentId}/receipt`, token, signal);
+}
+
+export function failPayment(paymentId: number, token = getToken()) {
+  return postJson<PaymentRow>(`/payments/${paymentId}/fail`, {}, token);
+}
+
+export function startPayment(paymentId: number, callbackUrl = "", token = getToken()) {
+  return postJson<PaymentStart>(
+    `/payments/${paymentId}/start`,
+    { callback_url: callbackUrl },
+    token,
+  );
+}
+
+export function confirmGatewayCallback(
+  paymentId: number,
+  authority: string,
+  callbackToken: string,
+  token = getToken(),
+) {
+  return postJson<PaymentRow>(
+    `/payments/${paymentId}/callback`,
+    { authority, callback_token: callbackToken },
+    token,
+  );
+}
+
 // ── autoreg-1.0 — وزنهٔ پیشنهادی ست بعدی (POST /ai/suggest-weight) ──
 
 export interface WeightSuggestion {

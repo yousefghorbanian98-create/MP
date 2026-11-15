@@ -18,7 +18,13 @@ def create_payment(
     amount_rial: int,
     method: str = "zarinpal",
     description: str = "",
+    user=None,
 ) -> Payment:
+    from app.security.ownership import ensure_member_scope
+
+    # G8/D-005 — عضو فقط برای خودش؛ کادر برای هر عضو. بدون این، هر عضوی
+    # می‌توانست برای هر عضو دیگری تراکنش بسازد.
+    ensure_member_scope(db, user, member_id)
     if db.get(Member, member_id) is None:
         raise NotFoundError("عضو یافت نشد")
     payment = Payment(
@@ -50,6 +56,78 @@ def verify_payment(db: Session, payment_id: int, reference_id: str = "") -> Paym
 
     audit(db, None, "payment_verified", "payment", payment.id, {"amount_rial": payment.amount_rial})
     return payment
+
+
+def start_payment(db: Session, payment_id: int, callback_url: str = "") -> dict:
+    """آغاز پرداخت درگاه — authority از درگاه واقعی، نه از ورودی کاربر.
+
+    پیش از این `gateway.py` (Mock + زرین‌پال + امضای HMAC) کامل نوشته شده
+    بود ولی **هیچ مصرف‌کننده‌ای نداشت**: پرداخت همیشه pending می‌شد و
+    verify با هر reference_id دلخواه «پرداخت‌شده» اعلام می‌کرد.
+    """
+    from modules.payments.gateway import PaymentGatewayError, get_gateway, signed_token
+
+    payment = db.get(Payment, payment_id)
+    if payment is None:
+        raise NotFoundError("پرداخت یافت نشد")
+    if payment.status != "pending":
+        raise ApiError("این پرداخت قبلاً پردازش شده است", code="already_processed")
+    if payment.method == "wallet":
+        raise ApiError("پرداخت کیف‌پول مسیر درگاه ندارد", code="wallet_not_gateway")
+    if payment.gateway_authority:
+        # اگر دو بار authority صادر شود، کدام تراکنش واقعی است؟ هیچ‌کدام معلوم نیست.
+        raise ApiError("این پرداخت قبلاً در درگاه آغاز شده است", code="already_started")
+
+    gw = get_gateway()
+    try:
+        started = gw.start(payment.amount_rial, payment.description or "", callback_url)
+    except PaymentGatewayError as exc:
+        raise ApiError(str(exc), code=exc.code) from exc
+
+    payment.gateway_authority = started.authority
+    db.commit()
+    db.refresh(payment)
+    from modules.admin.service import audit
+
+    audit(db, None, "payment_started", "payment", payment.id, {"amount_rial": payment.amount_rial})
+    return {
+        "payment_id": payment.id,
+        "authority": started.authority,
+        "redirect_url": started.redirect_url,
+        "amount_rial": payment.amount_rial,
+        # امضای HMAC تا callback نتواند مبلغ را عوض کند (G8-مالی)
+        "callback_token": signed_token(payment.id, payment.amount_rial),
+    }
+
+
+def verify_with_gateway(
+    db: Session, payment_id: int, authority: str = "", callback_token: str = ""
+) -> Payment:
+    """تأیید واقعی: authority باید همان باشد که درگاه صادر کرده، و مبلغ هم‌خوان."""
+    from modules.payments.gateway import PaymentGatewayError, get_gateway, verify_token
+
+    payment = db.get(Payment, payment_id)
+    if payment is None:
+        raise NotFoundError("پرداخت یافت نشد")
+    if payment.status != "pending":
+        raise ApiError("این پرداخت قبلاً پردازش شده است", code="already_processed")
+    if not payment.gateway_authority:
+        raise ApiError("این پرداخت هنوز در درگاه آغاز نشده است", code="not_started")
+    if callback_token and not verify_token(payment_id, payment.amount_rial, callback_token):
+        raise ApiError(
+            "امضای callback نامعتبر است — مبلغ یا شناسه دست‌کاری شده", code="bad_signature"
+        )
+    if authority and authority != payment.gateway_authority:
+        raise ApiError("authority با تراکنش آغازشده هم‌خوان نیست", code="authority_mismatch")
+
+    gw = get_gateway()
+    try:
+        result = gw.verify(payment.gateway_authority, payment.amount_rial)
+    except PaymentGatewayError as exc:
+        raise ApiError(str(exc), code=exc.code) from exc
+    if not result.ok:
+        raise ApiError("درگاه تأیید نکرد", code="gateway_rejected")
+    return verify_payment(db, payment_id, reference_id=result.reference_id)
 
 
 def fail_payment(db: Session, payment_id: int) -> Payment:

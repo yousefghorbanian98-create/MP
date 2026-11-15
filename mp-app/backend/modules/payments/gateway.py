@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import hashlib
 import hmac
+import secrets
 from dataclasses import dataclass
 from typing import Protocol
 
@@ -43,28 +44,46 @@ class GatewayAdapter(Protocol):
 
 
 class MockGateway:
-    """درگاه تست — deterministic برای dev/e2e (D-008)."""
+    """درگاه تست — deterministic برای dev/e2e (D-008).
 
-    def __init__(self):
-        self._issued: dict[str, int] = {}  # authority → amount
+    نکتهٔ مهم (باگ تولیدی): نسخهٔ قبلی authorityها را در یک دیکشنری
+    **درون‌حافظه** نگه می‌داشت. با uvicorn `--workers 4` هر درخواست در
+    پروسهٔ دیگری اجرا می‌شود، پس `start` در worker A و `verify` در worker B
+    ⇒ «تراکنش یافت نشد» با وجود پرداخت کاملاً معتبر. همان اتفاق با هر
+    کِش محلی در production هم می‌افتد.
+
+    حالا اعتبار authority از **خودِ authority** می‌آید: شناسه شامل مبلغ و
+    امضای HMAC با کلید سرور است، پس verify آماری/بی‌اثر است و به حافظهٔ
+    پروسه وابسته نیست.
+    """
+
+    def _sign(self, authority: str, amount_rial: int) -> str:
+        return hmac.new(
+            settings.secret_key.encode(),
+            f"{authority}:{amount_rial}".encode(),
+            hashlib.sha256,
+        ).hexdigest()[:16]
 
     def start(self, amount_rial: int, description: str, callback_url: str) -> GatewayStartResult:
-        authority = (
-            f"MOCK-{hashlib.sha256(f'{amount_rial}:{description}'.encode()).hexdigest()[:12]}"
-        )
-        self._issued[authority] = amount_rial
+        unique = secrets.token_hex(4)
+        authority = f"MOCK-{amount_rial:x}-{unique}"
         return GatewayStartResult(
             authority=authority, redirect_url=f"mock://gateway/pay/{authority}"
         )
 
     def verify(self, authority: str, amount_rial: int) -> GatewayVerifyResult:
-        if authority not in self._issued:
-            raise PaymentGatewayError("تراکنش یافت نشد", code="authority_not_found")
-        if self._issued[authority] != amount_rial:
+        # قالب: MOCK-<hex amount>-<8 hex>
+        try:
+            prefix, amount_hex, _unique = authority.split("-")
+            issued_amount = int(amount_hex, 16)
+        except (ValueError, AttributeError) as exc:
+            raise PaymentGatewayError("authority نامعتبر", code="authority_not_found") from exc
+        if prefix != "MOCK" or issued_amount != amount_rial:
             raise PaymentGatewayError("مبلغ ناسازگار", code="amount_mismatch")
-        del self._issued[authority]
         return GatewayVerifyResult(
-            ok=True, reference_id=f"MOCKREF-{authority[5:]}", card_pan="6037-**-**-1234"
+            ok=True,
+            reference_id=f"MOCKREF-{self._sign(authority, amount_rial)}",
+            card_pan="6037-**-**-1234",
         )
 
 

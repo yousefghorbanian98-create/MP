@@ -59,6 +59,11 @@ POLICIES: list[tuple[str, str, str]] = [
     ("member", "/api/v1/payments", "GET"),
     ("member", "/api/v1/payments/*", "GET"),
     ("member", "/api/v1/payments/wallet/pay", "POST"),
+    # Q6 — آغاز پرداخت و callback درگاه: عضو باید تراکنش خودش را آغاز کند.
+    # کنترل «کدام تراکنش» در service (وضعیت/authority) است.
+    ("member", "/api/v1/payments", "POST"),
+    ("member", "/api/v1/payments/*/start", "POST"),
+    ("member", "/api/v1/payments/*/callback", "POST"),
     ("member", "/api/v1/nutrition/*", "GET"),
     # G9 — کتابخانهٔ حرکات با تصویر: شاگرد باید حرکت برنامهٔ خودش را ببیند.
     ("member", "/api/v1/library/*", "GET"),
