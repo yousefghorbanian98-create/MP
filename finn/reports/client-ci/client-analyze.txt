@@ -58,9 +58,9 @@ Analyzing client...
    info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/home/home_page.dart:302:13 • prefer_const_constructors
    info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/home/home_page.dart:303:22 • prefer_const_constructors
    info • 'package:flutter/material.dart' is deprecated and shouldn't be used. Use package:material_ui/material_ui.dart instead. This feature was deprecated after v3.47.0-0.0.pre. Try replacing the use of the deprecated member with the replacement • lib/features/intake/intake_page.dart:5:1 • deprecated_member_use
-   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/intake/intake_page.dart:263:20 • prefer_const_constructors
-   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/intake/intake_page.dart:329:9 • prefer_const_constructors
-   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/intake/intake_page.dart:330:20 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/intake/intake_page.dart:267:20 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/intake/intake_page.dart:353:9 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/intake/intake_page.dart:354:20 • prefer_const_constructors
    info • 'package:flutter/material.dart' is deprecated and shouldn't be used. Use package:material_ui/material_ui.dart instead. This feature was deprecated after v3.47.0-0.0.pre. Try replacing the use of the deprecated member with the replacement • lib/features/intake/program_result.dart:4:1 • deprecated_member_use
    info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/intake/program_result.dart:53:31 • prefer_const_constructors
    info • Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation • lib/features/intake/program_result.dart:119:24 • prefer_const_constructors
@@ -133,4 +133,4 @@ Analyzing client...
   error • The function 'SetFeedbackSheet' isn't defined. Try importing the library that defines 'SetFeedbackSheet', correcting the name to the name of an existing function, or defining a function named 'SetFeedbackSheet' • test/set_feedback_sheet_test.dart:33:32 • undefined_function
    info • 'package:flutter/material.dart' is deprecated and shouldn't be used. Use package:material_ui/material_ui.dart instead. This feature was deprecated after v3.47.0-0.0.pre. Try replacing the use of the deprecated member with the replacement • test/today_page_test.dart:4:1 • deprecated_member_use
 
-132 issues found. (ran in 5.5s)
+132 issues found. (ran in 4.8s)
