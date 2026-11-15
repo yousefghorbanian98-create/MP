@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import date, datetime
+from typing import Literal
 
 from pydantic import BaseModel, Field
 
@@ -11,7 +12,7 @@ class MemberCreate(BaseModel):
     phone: str = Field(..., pattern=r"^09\d{9}$")
     full_name: str = Field(..., min_length=2, max_length=120)
     goal: str = Field("", max_length=30)
-    gender: str = Field("unknown", max_length=10)
+    gender: Literal["male", "female"] = Field(..., description="جنسیت اجباری — تفکیک آقایان/بانوان (M41-c1)")
     height_cm: int | None = Field(None, ge=100, le=250)
     constraints: str = Field("[]", description="JSON آسیب‌ها/محدودیت‌ها")
 

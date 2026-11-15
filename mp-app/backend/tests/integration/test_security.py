@@ -61,7 +61,7 @@ def test_security_headers_present(client):
 def test_audit_log_payment_verify(client, auth):
     reception = auth("reception")
     member = client.post(
-        "/api/v1/members", json={"phone": "09120001111", "full_name": "aud"}, headers=reception
+        "/api/v1/members", json={"phone": "09120001111", "full_name": "aud", "gender": "male"}, headers=reception
     ).json()
     p = client.post(
         "/api/v1/payments",
@@ -78,7 +78,7 @@ def test_audit_log_face_delete(client, auth):
 
     coach = auth("coach")
     member = client.post(
-        "/api/v1/members", json={"phone": "09120002222", "full_name": "face"}, headers=coach
+        "/api/v1/members", json={"phone": "09120002222", "full_name": "face", "gender": "male"}, headers=coach
     ).json()
     from app.security.jwt import create_access_token
 
@@ -96,7 +96,7 @@ def test_audit_log_face_delete(client, auth):
 def test_audit_log_program_approve(client, auth):
     coach = auth("coach")
     member = client.post(
-        "/api/v1/members", json={"phone": "09120003333", "full_name": "prog"}, headers=coach
+        "/api/v1/members", json={"phone": "09120003333", "full_name": "prog", "gender": "male"}, headers=coach
     ).json()
     from db.models import WorkoutProgram
 

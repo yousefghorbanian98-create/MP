@@ -26,8 +26,11 @@ class MemberRepository:
         self.db.refresh(member)
         return member
 
-    def list(self, offset: int = 0, limit: int = 50) -> list[Member]:
-        return list(self.db.scalars(select(Member).offset(offset).limit(limit)))
+    def list(self, offset: int = 0, limit: int = 50, gender: str | None = None) -> list[Member]:
+        stmt = select(Member)
+        if gender:
+            stmt = stmt.where(Member.gender == gender)
+        return list(self.db.scalars(stmt.offset(offset).limit(limit)))
 
 
 class MembershipRepository:

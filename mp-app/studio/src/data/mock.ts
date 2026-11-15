@@ -14,6 +14,7 @@ export interface MemberRow {
   phone: string;
   goal: string;
   status: "active" | "expiring" | "expired";
+  gender: "male" | "female";
   daysLeft: number;
   lastSeen: string;
   avatarHue: number;
@@ -45,12 +46,12 @@ export const attendanceSeries = [
 ];
 
 export const members: MemberRow[] = [
-  { id: 1, name: "علی رضایی", phone: "0912 123 4567", goal: "حجم‌سازی", status: "active", daysLeft: 42, lastSeen: "امروز، ۱۷:۴۰", avatarHue: 150 },
-  { id: 2, name: "سارا محمدی", phone: "0935 222 8890", goal: "کاهش وزن", status: "expiring", daysLeft: 5, lastSeen: "دیروز، ۱۹:۱۰", avatarHue: 40 },
-  { id: 3, name: "رضا کریمی", phone: "0919 555 1122", goal: "آمادگی جسمانی", status: "active", daysLeft: 88, lastSeen: "۲ روز پیش", avatarHue: 210 },
-  { id: 4, name: "مریم احمدی", phone: "0903 777 3344", goal: "سلامت عمومی", status: "expired", daysLeft: -3, lastSeen: "۱۰ روز پیش", avatarHue: 330 },
-  { id: 5, name: "امیر حسینی", phone: "0912 888 9900", goal: "قدرتی", status: "active", daysLeft: 21, lastSeen: "امروز، ۰۸:۱۵", avatarHue: 265 },
-  { id: 6, name: "نگار صادقی", phone: "0990 444 6655", goal: "کاهش وزن", status: "expiring", daysLeft: 7, lastSeen: "۳ روز پیش", avatarHue: 95 },
+  { id: 1, name: "علی رضایی", phone: "0912 123 4567", goal: "حجم‌سازی", status: "active", gender: "male", daysLeft: 42, lastSeen: "امروز، ۱۷:۴۰", avatarHue: 150 },
+  { id: 2, name: "سارا محمدی", phone: "0935 222 8890", goal: "کاهش وزن", status: "expiring", gender: "female", daysLeft: 5, lastSeen: "دیروز، ۱۹:۱۰", avatarHue: 40 },
+  { id: 3, name: "رضا کریمی", phone: "0919 555 1122", goal: "آمادگی جسمانی", status: "active", gender: "male", daysLeft: 88, lastSeen: "۲ روز پیش", avatarHue: 210 },
+  { id: 4, name: "مریم احمدی", phone: "0903 777 3344", goal: "سلامت عمومی", status: "expired", gender: "female", daysLeft: -3, lastSeen: "۱۰ روز پیش", avatarHue: 330 },
+  { id: 5, name: "امیر حسینی", phone: "0912 888 9900", goal: "قدرتی", status: "active", gender: "male", daysLeft: 21, lastSeen: "امروز، ۰۸:۱۵", avatarHue: 265 },
+  { id: 6, name: "نگار صادقی", phone: "0990 444 6655", goal: "کاهش وزن", status: "expiring", gender: "female", daysLeft: 7, lastSeen: "۳ روز پیش", avatarHue: 95 },
 ];
 
 export const schedule: ScheduleItem[] = [

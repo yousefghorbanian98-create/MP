@@ -48,7 +48,7 @@ _staff.counter = itertools.count(int(__import__("time").time() * 1000) % 10**8)
 
 def _member(client, h, phone="09126660001") -> int:
     return client.post(
-        "/api/v1/members/", json={"phone": phone, "full_name": "عضو مالی"}, headers=h
+        "/api/v1/members/", json={"phone": phone, "full_name": "عضو مالی", "gender": "male"}, headers=h
     ).json()["id"]
 
 

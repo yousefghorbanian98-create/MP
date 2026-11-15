@@ -71,7 +71,7 @@ def test_confidential_report_full_structure(client, auth):
     coach = auth("coach")
     member = client.post(
         "/api/v1/members",
-        json={"phone": "09125550001", "full_name": "ورزشکار نمونه", "goal": "hypertrophy"},
+        json={"phone": "09125550001", "full_name": "ورزشکار نمونه", "gender": "male", "goal": "hypertrophy"},
         headers=coach,
     ).json()
     # ارزیابی ۱۴ دامنه

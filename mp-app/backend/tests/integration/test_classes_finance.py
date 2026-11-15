@@ -49,7 +49,7 @@ def auth():
 
 def _member(client, h, phone):
     return client.post(
-        "/api/v1/members", json={"phone": phone, "full_name": "عضو کلاس"}, headers=h
+        "/api/v1/members", json={"phone": phone, "full_name": "عضو کلاس", "gender": "male"}, headers=h
     ).json()
 
 

@@ -8,13 +8,35 @@ const domains = [
 ];
 
 /** اعضا + پنل جزئیات با ورود/خروج انیمیشنی (AnimatePresence). */
+const genderTabs = [
+  { key: "all" as const, label: "همه" },
+  { key: "male" as const, label: "آقایان" },
+  { key: "female" as const, label: "بانوان" },
+];
+
 export function Members() {
-  const { selectedMemberId, selectMember, members } = useAppStore();
+  const { selectedMemberId, selectMember, members, genderFilter, setGenderFilter } = useAppStore();
   const member = members.find((m) => m.id === selectedMemberId) ?? null;
 
   return (
     <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
       <div className="xl:col-span-2">
+        <div className="mb-4 flex items-center gap-2">
+          {genderTabs.map((t) => (
+            <button
+              key={t.key}
+              onClick={() => setGenderFilter(t.key)}
+              className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-colors ${
+                genderFilter === t.key
+                  ? "bg-primary text-white"
+                  : "bg-surface/70 text-ink-dim hover:text-ink"
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+          <span className="mr-auto text-[11px] text-ink-dim">تفکیک جنسیت (M41) — نمای کامل ادمین</span>
+        </div>
         <MemberTable onSelect={(id) => selectMember(id)} />
       </div>
 
@@ -37,7 +59,12 @@ export function Members() {
               </div>
               <div>
                 <h3 className="text-lg font-bold">{member.name}</h3>
-                <p className="text-xs text-ink-dim">{member.phone} · هدف: {member.goal}</p>
+                <p className="text-xs text-ink-dim">
+                  {member.phone} · هدف: {member.goal} ·{" "}
+                  <span className={member.gender === "female" ? "text-pink-400" : "text-sky-400"}>
+                    {member.gender === "female" ? "بانو" : "آقا"}
+                  </span>
+                </p>
               </div>
             </div>
 

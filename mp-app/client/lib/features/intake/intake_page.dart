@@ -28,7 +28,7 @@ class _IntakePageState extends ConsumerState<IntakePage> {
   String activity = 'moderate';
   final weightCtrl = TextEditingController(text: '75');
   final ageCtrl = TextEditingController(text: '28');
-  String gender = 'male';
+  String? gender; // M41-c1: اجباری — باید صریح انتخاب شود (تفکیک آقایان/بانوان)
 
   // گام ۳: محدودیت‌ها
   final Set<String> constraints = {};
@@ -62,6 +62,10 @@ class _IntakePageState extends ConsumerState<IntakePage> {
   }
 
   Future<void> _generate() async {
+    if (gender == null) {
+      setState(() => error = 'انتخاب جنسیت الزامی است — تفکیک آقایان/بانوان');
+      return;
+    }
     setState(() {
       busy = true;
       error = null;
@@ -83,7 +87,7 @@ class _IntakePageState extends ConsumerState<IntakePage> {
       await api.post('/population/gate-check', {'path': path});
 
       // ذخیرهٔ پروفایل با پاسخ‌های همین پرسش‌نامه
-      await api.put('/members/me', {'goal': goal, 'gender': gender});
+      await api.put('/members/me', {'goal': goal, 'gender': gender!});
 
       // تولید برنامه از موتور قواعد (G8) — با محدودیت‌ها و سابقه
       final prog = await api.post('/ai/program/generate', {
@@ -107,7 +111,7 @@ class _IntakePageState extends ConsumerState<IntakePage> {
           'weight_kg': double.tryParse(weightCtrl.text) ?? 75,
           'height_cm': height,
           'age': age,
-          'gender': gender,
+          'gender': gender!,
         });
       } catch (_) {
         nutrition = null; // تغذیه اختیاری است — برنامه اصلی ساخته می‌شود
@@ -291,15 +295,35 @@ class _IntakePageState extends ConsumerState<IntakePage> {
           ],
         ),
         const SizedBox(height: 12),
-        DropdownButtonFormField<String>(
-          initialValue: gender,
-          decoration:
-              const InputDecoration(labelText: 'جنس', border: OutlineInputBorder()),
-          items: const [
-            DropdownMenuItem(value: 'male', child: Text('مرد')),
-            DropdownMenuItem(value: 'female', child: Text('زن')),
-          ],
-          onChanged: (v) => setState(() => gender = v ?? 'male'),
+        // M41-c1: انتخاب اجباری جنسیت — تفکیک آقایان/بانوان
+        InputDecorator(
+          decoration: InputDecoration(
+            labelText: 'جنسیت *',
+            border: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: gender == null ? Colors.redAccent : Colors.grey,
+              ),
+            ),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: ChoiceChip(
+                  label: const Text('آقا'),
+                  selected: gender == 'male',
+                  onSelected: (_) => setState(() => gender = 'male'),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: ChoiceChip(
+                  label: const Text('بانو'),
+                  selected: gender == 'female',
+                  onSelected: (_) => setState(() => gender = 'female'),
+                ),
+              ),
+            ],
+          ),
         ),
         const SizedBox(height: 12),
         DropdownButtonFormField<String>(

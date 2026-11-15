@@ -7,7 +7,7 @@ from datetime import UTC, datetime, timedelta
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.errors import ConflictError, NotFoundError
+from app.errors import ApiError, ConflictError, NotFoundError
 from db.models import Member, Membership, User
 
 
@@ -69,7 +69,7 @@ def get_member(db: Session, member_id: int, user=None) -> Member:
     return member
 
 
-def list_members(db: Session, offset: int = 0, limit: int = 50, user=None) -> list[Member]:
+def list_members(db: Session, offset: int = 0, limit: int = 50, user=None, gender: str | None = None) -> list[Member]:
     from app.security.ownership import ensure_member_scope, get_own_member
     from cache.keys import members_list_key
     from cache.store import get_cache
@@ -83,11 +83,11 @@ def list_members(db: Session, offset: int = 0, limit: int = 50, user=None) -> li
         own = get_own_member(db, user)
         return [own] if own else []
     cache = get_cache()
-    key = members_list_key(offset, limit)
+    key = members_list_key(offset, limit) + (f":{gender}" if gender else "")
     cached = cache.get(key)
     if cached is not None:
         return [db.get(MemberModel, mid) for mid in cached]
-    members = MemberRepository(db).list(offset=offset, limit=limit)
+    members = MemberRepository(db).list(offset=offset, limit=limit, gender=gender)
     cache.set(key, [m.id for m in members], ttl=30)
     return members
 
@@ -148,3 +148,55 @@ def get_active_membership(db: Session, member_id: int) -> Membership | None:
 
 def _aware(dt: datetime) -> datetime:
     return dt if dt.tzinfo else dt.replace(tzinfo=UTC)
+
+
+def create_membership_from_plan(db: Session, member_id: int, plan_key: str) -> dict:
+    """خرید/تمدید از روی پلن جنسیت‌محور (M41-c2) — مدت/قیمت از motor + reason."""
+    from engine.gender_plans import resolve_plan
+
+    member = get_member(db, member_id)
+    if member.gender not in ("male", "female"):
+        raise ApiError(
+            "جنسیت عضو ثبت نشده — ابتدا ثبت‌نام را کامل کنید (داده ناشناخته است نه صفر)",
+            code="missing_gender",
+        )
+    try:
+        resolution = resolve_plan(plan_key=plan_key, gender=member.gender)
+    except KeyError as exc:
+        raise ApiError(f"پلن «{plan_key}» تعریف نشده", code="unknown_plan") from exc
+    ms = create_membership(
+        db,
+        member_id=member.id,
+        plan_name=resolution["plan_name"],
+        duration_days=resolution["duration_days"],
+        price_rial=resolution["price_rial"],
+    )
+    return {"membership": ms, "invoice": {**resolution, "membership_id": ms.id}}
+
+
+def membership_invoice(db: Session, membership_id: int) -> dict:
+    """صورتحساب/تاریخچه با reason سیاست (M41-c3) — بدون ادعای علمی/فروش."""
+    from db.models import Membership
+    from engine.gender_plans import PLAN_POLICY_VERSION
+
+    ms = db.get(Membership, membership_id)
+    if ms is None:
+        raise ApiError("اشتراک یافت نشد", code="not_found")
+    member = db.get(Member, ms.member_id)
+    duration = (_aware(ms.expires_at) - _aware(ms.started_at)).days
+    return {
+        "membership_id": ms.id,
+        "member_id": ms.member_id,
+        "plan_name": ms.plan_name,
+        "started_at": ms.started_at.isoformat(),
+        "expires_at": ms.expires_at.isoformat(),
+        "duration_days": duration,
+        "price_rial": ms.price_rial,
+        "status": ms.status,
+        "gender": member.gender if member else None,
+        "policy_note": (
+            "قیمت و مدت طبق سیاست نسخه‌دار باشگاه ثبت شده است (تصمیم مالک) — "
+            "در پلن‌های بانوان، ماه ۳۷ روز (۳۰+۷ جبران هفتهٔ قاعدگی) محاسبه می‌شود"
+        ),
+        "policy_version": PLAN_POLICY_VERSION,
+    }

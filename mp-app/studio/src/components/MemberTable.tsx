@@ -37,7 +37,9 @@ export function MemberTable({ onSelect }: { onSelect?: (id: number) => void }) {
             </div>
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-semibold">{m.name}</p>
-              <p className="truncate text-xs text-ink-dim">{m.phone} · {m.goal}</p>
+              <p className="truncate text-xs text-ink-dim">
+                {m.phone} · {m.goal} · {m.gender === "female" ? "بانو" : "آقا"}
+              </p>
             </div>
             <div className="text-left">
               <span className={statusPill[m.status].cls}>{statusPill[m.status].label}</span>

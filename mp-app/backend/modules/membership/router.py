@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, Query
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from sqlalchemy import select
 
 from app.deps import CurrentUser, DbSession, require_permission
@@ -41,8 +41,9 @@ def list_members(
     user: CurrentUser,
     offset: int = Query(0, ge=0),
     limit: int = Query(50, ge=1, le=200),
+    gender: str | None = Query(None, pattern="^(male|female)$", description="فیلتر تفکیک جنسیت (M41-c1)"),
 ):
-    return service.list_members(db, offset=offset, limit=limit, user=user)
+    return service.list_members(db, offset=offset, limit=limit, user=user, gender=gender)
 
 
 # ── پروفایل شخصی (کلاینت عضو) — ساخت/ویرایش واقعی [finn] ──
@@ -107,6 +108,31 @@ def update_me(payload: MeUpdate, db: DbSession, user: CurrentUser):
     return _me_dict(m, user)
 
 
+# ── M41: پلن جنسیت‌محور + صورتحساب [finn] ──
+
+
+class PlanPurchaseIn(BaseModel):
+    member_id: int
+    plan_key: str = Field(..., min_length=2, max_length=40)
+
+
+@router.get("/memberships/plans", summary="فهرست پلن‌های جنسیت‌محور (M41-c2)")
+def list_plans(db: DbSession, user: CurrentUser):
+    from engine.gender_plans import list_plans as _list
+
+    return _list()
+
+
+@router.post("/memberships/from-plan", summary="خرید/تمدید از روی پلن جنسیت‌محور (M41-c2)")
+def create_from_plan(payload: PlanPurchaseIn, db: DbSession):
+    return service.create_membership_from_plan(db, payload.member_id, payload.plan_key)
+
+
+@router.get("/memberships/{membership_id}/invoice", summary="صورتحساب + reason سیاست (M41-c3)")
+def get_invoice(membership_id: int, db: DbSession, user: CurrentUser):
+    return service.membership_invoice(db, membership_id)
+
+
 @router.get("/{member_id}", response_model=MemberOut, summary="پروفایل عضو")
 def get_member(member_id: int, db: DbSession, user: CurrentUser):
     return service.get_member(db, member_id, user=user)
@@ -152,3 +178,4 @@ def member_memberships(member_id: int, db: DbSession, user: CurrentUser):
             .order_by(Membership.id.desc())
         )
     )
+

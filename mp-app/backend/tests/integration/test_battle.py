@@ -52,7 +52,7 @@ def test_golden_path_battle(client):
     h = _staff(client)
     # عضو
     member = client.post(
-        "/api/v1/members/", json={"phone": "09123334444", "full_name": "نبرد طلایی"}, headers=h
+        "/api/v1/members/", json={"phone": "09123334444", "full_name": "نبرد طلایی", "gender": "male"}, headers=h
     ).json()
     mid = member["id"]
     # اشتراک فعال
@@ -151,7 +151,7 @@ def test_golden_path_battle(client):
 def test_edge_long_name_rejected(client):
     h = _staff(client)
     resp = client.post(
-        "/api/v1/members/", json={"phone": "09123335555", "full_name": "ن" * 300}, headers=h
+        "/api/v1/members/", json={"phone": "09123335555", "full_name": "ن", "gender": "male" * 300}, headers=h
     )
     assert resp.status_code == 422  # max_length name
 
@@ -159,7 +159,7 @@ def test_edge_long_name_rejected(client):
 def test_edge_negative_amount_rejected(client):
     h = _staff(client)
     member = client.post(
-        "/api/v1/members/", json={"phone": "09123336666", "full_name": "منفی"}, headers=h
+        "/api/v1/members/", json={"phone": "09123336666", "full_name": "منفی", "gender": "male"}, headers=h
     ).json()
     # قیمت منفی اشتراک
     r1 = client.post(
@@ -197,7 +197,7 @@ def test_edge_bad_method_and_denied_checkin(client):
     assert resp.status_code == 422
     # عضو بدون اشتراک → denied
     member = client.post(
-        "/api/v1/members/", json={"phone": "09123338888", "full_name": "بدون اشتراک"}, headers=h
+        "/api/v1/members/", json={"phone": "09123338888", "full_name": "بدون اشتراک", "gender": "male"}, headers=h
     ).json()
     ci = client.post(
         "/api/v1/face/checkin", json={"member_id": member["id"], "method": "manual"}, headers=h
