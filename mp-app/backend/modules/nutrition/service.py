@@ -74,6 +74,16 @@ def list_member_plans(db: Session, member_id: int, user=None) -> list[NutritionP
 FOOD_LOG_VERSION = "food-logging-1.0"
 VALID_SLOTS = ("breakfast", "lunch", "dinner", "snack")
 
+# نام‌هایی که وزنشان «پیش از پخت» است. ۲۵۰ گرم برنج خشک ≈ ۹۰۰ کالری،
+# ولی کاربر معمولاً «۲۵۰ گرم برنج پخته» در ذهن دارد (~۳۲۵ کالری).
+# پنهان‌کردن این تفاوت، خطای ۵۰۰ کالری در روز است — پس صریح علامت می‌زنیم.
+_DRY_OR_RAW_HINTS = ("(خشک)", "(خام)", "(نخود خشک)")
+
+
+def is_dry_or_raw(name_fa: str) -> bool:
+    """آیا اعداد این ماده برای وزن **خشک/خام** است؟"""
+    return any(h in name_fa for h in _DRY_OR_RAW_HINTS)
+
 
 def _food_macros(food, grams: float) -> dict:
     """درشت‌مغذی‌های یک وعده از جدول غذایی — همان لحظه، نه ذخیره‌شده.
@@ -151,8 +161,7 @@ def log_food(
         "logged": len(accepted),
         "rejected": rejected,
         "reason": (
-            f"{len(accepted)} وعده ثبت شد"
-            + (f"؛ {len(rejected)} ردیف رد شد" if rejected else "")
+            f"{len(accepted)} وعده ثبت شد" + (f"؛ {len(rejected)} ردیف رد شد" if rejected else "")
         ),
         "rule_version": FOOD_LOG_VERSION,
     }
@@ -187,7 +196,9 @@ def daily_summary(db: Session, *, member_id: int, day: str | None = None, user=N
     )
 
     totals = {"kcal": 0.0, "protein_g": 0.0, "carbs_g": 0.0, "fat_g": 0.0}
-    per_slot: dict[str, dict] = {s: {"kcal": 0.0, "protein_g": 0.0, "count": 0} for s in VALID_SLOTS}
+    per_slot: dict[str, dict] = {
+        s: {"kcal": 0.0, "protein_g": 0.0, "count": 0} for s in VALID_SLOTS
+    }
     items = []
     for r in rows:
         food = foods.get(r.food_id)
@@ -222,7 +233,11 @@ def daily_summary(db: Session, *, member_id: int, day: str | None = None, user=N
                 "name_fa": food.name_fa,
                 "grams": r.grams,
                 "meal_slot": r.meal_slot,
-                "warning": "",
+                "warning": (
+                    "اعداد برای وزن خشک/خام است — اگر پخته وزن کرده‌اید، مقدار کمتری وارد کنید"
+                    if is_dry_or_raw(food.name_fa)
+                    else ""
+                ),
                 **macros,
             }
         )
@@ -252,7 +267,11 @@ def daily_summary(db: Session, *, member_id: int, day: str | None = None, user=N
         "items": items,
         "totals": {k: round(v, 1) for k, v in totals.items()},
         "by_slot": {
-            s: {"kcal": round(v["kcal"], 1), "protein_g": round(v["protein_g"], 1), "count": v["count"]}
+            s: {
+                "kcal": round(v["kcal"], 1),
+                "protein_g": round(v["protein_g"], 1),
+                "count": v["count"],
+            }
             for s, v in per_slot.items()
         },
         "target": target,
@@ -287,6 +306,7 @@ def search_foods(db: Session, *, query: str = "", limit: int = 30) -> list[dict]
             "protein_g_per_100g": f.protein_g_per_100g,
             "carbs_g_per_100g": f.carbs_g_per_100g,
             "fat_g_per_100g": f.fat_g_per_100g,
+            "dry_or_raw": is_dry_or_raw(f.name_fa),
         }
         for f in db.scalars(stmt).all()
     ]

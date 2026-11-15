@@ -47,6 +47,7 @@ __all__ = [
     "FoodItem",
     "GymClass",
     "JacksonPollockMeasurement",
+    "FoodLog",
     "MealItem",
     "Member",
     "Membership",

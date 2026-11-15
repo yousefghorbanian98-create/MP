@@ -90,8 +90,7 @@ def derive_fat(protein_g: float, carbs_g: float, kcal: float) -> tuple[float, st
     fat = remainder / 9
     if fat > 100:
         return 0.0, (
-            f"چربی نامعلوم: محاسبهٔ آتووتر {fat:.0f} گرم در ۱۰۰ گرم می‌داد "
-            "(ناممکن) — صفر ثبت شد"
+            f"چربی نامعلوم: محاسبهٔ آتووتر {fat:.0f} گرم در ۱۰۰ گرم می‌داد (ناممکن) — صفر ثبت شد"
         )
     return round(fat, 1), ""
 

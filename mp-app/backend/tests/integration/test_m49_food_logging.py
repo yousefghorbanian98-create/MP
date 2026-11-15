@@ -121,7 +121,12 @@ def test_logging_computes_macros_from_the_catalog(client: TestClient) -> None:
         json={
             "member_id": mid,
             "entries": [
-                {"food_id": chicken, "grams": 200, "meal_slot": "lunch", "logged_for_date": "2026-11-15"}
+                {
+                    "food_id": chicken,
+                    "grams": 200,
+                    "meal_slot": "lunch",
+                    "logged_for_date": "2026-11-15",
+                }
             ],
         },
         headers=h,
@@ -152,9 +157,24 @@ def test_daily_totals_sum_across_slots(client: TestClient) -> None:
         json={
             "member_id": mid,
             "entries": [
-                {"food_id": chicken, "grams": 100, "meal_slot": "lunch", "logged_for_date": "2026-11-15"},
-                {"food_id": rice, "grams": 200, "meal_slot": "lunch", "logged_for_date": "2026-11-15"},
-                {"food_id": oil, "grams": 10, "meal_slot": "breakfast", "logged_for_date": "2026-11-15"},
+                {
+                    "food_id": chicken,
+                    "grams": 100,
+                    "meal_slot": "lunch",
+                    "logged_for_date": "2026-11-15",
+                },
+                {
+                    "food_id": rice,
+                    "grams": 200,
+                    "meal_slot": "lunch",
+                    "logged_for_date": "2026-11-15",
+                },
+                {
+                    "food_id": oil,
+                    "grams": 10,
+                    "meal_slot": "breakfast",
+                    "logged_for_date": "2026-11-15",
+                },
             ],
         },
         headers=h,
@@ -194,8 +214,18 @@ def test_invalid_entries_are_rejected_with_reasons(client: TestClient) -> None:
         json={
             "member_id": mid,
             "entries": [
-                {"food_id": chicken, "grams": 100, "meal_slot": "lunch", "logged_for_date": "2026-11-15"},
-                {"food_id": 999999, "grams": 100, "meal_slot": "lunch", "logged_for_date": "2026-11-15"},
+                {
+                    "food_id": chicken,
+                    "grams": 100,
+                    "meal_slot": "lunch",
+                    "logged_for_date": "2026-11-15",
+                },
+                {
+                    "food_id": 999999,
+                    "grams": 100,
+                    "meal_slot": "lunch",
+                    "logged_for_date": "2026-11-15",
+                },
             ],
         },
         headers=h,
@@ -216,7 +246,12 @@ def test_unknown_food_id_is_rejected_not_created(client: TestClient) -> None:
         json={
             "member_id": mid,
             "entries": [
-                {"food_id": 424242, "grams": 100, "meal_slot": "lunch", "logged_for_date": "2026-11-15"}
+                {
+                    "food_id": 424242,
+                    "grams": 100,
+                    "meal_slot": "lunch",
+                    "logged_for_date": "2026-11-15",
+                }
             ],
         },
         headers=h,
@@ -279,7 +314,12 @@ def test_member_cannot_log_for_another_member(client: TestClient) -> None:
         json={
             "member_id": mid,
             "entries": [
-                {"food_id": chicken, "grams": 100, "meal_slot": "lunch", "logged_for_date": "2026-11-15"}
+                {
+                    "food_id": chicken,
+                    "grams": 100,
+                    "meal_slot": "lunch",
+                    "logged_for_date": "2026-11-15",
+                }
             ],
         },
         headers=other,
@@ -288,3 +328,94 @@ def test_member_cannot_log_for_another_member(client: TestClient) -> None:
 
     r2 = client.get(f"/api/v1/nutrition/food-logs/member/{mid}/daily", headers=other)
     assert r2.status_code == 403
+
+
+def test_dry_weight_trap_is_flagged(client: TestClient) -> None:
+    """۲۵۰ گرم برنج «خشک» ≈ ۹۱۲ کالری است، نه آنچه کاربر در ذهن دارد.
+
+    این تفاوت ۵۰۰ کالری در روز است. اگر پنهان بماند، G3 روی دادهٔ غلط
+    تنظیم می‌شود. پرچم `dry_or_raw` باید در جستجو و در آیتم روز باشد.
+    """
+    from db.base import get_session_factory
+    from db.models import FoodItem
+
+    h = _staff()
+    mid = _member(client, h)
+
+    with get_session_factory()() as s:
+        dry = FoodItem(
+            external_id="test:برنج سفید (خشک)",
+            name_fa="برنج سفید (خشک)",
+            kcal_per_100g=365,
+            protein_g_per_100g=7.0,
+            carbs_g_per_100g=80.0,
+            fat_g_per_100g=1.9,
+            category="غلات",
+        )
+        s.add(dry)
+        s.commit()
+        dry_id = dry.id
+
+    rows = client.get("/api/v1/nutrition/foods?q=خشک", headers=h).json()
+    assert all(r["dry_or_raw"] for r in rows), "همهٔ ردیف‌های خشک باید پرچم داشته باشند"
+
+    client.post(
+        "/api/v1/nutrition/food-logs",
+        json={
+            "member_id": mid,
+            "entries": [
+                {
+                    "food_id": dry_id,
+                    "grams": 250,
+                    "meal_slot": "lunch",
+                    "logged_for_date": "2026-11-15",
+                }
+            ],
+        },
+        headers=h,
+    )
+    d = client.get(
+        f"/api/v1/nutrition/food-logs/member/{mid}/daily?date=2026-11-15", headers=h
+    ).json()
+
+    item = d["items"][0]
+    assert item["kcal"] == pytest.approx(912.5, abs=1.0)
+    assert "خشک" in item["warning"]
+    assert "پخته" in item["warning"]
+
+
+def test_wet_food_has_no_warning(client: TestClient) -> None:
+    h = _staff()
+    mid = _member(client, h)
+    chicken = _food_id(client, h, "مرغ")
+
+    client.post(
+        "/api/v1/nutrition/food-logs",
+        json={
+            "member_id": mid,
+            "entries": [
+                {
+                    "food_id": chicken,
+                    "grams": 150,
+                    "meal_slot": "dinner",
+                    "logged_for_date": "2026-11-15",
+                }
+            ],
+        },
+        headers=h,
+    )
+    d = client.get(
+        f"/api/v1/nutrition/food-logs/member/{mid}/daily?date=2026-11-15", headers=h
+    ).json()
+    assert d["items"][0]["warning"] == ""
+
+
+def test_khameh_is_not_mistaken_for_dry(client: TestClient) -> None:
+    """«خامه» با «(خام)» اشتباه گرفته نمی‌شود — تله‌ی تطبیق زیررشته."""
+    from modules.nutrition.service import is_dry_or_raw
+
+    assert is_dry_or_raw("برنج سفید (خشک)") is True
+    assert is_dry_or_raw("عدس (خشک)") is True
+    assert is_dry_or_raw("خامه") is False
+    assert is_dry_or_raw("خامه ترش") is False
+    assert is_dry_or_raw("سینه مرغ (پخته)") is False

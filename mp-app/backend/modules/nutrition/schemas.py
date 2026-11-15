@@ -82,3 +82,4 @@ class FoodSearchRow(BaseModel):
     protein_g_per_100g: float
     carbs_g_per_100g: float
     fat_g_per_100g: float
+    dry_or_raw: bool = False

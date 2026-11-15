@@ -432,3 +432,79 @@ export function fetchMemberVolume(
 }
 
 export type VolumeLevel = "beginner" | "intermediate" | "advanced";
+
+// ── G5 — ثبت غذای روزانه ──
+
+export interface FoodRow {
+  id: number;
+  name_fa: string;
+  category: string;
+  kcal_per_100g: number;
+  protein_g_per_100g: number;
+  carbs_g_per_100g: number;
+  fat_g_per_100g: number;
+  dry_or_raw: boolean;
+}
+
+export interface FoodLogItem {
+  id: number;
+  food_id: number;
+  name_fa: string;
+  grams: number;
+  meal_slot: string;
+  kcal: number;
+  protein_g: number;
+  carbs_g: number;
+  fat_g: number;
+  warning: string;
+}
+
+export interface DailyNutrition {
+  member_id: number;
+  date: string;
+  items: FoodLogItem[];
+  totals: { kcal: number; protein_g: number; carbs_g: number; fat_g: number };
+  by_slot: Record<string, { kcal: number; protein_g: number; count: number }>;
+  target: { kcal: number; protein_g: number; carbs_g: number; fat_g: number };
+  target_source: "approved_plan" | "none" | string;
+  plan_id: number | null;
+  data_state: "logged" | "nothing_logged" | string;
+  reason: string;
+  rule_version: string;
+}
+
+export interface FoodLogResult {
+  logged: number;
+  rejected: { index: number; reason: string }[];
+  reason: string;
+  rule_version: string;
+}
+
+export function searchFoods(query: string, token = getToken(), signal?: AbortSignal) {
+  return getJson<FoodRow[]>(
+    `/nutrition/foods?q=${encodeURIComponent(query)}&limit=25`,
+    token,
+    signal,
+  );
+}
+
+export function logFood(
+  memberId: number,
+  entries: { food_id: number; grams: number; meal_slot: string; logged_for_date: string }[],
+  token = getToken(),
+) {
+  return postJson<FoodLogResult>("/nutrition/food-logs", { member_id: memberId, entries }, token);
+}
+
+export function fetchDailyNutrition(
+  memberId: number,
+  date: string,
+  token = getToken(),
+  signal?: AbortSignal,
+) {
+  return getJson<DailyNutrition>(
+    `/nutrition/food-logs/member/${memberId}/daily?date=${date}`,
+    token,
+    signal,
+  );
+}

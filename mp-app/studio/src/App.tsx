@@ -6,6 +6,7 @@ import { Finance } from "./pages/Finance";
 import { Analytics } from "./pages/Analytics";
 import { Dashboard } from "./pages/Dashboard";
 import { Members } from "./pages/Members";
+import { Nutrition } from "./pages/Nutrition";
 import { Programs } from "./pages/Programs";
 import { Settings } from "./pages/Settings";
 import { useAppStore } from "./stores/appStore";
@@ -14,6 +15,7 @@ const pages = {
   dashboard: Dashboard,
   members: Members,
   programs: Programs,
+  nutrition: Nutrition,
   checkin: CheckIn,
   finance: Finance,
   analytics: Analytics,

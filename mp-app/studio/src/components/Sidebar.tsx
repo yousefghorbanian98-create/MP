@@ -5,6 +5,7 @@ const items: { id: PageId; label: string; icon: string }[] = [
   { id: "dashboard", label: "داشبورد", icon: "◈" },
   { id: "members", label: "اعضا", icon: "◉" },
   { id: "programs", label: "برنامه‌ها", icon: "▤" },
+  { id: "nutrition", label: "تغذیه", icon: "◇" },
   { id: "checkin", label: "حضور", icon: "◎" },
   { id: "finance", label: "مالی", icon: "◈" },
   { id: "analytics", label: "تحلیل‌ها", icon: "◆" },

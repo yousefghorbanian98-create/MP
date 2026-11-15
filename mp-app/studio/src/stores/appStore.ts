@@ -11,6 +11,7 @@ export type PageId =
   | "dashboard"
   | "members"
   | "programs"
+  | "nutrition"
   | "checkin"
   | "finance"
   | "analytics"
