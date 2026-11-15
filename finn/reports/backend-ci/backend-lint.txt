@@ -1,46 +1,4 @@
-I001 [*] Import block is un-sorted or un-formatted
-  --> db/models/__init__.py:3:1
-   |
- 1 |   """ثبت همهٔ مدل‌ها — import این ماژول کل metadata را کامل می‌کند."""
- 2 |
- 3 | / from db.models.admin import AuditLog, Campaign, FeatureFlag, Offer
- 4 | | from db.models.ai import RuleRun
- 5 | | from db.models.assessment import Assessment14Domain, DomainScore, JacksonPollockMeasurement, NormEntry
- 6 | | from db.models.auth import OtpCode, RefreshToken, User
- 7 | | from db.models.classes import ClassBooking, GymClass
- 8 | | from db.models.content import (
- 9 | |     CatalogExercise,
-10 | |     CatalogSource,
-11 | |     Exercise,
-12 | |     FoodItem,
-13 | |     ProgressionLadder,
-14 | |     ProgressionStep,
-15 | | )
-16 | | from db.models.face_id import BiometricConsent, CheckIn, FaceTemplate
-17 | | from db.models.membership import Member, Membership
-18 | | from db.models.notification import Notification
-19 | | from db.models.nutrition import MealItem, NutritionPlan
-20 | | from db.models.payments import Payment, WalletTransaction
-21 | | from db.models.programs import ProgramExercise, ProgramWeek, WorkoutProgram
-   | |___________________________________________________________________________^
-22 |
-23 |   __all__ = [
-   |
-help: Organize imports
-   |
-4  | from db.models.ai import RuleRun
-   - from db.models.assessment import Assessment14Domain, DomainScore, JacksonPollockMeasurement, NormEntry
-5  + from db.models.assessment import (
-6  +     Assessment14Domain,
-7  +     DomainScore,
-8  +     JacksonPollockMeasurement,
-9  +     NormEntry,
-10 + )
-11 | from db.models.auth import OtpCode, RefreshToken, User
-   |
-
-Found 1 error.
-[*] 1 fixable with `--fix`.
+All checks passed!
 unformatted: File would be reformatted
   --> db/migrations/versions/a7b8c9d0e1f2_m35_norm_tables.py:31:19
    |
@@ -138,20 +96,6 @@ unformatted: File would be reformatted
 41 +             "updated_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False
 42 +         ),
 43 |     )
-   |
-
-unformatted: File would be reformatted
-  --> db/models/__init__.py:5:34
-   |
-4  | from db.models.ai import RuleRun
-   - from db.models.assessment import Assessment14Domain, DomainScore, JacksonPollockMeasurement, NormEntry
-5  + from db.models.assessment import (
-6  +     Assessment14Domain,
-7  +     DomainScore,
-8  +     JacksonPollockMeasurement,
-9  +     NormEntry,
-10 + )
-11 | from db.models.auth import OtpCode, RefreshToken, User
    |
 
 unformatted: File would be reformatted
@@ -1170,4 +1114,4 @@ unformatted: File would be reformatted
 55 |     assert row.category == "strength"
    |
 
-13 files would be reformatted, 162 files already formatted
+12 files would be reformatted, 163 files already formatted
