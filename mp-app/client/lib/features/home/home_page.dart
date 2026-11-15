@@ -2,6 +2,7 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/theme.dart';
@@ -49,7 +50,7 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
           const SizedBox(height: 16),
-          const _PromoBanner(),
+          const _PromoBanner().animate().fadeIn(duration: 450.ms).slideY(begin: -0.12),
           const SizedBox(height: 20),
           Text(
             'بخش‌ها',
@@ -60,9 +61,12 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           const SizedBox(height: 12),
-          const _SectionsGrid(),
+          const _SectionsGrid().animate().fadeIn(delay: 120.ms, duration: 450.ms),
           const SizedBox(height: 20),
-          _QuickCheckInCard(onTap: () => context.push('/checkin')),
+          _QuickCheckInCard(onTap: () => context.push('/checkin'))
+              .animate()
+              .fadeIn(delay: 240.ms)
+              .slideY(begin: 0.15),
         ],
       ),
     );

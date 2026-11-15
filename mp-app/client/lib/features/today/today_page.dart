@@ -1,11 +1,13 @@
-/// صفحهٔ «برنامهٔ امروز» — مطابق موکاپ 02-client-today-workout.png
-/// انیمیشن‌ها با flutter_animate (معادل فلاتری Framer Motion).
+/// «امروز» واقعی — تمرین‌های برنامهٔ موتور، چک‌خوردن زنده، حلقهٔ پیشرفت.
 library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../core/app_state.dart';
+import '../../core/session.dart';
 import '../../core/theme.dart';
 import '../../shared/widgets/glass_card.dart';
 import 'today_controller.dart';
@@ -15,144 +17,229 @@ class TodayPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(todayControllerProvider);
-    final controller = ref.read(todayControllerProvider.notifier);
+    final auth = ref.watch(authProvider);
+    final programAsync = ref.watch(myProgramsProvider);
+    final exercises = ref.watch(todayWorkoutProvider);
+    final todayState = ref.watch(todayControllerProvider);
 
-    return Scaffold(
-      body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
-                child: Row(
-                  children: [
-                    const Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('سلام، علی 👋', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-                          SizedBox(height: 4),
-                          Text('برنامهٔ امروزت آماده است', style: TextStyle(color: MpColors.textSecondary)),
-                        ],
-                      ),
-                    ),
-                    _ProgressRing(progress: state.progress),
-                  ],
-                ),
-              ),
-            ),
-            SliverPadding(
-              padding: const EdgeInsets.all(20),
-              sliver: SliverList.separated(
-                itemCount: state.exercises.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 12),
-                itemBuilder: (context, i) {
-                  final ex = state.exercises[i];
-                  return GlassCard(
-                    child: Row(
+    return SafeArea(
+      child: RefreshIndicator(
+        onRefresh: () async => ref.invalidate(myProgramsProvider),
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+          children: [
+            // سرسلامت + پیشرفت
+            GlassCard(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          width: 56,
-                          height: 56,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(14),
-                            color: MpColors.primary.withOpacity(0.12),
-                          ),
-                          child: const Icon(Icons.fitness_center, color: MpColors.primaryLight),
+                        Text('سلام، ${auth.userName ?? 'ورزشکار'} 👋',
+                            style: const TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.w900)),
+                        const SizedBox(height: 4),
+                        Text(
+                          exercises.isEmpty
+                              ? 'برنامه‌ای برای امروز نیست'
+                              : '${exercises.length} حرکت امروز — ${(todayState.progress(exercises.length) * 100).round()}٪ انجام شد',
+                          style: TextStyle(color: MpColors.textSecondary),
                         ),
-                        const SizedBox(width: 14),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(ex.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-                              const SizedBox(height: 6),
-                              Wrap(
-                                spacing: 8,
-                                children: [
-                                  _Chip(label: '${ex.sets} ست'),
-                                  _Chip(label: ex.reps),
-                                  _Chip(label: '${ex.loadPct}٪ ۱RM', gold: true),
-                                  _Chip(label: '${ex.restSeconds} ثانیه استراحت'),
-                                ],
-                              ),
-                            ],
-                          ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    width: 64,
+                    height: 64,
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        CircularProgressIndicator(
+                          value: exercises.isEmpty
+                              ? 0
+                              : todayState.progress(exercises.length),
+                          strokeWidth: 6,
+                          backgroundColor: MpColors.surface,
+                          color: MpColors.primary,
                         ),
-                        IconButton(
-                          onPressed: () => controller.toggle(i),
-                          icon: AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 250),
-                            transitionBuilder: (child, anim) =>
-                                ScaleTransition(scale: anim, child: child),
-                            child: Icon(
-                              ex.done ? Icons.check_circle : Icons.circle_outlined,
-                              key: ValueKey(ex.done),
-                              color: ex.done ? MpColors.primary : MpColors.textSecondary,
-                              size: 30,
-                            ),
+                        Center(
+                          child: Text(
+                            '${(todayState.progress(exercises.length) * 100).round()}٪',
+                            style: const TextStyle(
+                                fontSize: 13, fontWeight: FontWeight.bold),
                           ),
                         ),
                       ],
                     ),
-                  )
-                      .animate()
-                      .fadeIn(delay: (80 * i).ms, duration: 350.ms)
-                      .slideX(begin: 0.06, end: 0, curve: Curves.easeOut);
-                },
+                  ),
+                ],
               ),
+            ).animate().fadeIn(duration: 400.ms).slideY(begin: -0.15),
+
+            const SizedBox(height: 14),
+            programAsync.when(
+              loading: () => const Padding(
+                padding: EdgeInsets.all(40),
+                child: Center(child: CircularProgressIndicator()),
+              ),
+              error: (e, _) => GlassCard(
+                child: Column(
+                  children: [
+                    const Icon(Icons.wifi_off, color: MpColors.danger, size: 40),
+                    const SizedBox(height: 8),
+                    Text('خطا در دریافت برنامه: $e',
+                        textAlign: TextAlign.center),
+                    const SizedBox(height: 10),
+                    OutlinedButton(
+                      onPressed: () => ref.invalidate(myProgramsProvider),
+                      child: const Text('تلاش دوباره'),
+                    ),
+                  ],
+                ),
+              ),
+              data: (_) {
+                if (exercises.isEmpty) {
+                  return GlassCard(
+                    child: Column(
+                      children: [
+                        const Icon(Icons.fitness_center,
+                            size: 44, color: MpColors.primary),
+                        const SizedBox(height: 10),
+                        const Text('هنوز برنامه‌ای ندارید',
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 6),
+                        Text('با چند پرسش ساده، برنامهٔ اختصاصی شما ساخته می‌شود',
+                            style: TextStyle(color: MpColors.textSecondary)),
+                        const SizedBox(height: 14),
+                        FilledButton.icon(
+                          onPressed: () => context.push('/intake'),
+                          icon: const Icon(Icons.auto_awesome),
+                          label: const Text('ساخت برنامهٔ اختصاصی'),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+                return Column(
+                  children: [
+                    for (var i = 0; i < exercises.length; i++)
+                      _ExerciseTile(
+                        index: i,
+                        exercise: exercises[i],
+                        done: todayState.done.contains(i),
+                      )
+                          .animate()
+                          .fadeIn(delay: (80 * i).ms, duration: 350.ms)
+                          .slideX(begin: 0.08),
+                  ],
+                );
+              },
             ),
           ],
         ),
       ),
-      bottomNavigationBar: NavigationBar(
-        backgroundColor: MpColors.surface.withOpacity(0.9),
-        indicatorColor: MpColors.primary.withOpacity(0.2),
-        selectedIndex: 0,
-        destinations: const [
-          NavigationDestination(icon: Icon(Icons.today_outlined), label: 'امروز'),
-          NavigationDestination(icon: Icon(Icons.insights_outlined), label: 'پیشرفت'),
-          NavigationDestination(icon: Icon(Icons.qr_code_scanner), label: 'چک‌این'),
-          NavigationDestination(icon: Icon(Icons.person_outline), label: 'پروفایل'),
-        ],
+    );
+  }
+}
+
+class _ExerciseTile extends ConsumerWidget {
+  const _ExerciseTile({required this.index, required this.exercise, required this.done});
+
+  final int index;
+  final Map<String, dynamic> exercise;
+  final bool done;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: GlassCard(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap: () =>
+              ref.read(todayControllerProvider.notifier).toggle(index),
+          child: Row(
+            children: [
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 250),
+                width: 34,
+                height: 34,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: done ? MpColors.primary : MpColors.surface,
+                  border: Border.all(
+                      color: done ? MpColors.primary : MpColors.textSecondary),
+                ),
+                child: done
+                    ? const Icon(Icons.check, size: 20, color: Colors.white)
+                    : null,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'حرکت ${exercise['exercise_id']} — روز ${exercise['day']}',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        decoration: done ? TextDecoration.lineThrough : null,
+                        color: done ? MpColors.textSecondary : MpColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      '${exercise['sets']} ست × ${exercise['reps']} — استراحت ${exercise['rest_seconds']} ثانیه',
+                      style: TextStyle(
+                          fontSize: 12, color: MpColors.textSecondary),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: MpColors.primary.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text('${exercise['load_pct']}٪ بار',
+                    style: const TextStyle(
+                        fontSize: 11, color: MpColors.primaryLight)),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 }
 
-class _ProgressRing extends StatelessWidget {
-  const _ProgressRing({required this.progress});
-
-  final double progress;
+/// حلقهٔ پیشرفت روز.
+class _Ring extends StatelessWidget {
+  const _Ring({required this.pct});
+  final double pct;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 72,
-      height: 72,
+      width: 44,
+      height: 44,
       child: Stack(
         fit: StackFit.expand,
-        alignment: Alignment.center,
         children: [
           CircularProgressIndicator(
-            value: 1,
-            strokeWidth: 6,
-            color: MpColors.primary.withOpacity(0.15),
-          ),
-          TweenAnimationBuilder<double>(
-            tween: Tween(begin: 0, end: progress),
-            duration: const Duration(milliseconds: 800),
-            curve: Curves.easeOut,
-            builder: (_, value, __) => CircularProgressIndicator(
-              value: value,
-              strokeWidth: 6,
-              strokeCap: StrokeCap.round,
-              color: MpColors.primary,
-            ),
+            value: pct,
+            strokeWidth: 5,
+            backgroundColor: MpColors.surface,
+            color: MpColors.primary,
           ),
           Center(
-            child: Text('${(progress * 100).round()}٪', style: const TextStyle(fontSize: 13)),
+            child: Text('${(pct * 100).toInt()}%',
+                style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -160,26 +247,24 @@ class _ProgressRing extends StatelessWidget {
   }
 }
 
-class _Chip extends StatelessWidget {
-  const _Chip({required this.label, this.gold = false});
-
-  final String label;
-  final bool gold;
+/// حالت خالی روز.
+class _TodayEmpty extends StatelessWidget {
+  const _TodayEmpty();
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
-        color: (gold ? MpColors.accent : MpColors.primary).withOpacity(0.12),
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          fontSize: 11,
-          color: gold ? MpColors.accentSoft : MpColors.primaryLight,
-        ),
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.self_improvement, size: 56, color: MpColors.accent),
+          const SizedBox(height: 12),
+          const Text('برنامه‌ای برای امروز نیست',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 6),
+          Text('روز استراحت — بدن را ترمیم کنید 💤',
+              style: TextStyle(color: MpColors.textSecondary)),
+        ],
       ),
     );
   }

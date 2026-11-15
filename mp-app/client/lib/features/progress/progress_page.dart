@@ -1,112 +1,94 @@
-/// پیشرفت کلاینت — نمای کلی روندها (M19).
+/// پیشرفت واقعی — ارزیابی‌های ثبت‌شدهٔ عضو (فقط مشاهده — قانون M18).
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/session.dart';
 import '../../core/theme.dart';
 import '../../shared/widgets/glass_card.dart';
 
-class ProgressPage extends StatelessWidget {
+final myAssessmentsProvider = FutureProvider<List<dynamic>>((ref) async {
+  final api = ref.watch(apiClientProvider);
+  final auth = ref.watch(authProvider);
+  final memberId = auth.memberId;
+  if (memberId == null) return [];
+  try {
+    final r = await api.get('/assessments/member/$memberId');
+    return (r is List ? r : const []);
+  } catch (_) {
+    return [];
+  }
+});
+
+class ProgressPage extends ConsumerWidget {
   const ProgressPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final assessments = ref.watch(myAssessmentsProvider);
     return SafeArea(
       child: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+        padding: const EdgeInsets.all(16),
         children: [
-          const Text('پیشرفت من', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: MpColors.textPrimary)),
-          const SizedBox(height: 16),
-          Row(
-            children: const [
-              Expanded(child: _ProgressTile('چربی بدن', '۱۲٫۴٪', '−۱٫۲٪', Icons.show_chart, MpColors.primary)),
-              SizedBox(width: 12),
-              Expanded(child: _ProgressTile('وزن', '۷۸٫۵', '−۱٫۶ کیلو', Icons.scale, MpColors.info)),
-            ],
+          GlassCard(
+            child: Row(
+              children: [
+                const Icon(Icons.trending_up, color: MpColors.primary, size: 36),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('روند پیشرفت شما',
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text('ارزیابی‌های مربی — داده‌های شما فقط توسط ادمین ثبت می‌شود',
+                          style: TextStyle(
+                              fontSize: 12, color: MpColors.textSecondary)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 12),
-          Row(
-            children: const [
-              Expanded(child: _ProgressTile('حضور', '۱۸ جلسه', 'این ماه', Icons.calendar_month, MpColors.accent)),
-              SizedBox(width: 12),
-              Expanded(child: _ProgressTile('رکورد اسکوات', '۱۲۰ کیلو', '+۵ کیلو', Icons.fitness_center, MpColors.primaryLight)),
-            ],
-          ),
-          const SizedBox(height: 20),
-          GlassCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text('دستاوردهای اخیر', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: MpColors.textPrimary)),
-                SizedBox(height: 12),
-                _Achievement('🏅', '۱۰ جلسهٔ پیوسته', 'بیش از ۱۰ جلسه بدون وقفه'),
-                _Achievement('💪', 'رکورد جدید پرس سینه', '۸۰ کیلو × ۵ تکرار'),
-                _Achievement('📉', 'کاهش ۲٪ چربی', 'در ۸ هفتهٔ گذشته'),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ProgressTile extends StatelessWidget {
-  const _ProgressTile(this.label, this.value, this.delta, this.icon, this.color);
-
-  final String label;
-  final String value;
-  final String delta;
-  final IconData icon;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return GlassCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, size: 18, color: color),
-              const SizedBox(width: 6),
-              Text(label, style: const TextStyle(fontSize: 11.5, color: MpColors.textSecondary)),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Text(value, style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: MpColors.textPrimary)),
-          const SizedBox(height: 4),
-          Text(delta, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: color)),
-        ],
-      ),
-    );
-  }
-}
-
-class _Achievement extends StatelessWidget {
-  const _Achievement(this.emoji, this.title, this.subtitle);
-
-  final String emoji;
-  final String title;
-  final String subtitle;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        children: [
-          Text(emoji, style: const TextStyle(fontSize: 22)),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: MpColors.textPrimary)),
-                const SizedBox(height: 2),
-                Text(subtitle, style: const TextStyle(fontSize: 11, color: MpColors.textSecondary)),
-              ],
-            ),
+          assessments.when(
+            loading: () => const Center(
+                child: Padding(
+              padding: EdgeInsets.all(40),
+              child: CircularProgressIndicator(),
+            )),
+            error: (e, _) => GlassCard(
+                child: Text('خطا: $e', textAlign: TextAlign.center)),
+            data: (list) {
+              if (list.isEmpty) {
+                return GlassCard(
+                  child: Column(
+                    children: [
+                      const Icon(Icons.insights, size: 40, color: MpColors.info),
+                      const SizedBox(height: 8),
+                      const Text('هنوز ارزیابی ثبت نشده است',
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 6),
+                      Text('پس از ارزیابی توسط مربی، روند شما اینجا دیده می‌شود',
+                          style: TextStyle(color: MpColors.textSecondary)),
+                    ],
+                  ),
+                );
+              }
+              return Column(
+                children: [
+                  for (final a in list)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: GlassCard(
+                        child: Text('ارزیابی شمارهٔ ${(a as Map<String, dynamic>)['id']}',
+                            style: const TextStyle(fontWeight: FontWeight.bold)),
+                      ),
+                    ),
+                ],
+              );
+            },
           ),
         ],
       ),

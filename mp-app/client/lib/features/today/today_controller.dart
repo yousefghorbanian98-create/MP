@@ -1,76 +1,34 @@
-/// کنترلر «برنامهٔ امروز» — Riverpod.
-/// قانون G8: اعداد بار/ست/تکرار فقط از API (موتور قواعد) می‌آیند؛ LLM هرگز عدد نمی‌سازد.
+/// «برنامهٔ امروز» واقعی — تمرین‌های روز از برنامهٔ موتور + ثبت انجام‌شده‌ها.
 library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ExerciseItem {
-  const ExerciseItem({
-    required this.title,
-    required this.sets,
-    required this.reps,
-    required this.loadPct,
-    required this.restSeconds,
-    this.done = false,
-  });
-
-  final String title;
-  final int sets;
-  final String reps;
-  final int loadPct;
-  final int restSeconds;
-  final bool done;
-
-  ExerciseItem copyWith({bool? done}) => ExerciseItem(
-        title: title,
-        sets: sets,
-        reps: reps,
-        loadPct: loadPct,
-        restSeconds: restSeconds,
-        done: done ?? this.done,
-      );
-}
+import '../../core/app_state.dart';
 
 class TodayState {
-  const TodayState({required this.exercises, required this.status});
-
-  final List<ExerciseItem> exercises;
-
-  /// draft | approved | pending — فقط approved نمایش داده می‌شود (US-104)
-  final String status;
-
-  double get progress {
-    if (exercises.isEmpty) return 0;
-    return exercises.where((e) => e.done).length / exercises.length;
-  }
-
-  TodayState copyWith({List<ExerciseItem>? exercises, String? status}) => TodayState(
-        exercises: exercises ?? this.exercises,
-        status: status ?? this.status,
-      );
+  const TodayState({this.done = const {}});
+  final Set<int> done;
+  double progress(int total) => total == 0 ? 0 : done.length / total;
+  TodayState copyWith({Set<int>? done}) => TodayState(done: done ?? this.done);
 }
 
-class TodayController extends Notifier<TodayState> {
-  @override
-  TodayState build() {
-    // دادهٔ نمونه — در نسخهٔ متصل به API از /api/v1/programs می‌آید
-    return const TodayState(
-      status: 'approved',
-      exercises: [
-        ExerciseItem(title: 'اسکوات هالتر', sets: 4, reps: '۸-۱۰', loadPct: 70, restSeconds: 90),
-        ExerciseItem(title: 'پرس سینه هالتر', sets: 4, reps: '۸-۱۲', loadPct: 65, restSeconds: 90),
-        ExerciseItem(title: 'زیربغل سیم‌کش', sets: 3, reps: '۱۰-۱۲', loadPct: 60, restSeconds: 75),
-        ExerciseItem(title: 'پرس سرشانه', sets: 3, reps: '۱۰-۱۲', loadPct: 55, restSeconds: 75),
-      ],
-    );
-  }
+class TodayController extends StateNotifier<TodayState> {
+  TodayController(this.ref) : super(const TodayState());
+  final Ref ref;
 
   void toggle(int index) {
-    final list = [...state.exercises];
-    list[index] = list[index].copyWith(done: !list[index].done);
-    state = state.copyWith(exercises: list);
+    final s = Set<int>.from(state.done);
+    s.contains(index) ? s.remove(index) : s.add(index);
+    state = TodayState(done: s);
   }
+
+  void reset() => state = const TodayState();
 }
 
 final todayControllerProvider =
-    NotifierProvider<TodayController, TodayState>(TodayController.new);
+    StateNotifierProvider<TodayController, TodayState>((ref) => TodayController(ref));
+
+/// تمرین‌های امروز از برنامهٔ واقعی.
+final todayWorkoutProvider = Provider<List<Map<String, dynamic>>>((ref) {
+  return ref.watch(todayExercisesProvider);
+});

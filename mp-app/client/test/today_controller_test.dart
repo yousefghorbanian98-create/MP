@@ -1,4 +1,4 @@
-/// تست‌های کنترلر «برنامهٔ امروز» (اجرا در CI — D-002).
+/// تست‌های کنترلر «برنامهٔ امروز» واقعی (اجرا در CI — D-002).
 library;
 
 import 'package:flutter_test/flutter_test.dart';
@@ -12,21 +12,30 @@ void main() {
     addTearDown(container.dispose);
 
     final initial = container.read(todayControllerProvider);
-    expect(initial.status, 'approved');
-    expect(initial.progress, 0);
+    expect(initial.done, isEmpty);
+    expect(initial.progress(4), 0);
 
     container.read(todayControllerProvider.notifier).toggle(0);
     final after = container.read(todayControllerProvider);
-    expect(after.exercises[0].done, true);
-    expect(after.progress, closeTo(0.25, 0.001));
+    expect(after.done, {0});
+    expect(after.progress(4), closeTo(0.25, 0.001));
+
+    // toggle دوباره = برگشت به حالت انجام‌نشده
+    container.read(todayControllerProvider.notifier).toggle(0);
+    expect(container.read(todayControllerProvider).done, isEmpty);
   });
 
-  test('G8: exercises carry numeric load from rule engine fields only', () {
+  test('progress handles zero-total safely (no division by zero)', () {
     final container = ProviderContainer();
     addTearDown(container.dispose);
-    for (final ex in container.read(todayControllerProvider).exercises) {
-      expect(ex.loadPct, inInclusiveRange(1, 100));
-      expect(ex.sets, greaterThan(0));
-    }
+    expect(container.read(todayControllerProvider).progress(0), 0);
+  });
+
+  test('reset clears done set', () {
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
+    container.read(todayControllerProvider.notifier).toggle(1);
+    container.read(todayControllerProvider.notifier).reset();
+    expect(container.read(todayControllerProvider).done, isEmpty);
   });
 }

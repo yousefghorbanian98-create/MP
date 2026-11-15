@@ -5,6 +5,7 @@ from __future__ import annotations
 import base64
 
 from fastapi import APIRouter, Depends
+from sqlalchemy import select
 
 from app.deps import CurrentUser, DbSession, require_permission
 from modules.face_id import service
@@ -60,3 +61,41 @@ from modules.face_id.deep import lock_status  # noqa: E402
 @router.get("/deep-status", summary="وضعیت مدل عمیق چهره (model_lock)")
 def deep_status():
     return lock_status()
+
+
+
+# ── چک‌این با QR (M32) — توکن امضاشده، بدون واسط [finn] ──
+
+
+@router.get("/qr-token", summary="توکن QR چک‌این عضو")
+def qr_token(db: DbSession, user: CurrentUser):
+    from app.errors import NotFoundError
+    from app.security.jwt import create_access_token
+    from db.models import Member
+
+    member = db.scalar(select(Member).where(Member.user_id == user.id))
+    if member is None:
+        raise NotFoundError("پروفایل عضو یافت نشد")
+    tok = create_access_token(member.id, "checkin-qr")
+    return {"payload": tok, "member_id": member.id}
+
+
+@router.post("/checkin-qr", summary="چک‌این با QR (کیوسک/پذیرش)")
+def checkin_qr(payload: dict, db: DbSession):
+    from app.errors import ApiError, NotFoundError
+    from app.security.jwt import decode_access_token
+    from db.models import CheckIn, Member
+
+    try:
+        data = decode_access_token(payload.get("payload", ""))
+    except Exception:
+        raise ApiError("توکن QR نامعتبر است", code="qr_invalid")
+    if data.get("role") != "checkin-qr":
+        raise ApiError("توکن QR نیست", code="qr_invalid")
+    member_id = int(data.get("sub", 0))
+    if db.get(Member, member_id) is None:
+        raise NotFoundError("عضو یافت نشد")
+    c = CheckIn(member_id=member_id, method="qr", result="ok", branch_id=1)
+    db.add(c)
+    db.commit()
+    return {"status": "ok", "method": "qr", "member_id": member_id}

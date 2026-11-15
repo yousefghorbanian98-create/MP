@@ -1,106 +1,102 @@
-/// تغذیه — برنامهٔ غذایی عضو (M19).
+/// تغذیهٔ واقعی — برنامهٔ محاسبه‌شده از موتور (M32).
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/app_state.dart';
 import '../../core/theme.dart';
 import '../../shared/widgets/glass_card.dart';
 
-class NutritionPage extends StatelessWidget {
+class NutritionPage extends ConsumerWidget {
   const NutritionPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('تغذیه'), backgroundColor: MpColors.background, surfaceTintColor: Colors.transparent),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final plan = ref.watch(nutritionProvider);
+    return SafeArea(
+      child: ListView(
+        padding: const EdgeInsets.all(16),
         children: [
-          GlassCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('برنامهٔ امروز', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: MpColors.textPrimary)),
-                const SizedBox(height: 12),
-                Row(
-                  children: const [
-                    _Macro('کالری', '۲٬۲۰۰', MpColors.primary),
-                    _Macro('پروتئین', '۱۶۵g', MpColors.info),
-                    _Macro('کربوهیدرات', '۲۲۰g', MpColors.accent),
-                    _Macro('چربی', '۷۳g', MpColors.primaryLight),
+          plan.when(
+            loading: () => const Center(
+                child: Padding(
+              padding: EdgeInsets.all(40),
+              child: CircularProgressIndicator(),
+            )),
+            error: (e, _) => GlassCard(
+                child: Text('خطا: $e', textAlign: TextAlign.center)),
+            data: (p) {
+              if (p == null) {
+                return GlassCard(
+                  child: Column(
+                    children: [
+                      const Icon(Icons.restaurant, size: 44, color: MpColors.accent),
+                      const SizedBox(height: 10),
+                      const Text('برنامهٔ غذایی ندارید',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 6),
+                      Text('در جریان ساخت برنامه، تغذیه هم محاسبه می‌شود',
+                          style: TextStyle(color: MpColors.textSecondary)),
+                    ],
+                  ),
+                );
+              }
+              final kcal = p['daily_kcal'] ?? p['target_kcal'] ?? 0;
+              return Column(
+                children: [
+                  GlassCard(
+                    child: Column(
+                      children: [
+                        Text('کالری روزانه',
+                            style: TextStyle(color: MpColors.textSecondary)),
+                        const SizedBox(height: 6),
+                        Text('$kcal کیلوکالری',
+                            style: const TextStyle(
+                                fontSize: 30, fontWeight: FontWeight.w900)),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      _macro('پروتئین', p['protein_g'], MpColors.primary),
+                      const SizedBox(width: 8),
+                      _macro('کربوهیدرات', p['carbs_g'], MpColors.info),
+                      const SizedBox(width: 8),
+                      _macro('چربی', p['fat_g'], MpColors.accent),
+                    ],
+                  ),
+                  if ((p['llm_explanation'] as String? ?? '').isNotEmpty) ...[
+                    const SizedBox(height: 12),
+                    GlassCard(
+                      child: Text(p['llm_explanation'] as String,
+                          style: const TextStyle(height: 1.8)),
+                    ),
                   ],
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          GlassCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text('وعده‌ها', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: MpColors.textPrimary)),
-                SizedBox(height: 10),
-                _Meal('صبحانه', 'بلغور جو + تخم‌مرغ + گردو', '۵۲۰ کیلوکالری'),
-                _Meal('ناهار', 'سینهٔ مرغ + برنج قهوه‌ای + سالاد', '۷۵۰ کیلوکالری'),
-                _Meal('میان‌وعده', 'ماست یونانی + موز', '۲۸۰ کیلوکالری'),
-                _Meal('شام', 'ماهی + سبزیجات بخارپز', '۶۵۰ کیلوکالری'),
-              ],
-            ),
+                ],
+              );
+            },
           ),
         ],
       ),
     );
   }
-}
 
-class _Macro extends StatelessWidget {
-  const _Macro(this.label, this.value, this.color);
-
-  final String label;
-  final String value;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _macro(String label, dynamic grams, Color color) {
     return Expanded(
-      child: Column(
-        children: [
-          Text(value, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w900, color: color)),
-          const SizedBox(height: 3),
-          Text(label, style: const TextStyle(fontSize: 10.5, color: MpColors.textSecondary)),
-        ],
-      ),
-    );
-  }
-}
-
-class _Meal extends StatelessWidget {
-  const _Meal(this.title, this.items, this.kcal);
-
-  final String title;
-  final String items;
-  final String kcal;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 9),
-      child: Row(
-        children: [
-          const Icon(Icons.restaurant_menu, size: 18, color: MpColors.primaryLight),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: MpColors.textPrimary)),
-                const SizedBox(height: 2),
-                Text(items, style: const TextStyle(fontSize: 11, color: MpColors.textSecondary)),
-              ],
-            ),
-          ),
-          Text(kcal, style: const TextStyle(fontSize: 11, color: MpColors.accentSoft, fontWeight: FontWeight.w700)),
-        ],
+      child: GlassCard(
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        child: Column(
+          children: [
+            Text('$grams گرم',
+                style: TextStyle(
+                    fontSize: 18, fontWeight: FontWeight.bold, color: color)),
+            const SizedBox(height: 4),
+            Text(label, style: TextStyle(fontSize: 12, color: MpColors.textSecondary)),
+          ],
+        ),
       ),
     );
   }

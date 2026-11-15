@@ -29,11 +29,28 @@ android {
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        // امضای پایدار انتشار (MP) — همهٔ نسخه‌ها با یک کلید امضا می‌شوند
+        // تا نصبِ روی نسخهٔ قبلی بدون حذف، ممکن بماند (رفع «نصب پکیج شکست خورد»).
+        create("release") {
+            val props = java.util.Properties()
+            val f = file("../keystore/keystore.properties")
+            if (f.exists()) {
+                f.inputStream().use { props.load(it) }
+                storeFile = file("../" + props.getProperty("storeFile").removePrefix("../"))
+                storePassword = props.getProperty("storePassword")
+                keyAlias = props.getProperty("keyAlias")
+                keyPassword = props.getProperty("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = if (signingConfigs.getByName("release").storeFile != null)
+                signingConfigs.getByName("release")
+            else
+                signingConfigs.getByName("debug")
         }
     }
 }
