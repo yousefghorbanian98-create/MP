@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Added — M40 (2026-11-14) — پروتکل پایلوت + dry-run حلقهٔ کامل
+- `PILOT-PROTOCOL-M40.md` (pilot-1.0): روزشمار ۷ روزه + معیارهای موفقیت از پیش تعریف‌شده + مرزهای ایمنی + طرح تکرار ۴ هفته‌ای
+- dry-run E2E: آزمون ← ماتریس ← تجویز ← بازخورد ← بازبینی — `test_pilot_dry_run.py` سبز
+
 ### Added — M39 (2026-11-14) — بازخورد ست در کلاینت + «چرا این تغییر؟»
 - SetFeedbackSheet (RIR/درد هر ست) روی «برنامهٔ امروز» + _WhyCard زنجیرهٔ داده←قاعده←تصمیم+دلیل
 - S3c: ۱۳۷ rps صفر خطا + رفع دو شکاف casbin (member set-feedback، super_admin) با تست regression
