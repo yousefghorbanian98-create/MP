@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { RoleManager } from "../components/RoleManager";
 
 const initialFlags = [
   { key: "face_gate", label: "گیت تشخیص چهره", enabled: true, desc: "فعال‌سازی ورود با چهره در کیوسک" },
@@ -68,6 +69,7 @@ export function Settings() {
           </div>
         </dl>
       </div>
+      <RoleManager />
     </motion.div>
   );
 }

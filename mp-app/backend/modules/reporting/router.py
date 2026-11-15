@@ -5,11 +5,11 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, Query
 from fastapi.responses import HTMLResponse
 
-from app.deps import DbSession, require_roles
+from app.deps import DbSession, require_permission
 from modules.reporting.service import build_confidential_report, render_html
 
 router = APIRouter(
-    prefix="/reports", tags=["reports"], dependencies=[Depends(require_roles("admin", "coach"))]
+    prefix="/reports", tags=["reports"], dependencies=[Depends(require_permission())]
 )
 
 

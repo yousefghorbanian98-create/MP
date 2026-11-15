@@ -28,6 +28,8 @@ m = g(r.sub, p.sub) && keyMatch2(r.obj, p.obj) && (r.act == p.act || p.act == "*
 # ماتریس اجازه‌ها (policy) — (نقش، الگوی مسیر، متد)
 # نکتهٔ keyMatch2: فقط «/*» وایلدکارت است (به‌صورت /.* تفسیر می‌شود) — پس هر مسیر
 # هم به‌صورت exact و هم با «/*» ثبت می‌شود.
+# DENIES (D-004): ردِ صریح که بر allow اولویت دارد — برای حفظ معنای قدیمیِ
+# guardهای ترکیبی (مثلاً «manager همه‌چیز به‌جز گزارش محرمانه»).
 POLICIES: list[tuple[str, str, str]] = [
     # عضو: فقط دادهٔ خودش (کنترل مالکیت در service — لایهٔ ABAC بعدی)
     ("member", "/api/v1/auth/logout", "POST"),
@@ -55,6 +57,14 @@ POLICIES: list[tuple[str, str, str]] = [
     ("member", "/api/v1/payments/*", "GET"),
     ("member", "/api/v1/payments/wallet/pay", "POST"),
     ("member", "/api/v1/nutrition/*", "GET"),
+    # M43-c3 (D-004): مسیرهای مهاجرت‌داده‌شده از require_roles — عضو در فرم ورودی خودش
+    # (باگ REA: نبود policy برای /ai و /population ← ۴۰۳ در مسیر ثبت‌نام واقعی)
+    ("member", "/api/v1/ai/program/generate", "POST"),
+    ("member", "/api/v1/ai/nutrition/generate", "POST"),
+    ("member", "/api/v1/ai/suggest-weight", "POST"),
+    ("member", "/api/v1/population/*", "*"),
+    ("member", "/api/v1/classes/book", "POST"),
+    ("member", "/api/v1/classes/cancel", "POST"),
     # مربی: ارزیابی/برنامه/اعضا (خواندن+نوشتن برنامه)
     ("coach", "/api/v1/members", "GET"),
     ("coach", "/api/v1/members", "POST"),
@@ -68,6 +78,15 @@ POLICIES: list[tuple[str, str, str]] = [
     ("coach", "/api/v1/axis-assessments/*", "*"),
     ("coach", "/api/v1/programs", "GET"),
     ("coach", "/api/v1/programs/*", "*"),
+    # M43-c3 (D-004): مسیرهای مهاجرت‌داده‌شده از require_roles
+    ("coach", "/api/v1/ai/program/generate", "POST"),
+    ("coach", "/api/v1/ai/nutrition/generate", "POST"),
+    ("coach", "/api/v1/ai/suggest-weight", "POST"),
+    ("coach", "/api/v1/population/*", "*"),
+    ("coach", "/api/v1/classes", "POST"),
+    ("coach", "/api/v1/classes/book", "POST"),
+    ("coach", "/api/v1/classes/cancel", "POST"),
+    ("coach", "/api/v1/reports/*", "*"),
     ("coach", "/api/v1/nutrition/*", "*"),
     ("coach", "/api/v1/nutrition/plans", "POST"),
     ("coach", "/api/v1/face/*", "*"),
@@ -87,12 +106,21 @@ POLICIES: list[tuple[str, str, str]] = [
     ("reception", "/api/v1/face/consent", "POST"),
     ("reception", "/api/v1/face/consent/revoke", "POST"),
     ("reception", "/api/v1/notifications/*", "*"),
+    ("reception", "/api/v1/population/*", "*"),
     # مدیر: همه‌چیز
     ("manager", "/*", "*"),
     # ادمین سیستم: دسترسی کامل (هم‌ارز manager در casbin)
     ("admin", "/*", "*"),
     # مالک سیستم: دسترسی کامل (M39-c3 — شکاف policy پیدا شد: super_admin ثبت نشده بود)
     ("super_admin", "/*", "*"),
+]
+
+# ردِ صریح (D-004) — بر allow مقدم است؛ برای حفظ معنای قدیمیِ guardهای ترکیبی:
+# - گزارش محرمانه فقط admin/coach (body-comp طبق قاعدهٔ کاربر فقط admin — manager هم رد)
+# - بازبینی ارزیابی فقط manager/admin (coach نباید تأیید/رد کند)
+DENIES: list[tuple[str, str, str]] = [
+    ("manager", "/api/v1/reports/*", "*"),
+    ("coach", "/api/v1/axis-assessments/:id/review", "POST"),
 ]
 
 
@@ -116,5 +144,12 @@ def get_enforcer() -> casbin.Enforcer:
 
 
 def enforce(role: str, path: str, method: str) -> bool:
-    """بررسی اجازهٔ نقش برای مسیر/متد."""
+    """بررسی اجازهٔ نقش برای مسیر/متد — DENIES (رد صریح) بر allow مقدم است (D-004)."""
+    for deny_role, deny_obj, deny_act in DENIES:
+        if (
+            role == deny_role
+            and (deny_act == "*" or deny_act == method)
+            and casbin.util.key_match2(path, deny_obj)
+        ):
+            return False
     return bool(get_enforcer().enforce(role, path, method))

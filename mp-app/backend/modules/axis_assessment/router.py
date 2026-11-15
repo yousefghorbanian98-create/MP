@@ -6,7 +6,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
-from app.deps import CurrentUser, DbSession, require_permission, require_roles
+from app.deps import CurrentUser, DbSession, require_permission
 from db.models.auth import User
 from modules.axis_assessment import service
 from modules.axis_assessment.schemas import AssessmentCreate, MatrixOut, ReviewIn
@@ -44,7 +44,7 @@ def review_assessment(
     assessment_id: int,
     payload: ReviewIn,
     db: DbSession,
-    user: Annotated[User, Depends(require_roles("manager", "admin"))],
+    user: Annotated[User, Depends(require_permission())],
 ):
     return service.review_assessment(
         db, assessment_id, action=payload.action, reason=payload.reason, user=user

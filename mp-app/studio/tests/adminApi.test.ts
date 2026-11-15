@@ -29,3 +29,20 @@ describe("adminApi.fetchLeaderboards", () => {
     await expect(fetchLeaderboards("/api/v1", "tok")).rejects.toThrow("500");
   });
 });
+
+describe("adminApi role management (M43)", () => {
+  it("setUserRole posts the role payload", async () => {
+    const fetchMock = vi.fn(async () => ({ ok: true, status: 200, json: async () => ({}) }));
+    vi.stubGlobal("fetch", fetchMock);
+    const { setUserRole } = await import("../src/lib/adminApi");
+    await setUserRole(7, "coach", "/api/v1", "tok");
+    const call = fetchMock.mock.calls[0] as unknown[];
+    expect(String(call[0])).toContain("/admin/users/7/role");
+  });
+
+  it("revokeUserRole maps 403 to AuthError (owner-only)", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => ({ ok: false, status: 403, json: async () => ({}) })));
+    const { revokeUserRole, AuthError } = await import("../src/lib/adminApi");
+    await expect(revokeUserRole(7, "/api/v1", "tok")).rejects.toBeInstanceOf(AuthError);
+  });
+});

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends
 
-from app.deps import DbSession, require_permission
+from app.deps import CurrentUser, DbSession, require_permission
 from modules.ai_engine import service
 from modules.ai_engine.schemas import NutritionGenerateIn, ProgramGenerateIn
 from modules.nutrition.schemas import PlanOut
@@ -18,7 +18,11 @@ router = APIRouter(prefix="/ai", tags=["ai-engine"], dependencies=[Depends(requi
     response_model=ProgramOut,
     summary="تولید برنامه از موتور قواعد قطعی (G8 — M15)",
 )
-def generate_program(payload: ProgramGenerateIn, db: DbSession):
+def generate_program(payload: ProgramGenerateIn, db: DbSession, user: CurrentUser):
+    from app.security.ownership import ensure_member_scope
+
+    # عضو فقط برای خودش (D-005) — کادر برای هر عضوی؛ مالکیت اجباری
+    ensure_member_scope(db, user, payload.member_id)
     return service.draft_program_with_explanation(
         db,
         member_id=payload.member_id,
@@ -35,7 +39,10 @@ def generate_program(payload: ProgramGenerateIn, db: DbSession):
     response_model=PlanOut,
     summary="تولید برنامهٔ غذایی از موتور قواعد قطعی (G8 — M15)",
 )
-def generate_nutrition(payload: NutritionGenerateIn, db: DbSession):
+def generate_nutrition(payload: NutritionGenerateIn, db: DbSession, user: CurrentUser):
+    from app.security.ownership import ensure_member_scope
+
+    ensure_member_scope(db, user, payload.member_id)
     return service.draft_nutrition_with_explanation(
         db,
         member_id=payload.member_id,

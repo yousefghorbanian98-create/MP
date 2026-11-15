@@ -5,7 +5,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
 
-from app.deps import DbSession, require_roles
+from app.deps import DbSession, require_permission
 from modules.classes import service
 
 router = APIRouter(prefix="/classes", tags=["classes"])
@@ -31,7 +31,7 @@ def list_classes(db: DbSession):
 @router.post(
     "",
     summary="ایجاد کلاس (staff)",
-    dependencies=[Depends(require_roles("admin", "manager", "coach"))],
+    dependencies=[Depends(require_permission())],
 )
 def create_class(payload: ClassIn, db: DbSession):
     c = service.create_class(
@@ -47,7 +47,7 @@ def create_class(payload: ClassIn, db: DbSession):
 @router.post(
     "/book",
     summary="رزرو کلاس (confirmed/waitlisted)",
-    dependencies=[Depends(require_roles("admin", "manager", "coach", "member"))],
+    dependencies=[Depends(require_permission())],
 )
 def book(payload: BookIn, db: DbSession):
     b = service.book(db, class_id=payload.class_id, member_id=payload.member_id)
@@ -57,7 +57,7 @@ def book(payload: BookIn, db: DbSession):
 @router.post(
     "/cancel",
     summary="لغو رزرو + ارتقای لیست انتظار",
-    dependencies=[Depends(require_roles("admin", "manager", "coach", "member"))],
+    dependencies=[Depends(require_permission())],
 )
 def cancel(payload: BookIn, db: DbSession):
     b = service.cancel(db, class_id=payload.class_id, member_id=payload.member_id)

@@ -5,16 +5,15 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
-from app.deps import require_roles
+from app.deps import require_permission
 from modules.population.gates import POPULATION_PATHS, assert_generation_allowed
 from modules.population.intake import next_questions
 
 router = APIRouter(
     prefix="/population",
     tags=["programs"],
-    # member/reception هم مجاز: فرم ورودی کلاینت (intake) با نقش عضو gate-check می‌زند
-    # (باگ REA-2026-11-15 — ۴۰۳ برای عضو در مسیر ثبت‌نام).
-    dependencies=[Depends(require_roles("admin", "coach", "manager", "member", "reception"))],
+    # M43-c3 (D-004): casbin تنها مرجع مجوز — نقش‌ها در security/rbac.py
+    dependencies=[Depends(require_permission())],
 )
 
 

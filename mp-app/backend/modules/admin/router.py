@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, Query
+from pydantic import BaseModel, Field
 
-from app.deps import DbSession, require_permission
+from app.deps import CurrentUser, DbSession, require_permission
+from app.errors import ForbiddenError
 from modules.admin import service
 from modules.admin.schemas import AuditOut, FeatureFlagIn, FeatureFlagOut
 
@@ -43,3 +45,33 @@ def _leaderboards(
 @router.get("/kpis", summary="KPI های واقعی داشبورد (M29)")
 def _kpis(db: DbSession):
     return _admin_kpis(db)
+
+
+# ── M43: admin pass — اعطا/ابطال نقش [finn] ──
+
+
+class RoleIn(BaseModel):
+    role: str = Field(..., min_length=2, max_length=20)
+
+
+@router.get("/users", summary="فهرست کاربران و نقش‌ها (M43-c1)")
+def users_list(db: DbSession, user: CurrentUser):
+    if user.role != "super_admin":
+        raise ForbiddenError("فقط مالک سیستم (super_admin)")
+    from modules.admin.roles import list_users
+
+    return list_users(db)
+
+
+@router.post("/users/{user_id}/role", summary="اعطا/تغییر نقش = admin pass (M43-c1)")
+def grant_role(user_id: int, payload: RoleIn, db: DbSession, user: CurrentUser):
+    from modules.admin.roles import set_role
+
+    return set_role(db, actor=user, user_id=user_id, role=payload.role)
+
+
+@router.delete("/users/{user_id}/role", summary="ابطال admin pass ← بازگشت به member (M43-c1)")
+def revoke_role(user_id: int, db: DbSession, user: CurrentUser):
+    from modules.admin.roles import revoke_role as _revoke
+
+    return _revoke(db, actor=user, user_id=user_id)

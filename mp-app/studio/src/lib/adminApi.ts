@@ -37,3 +37,61 @@ export async function fetchLeaderboards(
 }
 
 export class AuthError extends Error {}
+
+// ── M43: admin pass — مدیریت نقش‌ها [finn] ──
+
+export interface UserRow {
+  id: number;
+  phone: string;
+  full_name: string;
+  role: string;
+  is_active: boolean;
+  created_at: string | null;
+}
+
+export interface AuditRow {
+  id: number;
+  actor_user_id: number | null;
+  action: string;
+  entity_type: string;
+  entity_id: number | null;
+  detail: string;
+  created_at: string;
+}
+
+function authHeaders(token: string | null): Record<string, string> {
+  return token ? { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } : { "Content-Type": "application/json" };
+}
+
+export async function fetchUsers(base = "/api/v1", token: string | null = localStorage.getItem("mp_token")): Promise<UserRow[]> {
+  const resp = await fetch(`${base}/admin/users`, { headers: authHeaders(token) });
+  if (resp.status === 401 || resp.status === 403) throw new AuthError("فقط مالک سیستم (super_admin)");
+  if (!resp.ok) throw new Error(`خطای ${resp.status}`);
+  return (await resp.json()) as UserRow[];
+}
+
+export async function setUserRole(userId: number, role: string, base = "/api/v1", token: string | null = localStorage.getItem("mp_token")): Promise<void> {
+  const resp = await fetch(`${base}/admin/users/${userId}/role`, {
+    method: "POST",
+    headers: authHeaders(token),
+    body: JSON.stringify({ role }),
+  });
+  if (resp.status === 401 || resp.status === 403) throw new AuthError("فقط مالک سیستم (super_admin)");
+  if (!resp.ok) throw new Error(`خطای ${resp.status}`);
+}
+
+export async function revokeUserRole(userId: number, base = "/api/v1", token: string | null = localStorage.getItem("mp_token")): Promise<void> {
+  const resp = await fetch(`${base}/admin/users/${userId}/role`, {
+    method: "DELETE",
+    headers: authHeaders(token),
+  });
+  if (resp.status === 401 || resp.status === 403) throw new AuthError("فقط مالک سیستم (super_admin)");
+  if (!resp.ok) throw new Error(`خطای ${resp.status}`);
+}
+
+export async function fetchAudit(action: string | null = null, base = "/api/v1", token: string | null = localStorage.getItem("mp_token")): Promise<AuditRow[]> {
+  const q = action ? `?action=${encodeURIComponent(action)}` : "";
+  const resp = await fetch(`${base}/admin/audit${q}`, { headers: authHeaders(token) });
+  if (!resp.ok) throw new Error(`خطای ${resp.status}`);
+  return (await resp.json()) as AuditRow[];
+}

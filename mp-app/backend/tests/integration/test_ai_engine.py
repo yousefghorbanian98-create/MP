@@ -109,11 +109,38 @@ def test_nutrition_generate_draft(client):
     assert body["protein_g"] > 0 and body["carbs_g"] > 0 and body["fat_g"] > 0
 
 
-def test_generate_requires_manager(client):
-    h = _staff(client, role="member")
+def test_generate_member_only_for_self(client):
+    """D-005 (2026-11-15 — تغییر معنای عمدی): عضو می‌تواند برنامهٔ خودش را از فرم ورودی بسازد
+    (draft — همچنان نیازمند تأیید کادر)، اما برای دیگری نه. قبل از این تغییر، عضو کلاً ۴۰۳
+    می‌گرفت که با فرم ورودی کلاینت (intake) ناسازگار بود — باگ REA-2026-11-15."""
+    from db.base import get_session_factory
+    from db.models import Member, User
+
+    n = next(_staff.counter)
+    with get_session_factory()() as s:
+        u = User(phone=f"09{n:09d}", full_name="member-self", role="member")
+        s.add(u)
+        s.flush()
+        m = Member(user_id=u.id, gender="male")
+        s.add(m)
+        s.commit()
+        own_id, other_id = m.id, 99999
+    from app.security.jwt import create_access_token
+
+    h = {"Authorization": f"Bearer {create_access_token(u.id, u.role)}"}
+
+    # برای خودش: مجاز (draft)
     resp = client.post(
         "/api/v1/ai/program/generate",
-        json={"member_id": 1, "goal": "fitness", "level": "beginner"},
+        json={"member_id": own_id, "goal": "fitness", "level": "beginner", "days_per_week": 3},
+        headers=h,
+    )
+    assert resp.status_code == 200, resp.text
+
+    # برای دیگری: ممنوع (مالکیت)
+    resp = client.post(
+        "/api/v1/ai/program/generate",
+        json={"member_id": other_id, "goal": "fitness", "level": "beginner", "days_per_week": 3},
         headers=h,
     )
     assert resp.status_code == 403

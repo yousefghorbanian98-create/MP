@@ -5,7 +5,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
 
-from app.deps import DbSession, require_roles
+from app.deps import DbSession, require_permission
 from engine.autoreg import suggest_next_weight
 
 router = APIRouter(prefix="/ai", tags=["ai"])
@@ -21,7 +21,7 @@ class SuggestWeightIn(BaseModel):
 @router.post(
     "/suggest-weight",
     summary="وزنهٔ پیشنهادی بعدی (autoreg-1.0)",
-    dependencies=[Depends(require_roles("admin", "manager", "coach", "member"))],
+    dependencies=[Depends(require_permission())],
 )
 def suggest_weight(
     payload: SuggestWeightIn,
