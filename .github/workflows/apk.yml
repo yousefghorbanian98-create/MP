@@ -109,7 +109,7 @@ jobs:
           echo "built-from: ${{ github.sha }} run: ${{ github.run_id }}" > mp-app/client/release/BUILD-INFO.txt
           git add mp-app/client/release mp-app/client/android 2>/dev/null || git add mp-app/client/release
           git commit -m "mp(apk): deliver APK build ${{ github.run_number }} [skip ci]" || echo "no changes"
-          git push origin "$BRANCH"
+          git push origin "HEAD:$BRANCH"
 
       - name: Upload APK to GitHub Release (if exists for tag)
         if: success() && startsWith(github.ref, 'refs/tags/')
