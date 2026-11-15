@@ -65,6 +65,8 @@ def _me_dict(m, u) -> dict:
         "user_id": u.id,
         "full_name": u.full_name,
         "phone": u.phone,
+        # M46-c2 — نقش واقعی، تا کلاینت مجبور نباشد «مدیر» را hardcode کند
+        "role": getattr(u, "role", "member"),
         "goal": m.goal,
         "gender": m.gender,
         "height_cm": m.height_cm,

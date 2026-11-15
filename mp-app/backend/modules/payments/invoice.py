@@ -33,9 +33,7 @@ def build_receipt(db: Session, payment_id: int, user=None) -> dict:
     }
 
 
-def build_invoice(
-    db: Session, member_id: int, from_date: datetime | None = None, user=None
-) -> dict:
+def build_invoice(db: Session, member_id: int, user=None) -> dict:
     from app.security.ownership import ensure_member_scope
 
     ensure_member_scope(db, user, member_id)

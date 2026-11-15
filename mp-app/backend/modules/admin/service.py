@@ -40,6 +40,11 @@ def list_audit(db: Session, action: str | None = None, limit: int = 100) -> list
     return list(db.scalars(stmt))
 
 
+def list_flags(db: Session) -> list[FeatureFlag]:
+    """همهٔ پرچم‌ها (M46-c1). لیست خالی = هیچ پرچمی تعریف نشده، نه ۴۰۴."""
+    return list(db.scalars(select(FeatureFlag).order_by(FeatureFlag.key)))
+
+
 def get_flag(db: Session, key: str) -> FeatureFlag:
     flag = db.scalar(select(FeatureFlag).where(FeatureFlag.key == key))
     if flag is None:

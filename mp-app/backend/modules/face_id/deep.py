@@ -71,8 +71,12 @@ class DeepFaceAdapter:
             raise ApiError("مدل عمیق قفل است (model_lock)", code="model_locked")
         self._info = verify_model_file(Path(os.environ["MP_FACE_MODEL_PATH"]))
 
-    def embed(self, image_bgr) -> list[float]:
-        """بردار چهره — ورودی آرایهٔ HxWx3؛ نیازمند onnxruntime در استقرار."""
+    def embed(self, image_bgr) -> list[float]:  # noqa: ARG002
+        """بردار چهره — ورودی آرایهٔ HxWx3.
+
+        M46-c3: پارامتر عمداً نگه داشته شده (قرارداد فراخوان)، ولی تا وقتی
+        `model_preprocess_unconfigured` پابرجاست مصرف نمی‌شود — همان قفل جزئی.
+        """
         try:
             import onnxruntime  # type: ignore
         except ImportError as exc:  # pragma: no cover - در استقرار نصب می‌شود

@@ -18,6 +18,13 @@ def list_audit(db: DbSession, action: str | None = Query(None), limit: int = Que
     return service.list_audit(db, action=action, limit=limit)
 
 
+@router.get(
+    "/flags", response_model=list[FeatureFlagOut], summary="فهرست همهٔ feature flagها (M46-c1)"
+)
+def list_flags(db: DbSession):
+    return service.list_flags(db)
+
+
 @router.get("/flags/{key}", response_model=FeatureFlagOut, summary="وضعیت flag")
 def get_flag(key: str, db: DbSession):
     return service.get_flag(db, key)

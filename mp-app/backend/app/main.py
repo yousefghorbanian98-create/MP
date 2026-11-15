@@ -40,6 +40,13 @@ def health() -> dict:
 
 
 def create_app() -> FastAPI:
+    # M46-c3 — لاگ ساختاریافته را واقعاً روشن کن.
+    # پیش از این `configure_logging` تعریف شده بود ولی هیچ‌جا صدا زده نمی‌شد،
+    # پس `get_logger("jobs")` در scheduler به پیکربندی پیش‌فرض structlog می‌افتاد.
+    from app.logging import configure_logging
+
+    configure_logging(json_logs=settings.environment != "development")
+
     app = FastAPI(
         title="Muscle Paradise API",
         description=(

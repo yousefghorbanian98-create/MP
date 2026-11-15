@@ -44,11 +44,6 @@ class ConflictError(ApiError):
         super().__init__(message, status.HTTP_409_CONFLICT, "conflict")
 
 
-class TooManyRequestsError(ApiError):
-    def __init__(self, message: str = "تعداد درخواست‌ها زیاد است؛ کمی بعد تلاش کنید"):
-        super().__init__(message, status.HTTP_429_TOO_MANY_REQUESTS, "rate_limited")
-
-
 def _payload(code: str, message: str, details: list | None = None) -> dict:
     return {"error": {"code": code, "message": message, "details": details or []}}
 

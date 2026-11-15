@@ -233,3 +233,71 @@ export interface CheckinFeed {
 export function fetchCheckinFeed(limit = 50, token = getToken(), signal?: AbortSignal) {
   return getJson<CheckinFeed>(`/admin/checkins?limit=${limit}`, token, signal);
 }
+
+// ── Feature flags (GET/PUT /admin/flags — M46-c1) ──
+
+export interface FeatureFlagRow {
+  id: number;
+  key: string;
+  enabled: boolean;
+  description: string;
+}
+
+export function fetchFlags(token = getToken(), signal?: AbortSignal) {
+  return getJson<FeatureFlagRow[]>("/admin/flags", token, signal);
+}
+
+/** ویرایش پرچم — تنها عملیات نوشتنِ استودیو تا امروز. */
+export async function putFlag(
+  key: string,
+  enabled: boolean,
+  description = "",
+  token = getToken(),
+): Promise<FeatureFlagRow> {
+  let resp: Response;
+  try {
+    resp = await fetch(`${API_BASE}/admin/flags`, {
+      method: "PUT",
+      headers: { ...authHeaders(token), "Content-Type": "application/json" },
+      body: JSON.stringify({ key, enabled, description }),
+    });
+  } catch {
+    throw new ApiError("اتصال به سرور برقرار نشد", 0);
+  }
+  if (resp.status === 401 || resp.status === 403) {
+    throw new AuthError("نشست معتبر نیست — توکن مدیر را وارد کنید");
+  }
+  if (!resp.ok) throw new ApiError(`خطای ${resp.status} در ثبت پرچم`, resp.status);
+  return (await resp.json()) as FeatureFlagRow;
+}
+
+// ── سلامت سیستم (GET /health + /api/v1/health/ready) ──
+
+export interface HealthInfo {
+  status: string;
+  service: string;
+  version: string;
+}
+
+export async function fetchHealth(signal?: AbortSignal): Promise<HealthInfo> {
+  const resp = await fetch("/health", { signal });
+  if (!resp.ok) throw new ApiError(`خطای ${resp.status} در /health`, resp.status);
+  return (await resp.json()) as HealthInfo;
+}
+
+// ── من (GET /members/me) — M46-c2 ──
+
+export interface Me {
+  id: number;
+  user_id: number;
+  full_name: string;
+  phone: string;
+  role: string;
+  goal: string;
+  gender: string;
+  height_cm: number | null;
+}
+
+export function fetchMe(token = getToken(), signal?: AbortSignal) {
+  return getJson<Me>("/members/me", token, signal);
+}

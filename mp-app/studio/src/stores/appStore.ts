@@ -33,7 +33,8 @@ export const useAppStore = create<AppState>((set) => ({
   search: "",
   genderFilter: "all",
   setGenderFilter: (genderFilter) => set({ genderFilter }),
-  setPage: (page) => set({ page, selectedMemberId: null }),
+  // M46-c2 — جست‌وجو به صفحه گره می‌خورد؛ عبارتِ صفحهٔ دیگر به این صفحه نشت نمی‌کند
+  setPage: (page) => set({ page, selectedMemberId: null, search: "" }),
   selectMember: (id) => set({ selectedMemberId: id }),
   setSearch: (search) => set({ search }),
 }));
