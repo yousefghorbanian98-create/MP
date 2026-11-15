@@ -124,8 +124,13 @@ def apply_suggestions(
             # یک ست گزارش کند، برنامهٔ ۳ ستی را به ۱ ست سقوط می‌داد.
             if volume_action == "deload":
                 row.sets = max(MIN_SETS, (row.sets or MIN_SETS) - 1)
-            elif sugg.get("next_sets") is not None and volume_action == "keep":
-                row.sets = max(MIN_SETS, int(sugg["next_sets"]))
+            elif volume_action == "keep":
+                # `next_sets` فقط وقتی «حقیقت» است که خودِ عضو تعداد ست را
+                # گزارش کرده باشد؛ وگرنه عددی است که از *تعداد ردیف‌های ارسالی*
+                # ساخته شده و برنامهٔ ۳ ستی را به ۱ ست می‌رساند (باگ ۱۹/۲۰).
+                reported = sugg.get("reported_sets")
+                if reported:
+                    row.sets = max(MIN_SETS, int(reported))
             if weight_action in ("increase", "increase_load", "up"):
                 row.load_pct = min(MAX_LOAD_PCT, (row.load_pct or 0) + LOAD_STEP_PCT)
             elif weight_action in ("decrease", "decrease_load", "down"):

@@ -78,7 +78,13 @@ def process_set_feedback(*, entries: list[dict]) -> dict:
             )
         else:
             volume_action = "keep"
-            next_sets = effective_sets
+            # `next_sets` فقط در دو حالت قابل اتکاست:
+            #   ۱) عضو خودش `sets_done` را گزارش کرده باشد
+            #   ۲) تعداد ردیف‌های گزارش دقیقاً به معنای «به همین تعداد ست زد»
+            # در غیر این صورت None می‌ماند تا `feedback_apply` عدد ساختگی را
+            # روی برنامه ننشاند (باگ ۲۰).
+            explicit = prescribed_sets > 0
+            next_sets = effective_sets if explicit else None
             volume_reason = f"درد عضلانی {max_soreness}/۱۰ در محدودهٔ قابل قبول ← حجم حفظ می‌شود"
         suggestions.append(
             {
@@ -86,6 +92,7 @@ def process_set_feedback(*, entries: list[dict]) -> dict:
                 "next_weight": weight_rule["next_weight"],
                 "weight_action": weight_rule["action"],
                 "next_sets": next_sets,
+                "reported_sets": prescribed_sets or None,
                 "volume_action": volume_action,
                 "reason": f"{weight_rule['reason']}؛ {volume_reason}",
                 "rule_version": SET_FEEDBACK_VERSION,

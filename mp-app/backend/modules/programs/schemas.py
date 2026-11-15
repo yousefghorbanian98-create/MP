@@ -83,6 +83,9 @@ class SetFeedbackEntryIn(BaseModel):
     reps_done: int = Field(ge=0)
     rir: float | None = Field(default=None, ge=0, le=10)
     soreness: int | None = Field(default=None, ge=0, le=10)
+    # G2 — تعداد ستی که عضو واقعاً انجام داد. اختیاری و صریح: اگر خالی باشد
+    # موتور هیچ عدد حجمی از «تعداد ردیف‌های ارسالی» نمی‌سازد (باگ ۲۰).
+    sets_done: int | None = Field(default=None, ge=0, le=40)
     notes: str = ""
 
 

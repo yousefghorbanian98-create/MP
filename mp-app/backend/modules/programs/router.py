@@ -65,6 +65,22 @@ def reject_program(program_id: int, payload: RejectIn, db: DbSession, user: Curr
     return service.reject_program(db, program_id, coach_id=user.id, reason=payload.reason)
 
 
+@router.get(
+    "/member/{member_id}/volume",
+    summary="حجم هفتگی هر گروه عضلانی + نشانگرهای MV/MEV/MAV/MRV (G2)",
+)
+def member_volume(
+    member_id: int,
+    db: DbSession,
+    user: CurrentUser,
+    level: str = "intermediate",
+):
+    from app.security.ownership import ensure_member_scope
+
+    ensure_member_scope(db, user, member_id)
+    return service.weekly_volume_report(db, member_id=member_id, level=level)
+
+
 @router.post("/set-feedback", summary="ثبت بازخورد ست‌به‌ست (RIR/درد) + پیشنهاد جلسهٔ بعد (G1)")
 def set_feedback(payload: SetFeedbackIn, db: DbSession, user: CurrentUser):
     return service.record_set_feedback(

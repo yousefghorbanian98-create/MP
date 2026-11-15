@@ -153,6 +153,25 @@ def record_set_feedback(
     from engine.set_feedback import process_set_feedback as _process
 
     ensure_member_scope(db, user, member_id)
+
+    # مهم: برنامه را **قبل از** درج ردیف‌ها حل می‌کنیم. قبلاً این حل بعد از
+    # commit انجام می‌شد و وقتی club_id/program_id در درخواست نبود، هر ردیف با
+    # program_id=None («بازخورد یتیم») ذخیره می‌شد — یعنی بازخورد هرگز به برنامه
+    # وصل نمی‌شد و گزارش حجم آن را نمی‌دید. (باگ ۱۹)
+    from db.models import WorkoutProgram
+
+    program = None
+    if program_id is not None:
+        program = db.get(WorkoutProgram, program_id)
+    else:
+        program = db.scalar(
+            select(WorkoutProgram)
+            .where(WorkoutProgram.member_id == member_id)
+            .order_by(WorkoutProgram.id.desc())
+        )
+    if program is not None:
+        program_id = program.id
+
     for entry in entries:
         db.add(
             SetFeedback(
@@ -173,18 +192,7 @@ def record_set_feedback(
 
     # M48-c1 — G1 تا اینجا نیمه‌کاره بود: پیشنهاد ساخته می‌شد ولی هیچ ردیفی
     # در برنامه تغییر نمی‌کرد. اینجا پیشنهاد واقعاً روی هفتهٔ بعد اعمال می‌شود.
-    from db.models import WorkoutProgram
-
-    program = None
-    if program_id is not None:
-        program = db.get(WorkoutProgram, program_id)
-    else:
-        program = db.scalar(
-            select(WorkoutProgram)
-            .where(WorkoutProgram.member_id == member_id)
-            .order_by(WorkoutProgram.id.desc())
-        )
-
+    # `program` بالاتر (پیش از درج) حل شده است.
     result["applied"] = apply_suggestions(db, program=program, suggestions=result["suggestions"])
     return result
 
@@ -239,4 +247,106 @@ def list_programs_summary(db, *, status: str | None = None, limit: int = 200) ->
         "counts_by_status": {
             s: sum(1 for i in items if i["status"] == s) for s in {i["status"] for i in items}
         },
+    }
+
+
+# ── G2 — نشانگرهای حجم هفتگی (volume-landmarks-1.0) [finn] ──
+
+VOLUME_REPORT_VERSION = "volume-report-1.0"
+
+
+def weekly_volume_report(db, *, member_id: int, level: str = "intermediate") -> dict:
+    """حجم هفتگی هر گروه عضلانی برای آخرین برنامهٔ عضو + وضعیت و پیشنهاد.
+
+    منبع عدد، صریح اعلام می‌شود:
+      * `planned`            — هیچ ستّی گزارش نشده؛ عدد از خود برنامه است
+      * `reported_hard_sets` — از بازخورد واقعی؛ فقط ست‌های سخت شمرده می‌شوند
+
+    این تفکیک مهم است چون «برنامه ۱۲ ست دارد» با «۱۲ ست سخت انجام شد» یکی نیست.
+    """
+    from db.models import Exercise, ProgramExercise, ProgramWeek, SetFeedback, WorkoutProgram
+    from engine.feedback_apply import resolve_exercise_id
+    from engine.volume import summarize_volume
+
+    program = db.scalar(
+        select(WorkoutProgram)
+        .where(WorkoutProgram.member_id == member_id)
+        .order_by(WorkoutProgram.id.desc())
+    )
+    if program is None:
+        return {
+            "member_id": member_id,
+            "program_id": None,
+            "level": level,
+            "muscles": [],
+            "reason": "برای این عضو هیچ برنامه‌ای ثبت نشده — گزارش حجم ساخته نمی‌شود",
+            "rule_version": VOLUME_REPORT_VERSION,
+        }
+
+    weeks = list(db.scalars(select(ProgramWeek).where(ProgramWeek.program_id == program.id)).all())
+    if not weeks:
+        return {
+            "member_id": member_id,
+            "program_id": program.id,
+            "level": level,
+            "muscles": [],
+            "reason": "برنامه هیچ هفته‌ای ندارد",
+            "rule_version": VOLUME_REPORT_VERSION,
+        }
+
+    # هفتهٔ جاری = آخرین هفتهٔ موجود (مافوق واقعیت: هفته‌ها ۱..N)
+    current_week = max(weeks, key=lambda w: w.week_number)
+    rows = list(
+        db.scalars(select(ProgramExercise).where(ProgramExercise.week_id == current_week.id)).all()
+    )
+
+    ex_ids = {r.exercise_id for r in rows}
+    catalog = (
+        {e.id: e for e in db.scalars(select(Exercise).where(Exercise.id.in_(ex_ids))).all()}
+        if ex_ids
+        else {}
+    )
+
+    # ست‌های برنامه‌ریزی‌شده به تفکیک گروه عضلانی
+    planned_by_muscle: dict[str, int] = {}
+    for row in rows:
+        ex = catalog.get(row.exercise_id)
+        group = ex.muscle_group if ex is not None else "full_body"
+        planned_by_muscle[group] = planned_by_muscle.get(group, 0) + (row.sets or 0)
+
+    # بازخوردهای همان برنامه ← نگاشت movement_id به گروه عضلانی
+    feedback = list(
+        db.scalars(select(SetFeedback).where(SetFeedback.program_id == program.id)).all()
+    )
+    feedback_by_muscle: dict[str, list[dict]] = {}
+    for fb in feedback:
+        ex_id = resolve_exercise_id(fb.movement_id)
+        ex = catalog.get(ex_id) if ex_id is not None else None
+        if ex is None and ex_id is not None:
+            ex = db.get(Exercise, ex_id)
+        group = ex.muscle_group if ex is not None else "full_body"
+        feedback_by_muscle.setdefault(group, []).append({"rir": fb.rir, "soreness": fb.soreness})
+
+    muscles = []
+    for group, planned in sorted(planned_by_muscle.items()):
+        muscles.append(
+            summarize_volume(
+                muscle=group,
+                level=level,
+                planned_sets=planned,
+                feedback_rows=feedback_by_muscle.get(group, []),
+            )
+        )
+
+    return {
+        "member_id": member_id,
+        "program_id": program.id,
+        "week_number": current_week.week_number,
+        "level": level,
+        "muscles": muscles,
+        "reason": (
+            f"{len(muscles)} گروه عضلانی از هفتهٔ {current_week.week_number} برنامهٔ "
+            f"#{program.id} بررسی شد — ست سخت = RIR ≤ ۳"
+        ),
+        "rule_version": VOLUME_REPORT_VERSION,
     }

@@ -233,3 +233,90 @@ def test_unknown_movement_is_reported_not_ignored(client: TestClient) -> None:
     applied = r.json()["applied"]
     assert "not_a_real_movement" in applied["unmatched_movements"]
     assert applied["weeks_updated"] == 0
+
+
+def test_single_reported_set_does_not_collapse_prescribed_sets(client: TestClient) -> None:
+    """باگ ۲۰ — یک ست گزارش‌شده نباید برنامهٔ ۳ ستی را به ۱ ست برساند.
+
+    عضو فقط ۱ ست از ۳ ست را گزارش می‌کند (فراموشی، نه واقعیت). موتور نباید
+    از «تعداد ردیف» عدد حجم بسازد و آن را روی برنامه بنشاند.
+    """
+    h = _staff()
+    mid, pid = _member_with_program(client, h)
+    before = _week_rows(pid, 2)
+
+    from engine.feedback_apply import resolve_exercise_id
+
+    squat_id = resolve_exercise_id("back_squat")
+    target = next(r for r in before if r["exercise_id"] == squat_id)
+
+    r = client.post(
+        "/api/v1/programs/set-feedback",
+        json={
+            "member_id": mid,
+            "program_id": pid,
+            "entries": [
+                {
+                    "movement_id": "back_squat",
+                    "weight": 60,
+                    "target_reps": 10,
+                    "reps_done": 10,
+                    "rir": 2,
+                    "soreness": 2,
+                }
+            ],
+        },
+        headers=h,
+    )
+    assert r.status_code == 200, r.text
+    sugg = r.json()["suggestions"][0]
+
+    assert sugg["volume_action"] == "keep"
+    # هیچ `sets_done`ای گزارش نشده ⇒ هیچ عدد حجمی نباید اعلام شود
+    assert sugg["next_sets"] is None, "عدد حجم ساختگی از تعداد ردیف‌ها ساخته شد"
+
+    after = _week_rows(pid, 2)
+    after_row = next(a for a in after if a["exercise_id"] == squat_id)
+    assert after_row["sets"] == target["sets"], (
+        f"برنامهٔ {target['sets']} ستی نباید به {after_row['sets']} ست تغییر کند"
+    )
+
+
+def test_explicit_sets_done_is_honoured(client: TestClient) -> None:
+    """اگر عضو خودش `sets_done` بدهد، همان عدد (کاهش واقعی) اعمال می‌شود."""
+    h = _staff()
+    mid, pid = _member_with_program(client, h)
+    before = _week_rows(pid, 2)
+
+    from engine.feedback_apply import resolve_exercise_id
+
+    squat_id = resolve_exercise_id("back_squat")
+    target = next(r for r in before if r["exercise_id"] == squat_id)
+    assert target["sets"] > 2, "برای این تست به برنامه‌ای با بیش از ۲ ست نیاز است"
+
+    r = client.post(
+        "/api/v1/programs/set-feedback",
+        json={
+            "member_id": mid,
+            "program_id": pid,
+            "entries": [
+                {
+                    "movement_id": "back_squat",
+                    "weight": 60,
+                    "target_reps": 10,
+                    "reps_done": 10,
+                    "rir": 2,
+                    "soreness": 2,
+                    "sets_done": target["sets"] - 2,
+                }
+            ],
+        },
+        headers=h,
+    )
+    assert r.status_code == 200, r.text
+    sugg = r.json()["suggestions"][0]
+    assert sugg["next_sets"] == target["sets"] - 2
+
+    after = _week_rows(pid, 2)
+    after_row = next(a for a in after if a["exercise_id"] == squat_id)
+    assert after_row["sets"] == target["sets"] - 2
