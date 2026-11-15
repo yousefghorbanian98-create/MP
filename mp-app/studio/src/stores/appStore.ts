@@ -12,6 +12,7 @@ export type PageId =
   | "members"
   | "programs"
   | "nutrition"
+  | "assessment"
   | "checkin"
   | "finance"
   | "analytics"

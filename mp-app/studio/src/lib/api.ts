@@ -572,3 +572,45 @@ export function logWeight(
 ) {
   return postJson<WeightLogResult>("/nutrition/weight-logs", { member_id: memberId, entries }, token);
 }
+
+// ── G6 — روند JP7 ──
+
+export interface Jp7Point {
+  id: number;
+  measured_at: string | null;
+  sum_mm: number;
+  sites: Record<string, number>;
+  body_fat_pct: number | null;
+}
+
+export interface Jp7Trend {
+  member_id: number;
+  measurements: Jp7Point[];
+  trend: {
+    first_at: string | null;
+    last_at: string | null;
+    span_days: number;
+    first_sum_mm: number;
+    last_sum_mm: number;
+    delta_mm: number;
+    delta_mm_per_week: number | null;
+    biggest_change_site: string;
+    biggest_change_mm: number;
+  } | null;
+  site_deltas?: Record<string, { first_mm: number; last_mm: number; delta_mm: number }>;
+  interpretation: {
+    status: "stable" | "decreasing" | "increasing" | "insufficient" | string;
+    headline: string;
+    detail: string;
+    confidence: string;
+    threshold_mm?: number;
+    suggestion?: string;
+  };
+  data_state: string;
+  body_fat_note: string;
+  rule_version: string;
+}
+
+export function fetchJp7Trend(memberId: number, token = getToken(), signal?: AbortSignal) {
+  return getJson<Jp7Trend>(`/assessments/jp7/member/${memberId}/trend`, token, signal);
+}

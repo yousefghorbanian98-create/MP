@@ -48,3 +48,14 @@ def record_jp7(payload: Jp7In, db: DbSession):
         quality=payload.quality,
         method=payload.method,
     )
+
+
+# ── G6 — روندنمای JP7 + تفسیر خودکار [finn] ──
+
+
+@router.get(
+    "/jp7/member/{member_id}/trend",
+    summary="روند چین‌های پوستی + تفسیر خودکار (G6)",
+)
+def jp7_trend(member_id: int, db: DbSession, user: CurrentUser):
+    return service.jp7_trend(db, member_id=member_id, user=user)

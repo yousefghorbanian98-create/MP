@@ -126,3 +126,168 @@ def record_jp7(
     db.commit()
     db.refresh(m)
     return m
+
+
+# ── G6 — روندنمای JP7 + تفسیر خودکار [finn] ──
+
+JP7_TREND_VERSION = "jp7-trend-1.0"
+
+# آستانهٔ تغییر مجموع چین‌ها. ۲ میلی‌متر کمتر از خطای اندازه‌گیری
+# پوست‌چین با کالیپر است، پس کمتر از آن «تغییر» نامیده نمی‌شود.
+JP7_SUM_CHANGE_MM = 2.0
+
+
+def jp7_trend(db: Session, *, member_id: int, user=None) -> dict:
+    """روند تغییر چین‌های پوستی + تفسیر خودکار (G6).
+
+    ## چرا روی «مجموع چین خام» و نه درصد چربی
+    `body_fat_pct` عمداً قفل است (E07/D-012): معادلهٔ جکسون-پولاک تا
+    تأیید مرجع مستقل ذخیره نمی‌شود. اگر روند را روی درصد چربیِ ساختگی
+    بسازیم، همان کار ممنوعه را در ظاهر دیگر انجام داده‌ایم. مجموع هفت چین
+    یک عدد خام، قابل بازبینی و بی‌ادعاست.
+
+    ## تفکیک مهم
+    کاهش مجموع ⇒ کاهش بافت زیرجلدی (خبر خوب برای کاهش وزن).
+    افزایش مجموع ⇒ افزایش بافت. ولی *کاهش* چین‌ها همراه با *افت قدرت*
+    می‌تواند تحلیل عضله باشد — چون قدرت داده‌اش در دست نیست، این را
+    نمی‌توان از JP7 تنها نتیجه گرفت؛ صریحاً گفته می‌شود.
+    """
+    import json
+
+    from app.security.ownership import ensure_member_scope
+    from db.models import JacksonPollockMeasurement
+
+    ensure_member_scope(db, user, member_id)
+
+    rows = list(
+        db.scalars(
+            select(JacksonPollockMeasurement)
+            .where(JacksonPollockMeasurement.member_id == member_id)
+            .order_by(JacksonPollockMeasurement.measured_at)
+        ).all()
+    )
+
+    points = []
+    for r in rows:
+        try:
+            folds = json.loads(r.skinfolds_mm)
+        except (TypeError, ValueError):
+            continue
+        total = sum(float(v) for v in folds.values())
+        points.append(
+            {
+                "id": r.id,
+                "measured_at": r.measured_at.isoformat() if r.measured_at else None,
+                "sum_mm": round(total, 1),
+                "sites": {k: float(v) for k, v in folds.items()},
+                "body_fat_pct": r.body_fat_pct,  # None = قفل، صادقانه برمی‌گردد
+            }
+        )
+
+    if len(points) < 2:
+        return {
+            "member_id": member_id,
+            "measurements": points,
+            "trend": None,
+            "interpretation": {
+                "status": "insufficient",
+                "headline": "برای تفسیر روند حداقل دو اندازه‌گیری لازم است",
+                "detail": (f"فقط {len(points)} اندازه‌گیری ثبت شده. یک نقطه، روند نیست."),
+                "confidence": "insufficient",
+            },
+            "data_state": "insufficient_measurements",
+            "body_fat_note": (
+                "درصد چربی محاسبه نشده و نمایش داده نمی‌شود: معادله تا تأیید "
+                "مرجع مستقل قفل است (D-012). روند از مجموع چین خام ساخته می‌شود."
+            ),
+            "rule_version": JP7_TREND_VERSION,
+        }
+
+    first, last = points[0], points[-1]
+    delta_mm = round(last["sum_mm"] - first["sum_mm"], 1)
+    days = 0
+    if first["measured_at"] and last["measured_at"]:
+        from datetime import datetime
+
+        d0 = datetime.fromisoformat(first["measured_at"])
+        d1 = datetime.fromisoformat(last["measured_at"])
+        days = max(0, (d1 - d0).days)
+    per_week = round(delta_mm / (days / 7), 2) if days >= 7 else None
+
+    # تفسیر خودکار — با آستانهٔ خطای اندازه‌گیری
+    if abs(delta_mm) < JP7_SUM_CHANGE_MM:
+        status = "stable"
+        headline = "تغییر معناداری در چین‌های پوستی نیست"
+        detail = (
+            f"اختلاف مجموع {delta_mm:+.1f} میلی‌متر است و کمتر از آستانهٔ "
+            f"{JP7_SUM_CHANGE_MM:.0f} میلی‌متر (خطای اندازه‌گیری کالیپر) — "
+            "به‌عنوان «بدون تغییر» تفسیر می‌شود."
+        )
+        confidence = "high" if days >= 28 else "medium"
+    elif delta_mm < 0:
+        status = "decreasing"
+        headline = "بافت زیرجلدی کاهش یافته است"
+        detail = (
+            f"مجموع چین‌ها {abs(delta_mm):.1f} میلی‌متر کم شده"
+            + (f" ({abs(per_week):.2f} میلی‌متر در هفته)" if per_week is not None else "")
+            + ". این با کاهش چربی سازگار است — ولی کاهش چین همراه با افت قدرت "
+            "می‌تواند تحلیل عضله باشد؛ قدرت/حجم را جدا بررسی کنید."
+        )
+        confidence = "high" if days >= 42 else "medium"
+    else:
+        status = "increasing"
+        headline = "بافت زیرجلدی افزایش یافته است"
+        detail = (
+            f"مجموع چین‌ها {delta_mm:.1f} میلی‌متر بیشتر شده"
+            + (f" ({per_week:.2f} میلی‌متر در هفته)" if per_week is not None else "")
+            + ". در هدف افزایش حجم این تا حدی طبیعی است؛ اگر سرعتش بیشتر از "
+            "حد انتظار است، کالری را بازبینی کنید."
+        )
+        confidence = "high" if days >= 42 else "medium"
+
+    # کدام ناحیه بیشترین تغییر را داشت — قابل اقدام برای مربی
+    site_deltas = {
+        site: {
+            "first_mm": first["sites"].get(site),
+            "last_mm": last["sites"].get(site),
+            "delta_mm": round((last["sites"].get(site) or 0) - (first["sites"].get(site) or 0), 1),
+        }
+        for site in sorted(set(first["sites"]) | set(last["sites"]))
+    }
+    biggest = max(site_deltas.items(), key=lambda kv: abs(kv[1]["delta_mm"]))
+
+    return {
+        "member_id": member_id,
+        "measurements": points,
+        "trend": {
+            "first_at": first["measured_at"],
+            "last_at": last["measured_at"],
+            "span_days": days,
+            "first_sum_mm": first["sum_mm"],
+            "last_sum_mm": last["sum_mm"],
+            "delta_mm": delta_mm,
+            "delta_mm_per_week": per_week,
+            "biggest_change_site": biggest[0],
+            "biggest_change_mm": biggest[1]["delta_mm"],
+        },
+        "site_deltas": site_deltas,
+        "interpretation": {
+            "status": status,
+            "headline": headline,
+            "detail": detail,
+            "confidence": confidence,
+            "threshold_mm": JP7_SUM_CHANGE_MM,
+            "suggestion": (
+                f"بیشترین تغییر در «{biggest[0]}» ({biggest[1]['delta_mm']:+.1f} میلی‌متر) — "
+                "همان ناحیه را در اندازه‌گیری بعدی با همان روش و همان کالیپر تکرار کنید"
+                if abs(biggest[1]["delta_mm"]) >= JP7_SUM_CHANGE_MM
+                else "برای دیدن تغییر واقعی، اندازه‌گیری بعدی را با همان روش تکرار کنید"
+            ),
+        },
+        "data_state": "trend_available",
+        "body_fat_note": (
+            "درصد چربی محاسبه نشده و نمایش داده نمی‌شود: معادله تا تأیید "
+            "مرجع مستقل قفل است (D-012). روند از مجموع چین خام ساخته می‌شود."
+        ),
+        "rule_version": JP7_TREND_VERSION,
+    }
