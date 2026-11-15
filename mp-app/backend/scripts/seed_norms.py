@@ -27,6 +27,8 @@ from db.models.assessment import NormEntry  # noqa: E402
 SOURCE_PUSHUP = "https://fitnessnorms.com/strength/push-ups/"
 SOURCE_REACH = "https://fitnessnorms.com/flexibility/sit-and-reach/"
 SOURCE_SDC = "https://media.cleveland.com/pdextra/other/push-ups.pdf + https://www.instituteofpersonaltrainers.com/"
+SOURCE_GRIP = "https://fitnessnorms.com/strength/grip-strength/"
+SOURCE_COOPER = "https://fitnessnorms.com/cardio/cooper-1-5-mile-run/"
 
 
 @dataclass(frozen=True)
@@ -42,6 +44,7 @@ class NormRow:
     sdc_note: str
     source: str
     source_version: str
+    direction: str = "higher_better"
 
 
 def _pushup(sex: str, age_min: int, age_max: int, p5: float, p25: float, p50: float, p75: float, p95: float) -> NormRow:
@@ -84,6 +87,48 @@ def _reach(sex: str, age_min: int, age_max: int, p25: float, p75: float,
     )
 
 
+def _grip(sex: str, age_min: int, age_max: int, p25: float, p75: float,
+          p5: float | None = None, p50: float | None = None, p95: float | None = None) -> NormRow:
+    percentiles: dict[str, float] = {"25": p25, "75": p75}
+    if p5 is not None:
+        percentiles["5"] = p5
+    if p50 is not None:
+        percentiles["50"] = p50
+    if p95 is not None:
+        percentiles["95"] = p95
+    return NormRow(
+        test_key="grip_kg",
+        name_fa="قدرت گرفتن (دینامومتر دست)",
+        unit="kg",
+        sex=sex,
+        age_min=age_min,
+        age_max=age_max,
+        percentiles=percentiles,
+        sdc=None,
+        sdc_note="SDC مستند برای این آزمون یافت نشد — قضاوت «تغییر واقعی» نامعلوم می‌ماند",
+        source=SOURCE_GRIP,
+        source_version="fitnessnorms-2026",
+    )
+
+
+def _cooper(sex: str, age_min: int, age_max: int, p5: float, p25: float, p50: float, p75: float, p95: float) -> NormRow:
+    # زمان‌ها به ثانیه تبدیل شده‌اند (منبع mm:ss) — کمتر بهتر
+    return NormRow(
+        test_key="cooper_1_5mile_sec",
+        name_fa="دوی ۱٫۵ مایل (کوپر)",
+        unit="sec",
+        sex=sex,
+        age_min=age_min,
+        age_max=age_max,
+        percentiles={"5": p5, "25": p25, "50": p50, "75": p75, "95": p95},
+        sdc=None,
+        direction="lower_better",
+        sdc_note="SDC مستند برای این آزمون یافت نشد — قضاوت «تغییر واقعی» نامعلوم می‌ماند",
+        source=SOURCE_COOPER,
+        source_version="cooper-institute-2013-via-fitnessnorms",
+    )
+
+
 NORMS: tuple[NormRow, ...] = (
     # --- شنای سوئدی یک دقیقه‌ای (درصدک‌های ۵گانه) ---
     _pushup("m", 20, 29, 8, 22, 25, 29, 40),
@@ -109,6 +154,28 @@ NORMS: tuple[NormRow, ...] = (
     _reach("f", 60, 64, 19.1, 37.6, p5=11.3, p50=28.8, p95=43.4),
     _reach("m", 65, 69, 13.4, 27.1, p5=7.4, p50=20.3, p95=33.1),
     _reach("f", 65, 69, 19.0, 37.7, p5=11.1, p50=28.9, p95=43.8),
+    # --- قدرت گرفتن (kg) — بازهٔ ۲۵/۷۵؛ ۵/۵۰/۹۵ فقط ۶۵-۶۹ مرد مستند است ---
+    _grip("m", 20, 24, 41.9, 54.5), _grip("f", 20, 24, 24.9, 32.6),
+    _grip("m", 25, 29, 43.5, 55.3), _grip("f", 25, 29, 25.4, 33.6),
+    _grip("m", 30, 34, 43.6, 55.9), _grip("f", 30, 34, 25.4, 34.2),
+    _grip("m", 35, 39, 43.0, 56.0), _grip("f", 35, 39, 25.1, 34.3),
+    _grip("m", 40, 44, 42.0, 55.5), _grip("f", 40, 44, 24.8, 34.1),
+    _grip("m", 45, 49, 40.6, 54.5), _grip("f", 45, 49, 24.1, 33.6),
+    _grip("m", 50, 54, 39.0, 53.2), _grip("f", 50, 54, 23.4, 32.9),
+    _grip("m", 55, 59, 37.2, 51.5), _grip("f", 55, 59, 22.6, 31.9),
+    _grip("m", 60, 64, 35.2, 49.5), _grip("f", 60, 64, 21.6, 30.8),
+    _grip("m", 65, 69, 33.1, 47.2, p5=23.7, p50=40.1, p95=56.8), _grip("f", 65, 69, 20.6, 29.4),
+    _grip("m", 70, 74, 30.9, 44.7), _grip("f", 70, 74, 19.3, 27.9),
+    _grip("m", 75, 79, 28.4, 41.9), _grip("f", 75, 79, 17.9, 26.2),
+    _grip("m", 80, 84, 25.9, 39.0), _grip("f", 80, 84, 16.4, 24.4),
+    _grip("m", 85, 89, 23.2, 35.9), _grip("f", 85, 89, 14.8, 22.4),
+    # --- دوی ۱٫۵ مایل کوپر (ثانیه — کمتر بهتر) ---
+    _cooper("m", 20, 29, 550, 634, 718, 805, 1006), _cooper("f", 20, 29, 620, 727, 855, 1003, 1265),
+    _cooper("m", 30, 39, 571, 659, 745, 850, 1050), _cooper("f", 30, 39, 668, 788, 914, 1058, 1317),
+    _cooper("m", 40, 49, 587, 692, 785, 900, 1119), _cooper("f", 40, 49, 695, 838, 973, 1119, 1407),
+    _cooper("m", 50, 59, 627, 757, 873, 986, 1300), _cooper("f", 50, 59, 796, 947, 1085, 1255, 1575),
+    _cooper("m", 60, 69, 680, 838, 979, 1150, 1558), _cooper("f", 60, 69, 868, 1054, 1208, 1400, 1746),
+    _cooper("m", 70, 79, 745, 938, 1119, 1342, 1834), _cooper("f", 70, 79, 873, 1119, 1342, 1575, 2012),
 )
 
 
@@ -126,6 +193,7 @@ def seed(session) -> dict:
             "method": "percentile",
             "percentiles": json.dumps(row.percentiles, sort_keys=True),
             "bands": "{}",
+            "direction": row.direction,
             "sdc": row.sdc,
             "sdc_note": row.sdc_note,
             "source": row.source,

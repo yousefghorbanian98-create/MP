@@ -4,6 +4,12 @@
 
 ## [Unreleased]
 
+### Added — M36-c1/c2 (2026-11-14) — API ارزیابی ۱۴ توانایی
+- مدل‌ها + مهاجرت (axis_assessments/axis_scores/field_test_results) + سیاست‌های RBAC
+- ماژول `axis_assessment`: ثبت جلسهٔ آزمون ← ماتریس درصد ۱۴ محور + تصمیم چهارگانه + تاریخچه — «نامعلوم ≠ صفر»
+- نُرم‌های جدید: قدرت گرفتن (۲۸ ردیف) + دوی ۱٫۵ مایل کوپر (۱۲ ردیف) + ۹ rubric معیاری (criterion-candidate)
+- نگاشت آزمون←محور (axis-test-map-1.0) + تست‌های یکپارچه + دود بار Locust (۱۴٫۹ rps، صفر 5xx)
+
 ### Added — M35-c3 (2026-11-14) — هارنس G4 امتیازدهی
 - `eval/scoring_eval.py`: ۴ سناریو (round-trip نقاط مستند، محدوده/اکوتونی، صداقت کیفیت جدول ناقص، گیت SDC) — ۴/۴ سبز
 - گزارش: `finn/reports/eval/2026-11-14-m35c3-scoring-eval.json` + تست هارنس

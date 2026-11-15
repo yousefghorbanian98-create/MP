@@ -97,6 +97,8 @@ class NormEntry(TimestampMixin, Base):
     percentiles: Mapped[str] = mapped_column(Text, default="{}", nullable=False)
     # JSON باندهای معیاری برای method=criterion
     bands: Mapped[str] = mapped_column(Text, default="{}", nullable=False)
+    # higher_better | lower_better (مثلاً زمان دویدن: کمتر بهتر)
+    direction: Mapped[str] = mapped_column(String(20), default="higher_better", nullable=False)
     # کوچک‌ترین تغییر واقعی (SDC) — گیت «تغییر واقعی» در امتیازدهی مجدد
     sdc: Mapped[float | None] = mapped_column(Float, nullable=True)
     sdc_note: Mapped[str] = mapped_column(String(200), default="", nullable=False)

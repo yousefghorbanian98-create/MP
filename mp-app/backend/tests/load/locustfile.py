@@ -48,3 +48,18 @@ class GymAuthUser(HttpUser):
     @task(1)
     def health(self) -> None:
         self.client.get("/health", name="/health")
+
+
+class AxisSmokeUser(HttpUser):
+    """M36-c2 — دود بار endpointهای ارزیابی ۱۴ توانایی (پاسخ 401 بدون توکن معتبر است؛
+    هدف: «کرش زیر بار» ممنوع — هیچ 5xx نباید ثبت شود)."""
+
+    wait_time = between(0.2, 0.8)
+
+    @task(2)
+    def matrix(self) -> None:
+        self.client.get("/api/v1/axis-assessments/1/matrix", name="/axis-assessments/matrix")
+
+    @task(1)
+    def history(self) -> None:
+        self.client.get("/api/v1/axis-assessments/member/1", name="/axis-assessments/history")

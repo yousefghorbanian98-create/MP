@@ -1,0 +1,20 @@
+{
+  "rule_id": "M36c2-axis-assessment-api",
+  "date": "2026-11-14",
+  "status": "verified",
+  "method": "API ثبت آزمون/ماتریس/تاریخچه — زنجیرهٔ کامل: آزمون خام ← نُرم مستند ← engine.scoring ← engine.axis_map (axis-test-map-1.0) ← engine.axis_rules (تصمیم چهارگانه)",
+  "rules": {
+    "axis-map": "نمرهٔ محور = میانگین وزنی درصدک آزمون‌های مپ‌شده؛ محور بدون داده ← missing/unknown (هرگز صفر)",
+    "direction": "cooper_1_5mile_sec: lower_better (در norm_entries ثبت شد)",
+    "criterion-tools": "۹ rubric + plank_secs با method=criterion (طراحی ابزار MP — candidate تا پایلوت M40)"
+  },
+  "norms_added": [
+    "grip_kg (۲۸ ردیف، fitnessnorms)",
+    "cooper_1_5mile_sec (۱۲ ردیف، Cooper Institute 2013)"
+  ],
+  "verified_by": "finn (ECC-1/2/3), S3b+S3c چرخهٔ M36-c2",
+  "evidence": [
+    "tests/integration/test_axis_assessment_api.py (4 tests)",
+    "finn/reports/load/M36c2-smoke_stats.csv (Locust 10u/10s: 14.9 rps، صفر 5xx)"
+  ]
+}

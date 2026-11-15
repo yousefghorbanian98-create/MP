@@ -1,0 +1,4 @@
+Method,Name,Error,Occurrences,First Seen,Last Seen
+GET,/axis-assessments/history,HTTPError('401 Client Error: Unauthorized for url: /axis-assessments/history'),21,2026-11-15T11:58:43Z,2026-11-15T11:58:51Z
+GET,/axis-assessments/matrix,HTTPError('401 Client Error: Unauthorized for url: /axis-assessments/matrix'),53,2026-11-15T11:58:43Z,2026-11-15T11:58:51Z
+POST,/auth/otp/request,HTTPError('429 Client Error: Too Many Requests for url: /auth/otp/request'),8,2026-11-15T11:58:43Z,2026-11-15T11:58:51Z
