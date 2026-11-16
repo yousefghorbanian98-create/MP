@@ -63,12 +63,15 @@ class _SetFeedbackSheetState extends ConsumerState<SetFeedbackSheet> {
 
   @override
   Widget build(BuildContext context) {
-    // M48-c1 + M59 — ساختار و چرایی:
-    //   قطر ۱: Column سرریز می‌کرد ← SingleChildScrollView (M48-c1)
-    //   قطر ۲: با کارت «چرا این تغییر؟» حتی اسکرول‌ویو هم ۲px سرریز می‌داد،
-    //          چون درون Padding ارتفاع نامحدود نمی‌گرفت (CI ۲۰۲۶-۱۱-۱۵).
-    // رفع واقعی: Expanded ارتفاع باقی‌مانده را به اسکرول می‌دهد و اطلاعات
-    // کارت در یک Wrap فشرده می‌شود. هیچ فیلدی حذف نشد.
+    // M48-c1 → M59 — سه قطر سرریز و درسِ هرکدام:
+    //   ۱) Column سرریز می‌کرد ← SingleChildScrollView.
+    //   ۲) با کارت «چرا این تغییر؟» چند پیکسل کم آمد ← کارت با Wrap فشرده شد.
+    //   ۳) تلاش کردم `Expanded` بدهم؛ خودِ فریم‌ورک گفت «Expanded inside
+    //      Padding» خطاست و راست می‌گفت — Expanded فقط داخل Flex معنا دارد.
+    // رفع درست: `ConstrainedBox(maxHeight)` + اسکرول. محتوای بلند اسکرول
+    // می‌شود، محتوای کوتاه ارتفاع طبیعی خودش را می‌گیرد. نه فیلدی حذف شد،
+    // نه فونت کوچک شد.
+    final maxHeight = MediaQuery.of(context).size.height * 0.86;
     return Padding(
       padding: EdgeInsets.only(
         left: 20,
@@ -76,7 +79,8 @@ class _SetFeedbackSheetState extends ConsumerState<SetFeedbackSheet> {
         top: 20,
         bottom: MediaQuery.of(context).viewInsets.bottom + 20,
       ),
-      child: Expanded(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxHeight: maxHeight),
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
