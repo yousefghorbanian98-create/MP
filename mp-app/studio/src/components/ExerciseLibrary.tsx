@@ -100,7 +100,11 @@ export function ExerciseLibrary() {
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
         {rows.map((r) => {
           const isOpen = open === r.exercise_id;
-          const src = isOpen && r.image_url_alt ? r.image_url_alt : r.image_url;
+          // بسته: انیمیشن اجرا (اگر هست). باز: فریم پایان، ثابت.
+          // چرا GIF در حالت بسته: کاربر بدون کلیک حرکت را می‌بیند؛ ولی در
+          // حالت باز GIF متوقف می‌شود تا بشود فریم پایان را دقیق دید.
+          const still = isOpen && r.image_url_alt ? r.image_url_alt : r.image_url;
+          const src = !isOpen && r.gif_url ? r.gif_url : still;
           return (
             <button
               key={r.exercise_id}
@@ -111,7 +115,11 @@ export function ExerciseLibrary() {
               {src ? (
                 <img
                   src={src}
-                  alt={`اجرای ${r.name_fa} — ${isOpen ? "فریم پایان" : "فریم شروع"}`}
+                  alt={
+                    !isOpen && r.gif_url
+                      ? `انیمیشن اجرای ${r.name_fa}`
+                      : `اجرای ${r.name_fa} — ${isOpen ? "فریم پایان" : "فریم شروع"}`
+                  }
                   loading="lazy"
                   width={300}
                   height={300}

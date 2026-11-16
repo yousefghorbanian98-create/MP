@@ -11,6 +11,8 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
 
@@ -32,6 +34,10 @@ class ExerciseMediaOut(BaseModel):
     instructions_fa: str = ""
     image_url: str = ""
     image_url_alt: str = ""
+    # M60/R6 — انیمیشن اجرای حرکت (GIF ساخته‌شده از دو فریم شروع/پایان).
+    # خالی یعنی برای این حرکت انیمیشن ساخته نشده؛ مصرف‌کننده باید به
+    # `image_url` برگردد، نه اینکه تصویر شکسته نشان دهد.
+    gif_url: str = ""
 
 
 @router.get(
@@ -73,9 +79,26 @@ def list_exercises(
                 instructions_fa=ex.instructions_fa,
                 image_url=first,
                 image_url_alt=alt,
+                gif_url=_gif_for(first),
             )
         )
     return out
+
+
+def _gif_for(image_url: str) -> str:
+    """مسیر GIF متناظر با تصویر — فقط اگر فایل واقعاً موجود باشد.
+
+    عمداً وجود فایل روی دیسک بررسی می‌شود: اگر GIF ساخته نشده باشد مسیر
+    برنمی‌گردانیم، تا کلاینت تصویر شکسته دریافت نکند. (نسخهٔ اول این بررسی
+    را نداشت و برای حرکات بدون GIF یک ۴۰۴ برمی‌گرداند.)
+    """
+    if not image_url.endswith("_0.jpg"):
+        return ""
+    candidate = image_url[: -len("_0.jpg")] + ".gif"
+    name = candidate.rsplit("/", 1)[-1]
+    if (Path(__file__).resolve().parents[2] / "static" / "exercises" / name).is_file():
+        return candidate
+    return ""
 
 
 @router.get(
@@ -101,4 +124,5 @@ def get_exercise(exercise_id: int, db: DbSession, user: CurrentUser):
         instructions_fa=ex.instructions_fa,
         image_url=first,
         image_url_alt=alt,
+        gif_url=_gif_for(first),
     )

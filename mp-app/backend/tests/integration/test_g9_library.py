@@ -114,3 +114,42 @@ def test_single_exercise_payload(
     assert body["exercise_id"] == exercise_id
     assert body["name_fa"]
     assert body["image_url"] == f"/static/exercises/{exercise_id}_0.jpg"
+
+
+# ── M60/R6 — انیمیشن اجرای حرکت (GIF از دو فریم) ──
+def test_exercise_exposes_gif_only_when_file_exists(
+    client: TestClient, member_headers: dict
+) -> None:
+    """`gif_url` باید فقط وقتی پر شود که فایل واقعاً روی دیسک باشد.
+
+    باگ واقعی هنگام افزودن این قابلیت: نسخهٔ اول مسیر را بدون بررسی وجود
+    فایل برمی‌گرداند و کلاینت تصویر شکسته می‌گرفت.
+    """
+    from pathlib import Path
+
+    rows = client.get("/api/v1/library/exercises", headers=member_headers).json()
+    assert rows, "کتابخانه خالی است"
+    static = Path(__file__).resolve().parents[2] / "static" / "exercises"
+    for row in rows:
+        if row["gif_url"]:
+            name = row["gif_url"].rsplit("/", 1)[-1]
+            assert (static / name).is_file(), f"gif_url وعده داده ولی فایل نیست: {row['gif_url']}"
+
+
+def test_gif_is_a_real_animated_gif() -> None:
+    """فایل GIF باید چند فریم باشد، نه یک تصویر ثابت با پسوند gif."""
+    from pathlib import Path
+
+    from PIL import Image
+
+    static = Path(__file__).resolve().parents[2] / "static" / "exercises"
+    gifs = sorted(static.glob("*.gif"))
+    assert len(gifs) >= 10, f"GIF حرکات کم است: {len(gifs)}"
+    for g in gifs[:3]:
+        im = Image.open(g)
+        assert im.format == "GIF", (g.name, im.format)
+        assert im.n_frames > 5, f"{g.name}: فقط {im.n_frames} فریم — انیمیشن نیست"
+        # حجم هر فایل باید در حدی باشد که در اپ روی شبکهٔ باشگاه قابل دانلود باشد
+        assert g.stat().st_size < 600_000, (
+            f"{g.name}: {g.stat().st_size / 1024:.0f}KB خیلی سنگین است"
+        )

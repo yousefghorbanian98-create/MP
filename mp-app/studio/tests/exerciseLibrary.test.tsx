@@ -22,6 +22,7 @@ const exercises = [
     instructions_fa: "",
     image_url: "/static/exercises/1_0.jpg",
     image_url_alt: "/static/exercises/1_1.jpg",
+    gif_url: "/static/exercises/1.gif",
   },
   {
     exercise_id: 2,
@@ -33,6 +34,7 @@ const exercises = [
     instructions_fa: "",
     image_url: "/static/exercises/2_0.jpg",
     image_url_alt: "/static/exercises/2_1.jpg",
+    gif_url: "",
   },
 ];
 
@@ -53,8 +55,9 @@ describe("ExerciseLibrary (G9)", () => {
     render(<ExerciseLibrary />);
 
     await waitFor(() => expect(screen.getByText("اسکوات پشت")).toBeTruthy());
-    const img = screen.getByAltText("اجرای اسکوات پشت — فریم شروع") as HTMLImageElement;
-    expect(img.getAttribute("src")).toBe("/static/exercises/1_0.jpg");
+    // M60/R6: وقتی انیمیشن هست، حالت بسته GIF نشان می‌دهد (نه فریم شروع).
+    const img = screen.getByAltText("انیمیشن اجرای اسکوات پشت") as HTMLImageElement;
+    expect(img.getAttribute("src")).toBe("/static/exercises/1.gif");
     // تصویر تزئینی نیست: متن جانشین دارد
     expect(img.getAttribute("alt")).not.toBe("");
   });
@@ -110,5 +113,34 @@ describe("ExerciseLibrary (G9)", () => {
     vi.stubGlobal("fetch", mockFetch([]));
     render(<ExerciseLibrary />);
     await waitFor(() => expect(screen.getByText("حرکتی با این فیلتر پیدا نشد.")).toBeTruthy());
+  });
+
+  /**
+   * M60/R6 — انیمیشن اجرا.
+   *
+   * GIF فقط وقتی استفاده می‌شود که سرور مسیر داده باشد؛ حرکتی که GIF ندارد
+   * باید تصویر ثابت بگیرد، نه `src` خالی (که یعنی آیکون شکسته).
+   */
+  it("حرکت با GIF، انیمیشن می‌گیرد و حرکت بدون آن تصویر ثابت", async () => {
+    vi.stubGlobal("fetch", mockFetch(exercises));
+    render(<ExerciseLibrary />);
+    await waitFor(() => expect(screen.getByText("اسکوات پشت")).toBeTruthy());
+
+    const withGif = screen.getByAltText("انیمیشن اجرای اسکوات پشت") as HTMLImageElement;
+    expect(withGif.getAttribute("src")).toBe("/static/exercises/1.gif");
+
+    const withoutGif = screen.getByAltText("اجرای پرس سینه — فریم شروع") as HTMLImageElement;
+    expect(withoutGif.getAttribute("src")).toBe("/static/exercises/2_0.jpg");
+  });
+
+  it("با کلیک، انیمیشن به فریم پایان ثابت تبدیل می‌شود", async () => {
+    vi.stubGlobal("fetch", mockFetch(exercises));
+    render(<ExerciseLibrary />);
+    await waitFor(() => expect(screen.getByText("اسکوات پشت")).toBeTruthy());
+    screen.getByAltText("انیمیشن اجرای اسکوات پشت").click();
+    await waitFor(() => {
+      const img = screen.getByAltText("اجرای اسکوات پشت — فریم پایان") as HTMLImageElement;
+      expect(img.getAttribute("src")).toBe("/static/exercises/1_1.jpg");
+    });
   });
 });

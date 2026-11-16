@@ -565,6 +565,8 @@ export interface ExerciseRow {
   instructions_fa: string;
   image_url: string;
   image_url_alt: string;
+  /** M60/R6 — انیمیشن اجرا؛ خالی یعنی ساخته نشده (به image_url برگرد). */
+  gif_url: string;
 }
 
 export function browseExercises(
