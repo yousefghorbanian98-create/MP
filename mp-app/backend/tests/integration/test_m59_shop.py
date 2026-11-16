@@ -605,7 +605,9 @@ def test_checkout_is_rate_limited(client: TestClient) -> None:
     limiter.reset()
     member = _user("member")
     codes = [
-        client.post("/api/v1/shop/checkout", json={"method": "wallet"}, headers=member["headers"]).status_code
+        client.post(
+            "/api/v1/shop/checkout", json={"method": "wallet"}, headers=member["headers"]
+        ).status_code
         for _ in range(12)
     ]
     assert 429 in codes, f"سقف تسویه اعمال نشد: {codes}"
@@ -623,7 +625,9 @@ def test_cart_write_is_rate_limited(client: TestClient) -> None:
     product = _product(client, owner, stock=100)
     codes = [
         client.post(
-            "/api/v1/shop/cart", json={"product_id": product["id"], "qty": 1}, headers=member["headers"]
+            "/api/v1/shop/cart",
+            json={"product_id": product["id"], "qty": 1},
+            headers=member["headers"],
         ).status_code
         for _ in range(35)
     ]
@@ -639,7 +643,9 @@ def test_rate_limited_response_shape(client: TestClient) -> None:
     member = _user("member")
     body = None
     for _ in range(12):
-        r = client.post("/api/v1/shop/checkout", json={"method": "wallet"}, headers=member["headers"])
+        r = client.post(
+            "/api/v1/shop/checkout", json={"method": "wallet"}, headers=member["headers"]
+        )
         if r.status_code == 429:
             body = r.json()
             break
@@ -647,3 +653,27 @@ def test_rate_limited_response_shape(client: TestClient) -> None:
     assert body["error"]["code"] == "rate_limited"
     assert body["error"]["message"]
     limiter.reset()
+
+
+# ── M60/R2 — مسیر کلاس‌ها بدون احراز هویت بود ──
+def test_classes_read_requires_auth(client: TestClient) -> None:
+    """قبل از M60: `GET /api/v1/classes` بدون هیچ توکنی ۲۰۰ + کل جدول را می‌داد."""
+    assert client.get("/api/v1/classes").status_code == 401
+    member = _user("member")
+    r = client.get("/api/v1/classes", headers=member["headers"])
+    assert r.status_code == 200, r.text
+    assert isinstance(r.json(), list)
+
+
+def test_classes_read_denied_for_role_without_policy(client: TestClient) -> None:
+    """نقشی که در casbin برای `/classes` GET مجوز ندارد باید ۴۰۳ بگیرد."""
+    from app.security.jwt import create_access_token
+    from db.base import get_session_factory
+    from db.models import User
+
+    with get_session_factory()() as s:
+        u = User(phone="09120000042", full_name="stranger", role="guest")
+        s.add(u)
+        s.commit()
+        h = {"Authorization": f"Bearer {create_access_token(u.id, u.role)}"}
+    assert client.get("/api/v1/classes", headers=h).status_code == 403

@@ -80,6 +80,7 @@ POLICIES: list[tuple[str, str, str]] = [
     ("member", "/api/v1/ai/nutrition/generate", "POST"),
     ("member", "/api/v1/ai/suggest-weight", "POST"),
     ("member", "/api/v1/population/*", "*"),
+    ("member", "/api/v1/classes", "GET"),
     ("member", "/api/v1/classes/book", "POST"),
     ("member", "/api/v1/classes/cancel", "POST"),
     # مربی: ارزیابی/برنامه/اعضا (خواندن+نوشتن برنامه)
@@ -104,6 +105,7 @@ POLICIES: list[tuple[str, str, str]] = [
     ("coach", "/api/v1/ai/nutrition/generate", "POST"),
     ("coach", "/api/v1/ai/suggest-weight", "POST"),
     ("coach", "/api/v1/population/*", "*"),
+    ("coach", "/api/v1/classes", "GET"),
     ("coach", "/api/v1/classes", "POST"),
     ("coach", "/api/v1/classes/book", "POST"),
     ("coach", "/api/v1/classes/cancel", "POST"),
@@ -126,6 +128,7 @@ POLICIES: list[tuple[str, str, str]] = [
     ("reception", "/api/v1/face/deep-status", "GET"),
     ("coach", "/api/v1/notifications/*", "*"),
     # پذیرش: ثبت‌نام/پرداخت/چک‌این
+    ("reception", "/api/v1/classes", "GET"),
     ("reception", "/api/v1/members", "GET"),
     ("reception", "/api/v1/members", "POST"),
     ("reception", "/api/v1/members/*", "*"),

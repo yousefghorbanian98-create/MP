@@ -1,0 +1,103 @@
+{
+  "release_dir": "mp-app/client/release",
+  "apks": [
+    {
+      "file": "app-arm64-v8a-release.apk",
+      "bytes": 20914966,
+      "sha256": "2ab56399ad4a6d82edf0880593a08fc210afb4e96f72d368becd7500f6c04098",
+      "package": "ir.muscleparadise.mp_client",
+      "versionName": "0.1.0",
+      "versionCode": "2021",
+      "minSdk": 24,
+      "targetSdk": 36,
+      "permissions": [
+        "android.permission.INTERNET",
+        "ir.muscleparadise.mp_client.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+      ],
+      "debuggable": null,
+      "allowBackup": "false",
+      "usesCleartextTraffic": null,
+      "hasNetworkSecurityConfig": true,
+      "signature": {
+        "v1": false,
+        "v2": true,
+        "v3": false,
+        "valid": true
+      },
+      "sha256_file_match": true,
+      "sha256_expected": "2ab56399ad4a6d82edf0880593a08fc210afb4e96f72d368becd7500f6c04098",
+      "policy": {
+        "pass": true,
+        "failures": [],
+        "warnings": [
+          "cleartext مجاز (معماری سرور محلی) — برای استقرار عمومی HTTPS لازم است"
+        ]
+      }
+    },
+    {
+      "file": "app-armeabi-v7a-release.apk",
+      "bytes": 18688300,
+      "sha256": "b5585dbbe2744ff25815f9b6f1460f1876de08eb83760a08250bb205f78d125b",
+      "package": "ir.muscleparadise.mp_client",
+      "versionName": "0.1.0",
+      "versionCode": "1021",
+      "minSdk": 24,
+      "targetSdk": 36,
+      "permissions": [
+        "android.permission.INTERNET",
+        "ir.muscleparadise.mp_client.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+      ],
+      "debuggable": null,
+      "allowBackup": "false",
+      "usesCleartextTraffic": null,
+      "hasNetworkSecurityConfig": true,
+      "signature": {
+        "v1": false,
+        "v2": true,
+        "v3": false,
+        "valid": true
+      },
+      "sha256_file_match": null,
+      "policy": {
+        "pass": true,
+        "failures": [],
+        "warnings": [
+          "cleartext مجاز (معماری سرور محلی) — برای استقرار عمومی HTTPS لازم است"
+        ]
+      }
+    },
+    {
+      "file": "app-x86_64-release.apk",
+      "bytes": 22186059,
+      "sha256": "a4dfb33de1e5ad6bb3134aaebe4abcfa13a1bb4676dba17f11d521a0df9e96aa",
+      "package": "ir.muscleparadise.mp_client",
+      "versionName": "0.1.0",
+      "versionCode": "4021",
+      "minSdk": 24,
+      "targetSdk": 36,
+      "permissions": [
+        "android.permission.INTERNET",
+        "ir.muscleparadise.mp_client.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+      ],
+      "debuggable": null,
+      "allowBackup": "false",
+      "usesCleartextTraffic": null,
+      "hasNetworkSecurityConfig": true,
+      "signature": {
+        "v1": false,
+        "v2": true,
+        "v3": false,
+        "valid": true
+      },
+      "sha256_file_match": null,
+      "policy": {
+        "pass": true,
+        "failures": [],
+        "warnings": [
+          "cleartext مجاز (معماری سرور محلی) — برای استقرار عمومی HTTPS لازم است"
+        ]
+      }
+    }
+  ],
+  "pass": true
+}

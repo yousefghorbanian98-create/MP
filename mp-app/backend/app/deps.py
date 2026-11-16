@@ -62,6 +62,9 @@ def require_roles(*roles: str):
             raise ForbiddenError(f"نقش {user.role} مجاز نیست")
         return user
 
+    # برچسب برای گیتِ «هر مسیر یک guard دارد» (tests/integration/test_route_guards.py):
+    # بدون برچسب، گیت نمی‌تواند guardهای همین ماژول را از تابع‌های عادی تفکیک کند.
+    _guard.__rbac__ = "roles"  # type: ignore[attr-defined]
     return _guard
 
 
@@ -77,4 +80,5 @@ def require_permission():
             )
         return user
 
+    _guard.__rbac__ = "permission"  # type: ignore[attr-defined]
     return _guard
