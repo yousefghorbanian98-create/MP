@@ -126,6 +126,13 @@ jobs:
         working-directory: mp-app/client
         run: flutter test
 
+      # M60 — گیت مانیفست. اجرای 43828454021 نشان داد `android:debuggable="false"`
+      # در سورس، `lintVitalRelease` را می‌شکند و بیلد release را متوقف می‌کند.
+      # آن ویژگی برای «سخت‌کردن» اضافه شده بود، ولی اپ را امن‌تر نمی‌کرد.
+      - name: manifest gate (ویژگی‌های شکست‌دهندهٔ lintVitalRelease)
+        working-directory: mp-app/client
+        run: python3 tools/manifest_gate.py
+
       - name: Commit client diagnostics (on failure)
         if: failure()
         env:

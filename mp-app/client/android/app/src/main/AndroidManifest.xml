@@ -6,8 +6,21 @@
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:allowBackup="false"
-        android:debuggable="false"
         android:networkSecurityConfig="@xml/network_security_config">
+        <!--
+          عمداً بدون android:debuggable.
+
+          تاریخچه (مهم): برای «سخت‌کردن» مانیفست، `android:debuggable="false"` اینجا
+          اضافه شده بود. Android Lint آن را HardcodedDebugMode می‌داند و با
+          `lintVitalRelease` **بیلد release را می‌شکند** — یعنی آن تغییر، اپ را
+          امن‌تر نمی‌کرد، انتشار را متوقف می‌کرد. در اجرای 43828454021 دیده شد.
+
+          نتیجهٔ درست: نبودن این ویژگی، خودش یعنی debug=false در بیلد release
+          (Gradle آن را از buildType می‌گذارد). صحت آن با بازرسی مانیفست
+          **کامپایل‌شده** تأیید می‌شود: `tools/apk_deep_audit.py` (apktool) و
+          `tools/apk_audit.py` (androguard) هر دو روی APK واقعی بررسی می‌کنند،
+          نه روی سورس.
+        -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
