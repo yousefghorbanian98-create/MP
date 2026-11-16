@@ -176,11 +176,64 @@ def _rel(path: Path) -> str:
         return str(path)
 
 
+# الگوی خطای واقعی CI (اجرای 43836603926):
+#   `_fmtRial((p['amount_rial'] as num?) ?? 0)`  → num به int نمی‌خورد.
+# این نوع خطا را بدون Dart SDK می‌شود گرفت، چون شکلش همیشه یکی است: یک
+# عبارت `as num` که مستقیم به تابعی با پارامتر int داده می‌شود (بدون toInt).
+_NUM_CAST = re.compile(r"as\s+num\??")
+_CALL_WITH_NUM = re.compile(r"\b(_?[A-Za-z_][A-Za-z0-9_]*)\s*\(([^()]*(?:\([^()]*\)[^()]*)*)\)")
+
+
+def _num_to_int_findings(rel: str, lines: list[str]) -> list[Finding]:
+    """`as num` که به تابع int-پذیر پاس می‌شود بدون `.toInt()`.
+
+    فقط توابعی بررسی می‌شوند که تعریف‌شان در همین فایل پارامتر `int` دارد
+    (`fn(int n)` / `fn(String s, int n)`) — تا مثبت کاذب تولید نشود.
+    """
+    source = "\n".join(lines)
+    int_params: set[str] = set()
+    for m in re.finditer(
+        r"\b(?:String|void|int|double|bool|Widget|num|dynamic)?\s*"
+        r"(_?[A-Za-z_][A-Za-z0-9_]*)\s*\(([^)]*)\)\s*(?:async\s*)?\{",
+        source,
+    ):
+        params = m.group(2)
+        if re.search(r"\bint\b", params):
+            int_params.add(m.group(1))
+    if not int_params:
+        return []
+
+    out: list[Finding] = []
+    for i, raw in enumerate(lines, start=1):
+        line = _strip_comment(raw)
+        if not _NUM_CAST.search(line):
+            continue
+        if ".toInt()" in line:
+            continue
+        for call in _CALL_WITH_NUM.finditer(line):
+            if call.group(1) not in int_params:
+                continue
+            if not _NUM_CAST.search(call.group(2)):
+                continue
+            out.append(
+                Finding(
+                    rel,
+                    i,
+                    "num-to-int",
+                    f"`{call.group(1)}` پارامتر int می‌خواهد ولی مقدار `num` می‌گیرد "
+                    "— `.toInt()` لازم است (خطای واقعی CI: argument_type_not_assignable)",
+                )
+            )
+            break
+    return out
+
+
 def text_rules(path: Path) -> list[Finding]:
     rel = _rel(path)
     out: list[Finding] = []
     all_lines = path.read_text(encoding="utf-8").splitlines()
     out += _api_body_cast_findings(rel, all_lines)
+    out += _num_to_int_findings(rel, all_lines)
     in_block_comment = False
     for i, raw in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
         line = raw

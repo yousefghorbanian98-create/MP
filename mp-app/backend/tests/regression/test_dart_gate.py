@@ -100,3 +100,36 @@ def test_repo_is_clean():
         findings += gate.syntax_errors(parser, f)
         findings += gate.text_rules(f)
     assert findings == [], "\n".join(x.render() for x in findings)
+
+
+# ── M60 — قانون num→int (خطای واقعی CI در اجرای 43836603926) ──
+def test_num_to_int_rule_catches_the_real_ci_failure() -> None:
+    """همان خطی که CI گرفت: `_fmtRial((p['amount_rial'] as num?) ?? 0)`."""
+    gate = _load()
+    lines = [
+        "String _fmtRial(int n) { return '$n'; }",
+        "Text('${_fmtRial((p['amount_rial'] as num?) ?? 0)} ریال')",
+    ]
+    findings = gate._num_to_int_findings("wallet_page.dart", lines)
+    assert findings, "قانون num→int باید شلیک کند"
+    assert findings[0].rule == "num-to-int"
+
+
+def test_num_to_int_rule_stays_quiet_with_to_int_call() -> None:
+    """کنترل مثبت: با `.toInt()` نباید یافته بدهد (وگرنه گیت را خاموش می‌کنند)."""
+    gate = _load()
+    lines = [
+        "String _fmtRial(int n) { return '$n'; }",
+        "Text('${_fmtRial(((p['amount_rial'] as num?) ?? 0).toInt())} ریال')",
+    ]
+    assert gate._num_to_int_findings("wallet_page.dart", lines) == []
+
+
+def test_num_to_int_rule_ignores_functions_that_do_not_take_int() -> None:
+    """`num` دادن به تابعی که `num` می‌خواهد خطا نیست — نباید مثبت کاذب بدهد."""
+    gate = _load()
+    lines = [
+        "void show(num value) {}",
+        "show((p['x'] as num?) ?? 0);",
+    ]
+    assert gate._num_to_int_findings("x.dart", lines) == []

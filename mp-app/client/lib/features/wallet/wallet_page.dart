@@ -163,7 +163,7 @@ class _PaymentHistory extends ConsumerWidget {
                             ),
                           ),
                           Text(
-                            '${_fmtRial((p['amount_rial'] as num?) ?? 0)} ریال',
+                            '${_fmtRial(((p['amount_rial'] as num?) ?? 0).toInt())} ریال',
                             style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
                           ),
                         ],
