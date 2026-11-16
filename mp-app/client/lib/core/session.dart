@@ -33,7 +33,13 @@ class AuthState {
 }
 
 class AuthController extends StateNotifier<AuthState> {
-  AuthController(this._api) : super(const AuthState());
+  AuthController(this._api, {String? refreshToken})
+      : _refreshToken = refreshToken,
+        super(const AuthState());
+
+  /// refresh token در حافظه نگه داشته می‌شود تا خروج بتواند نشست **سرور** را
+  /// هم ببندد (`POST /auth/logout`). نسخهٔ قبلی فقط access token را می‌شناخت.
+  String? _refreshToken;
 
   /// سازندهٔ تست — وضعیت اولیه را مستقیم می‌دهد.
   ///
@@ -68,9 +74,41 @@ class AuthController extends StateNotifier<AuthState> {
   }
 
   Future<void> _persist(String token, String refresh) async {
+    _refreshToken = refresh;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('mp_token', token);
     await prefs.setString('mp_refresh', refresh);
+  }
+
+  /// خروج — نشست سرور بسته می‌شود، سپس حافظهٔ دستگاه پاک.
+  ///
+  /// M61/D3: این متد اصلاً وجود نداشت؛ `POST /auth/logout` صفر مصرف‌کننده بود و
+  /// روی گوشی مشترک باشگاه هیچ راهی برای قطع دسترسی نبود.
+  ///
+  /// دو نکتهٔ عمدی:
+  ///   • ترتیب: **اول** سرور، **بعد** پاک‌کردن محلی. اگر برعکس بود، refresh token
+  ///     از دست می‌رفت و نشست سرور تا ۱۴ روز زنده می‌ماند.
+  ///   • خطای شبکه خروج محلی را متوقف **نمی‌کند** — کاربر نباید وقتی سرور در
+  ///     دسترس نیست در حساب خودش زندانی شود. ولی خطا بی‌صدا هم نمی‌ماند:
+  ///     `serverRevoked` می‌گوید نشست سرور بسته شد یا نه.
+  Future<bool> logout() async {
+    var serverRevoked = false;
+    final refresh = _refreshToken;
+    if (_api != null && refresh != null) {
+      try {
+        await _api!.post('/auth/logout', {'refresh_token': refresh});
+        serverRevoked = true;
+      } catch (_) {
+        // عمداً بلعیده می‌شود — پایین توضیح داده شده
+      }
+    }
+    _api?.accessToken = null;
+    _refreshToken = null;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('mp_token');
+    await prefs.remove('mp_refresh');
+    state = const AuthState();
+    return serverRevoked;
   }
 
   /// بازیابی نشست قبلی در شروع برنامه.
@@ -89,7 +127,9 @@ class AuthController extends StateNotifier<AuthState> {
       state = state.copyWith(accessToken: t);
       await _persist(t, r['refresh_token'] as String? ?? (refresh ?? token));
     } catch (_) {
-      // refresh نامعتبر ← همان توکن قبلی امتحان می‌شود
+      // refresh نامعتبر ← همان توکن قبلی امتحان می‌شود، ولی برای خروج باید
+      // همان refresh را بشناسیم تا `POST /auth/logout` بتواند نشست را ببندد.
+      _refreshToken = refresh;
     }
     try {
       await refreshMe();
@@ -105,3 +145,11 @@ class AuthController extends StateNotifier<AuthState> {
 final authProvider = StateNotifierProvider<AuthController, AuthState>(
   (ref) => AuthController(ref.watch(apiClientProvider)),
 );
+
+/// خروج از حساب — برای دکمه‌های UI.
+///
+/// چرا provider جدا: تست‌های ویجت باید بتوانند مسیر واقعی `logout` را
+/// بسنجند بدون اینکه به `StateNotifierProvider` دست بزنند.
+final logoutProvider = Provider<Future<bool> Function()>((ref) {
+  return ref.watch(authProvider.notifier).logout;
+});

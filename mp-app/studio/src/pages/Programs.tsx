@@ -8,6 +8,7 @@ import { VolumePanel } from "../components/VolumePanel";
 import { ExerciseLibrary } from "../components/ExerciseLibrary";
 import { AutoregPanel } from "../components/AutoregPanel";
 import { fa, useApi } from "../lib/useApi";
+import { useAppStore } from "../stores/appStore";
 
 /**
  * برنامه‌ها (M45-c2) — از `GET /programs` واقعی، نه mock.
@@ -60,6 +61,11 @@ export function Programs() {
   }
 
   const [status, setStatus] = useState<string | null>(null);
+  // M61/D7 — عضو انتخاب‌شده در صفحهٔ «اعضا» منبع حقیقت پنل‌های پایین صفحه است.
+  // قبلاً پنل حجم با `items[0].member_id` سوار می‌شد: مربی عضو B را انتخاب
+  // می‌کرد و گزارش حجم عضو A را می‌دید، در حالی که ReadinessPanel کنارش
+  // درست از B می‌خواند. دو پنل هم‌سایه با دو عضو = دادهٔ آموزشی غلط.
+  const selectedMemberId = useAppStore((s) => s.selectedMemberId);
   const { data, loading, error, needsToken, reload } = useApi(
     (s) => fetchProgramsSummary(status, undefined, s),
     [status],
@@ -213,12 +219,20 @@ export function Programs() {
       </div>
     </motion.div>
 
-    {items.length > 0 && (
-      <div className="mt-4 space-y-4">
-        <VolumePanel memberId={items[0].member_id} />
-        <ReadinessPanel />
-      </div>
-    )}
+    <div className="mt-4 space-y-4">
+      {selectedMemberId === null ? (
+        // یک پیام، نه دو تا: ReadinessPanel هم حالت خالی خودش را دارد و
+        // اگر هر دو رندر شوند، کاربر دو کارت هم‌متن می‌بیند.
+        <section className="glass-card p-6 text-center text-sm text-ink-dim">
+          برای دیدن آمادگی و حجم تمرین، یک عضو را از صفحهٔ «اعضا» انتخاب کنید.
+        </section>
+      ) : (
+        <>
+          <VolumePanel memberId={selectedMemberId} />
+          <ReadinessPanel />
+        </>
+      )}
+    </div>
     <div className="mt-4 space-y-4">
       <AutoregPanel />
       <ExerciseLibrary />

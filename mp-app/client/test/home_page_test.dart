@@ -15,11 +15,14 @@ void main() {
     }
   });
 
-  testWidgets('جست‌وجو و بنر موجودند', (tester) async {
+  testWidgets('جست‌وجو هست؛ بنر دیگر متن تخفیف ثابت ندارد', (tester) async {
     await tester.pumpWidget(wrap());
     await tester.pumpAndSettle();
     expect(find.byType(TextField), findsOneWidget);
-    expect(find.text('تولدت مبارک! 🎂'), findsOneWidget);
+    // M61/D5 — نسخهٔ قبلی این تست «تولدت مبارک! 🎂» را تأیید می‌کرد، یعنی
+    // تستی که خودش باگ را قفل کرده بود. بنر اکنون از اشتراک واقعی ساخته
+    // می‌شود؛ جزئیاتش در home_banner_test.dart سنجیده می‌شود.
+    expect(find.text('تولدت مبارک! 🎂'), findsNothing);
   });
 
   testWidgets('چک‌این سریع در خانه', (tester) async {

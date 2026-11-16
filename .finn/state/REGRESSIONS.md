@@ -19,3 +19,13 @@
 | R-012 | `tests/integration/test_m45_checkin_feed.py` (۵ تست) | M45: جریان ورودها mock بود؛ ورود رد‌شده پنهان می‌شد | 2026-11-15 | ✅ فعال |
 | R-013 | `tests/api.test.ts` (۷ تست استودیو) | M45: کلاینت API نباید در خطا به mock برگردد؛ null ≠ ۰ | 2026-11-15 | ✅ فعال |
 | R-014 | assistant هیچ‌کدام از workflowها نباید شاخهٔ ثابت داشته باشد | CI به `arena/a0408b29-mp` هاردکد بود → روی شاخهٔ جاری diagnostics را push نمی‌کرد | 2026-11-15 | ✅ فعال (`github.head_ref \|\| github.ref_name`) |
+
+## M61 — چهار رگرسیون جدید
+
+| باگ | تست | اگر رفع برگردد |
+|---|---|---|
+| D1 دکمهٔ ثبت چهره ۴۰۳ برای member | `backend/tests/integration/test_m61_face_member_gate.py` (۴ تست) | با حذف ردیف rbac، ۳ تست قرمز می‌شود (اثبات‌شده) |
+| D2 بدنهٔ چک‌این ۴۲۲ | `client/test/face_consent_gate_test.dart` | تست شکل بدنه (`method: face`، بدون `image_base64`) |
+| D3 نبود logout | `client/test/logout_test.dart` + `logout_button_test.dart` | توکن پاک نشود یا مسیر سرور صدا زده نشود |
+| D6 گیت دروغ‌گو | `studio/tests/apiCoverage.test.ts` | evidence ناموجود → قرمز (اثبات‌شده) |
+| D7 VolumePanel روی items[0] | `studio/tests/programsPage.test.tsx` (۲ تست) | درخواست به `/member/7/` برود → قرمز |

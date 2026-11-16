@@ -123,6 +123,23 @@ class PlanPurchaseIn(BaseModel):
     plan_key: str = Field(..., min_length=2, max_length=40)
 
 
+@router.get(
+    "/me/face-consent",
+    summary="وضعیت رضایت بیومتریک من (M61/D1)",
+)
+def my_face_consent(db: DbSession, user: CurrentUser):
+    """«آیا رضایت داده‌ام؟» — تا اپ بتواند دکمهٔ ثبت چهره را درست فعال کند.
+
+    چرا لازم شد: اپ عضو دکمهٔ «ثبت چهره» را همیشه نشان می‌داد، در حالی که
+    بدون رضایت ثبت‌شده سرور ۴۰۳ می‌دهد (`_has_active_consent`). یعنی دکمه
+    هرگز کار نمی‌کرد و دلیلش هم دیده نمی‌شد. این مسیر مالکیت‌محور است:
+    فقط رضایت خودِ کاربر را برمی‌گرداند، نه کسی دیگر.
+    """
+    from modules.face_id.service import has_active_consent
+
+    return has_active_consent(db, user)
+
+
 @router.get("/memberships/plans", summary="فهرست پلن‌های جنسیت‌محور (M41-c2)")
 def list_plans(db: DbSession, user: CurrentUser):
     from engine.gender_plans import list_plans as _list

@@ -51,6 +51,7 @@
   "/api/v1/library/exercises/{exercise_id}",
   "/api/v1/members",
   "/api/v1/members/me",
+  "/api/v1/members/me/face-consent",
   "/api/v1/members/memberships",
   "/api/v1/members/memberships/from-plan",
   "/api/v1/members/memberships/plans",

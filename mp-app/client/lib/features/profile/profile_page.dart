@@ -3,6 +3,7 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/session.dart';
 import '../../core/theme.dart';
@@ -149,6 +150,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       ),
                     ],
                   ),
+                  const SizedBox(height: 16),
+                  // M61/D3 — پیش از این هیچ راهی برای خروج نبود. توکن ۳۰ دقیقه
+                  // اعتبار دارد و تا ۱۴ روز قابل تمدید است؛ روی گوشی مشترک
+                  // باشگاه، نبودِ خروج یعنی نبودِ تنها راه قطع دسترسی.
+                  const _LogoutButton(),
                 ],
               ),
             ),
@@ -223,6 +229,53 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
           Expanded(child: Text(value)),
         ],
       ),
+    );
+  }
+}
+
+/// دکمهٔ خروج با تأیید صریح (کار برگشت‌ناپذیر است).
+class _LogoutButton extends ConsumerStatefulWidget {
+  const _LogoutButton();
+
+  @override
+  ConsumerState<_LogoutButton> createState() => _LogoutButtonState();
+}
+
+class _LogoutButtonState extends ConsumerState<_LogoutButton> {
+  bool _busy = false;
+
+  Future<void> _confirmAndLogout() async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('خروج از حساب'),
+        content: const Text(
+            'از حساب خارج می‌شوید. برای ورود دوباره به کد پیامکی نیاز دارید.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('انصراف')),
+          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('خروج')),
+        ],
+      ),
+    );
+    if (ok != true || !mounted) return;
+    setState(() => _busy = true);
+    final revoke = await ref.read(logoutProvider)();
+    if (!mounted) return;
+    // نشست محلی در هر حالت بسته شد؛ فقط اگر سرور هم بست، همین را بگوییم.
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(revoke
+          ? 'از حساب خارج شدید و نشست سرور بسته شد.'
+          : 'از این دستگاه خارج شدید. سرور در دسترس نبود، پس نشست آن‌جا ممکن است باز بماند.'),
+    ));
+    context.go('/otp');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return OutlinedButton.icon(
+      onPressed: _busy ? null : _confirmAndLogout,
+      icon: const Icon(Icons.logout, color: Colors.redAccent),
+      label: Text(_busy ? 'در حال خروج…' : 'خروج از حساب'),
     );
   }
 }

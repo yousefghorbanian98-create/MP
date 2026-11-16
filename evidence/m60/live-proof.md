@@ -76,3 +76,33 @@
 خط سوم یعنی محدودسازی سمت سرور واقعی است (`service.list_payments` برای نقش
 `member` شناسه را با شناسهٔ خودش بازنویسی می‌کند)، نه فقط در UI. صفحهٔ کلاینت
 که روی همین مسیر ساخته شد، به این محدودسازی تکیه می‌کند.
+
+---
+
+## M61 — اثبات زندهٔ D1/D2 (۲۰۲۶-۱۱-۱۶)
+
+سرور: uvicorn روی `:8141` با `sqlite:////tmp/live_shop.db` · توکن member#3 با
+`create_access_token(3, "member")`.
+
+### D1 — «ثبت چهره» عضو
+
+| گام | پیش از M61 | پس از M61 |
+|---|---|---|
+| `POST /face/enroll` بدون رضایت | `403 نقش member برای POST /api/v1/face/enroll مجاز نیست` | `403 ثبت چهره بدون رضایت صریح ممکن نیست (US-108)` |
+| `POST /face/consent` | (اپ هرگز صدا نمی‌زد) | `200 {"id":1,"policy_version":"v1"}` |
+| `POST /face/enroll` با رضایت | **غیرممکن** | `200 {"id":1,"algorithm":"sface-v1"}` |
+| `GET /members/me/face-consent` | مسیر وجود نداشت | `{"consent":false,...,"enrolled":false}` → بعد از رضایت/ثبت: `{"consent":true,...,"enrolled":true}` |
+
+نکتهٔ مهم: ۴۰۳ **دلیلش عوض شد**. قبل نقش بود (باگی که هیچ‌کس نمی‌فهمید)، حالا
+رضایت است — که خودِ اپ می‌گوید چطور بدهید (`faceConsentProvider` + متن
+`GET /face/privacy-notice`).
+
+### D2 — «چک‌این» با چهره
+
+| بدنه | نتیجه |
+|---|---|
+| `{member_id, image_base64}` (بدنهٔ **قبلی** کلاینت) | `422 {"loc":["body","method"],"msg":"Field required"}` |
+| `{member_id, method:"face"}` (بدنهٔ **جدید**) | `200 {"id":2,"method":"face","result":"denied","denial_reason":"membership_expired"}` |
+
+`denied` اینجا رفتار **درست** است: عضو#3 در DB آزمایشی اشتراک فعال ندارد. یعنی
+مسیر از «هرگز کار نمی‌کرد» به «کار می‌کند و منطق اشتراک هم اعمال می‌شود» رسید.

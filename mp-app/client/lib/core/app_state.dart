@@ -67,6 +67,22 @@ final myPaymentsProvider = FutureProvider<List<Map<String, dynamic>>>((ref) asyn
   return const [];
 });
 
+/// اشتراک‌های عضو — منبع «چقدر اعتبار دارم؟».
+///
+/// M61/D5: بنر خانه متنی ثابت بود («تولدت مبارک! ۲۰٪ تخفیف تمدید») که هیچ
+/// پشتوانه‌ای نداشت — نه کوپنی وجود دارد، نه منطق تولدی. اکنون همان بنر از
+/// دادهٔ واقعی اشتراک ساخته می‌شود و اگر اشتراکی نباشد، همین را می‌گوید.
+/// سرور با `ensure_member_scope` تضمین می‌کند عضو فقط اشتراک خودش را ببیند.
+final myMembershipsProvider = FutureProvider<List<Map<String, dynamic>>>((ref) async {
+  final api = ref.watch(apiClientProvider);
+  final auth = ref.watch(authProvider);
+  final memberId = auth.memberId;
+  if (memberId == null) return const [];
+  final r = await api.get('/members/$memberId/memberships');
+  if (r is List) return r.map((e) => Map<String, dynamic>.from(e as Map)).toList();
+  return const [];
+});
+
 /// فروشگاه واقعی — کاتالوگ از API (M59). پیش‌تر چهار محصول hardcode بود.
 final shopProductsProvider = FutureProvider<List<Map<String, dynamic>>>((ref) async {
   final api = ref.watch(apiClientProvider);

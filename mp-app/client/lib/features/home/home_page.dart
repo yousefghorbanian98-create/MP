@@ -2,9 +2,12 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/app_state.dart';
+import '../../core/membership.dart';
 import '../../core/theme.dart';
 import '../../shared/widgets/glass_card.dart';
 
@@ -50,7 +53,7 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
           const SizedBox(height: 16),
-          const _PromoBanner().animate().fadeIn(duration: 450.ms).slideY(begin: -0.12),
+          const _SubscriptionBanner().animate().fadeIn(duration: 450.ms).slideY(begin: -0.12),
           const SizedBox(height: 20),
           Text(
             'بخش‌ها',
@@ -112,57 +115,96 @@ class _SearchBar extends StatelessWidget {
   }
 }
 
-class _PromoBanner extends StatelessWidget {
-  const _PromoBanner();
+/// بنر وضعیت اشتراک — از دادهٔ واقعی، نه متن ثابت.
+///
+/// M61/D5: نسخهٔ قبلی «تولدت مبارک! ۲۰٪ تخفیف تمدید» را هاردکد نشان می‌داد
+/// در حالی که هیچ کوپن/منطق تولدی در سرور نبود. یعنی صفحهٔ اول اپ یک وعدهٔ
+/// تجاری ناموجود می‌داد. سه حالت صادقانه:
+///   ۱) اشتراک فعال   → روزهای باقی‌مانده (از سرور، که در M61 ساخته شد)
+///   ۲) اشتراک منقضی  → پیام + راه تمدید
+///   ۳) هیچ اشتراکی   → «اشتراک فعالی ندارید» + راه ارتباط با پذیرش
+/// در حالت بار/خطا هیچ عددی ساخته نمی‌شود؛ بنر ساکت می‌ماند.
+class _SubscriptionBanner extends ConsumerWidget {
+  const _SubscriptionBanner();
 
   @override
-  Widget build(BuildContext context) {
-    return TweenAnimationBuilder<double>(
-      tween: Tween(begin: 0, end: 1),
-      duration: const Duration(milliseconds: 450),
-      curve: Curves.easeOutCubic,
-      builder: (context, t, child) => Opacity(
-        opacity: t,
-        child: Transform.translate(offset: Offset(0, 16 * (1 - t)), child: child),
-      ),
-      child: GlassCard(
-        padding: const EdgeInsets.all(18),
-        child: Row(
-          children: [
-            Container(
-              width: 52,
-              height: 52,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [MpColors.primary, MpColors.primary.withOpacity(0.6)],
-                  begin: Alignment.topRight,
-                  end: Alignment.bottomLeft,
+  Widget build(BuildContext context, WidgetRef ref) {
+    final memberships = ref.watch(myMembershipsProvider);
+    return memberships.when(
+      loading: () => const SizedBox(height: 84),
+      error: (_, __) => const SizedBox.shrink(),
+      data: (rows) {
+        final active = rows.cast<Map<String, dynamic>?>().firstWhere(
+              (m) => m != null && m['status'] == 'active',
+              orElse: () => null,
+            );
+        final days = daysUntilExpiry(active?['expires_at'] as String?);
+        // روز «نامعلوم» را صفر نشان نمی‌دهیم — همان قاعدهٔ «نامعلوم ≠ صفر».
+        final daysText = days == null ? 'اعتبار نامعلوم' : '$days روز باقی‌مانده';
+        final (title, body, color) = active == null
+            ? (
+                'اشتراک فعالی ندارید',
+                'برای فعال‌سازی یا تمدید، با پذیرش باشگاه در ارتباط باشید.',
+                MpColors.accent,
+              )
+            : (
+                'اشتراک فعال',
+                '${active['plan_name'] ?? 'پلن باشگاه'} · $daysText',
+                MpColors.primary,
+              );
+        return TweenAnimationBuilder<double>(
+          tween: Tween(begin: 0, end: 1),
+          duration: const Duration(milliseconds: 450),
+          curve: Curves.easeOutCubic,
+          builder: (context, t, child) => Opacity(
+            opacity: t,
+            child: Transform.translate(offset: Offset(0, 16 * (1 - t)), child: child),
+          ),
+          child: GlassCard(
+            padding: const EdgeInsets.all(18),
+            child: Row(
+              children: [
+                Container(
+                  width: 52,
+                  height: 52,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [color, color.withOpacity(0.6)],
+                      begin: Alignment.topRight,
+                      end: Alignment.bottomLeft,
+                    ),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Icon(
+                    active == null ? Icons.info_outline : Icons.verified_outlined,
+                    color: Colors.white,
+                    size: 28,
+                  ),
                 ),
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: const Icon(Icons.celebration, color: MpColors.accent, size: 28),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'تولدت مبارک! 🎂',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: MpColors.textPrimary),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w800, color: MpColors.textPrimary),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        body,
+                        style: TextStyle(
+                            fontSize: 12, color: MpColors.textSecondary, height: 1.6),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'هدیهٔ باشگاه: ۲۰٪ تخفیف تمدید اشتراک تا پایان هفته',
-                    style: TextStyle(fontSize: 12, color: MpColors.textSecondary, height: 1.6),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-            Icon(Icons.chevron_left, color: MpColors.accentSoft),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

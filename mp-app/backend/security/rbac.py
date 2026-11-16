@@ -39,6 +39,12 @@ POLICIES: list[tuple[str, str, str]] = [
     ("member", "/api/v1/members/me", "PUT"),
     ("member", "/api/v1/face/consent", "POST"),
     ("member", "/api/v1/face/consent/revoke", "POST"),
+    # ثبت چهرهٔ خودِ عضو: پیش‌تر فقط DELETE مجاز بود، در حالی که اپ عضو دکمهٔ
+    # «ثبت چهره» را نشان می‌داد و همیشه ۴۰۳ می‌گرفت (M61/D1). ثبت چهره بدون
+    # رضایت صریح در service رد می‌شود (`_has_active_consent`)، پس بازکردن این
+    # مسیر امنیت بیومتریک را تضعیف نمی‌کند — همان قاعده‌ای که coach/reception
+    # از قبل داشتند.
+    ("member", "/api/v1/face/enroll", "POST"),
     ("member", "/api/v1/face/enroll/*", "DELETE"),
     ("member", "/api/v1/face/checkin", "POST"),
     ("member", "/api/v1/face/privacy-notice", "GET"),

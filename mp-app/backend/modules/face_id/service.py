@@ -57,6 +57,33 @@ def _has_active_consent(db: Session, member_id: int) -> bool:
     )
 
 
+def has_active_consent(db: Session, user=None) -> dict:
+    """وضعیت رضایت + ثبت چهرهٔ **خودِ** کاربر — برای گیت UI در اپ عضو (M61/D1).
+
+    برمی‌گرداند: `member_id`، `consent`، `enrolled`، `policy_version`.
+    هیچ‌جا تصویر یا embedding برنمی‌گردد؛ فقط بولین‌ها.
+    """
+    from db.models import FaceTemplate, Member
+
+    member = db.scalar(select(Member).where(Member.user_id == user.id)) if user else None
+    if member is None:
+        raise NotFoundError("عضو یافت نشد")
+    consent = db.scalar(
+        select(BiometricConsent)
+        .where(BiometricConsent.member_id == member.id, BiometricConsent.revoked_at.is_(None))
+        .order_by(BiometricConsent.id.desc())
+    )
+    enrolled = (
+        db.scalar(select(FaceTemplate).where(FaceTemplate.member_id == member.id)) is not None
+    )
+    return {
+        "member_id": member.id,
+        "consent": consent is not None,
+        "policy_version": consent.policy_version if consent else None,
+        "enrolled": enrolled,
+    }
+
+
 def enroll_face(db: Session, member_id: int, embedding: bytes, user=None) -> FaceTemplate:
     """ثبت چهره — فقط با رضایت صریح و embedding رمزنگاری‌شده."""
     from app.security.ownership import ensure_member_scope
