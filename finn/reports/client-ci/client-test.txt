@@ -1,55 +1,78 @@
 
 ::group::✅ Passing tests
-✅ /home/runner/work/MP/MP/mp-app/client/test/today_controller_test.dart: progress starts at zero and updates on toggle
-✅ /home/runner/work/MP/MP/mp-app/client/test/today_controller_test.dart: progress handles zero-total safely (no division by zero)
-✅ /home/runner/work/MP/MP/mp-app/client/test/today_controller_test.dart: reset clears done set
 ✅ /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart: GET موفق JSON برمی‌گرداند + هدر Authorization
 ✅ /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart: خطای سرور با پیام فارسی detail بالا می‌آید
 ✅ /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart: POST بدنهٔ JSON می‌فرستد
+✅ /home/runner/work/MP/MP/mp-app/client/test/assessment14_page_test.dart: empty state shows prompt when no assessment exists
 ✅ /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart: AuthController ورود OTP توکن را نگه می‌دارد
 ✅ /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart: سیاست شبکه (REA 2026-11-15) HTTP روی میزبان عمومی رد می‌شود
 ✅ /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart: سیاست شبکه (REA 2026-11-15) HTTPS روی هر میزبانی مجاز است
 ✅ /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart: سیاست شبکه (REA 2026-11-15) بازه‌های RFC1918 مجازند
 ✅ /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart: سیاست شبکه (REA 2026-11-15) آدرس نامعتبر باعث خطای صریح می‌شود، نه شکست مبهم
-lib/features/shop/shop_page.dart:123:21: Error: Too few positional arguments: 2 required, 1 given.
-      await api.post('/shop/cart', body: {'product_id': product['id'], 'qty': 1});
-                    ^
-lib/features/shop/shop_page.dart:274:33: Error: Too few positional arguments: 2 required, 1 given.
-      final res = await api.post('/shop/checkout', body: {'method': 'wallet'});
-                                ^
-✅ /home/runner/work/MP/MP/mp-app/client/test/assessment14_page_test.dart: empty state shows prompt when no assessment exists
 ✅ /home/runner/work/MP/MP/mp-app/client/test/assessment14_page_test.dart: matrix renders axes with scores, dashes and decision chips
-::endgroup::
-::group::❌ loading /home/runner/work/MP/MP/mp-app/client/test/shop_page_test.dart (failed)
-Failed to load "/home/runner/work/MP/MP/mp-app/client/test/shop_page_test.dart":
-Compilation failed for testPath=/home/runner/work/MP/MP/mp-app/client/test/shop_page_test.dart: lib/features/shop/shop_page.dart:123:21: Error: Too few positional arguments: 2 required, 1 given.
-      await api.post('/shop/cart', body: {'product_id': product['id'], 'qty': 1});
-                    ^
-lib/features/shop/shop_page.dart:274:33: Error: Too few positional arguments: 2 required, 1 given.
-      final res = await api.post('/shop/checkout', body: {'method': 'wallet'});
-                                ^
-.
-
-::endgroup::
-::group::❌ loading /home/runner/work/MP/MP/mp-app/client/test/assessment14_page_test.dart (failed after test completion)
-Error: The Dart compiler exited unexpectedly.
-package:flutter_tools/src/base/common.dart 36:3  throwToolExit
-package:flutter_tools/src/compile.dart 1029:11   DefaultResidentCompiler._compile.<fn>
-dart:async/future_impl.dart 961:45               Future._propagateToListeners.handleValueCallback
-dart:async/future_impl.dart 990:13               Future._propagateToListeners
-dart:async/future_impl.dart 874:9                Future._propagateToListeners
-dart:async/future_impl.dart 732:5                Future._completeWithValue
-dart:async/future_impl.dart 816:7                Future._asyncCompleteWithValue.<fn>
-dart:async/zone.dart 474:14                      Zone.runGuarded
-dart:async/zone.dart 604:18                      Zone.bindCallbackGuarded.<fn>
-dart:async/schedule_microtask.dart 40:35         _microtaskLoop
-dart:async/schedule_microtask.dart 49:5          _startMicrotaskLoop
-dart:isolate-patch/isolate_patch.dart 127:13     _runPendingImmediateCallback
-dart:isolate-patch/isolate_patch.dart 193:5      _RawReceivePort._handleMessage
-::endgroup::
-::group::✅ Passing tests
 ✅ /home/runner/work/MP/MP/mp-app/client/test/assessment14_page_test.dart: submitting a test posts data and confirms
 ✅ /home/runner/work/MP/MP/mp-app/client/test/assessment14_page_test.dart: invalid submit shows validation message
+::endgroup::
+::group::❌ /home/runner/work/MP/MP/mp-app/client/test/shop_page_test.dart: محصولات از API می‌آیند و قیمت از سرور است (failed)
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "پروتئین وی ۲ کیلو": []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///home/runner/work/MP/MP/mp-app/client/test/shop_page_test.dart:79:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1968:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///home/runner/work/MP/MP/mp-app/client/test/shop_page_test.dart line 79
+The test description was:
+  محصولات از API می‌آیند و قیمت از سرور است
+════════════════════════════════════════════════════════════════════════════════════════════════════
+Test failed. See exception logs above.
+The test description was: محصولات از API می‌آیند و قیمت از سرور است
+
+::endgroup::
+::group::❌ /home/runner/work/MP/MP/mp-app/client/test/shop_page_test.dart: کاتالوگ خالی ← پیام راهنما، نه صفحهٔ سفید (failed)
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextContainingWidgetFinder:<Found 0 widgets with text containing هنوز محصولی ثبت نشده:
+[]>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///home/runner/work/MP/MP/mp-app/client/test/shop_page_test.dart:109:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1968:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///home/runner/work/MP/MP/mp-app/client/test/shop_page_test.dart line 109
+The test description was:
+  کاتالوگ خالی ← پیام راهنما، نه صفحهٔ سفید
+════════════════════════════════════════════════════════════════════════════════════════════════════
+Test failed. See exception logs above.
+The test description was: کاتالوگ خالی ← پیام راهنما، نه صفحهٔ سفید
+
+::endgroup::
+::group::✅ Passing tests
+✅ /home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart: TodayPage renders real exercises RTL with dark theme
+✅ /home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart: toggling an exercise updates completion state
+✅ /home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart: empty state shows when no workout is planned
+✅ /home/runner/work/MP/MP/mp-app/client/test/today_controller_test.dart: progress starts at zero and updates on toggle
+✅ /home/runner/work/MP/MP/mp-app/client/test/today_controller_test.dart: progress handles zero-total safely (no division by zero)
+✅ /home/runner/work/MP/MP/mp-app/client/test/today_controller_test.dart: reset clears done set
 ::endgroup::
 ::group::❌ /home/runner/work/MP/MP/mp-app/client/test/set_feedback_sheet_test.dart: renders feedback form with sliders and submit (failed)
 ══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
@@ -345,9 +368,6 @@ Test failed. See exception logs above.
 The test description was: submit shows why-card with data-rule-decision chain
 
 ::endgroup::
-::group::✅ Passing tests
-✅ /home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart: TodayPage renders real exercises RTL with dark theme
-::endgroup::
 ::group::❌ /home/runner/work/MP/MP/mp-app/client/test/set_feedback_sheet_test.dart: empty reps sends nothing (failed)
 ══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
 The following assertion was thrown while applying parent data.:
@@ -464,9 +484,6 @@ When the exception was thrown, this was the stack:
 Test failed. See exception logs above.
 The test description was: empty reps sends nothing
 
-::endgroup::
-::group::✅ Passing tests
-✅ /home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart: toggling an exercise updates completion state
 ::endgroup::
 ::group::❌ /home/runner/work/MP/MP/mp-app/client/test/set_feedback_sheet_test.dart: M48-c1: shows that the suggestion was actually applied (failed)
 ══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
@@ -644,9 +661,6 @@ unexpected.
 Test failed. See exception logs above.
 The test description was: M48-c1: shows that the suggestion was actually applied
 
-::endgroup::
-::group::✅ Passing tests
-✅ /home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart: empty state shows when no workout is planned
 ::endgroup::
 ::group::❌ /home/runner/work/MP/MP/mp-app/client/test/set_feedback_sheet_test.dart: M48-c1: sends the real weight, not hardcoded zero (failed)
 ══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
