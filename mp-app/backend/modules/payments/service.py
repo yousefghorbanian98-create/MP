@@ -64,6 +64,8 @@ def verify_payment(
     payment.status = "paid"
     payment.paid_at = datetime.now(UTC)
     payment.reference_id = reference_id or f"ref-{secrets.token_hex(6)}"
+    # M60/R4 — تسویهٔ سفارشِ فروشگاه در همان تراکنش
+    _settle_shop_order(db, payment.id)
     db.commit()
     db.refresh(payment)
     from modules.admin.service import audit
@@ -144,6 +146,49 @@ def verify_with_gateway(
     # manual=True فقط برای گذر از بررسیِ «مسیر دستی»؛ خودِ پاسخ درگاه
     # همین لحظه و با امضا دریافت شد و authority در DB ثبت است.
     return verify_payment(db, payment_id, reference_id=result.reference_id, manual=True)
+
+
+def _settle_shop_order(db: Session, payment_id: int) -> None:
+    """سفارش فروشگاهِ وصل به این پرداخت را «پرداخت‌شده» کن.
+
+    # باگ واقعی (M60/R4)
+
+    `shop.checkout` برای پرداخت درگاهی سفارش را `pending` می‌گذاشت و
+    `payment_id` را ثبت می‌کرد. وقتی callback درگاه موفق می‌شد،
+    `verify_payment` فقط **پرداخت** را paid می‌کرد؛ هیچ‌کس سراغ سفارش نمی‌رفت.
+    نتیجه: پول گرفته شده بود، موجودی کسر شده بود، و سفارش تا ابد `pending`
+    می‌ماند — نه به انبار می‌رفت، نه لغو می‌شد. (با TestClient تأیید شد:
+    callback ۲۰۰ و `orders.status` همچنان `pending`.)
+
+    جای این منطق در لایهٔ پرداخت است چون تنها نقطه‌ای است که «پول واقعاً
+    رسید» را می‌داند؛ گذاشتنش در روتِر درگاه یعنی هر مسیر تأیید آینده دوباره
+    فراموشش می‌کند.
+    """
+    # import داخل تابع: `modules.shop.service` خودش payments را import می‌کند ←
+    # حلقهٔ import در بارگذاری ماژول.
+    from db.models import Order
+
+    order = db.scalar(select(Order).where(Order.payment_id == payment_id))
+    if order is None or order.status == "paid":
+        return
+    if order.status != "pending":
+        # مثلاً لغو شده — پرداخت را برنمی‌گردانیم؛ فقط ثبت می‌کنیم تا در
+        # ممیزی/گزارش دیده شود (بازپرداخت خارج از دامنهٔ این تغییر است).
+        from modules.admin.service import audit
+
+        audit(
+            db,
+            None,
+            "order_paid_but_not_pending",
+            "order",
+            order.id,
+            {"order_status": order.status, "payment_id": payment_id},
+        )
+        return
+    order.status = "paid"
+    from modules.admin.service import audit
+
+    audit(db, None, "order_settled_by_payment", "order", order.id, {"payment_id": payment_id})
 
 
 def fail_payment(db: Session, payment_id: int) -> Payment:

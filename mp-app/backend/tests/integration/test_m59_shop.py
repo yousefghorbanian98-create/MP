@@ -707,3 +707,91 @@ def test_manager_and_admin_keep_finance_access(client: TestClient) -> None:
     for role in ("manager", "admin"):
         h = _user(role)["headers"]
         assert client.get("/api/v1/payments/finance/summary", headers=h).status_code == 200, role
+
+
+# ── M60/R4 — تسویهٔ سفارشِ پرداخت‌شده از درگاه ──
+#
+# باگ واقعی: برای پرداخت درگاهی، `checkout` سفارش را `pending` می‌گذاشت و
+# `verify_payment` فقط **پرداخت** را paid می‌کرد. پول گرفته شده بود، موجودی
+# کسر شده بود، و سفارش تا ابد pending می‌ماند. تست زیر همان مسیر را می‌رود.
+def test_gateway_paid_order_is_settled(client: TestClient) -> None:
+    from db.base import get_session_factory
+    from modules.payments import service as payments
+
+    owner = _user("super_admin")
+    member = _user("member")
+    product = _product(client, owner, stock=5)
+    client.post(
+        "/api/v1/shop/cart", json={"product_id": product["id"], "qty": 1}, headers=member["headers"]
+    )
+
+    # پرداخت غیرکیف‌پول (درگاه/کارت) ← سفارش pending می‌شود
+    r = client.post("/api/v1/shop/checkout", json={"method": "cash"}, headers=member["headers"])
+    assert r.status_code == 200, r.text
+    order = r.json()
+    assert order["status"] == "pending", "برای پرداخت غیرکیف‌پول باید pending بماند"
+
+    # همان کاری که callback موفق درگاه می‌کند: تأیید پرداخت
+    with get_session_factory()() as s:
+        payments.verify_payment(s, order["payment_id"], reference_id="ref-e2e-1", manual=True)
+
+    after = client.get("/api/v1/shop/orders", headers=member["headers"]).json()
+    mine = [o for o in after if o["id"] == order["order_id"]][0]
+    assert mine["status"] == "paid", f"سفارش پس از تأیید پرداخت تسویه نشد: {mine['status']}"
+
+
+def test_failed_payment_does_not_settle_order(client: TestClient) -> None:
+    """کنترل منفی: پرداخت ناموفق نباید سفارش را paid کند."""
+    from db.base import get_session_factory
+    from modules.payments import service as payments
+
+    owner = _user("super_admin")
+    member = _user("member")
+    product = _product(client, owner, stock=5)
+    client.post(
+        "/api/v1/shop/cart", json={"product_id": product["id"], "qty": 1}, headers=member["headers"]
+    )
+    order = client.post(
+        "/api/v1/shop/checkout", json={"method": "cash"}, headers=member["headers"]
+    ).json()
+    with get_session_factory()() as s:
+        payments.fail_payment(s, order["payment_id"])
+    mine = [
+        o
+        for o in client.get("/api/v1/shop/orders", headers=member["headers"]).json()
+        if o["id"] == order["order_id"]
+    ][0]
+    assert mine["status"] == "pending"
+
+
+def test_settle_skips_cancelled_order(client: TestClient) -> None:
+    """اگر سفارش پیش از تأیید پرداخت لغو شده باشد، پرداخت آن را زنده نمی‌کند."""
+    from db.base import get_session_factory
+    from modules.payments import service as payments
+
+    owner = _user("super_admin")
+    member = _user("member")
+    product = _product(client, owner, stock=5)
+    client.post(
+        "/api/v1/shop/cart", json={"product_id": product["id"], "qty": 1}, headers=member["headers"]
+    )
+    order = client.post(
+        "/api/v1/shop/checkout", json={"method": "cash"}, headers=member["headers"]
+    ).json()
+    # لغو توسط کادر
+    assert (
+        client.patch(
+            f"/api/v1/shop/orders/{order['order_id']}",
+            json={"status": "cancelled"},
+            headers=owner["headers"],
+        ).status_code
+        == 200
+    )
+    with get_session_factory()() as s:
+        payments.verify_payment(s, order["payment_id"], reference_id="ref-e2e-2", manual=True)
+    mine = [
+        o
+        for o in client.get("/api/v1/shop/orders", headers=member["headers"]).json()
+        if o["id"] == order["order_id"]
+    ][0]
+    assert mine["status"] == "cancelled"
