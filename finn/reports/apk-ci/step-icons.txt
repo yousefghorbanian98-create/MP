@@ -5,8 +5,7 @@
 • Creating default icons Android
 • Creating adaptive icons Android
 • Overwriting the default Android launcher icon with a new icon
-• No colors.xml file found in your Android project
-• Creating colors.xml file and adding it to your Android project
+• Updating colors.xml with color for adaptive icon background
 • Creating mipmap xml file Android
 No platform provided
 

@@ -1,6 +1,4 @@
 Running Gradle task 'assembleRelease'...                        
-e: file:///home/runner/work/MP/MP/mp-app/client/android/app/build.gradle.kts:36:30: Unresolved reference 'util'.
-e: file:///home/runner/work/MP/MP/mp-app/client/android/app/build.gradle.kts:39:33: Cannot infer type for type parameter 'R'. Specify it explicitly.
 Loading package information...                                                  
 Loading local repository...                                                     
 [                                       ] 3% Loading local repository...        
@@ -93,26 +91,76 @@ Loading local repository...
 [=====================                  ] 55% Unzipping... android-ndk-r28c/CHAN
 [=======================================] 100% Unzipping... android-ndk-r28c/CHA
 
+Expected to find fonts for {packages/cupertino_icons/CupertinoIcons}, but found (MaterialIcons). This usually means you are referring to font families in an IconData class but not including them in the assets section of your pubspec.yaml, are missing the package that would include them, or are missing "uses-material-design: true".
+Font asset "MaterialIcons-Regular.otf" was tree-shaken, reducing it from 1645184 to 6264 bytes (99.6% reduction). Tree-shaking can be disabled by providing the --no-tree-shake-icons flag when building your app.
+Caught exception: Already watching path: /opt/hostedtoolcache/flutter/stable-3.50.0-x64/flutter/packages/flutter_tools/gradle
+Checking the license for package CMake 3.22.1 in /usr/local/lib/android/sdk/licenses
+License for package CMake 3.22.1 accepted.
+Preparing "Install CMake 3.22.1 v.3.22.1".
+"Install CMake 3.22.1 v.3.22.1" ready.
+Installing CMake 3.22.1 in /usr/local/lib/android/sdk/cmake/3.22.1
+"Install CMake 3.22.1 v.3.22.1" complete.
+"Install CMake 3.22.1 v.3.22.1" finished.
+Lint found 1 error. First failure:
+/home/runner/work/MP/MP/mp-app/client/android/app/src/main/AndroidManifest.xml:9: Error: Avoid hardcoding the debug mode; leaving it out allows debug and release builds to automatically assign one [HardcodedDebugMode]
+        android:debuggable="false"
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+/home/runner/work/MP/MP/mp-app/client/android/app/src/main/AndroidManifest.xml:9: Error: Avoid hardcoding the debug mode; leaving it out allows debug and release builds to automatically assign one [HardcodedDebugMode]
+        android:debuggable="false"
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "HardcodedDebugMode":
+   It's best to leave out the android:debuggable attribute from the manifest.
+   If you do, then the tools will automatically insert android:debuggable=true
+   when building an APK to debug on an emulator or device. And when you
+   perform a release build, such as Exporting APK, it will automatically set
+   it to false.
+
+   If on the other hand you specify a specific value in the manifest file,
+   then the tools will always use it. This can lead to accidentally publishing
+   your app with debug information.
+
+   https://goo.gle/HardcodedDebugMode
+
+1 error
+
 
 FAILURE: Build failed with an exception.
 
-* Where:
-Build file '/home/runner/work/MP/MP/mp-app/client/android/app/build.gradle.kts' line: 7
-
 * What went wrong:
-Script compilation errors:
+Execution failed for task ':app:lintVitalRelease' (registered by plugin 'com.android.internal.application').
+> Lint found fatal errors while assembling a release target.
 
-  Line 07: android {
-           ^ 'fun Project.android(configure: Action<BaseAppModuleExtension>): Unit' is deprecated. Replaced by com.android.build.api.dsl.ApplicationExtension.
-               This class is not used for the public extensions in AGP when android.newDsl=true, which is the default in AGP 9.0, and will be removed in AGP 10.0.
+  Fix the issues identified by lint, or create a baseline to see only new errors.
+  To create a baseline, run `gradlew updateLintBaseline` after adding the following to the module's build.gradle file:
+  ```
+  android {
+      lint {
+          baseline = file("lint-baseline.xml")
+      }
+  }
+  ```
+  For more details, see https://developer.android.com/studio/write/lint#snapshot
 
-  Line 36:             val props = java.util.Properties()
-                                        ^ Unresolved reference 'util'.
+  /home/runner/work/MP/MP/mp-app/client/android/app/src/main/AndroidManifest.xml:9: Error: Avoid hardcoding the debug mode; leaving it out allows debug and release builds to automatically assign one [HardcodedDebugMode]
+          android:debuggable="false"
+          ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  Line 39:                 f.inputStream().use { props.load(it) }
-                                           ^ Cannot infer type for type parameter 'R'. Specify it explicitly.
+     Explanation for issues of type "HardcodedDebugMode":
+     It's best to leave out the android:debuggable attribute from the manifest.
+     If you do, then the tools will automatically insert android:debuggable=true
+     when building an APK to debug on an emulator or device. And when you
+     perform a release build, such as Exporting APK, it will automatically set
+     it to false.
 
-3 errors
+     If on the other hand you specify a specific value in the manifest file,
+     then the tools will always use it. This can lead to accidentally publishing
+     your app with debug information.
+
+     https://goo.gle/HardcodedDebugMode
+
+  1 error
 
 * Try:
 > Run with --stacktrace option to get the stack trace.
@@ -120,6 +168,6 @@ Script compilation errors:
 > Run with --scan to get full insights from a Build Scan (powered by Develocity).
 > Get more help at https://help.gradle.org.
 
-BUILD FAILED in 1m 46s
-Running Gradle task 'assembleRelease'...                          106.7s
+BUILD FAILED in 3m 23s
+Running Gradle task 'assembleRelease'...                          206.2s
 Gradle task assembleRelease failed with exit code 1
