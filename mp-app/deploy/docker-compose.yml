@@ -11,7 +11,11 @@ services:
     restart: unless-stopped
     environment:
       MP_DATABASE_URL: sqlite:////data/mp.db
-      MP_JWT_SECRET: ${MP_JWT_SECRET:?تنظیم کنید — openssl rand -hex 32}
+      # نام متغیر باید با فیلد settings بخواند: `secret_key` + env_prefix MP_
+      # → MP_SECRET_KEY. (قبلاً MP_JWT_SECRET بود و هیچ‌چیز آن را نمی‌خواند؛
+      # در عمل JWT با کلید پیش‌فرض توسعه امضا می‌شد و توکن جعل‌شدنی بود —
+      # باگ کشف‌شده توسط scripts/deploy_gate.py.)
+      MP_SECRET_KEY: ${MP_SECRET_KEY:?تنظیم کنید — openssl rand -hex 32}
       MP_CORS_ORIGINS: ${MP_CORS_ORIGINS:-http://localhost:8080}
       # پیامک (M28) — اختیاری؛ بدون آن حالت dev (کد در پاسخ OTP)
       MP_SMS_PROVIDER: ${MP_SMS_PROVIDER:-dev}
