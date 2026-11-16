@@ -590,3 +590,60 @@ def test_shop_routes_in_artifact() -> None:
     paths = json.loads(artifact.read_text())["paths"]
     shop = [p for p in paths if p.startswith("/api/v1/shop")]
     assert len(shop) >= 13, shop
+
+
+# ── M60 — سقف نرخ روی مسیر پول (یافتهٔ بازبینی: حلقهٔ سبد/تسویه) ──
+#
+# نکتهٔ پیاده‌سازی که یک‌بار تست را گمراه کرد: مقدار سقف در
+# `@limiter.limit(settings.…)` **در زمان import** خوانده می‌شود، پس
+# monkeypatch روی settings بعد از import بی‌اثر است. تست باید از همان
+# سقف واقعی عبور کند (۱۰/دقیقه ← ۱۲ درخواست)، نه اینکه سقف را عوض کند.
+def test_checkout_is_rate_limited(client: TestClient) -> None:
+    """۴۲۹ بعد از سقف — بدون آن یک حلقهٔ ساده موجودی/تراکنش را می‌بلعد."""
+    from modules.auth.router import limiter
+
+    limiter.reset()
+    member = _user("member")
+    codes = [
+        client.post("/api/v1/shop/checkout", json={"method": "wallet"}, headers=member["headers"]).status_code
+        for _ in range(12)
+    ]
+    assert 429 in codes, f"سقف تسویه اعمال نشد: {codes}"
+    # و سقف *پس از* عبور از تعداد مجاز اعمال می‌شود، نه از اول
+    assert codes[0] != 429
+    limiter.reset()
+
+
+def test_cart_write_is_rate_limited(client: TestClient) -> None:
+    from modules.auth.router import limiter
+
+    limiter.reset()
+    owner = _user("super_admin")
+    member = _user("member")
+    product = _product(client, owner, stock=100)
+    codes = [
+        client.post(
+            "/api/v1/shop/cart", json={"product_id": product["id"], "qty": 1}, headers=member["headers"]
+        ).status_code
+        for _ in range(35)
+    ]
+    assert 429 in codes, f"سقف نوشتن سبد اعمال نشد: {codes[-3:]}"
+    limiter.reset()
+
+
+def test_rate_limited_response_shape(client: TestClient) -> None:
+    """۴۲۹ باید همان قالب خطای پروژه را داشته باشد (`error.code=rate_limited`)."""
+    from modules.auth.router import limiter
+
+    limiter.reset()
+    member = _user("member")
+    body = None
+    for _ in range(12):
+        r = client.post("/api/v1/shop/checkout", json={"method": "wallet"}, headers=member["headers"])
+        if r.status_code == 429:
+            body = r.json()
+            break
+    assert body is not None, "هیچ ۴۲۹ای صادر نشد"
+    assert body["error"]["code"] == "rate_limited"
+    assert body["error"]["message"]
+    limiter.reset()

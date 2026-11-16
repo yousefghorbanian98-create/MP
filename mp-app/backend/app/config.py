@@ -39,6 +39,10 @@ class Settings(BaseSettings):
     otp_rate_limit: str = "10/minute"
     otp_burst_limit: str = "3/second"  # سقف انفجاری — ساعت اوج باشگاه (M22-c3)
     login_rate_limit: str = "10/minute"
+    # M60 — فروشگاه. چرا اینجا و نه hardcode: مسیر خرید مسیر پول است؛
+    # سقف باید قابل تنظیم باشد (پیک فروش/حراج) بدون تغییر کد.
+    shop_write_rate_limit: str = "30/minute"
+    shop_checkout_rate_limit: str = "10/minute"
     valkey_url: str = "redis://localhost:6379/0"
     # allowlist مبدأهای CORS — با کاما جدا شود (env: MP_CORS_ORIGINS)
     # در production باید صریح تنظیم شود؛ خالی = هیچ مبدأ مرورگری (fail-closed)

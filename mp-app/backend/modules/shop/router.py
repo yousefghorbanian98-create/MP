@@ -10,11 +10,15 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, Request
 from pydantic import BaseModel, Field
 
+from app.config import settings
 from app.deps import CurrentUser, DbSession, require_permission
 from modules.shop import service
+# همان نمونهٔ سقف نرخ که auth و main استفاده می‌کنند (slowapi). نمونهٔ دوم
+# ساختن باعث می‌شود شمارنده‌ها از هم جدا شوند و سقف دور زده شود.
+from modules.auth.router import limiter
 
 router = APIRouter(prefix="/shop", tags=["shop"], dependencies=[Depends(require_permission())])
 
@@ -155,7 +159,11 @@ def cart(db: DbSession, user: CurrentUser):
 
 
 @router.post("/cart", summary="افزودن به سبد")
-def cart_add(payload: CartAdd, db: DbSession, user: CurrentUser):
+@limiter.limit(settings.shop_write_rate_limit)
+def cart_add(request: Request, payload: CartAdd, db: DbSession, user: CurrentUser):
+    # M60 — چرا سقف: بدون آن، حلقهٔ سبد/تسویه همهٔ موجودی را رزرو می‌کند
+    # (نوعی DoS روی موجودی). `request` اول است چون slowapi امضای آن را
+    # از decorated function می‌خواند.
     return service.add_to_cart(
         db,
         user=user,
@@ -166,17 +174,23 @@ def cart_add(payload: CartAdd, db: DbSession, user: CurrentUser):
 
 
 @router.patch("/cart/{item_id}", summary="تغییر تعداد قلم سبد")
-def cart_update(item_id: int, payload: CartUpdate, db: DbSession, user: CurrentUser):
+@limiter.limit(settings.shop_write_rate_limit)
+def cart_update(
+    request: Request, item_id: int, payload: CartUpdate, db: DbSession, user: CurrentUser
+):
     return service.update_cart_item(db, user=user, item_id=item_id, qty=payload.qty)
 
 
 @router.delete("/cart/{item_id}", summary="حذف قلم سبد")
-def cart_remove(item_id: int, db: DbSession, user: CurrentUser):
+@limiter.limit(settings.shop_write_rate_limit)
+def cart_remove(request: Request, item_id: int, db: DbSession, user: CurrentUser):
     return service.remove_cart_item(db, user=user, item_id=item_id)
 
 
 @router.post("/checkout", summary="تسویهٔ سبد ← سفارش (کیف‌پول یا درگاه)")
-def checkout(payload: CheckoutIn, db: DbSession, user: CurrentUser):
+@limiter.limit(settings.shop_checkout_rate_limit)
+def checkout(request: Request, payload: CheckoutIn, db: DbSession, user: CurrentUser):
+    # M60 — سقف سخت‌گیرانه‌تر: هر تسویه یک تراکنش پول است.
     order = service.checkout(db, user=user, method=payload.method, note=payload.note)
     return {
         "order_id": order.id,
