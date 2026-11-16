@@ -10,11 +10,11 @@ from __future__ import annotations
 
 import json
 
-from app.security.hierarchy import ROLE_RANK, ensure_can_manage
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.errors import ApiError, ForbiddenError, NotFoundError
+from app.security.hierarchy import ROLE_RANK, ensure_can_manage
 from db.models import AuditLog, User
 
 # M59 — `super_admin` عمداً از این فهرست حذف شد.

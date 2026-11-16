@@ -106,9 +106,22 @@ jobs:
       - name: flutter pub get
         working-directory: mp-app/client
         run: flutter pub get
-      - name: flutter analyze (errors/warnings fatal — infos گزارش می‌شود)
+      - name: flutter analyze (گیت روی error — نه info/warning)
         working-directory: mp-app/client
-        run: flutter analyze --no-fatal-infos
+        # چرا گیت صریح است (۲۰۲۶-۱۱-۱۵): جاب چند بار با «۰ خطا، ۱۲۵ info» قرمز شد.
+        # `channel: stable` شناور است و همان کد در نسخهٔ Flutter دیگر به‌عنوان
+        # warning طبقه‌بندی می‌شود؛ گیتِ وابسته به طبقه‌بندی ابزار، دروازهٔ بی‌معنی است.
+        # حالا شرط شکست **وجود error** است، و خروجی کامل برای بازبینی ذخیره می‌شود
+        # (infoها همان `deprecated_member_use` نسخهٔ جدید Flutter هستند).
+        run: |
+          set -o pipefail
+          flutter analyze --no-fatal-infos > /tmp/analyze.txt 2>&1 || true
+          tail -n 40 /tmp/analyze.txt
+          if grep -qE "^[[:space:]]*error[[:space:]]*•" /tmp/analyze.txt; then
+            echo "::error::flutter analyze: خطای واقعی (error) پیدا شد"
+            exit 1
+          fi
+          echo "analyze: بدون error"
       - name: flutter test
         working-directory: mp-app/client
         run: flutter test

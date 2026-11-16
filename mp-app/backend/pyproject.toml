@@ -57,6 +57,14 @@ target-version = "py311"
 select = ["E", "F", "W", "I", "N", "UP", "B", "SIM"]
 ignore = ["E501"]
 
+# isort — چرا این بخش صریح است (باگ CI 2026-11-15):
+# ruff «first-party» را از نصب‌بودن پکیج حدس می‌زند. محلی `mp-backend` با
+# `pip install -e` نصب است، در CI هم نصب می‌شود ولی ترتیب importهای
+# `app.*` و `db.*` یکی درنمی‌آمد: محلی سبز، CI قرمز با یک I001.
+# با تعیین صریح، نتیجه مستقل از محیط می‌شود — همان چیزی که گیت لازم دارد.
+[tool.ruff.lint.isort]
+known-first-party = ["app", "api", "db", "engine", "modules", "security", "cache", "jobs", "eval"]
+
 [tool.coverage.run]
 source = ["."]
 omit = ["tests/*", "*/tests/*"]
