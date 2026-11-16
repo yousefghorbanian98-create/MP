@@ -19,7 +19,6 @@ Try correcting the name to the name of an existing getter, or defining a getter 
     final api = ref.read(apiClientProvider);
                          ^^^^^^^^^^^^^^^^^
 ✅ /home/runner/work/MP/MP/mp-app/client/test/assessment14_page_test.dart: empty state shows prompt when no assessment exists
-✅ /home/runner/work/MP/MP/mp-app/client/test/assessment14_page_test.dart: matrix renders axes with scores, dashes and decision chips
 ::endgroup::
 ::group::❌ loading /home/runner/work/MP/MP/mp-app/client/test/shop_page_test.dart (failed)
 Failed to load "/home/runner/work/MP/MP/mp-app/client/test/shop_page_test.dart":
@@ -53,6 +52,7 @@ dart:isolate-patch/isolate_patch.dart 127:13     _runPendingImmediateCallback
 dart:isolate-patch/isolate_patch.dart 193:5      _RawReceivePort._handleMessage
 ::endgroup::
 ::group::✅ Passing tests
+✅ /home/runner/work/MP/MP/mp-app/client/test/assessment14_page_test.dart: matrix renders axes with scores, dashes and decision chips
 ✅ /home/runner/work/MP/MP/mp-app/client/test/assessment14_page_test.dart: submitting a test posts data and confirms
 ✅ /home/runner/work/MP/MP/mp-app/client/test/assessment14_page_test.dart: invalid submit shows validation message
 ✅ /home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart: TodayPage renders real exercises RTL with dark theme
