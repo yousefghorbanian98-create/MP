@@ -20,7 +20,7 @@ void main() {
     final api = ApiClient(httpClient: mock, baseUrl: 'http://10.0.2.2:8000/api/v1');
     api.accessToken = 'tok-123';
     final r = await api.get('/members/me');
-    expect(r['id'], 7);
+    expect((r as Map)['id'], 7);
     final authHeader = seen.headers.map((k, v) => MapEntry(k.toLowerCase(), v))['authorization'];
     expect(authHeader, 'Bearer tok-123');
     expect(seen.url.toString(), 'http://10.0.2.2:8000/api/v1/members/me');
@@ -118,5 +118,45 @@ void main() {
         throwsA(isA<ArgumentError>()),
       );
     });
+  });
+
+  test('پاسخ آرایه‌ای (فهرست) باید List برگردد نه TypeError — رگرسیون M59', () async {
+    // باگ واقعی: `_decode` بدنه را همیشه `as Map` می‌کرد؛ پس هر مسیر
+    // فهرستی (/classes، /shop/products، /shop/orders …) در اپ می‌شکست.
+    final mock = MockClient((request) async {
+      return http.Response(
+        jsonEncode([
+          {'id': 1, 'title': 'پروتئین وی'},
+          {'id': 2, 'title': 'کراتین'},
+        ]),
+        200,
+        headers: {'content-type': 'application/json'},
+      );
+    });
+    final api = ApiClient(httpClient: mock, baseUrl: 'http://10.0.2.2:8000/api/v1');
+    final r = await api.get('/shop/products');
+    expect(r, isA<List<dynamic>>());
+    expect((r as List).length, 2);
+    expect((r.first as Map)['title'], 'پروتئین وی');
+  });
+
+  test('خطای ساختاریافتهٔ بک‌اند ({"error":{"message"}}) پیام فارسی می‌دهد', () async {
+    final mock = MockClient((request) async {
+      return http.Response.bytes(
+        utf8.encode(jsonEncode({
+          'error': {'code': 'forbidden', 'message': 'فقط مالک سیستم اجازه دارد'}
+        })),
+        403,
+        headers: {'content-type': 'application/json; charset=utf-8'},
+      );
+    });
+    final api = ApiClient(httpClient: mock, baseUrl: 'http://10.0.2.2:8000/api/v1');
+    try {
+      await api.get('/shop/products');
+      fail('باید ApiException بدهد');
+    } on ApiException catch (e) {
+      expect(e.statusCode, 403);
+      expect(e.message, 'فقط مالک سیستم اجازه دارد');
+    }
   });
 }

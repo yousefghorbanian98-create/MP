@@ -89,7 +89,7 @@ class ApiClient {
     return _decode(r);
   }
 
-  Future<Map<String, dynamic>> put(String path, Map<String, dynamic> body) async {
+  Future<dynamic> put(String path, Map<String, dynamic> body) async {
     final r = await _http.put(
       Uri.parse('$baseUrl$path'),
       headers: _headers,
@@ -98,16 +98,33 @@ class ApiClient {
     return _decode(r);
   }
 
-  Map<String, dynamic> _decode(http.Response r) {
-    final Map<String, dynamic> data =
-        r.body.isEmpty ? <String, dynamic>{} : jsonDecode(r.body) as Map<String, dynamic>;
-    if (r.statusCode >= 200 && r.statusCode < 300) return data;
-    final detail = data['detail'];
-    final msg = detail is String
-        ? detail
-        : detail is Map
-            ? (detail['message'] as String? ?? 'خطای سرور')
-            : 'خطای سرور (${r.statusCode})';
+  /// رمزگشایی پاسخ — **هم شیء و هم آرایه**.
+  ///
+  /// باگ واقعی (M59): نسخهٔ پیشین بدنه را همیشه `as Map<String, dynamic>`
+  /// می‌کرد. هر مسیری که آرایه برمی‌گرداند (`/classes`، `/shop/products`،
+  /// `/shop/orders`، `/axis-assessments/...`) در اپ با TypeError می‌شکست —
+  /// و چون هیچ تستی این کلاینت را روی پاسخ آرایه‌ای نمی‌سنجید، سه صفحه
+  /// «کار می‌کرد» ولی همیشه خطا می‌داد. تست `api_client_test` این را قفل
+  /// می‌کند.
+  dynamic _decode(http.Response r) {
+    final dynamic decoded = r.body.isEmpty ? null : jsonDecode(r.body);
+    if (r.statusCode >= 200 && r.statusCode < 300) {
+      return decoded ?? <String, dynamic>{};
+    }
+    // خطای ساختاریافتهٔ بک‌اند: {"error": {"code","message"}} (قالب پروژه)
+    // و قالب قدیمی FastAPI: {"detail": ...}. هر دو پشتیبانی می‌شوند تا
+    // پیام فارسی سرور به کاربر برسد، نه «خطای سرور (۴۰۳)».
+    String msg = 'خطای سرور (${r.statusCode})';
+    if (decoded is Map) {
+      final err = decoded['error'];
+      if (err is Map && err['message'] is String) {
+        msg = err['message'] as String;
+      } else if (decoded['detail'] is String) {
+        msg = decoded['detail'] as String;
+      } else if (decoded['detail'] is Map && decoded['detail']['message'] is String) {
+        msg = decoded['detail']['message'] as String;
+      }
+    }
     throw ApiException(msg, statusCode: r.statusCode);
   }
 }

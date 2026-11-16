@@ -37,7 +37,9 @@ class AuthController extends StateNotifier<AuthState> {
 
   /// ورود با کد پیامکی — توکن ذخیره و پروفایل بارگیری می‌شود.
   Future<void> loginWithOtp(String phone, String code) async {
-    final r = await _api.post('/auth/otp/verify', {'phone': phone, 'code': code});
+    // `_decode` نوع بدنه را نگه می‌دارد (Map/List) — پس اینجا صریح تبدیل می‌کنیم
+    final r = Map<String, dynamic>.from(
+        await _api.post('/auth/otp/verify', {'phone': phone, 'code': code}) as Map);
     final token = r['access_token'] as String?;
     if (token == null) throw ApiException('توکن دریافت نشد');
     _api.accessToken = token;
@@ -52,7 +54,7 @@ class AuthController extends StateNotifier<AuthState> {
   }
 
   Future<void> refreshMe() async {
-    final me = await _api.get('/members/me');
+    final me = Map<String, dynamic>.from(await _api.get('/members/me') as Map);
     state = state.copyWith(memberId: me['id'] as int?, userName: me['full_name'] as String?);
   }
 
@@ -71,7 +73,8 @@ class AuthController extends StateNotifier<AuthState> {
     _api.accessToken = token;
     state = AuthState(accessToken: token);
     try {
-      final r = await _api.post('/auth/refresh', {'refresh_token': refresh ?? token});
+      final r = Map<String, dynamic>.from(
+          await _api.post('/auth/refresh', {'refresh_token': refresh ?? token}) as Map);
       final t = r['access_token'] as String? ?? token;
       _api.accessToken = t;
       state = state.copyWith(accessToken: t);
