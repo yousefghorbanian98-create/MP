@@ -136,20 +136,65 @@ def test_exercise_exposes_gif_only_when_file_exists(
             assert (static / name).is_file(), f"gif_url وعده داده ولی فایل نیست: {row['gif_url']}"
 
 
-def test_gif_is_a_real_animated_gif() -> None:
-    """فایل GIF باید چند فریم باشد، نه یک تصویر ثابت با پسوند gif."""
-    from pathlib import Path
+def _count_gif_frames(data: bytes) -> int:
+    """شمارش فریم‌ها با پیمایش ساختار بلوک‌های GIF.
 
-    from PIL import Image
+    چرا نه `data.count(b"\x2c")`: بایت ۰x2C می‌تواند داخل دادهٔ فشردهٔ LZW هم
+    بیاید و شمردن ساده، عددی تصادفی می‌دهد. این تابع بلوک‌ها را به ترتیب
+    می‌خواند و فقط جداکننده‌های تصویر واقعی را می‌شمارد.
+    """
+    if data[:6] not in (b"GIF89a", b"GIF87a"):
+        raise ValueError("امضای GIF نیست")
+    pos = 6
+    packed = data[pos + 4]
+    pos += 7
+    if packed & 0x80:  # جدول رنگ سراسری
+        pos += 3 * (2 ** ((packed & 0x07) + 1))
+
+    def skip_blocks(i: int) -> int:
+        while True:
+            size = data[i]
+            i += 1
+            if size == 0:
+                return i
+            i += size
+
+    frames = 0
+    while pos < len(data):
+        marker = data[pos]
+        if marker == 0x3B:  # پایان فایل
+            break
+        if marker == 0x21:  # افزونه (GCE / comment / app)
+            pos = skip_blocks(pos + 2)
+            continue
+        if marker == 0x2C:  # جداکنندهٔ تصویر
+            local = data[pos + 9]
+            pos += 10
+            if local & 0x80:
+                pos += 3 * (2 ** ((local & 0x07) + 1))
+            pos = skip_blocks(pos + 1)  # +1 برای بایت حداقل طول کد LZW
+            frames += 1
+            continue
+        raise ValueError(f"بلوک ناشناختهٔ GIF: 0x{marker:02X}")
+    return frames
+
+
+def test_gif_is_a_real_animated_gif() -> None:
+    """فایل GIF باید چند فریم و حلقه‌دار باشد، نه یک تصویر ثابت با پسوند gif.
+
+    پارس با کد خودمان، نه Pillow: Pillow وابستگی بک‌اند نیست و نسخهٔ اول این
+    تست در CI با `ModuleNotFoundError: No module named 'PIL'` شکست.
+    """
+    from pathlib import Path
 
     static = Path(__file__).resolve().parents[2] / "static" / "exercises"
     gifs = sorted(static.glob("*.gif"))
     assert len(gifs) >= 10, f"GIF حرکات کم است: {len(gifs)}"
     for g in gifs[:3]:
-        im = Image.open(g)
-        assert im.format == "GIF", (g.name, im.format)
-        assert im.n_frames > 5, f"{g.name}: فقط {im.n_frames} فریم — انیمیشن نیست"
-        # حجم هر فایل باید در حدی باشد که در اپ روی شبکهٔ باشگاه قابل دانلود باشد
+        data = g.read_bytes()
+        frames = _count_gif_frames(data)
+        assert frames > 5, f"{g.name}: فقط {frames} فریم — انیمیشن نیست"
+        assert b"NETSCAPE2.0" in data, f"{g.name}: حلقهٔ تکرار ندارد"
         assert g.stat().st_size < 600_000, (
             f"{g.name}: {g.stat().st_size / 1024:.0f}KB خیلی سنگین است"
         )

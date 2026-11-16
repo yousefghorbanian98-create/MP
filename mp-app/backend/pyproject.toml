@@ -37,6 +37,9 @@ dev = [
     "pip-audit>=2.7",
     "faker>=24.0",
     "pyyaml>=6.0",
+    # فقط برای scripts/build_exercise_gifs.py (ساخت دارایی، نه اجرای API).
+    # تست API به آن وابسته نیست: شمارش فریم GIF با پارس بایت‌ها انجام می‌شود.
+    "Pillow>=10.0",
 ]
 
 [tool.setuptools.packages.find]
