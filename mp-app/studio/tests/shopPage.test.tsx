@@ -72,7 +72,50 @@ function stub(role: string) {
       if (url.includes("/shop/categories")) return json([{ id: 1, slug: "supplements", title: "مکمل", kind: "supplement", sort_order: 0, is_active: true }]);
       if (url.includes("/shop/cart") && method === "GET") return json(cart);
       if (url.includes("/shop/cart") && method === "POST") return json(cart);
-      if (url.includes("/shop/orders")) return json([]);
+      if (url.includes("/receipt"))
+        return json({
+          receipt_no: "O-000091",
+          order_id: 91,
+          member_id: 1,
+          member_name: "سارا محمدی",
+          status: "paid",
+          note: "",
+          created_at: "2026-11-15T10:00:00Z",
+          lines: [
+            {
+              product_id: 7,
+              title: "پروتئین وی ۲ کیلو",
+              variant: "شکلاتی",
+              unit_price_rial: 2_500_000,
+              qty: 1,
+              line_total_rial: 2_500_000,
+            },
+          ],
+          items_total_rial: 2_500_000,
+          total_rial: 2_500_000,
+          payment: {
+            id: 55,
+            method: "wallet",
+            status: "paid",
+            reference_id: "ref-1",
+            paid_at: "2026-11-15T10:00:00Z",
+          },
+          issued_at: "2026-11-15T10:01:00Z",
+          branch: "Muscle Paradise",
+        });
+      if (url.includes("/shop/orders"))
+        return json([
+          {
+            id: 91,
+            member_id: 1,
+            status: "paid",
+            total_rial: 2_500_000,
+            payment_id: 55,
+            note: "",
+            created_at: "2026-11-15T10:00:00Z",
+            items: [{ product_id: 7, title: "پروتئین وی ۲ کیلو", unit_price_rial: 2_500_000, qty: 1 }],
+          },
+        ]);
       if (url.includes("/shop/gateways"))
         return json([
           {
@@ -160,5 +203,31 @@ describe("صفحهٔ فروشگاه — سطوح دسترسی و جریان خر
     screen.getByText("سبد (۱)").click();
     await waitFor(() => expect(screen.getByText(/6104-\*\*\*\*-\*\*\*\*-5678/)).toBeTruthy());
     expect(document.body.textContent).not.toContain("6104337712345678");
+  });
+
+  /**
+   * M60/R5 — رسید سفارش.
+   *
+   * چرا این تست: مسیر `/shop/orders/{id}/receipt` فقط زمانی «مصرف‌کنندهٔ
+   * واقعی» دارد که دکمه‌اش در UI کار کند؛ وگرنه دوباره یک endpoint دکوراتیو
+   * است (همان ردهٔ باگی که گیت apiCoverage برایش نوشته شد).
+   */
+  it("دکمهٔ رسید، رسید واقعی سفارش را باز می‌کند", async () => {
+    const calls = stub("member");
+    render(<Shop />);
+    await waitFor(() => expect(screen.getByText("سبد (۱)")).toBeTruthy());
+    screen.getByText("سفارش‌ها").click();
+
+    const receiptBtn = await screen.findByText("رسید");
+    receiptBtn.click();
+
+    const dialog = await screen.findByRole("dialog", { name: "رسید سفارش" });
+    expect(within(dialog).getByText("رسید O-000091")).toBeTruthy();
+    expect(within(dialog).getByText("سارا محمدی · وضعیت paid · Muscle Paradise")).toBeTruthy();
+    // واریانت در همان سطر کالا می‌آید
+    expect(within(dialog).getByText("پروتئین وی ۲ کیلو (شکلاتی)")).toBeTruthy();
+    // جمع از سرور می‌آید، نه محاسبهٔ سمت کلاینت
+    expect(within(dialog).getAllByText(/۲٬۵۰۰٬۰۰۰/).length).toBeGreaterThan(0);
+    expect(calls.some((c) => c.url.includes("/shop/orders/91/receipt"))).toBe(true);
   });
 });

@@ -107,6 +107,7 @@
   "/api/v1/shop/gateways/{gateway_id}",
   "/api/v1/shop/orders",
   "/api/v1/shop/orders/{order_id}",
+  "/api/v1/shop/orders/{order_id}/receipt",
   "/api/v1/shop/prices",
   "/api/v1/shop/products",
   "/api/v1/shop/products/{product_id}",

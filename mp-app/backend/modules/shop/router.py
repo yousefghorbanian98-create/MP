@@ -208,6 +208,18 @@ def orders(db: DbSession, user: CurrentUser, limit: int = Query(50, ge=1, le=200
     return service.list_orders(db, user=user, limit=limit)
 
 
+@router.get("/orders/{order_id}/receipt", summary="رسید سفارش (چاپ/تحویل — R5)")
+def order_receipt(order_id: int, db: DbSession, user: CurrentUser):
+    """رسید قابل‌چاپ سفارش: اقلام، جمع، و پرداخت مرتبط.
+
+    کنترل مالکیت داخل سرویس است (عضو فقط سفارش خودش) — مسیر عمداً از
+    `ensure_owner` نمی‌گذرد چون عضو باید رسید سفارش خودش را ببیند.
+    """
+    from modules.payments.invoice import build_order_receipt
+
+    return build_order_receipt(db, order_id, user=user)
+
+
 @router.patch("/orders/{order_id}", summary="تغییر وضعیت سفارش (کادر)")
 def order_status(order_id: int, payload: OrderStatusIn, db: DbSession, user: CurrentUser):
     return service.mark_order(db, user=user, order_id=order_id, status=payload.status)

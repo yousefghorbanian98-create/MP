@@ -795,3 +795,61 @@ def test_settle_skips_cancelled_order(client: TestClient) -> None:
         if o["id"] == order["order_id"]
     ][0]
     assert mine["status"] == "cancelled"
+
+
+# ── M60/R5 — رسید سفارش (چاپ/تحویل) ──
+def test_order_receipt_has_lines_and_member_name(client: TestClient) -> None:
+    owner = _user("super_admin")
+    member = _user("member")
+    _topup(client, member, 5_000_000)  # پرداخت کیف‌پولی موجودی می‌خواهد
+    product = _product(client, owner, stock=5)
+    client.post(
+        "/api/v1/shop/cart", json={"product_id": product["id"], "qty": 2}, headers=member["headers"]
+    )
+    resp = client.post(
+        "/api/v1/shop/checkout", json={"method": "wallet"}, headers=member["headers"]
+    )
+    assert resp.status_code == 200, resp.text
+    order = resp.json()
+
+    r = client.get(f"/api/v1/shop/orders/{order['order_id']}/receipt", headers=member["headers"])
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert body["receipt_no"].startswith("O-")
+    assert body["status"] == "paid"
+    assert len(body["lines"]) == 1
+    line = body["lines"][0]
+    assert line["qty"] == 2
+    assert line["line_total_rial"] == body["total_rial"]
+    assert body["items_total_rial"] == body["total_rial"]
+    # نام عضو، نه شناسهٔ داخلی (باگ رسید پرداخت هم همین‌جا رفع شد)
+    assert body["member_name"], "رسید باید نام عضو را داشته باشد"
+    assert body["payment"]["method"] == "wallet"
+
+
+def test_order_receipt_is_scoped_to_owner(client: TestClient) -> None:
+    """عضو نباید رسید سفارش عضو دیگر را ببیند."""
+    owner = _user("super_admin")
+    a = _user("member")
+    b = _user("member")
+    _topup(client, a, 5_000_000)
+    product = _product(client, owner, stock=5)
+    client.post(
+        "/api/v1/shop/cart", json={"product_id": product["id"], "qty": 1}, headers=a["headers"]
+    )
+    order = client.post(
+        "/api/v1/shop/checkout", json={"method": "wallet"}, headers=a["headers"]
+    ).json()
+    assert (
+        client.get(
+            f"/api/v1/shop/orders/{order['order_id']}/receipt", headers=b["headers"]
+        ).status_code
+        == 403
+    )
+    # کادر مجاز است
+    assert (
+        client.get(
+            f"/api/v1/shop/orders/{order['order_id']}/receipt", headers=owner["headers"]
+        ).status_code
+        == 200
+    )

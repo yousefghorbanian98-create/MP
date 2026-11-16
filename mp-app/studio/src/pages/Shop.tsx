@@ -41,6 +41,7 @@ import {
   type ShopGateway,
   type ShopOrder,
   type ShopProduct,
+  type OrderReceipt,
 } from "../lib/api";
 
 const rial = (n: number) => `${fa(n)} ریال`;
@@ -78,6 +79,8 @@ export function Shop() {
   const [search, setSearch] = useState("");
   const [confirmCheckout, setConfirmCheckout] = useState(false);
   const [pendingApproval, setPendingApproval] = useState<ChangeRequest | null>(null);
+  // رسید باز (R5) — چاپ سفارش برای تحویل
+  const [receipt, setReceipt] = useState<OrderReceipt | null>(null);
 
   const reload = useCallback(async () => {
     setLoading(true);
@@ -265,6 +268,67 @@ export function Shop() {
         </section>
       )}
 
+      {receipt && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label="رسید سفارش"
+        >
+          <div className="glass-card w-full max-w-lg p-5">
+            <div className="mb-3 flex items-center justify-between">
+              <h3 className="text-base font-semibold">رسید {receipt.receipt_no}</h3>
+              <button
+                type="button"
+                onClick={() => setReceipt(null)}
+                className="focus-ring rounded-lg px-2 py-1 text-xs text-ink-dim"
+              >
+                بستن
+              </button>
+            </div>
+            <p className="text-xs text-ink-dim">
+              {receipt.member_name ?? `عضو #${fa(receipt.member_id)}`} · وضعیت {receipt.status} ·{" "}
+              {receipt.branch}
+            </p>
+            <table className="mt-3 w-full text-xs">
+              <thead className="text-ink-dim">
+                <tr>
+                  <th className="text-right">کالا</th>
+                  <th className="text-right">تعداد</th>
+                  <th className="text-right">جمع</th>
+                </tr>
+              </thead>
+              <tbody>
+                {receipt.lines.map((l, i) => (
+                  <tr key={i}>
+                    <td>{l.variant ? `${l.title} (${l.variant})` : l.title}</td>
+                    <td>{fa(l.qty)}</td>
+                    <td>{rial(l.line_total_rial)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <div className="mt-3 flex items-center justify-between border-t border-white/10 pt-2 text-sm">
+              <span>جمع کل</span>
+              <span className="font-bold">{rial(receipt.total_rial)}</span>
+            </div>
+            {receipt.payment && (
+              <p className="mt-2 text-xs text-ink-dim">
+                پرداخت {receipt.payment.method} · {receipt.payment.status}
+                {receipt.payment.reference_id ? ` · ${receipt.payment.reference_id}` : ""}
+              </p>
+            )}
+            <button
+              type="button"
+              onClick={() => window.print()}
+              className="focus-ring mt-4 w-full rounded-xl bg-primary px-4 py-2 text-sm text-white"
+            >
+              چاپ
+            </button>
+          </div>
+        </div>
+      )}
+
       {!loading && tab === "cart" && (
         <section className="glass-card space-y-4 p-5">
           {!cart || cart.count === 0 ? (
@@ -358,6 +422,18 @@ export function Shop() {
                     </li>
                   ))}
                 </ul>
+                <button
+                  type="button"
+                  onClick={() =>
+                    act(async () => {
+                      const { fetchOrderReceipt } = await import("../lib/api");
+                      setReceipt(await fetchOrderReceipt(o.id));
+                    }, "")
+                  }
+                  className="focus-ring mt-3 rounded-xl border border-white/15 px-3 py-1.5 text-xs"
+                >
+                  رسید
+                </button>
                 {isAdmin && o.status === "paid" && (
                   <button
                     type="button"

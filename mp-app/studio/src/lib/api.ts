@@ -1219,6 +1219,45 @@ export const checkoutCart = (method: "wallet" | "zarinpal" | "card" | "cash" = "
 export const fetchShopOrders = (token = getToken(), signal?: AbortSignal) =>
   getJson<ShopOrder[]>("/shop/orders", token, signal);
 
+export interface OrderReceipt {
+  receipt_no: string;
+  order_id: number;
+  member_id: number;
+  member_name: string | null;
+  status: ShopOrder["status"];
+  note: string;
+  created_at: string | null;
+  lines: {
+    product_id: number;
+    title: string;
+    variant: string | null;
+    unit_price_rial: number;
+    qty: number;
+    line_total_rial: number;
+  }[];
+  items_total_rial: number;
+  total_rial: number;
+  payment: {
+    id: number;
+    method: string;
+    status: string;
+    reference_id: string | null;
+    paid_at: string | null;
+  } | null;
+  issued_at: string;
+  branch: string;
+}
+
+/**
+ * رسید سفارش (M60/R5).
+ *
+ * چرا مسیر جدا از `/shop/orders`: آن پاسخ برای لیست است (فقط عنوان/تعداد)،
+ * این یکی اقلام با واریانت + وضعیت پرداخت + نام عضو را می‌دهد — همان چیزی
+ * که انباردار برای تحویل چاپ می‌کند. کنترل مالکیت سمت سرور است.
+ */
+export const fetchOrderReceipt = (orderId: number, token = getToken(), signal?: AbortSignal) =>
+  getJson<OrderReceipt>(`/shop/orders/${orderId}/receipt`, token, signal);
+
 export const markOrderStatus = (orderId: number, status: ShopOrder["status"], token = getToken()) =>
   sendJson<{ id: number; status: string }>("PATCH", `/shop/orders/${orderId}`, { status }, token);
 

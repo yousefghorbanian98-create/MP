@@ -10,6 +10,18 @@ from app.errors import NotFoundError
 from db.models import Member, Payment, WalletTransaction
 
 
+def _member_name(db: Session, member_id: int | None) -> str | None:
+    if member_id is None:
+        return None
+    from db.models import User
+
+    member = db.get(Member, member_id)
+    if member is None:
+        return None
+    user = db.get(User, member.user_id)
+    return user.full_name if user else None
+
+
 def build_receipt(db: Session, payment_id: int, user=None) -> dict:
     """رسید پرداخت — برای نمایش/چاپ (US-303)."""
     payment = db.get(Payment, payment_id)
@@ -18,11 +30,13 @@ def build_receipt(db: Session, payment_id: int, user=None) -> dict:
     from app.security.ownership import ensure_record_scope
 
     ensure_record_scope(db, user, payment)
-    member = db.get(Member, payment.member_id)
+    member_name = _member_name(db, payment.member_id)
     return {
         "receipt_no": f"R-{payment.id:06d}",
         "payment_id": payment.id,
-        "member_name": member.user_id if member else None,
+        # عضو با `user_id` نمایش داده نمی‌شد: رسید چاپی باید نام داشته باشد،
+        # نه کلید داخلی. (یافتهٔ M60/R5 هنگام افزودن رسید سفارش.)
+        "member_name": member_name,
         "amount_rial": payment.amount_rial,
         "method": payment.method,
         "status": payment.status,
@@ -71,4 +85,67 @@ def build_invoice(db: Session, member_id: int, user=None) -> dict:
         "wallet_debit_rial": wallet_debit,
         "wallet_balance_rial": wallet_credit - wallet_debit,
         "due_rial": 0,  # بدهی در مدل فعلی وجود ندارد (M17: اقساط)
+    }
+
+
+def build_order_receipt(db: Session, order_id: int, user=None) -> dict:
+    """رسید سفارش فروشگاه — برای چاپ/تحویل در انبار (M60/R5).
+
+    چرا جدا از `build_receipt`: آن رسید برای **پرداخت** است (یک تراکنش)،
+    این یکی برای **سفارش** است (چند قلم + وضعیت تحویل). قبلاً هیچ مسیری
+    جمع این دو را نمی‌داد و انباردار برای دیدن اقلام سفارش باید کل
+    `/shop/orders` را می‌گرفت و در کلاینت فیلتر می‌کرد.
+    """
+    from sqlalchemy import select
+
+    from db.models import Order, OrderItem, Payment, ProductVariant
+
+    order = db.get(Order, order_id)
+    if order is None:
+        raise NotFoundError("سفارش یافت نشد")
+    # همان قرارداد بقیهٔ رکوردهای دارای member_id؛ برای سفارش تابع جدا لازم
+    # نیست (ensure_record_scope فقط member_id را می‌بیند).
+    from app.security.ownership import ensure_record_scope
+
+    ensure_record_scope(db, user, order)
+
+    items = list(db.scalars(select(OrderItem).where(OrderItem.order_id == order.id)))
+    payment = db.get(Payment, order.payment_id) if order.payment_id else None
+    lines = []
+    for it in items:
+        variant = db.get(ProductVariant, it.variant_id) if it.variant_id else None
+        lines.append(
+            {
+                "product_id": it.product_id,
+                "title": it.title_snapshot,
+                "variant": variant.label if variant is not None else None,
+                "unit_price_rial": it.unit_price_rial,
+                "qty": it.qty,
+                "line_total_rial": it.unit_price_rial * it.qty,
+            }
+        )
+    return {
+        "receipt_no": f"O-{order.id:06d}",
+        "order_id": order.id,
+        "member_id": order.member_id,
+        "member_name": _member_name(db, order.member_id),
+        "status": order.status,
+        "note": order.note,
+        "created_at": order.created_at.isoformat() if order.created_at else None,
+        "lines": lines,
+        "items_total_rial": sum(line["line_total_rial"] for line in lines),
+        "total_rial": order.total_rial,
+        "payment": (
+            {
+                "id": payment.id,
+                "method": payment.method,
+                "status": payment.status,
+                "reference_id": payment.reference_id,
+                "paid_at": payment.paid_at.isoformat() if payment.paid_at else None,
+            }
+            if payment is not None
+            else None
+        ),
+        "issued_at": datetime.now(UTC).isoformat(),
+        "branch": "Muscle Paradise",
     }
