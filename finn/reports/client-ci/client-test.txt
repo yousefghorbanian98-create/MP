@@ -1,5 +1,8 @@
 
 ::group::✅ Passing tests
+✅ /home/runner/work/MP/MP/mp-app/client/test/today_controller_test.dart: progress starts at zero and updates on toggle
+✅ /home/runner/work/MP/MP/mp-app/client/test/today_controller_test.dart: progress handles zero-total safely (no division by zero)
+✅ /home/runner/work/MP/MP/mp-app/client/test/today_controller_test.dart: reset clears done set
 ✅ /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart: GET موفق JSON برمی‌گرداند + هدر Authorization
 ✅ /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart: خطای سرور با پیام فارسی detail بالا می‌آید
 ✅ /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart: POST بدنهٔ JSON می‌فرستد
@@ -21,7 +24,7 @@ Expected: exactly one matching candidate
    Which: means none were found but one was expected
 
 When the exception was thrown, this was the stack:
-#4      main.<anonymous closure> (file:///home/runner/work/MP/MP/mp-app/client/test/shop_page_test.dart:79:5)
+#4      main.<anonymous closure> (file:///home/runner/work/MP/MP/mp-app/client/test/shop_page_test.dart:83:5)
 <asynchronous suspension>
 #5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
 <asynchronous suspension>
@@ -31,7 +34,7 @@ When the exception was thrown, this was the stack:
 (elided one frame from package:stack_trace)
 
 This was caught by the test expectation on the following line:
-  file:///home/runner/work/MP/MP/mp-app/client/test/shop_page_test.dart line 79
+  file:///home/runner/work/MP/MP/mp-app/client/test/shop_page_test.dart line 83
 The test description was:
   محصولات از API می‌آیند و قیمت از سرور است
 ════════════════════════════════════════════════════════════════════════════════════════════════════
@@ -48,7 +51,7 @@ Expected: exactly one matching candidate
    Which: means none were found but one was expected
 
 When the exception was thrown, this was the stack:
-#4      main.<anonymous closure> (file:///home/runner/work/MP/MP/mp-app/client/test/shop_page_test.dart:109:5)
+#4      main.<anonymous closure> (file:///home/runner/work/MP/MP/mp-app/client/test/shop_page_test.dart:113:5)
 <asynchronous suspension>
 #5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
 <asynchronous suspension>
@@ -58,7 +61,7 @@ When the exception was thrown, this was the stack:
 (elided one frame from package:stack_trace)
 
 This was caught by the test expectation on the following line:
-  file:///home/runner/work/MP/MP/mp-app/client/test/shop_page_test.dart line 109
+  file:///home/runner/work/MP/MP/mp-app/client/test/shop_page_test.dart line 113
 The test description was:
   کاتالوگ خالی ← پیام راهنما، نه صفحهٔ سفید
 ════════════════════════════════════════════════════════════════════════════════════════════════════
@@ -67,17 +70,14 @@ The test description was: کاتالوگ خالی ← پیام راهنما، ن
 
 ::endgroup::
 ::group::✅ Passing tests
-✅ /home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart: TodayPage renders real exercises RTL with dark theme
-✅ /home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart: toggling an exercise updates completion state
-✅ /home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart: empty state shows when no workout is planned
-✅ /home/runner/work/MP/MP/mp-app/client/test/today_controller_test.dart: progress starts at zero and updates on toggle
-✅ /home/runner/work/MP/MP/mp-app/client/test/today_controller_test.dart: progress handles zero-total safely (no division by zero)
-✅ /home/runner/work/MP/MP/mp-app/client/test/today_controller_test.dart: reset clears done set
 ✅ /home/runner/work/MP/MP/mp-app/client/test/set_feedback_sheet_test.dart: renders feedback form with sliders and submit
 ✅ /home/runner/work/MP/MP/mp-app/client/test/set_feedback_sheet_test.dart: submit shows why-card with data-rule-decision chain
 ✅ /home/runner/work/MP/MP/mp-app/client/test/set_feedback_sheet_test.dart: empty reps sends nothing
 ✅ /home/runner/work/MP/MP/mp-app/client/test/set_feedback_sheet_test.dart: M48-c1: shows that the suggestion was actually applied
 ✅ /home/runner/work/MP/MP/mp-app/client/test/set_feedback_sheet_test.dart: M48-c1: sends the real weight, not hardcoded zero
+✅ /home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart: TodayPage renders real exercises RTL with dark theme
+✅ /home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart: toggling an exercise updates completion state
+✅ /home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart: empty state shows when no workout is planned
 ✅ /home/runner/work/MP/MP/mp-app/client/test/home_page_test.dart: گرید ۸ بخش نمایش داده می‌شود
 ✅ /home/runner/work/MP/MP/mp-app/client/test/home_page_test.dart: جست‌وجو و بنر موجودند
 ✅ /home/runner/work/MP/MP/mp-app/client/test/home_page_test.dart: چک‌این سریع در خانه
