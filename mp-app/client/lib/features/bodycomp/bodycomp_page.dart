@@ -1,84 +1,159 @@
-/// نتایج/سوابق/پیشرفت پیکرسنجی — فقط خواندنی برای کلاینت (M18/M19).
+/// پیکرسنجی — از دادهٔ واقعی روند JP7، نه اعداد ساخته‌شده.
+///
+/// M62/D4: نسخهٔ قبلی این صفحه هیچ provider/API نداشت و «۱۲٫۴٪ چربی»،
+/// «۷۸٫۵ کیلو»، نمودار ۶ ماهه و چهار ردیف سوابق را **هاردکد** نشان می‌داد.
+/// یعنی عضو اعدادی می‌دید که مال خودش نبود و هیچ‌جا «نمونه» برچسب نداشتند —
+/// نقض قاعدهٔ «هیچ عددی در UI بدون منبع داده».
+///
+/// اکنون تنها منبع، `GET /assessments/jp7/member/{id}/trend` است، که خودش
+/// سه حالت صادقانه دارد و هر سه را همین‌جا نمایش می‌دهیم:
+///   • داده کم (< ۲ اندازه‌گیری) → «یک نقطه، روند نیست»
+///   • روند واقعی → مجموع چین + تفسیر + سطح اطمینان
+///   • `body_fat_pct` قفل است (D-012) → عددی برایش ساخته نمی‌شود
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/session.dart';
 import '../../core/theme.dart';
 import '../../shared/widgets/glass_card.dart';
 
-class BodyCompPage extends StatelessWidget {
+/// روند JP7 عضو — تنها منبع این صفحه.
+final jp7TrendProvider = FutureProvider<Map<String, dynamic>>((ref) async {
+  final api = ref.watch(apiClientProvider);
+  final auth = ref.watch(authProvider);
+  final memberId = auth.memberId;
+  if (memberId == null) {
+    return {'data_state': 'no_member', 'measurements': <dynamic>[]};
+  }
+  final r = await api.get('/assessments/jp7/member/$memberId/trend');
+  return Map<String, dynamic>.from(r as Map);
+});
+
+/// برچسب فارسیِ سطح اطمینان — از سرور می‌آید، ترجمه فقط برای نمایش است.
+const _confidenceLabels = {
+  'insufficient': 'داده کافی نیست',
+  'medium': 'اطمینان متوسط',
+  'high': 'اطمینان بالا',
+};
+
+class BodyCompPage extends ConsumerWidget {
   const BodyCompPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final trend = ref.watch(jp7TrendProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text('پیکرسنجی'),
         backgroundColor: MpColors.background,
         surfaceTintColor: Colors.transparent,
       ),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-        children: const [
-          _SummaryCard(),
-          SizedBox(height: 16),
-          _TrendCard(),
-          SizedBox(height: 16),
-          _HistoryCard(),
-          SizedBox(height: 12),
-          _StaffOnlyNote(),
-        ],
+      body: trend.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('دریافت روند پیکرسنجی ناموفق بود: $e',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: MpColors.danger)),
+                const SizedBox(height: 10),
+                OutlinedButton(
+                  onPressed: () => ref.invalidate(jp7TrendProvider),
+                  child: const Text('تلاش دوباره'),
+                ),
+              ],
+            ),
+          ),
+        ),
+        data: (data) => ListView(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+          children: [
+            _HeadlineCard(data: data).animate().fadeIn(duration: 380.ms).slideY(begin: 0.06),
+            const SizedBox(height: 12),
+            _MeasurementsCard(data: data)
+                .animate()
+                .fadeIn(delay: 90.ms, duration: 380.ms),
+            const SizedBox(height: 12),
+            _LockedNote(data: data),
+            const SizedBox(height: 12),
+            const _StaffOnlyNote(),
+          ],
+        ),
       ),
     );
   }
 }
 
-class _SummaryCard extends StatelessWidget {
-  const _SummaryCard();
+/// کارت اصلی — تفسیر سرور، یا صادقانه «داده کافی نیست».
+class _HeadlineCard extends StatelessWidget {
+  const _HeadlineCard({required this.data});
+
+  final Map<String, dynamic> data;
 
   @override
   Widget build(BuildContext context) {
+    final interp = (data['interpretation'] as Map?) ?? const {};
+    final headline = interp['headline'] as String? ?? 'وضعیت نامعلوم';
+    final detail = interp['detail'] as String? ?? '';
+    final confidence = interp['confidence'] as String? ?? 'insufficient';
+    final trend = data['trend'] as Map?;
+
+    // «نامعلوم» با رنگ هشدار، نه با عدد سبز جعلی.
+    final isInsufficient = confidence == 'insufficient';
+    final accent = isInsufficient ? MpColors.textSecondary : MpColors.primary;
+
     return GlassCard(
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // عدد بزرگ درصد چربی
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          Row(
             children: [
-              const Text('درصد چربی بدن', style: TextStyle(fontSize: 13, color: MpColors.textSecondary)),
-              const SizedBox(height: 6),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: const [
-                  Text(
-                    '۱۲٫۴',
-                    style: TextStyle(fontSize: 40, fontWeight: FontWeight.w900, color: MpColors.primary, height: 1),
-                  ),
-                  SizedBox(width: 4),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 6),
-                    child: Text('٪', style: TextStyle(fontSize: 16, color: MpColors.primaryLight)),
-                  ),
-                ],
+              Icon(
+                isInsufficient ? Icons.info_outline : Icons.show_chart,
+                color: accent,
+                size: 20,
               ),
-              const SizedBox(height: 6),
-              Row(
-                children: const [
-                  Icon(Icons.trending_down, color: MpColors.primaryLight, size: 18),
-                  SizedBox(width: 4),
-                  Text('۱٫۲٪ کاهش از ماه قبل', style: TextStyle(fontSize: 12, color: MpColors.primaryLight)),
-                ],
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  headline,
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: accent),
+                ),
               ),
             ],
           ),
-          const Spacer(),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: const [
-              _MiniStat('وزن', '۷۸٫۵ کیلو'),
-              SizedBox(height: 10),
-              _MiniStat('عضله', '۳۴٫۱ کیلو'),
-            ],
+          if (detail.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Text(detail,
+                style: const TextStyle(fontSize: 12, height: 1.8, color: MpColors.textSecondary)),
+          ],
+          if (trend != null) ...[
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                _Stat('تغییر مجموع چین', '${trend['delta_mm'] ?? '—'} میلی‌متر'),
+                const SizedBox(width: 12),
+                _Stat('بازه', '${trend['days'] ?? '—'} روز'),
+              ],
+            ),
+          ],
+          const SizedBox(height: 10),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            decoration: BoxDecoration(
+              color: accent.withOpacity(0.10),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              _confidenceLabels[confidence] ?? confidence,
+              style: TextStyle(fontSize: 11, color: accent, fontWeight: FontWeight.w700),
+            ),
           ),
         ],
       ),
@@ -86,132 +161,115 @@ class _SummaryCard extends StatelessWidget {
   }
 }
 
-class _MiniStat extends StatelessWidget {
-  const _MiniStat(this.label, this.value);
+class _Stat extends StatelessWidget {
+  const _Stat(this.label, this.value);
 
   final String label;
   final String value;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Text(label, style: const TextStyle(fontSize: 11, color: MpColors.textSecondary)),
-        const SizedBox(height: 2),
-        Text(value, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: MpColors.textPrimary)),
-      ],
-    );
-  }
-}
-
-class _TrendCard extends StatelessWidget {
-  const _TrendCard();
-
-  @override
-  Widget build(BuildContext context) {
-    return GlassCard(
+    return Expanded(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('روند ۶ ماه اخیر', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: MpColors.textPrimary)),
-          const SizedBox(height: 16),
-          SizedBox(
-            height: 120,
-            child: CustomPaint(
-              size: const Size(double.infinity, 120),
-              painter: _TrendPainter(),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
-              Text('اردیبهشت', style: TextStyle(fontSize: 10, color: MpColors.textSecondary)),
-              Text('تیر', style: TextStyle(fontSize: 10, color: MpColors.textSecondary)),
-              Text('شهریور', style: TextStyle(fontSize: 10, color: MpColors.textSecondary)),
-              Text('آبان', style: TextStyle(fontSize: 10, color: MpColors.textSecondary)),
-            ],
-          ),
+          Text(label,
+              style: const TextStyle(fontSize: 11, color: MpColors.textSecondary)),
+          const SizedBox(height: 2),
+          Text(value,
+              style: const TextStyle(
+                  fontSize: 14, fontWeight: FontWeight.w700, color: MpColors.textPrimary)),
         ],
       ),
     );
   }
 }
 
-class _TrendPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final line = Paint()
-      ..color = MpColors.primary
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 3
-      ..strokeCap = StrokeCap.round;
-    final fill = Paint()
-      ..shader = LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [MpColors.primary.withOpacity(0.30), MpColors.primary.withOpacity(0.0)],
-      ).createShader(Offset.zero & size);
+/// سوابق اندازه‌گیری — فقط نقاطی که در سرور هستند.
+class _MeasurementsCard extends StatelessWidget {
+  const _MeasurementsCard({required this.data});
 
-    // داده‌های نمونه — در اتصال API از /assessments/member پر می‌شود
-    final points = <Offset>[
-      Offset(0, size.height * 0.35),
-      Offset(size.width * 0.2, size.height * 0.45),
-      Offset(size.width * 0.4, size.height * 0.40),
-      Offset(size.width * 0.6, size.height * 0.60),
-      Offset(size.width * 0.8, size.height * 0.72),
-      Offset(size.width, size.height * 0.80),
-    ];
-    final path = Path()..moveTo(points.first.dx, points.first.dy);
-    for (final p in points.skip(1)) {
-      path.lineTo(p.dx, p.dy);
-    }
-    canvas.drawPath(path, line);
-    final fillPath = Path.from(path)
-      ..lineTo(size.width, size.height)
-      ..lineTo(0, size.height)
-      ..close();
-    canvas.drawPath(fillPath, fill);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-class _HistoryCard extends StatelessWidget {
-  const _HistoryCard();
+  final Map<String, dynamic> data;
 
   @override
   Widget build(BuildContext context) {
-    final rows = <({String date, String fat, String weight})>[
-      (date: '۱۴ آبان ۱۴۰۵', fat: '۱۲٫۴٪', weight: '۷۸٫۵'),
-      (date: '۱۴ مهر ۱۴۰۵', fat: '۱۳٫۶٪', weight: '۸۰٫۱'),
-      (date: '۱۵ شهریور ۱۴۰۵', fat: '۱۴٫۲٪', weight: '۸۱٫۰'),
-      (date: '۱۵ مرداد ۱۴۰۵', fat: '۱۵٫۰٪', weight: '۸۲٫۳'),
-    ];
+    final rows = (data['measurements'] as List?) ?? const [];
     return GlassCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('سوابق اندازه‌گیری', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: MpColors.textPrimary)),
+          const Text('سوابق اندازه‌گیری',
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: MpColors.textPrimary)),
           const SizedBox(height: 12),
-          for (final r in rows) ...[
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              child: Row(
-                children: [
-                  const Icon(Icons.event_note, size: 18, color: MpColors.textSecondary),
-                  const SizedBox(width: 10),
-                  Expanded(child: Text(r.date, style: const TextStyle(fontSize: 13, color: MpColors.textPrimary))),
-                  Text(r.fat, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: MpColors.primaryLight)),
-                  const SizedBox(width: 16),
-                  Text('${r.weight} کیلو', style: const TextStyle(fontSize: 13, color: MpColors.textSecondary)),
-                ],
+          if (rows.isEmpty)
+            Text('هنوز اندازه‌گیری‌ای ثبت نشده است.',
+                style: TextStyle(fontSize: 13, color: MpColors.textSecondary))
+          else
+            for (final r in rows.cast<Map>()) ...[
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 9),
+                child: Row(
+                  children: [
+                    const Icon(Icons.event_note, size: 18, color: MpColors.textSecondary),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        _dateFa(r['measured_at'] as String?),
+                        style: const TextStyle(fontSize: 13, color: MpColors.textPrimary),
+                      ),
+                    ),
+                    Text(
+                      '${r['sum_mm'] ?? '—'} میلی‌متر',
+                      style: const TextStyle(
+                          fontSize: 13, fontWeight: FontWeight.w700, color: MpColors.primaryLight),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            if (r != rows.last) Divider(color: MpColors.primary.withOpacity(0.10), height: 1),
-          ],
+              if (r != rows.last) Divider(color: MpColors.primary.withOpacity(0.10), height: 1),
+            ],
+        ],
+      ),
+    );
+  }
+}
+
+/// تاریخ ISO سرور → «۱۴۰۵/۰۸/۱۴» با ارقام فارسی.
+/// بدون `intl` انجام می‌شود تا وابستگی تازه اضافه نشود.
+String _dateFa(String? iso) {
+  if (iso == null) return 'تاریخ نامعلوم';
+  final d = DateTime.tryParse(iso);
+  if (d == null) return 'تاریخ نامعلوم';
+  final g = '${d.year}/${d.month.toString().padLeft(2, '0')}/${d.day.toString().padLeft(2, '0')}';
+  const fa = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+  return g.split('').map((c) => fa[int.tryParse(c) ?? -1] ?? c).join();
+}
+
+/// یادداشت قفل درصد چربی — صریح، چون عدد ندارد.
+class _LockedNote extends StatelessWidget {
+  const _LockedNote({required this.data});
+
+  final Map<String, dynamic> data;
+
+  @override
+  Widget build(BuildContext context) {
+    final note = data['body_fat_note'] as String?;
+    if (note == null || note.isEmpty) return const SizedBox.shrink();
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+      decoration: BoxDecoration(
+        color: MpColors.primary.withOpacity(0.06),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: MpColors.primary.withOpacity(0.20)),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.lock_outline, size: 17, color: MpColors.primaryLight),
+          const SizedBox(width: 9),
+          Expanded(
+            child: Text(note,
+                style: const TextStyle(fontSize: 11.5, height: 1.7, color: MpColors.primaryLight)),
+          ),
         ],
       ),
     );

@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
+import 'package:mp_client/core/api_client.dart';
 import 'package:mp_client/core/session.dart';
 import 'package:mp_client/core/theme.dart';
 import 'package:mp_client/features/profile/profile_page.dart';

@@ -13,8 +13,17 @@ import 'api_client.dart';
 /// می‌کند و در تست باید همان مسیر تولیدی طی شود، نه یک کلاینت دست‌ساز.
 final httpClientProvider = Provider<http.Client>((ref) => http.Client());
 
-final apiClientProvider =
-    Provider<ApiClient>((ref) => ApiClient(httpClient: ref.watch(httpClientProvider)));
+final apiClientProvider = Provider<ApiClient>((ref) {
+  final api = ApiClient(httpClient: ref.watch(httpClientProvider));
+  // M62/D10 — نشست باید وسط اجرا هم قابل تمدید باشد. تا امروز `restore()`
+  // فقط یک‌بار در `main()` صدا زده می‌شد و توکن ۳۰ دقیقه‌ای وسط تمرین
+  // می‌مُرد؛ یعنی هر صفحه خطا می‌داد تا کاربر اپ را ببندد و باز کند.
+  api.attachSession(
+    refresher: () => ref.read(authProvider.notifier).refreshAccessToken(),
+    onSessionLost: () => ref.read(authProvider.notifier).markSessionLost(),
+  );
+  return api;
+});
 
 class AuthState {
   const AuthState({this.accessToken, this.userId, this.userName, this.memberId});
@@ -78,6 +87,34 @@ class AuthController extends StateNotifier<AuthState> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('mp_token', token);
     await prefs.setString('mp_refresh', refresh);
+  }
+
+  /// تمدید توکن دسترسی در میانهٔ کار — مصرف‌کنندهٔ `ApiClient.attachSession`.
+  ///
+  /// `true` یعنی «توکن تازه گرفتم، درخواست را دوباره بفرست». اگر refresh
+  /// موجود نباشد یا سرور رد کند، `false` و نشست منقضی اعلام می‌شود.
+  Future<bool> refreshAccessToken() async {
+    final refresh = _refreshToken;
+    if (_api == null || refresh == null) return false;
+    try {
+      final r = Map<String, dynamic>.from(
+          await _api!.post('/auth/refresh', {'refresh_token': refresh}) as Map);
+      final token = r['access_token'] as String?;
+      if (token == null) return false;
+      _api!.accessToken = token;
+      state = state.copyWith(accessToken: token);
+      await _persist(token, r['refresh_token'] as String? ?? refresh);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// نشست از دست رفت (refresh هم رد شد) — وضعیت خالی، تا UI به ورود ببرد.
+  void markSessionLost() {
+    _api?.accessToken = null;
+    _refreshToken = null;
+    state = const AuthState();
   }
 
   /// خروج — نشست سرور بسته می‌شود، سپس حافظهٔ دستگاه پاک.

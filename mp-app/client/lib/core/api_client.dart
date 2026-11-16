@@ -70,32 +70,77 @@ class ApiClient {
   final String baseUrl;
   String? accessToken;
 
+  /// بازیابی نشست — M62/D10.
+  ///
+  /// چرا این‌جا و نه در Riverpod: توکن در `AuthController` نگه‌داری می‌شود ولی
+  /// **هر** درخواست از همین کلاس می‌رود. اگر ۴۰۱ این‌جا مدیریت نشود، هیچ
+  /// صفحه‌ای نمی‌تواند خودش را نجات دهد؛ و اگر مدیریت شود، هر صفحه بی‌آنکه
+  /// بداند، نشستش تازه می‌شود.
+  ///
+  /// `refresher` باید `true` بدهد اگر توانست توکن تازه بگیرد (و `accessToken`
+  /// را خودش به‌روز کند)؛ `onSessionLost` وقتی صدا زده می‌شود که نشست
+  /// برگشت‌ناپذیر از دست رفته و کاربر باید به صفحهٔ ورود برود.
+  Future<bool> Function()? _refresher;
+  void Function()? _onSessionLost;
+
+  /// یک درخواست در حالِ refresh — بقیه منتظر همین می‌مانند.
+  /// بدون این، ده درخواست هم‌زمان ده بار refresh می‌زنند.
+  Future<bool>? _refreshing;
+
+  void attachSession({
+    required Future<bool> Function() refresher,
+    void Function()? onSessionLost,
+  }) {
+    _refresher = refresher;
+    _onSessionLost = onSessionLost;
+  }
+
   Map<String, String> get _headers => {
         'Content-Type': 'application/json',
         if (accessToken != null) 'Authorization': 'Bearer $accessToken',
       };
 
-  Future<dynamic> get(String path) async {
-    final r = await _http.get(Uri.parse('$baseUrl$path'), headers: _headers);
+  /// اجرای درخواست با یک بار تلاش دوباره پس از refresh.
+  ///
+  /// چرا فقط **یک** بار: اگر سرور با توکن تازه هم ۴۰۱ بدهد، تلاش دوبارهٔ
+  /// بی‌پایان یعنی حلقه روی سرور. یک بار، سپس شکست صریح.
+  Future<dynamic> _send(Future<http.Response> Function() call) async {
+    var r = await call();
+    if (r.statusCode != 401 || _refresher == null) return _decode(r);
+
+    final ok = await (_refreshing ??= () async {
+      try {
+        return await _refresher!();
+      } finally {
+        _refreshing = null;
+      }
+    }());
+    if (!ok) {
+      _onSessionLost?.call();
+      return _decode(r); // همان ۴۰۱ را با پیام سرور بالا می‌برد
+    }
+    r = await call(); // با توکن تازه، یک بار دیگر
     return _decode(r);
+  }
+
+  Future<dynamic> get(String path) async {
+    return _send(() => _http.get(Uri.parse('$baseUrl$path'), headers: _headers));
   }
 
   Future<dynamic> post(String path, Map<String, dynamic> body) async {
-    final r = await _http.post(
-      Uri.parse('$baseUrl$path'),
-      headers: _headers,
-      body: jsonEncode(body),
-    );
-    return _decode(r);
+    return _send(() => _http.post(
+          Uri.parse('$baseUrl$path'),
+          headers: _headers,
+          body: jsonEncode(body),
+        ));
   }
 
   Future<dynamic> put(String path, Map<String, dynamic> body) async {
-    final r = await _http.put(
-      Uri.parse('$baseUrl$path'),
-      headers: _headers,
-      body: jsonEncode(body),
-    );
-    return _decode(r);
+    return _send(() => _http.put(
+          Uri.parse('$baseUrl$path'),
+          headers: _headers,
+          body: jsonEncode(body),
+        ));
   }
 
   /// PATCH و DELETE — تا M60 در این کلاینت **نبودند**.
@@ -105,17 +150,15 @@ class ApiClient {
   /// نداشت؛ یعنی عضو نمی‌توانست تعداد را عوض کند یا قلمی را حذف کند و سبد
   /// فقط خواندنی بود. endpointهای بی‌مصرف، همان باگ «کد مرده» هستند.
   Future<dynamic> patch(String path, Map<String, dynamic> body) async {
-    final r = await _http.patch(
-      Uri.parse('$baseUrl$path'),
-      headers: _headers,
-      body: jsonEncode(body),
-    );
-    return _decode(r);
+    return _send(() => _http.patch(
+          Uri.parse('$baseUrl$path'),
+          headers: _headers,
+          body: jsonEncode(body),
+        ));
   }
 
   Future<dynamic> delete(String path) async {
-    final r = await _http.delete(Uri.parse('$baseUrl$path'), headers: _headers);
-    return _decode(r);
+    return _send(() => _http.delete(Uri.parse('$baseUrl$path'), headers: _headers));
   }
 
   /// رمزگشایی پاسخ — **هم شیء و هم آرایه**.
