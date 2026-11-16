@@ -87,6 +87,9 @@ def find_java() -> str:
 
 
 def find_apktool() -> str:
+    env = os.environ.get("APKTOOL_JAR")
+    if env and Path(env).is_file():
+        return env
     for cand in APKTOOL_JAR_CANDIDATES:
         if Path(cand).is_file():
             return cand
