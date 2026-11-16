@@ -8,8 +8,51 @@
 ✅ /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart: سیاست شبکه (REA 2026-11-15) HTTPS روی هر میزبانی مجاز است
 ✅ /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart: سیاست شبکه (REA 2026-11-15) بازه‌های RFC1918 مجازند
 ✅ /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart: سیاست شبکه (REA 2026-11-15) آدرس نامعتبر باعث خطای صریح می‌شود، نه شکست مبهم
+lib/features/shop/shop_page.dart:120:26: Error: The getter 'apiClientProvider' isn't defined for the type 'ShopPage'.
+ - 'ShopPage' is from 'package:mp_client/features/shop/shop_page.dart' ('lib/features/shop/shop_page.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'apiClientProvider'.
+    final api = ref.read(apiClientProvider);
+                         ^^^^^^^^^^^^^^^^^
+lib/features/shop/shop_page.dart:270:26: Error: The getter 'apiClientProvider' isn't defined for the type '_CartSheetState'.
+ - '_CartSheetState' is from 'package:mp_client/features/shop/shop_page.dart' ('lib/features/shop/shop_page.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'apiClientProvider'.
+    final api = ref.read(apiClientProvider);
+                         ^^^^^^^^^^^^^^^^^
 ✅ /home/runner/work/MP/MP/mp-app/client/test/assessment14_page_test.dart: empty state shows prompt when no assessment exists
 ✅ /home/runner/work/MP/MP/mp-app/client/test/assessment14_page_test.dart: matrix renders axes with scores, dashes and decision chips
+::endgroup::
+::group::❌ loading /home/runner/work/MP/MP/mp-app/client/test/shop_page_test.dart (failed)
+Failed to load "/home/runner/work/MP/MP/mp-app/client/test/shop_page_test.dart":
+Compilation failed for testPath=/home/runner/work/MP/MP/mp-app/client/test/shop_page_test.dart: lib/features/shop/shop_page.dart:120:26: Error: The getter 'apiClientProvider' isn't defined for the type 'ShopPage'.
+ - 'ShopPage' is from 'package:mp_client/features/shop/shop_page.dart' ('lib/features/shop/shop_page.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'apiClientProvider'.
+    final api = ref.read(apiClientProvider);
+                         ^^^^^^^^^^^^^^^^^
+lib/features/shop/shop_page.dart:270:26: Error: The getter 'apiClientProvider' isn't defined for the type '_CartSheetState'.
+ - '_CartSheetState' is from 'package:mp_client/features/shop/shop_page.dart' ('lib/features/shop/shop_page.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'apiClientProvider'.
+    final api = ref.read(apiClientProvider);
+                         ^^^^^^^^^^^^^^^^^
+.
+
+::endgroup::
+::group::❌ loading /home/runner/work/MP/MP/mp-app/client/test/assessment14_page_test.dart (failed after test completion)
+Error: The Dart compiler exited unexpectedly.
+package:flutter_tools/src/base/common.dart 36:3  throwToolExit
+package:flutter_tools/src/compile.dart 1029:11   DefaultResidentCompiler._compile.<fn>
+dart:async/future_impl.dart 961:45               Future._propagateToListeners.handleValueCallback
+dart:async/future_impl.dart 990:13               Future._propagateToListeners
+dart:async/future_impl.dart 874:9                Future._propagateToListeners
+dart:async/future_impl.dart 732:5                Future._completeWithValue
+dart:async/future_impl.dart 816:7                Future._asyncCompleteWithValue.<fn>
+dart:async/zone.dart 474:14                      Zone.runGuarded
+dart:async/zone.dart 604:18                      Zone.bindCallbackGuarded.<fn>
+dart:async/schedule_microtask.dart 40:35         _microtaskLoop
+dart:async/schedule_microtask.dart 49:5          _startMicrotaskLoop
+dart:isolate-patch/isolate_patch.dart 127:13     _runPendingImmediateCallback
+dart:isolate-patch/isolate_patch.dart 193:5      _RawReceivePort._handleMessage
+::endgroup::
+::group::✅ Passing tests
 ✅ /home/runner/work/MP/MP/mp-app/client/test/assessment14_page_test.dart: submitting a test posts data and confirms
 ✅ /home/runner/work/MP/MP/mp-app/client/test/assessment14_page_test.dart: invalid submit shows validation message
 ✅ /home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart: TodayPage renders real exercises RTL with dark theme
@@ -19,157 +62,13 @@
 ✅ /home/runner/work/MP/MP/mp-app/client/test/today_controller_test.dart: progress starts at zero and updates on toggle
 ✅ /home/runner/work/MP/MP/mp-app/client/test/today_controller_test.dart: progress handles zero-total safely (no division by zero)
 ✅ /home/runner/work/MP/MP/mp-app/client/test/today_controller_test.dart: reset clears done set
-::endgroup::
-::group::❌ /home/runner/work/MP/MP/mp-app/client/test/set_feedback_sheet_test.dart: submit shows why-card with data-rule-decision chain (failed)
-══╡ EXCEPTION CAUGHT BY RENDERING LIBRARY ╞═════════════════════════════════════════════════════════
-The following assertion was thrown during layout:
-A RenderFlex overflowed by 2.0 pixels on the bottom.
-
-The relevant error-causing widget was:
-  Column
-  Column:file:///home/runner/work/MP/MP/mp-app/client/lib/features/feedback/set_feedback_sheet.dart:73:14
-
-The overflowing RenderFlex has an orientation of Axis.vertical.
-The edge of the RenderFlex that is overflowing has been marked in the rendering with a yellow and
-black striped pattern. This is usually caused by the contents being too big for the RenderFlex.
-Consider applying a flex factor (e.g. using an Expanded widget) to force the children of the
-RenderFlex to fit within the available space instead of being sized to their natural size.
-This is considered an error condition because it indicates that there is content that cannot be
-seen. If the content is legitimately bigger than the available space, consider clipping it with a
-ClipRect widget before putting it in the flex, or using a scrollable container rather than a Flex,
-like a ListView.
-The specific RenderFlex in question is: RenderFlex#1f6b9 relayoutBoundary=up2 OVERFLOWING:
-  needs compositing
-  creator: Column ← Padding ← SetFeedbackSheet ← KeyedSubtree-[GlobalKey#86b8c] ← _BodyBuilder ←
-    MediaQuery ← LayoutId-[<_ScaffoldSlot.body>] ← CustomMultiChildLayout ← _ActionsScope ← Actions ←
-    Builder ← DefaultTextStyle ← ⋯
-  parentData: offset=Offset(20.0, 20.0) (can use size)
-  constraints: BoxConstraints(0.0<=w<=760.0, 0.0<=h<=560.0)
-  size: Size(760.0, 560.0)
-  direction: vertical
-  mainAxisAlignment: start
-  mainAxisSize: min
-  crossAxisAlignment: start
-  textDirection: ltr
-  verticalDirection: down
-  spacing: 0.0
-◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤
-════════════════════════════════════════════════════════════════════════════════════════════════════
-Test failed. See exception logs above.
-The test description was: submit shows why-card with data-rule-decision chain
-
-::endgroup::
-::group::✅ Passing tests
+✅ /home/runner/work/MP/MP/mp-app/client/test/set_feedback_sheet_test.dart: submit shows why-card with data-rule-decision chain
 ✅ /home/runner/work/MP/MP/mp-app/client/test/set_feedback_sheet_test.dart: empty reps sends nothing
-::endgroup::
-::group::❌ /home/runner/work/MP/MP/mp-app/client/test/set_feedback_sheet_test.dart: M48-c1: shows that the suggestion was actually applied (failed)
-══╡ EXCEPTION CAUGHT BY RENDERING LIBRARY ╞═════════════════════════════════════════════════════════
-The following assertion was thrown during layout:
-A RenderFlex overflowed by 2.0 pixels on the bottom.
-
-The relevant error-causing widget was:
-  Column
-  Column:file:///home/runner/work/MP/MP/mp-app/client/lib/features/feedback/set_feedback_sheet.dart:73:14
-
-The overflowing RenderFlex has an orientation of Axis.vertical.
-The edge of the RenderFlex that is overflowing has been marked in the rendering with a yellow and
-black striped pattern. This is usually caused by the contents being too big for the RenderFlex.
-Consider applying a flex factor (e.g. using an Expanded widget) to force the children of the
-RenderFlex to fit within the available space instead of being sized to their natural size.
-This is considered an error condition because it indicates that there is content that cannot be
-seen. If the content is legitimately bigger than the available space, consider clipping it with a
-ClipRect widget before putting it in the flex, or using a scrollable container rather than a Flex,
-like a ListView.
-The specific RenderFlex in question is: RenderFlex#ab944 relayoutBoundary=up2 OVERFLOWING:
-  needs compositing
-  creator: Column ← Padding ← SetFeedbackSheet ← KeyedSubtree-[GlobalKey#eefa2] ← _BodyBuilder ←
-    MediaQuery ← LayoutId-[<_ScaffoldSlot.body>] ← CustomMultiChildLayout ← _ActionsScope ← Actions ←
-    Builder ← DefaultTextStyle ← ⋯
-  parentData: offset=Offset(20.0, 20.0) (can use size)
-  constraints: BoxConstraints(0.0<=w<=760.0, 0.0<=h<=560.0)
-  size: Size(760.0, 560.0)
-  direction: vertical
-  mainAxisAlignment: start
-  mainAxisSize: min
-  crossAxisAlignment: start
-  textDirection: ltr
-  verticalDirection: down
-  spacing: 0.0
-◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤
-════════════════════════════════════════════════════════════════════════════════════════════════════
-══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
-The following TestFailure was thrown running a test:
-Expected: exactly one matching candidate
-  Actual: _TextContainingWidgetFinder:<Found 0 widgets with text containing ۲ هفته: []>
-   Which: means none were found but one was expected
-
-When the exception was thrown, this was the stack:
-#4      main.<anonymous closure> (file:///home/runner/work/MP/MP/mp-app/client/test/set_feedback_sheet_test.dart:85:5)
-<asynchronous suspension>
-#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
-<asynchronous suspension>
-#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1968:5)
-<asynchronous suspension>
-<asynchronous suspension>
-(elided one frame from package:stack_trace)
-
-This was caught by the test expectation on the following line:
-  file:///home/runner/work/MP/MP/mp-app/client/test/set_feedback_sheet_test.dart line 85
-The test description was:
-  M48-c1: shows that the suggestion was actually applied
-════════════════════════════════════════════════════════════════════════════════════════════════════
-══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
-The following message was thrown:
-Multiple exceptions (2) were detected during the running of the current test, and at least one was
-unexpected.
-════════════════════════════════════════════════════════════════════════════════════════════════════
-Test failed. See exception logs above.
-The test description was: M48-c1: shows that the suggestion was actually applied
-
-::endgroup::
-::group::❌ /home/runner/work/MP/MP/mp-app/client/test/set_feedback_sheet_test.dart: M48-c1: sends the real weight, not hardcoded zero (failed)
-══╡ EXCEPTION CAUGHT BY RENDERING LIBRARY ╞═════════════════════════════════════════════════════════
-The following assertion was thrown during layout:
-A RenderFlex overflowed by 2.0 pixels on the bottom.
-
-The relevant error-causing widget was:
-  Column
-  Column:file:///home/runner/work/MP/MP/mp-app/client/lib/features/feedback/set_feedback_sheet.dart:73:14
-
-The overflowing RenderFlex has an orientation of Axis.vertical.
-The edge of the RenderFlex that is overflowing has been marked in the rendering with a yellow and
-black striped pattern. This is usually caused by the contents being too big for the RenderFlex.
-Consider applying a flex factor (e.g. using an Expanded widget) to force the children of the
-RenderFlex to fit within the available space instead of being sized to their natural size.
-This is considered an error condition because it indicates that there is content that cannot be
-seen. If the content is legitimately bigger than the available space, consider clipping it with a
-ClipRect widget before putting it in the flex, or using a scrollable container rather than a Flex,
-like a ListView.
-The specific RenderFlex in question is: RenderFlex#73d85 relayoutBoundary=up2 OVERFLOWING:
-  needs compositing
-  creator: Column ← Padding ← SetFeedbackSheet ← KeyedSubtree-[GlobalKey#167e1] ← _BodyBuilder ←
-    MediaQuery ← LayoutId-[<_ScaffoldSlot.body>] ← CustomMultiChildLayout ← _ActionsScope ← Actions ←
-    Builder ← DefaultTextStyle ← ⋯
-  parentData: offset=Offset(20.0, 20.0) (can use size)
-  constraints: BoxConstraints(0.0<=w<=760.0, 0.0<=h<=560.0)
-  size: Size(760.0, 560.0)
-  direction: vertical
-  mainAxisAlignment: start
-  mainAxisSize: min
-  crossAxisAlignment: start
-  textDirection: ltr
-  verticalDirection: down
-  spacing: 0.0
-◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤
-════════════════════════════════════════════════════════════════════════════════════════════════════
-Test failed. See exception logs above.
-The test description was: M48-c1: sends the real weight, not hardcoded zero
-
-::endgroup::
-::group::✅ Passing tests
+✅ /home/runner/work/MP/MP/mp-app/client/test/set_feedback_sheet_test.dart: M48-c1: shows that the suggestion was actually applied
+✅ /home/runner/work/MP/MP/mp-app/client/test/set_feedback_sheet_test.dart: M48-c1: sends the real weight, not hardcoded zero
 ✅ /home/runner/work/MP/MP/mp-app/client/test/home_page_test.dart: گرید ۸ بخش نمایش داده می‌شود
 ✅ /home/runner/work/MP/MP/mp-app/client/test/home_page_test.dart: جست‌وجو و بنر موجودند
 ✅ /home/runner/work/MP/MP/mp-app/client/test/home_page_test.dart: چک‌این سریع در خانه
 ::endgroup::
 
-::error::23 tests passed, 3 failed.
+::error::26 tests passed, 2 failed.
