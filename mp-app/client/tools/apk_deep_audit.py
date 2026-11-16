@@ -131,12 +131,14 @@ def audit_decoded(tree: Path, apk: Path, tool_version: str) -> dict:
         "cleartext_permitted": _cleartext(tree),
         "exported_components": len(re.findall(r'android:exported="true"', manifest)),
     }
-    # exported=true روی activity اصلی طبیعی است؛ فقط غیر از آن مشکوک است.
-    exported_activities = re.findall(
-        r'<activity[^>]*android:name="([^"]+)"[^>]*android:exported="true"', manifest
-    )
-    exported_receivers = re.findall(
-        r'<receiver[^>]*android:name="([^"]+)"[^>]*android:exported="true"', manifest
+    # باگ واقعی در نسخهٔ اول این تابع: از regex استفاده می‌کرد که فرض داشت
+    # `android:name` پیش از `android:exported` می‌آید. در مانیفست واقعی
+    # (که apktool بازنویسی می‌کند) ترتیب برعکس است، پس لیست همیشه **خالی**
+    # برمی‌گشت در حالی که `exported_components` عدد ۲ را نشان می‌داد — یعنی
+    # ابزار «هیچ چیز exported نیست» می‌گفت و همان لحظه ۲ مورد exported داشت.
+    # حالا با پارس XML شمرده می‌شود، نه با regex.
+    exported_activities, exported_receivers, unprotected = _exported_components(
+        tree / "AndroidManifest.xml"
     )
 
     findings: list[str] = []
@@ -147,6 +149,8 @@ def audit_decoded(tree: Path, apk: Path, tool_version: str) -> dict:
         findings.append("android:debuggable=true — اپ debuggable ساخته شده")
     if flags["allow_backup"]:
         findings.append("android:allowBackup=true — پشتیبان‌گیری ابری از دادهٔ کاربر")
+    for comp in unprotected:
+        findings.append(f"کامپوننت exported بدون محافظ: {comp} (هر اپی می‌تواند صدایش بزند)")
     if flags["cleartext_permitted"]:
         findings.append(
             "cleartextTrafficPermitted=true — مهارش در لایهٔ اپ است (isPrivateHost)، نه مانیفست"
@@ -174,11 +178,60 @@ def audit_decoded(tree: Path, apk: Path, tool_version: str) -> dict:
         "flags": flags,
         "exported_activities": exported_activities,
         "exported_receivers": exported_receivers,
+        "unprotected_exported": unprotected,
         "manifest_findings": findings,
         "payload_findings": payload_hits,
         "dart_source_shipped": [str(p.relative_to(tree)) for p in dart_files],
-        "ok": not payload_hits and not flags["debuggable"] and not flags["allow_backup"],
+        "ok": (
+            not payload_hits
+            and not flags["debuggable"]
+            and not flags["allow_backup"]
+            and not unprotected
+        ),
     }
+
+
+def _exported_components(manifest_path: Path) -> tuple[list[str], list[str], list[str]]:
+    """کامپوننت‌های exported، با پارس XML (مستقل از ترتیب ویژگی‌ها).
+
+    علاوه بر فهرست، کامپوننت‌های exported **بدون هیچ محافظ** را هم برمی‌گردانیم:
+    هر اپ دیگری روی دستگاه می‌تواند آن‌ها را صدا بزند. activity لانچر طبیعی و
+    لازم است (Android 12+ وجود exported را اجباری کرده)، ولی receiver/service
+    بدون `android:permission` یک سطح حمله واقعی است.
+    """
+    import xml.etree.ElementTree as ET
+
+    ns = "{http://schemas.android.com/apk/res/android}"
+    try:
+        root = ET.parse(manifest_path).getroot()
+    except ET.ParseError:
+        return [], [], []
+    acts, recvs, unprotected = [], [], []
+    launcher = _launcher_activities(root, ns)
+    for tag, bucket in (("activity", acts), ("receiver", recvs)):
+        for el in root.iter(tag):
+            if el.get(f"{ns}exported") != "true":
+                continue
+            name = el.get(f"{ns}name", "?")
+            bucket.append(name)
+            if tag == "activity" and name in launcher:
+                continue  # activity لانچر باید exported باشد
+            if not el.get(f"{ns}permission"):
+                # intent-filter نداشتن هم به معنی عدم دسترسی نیست؛ سخت‌گیر می‌مانیم
+                unprotected.append(f"{tag}:{name}")
+    return acts, recvs, unprotected
+
+
+def _launcher_activities(root, ns: str) -> set[str]:
+    """activityهایی که MAIN/LAUNCHER دارند — exported بودنشان اجباری است."""
+    out: set[str] = set()
+    for act in root.iter("activity"):
+        for intent in act.findall("intent-filter"):
+            actions = {a.get(f"{ns}name") for a in intent.findall("action")}
+            cats = {c.get(f"{ns}name") for c in intent.findall("category")}
+            if "android.intent.action.MAIN" in actions and "android.intent.category.LAUNCHER" in cats:
+                out.add(act.get(f"{ns}name", ""))
+    return out
 
 
 def _cleartext(tree: Path) -> bool:

@@ -127,3 +127,33 @@ def test_real_apks_pass_the_deep_audit() -> None:
         assert not set(result["permissions"]) & gate.SUSPICIOUS_PERMISSIONS
         # کد دارت نباید ارسال شده باشد (release باید AOT باشد، نه kernel)
         assert not result["dart_source_shipped"], result["dart_source_shipped"]
+
+
+# ── باگ واقعی در خودِ ابزار: regex با فرض ترتیب ویژگی‌ها ──
+def test_exported_components_parsed_regardless_of_attribute_order(tmp_path) -> None:
+    """نسخهٔ اول ابزار با regex کار می‌کرد و فرض داشت `android:name` اول می‌آید.
+
+    در مانیفست واقعی (بازنویسی‌شده با apktool) ترتیب برعکس است، پس فهرست
+    exported **همیشه خالی** برمی‌گشت در حالی که شمارندهٔ درشت ۲ می‌داد.
+    """
+    mf = tmp_path / "AndroidManifest.xml"
+    mf.write_text(
+        '<manifest xmlns:android="http://schemas.android.com/apk/res/android">'
+        "<application>"
+        '<activity android:exported="true" android:name="com.x.Main">'
+        "<intent-filter>"
+        '<action android:name="android.intent.action.MAIN"/>'
+        '<category android:name="android.intent.category.LAUNCHER"/>'
+        "</intent-filter></activity>"
+        '<receiver android:exported="true" android:permission="android.permission.DUMP"'
+        ' android:name="com.x.SafeReceiver"/>'
+        '<receiver android:exported="true" android:name="com.x.LeakyReceiver"/>'
+        "</application></manifest>",
+        encoding="utf-8",
+    )
+    acts, recvs, unprotected = gate._exported_components(mf)
+    assert acts == ["com.x.Main"]
+    assert recvs == ["com.x.SafeReceiver", "com.x.LeakyReceiver"]
+    # activity لانچر exported بودنش اجباری است → محافظ لازم ندارد
+    # receiver با permission محافظت‌شده است → فقط LeakyReceiver یافته می‌شود
+    assert unprotected == ["receiver:com.x.LeakyReceiver"]
