@@ -25,12 +25,16 @@ class _FakeClient extends http.BaseClient {
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
     final path = request.url.path.replaceFirst('/api/v1', '');
     calls.add('${request.method} $path');
-    final body = routes[path] ?? <String, dynamic>{};
-    final bytes = utf8.encode(jsonEncode(body));
+    final payload = routes[path] ?? <String, dynamic>{};
+    final bytes = utf8.encode(jsonEncode(payload));
     return http.StreamedResponse(
       Stream.value(bytes),
       200,
+      // `http.Client.get` بدنه را از `contentLength` می‌خواند؛ بدون آن،
+      // پاسخ «خالی» تلقی می‌شود و تست با «۰ ویجت» شکست می‌خورد (یک‌بار شد).
+      contentLength: bytes.length,
       headers: {'content-type': 'application/json'},
+      request: request,
     );
   }
 }
