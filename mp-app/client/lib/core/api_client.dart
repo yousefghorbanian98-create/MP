@@ -98,6 +98,26 @@ class ApiClient {
     return _decode(r);
   }
 
+  /// PATCH و DELETE — تا M60 در این کلاینت **نبودند**.
+  ///
+  /// پیامد واقعی: سرور `PATCH /shop/cart/{id}` و `DELETE /shop/cart/{id}` را
+  /// داشت (با محدودیت نرخ و بررسی مالکیت) ولی اپ هیچ راهی برای صدا زدنشان
+  /// نداشت؛ یعنی عضو نمی‌توانست تعداد را عوض کند یا قلمی را حذف کند و سبد
+  /// فقط خواندنی بود. endpointهای بی‌مصرف، همان باگ «کد مرده» هستند.
+  Future<dynamic> patch(String path, Map<String, dynamic> body) async {
+    final r = await _http.patch(
+      Uri.parse('$baseUrl$path'),
+      headers: _headers,
+      body: jsonEncode(body),
+    );
+    return _decode(r);
+  }
+
+  Future<dynamic> delete(String path) async {
+    final r = await _http.delete(Uri.parse('$baseUrl$path'), headers: _headers);
+    return _decode(r);
+  }
+
   /// رمزگشایی پاسخ — **هم شیء و هم آرایه**.
   ///
   /// باگ واقعی (M59): نسخهٔ پیشین بدنه را همیشه `as Map<String, dynamic>`

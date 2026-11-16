@@ -8,6 +8,7 @@ import {
   type CommissionResult,
   type FinanceSummary,
 } from "../lib/api";
+import { useMotionPreset } from "../lib/motion";
 import { canSeePage, parseRole } from "../lib/roleNav";
 import { fa } from "../lib/useApi";
 
@@ -29,6 +30,7 @@ export function Finance() {
   // سرور است. منطق: پنهان‌کردن صفحه بر پایهٔ حدس، کاربر را قفل می‌کند؛
   // سرور همچنان ۴۰۳ می‌دهد و پیامش نمایش داده می‌شود.
   const role = parseRole();
+  const motionPreset = useMotionPreset();
   const [coachId, setCoachId] = useState("");
   const [rate, setRate] = useState("10");
   const [commission, setCommission] = useState<CommissionResult | null>(null);
@@ -93,7 +95,7 @@ export function Finance() {
   }
 
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+    <motion.div {...motionPreset.rise} className="space-y-4">
       <div className="glass-card space-y-4 p-5">
         <h2 className="text-sm font-bold">گزارش مالی</h2>
         <div className="flex items-center gap-3">

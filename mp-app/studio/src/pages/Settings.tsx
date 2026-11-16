@@ -8,6 +8,7 @@
  *   - خطا: پیام واقعی سرور، بدون سوییچِ خوش‌بینانه
  */
 import { motion } from "framer-motion";
+import { useMotionPreset } from "../lib/motion";
 import { useCallback, useEffect, useState } from "react";
 import { RoleManager } from "../components/RoleManager";
 import { fetchFlags, fetchHealth, putFlag, type FeatureFlagRow, type HealthInfo } from "../lib/api";
@@ -24,6 +25,7 @@ function labelFor(key: string) {
 }
 
 export function Settings() {
+  const motionPreset = useMotionPreset();
   const [flags, setFlags] = useState<FeatureFlagRow[]>([]);
   const [health, setHealth] = useState<HealthInfo | null>(null);
   const [loading, setLoading] = useState(true);
@@ -67,7 +69,7 @@ export function Settings() {
   }
 
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+    <motion.div {...motionPreset.rise} className="space-y-4">
       {needsToken && (
         <div className="glass-card border border-amber-500/30 p-4 text-sm">
           <p className="font-semibold text-amber-300">برای دیدن پرچم‌ها به توکن مدیر نیاز است</p>

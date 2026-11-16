@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useMotionPreset } from "../lib/motion";
 import { useState } from "react";
 import { approveProgram, fetchProgramsSummary, rejectProgram } from "../lib/api";
 import { SafetyBadge, parseSafety } from "../components/SafetyBadge";
@@ -28,6 +29,7 @@ const filters = [
 ];
 
 export function Programs() {
+  const motionPreset = useMotionPreset();
   const [busyId, setBusyId] = useState<number | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const [actionMsg, setActionMsg] = useState<string | null>(null);
@@ -78,8 +80,7 @@ export function Programs() {
         </p>
       )}
       <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
+        {...motionPreset.rise}
         className="space-y-4"
       >
       <div className="glass-card flex items-center gap-3 border-accent/25 p-4">
@@ -136,10 +137,9 @@ export function Programs() {
         {items.map((p, i) => (
           <motion.div
             key={p.id}
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.07 }}
-            whileHover={{ y: -3 }}
+            {...motionPreset.rise}
+            transition={{ ...motionPreset.rise.transition, delay: motionPreset.stagger(i) }}
+            {...motionPreset.hover}
             className="glass-card-hover p-5"
           >
             <div className="flex items-center justify-between">

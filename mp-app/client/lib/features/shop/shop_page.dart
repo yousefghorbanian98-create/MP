@@ -294,6 +294,40 @@ class _CartSheet extends ConsumerStatefulWidget {
 class _CartSheetState extends ConsumerState<_CartSheet> {
   bool _busy = false;
 
+  /// تغییر تعداد یک قلم سبد (PATCH).
+  Future<void> _setQty(int itemId, int qty) async {
+    final api = ref.read(apiClientProvider);
+    setState(() => _busy = true);
+    try {
+      // qty=0 در سرور یعنی حذف؛ همان قرارداد را نگه می‌داریم.
+      await api.patch('/shop/cart/$itemId', {'qty': qty});
+      ref.invalidate(cartProvider);
+      widget.onDone();
+    } catch (e) {
+      if (!mounted) return;
+      // پیام سرور («موجودی کافی نیست (موجود: ۲)») به کاربر می‌رسد، نه متن عمومی
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  /// حذف یک قلم سبد (DELETE).
+  Future<void> _remove(int itemId) async {
+    final api = ref.read(apiClientProvider);
+    setState(() => _busy = true);
+    try {
+      await api.delete('/shop/cart/$itemId');
+      ref.invalidate(cartProvider);
+      widget.onDone();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
   Future<void> _checkout() async {
     final api = ref.read(apiClientProvider);
     setState(() => _busy = true);
@@ -350,15 +384,17 @@ class _CartSheetState extends ConsumerState<_CartSheet> {
             children: [
               const Text('سبد خرید', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
               const SizedBox(height: 8),
+              // M60/B2 — سبد تا امروز فقط خواندنی بود: تعداد فقط نمایش داده
+              // می‌شد و راهی برای کم/زیاد کردن یا حذف نبود، در حالی که سرور
+              // `PATCH`/`DELETE /shop/cart/{id}` را داشت. حالا هر ردیف دکمهٔ
+              // ± و حذف دارد. موجودی را سرور بررسی می‌کند؛ این‌جا فقط با
+              // خطای سرور (که در SnackBar می‌آید) متوقف می‌شویم.
               ...items.map(
-                (line) => ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Text(
-                    '${line['title']}${(line['variant_label'] as String?)?.isNotEmpty == true ? ' — ${line['variant_label']}' : ''}',
-                    style: const TextStyle(fontSize: 13),
-                  ),
-                  subtitle: Text(_rial((line['line_total_rial'] as num?) ?? 0)),
-                  trailing: Text('×${line['qty']}'),
+                (line) => _CartRow(
+                  line: line,
+                  busy: _busy,
+                  onQty: (qty) => _setQty(line['id'] as int, qty),
+                  onRemove: () => _remove(line['id'] as int),
                 ),
               ),
               const Divider(),
@@ -405,6 +441,74 @@ class _CartSheetState extends ConsumerState<_CartSheet> {
             ],
           );
         },
+      ),
+    );
+  }
+}
+
+/// یک ردیف سبد با کنترل تعداد و حذف.
+///
+/// چرا ویجت جدا: تست‌پذیری. حالت قبلی یک `ListTile` با متن `×۲` بود که هیچ
+/// کنترلی نداشت و همین باعث می‌شد این کمبود در تست‌ها دیده نشود.
+class _CartRow extends StatelessWidget {
+  const _CartRow({
+    required this.line,
+    required this.busy,
+    required this.onQty,
+    required this.onRemove,
+  });
+
+  final Map<String, dynamic> line;
+  final bool busy;
+  final ValueChanged<int> onQty;
+  final VoidCallback onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    final qty = (line['qty'] as num?)?.toInt() ?? 1;
+    final variant = (line['variant_label'] as String?) ?? '';
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${line['title']}${variant.isNotEmpty ? ' — $variant' : ''}',
+                  style: const TextStyle(fontSize: 13),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  _rial((line['line_total_rial'] as num?) ?? 0),
+                  style: const TextStyle(fontSize: 12, color: MpColors.textSecondary),
+                ),
+              ],
+            ),
+          ),
+          IconButton(
+            tooltip: 'کاهش تعداد',
+            onPressed: busy ? null : () => onQty(qty - 1),
+            icon: const Icon(Icons.remove_circle_outline, size: 20),
+          ),
+          // Semantics: عدد برای screen reader با برچسب خوانده شود
+          Semantics(
+            label: 'تعداد $qty',
+            child: Text('$qty', style: const TextStyle(fontSize: 13)),
+          ),
+          IconButton(
+            tooltip: 'افزایش تعداد',
+            onPressed: busy ? null : () => onQty(qty + 1),
+            icon: const Icon(Icons.add_circle_outline, size: 20),
+          ),
+          IconButton(
+            tooltip: 'حذف از سبد',
+            onPressed: busy ? null : onRemove,
+            icon: const Icon(Icons.delete_outline, size: 20, color: Colors.redAccent),
+          ),
+        ],
       ),
     );
   }

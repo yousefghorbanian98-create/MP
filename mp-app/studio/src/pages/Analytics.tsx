@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useMotionPreset } from "../lib/motion";
 import { AuthError, fetchChurnRisk, fetchLeaderboards, type ChurnRow, type Leaderboards } from "../lib/adminApi";
 
 const sections: { key: keyof Leaderboards; title: string; hint: string }[] = [
@@ -11,6 +12,7 @@ const sections: { key: keyof Leaderboards; title: string; hint: string }[] = [
 
 /** تحلیل‌های مدیریتی (M42-c3) — لیدربوردها از API واقعی، هر رتبه با روش محاسبه. */
 export function Analytics() {
+  const motionPreset = useMotionPreset();
   const [data, setData] = useState<Leaderboards | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [needsToken, setNeedsToken] = useState(false);
@@ -73,7 +75,7 @@ export function Analytics() {
 
       {error && !needsToken && <div className="glass-card p-4 text-sm text-red-400">{error}</div>}
 
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-5">
+      <motion.div {...motionPreset.rise} className="glass-card p-5">
         <h3 className="text-sm font-bold">در خطر ریزش (churn)</h3>
         <p className="mt-0.5 text-[11px] text-ink-dim">
           قواعد شفاف: بی‌فعالیتی/انقضای نزدیک/بدهی/افت مراجعه با دلیل — بدون داده = نامعلوم (نه صفر)
@@ -104,7 +106,7 @@ export function Analytics() {
 
       <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
         {sections.map((sec) => (
-          <motion.div key={sec.key} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-5">
+          <motion.div key={sec.key} {...motionPreset.rise} className="glass-card p-5">
             <h3 className="text-sm font-bold">{sec.title}</h3>
             <p className="mt-0.5 text-[11px] text-ink-dim">{sec.hint}</p>
             <div className="mt-3 space-y-2">

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useMotionPreset } from "../lib/motion";
 import { MemberTable } from "../components/MemberTable";
 import { generateProgram, fetchAssessmentHistory, fetchAssessmentMatrix, fetchMembersSummary } from "../lib/api";
 import { fa, useApi } from "../lib/useApi";
@@ -18,6 +19,7 @@ const genderTabs = [
 ];
 
 export function Members() {
+  const motionPreset = useMotionPreset();
   const { selectedMemberId, selectMember, genderFilter, setGenderFilter, setPage } =
     useAppStore();
   const [busy, setBusy] = useState(false);
@@ -86,8 +88,7 @@ export function Members() {
         {member ? (
           <motion.div
             key={member.member_id}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
+            {...motionPreset.slide}
             exit={{ opacity: 0, x: -20 }}
             transition={{ type: "spring", stiffness: 260, damping: 24 }}
             className="glass-card p-5"
@@ -151,9 +152,13 @@ export function Members() {
                         <div className="h-full w-full bg-[repeating-linear-gradient(45deg,rgba(156,163,175,0.25)_0_4px,transparent_4px_8px)]" />
                       ) : (
                         <motion.div
-                          initial={{ width: 0 }}
+                          initial={motionPreset.reduced ? false : { width: 0 }}
                           animate={{ width: `${axis.score}%` }}
-                          transition={{ delay: i * 0.04, duration: 0.5 }}
+                          transition={
+                            motionPreset.reduced
+                              ? { duration: 0 }
+                              : { delay: motionPreset.stagger(i), duration: 0.5 }
+                          }
                           className="h-full rounded-full bg-gradient-to-l from-primary to-primary-light"
                         />
                       )}

@@ -112,4 +112,61 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.textContaining('هنوز محصولی ثبت نشده'), findsOneWidget);
   });
+
+  // M60/B2 — سبد باید قابل ویرایش باشد، نه فقط خواندنی.
+  //
+  // باگ واقعی: سرور PATCH/DELETE برای سبد داشت، ولی `ApiClient` هیچ‌کدام را
+  // نداشت و ردیف سبد فقط `×۲` نشان می‌داد. تست زیر هر سه عمل را می‌سنجد و
+  // **مسیر و متد** را هم چک می‌کند تا اگر کسی دکمه را به مسیر اشتباه وصل کرد
+  // گرفته شود.
+  testWidgets('سبد: افزایش، کاهش و حذف قلم واقعاً به سرور می‌رود', (tester) async {
+    final fake = _FakeClient({
+      '/shop/products': <dynamic>[],
+      '/shop/cart': {
+        'member_id': 1,
+        'items': [
+          {
+            'id': 42,
+            'title': 'پروتئین وی',
+            'variant_label': 'شکلاتی',
+            'qty': 2,
+            'line_total_rial': 5000000,
+          },
+        ],
+        'total_rial': 5000000,
+        'count': 2,
+      },
+    });
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [httpClientProvider.overrideWithValue(fake)],
+        child: MaterialApp(
+          theme: mpTheme(),
+          home: const Directionality(
+            textDirection: TextDirection.rtl,
+            child: ShopPage(),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // باز کردن شیت سبد
+    await tester.tap(find.text('سبد'));
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('پروتئین وی'), findsWidgets);
+    expect(find.byTooltip('افزایش تعداد'), findsOneWidget);
+    expect(find.byTooltip('کاهش تعداد'), findsOneWidget);
+    expect(find.byTooltip('حذف از سبد'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('افزایش تعداد'));
+    await tester.pumpAndSettle();
+    expect(fake.calls, contains('PATCH /shop/cart/42'));
+
+    await tester.tap(find.byTooltip('حذف از سبد'));
+    await tester.pumpAndSettle();
+    expect(fake.calls, contains('DELETE /shop/cart/42'));
+  });
 }

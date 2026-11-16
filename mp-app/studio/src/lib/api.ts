@@ -9,7 +9,18 @@
 
 export const API_BASE = "/api/v1";
 
+/**
+ * ۴۰۱ = «نشست معتبر نیست» (باید دوباره وارد شویم).
+ *
+ * جدا از ForbiddenError نگه داشته می‌شود چون رفتار کاربر متفاوت است:
+ * برای ۴۰۱ باید توکن تازه بدهیم، برای ۴۰۳ توکن سالم است و فقط نقش اجازه
+ * ندارد. نسخهٔ اول هر دو را AuthError می‌کرد و به مدیری که دسترسی نداشت
+ * می‌گفت «توکن وارد کن» — یعنی کاربر را به اقدام اشتباه می‌فرستاد.
+ */
 export class AuthError extends Error {}
+
+/** ۴۰۳ = توکن معتبر است، نقش اجازه ندارد. تلاش دوباره بی‌فایده است. */
+export class ForbiddenError extends Error {}
 
 export class ApiError extends Error {
   constructor(
@@ -18,6 +29,27 @@ export class ApiError extends Error {
   ) {
     super(message);
   }
+}
+
+/**
+ * ۴۰۱ و ۴۰۳ را از هم جدا می‌کند.
+ *
+ * چرا تابع مشترک: این شرط در چهار نقطه تکرار شده بود و هر چهار جا یک پیام
+ * اشتباه می‌دادند. یک نقطهٔ تصمیم، یک جای باگ.
+ */
+async function throwAuthOrForbidden(resp: Response): Promise<never> {
+  if (resp.status === 401) {
+    throw new AuthError("نشست معتبر نیست — توکن مدیر را وارد کنید");
+  }
+  // ۴۰۳: پیام فارسیِ خودِ سرور گویاتر است («ساخت محصول فقط با تأیید مالک…»)
+  let detail = "";
+  try {
+    const body = (await resp.json()) as { error?: { message?: string } };
+    detail = body.error?.message ?? "";
+  } catch {
+    /* بدنه JSON نبود */
+  }
+  throw new ForbiddenError(detail || "نقش شما اجازهٔ این کار را ندارد");
 }
 
 function authHeaders(token: string | null): HeadersInit {
@@ -36,9 +68,7 @@ async function getJson<T>(path: string, token: string | null, signal?: AbortSign
     if (err instanceof DOMException && err.name === "AbortError") throw err;
     throw new ApiError("اتصال به سرور برقرار نشد — آیا بک‌اند روی ۸۷۵۱ اجراست؟", 0);
   }
-  if (resp.status === 401 || resp.status === 403) {
-    throw new AuthError("نشست معتبر نیست — توکن مدیر را وارد کنید");
-  }
+  if (resp.status === 401 || resp.status === 403) await throwAuthOrForbidden(resp);
   if (!resp.ok) {
     // پیام فارسیِ سرور را نگه می‌داریم: «عضو یافت نشد» به کاربر کمک می‌کند،
     // «خطای ۴۰۴ در /notifications/reminders/…» نه. اگر بدنه JSON نبود،
@@ -64,9 +94,7 @@ async function getBlob(path: string, token: string | null): Promise<Blob> {
     if (err instanceof DOMException && err.name === "AbortError") throw err;
     throw new ApiError("اتصال به سرور برقرار نشد — آیا بک‌اند روی ۸۷۵۱ اجراست؟", 0);
   }
-  if (resp.status === 401 || resp.status === 403) {
-    throw new AuthError("نشست معتبر نیست — توکن مدیر را وارد کنید");
-  }
+  if (resp.status === 401 || resp.status === 403) await throwAuthOrForbidden(resp);
   if (!resp.ok) throw new ApiError(`دریافت فایل ناموفق (HTTP ${resp.status})`, resp.status);
   return resp.blob();
 }
@@ -303,9 +331,7 @@ export async function putFlag(
   } catch {
     throw new ApiError("اتصال به سرور برقرار نشد", 0);
   }
-  if (resp.status === 401 || resp.status === 403) {
-    throw new AuthError("نشست معتبر نیست — توکن مدیر را وارد کنید");
-  }
+  if (resp.status === 401 || resp.status === 403) await throwAuthOrForbidden(resp);
   if (!resp.ok) throw new ApiError(`خطای ${resp.status} در ثبت پرچم`, resp.status);
   return (await resp.json()) as FeatureFlagRow;
 }
@@ -375,9 +401,7 @@ export async function generateProgram(
   } catch {
     throw new ApiError("اتصال به سرور برقرار نشد", 0);
   }
-  if (resp.status === 401 || resp.status === 403) {
-    throw new AuthError("نشست معتبر نیست — توکن مدیر را وارد کنید");
-  }
+  if (resp.status === 401 || resp.status === 403) await throwAuthOrForbidden(resp);
   if (!resp.ok) {
     const detail = await resp.json().catch(() => null);
     throw new ApiError(detail?.error?.message ?? `خطای ${resp.status} در تولید برنامه`, resp.status);
@@ -398,9 +422,7 @@ async function postJson<T>(path: string, body: unknown, token: string | null): P
   } catch {
     throw new ApiError("اتصال به سرور برقرار نشد", 0);
   }
-  if (resp.status === 401 || resp.status === 403) {
-    throw new AuthError("نشست معتبر نیست — توکن مدیر را وارد کنید");
-  }
+  if (resp.status === 401 || resp.status === 403) await throwAuthOrForbidden(resp);
   if (!resp.ok) {
     const detail = await resp.json().catch(() => null);
     throw new ApiError(detail?.error?.message ?? `خطای ${resp.status}`, resp.status);

@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import {
   ApiError,
   AuthError,
+  ForbiddenError,
   fetchAttendance,
   fetchFinanceSummary,
   fetchKpis,
@@ -87,8 +88,27 @@ describe("studio api client (M45-c1)", () => {
     expect(fetchMock.mock.calls[0][0]).toBe("/api/v1/admin/attendance?days=7");
   });
 
-  it("raises AuthError on 403 so the page asks for a token", async () => {
-    vi.stubGlobal("fetch", vi.fn(async () => ({ ok: false, status: 403, json: async () => ({}) })));
+  // M60/B1 — ۴۰۳ یعنی «توکن سالم است، نقش اجازه ندارد»؛ ۴۰۱ یعنی «نشست مرده».
+  // نسخهٔ قبلی این تست، رفتار باگ‌دار را قفل می‌کرد: ۴۰۳ هم AuthError می‌داد و
+  // به مدیری که فقط دسترسی نداشت می‌گفت «توکن وارد کن».
+  it("raises ForbiddenError on 403 — the token is fine, the role is not", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => ({
+        ok: false,
+        status: 403,
+        json: async () => ({ error: { message: "ساخت محصول فقط با تأیید مالک سیستم" } }),
+      })),
+    );
+    const err = await fetchKpis(null).catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(ForbiddenError);
+    expect(err).not.toBeInstanceOf(AuthError);
+    // پیام خود سرور به کاربر می‌رسد، نه یک متن عمومی
+    expect((err as Error).message).toContain("مالک");
+  });
+
+  it("raises AuthError on 401 so the page asks for a token", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => ({ ok: false, status: 401, json: async () => ({}) })));
     await expect(fetchKpis(null)).rejects.toBeInstanceOf(AuthError);
   });
 

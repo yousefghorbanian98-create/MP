@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { DURATION, useMotionPreset } from "../lib/motion";
 import { useState } from "react";
 import { fetchCheckinFeed } from "../lib/api";
 import { useApi } from "../lib/useApi";
@@ -18,17 +19,14 @@ const methodLabel: Record<string, string> = {
 };
 
 export function CheckIn() {
+  const motionPreset = useMotionPreset();
   const [scanning, setScanning] = useState(true);
   const { data, loading, error } = useApi((s) => fetchCheckinFeed(20, undefined, s), []);
   const feed = data?.items ?? [];
 
   return (
     <div className="grid grid-cols-1 gap-6 xl:grid-cols-5">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.98 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="glass-card relative overflow-hidden xl:col-span-3"
-      >
+      <motion.div {...motionPreset.fade} className="glass-card relative overflow-hidden xl:col-span-3">
         <div className="relative flex h-[420px] items-center justify-center bg-[radial-gradient(600px_300px_at_50%_20%,rgba(0,184,106,0.12),transparent)]">
           {/* قاب تشخیص چهره */}
           <div className="relative h-64 w-52">
@@ -36,13 +34,25 @@ export function CheckIn() {
             {(["right-0 top-0 rounded-tr-[28px] border-t-2 border-r-2", "left-0 top-0 rounded-tl-[28px] border-t-2 border-l-2", "right-0 bottom-0 rounded-br-[28px] border-b-2 border-r-2", "left-0 bottom-0 rounded-bl-[28px] border-b-2 border-l-2"] as const).map((cls) => (
               <span key={cls} className={`absolute h-10 w-10 border-primary ${cls}`} />
             ))}
-            {scanning && (
-              <motion.span
-                className="absolute inset-x-4 top-4 h-px bg-gradient-to-l from-transparent via-primary to-transparent shadow-[0_0_18px_rgba(0,184,106,0.8)]"
-                animate={{ y: [0, 220, 0] }}
-                transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
-              />
-            )}
+            {/*
+              خط اسکن: تکرار بی‌پایان (repeat: Infinity) بدترین حالت برای
+              حساسیت دهلیزی است. در حالت کاهش حرکت، حرکت رفت‌وبرگشتی حذف
+              می‌شود و یک خط ثابت + تغییر وضعیت متنی جای آن را می‌گیرد —
+              اطلاعات («در حال اسکن») از دست نمی‌رود، حرکت می‌رود.
+            */}
+            {scanning &&
+              (motionPreset.reduced ? (
+                <span
+                  data-testid="scan-static"
+                  className="absolute inset-x-4 top-1/2 h-px bg-primary/70"
+                />
+              ) : (
+                <motion.span
+                  className="absolute inset-x-4 top-4 h-px bg-gradient-to-l from-transparent via-primary to-transparent shadow-[0_0_18px_rgba(0,184,106,0.8)]"
+                  animate={{ y: [0, 220, 0] }}
+                  transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
+                />
+              ))}
             <div className="absolute inset-0 flex items-center justify-center text-5xl opacity-30">◎</div>
           </div>
 
@@ -77,8 +87,7 @@ export function CheckIn() {
             {feed.map((f, i) => (
               <motion.div
                 key={f.checkin_id}
-                initial={{ opacity: 0, x: 14 }}
-                animate={{ opacity: 1, x: 0 }}
+                {...motionPreset.slide}
                 transition={{ delay: i * 0.08 }}
                 className="flex items-center justify-between rounded-xl bg-surface/60 px-3 py-2.5"
               >
@@ -124,9 +133,11 @@ export function CheckIn() {
           </p>
           <div className="mt-3 h-2 overflow-hidden rounded-full bg-surface">
             <motion.div
-              initial={{ width: 0 }}
+              initial={motionPreset.reduced ? false : { width: 0 }}
               animate={{ width: "93%" }}
-              transition={{ duration: 1 }}
+              transition={
+                motionPreset.reduced ? { duration: DURATION.press } : { duration: DURATION.page }
+              }
               className="h-full rounded-full bg-gradient-to-l from-primary to-accent"
             />
           </div>

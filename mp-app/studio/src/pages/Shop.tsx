@@ -14,6 +14,7 @@
  */
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
+import { useMotionPreset } from "../lib/motion";
 import { ConfirmDialog, SkeletonCards, toast } from "../components/Feedback";
 import { fa } from "../lib/useApi";
 import {
@@ -51,6 +52,7 @@ const rial = (n: number) => `${fa(n)} ریال`;
 type Tab = "store" | "cart" | "orders" | "manage" | "requests";
 
 export function Shop() {
+  const motionPreset = useMotionPreset();
   // M60/R3: منبع حقیقت مشترک (lib/roleNav) — قبلاً هر صفحه نسخهٔ خودش را داشت.
   const role = roleFromToken();
   const isOwner = role === "super_admin";
@@ -156,7 +158,11 @@ export function Shop() {
                   <motion.span
                     layoutId="shop-tab"
                     className="absolute inset-0 rounded-xl bg-primary/20 ring-1 ring-primary/40"
-                    transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                    transition={
+                      motionPreset.reduced
+                        ? { duration: 0 }
+                        : { type: "spring", stiffness: 380, damping: 32 }
+                    }
                   />
                 )}
                 <span className="relative z-10">{t.label}</span>
@@ -208,8 +214,7 @@ export function Shop() {
                 <motion.article
                   key={p.id}
                   layout
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
+                  {...motionPreset.rise}
                   className="glass-card group overflow-hidden"
                 >
                   {p.image_url ? (

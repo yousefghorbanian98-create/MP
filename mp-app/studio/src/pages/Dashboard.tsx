@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useMotionPreset } from "../lib/motion";
 import { AttendanceChart } from "../components/AttendanceChart";
 import { KpiCard } from "../components/KpiCard";
 import { MemberTable } from "../components/MemberTable";
@@ -14,6 +15,7 @@ import { useAppStore } from "../stores/appStore";
  * `class_fill_rate` وقتی ظرفیتی ثبت نشده باشد null است → «نامعلوم»، نه صفر.
  */
 export function Dashboard() {
+  const motionPreset = useMotionPreset();
   const { setPage } = useAppStore();
   const kpis = useApi((s) => fetchKpis(undefined, s), []);
   const attendance = useApi((s) => fetchAttendance(7, undefined, s), []);
@@ -54,9 +56,7 @@ export function Dashboard() {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35 }}
+      {...motionPreset.rise}
       className="space-y-6"
     >
       {kpis.needsToken && (
