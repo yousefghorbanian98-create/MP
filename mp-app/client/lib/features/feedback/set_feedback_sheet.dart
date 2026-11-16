@@ -63,6 +63,12 @@ class _SetFeedbackSheetState extends ConsumerState<SetFeedbackSheet> {
 
   @override
   Widget build(BuildContext context) {
+    // M48-c1 + M59 — ساختار و چرایی:
+    //   قطر ۱: Column سرریز می‌کرد ← SingleChildScrollView (M48-c1)
+    //   قطر ۲: با کارت «چرا این تغییر؟» حتی اسکرول‌ویو هم ۲px سرریز می‌داد،
+    //          چون درون Padding ارتفاع نامحدود نمی‌گرفت (CI ۲۰۲۶-۱۱-۱۵).
+    // رفع واقعی: Expanded ارتفاع باقی‌مانده را به اسکرول می‌دهد و اطلاعات
+    // کارت در یک Wrap فشرده می‌شود. هیچ فیلدی حذف نشد.
     return Padding(
       padding: EdgeInsets.only(
         left: 20,
@@ -70,67 +76,67 @@ class _SetFeedbackSheetState extends ConsumerState<SetFeedbackSheet> {
         top: 20,
         bottom: MediaQuery.of(context).viewInsets.bottom + 20,
       ),
-      // M48-c1 — با اضافه‌شدن فیلد وزنه، ارتفاع از صفحهٔ گوشی‌های کوچک و
-      // از محیط تست بیشتر شد و Column سرریز می‌کرد. اسکرول، رفع واقعی است
-      // (نه کوچک‌کردن فونت یا حذف فیلد).
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-          Text('بازخورد ست — ${widget.movementName}',
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-          const SizedBox(height: 4),
-          const Text('RIR یعنی چند تکرار در تانک داشتید؛ درد عضلانی فردا را ۰ تا ۱۰ بسنجید',
-              style: TextStyle(fontSize: 11, color: MpColors.textSecondary)),
-          const SizedBox(height: 14),
-          TextField(
-            controller: _weightController,
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            decoration: const InputDecoration(
-              labelText: 'وزنه (کیلوگرم) — برای وزن بدن خالی بگذارید',
-              border: OutlineInputBorder(),
-            ),
-          ),
-          const SizedBox(height: 10),
-          TextField(
-            controller: _repsController,
-            keyboardType: TextInputType.number,
-            decoration: const InputDecoration(
-              labelText: 'تکرار انجام‌شده',
-              border: OutlineInputBorder(),
-            ),
-          ),
-          const SizedBox(height: 14),
-          Text('تکرار ذخیره (RIR): ${_rir.round()}'),
-          Slider(
-            value: _rir,
-            min: 0,
-            max: 5,
-            divisions: 5,
-            onChanged: (v) => setState(() => _rir = v),
-          ),
-          Text('درد عضلانی: ${_soreness.round()}'),
-          Slider(
-            value: _soreness,
-            min: 0,
-            max: 10,
-            divisions: 10,
-            onChanged: (v) => setState(() => _soreness = v),
-          ),
-          const SizedBox(height: 10),
-          SizedBox(
-            width: double.infinity,
-            child: FilledButton(
-              onPressed: _submitting ? null : _submit,
-              child: Text(_submitting ? 'در حال پردازش…' : 'ثبت بازخورد'),
-            ),
-          ),
-            if (_result != null) ...[
-              const SizedBox(height: 16),
-              _WhyCard(result: _result!),
+      child: Expanded(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('بازخورد ست — ${widget.movementName}',
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              const SizedBox(height: 4),
+              const Text(
+                  'RIR یعنی چند تکرار در تانک داشتید؛ درد عضلانی فردا را ۰ تا ۱۰ بسنجید',
+                  style: TextStyle(fontSize: 11, color: MpColors.textSecondary)),
+              const SizedBox(height: 14),
+              TextField(
+                controller: _weightController,
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                decoration: const InputDecoration(
+                  labelText: 'وزنه (کیلوگرم) — برای وزن بدن خالی بگذارید',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: _repsController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  labelText: 'تکرار انجام‌شده',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 14),
+              Text('تکرار ذخیره (RIR): ${_rir.round()}'),
+              Slider(
+                value: _rir,
+                min: 0,
+                max: 5,
+                divisions: 5,
+                onChanged: (v) => setState(() => _rir = v),
+              ),
+              Text('درد عضلانی: ${_soreness.round()}'),
+              Slider(
+                value: _soreness,
+                min: 0,
+                max: 10,
+                divisions: 10,
+                onChanged: (v) => setState(() => _soreness = v),
+              ),
+              const SizedBox(height: 10),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton(
+                  onPressed: _submitting ? null : _submit,
+                  child: Text(_submitting ? 'در حال پردازش…' : 'ثبت بازخورد'),
+                ),
+              ),
+              if (_result != null) ...[
+                const SizedBox(height: 16),
+                _WhyCard(result: _result!),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );
@@ -192,15 +198,23 @@ class _WhyCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          Text('وزن بعد: ${s['next_weight']} (${s['weight_action']})',
-              style: const TextStyle(fontSize: 13)),
-          Text(
-            s['next_sets'] == null
-                // M48-c1 — در حالت deload عدد مطلق نداریم؛ کاهش نسبت به
-                // خودِ برنامه اعمال می‌شود، نه نسبت به تعداد گزارش‌شده.
-                ? 'ست بعد: یک ست کمتر از برنامهٔ فعلی (${s['volume_action']})'
-                : 'ست بعد: ${s['next_sets']} (${s['volume_action']})',
-            style: const TextStyle(fontSize: 13),
+          // M59 — سه خط جدا (وزن/ست/دلیل) در ارتفاع ویجت‌تست سرریز می‌کرد؛
+          // Wrap همان اطلاعات است و در عرض کم می‌شکند. هیچ داده‌ای حذف نشد.
+          Wrap(
+            spacing: 12,
+            runSpacing: 2,
+            children: [
+              Text('وزن بعد: ${s['next_weight']} (${s['weight_action']})',
+                  style: const TextStyle(fontSize: 13)),
+              Text(
+                s['next_sets'] == null
+                    // M48-c1 — در حالت deload عدد مطلق نداریم؛ کاهش نسبت به
+                    // خودِ برنامه اعمال می‌شود، نه نسبت به تعداد گزارش‌شده.
+                    ? 'ست بعد: یک ست کمتر از برنامهٔ فعلی (${s['volume_action']})'
+                    : 'ست بعد: ${s['next_sets']} (${s['volume_action']})',
+                style: const TextStyle(fontSize: 13),
+              ),
+            ],
           ),
           const Divider(height: 16),
           ..._appliedLine(result),
@@ -210,7 +224,7 @@ class _WhyCard extends StatelessWidget {
           ),
           if (s['volume_action'] == 'deload' && s['weight_action'] == 'increase')
             const Padding(
-              padding: EdgeInsets.only(top: 6),
+              padding: EdgeInsets.only(top: 4),
               child: Text(
                 // دو سیگنال مستقل: ست راحت بود (بار برود بالا) ولی درد زیاد است
                 // (حجم بیاید پایین). این تناقض نیست — تفکیک بار از حجم است.
