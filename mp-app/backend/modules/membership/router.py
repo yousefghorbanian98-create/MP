@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field
 from sqlalchemy import select
 
 from app.deps import CurrentUser, DbSession, require_permission
+from app.ids import Id
 from modules.membership import service
 from modules.membership.schemas import (
     MemberCreate,
@@ -39,7 +40,9 @@ def create_member(payload: MemberCreate, db: DbSession):
 def list_members(
     db: DbSession,
     user: CurrentUser,
-    offset: int = Query(0, ge=0),
+    # سقف بالا لازم است، نه فقط ge=0: DAST (R18) نشان داد
+    # `GET /members?offset=10**30` روی SQLite `OverflowError` می‌دهد ← ۵۰۰.
+    offset: int = Query(0, ge=0, le=1_000_000),
     limit: int = Query(50, ge=1, le=200),
     gender: str | None = Query(
         None, pattern="^(male|female)$", description="فیلتر تفکیک جنسیت (M41-c1)"
@@ -55,7 +58,7 @@ class MeUpdate(BaseModel):
     full_name: str | None = None
     goal: str | None = None
     gender: str | None = None
-    height_cm: int | None = None
+    height_cm: int | None = Field(default=None, ge=50, le=260)
     constraints: str | None = None
 
 
@@ -116,7 +119,7 @@ def update_me(payload: MeUpdate, db: DbSession, user: CurrentUser):
 
 
 class PlanPurchaseIn(BaseModel):
-    member_id: int
+    member_id: Id
     plan_key: str = Field(..., min_length=2, max_length=40)
 
 

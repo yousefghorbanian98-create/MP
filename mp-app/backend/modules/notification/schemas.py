@@ -6,9 +6,11 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field
 
+from app.ids import Id
+
 
 class NotificationSend(BaseModel):
-    member_id: int
+    member_id: Id
     title: str = Field(..., min_length=1, max_length=120)
     body: str = Field("", max_length=2000)
     kind: str = Field("general", pattern="^(renewal|workout|reassessment|general)$")

@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from pydantic import BaseModel, Field
 
+from app.ids import Id
+
 
 class TestIn(BaseModel):
     test_key: str = Field(min_length=2, max_length=40)
@@ -12,7 +14,7 @@ class TestIn(BaseModel):
 
 
 class AssessmentCreate(BaseModel):
-    member_id: int
+    member_id: Id
     tests: list[TestIn] = Field(min_length=1)
     notes: str = ""
 

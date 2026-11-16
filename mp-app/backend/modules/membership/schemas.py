@@ -7,6 +7,8 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
+from app.ids import Id
+
 
 class MemberCreate(BaseModel):
     phone: str = Field(..., pattern=r"^09\d{9}$")
@@ -42,7 +44,7 @@ class MemberOut(BaseModel):
 
 
 class MembershipCreate(BaseModel):
-    member_id: int
+    member_id: Id
     plan_name: str = Field(..., min_length=2, max_length=60)
     duration_days: int = Field(..., ge=1, le=730)
     price_rial: int = Field(..., ge=0)

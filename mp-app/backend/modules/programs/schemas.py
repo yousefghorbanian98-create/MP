@@ -6,6 +6,8 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field
 
+from app.ids import Id, OptId
+
 
 class ProgramExerciseOut(BaseModel):
     id: int
@@ -55,7 +57,7 @@ class RejectIn(BaseModel):
 
 
 class EngineExerciseIn(BaseModel):
-    exercise_id: int
+    exercise_id: Id
     day: int = Field(..., ge=1, le=7)
     order: int = Field(0, ge=0, le=20)
     sets: int = Field(..., ge=1, le=20)
@@ -75,7 +77,7 @@ class EngineWeekIn(BaseModel):
 
 
 class ProgramFromEngineIn(BaseModel):
-    member_id: int
+    member_id: Id
     goal: str = Field("", max_length=60)
     engine_version: str = Field("", max_length=20)
     llm_explanation: str = Field("", max_length=5000)  # فقط متن — هرگز عدد (G8)
@@ -84,9 +86,12 @@ class ProgramFromEngineIn(BaseModel):
 
 class SetFeedbackEntryIn(BaseModel):
     movement_id: str = Field(min_length=1, max_length=60)
-    weight: float = Field(ge=0)  # صفر = حرکت وزن‌بدن
-    target_reps: int = Field(ge=1)
-    reps_done: int = Field(ge=0)
+    # M60/R18 — سقف لازم است نه فقط ge: DAST نشان داد `weight: 1e30` به
+    # SQLite می‌رسد و `OverflowError` می‌دهد. هر سقف این‌جا یک عدد واقعی است
+    # (۵۰۰kg بار، ۲۰۰ تکرار) — نه سقف دلبخواه.
+    weight: float = Field(ge=0, le=500)  # صفر = حرکت وزن‌بدن
+    target_reps: int = Field(ge=1, le=200)
+    reps_done: int = Field(ge=0, le=200)
     rir: float | None = Field(default=None, ge=0, le=10)
     soreness: int | None = Field(default=None, ge=0, le=10)
     # G2 — تعداد ستی که عضو واقعاً انجام داد. اختیاری و صریح: اگر خالی باشد
@@ -96,6 +101,6 @@ class SetFeedbackEntryIn(BaseModel):
 
 
 class SetFeedbackIn(BaseModel):
-    member_id: int
-    program_id: int | None = None
+    member_id: Id
+    program_id: OptId = None
     entries: list[SetFeedbackEntryIn] = Field(min_length=1)

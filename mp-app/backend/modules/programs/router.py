@@ -8,6 +8,7 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
 
 from app.deps import CurrentUser, DbSession, require_permission
+from app.ids import Id, OptId
 from modules.programs import service
 from modules.programs.schemas import ProgramFromEngineIn, ProgramOut, RejectIn, SetFeedbackIn
 
@@ -113,7 +114,7 @@ class SyncItemIn(BaseModel):
     client_id: str = Field(min_length=1, max_length=64)
     # برنامه‌ای که این ست به آن تعلق دارد — بدون آن، بازخورد آفلاین
     # هیچ‌گاه به برنامه وصل نمی‌شد و G13 آمادگی برایش null می‌داد.
-    program_id: int | None = None
+    program_id: OptId = None
     device_id: str = Field(min_length=1, max_length=64)
     updated_at: datetime
     movement_id: str = Field(default="", max_length=60)
@@ -126,7 +127,7 @@ class SyncItemIn(BaseModel):
 
 
 class SyncIn(BaseModel):
-    member_id: int = Field(ge=1)
+    member_id: Id
     items: list[SyncItemIn] = Field(default_factory=list, max_length=500)
 
 

@@ -76,8 +76,11 @@ def parse_version(v: str) -> tuple[int, ...]:
     """نسخهٔ semver-simplified → برای مقایسه (قطعی، بدون وابستگی)."""
     parts: list[int] = []
     for chunk in v.strip().split("."):
-        digits = "".join(c for c in chunk if c.isdigit())
-        parts.append(int(digits) if digits else 0)
+        # فقط ارقام ASCII — `"²".isdigit()` در پایتون True است ولی
+        # `int("²")` می‌شکند. DAST (M60/R18) این را روی endpoint **عمومیِ**
+        # `GET /updates/manifest?current=²` پیدا کرد: ۵۰۰ به‌جای نسخهٔ فعلی.
+        digits = "".join(c for c in chunk if c.isascii() and c.isdigit())
+        parts.append(min(int(digits), 10**6) if digits else 0)
     while len(parts) < 3:  # نرمال‌سازی: همیشه major.minor.patch
         parts.append(0)
     return tuple(parts[:3])

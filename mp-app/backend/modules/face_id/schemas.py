@@ -7,9 +7,11 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field, field_validator
 
+from app.ids import Id
+
 
 class ConsentIn(BaseModel):
-    member_id: int
+    member_id: Id
     policy_version: str = Field("v1", max_length=20)
 
 
@@ -24,7 +26,7 @@ class ConsentOut(BaseModel):
 
 
 class FaceEnroll(BaseModel):
-    member_id: int
+    member_id: Id
     embedding_b64: str = Field(..., description="embedding خروجی SFace (base64) — تصویر خام هرگز")
 
     @field_validator("embedding_b64")
@@ -47,7 +49,7 @@ class FaceTemplateOut(BaseModel):
 
 
 class CheckInIn(BaseModel):
-    member_id: int
+    member_id: Id
     method: str = Field(..., pattern="^(qr|face|manual)$")
 
 

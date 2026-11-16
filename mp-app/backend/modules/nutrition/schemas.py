@@ -4,16 +4,18 @@ from __future__ import annotations
 
 from pydantic import BaseModel, Field
 
+from app.ids import Id
+
 
 class MealItemIn(BaseModel):
-    food_id: int
+    food_id: Id
     meal_slot: str = Field(..., pattern="^(breakfast|lunch|dinner|snack)$")
     grams: int = Field(..., gt=0, le=2000)
     order: int = 0
 
 
 class PlanFromEngineIn(BaseModel):
-    member_id: int
+    member_id: Id
     daily_kcal: int = Field(..., gt=500, le=10000)
     protein_g: int = Field(..., ge=0)
     carbs_g: int = Field(..., ge=0)
@@ -55,7 +57,7 @@ from datetime import date as _date  # noqa: E402
 
 
 class FoodLogEntryIn(BaseModel):
-    food_id: int = Field(ge=1)
+    food_id: Id
     grams: float = Field(gt=0, le=5000)
     meal_slot: str = Field(default="snack", max_length=20)
     logged_for_date: _date | None = None
@@ -63,7 +65,7 @@ class FoodLogEntryIn(BaseModel):
 
 
 class FoodLogIn(BaseModel):
-    member_id: int = Field(ge=1)
+    member_id: Id
     entries: list[FoodLogEntryIn] = Field(min_length=1, max_length=50)
 
 
@@ -92,7 +94,7 @@ class WeightLogEntryIn(BaseModel):
 
 
 class WeightLogIn(BaseModel):
-    member_id: int = Field(ge=1)
+    member_id: Id
     entries: list[WeightLogEntryIn] = Field(min_length=1, max_length=60)
 
 

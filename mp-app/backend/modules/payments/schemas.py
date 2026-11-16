@@ -6,9 +6,11 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field
 
+from app.ids import Id
+
 
 class PaymentCreate(BaseModel):
-    member_id: int
+    member_id: Id
     amount_rial: int = Field(..., ge=1000, description="مبلغ به ریال")
     method: str = Field("zarinpal", pattern="^(zarinpal|cash|card|wallet)$")
     description: str = Field("", max_length=200)
@@ -52,7 +54,7 @@ class PaymentOut(BaseModel):
 
 
 class WalletCharge(BaseModel):
-    member_id: int
+    member_id: Id
     amount_rial: int = Field(..., gt=0)
     description: str = Field("", max_length=200)
 

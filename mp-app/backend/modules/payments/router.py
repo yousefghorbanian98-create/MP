@@ -3,9 +3,10 @@
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, Query
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from app.deps import CurrentUser, DbSession, require_permission
+from app.ids import MAX_SAFE_ID, Id
 from modules.payments import service
 from modules.payments.schemas import (
     GatewayCallbackIn,
@@ -75,7 +76,7 @@ def fail_payment(payment_id: int, db: DbSession):
 def list_payments(
     user: CurrentUser,
     db: DbSession,
-    member_id: int | None = Query(None),
+    member_id: int | None = Query(None, ge=1, le=MAX_SAFE_ID),
     status: str | None = Query(None, pattern="^(pending|paid|failed)$"),
 ):
     return service.list_payments(db, member_id=member_id, status=status, user=user)
@@ -140,8 +141,8 @@ def _finance_csv(db: DbSession):
 
 
 class CommissionIn(BaseModel):
-    coach_id: int
-    rate: float | None = None
+    coach_id: Id
+    rate: float | None = Field(default=None, ge=0, le=100)
 
 
 @router.post("/finance/commission", summary="کمیسیون مربی (M27)")

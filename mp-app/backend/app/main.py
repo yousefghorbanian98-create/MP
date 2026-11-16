@@ -92,6 +92,19 @@ def create_app() -> FastAPI:
     app.state.limiter = limiter
     app.add_exception_handler(RateLimitExceeded, _rate_limit_handler)
 
+    # M60/R18 — کفِ کیفیت خطا: هیچ درخواستی ۵۰۰ خالی نمی‌گیرد. جای این هندلر
+    # آخر است تا بالاتر از ApiError/Validation قرار بگیرد و فقط خطاهای
+    # *غیرمنتظره* را بگیرد (یافتهٔ DAST: OverflowError/IntegrityError).
+    from app.unhandled import register as register_unhandled
+
+    register_unhandled(app)
+
+    # M60/R18 — سقف شناسه‌های عددی در مسیر، قبل از رسیدن به DB
+    # (بدون این، `GET /shop/products/10**30` ← OverflowError ← ۵۰۰).
+    from app.id_guard import register as register_id_guard
+
+    register_id_guard(app)
+
     # تصاویر کتابخانهٔ حرکات (G9) — از خود اپ سرو می‌شوند تا PWA آفلاین
     # هم تصویر داشته باشد؛ هیچ وابستگی به سرور بیرونی نیست.
     from fastapi.staticfiles import StaticFiles

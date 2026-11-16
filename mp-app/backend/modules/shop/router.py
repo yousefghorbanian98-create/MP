@@ -15,6 +15,7 @@ from pydantic import BaseModel, Field
 
 from app.config import settings
 from app.deps import CurrentUser, DbSession, require_permission
+from app.ids import Id, OptId
 
 # همان نمونهٔ سقف نرخ که auth و main استفاده می‌کنند (slowapi). نمونهٔ دوم
 # ساختن باعث می‌شود شمارنده‌ها از هم جدا شوند و سقف دور زده شود.
@@ -34,7 +35,7 @@ class VariantIn(BaseModel):
 class ProductCreate(BaseModel):
     title: str = Field(..., min_length=2, max_length=120)
     sku: str = Field(..., min_length=2, max_length=40)
-    category_id: int | None = None
+    category_id: OptId = None
     category_slug: str | None = None
     subtitle: str = Field("", max_length=160)
     description: str = ""
@@ -59,8 +60,9 @@ class ProductUpdate(BaseModel):
 
 
 class CartAdd(BaseModel):
-    product_id: int
-    variant_id: int | None = None
+    # M60/R18 — بدون سقف، `product_id: 10**30` به SQLite می‌رسید و ۵۰۰ می‌داد.
+    product_id: Id
+    variant_id: OptId = None
     qty: int = Field(1, ge=1, le=20)
 
 

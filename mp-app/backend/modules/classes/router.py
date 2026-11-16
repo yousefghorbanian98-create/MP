@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
 
 from app.deps import CurrentUser, DbSession, require_permission
+from app.ids import Id
 from modules.classes import service
 
 router = APIRouter(prefix="/classes", tags=["classes"])
@@ -19,8 +20,8 @@ class ClassIn(BaseModel):
 
 
 class BookIn(BaseModel):
-    class_id: int
-    member_id: int
+    class_id: Id
+    member_id: Id
 
 
 @router.get(

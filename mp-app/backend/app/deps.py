@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Generator
 from typing import Annotated
 
-from fastapi import Depends, Header, Request
+from fastapi import Depends, Header, Path, Request
 from sqlalchemy.orm import Session
 
 from app.errors import ForbiddenError, UnauthorizedError
@@ -23,6 +23,18 @@ def get_db() -> Generator[Session, None, None]:
 
 
 DbSession = Annotated[Session, Depends(get_db)]
+
+# شناسه‌های مسیر با سقف — نه `int` خالی.
+#
+# یافتهٔ DAST (M60/R18): `int` خالی در FastAPI هر عدد صحیح ۶۴بیتی و بزرگ‌تر را
+# می‌پذیرد؛ SQLite برای `10**30` استثنای `OverflowError` می‌دهد و نتیجه ۵۰۰ بود
+# (روی مسیرهایی مثل `/assessments/limb/member/{member_id}/report`). با سقف،
+# FastAPI پیش از رسیدن به لایهٔ داده ۴۲۲ می‌دهد. سقف ۲^۵۳ است تا با JSON
+# جاوااسکریپت (Number.MAX_SAFE_INTEGER) و کلاینت فلاتر هم‌خوان بماند.
+MAX_SAFE_ID = 9_007_199_254_740_991
+
+# در امضای تابع wrapper است تا هر سه‌جای `SafeId` یک رفتار داشته باشد.
+PathId = Annotated[int, Path(ge=1, le=MAX_SAFE_ID)]
 
 
 def get_current_user(

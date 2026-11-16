@@ -6,6 +6,8 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field
 
+from app.ids import Id
+
 
 class DomainScoreIn(BaseModel):
     domain: int = Field(..., ge=1, le=14)
@@ -14,7 +16,7 @@ class DomainScoreIn(BaseModel):
 
 
 class AssessmentCreate(BaseModel):
-    member_id: int
+    member_id: Id
     scores: list[DomainScoreIn] = Field(..., min_length=14, max_length=14)
     notes: str = Field("", max_length=2000)
 
@@ -40,7 +42,7 @@ class AssessmentOut(BaseModel):
 
 
 class Jp7In(BaseModel):
-    member_id: int
+    member_id: Id
     age: int = Field(..., ge=10, le=100)
     gender: str = Field(..., pattern="^(male|female)$")
     skinfolds_mm: dict[str, float] = Field(
@@ -69,7 +71,7 @@ class Jp7Out(BaseModel):
 class LimbMeasurementIn(BaseModel):
     """M54-c1 — محیط اندام (cm). همه اختیاری؛ حداقل یکی لازم است."""
 
-    member_id: int = Field(ge=1)
+    member_id: Id
     neck_cm: float | None = Field(default=None, gt=0, le=300)
     chest_cm: float | None = Field(default=None, gt=0, le=300)
     waist_cm: float | None = Field(default=None, gt=0, le=300)
