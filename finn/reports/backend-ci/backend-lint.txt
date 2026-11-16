@@ -1,2 +1,34 @@
-All checks passed!
-271 files already formatted
+I001 [*] Import block is un-sorted or un-formatted
+  --> modules/admin/roles.py:9:1
+   |
+ 7 |   """
+ 8 |
+ 9 | / from __future__ import annotations
+10 | |
+11 | | import json
+12 | |
+13 | | from app.security.hierarchy import ROLE_RANK, ensure_can_manage
+14 | | from sqlalchemy import select
+15 | | from sqlalchemy.orm import Session
+16 | |
+17 | | from app.errors import ApiError, ForbiddenError, NotFoundError
+18 | | from db.models import AuditLog, User
+   | |____________________________________^
+19 |
+20 |   # M59 — `super_admin` عمداً از این فهرست حذف شد.
+   |
+help: Organize imports
+   |
+12 |
+   - from app.security.hierarchy import ROLE_RANK, ensure_can_manage
+13 | from sqlalchemy import select
+14 | from sqlalchemy.orm import Session
+15 |
+16 | from app.errors import ApiError, ForbiddenError, NotFoundError
+17 + from app.security.hierarchy import ROLE_RANK, ensure_can_manage
+18 | from db.models import AuditLog, User
+   |
+
+Found 1 error.
+[*] 1 fixable with `--fix`.
+279 files already formatted
