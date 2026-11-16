@@ -299,7 +299,10 @@ class _CartSheetState extends ConsumerState<_CartSheet> {
     setState(() => _busy = true);
     try {
       final res = await api.post('/shop/checkout', {'method': 'wallet'});
-      final orderId = (res as Map)['order_id'];
+      // M60/R16 — `res` بدنهٔ خام API است و نوعش dynamic؛ cast مستقیم به Map
+      // همان الگویی است که در M59 سه صفحه را بی‌صدا شکست. `Map.from` هم
+      // نوع را صریح می‌کند و هم اگر بدنه List باشد پیام روشن می‌دهد.
+      final orderId = Map<String, dynamic>.from(res as Map)['order_id'];
       ref.invalidate(cartProvider);
       ref.invalidate(walletProvider);
       ref.invalidate(shopOrdersProvider);
