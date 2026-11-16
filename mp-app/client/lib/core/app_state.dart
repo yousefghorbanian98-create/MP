@@ -55,6 +55,18 @@ final walletProvider = FutureProvider<Map<String, dynamic>>((ref) async {
   return Map<String, dynamic>.from(r as Map);
 });
 
+/// تاریخچهٔ پرداخت‌های من — G1 از ممیزی رقابتی.
+///
+/// پیش از این، عضو هیچ‌جا نمی‌دید پولش کجا رفته است: استودیو گزارش مالی داشت
+/// ولی اپ عضو هیچ صفحه‌ای نداشت، در حالی که `GET /payments` از قبل وجود داشت
+/// (و سمت سرور عضو را مجبور می‌کند فقط پرداخت‌های خودش را ببیند).
+final myPaymentsProvider = FutureProvider<List<Map<String, dynamic>>>((ref) async {
+  final api = ref.watch(apiClientProvider);
+  final r = await api.get('/payments');
+  if (r is List) return r.map((e) => Map<String, dynamic>.from(e as Map)).toList();
+  return const [];
+});
+
 /// فروشگاه واقعی — کاتالوگ از API (M59). پیش‌تر چهار محصول hardcode بود.
 final shopProductsProvider = FutureProvider<List<Map<String, dynamic>>>((ref) async {
   final api = ref.watch(apiClientProvider);
