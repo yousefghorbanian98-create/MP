@@ -677,3 +677,33 @@ def test_classes_read_denied_for_role_without_policy(client: TestClient) -> None
         s.commit()
         h = {"Authorization": f"Bearer {create_access_token(u.id, u.role)}"}
     assert client.get("/api/v1/classes", headers=h).status_code == 403
+
+
+# ── M60/R3 — دادهٔ مالی برای پذیرش ──
+def test_reception_cannot_read_finance(client: TestClient) -> None:
+    """پذیرش پول می‌گیرد ولی نباید کل درآمد/CSV/کمیسیون را ببیند (M59 leak class)."""
+    reception = _user("reception")
+    assert (
+        client.get("/api/v1/payments/finance/summary", headers=reception["headers"]).status_code
+        == 403
+    )
+    assert (
+        client.get("/api/v1/payments/finance/export.csv", headers=reception["headers"]).status_code
+        == 403
+    )
+    assert (
+        client.post(
+            "/api/v1/payments/finance/commission",
+            json={"coach_id": 1, "rate": 0.1},
+            headers=reception["headers"],
+        ).status_code
+        == 403
+    )
+    # اما مسیر عملیاتی پرداخت باز است
+    assert client.get("/api/v1/payments", headers=reception["headers"]).status_code == 200
+
+
+def test_manager_and_admin_keep_finance_access(client: TestClient) -> None:
+    for role in ("manager", "admin"):
+        h = _user(role)["headers"]
+        assert client.get("/api/v1/payments/finance/summary", headers=h).status_code == 200, role

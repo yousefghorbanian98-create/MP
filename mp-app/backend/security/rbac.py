@@ -188,6 +188,13 @@ DENIES: list[tuple[str, str, str]] = [
     # (کل درآمد باشگاه + CSV همهٔ پرداخت‌ها). با TestClient و توکن member
     # تأیید شد: 200 با `{"total_paid_rial":750000,...}`.
     ("member", "/api/v1/payments/finance/*", "*"),
+    # ── M60/R3 — دادهٔ مالی خالص برای پذیرش نیست ──
+    # `("reception", "/payments/*", "*")` باعث می‌شد پذیرش
+    # `GET /payments/finance/summary` (کل درآمد باشگاه)، `export.csv`
+    # (همهٔ پرداخت‌ها) و `POST /finance/commission` را بگیرد — تأییدشده با
+    # TestClient: هر سه ۲۰۰. پذیرش برای گرفتن پول به `/payments` نیاز دارد،
+    # نه به گزارش درآمد. (`manager` و بالاتر مجاز می‌مانند.)
+    ("reception", "/api/v1/payments/finance/*", "*"),
     # نوشتن کاتالوگ/درگاه/قیمت هرگز از مسیر member — لایهٔ دوم بعد از ensure_owner
     ("member", "/api/v1/shop/products", "POST"),
     ("member", "/api/v1/shop/products/*", "PATCH"),
