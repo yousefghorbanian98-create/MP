@@ -1,27 +1,2 @@
 All checks passed!
-unformatted: File would be reformatted
-   --> tests/integration/test_m59_shop.py:608:21
-    |
-607 |     codes = [
-    -         client.post("/api/v1/shop/checkout", json={"method": "wallet"}, headers=member["headers"]).status_code
-608 +         client.post(
-609 +             "/api/v1/shop/checkout", json={"method": "wallet"}, headers=member["headers"]
-610 +         ).status_code
-611 |         for _ in range(12)
---------------------------------------------------------------------------------
-627 |         client.post(
-    -             "/api/v1/shop/cart", json={"product_id": product["id"], "qty": 1}, headers=member["headers"]
-628 +             "/api/v1/shop/cart",
-629 +             json={"product_id": product["id"], "qty": 1},
-630 +             headers=member["headers"],
-631 |         ).status_code
---------------------------------------------------------------------------------
-645 |     for _ in range(12):
-    -         r = client.post("/api/v1/shop/checkout", json={"method": "wallet"}, headers=member["headers"])
-646 +         r = client.post(
-647 +             "/api/v1/shop/checkout", json={"method": "wallet"}, headers=member["headers"]
-648 +         )
-649 |         if r.status_code == 429:
-    |
-
-1 file would be reformatted, 278 files already formatted
+291 files already formatted
