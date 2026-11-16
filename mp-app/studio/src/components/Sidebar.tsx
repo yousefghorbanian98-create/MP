@@ -1,4 +1,6 @@
 import { motion } from "framer-motion";
+import { useMemo } from "react";
+import { canSeePage, parseRole } from "../lib/roleNav";
 import { useAppStore, type PageId } from "../stores/appStore";
 
 const items: { id: PageId; label: string; icon: string }[] = [
@@ -15,9 +17,30 @@ const items: { id: PageId; label: string; icon: string }[] = [
   { id: "settings", label: "تنظیمات", icon: "⚙" },
 ];
 
-/** نوار کناری با نشانگر متحرک و hover نرم. */
+/**
+ * صفحه‌هایی که بدون نقش شناخته‌شده نمایش داده نمی‌شوند (fail-closed):
+ * دادهٔ مالی و پیکربندی نباید با یک توکن ناشناخته حتی در منو ظاهر شوند.
+ */
+const NEEDS_ROLE = new Set<PageId>(["finance", "settings"]);
+
+/**
+ * نوار کناری با نشانگر متحرک و hover نرم.
+ *
+ * M60/R3: فقط صفحه‌هایی نمایش داده می‌شوند که نقش جاری مجاز است ببیند. پیش‌تر
+ * پذیرش منوی «مالی» را می‌دید و با کلیک، صفحه‌ای باز می‌شد که همهٔ درخواست‌هایش
+ * ۴۰۳ می‌گرفتند — یعنی منو دکمهٔ دکوراتیو بود.
+ */
 export function Sidebar() {
   const { page, setPage } = useAppStore();
+  const role = useMemo(() => parseRole(), []);
+  // بدون نقش قابل‌تشخیص، منو را پنهان نمی‌کنیم: کاربر تازه‌وارد باید بفهمد
+  // باید وارد شود، نه اینکه با یک ستون خالی روبه‌رو شود. اما داده‌های حساس
+  // (مالی/تنظیمات) فقط با نقش شناخته‌شده نمایش داده می‌شوند — جدول
+  // STAFF_ONLY_ROLES در تست‌ها این را نگه می‌دارد.
+  const allowed = useMemo(
+    () => (role ? items.filter((i) => canSeePage(i.id, role)) : items.filter((i) => !NEEDS_ROLE.has(i.id))),
+    [role],
+  );
 
   return (
     <aside className="glass-card sticky top-6 flex h-[calc(100vh-3rem)] w-56 flex-col gap-2 p-4">
@@ -32,7 +55,7 @@ export function Sidebar() {
       </div>
 
       <nav className="relative flex flex-col gap-1">
-        {items.map((item) => {
+        {allowed.map((item) => {
           const active = page === item.id;
           return (
             <button

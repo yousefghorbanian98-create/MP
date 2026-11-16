@@ -44,24 +44,14 @@ import {
   type OrderReceipt,
 } from "../lib/api";
 
+import { roleFromToken } from "../lib/roleNav";
+
 const rial = (n: number) => `${fa(n)} ریال`;
 
 type Tab = "store" | "cart" | "orders" | "manage" | "requests";
 
-/** نقش از توکن خوانده می‌شود — منبع حقیقت سرور است، نه یک متغیر UI. */
-function roleFromToken(): string {
-  if (typeof localStorage === "undefined") return "member";
-  const raw = localStorage.getItem("mp_token");
-  if (!raw) return "guest";
-  try {
-    const payload = JSON.parse(atob(raw.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")));
-    return typeof payload.role === "string" ? payload.role : "member";
-  } catch {
-    return "guest";
-  }
-}
-
 export function Shop() {
+  // M60/R3: منبع حقیقت مشترک (lib/roleNav) — قبلاً هر صفحه نسخهٔ خودش را داشت.
   const role = roleFromToken();
   const isOwner = role === "super_admin";
   const isAdmin = isOwner || role === "admin";

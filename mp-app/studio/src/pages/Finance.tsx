@@ -8,6 +8,7 @@ import {
   type CommissionResult,
   type FinanceSummary,
 } from "../lib/api";
+import { canSeePage, parseRole } from "../lib/roleNav";
 import { fa } from "../lib/useApi";
 
 const fmt = (n: number) => fa(n);
@@ -21,6 +22,13 @@ const fmt = (n: number) => fa(n);
  * را به AuthError تبدیل می‌کند تا پیام «نیاز به توکن» نشان داده شود.
  */
 export function Finance() {
+  // M60/R3: صفحهٔ مالی پیش‌تر برای هر نقشی رندر می‌شد و سه دکمه‌اش برای
+  // reception/coach/member همه ۴۰۳ می‌گرفتند. حالا خودِ صفحه هم گیت می‌شود،
+  // نه فقط منو — چون کاربر می‌تواند با URL/state مستقیم به صفحه برسد.
+  // نقش ناشناخته (توکن غیر-JWT یا قدیمی) → گیت اعمال نمی‌شود و تصمیم با
+  // سرور است. منطق: پنهان‌کردن صفحه بر پایهٔ حدس، کاربر را قفل می‌کند؛
+  // سرور همچنان ۴۰۳ می‌دهد و پیامش نمایش داده می‌شود.
+  const role = parseRole();
   const [coachId, setCoachId] = useState("");
   const [rate, setRate] = useState("10");
   const [commission, setCommission] = useState<CommissionResult | null>(null);
@@ -74,6 +82,15 @@ export function Finance() {
       a.click();
       URL.revokeObjectURL(url);
     });
+
+  if (role && !canSeePage("finance", role)) {
+    return (
+      <div className="glass-card p-5 text-sm text-ink-dim" role="alert">
+        گزارش مالی برای نقش شما مجاز نیست. سرور هم این را رد می‌کند (۴۰۳) — این پیام
+        فقط توضیح می‌دهد چرا صفحه خالی است.
+      </div>
+    );
+  }
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
