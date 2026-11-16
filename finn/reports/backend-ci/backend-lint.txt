@@ -1,34 +1,27 @@
-I001 [*] Import block is un-sorted or un-formatted
-  --> modules/admin/roles.py:9:1
-   |
- 7 |   """
- 8 |
- 9 | / from __future__ import annotations
-10 | |
-11 | | import json
-12 | |
-13 | | from app.security.hierarchy import ROLE_RANK, ensure_can_manage
-14 | | from sqlalchemy import select
-15 | | from sqlalchemy.orm import Session
-16 | |
-17 | | from app.errors import ApiError, ForbiddenError, NotFoundError
-18 | | from db.models import AuditLog, User
-   | |____________________________________^
-19 |
-20 |   # M59 — `super_admin` عمداً از این فهرست حذف شد.
-   |
-help: Organize imports
-   |
-12 |
-   - from app.security.hierarchy import ROLE_RANK, ensure_can_manage
-13 | from sqlalchemy import select
-14 | from sqlalchemy.orm import Session
-15 |
-16 | from app.errors import ApiError, ForbiddenError, NotFoundError
-17 + from app.security.hierarchy import ROLE_RANK, ensure_can_manage
-18 | from db.models import AuditLog, User
-   |
+All checks passed!
+unformatted: File would be reformatted
+   --> tests/integration/test_m59_shop.py:608:21
+    |
+607 |     codes = [
+    -         client.post("/api/v1/shop/checkout", json={"method": "wallet"}, headers=member["headers"]).status_code
+608 +         client.post(
+609 +             "/api/v1/shop/checkout", json={"method": "wallet"}, headers=member["headers"]
+610 +         ).status_code
+611 |         for _ in range(12)
+--------------------------------------------------------------------------------
+627 |         client.post(
+    -             "/api/v1/shop/cart", json={"product_id": product["id"], "qty": 1}, headers=member["headers"]
+628 +             "/api/v1/shop/cart",
+629 +             json={"product_id": product["id"], "qty": 1},
+630 +             headers=member["headers"],
+631 |         ).status_code
+--------------------------------------------------------------------------------
+645 |     for _ in range(12):
+    -         r = client.post("/api/v1/shop/checkout", json={"method": "wallet"}, headers=member["headers"])
+646 +         r = client.post(
+647 +             "/api/v1/shop/checkout", json={"method": "wallet"}, headers=member["headers"]
+648 +         )
+649 |         if r.status_code == 429:
+    |
 
-Found 1 error.
-[*] 1 fixable with `--fix`.
-279 files already formatted
+1 file would be reformatted, 278 files already formatted
