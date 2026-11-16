@@ -55,6 +55,45 @@ final walletProvider = FutureProvider<Map<String, dynamic>>((ref) async {
   return Map<String, dynamic>.from(r as Map);
 });
 
+/// فروشگاه واقعی — کاتالوگ از API (M59). پیش‌تر چهار محصول hardcode بود.
+final shopProductsProvider = FutureProvider<List<Map<String, dynamic>>>((ref) async {
+  final api = ref.watch(apiClientProvider);
+  final r = await api.get('/shop/products');
+  if (r is List) return r.map((e) => Map<String, dynamic>.from(e as Map)).toList();
+  return const [];
+});
+
+/// دسته‌های فروشگاه (مکمل/تجهیزات/پوشاک).
+final shopCategoriesProvider = FutureProvider<List<Map<String, dynamic>>>((ref) async {
+  final api = ref.watch(apiClientProvider);
+  final r = await api.get('/shop/categories');
+  if (r is List) return r.map((e) => Map<String, dynamic>.from(e as Map)).toList();
+  return const [];
+});
+
+/// سبد خرید من — مبلغ از سرور می‌آید، نه از کلاینت.
+final cartProvider = FutureProvider<Map<String, dynamic>>((ref) async {
+  final api = ref.watch(apiClientProvider);
+  final r = await api.get('/shop/cart');
+  return Map<String, dynamic>.from(r as Map);
+});
+
+/// سفارش‌های من.
+final shopOrdersProvider = FutureProvider<List<Map<String, dynamic>>>((ref) async {
+  final api = ref.watch(apiClientProvider);
+  final r = await api.get('/shop/orders');
+  if (r is List) return r.map((e) => Map<String, dynamic>.from(e as Map)).toList();
+  return const [];
+});
+
+/// درگاه‌های فعال و شمارهٔ کارت (ماسک‌شده) — خواندن برای همه مجاز است.
+final gatewaysProvider = FutureProvider<List<Map<String, dynamic>>>((ref) async {
+  final api = ref.watch(apiClientProvider);
+  final r = await api.get('/shop/gateways');
+  if (r is List) return r.map((e) => Map<String, dynamic>.from(e as Map)).toList();
+  return const [];
+});
+
 /// کلاس‌های باشگاه.
 final classesProvider = FutureProvider<List<dynamic>>((ref) async {
   final api = ref.watch(apiClientProvider);

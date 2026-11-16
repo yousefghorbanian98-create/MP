@@ -1033,3 +1033,265 @@ export function fetchReminders(
     signal,
   );
 }
+
+// ── M59 — فروشگاه، کیف‌پول، درگاه، دفتر قیمت، درخواست تأیید ──
+
+async function sendJson<T>(
+  method: "POST" | "PATCH" | "PUT" | "DELETE",
+  path: string,
+  body: unknown,
+  token: string | null,
+): Promise<T> {
+  let resp: Response;
+  try {
+    resp = await fetch(`${API_BASE}${path}`, {
+      method,
+      headers: { ...authHeaders(token), "Content-Type": "application/json" },
+      body: body === undefined ? undefined : JSON.stringify(body),
+    });
+  } catch {
+    throw new ApiError("اتصال به سرور برقرار نشد", 0);
+  }
+  if (resp.status === 401 || resp.status === 403) {
+    // پیام سرور ارزشمند است («فقط مالک سیستم»)، ولی نوع خطا باید AuthError بماند
+    // تا لایهٔ UI بتواند «نیاز به سطح دسترسی» را از «قطع اتصال» تفکیک کند.
+    const detail = (await resp.json().catch(() => null)) as {
+      error?: { message?: string };
+    } | null;
+    throw new AuthError(detail?.error?.message ?? "این عملیات به سطح دسترسی بالاتری نیاز دارد");
+  }
+  if (!resp.ok) {
+    const detail = (await resp.json().catch(() => null)) as {
+      error?: { message?: string };
+    } | null;
+    throw new ApiError(detail?.error?.message ?? `خطای ${resp.status}`, resp.status);
+  }
+  if (resp.status === 204) return undefined as T;
+  return (await resp.json()) as T;
+}
+
+export interface ShopVariant {
+  id: number;
+  label: string;
+  price_rial: number;
+  stock_qty: number;
+  is_active: boolean;
+}
+
+export interface ShopProduct {
+  id: number;
+  sku: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  price_rial: number;
+  compare_at_rial: number | null;
+  image_url: string;
+  gallery: string[];
+  category_id: number;
+  stock_qty: number;
+  is_active: boolean;
+  variants: ShopVariant[];
+}
+
+export interface ShopCategory {
+  id: number;
+  slug: string;
+  title: string;
+  kind: "equipment" | "supplement" | "apparel" | "service";
+  sort_order: number;
+  is_active: boolean;
+}
+
+export interface CartLine {
+  id: number;
+  product_id: number;
+  variant_id: number | null;
+  title: string;
+  variant_label: string;
+  image_url: string;
+  unit_price_rial: number;
+  qty: number;
+  line_total_rial: number;
+}
+
+export interface ShopCart {
+  member_id: number;
+  items: CartLine[];
+  total_rial: number;
+  count: number;
+}
+
+export interface ShopOrder {
+  id: number;
+  member_id: number;
+  status: "pending" | "paid" | "failed" | "cancelled" | "delivered";
+  total_rial: number;
+  payment_id: number | null;
+  note: string;
+  created_at: string;
+  items: {
+    product_id: number;
+    title: string;
+    unit_price_rial: number;
+    qty: number;
+  }[];
+}
+
+export interface ShopGateway {
+  id: number;
+  kind: "zarinpal" | "idpay" | "card_to_card" | "cash";
+  title: string;
+  is_enabled: boolean;
+  card_number_masked: string;
+  card_holder: string;
+  bank_name: string;
+  public_key: string;
+  instructions: string;
+  secret_configured: boolean;
+}
+
+export interface PriceRow {
+  id: number;
+  category: "membership" | "coach_fee" | "program_fee";
+  code: string;
+  title: string;
+  price_rial: number;
+  duration_days: number | null;
+  gender: string;
+  effective_from?: string;
+}
+
+export interface ChangeRequest {
+  id: number;
+  kind: string;
+  kind_label: string;
+  payload: Record<string, unknown>;
+  requested_by: number;
+  status: "pending" | "approved" | "rejected";
+  reviewed_by: number | null;
+  reviewed_at: string | null;
+  review_note: string;
+  result: Record<string, unknown>;
+  created_at: string;
+}
+
+export const fetchShopProducts = (
+  params: { category?: string; kind?: string; search?: string } = {},
+  token = getToken(),
+  signal?: AbortSignal,
+) => {
+  const qs = new URLSearchParams();
+  if (params.category) qs.set("category", params.category);
+  if (params.kind) qs.set("kind", params.kind);
+  if (params.search) qs.set("search", params.search);
+  const suffix = qs.toString() ? `?${qs}` : "";
+  return getJson<ShopProduct[]>(`/shop/products${suffix}`, token, signal);
+};
+
+export const fetchShopCategories = (token = getToken(), signal?: AbortSignal) =>
+  getJson<ShopCategory[]>("/shop/categories", token, signal);
+
+export const fetchCart = (token = getToken(), signal?: AbortSignal) =>
+  getJson<ShopCart>("/shop/cart", token, signal);
+
+export const addCartItem = (
+  productId: number,
+  qty = 1,
+  variantId: number | null = null,
+  token = getToken(),
+) => sendJson<ShopCart>("POST", "/shop/cart", { product_id: productId, qty, variant_id: variantId }, token);
+
+export const updateCartItem = (itemId: number, qty: number, token = getToken()) =>
+  sendJson<ShopCart>("PATCH", `/shop/cart/${itemId}`, { qty }, token);
+
+export const removeCartItem = (itemId: number, token = getToken()) =>
+  sendJson<ShopCart>("DELETE", `/shop/cart/${itemId}`, undefined, token);
+
+export const checkoutCart = (method: "wallet" | "zarinpal" | "card" | "cash" = "wallet", token = getToken()) =>
+  sendJson<{ order_id: number; status: string; total_rial: number; payment_id: number | null }>(
+    "POST",
+    "/shop/checkout",
+    { method },
+    token,
+  );
+
+export const fetchShopOrders = (token = getToken(), signal?: AbortSignal) =>
+  getJson<ShopOrder[]>("/shop/orders", token, signal);
+
+export const markOrderStatus = (orderId: number, status: ShopOrder["status"], token = getToken()) =>
+  sendJson<{ id: number; status: string }>("PATCH", `/shop/orders/${orderId}`, { status }, token);
+
+export const fetchGateways = (token = getToken(), signal?: AbortSignal) =>
+  getJson<ShopGateway[]>("/shop/gateways", token, signal);
+
+export interface GatewayInput {
+  kind: ShopGateway["kind"];
+  title: string;
+  is_enabled?: boolean;
+  /** فقط هنگام نوشتن؛ در پاسخ فقط `card_number_masked` برمی‌گردد. */
+  card_number?: string;
+  card_holder?: string;
+  bank_name?: string;
+  public_key?: string;
+  secret_key?: string;
+  instructions?: string;
+}
+
+export const upsertGateway = (
+  payload: GatewayInput,
+  gatewayId?: number,
+  token = getToken(),
+) =>
+  sendJson<ShopGateway>(
+    gatewayId ? "PUT" : "POST",
+    gatewayId ? `/shop/gateways/${gatewayId}` : "/shop/gateways",
+    payload,
+    token,
+  );
+
+export const fetchPrices = (category?: PriceRow["category"], token = getToken(), signal?: AbortSignal) =>
+  getJson<PriceRow[]>(`/shop/prices${category ? `?category=${category}` : ""}`, token, signal);
+
+export const savePrice = (
+  payload: {
+    category: PriceRow["category"];
+    code: string;
+    title: string;
+    price_rial: number;
+    duration_days?: number | null;
+    gender?: string;
+  },
+  token = getToken(),
+) => sendJson<PriceRow>("POST", "/shop/prices", payload, token);
+
+export const createProduct = (
+  payload: {
+    title: string;
+    sku: string;
+    category_id: number;
+    price_rial: number;
+    image_url?: string;
+    stock_qty?: number;
+    description?: string;
+    variants?: { label: string; price_rial?: number | null; stock_qty?: number }[];
+  },
+  token = getToken(),
+) => sendJson<ShopProduct>("POST", "/shop/products", payload, token);
+
+export const updateProduct = (productId: number, payload: Record<string, unknown>, token = getToken()) =>
+  sendJson<ShopProduct>("PATCH", `/shop/products/${productId}`, payload, token);
+
+export const fetchChangeRequests = (token = getToken(), signal?: AbortSignal) =>
+  getJson<ChangeRequest[]>("/shop/change-requests", token, signal);
+
+export const askChangeRequest = (kind: string, payload: Record<string, unknown>, token = getToken()) =>
+  sendJson<ChangeRequest>("POST", "/shop/change-requests", { kind, payload }, token);
+
+export const reviewChangeRequest = (
+  requestId: number,
+  approve: boolean,
+  note = "",
+  token = getToken(),
+) =>
+  sendJson<ChangeRequest>("POST", `/shop/change-requests/${requestId}/review`, { approve, note }, token);

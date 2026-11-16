@@ -1,4 +1,5 @@
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { ToastViewport } from "./components/Feedback";
 import { UpdateBanner } from "./components/UpdateBanner";
 import { Sidebar } from "./components/Sidebar";
 import { TopBar } from "./components/TopBar";
@@ -12,6 +13,7 @@ import { Chat } from "./pages/Chat";
 import { Nutrition } from "./pages/Nutrition";
 import { Programs } from "./pages/Programs";
 import { Settings } from "./pages/Settings";
+import { Shop } from "./pages/Shop";
 import { useAppStore } from "./stores/appStore";
 
 const pages = {
@@ -25,6 +27,7 @@ const pages = {
   finance: Finance,
   analytics: Analytics,
   settings: Settings,
+  shop: Shop,
 } as const;
 
 /** لایهٔ اصلی — انتقال صفحات با انیمیشن نرم (AnimatePresence). */
@@ -50,6 +53,7 @@ export default function App() {
           </motion.div>
         </AnimatePresence>
         <UpdateBanner current={__APP_VERSION__} />
+        <ToastViewport />
         <footer className="mt-10 pb-2 text-center text-xs text-ink-dim">
           Muscle Paradise — سیستم‌عامل باشگاه · ساخته‌شده با عشق به جزئیات 💚
         </footer>

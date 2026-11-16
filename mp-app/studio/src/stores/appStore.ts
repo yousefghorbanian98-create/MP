@@ -17,7 +17,8 @@ export type PageId =
   | "checkin"
   | "finance"
   | "analytics"
-  | "settings";
+  | "settings"
+  | "shop";
 
 interface AppState {
   page: PageId;

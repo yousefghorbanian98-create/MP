@@ -152,3 +152,31 @@ KPI ← یادآوری ← UI ← مستندات ← پرداخت در آخر)
 
 **بازمانده (صادقانه):** فقط دو آیتم، و هر دو ابزارِ بیرونی می‌خواهند:
 APK روی دستگاه واقعی، و صف آفلاین Dart (نیازمند Flutter SDK).
+
+---
+
+## 🆕 چرخهٔ ۲۰۲۶-۱۱-۱۵ (M59) — فروشگاه، کیف‌پول، سلسله‌مراتب، بازبینی دسترسی
+
+| # | آیتم | شاهد | وضعیت |
+|---|---|---|---|
+| ✅ | **A1 — بستن نشت مالی**: عضو عادی به `/payments/finance/summary` و `export.csv` ۲۰۰ می‌گرفت | `security/rbac.py::DENIES` + `test_member_cannot_see_finance_summary` / `..._export_payments_csv`; اثبات زنده: ۲۰۰ ← ۴۰۳ | انجام |
+| ✅ | **A2 — سلسله‌مراتب نقش**: `admin` ≠ `super_admin`، `super_admin` از `ASSIGNABLE_ROLES` حذف، اعطای یک‌طرفه | `app/security/hierarchy.py`, `ROLE_INHERITANCE`, `test_role_hierarchy_one_way`, `test_admin_cannot_grant_admin`, `test_super_admin_not_assignable_via_api` | انجام |
+| ✅ | **A3 — فروشگاه کامل** (دسته/محصول/تنوع/سبد/سفارش/درگاه/دفترقیمت/تأیید) | `db/models/shop.py` + `modules/shop/` + مهاجرت `b7c9d1e2f3a4`; ۳۰ تست; `alembic check` بدون drift | انجام |
+| ✅ | **A4 — کیف‌پول در مسیر خرید**: سبد ← سفارش ← برداشت اتمیک، قفل قیمت در `OrderItem` | `test_checkout_debits_wallet_and_creates_order`, `test_order_price_is_frozen`, `test_checkout_insufficient_balance_keeps_cart` | انجام |
+| ✅ | **A5 — استودیو: صفحهٔ فروشگاه + لایهٔ بازخورد** (toast/skeleton/dialog) | `src/pages/Shop.tsx`, `components/Feedback.tsx`, `tests/shopPage.test.tsx` (۵ تست) | انجام |
+| ✅ | **A6 — اپ Dart: فروشگاه واقعی** (جایگزینی چهار محصول hardcode) | `client/lib/features/shop/shop_page.dart`, `test/shop_page_test.dart` — **بدون Flutter SDK اجرا نشده؛ بازبینی دستی** | انجام (غیرقابل اجرا در این محیط) |
+| ✅ | **A7 — دادهٔ اولیه** | `scripts/seed_shop.py` — idempotent، دو بار اجرا = ۰ رکورد جدید | انجام |
+| ✅ | **A8 — سند بازبینی دسترسی** | `docs/MuscleParadise/ACCESS-AUDIT-2026-11-15.md` | انجام |
+| ✅ | **A9 — طرح جامع + ریزلوپ‌ها** | `docs/MuscleParadise/MASTER-PLAN-M59.md` | انجام |
+| ⛔ | **A10 — ریت‌لیمیت سبد/تسویه** (L0.4) | ندارد | صف |
+| ⛔ | **A11 — گیت خودکار «هر مسیر guard دارد»** (L0.5) | ندارد | صف |
+| ⛔ | **A12 — پنهان‌کردن دکمه‌های غیرمجاز در همهٔ صفحه‌ها** (L0.6) | فقط فروشگاه role-aware | صف |
+| ⛔ | **A13 — تسویهٔ سفارش از درگاه** (L1.6): سفارش پس از callback خودکار `paid` نشود | — | صف |
+| ⛔ | **A14 — نمایش آموزشی GIF/ویدیو** (L3.2): **وجود ندارد**؛ ۳۴ JPG ثابت | — | صف |
+| ⛔ | **A15 — بسته‌بندی Electron + وب Docker** (L4.1/L4.2) | Electron خام، بدون packaging | صف |
+| ⛔ | **A16 — برابری وب/دسکتاپ** (L4.3) | `apiCoverage` فقط استودیو/Dart را می‌شمارد | صف |
+| 🟡 | **A17 — `alembic upgrade` روی `mp.db` محلی** | DB بدون نسخه (از `create_all`) ← `alembic stamp head` یا DB نو | توجه |
+
+**دروازه‌های این چرخه:** backend `681 passed` · ruff/format پاک · bandit 0 (کد خودمان) ·
+semgrep پروژه‌ای `errors=0, findings=0` · studio `163 passed / 26 files` · `tsc` پاک ·
+`alembic check` بدون drift · pip-audit فقط `mp-backend` خودمان (قابل audit نیست).

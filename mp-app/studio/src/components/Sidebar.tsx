@@ -11,6 +11,7 @@ const items: { id: PageId; label: string; icon: string }[] = [
   { id: "checkin", label: "حضور", icon: "◎" },
   { id: "finance", label: "مالی", icon: "◈" },
   { id: "analytics", label: "تحلیل‌ها", icon: "◆" },
+  { id: "shop", label: "فروشگاه", icon: "▣" },
   { id: "settings", label: "تنظیمات", icon: "⚙" },
 ];
 

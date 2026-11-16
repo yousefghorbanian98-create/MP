@@ -145,6 +145,32 @@ POLICIES: list[tuple[str, str, str]] = [
     ("admin", "/*", "*"),
     # مالک سیستم: دسترسی کامل (M39-c3 — شکاف policy پیدا شد: super_admin ثبت نشده بود)
     ("super_admin", "/*", "*"),
+    # ── M59: فروشگاه، کیف‌پول، دفتر قیمت ──
+    # نکتهٔ طراحی: casbin فقط «خط اول» است. تفکیک admin از super_admin در
+    # نوشتن کاتالوگ/قیمت/درگاه با `ensure_owner` داخل سرویس انجام می‌شود
+    # (چون casbin سطح-مسیر است و «تغییر قیمت» و «دیدن قیمت» یک مسیر دارند).
+    ("member", "/api/v1/shop/*", "GET"),
+    ("member", "/api/v1/shop/cart", "*"),
+    ("member", "/api/v1/shop/cart/*", "*"),
+    ("member", "/api/v1/shop/checkout", "POST"),
+    ("member", "/api/v1/shop/orders", "GET"),
+    # شارژ کیف‌پول: عضو فقط از مسیر درگاه (پرداخت واقعی) — شارژ مستقیم
+    # بدون پول در M59 بسته شد؛ دستی فقط پذیرش. (باگ: شارژ ۱ میلیاردی بی‌درگاه)
+    ("reception", "/api/v1/shop/*", "*"),
+    ("coach", "/api/v1/shop/*", "GET"),
+    ("manager", "/api/v1/shop/*", "GET"),
+    ("admin", "/api/v1/shop/*", "*"),
+    ("super_admin", "/api/v1/shop/*", "*"),
+]
+
+# ── M59: سلسله‌مراتب و مسیرهای ارتقای نقش ──
+# نقش‌های پایین‌تر از هر `g` خط: `manager` یعنی «admin نیست» و
+# `admin` یعنی «super_admin نیست» — قاعدهٔ «هیچ سطحی به سطح بالاتر نمی‌رسد».
+ROLE_INHERITANCE: list[tuple[str, str]] = [
+    ("super_admin", "admin"),
+    ("admin", "manager"),
+    ("manager", "coach"),
+    ("manager", "reception"),
 ]
 
 # ردِ صریح (D-004) — بر allow مقدم است؛ برای حفظ معنای قدیمیِ guardهای ترکیبی:
@@ -153,6 +179,21 @@ POLICIES: list[tuple[str, str, str]] = [
 DENIES: list[tuple[str, str, str]] = [
     ("manager", "/api/v1/reports/*", "*"),
     ("coach", "/api/v1/axis-assessments/:id/review", "POST"),
+    # ── M59 — یافتهٔ زندهٔ ۲۰۲۶-۱۱-۱۵ ──
+    # `("member", "/api/v1/payments/*", "GET")` باعث می‌شد عضو عادی
+    # `GET /payments/finance/summary` و `export.csv` را با ۲۰۰ بگیرد
+    # (کل درآمد باشگاه + CSV همهٔ پرداخت‌ها). با TestClient و توکن member
+    # تأیید شد: 200 با `{"total_paid_rial":750000,...}`.
+    ("member", "/api/v1/payments/finance/*", "*"),
+    # نوشتن کاتالوگ/درگاه/قیمت هرگز از مسیر member — لایهٔ دوم بعد از ensure_owner
+    ("member", "/api/v1/shop/products", "POST"),
+    ("member", "/api/v1/shop/products/*", "PATCH"),
+    ("member", "/api/v1/shop/gateways", "POST"),
+    ("member", "/api/v1/shop/gateways/*", "PUT"),
+    ("member", "/api/v1/shop/prices", "POST"),
+    ("member", "/api/v1/shop/change-requests", "POST"),
+    ("member", "/api/v1/shop/change-requests/*", "POST"),
+    ("member", "/api/v1/shop/orders/*", "PATCH"),
 ]
 
 
@@ -162,6 +203,11 @@ def _build_enforcer() -> casbin.Enforcer:
     enforcer = casbin.Enforcer(model)
     for role, obj, act in POLICIES:
         enforcer.add_policy(role, obj, act)
+    # M59 — سلسله‌مراتب نقش: `g("super_admin","admin")` یعنی super_admin
+    # همهٔ اجازه‌های admin را هم دارد، ولی نه برعکس. اگر این خطوط نبودند،
+    # admin و super_admin از نظر ماشین هم‌ارز می‌ماندند (باگ اصلی).
+    for child, parent in ROLE_INHERITANCE:
+        enforcer.add_grouping_policy(child, parent)
     return enforcer
 
 

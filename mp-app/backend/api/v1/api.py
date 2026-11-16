@@ -22,6 +22,7 @@ from modules.payments.router import router as payments_router
 from modules.population.router import router as population_router
 from modules.programs.router import router as programs_router
 from modules.reporting.router import router as reporting_router
+from modules.shop.router import router as shop_router
 from modules.updates.router import router as updates_router
 
 api_router = APIRouter()
@@ -40,6 +41,7 @@ api_router.include_router(face_router)
 api_router.include_router(notifications_router)
 api_router.include_router(chat_router)
 api_router.include_router(admin_router)
+api_router.include_router(shop_router)
 api_router.include_router(ai_router)
 api_router.include_router(monitoring_router)
 api_router.include_router(ai_engine_router)

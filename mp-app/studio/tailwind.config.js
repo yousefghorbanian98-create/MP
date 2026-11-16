@@ -20,6 +20,7 @@ export default {
           DEFAULT: "#F3F6F8",
           dim: "#9CA3AF",
         },
+        success: "#34D399",
         danger: "#F87171",
         warning: "#FBBF24",
         info: "#38BDF8",

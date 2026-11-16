@@ -1,0 +1,592 @@
+"""M59 — فروشگاه، کیف‌پول، سلسله‌مراتب نقش، و درخواست تأیید مالک.
+
+هر تست یک **قاعدهٔ کسب‌وکار** را قفل می‌کند، نه یک پیاده‌سازی را:
+
+| تست | قاعده |
+|---|---|
+| `test_member_cannot_see_finance_*` | عضو عادی نباید درآمد باشگاه/CSV را ببیند (یافتهٔ زنده) |
+| `test_admin_cannot_create_product` | ساخت محصول/قیمت فقط مالک |
+| `test_admin_cannot_touch_gateway` | درگاه و شمارهٔ کارت فقط مالک |
+| `test_admin_requests_price_change_owner_approves` | مسیر مجاز ادمین: پیشنهاد ← تأیید مالک ← اعمال |
+| `test_owner_cannot_approve_own_request` | تأیید درخواست خود = دور زدن کنترل |
+| `test_gateway_secret_never_returned` | کلید خصوصی هرگز در پاسخ نمی‌آید |
+| `test_card_number_is_masked` | شمارهٔ کارت ماسک‌شده برمی‌گردد |
+| `test_price_comes_from_db_not_client` | کلاینت قیمت نمی‌فرستد؛ مبلغ از DB |
+| `test_checkout_debits_wallet_and_creates_order` | کیف‌پول ← سفارش paid، موجودی کم |
+| `test_checkout_insufficient_balance_keeps_cart` | شکست ← سبد دست‌نخورده |
+| `test_order_price_is_frozen` | تغییر قیمت محصول، فاکتور قدیمی را عوض نمی‌کند |
+| `test_member_sees_only_own_orders` | مالکیت سطری |
+| `test_role_hierarchy_one_way` | admin ↛ super_admin، معاون ↛ بالاتر |
+| `test_super_admin_not_assignable_via_api` | ساخت مالک دوم ممنوع |
+| `test_stock_decrements` | موجودی پس از تسویه کم می‌شود |
+"""
+
+from __future__ import annotations
+
+import itertools
+
+import pytest
+from fastapi.testclient import TestClient
+
+from app.config import settings
+
+_counter = itertools.count(880001)
+
+
+@pytest.fixture()
+def client(tmp_path, monkeypatch):
+    from modules.auth.router import limiter
+
+    monkeypatch.setattr(settings, "database_url", f"sqlite:///{tmp_path}/shop.db")
+    from db.base import init_db, reset_engine
+
+    reset_engine()
+    init_db()
+    limiter.reset()
+    from cache.store import InMemoryCache, reset_cache
+
+    reset_cache(InMemoryCache())
+    app = __import__("app.main", fromlist=["create_app"]).create_app()
+    with TestClient(app) as c:
+        yield c
+    reset_engine()
+
+
+def _user(role: str) -> dict:
+    """کاربر با نقش دلخواه + توکن؛ عضو هم پروندهٔ Member دارد."""
+    from app.security.jwt import create_access_token
+    from db.base import get_session_factory
+    from db.models import Member, User
+
+    n = next(_counter)
+    with get_session_factory()() as s:
+        u = User(phone=f"09{n:09d}", full_name=f"{role}-{n}", role=role)
+        s.add(u)
+        s.commit()
+        if role == "member":
+            s.add(Member(user_id=u.id, branch_id=1))
+            s.commit()
+        return {
+            "id": u.id,
+            "role": role,
+            "headers": {"Authorization": f"Bearer {create_access_token(u.id, role)}"},
+        }
+
+
+def _member_id(user: dict) -> int:
+    from db.base import get_session_factory
+    from db.models import Member
+
+    with get_session_factory()() as s:
+        return s.query(Member).filter(Member.user_id == user["id"]).one().id
+
+
+def _category(client: TestClient, owner: dict, slug: str = "supplements") -> int:
+    from db.base import get_session_factory
+    from db.models import ProductCategory
+
+    with get_session_factory()() as s:
+        cat = ProductCategory(slug=slug, title="مکمل", kind="supplement")
+        s.add(cat)
+        s.commit()
+        return cat.id
+
+
+def _product(client: TestClient, owner: dict, *, price: int = 500_000, stock: int = 10) -> dict:
+    r = client.post(
+        "/api/v1/shop/products",
+        json={
+            "title": "پروتئین وی ۲ کیلو",
+            "sku": f"WHEY-{next(_counter)}",
+            "category_id": _category(client, owner),
+            "price_rial": price,
+            "image_url": "/static/shop/whey.jpg",
+            "stock_qty": stock,
+            "variants": [{"label": "شکلاتی", "price_rial": price + 50_000, "stock_qty": 5}],
+        },
+        headers=owner["headers"],
+    )
+    assert r.status_code == 200, r.text
+    return r.json()
+
+
+def _topup(client: TestClient, member: dict, amount: int) -> None:
+    """شارژ کیف‌پول از مسیر مجاز (پذیرش) — عضو نمی‌تواند خودش شارژ کند."""
+    from db.base import get_session_factory
+    from modules.payments import service as payments
+
+    with get_session_factory()() as s:
+        payments.wallet_charge(s, _member_id(member), amount, "شارژ تست")
+
+
+# ── ۱) نشت مالی (یافتهٔ زندهٔ این چرخه) ──
+def test_member_cannot_see_finance_summary(client: TestClient) -> None:
+    member = _user("member")
+    assert (
+        client.get("/api/v1/payments/finance/summary", headers=member["headers"]).status_code == 403
+    )
+
+
+def test_member_cannot_export_payments_csv(client: TestClient) -> None:
+    member = _user("member")
+    r = client.get("/api/v1/payments/finance/export.csv", headers=member["headers"])
+    assert r.status_code == 403
+    assert "amount_rial" not in r.text
+
+
+def test_staff_can_see_finance_summary(client: TestClient) -> None:
+    """۴۰۳ دادن به عضو نباید مدیر را هم ببندد (رگرسیون معکوس)."""
+    admin = _user("admin")
+    assert (
+        client.get("/api/v1/payments/finance/summary", headers=admin["headers"]).status_code == 200
+    )
+
+
+# ── ۲) کاتالوگ: نوشتن فقط مالک ──
+def test_admin_cannot_create_product(client: TestClient) -> None:
+    admin = _user("admin")
+    r = client.post(
+        "/api/v1/shop/products",
+        json={
+            "title": "کراتین",
+            "sku": "CRE-1",
+            "category_id": _category(client, admin),
+            "price_rial": 100,
+        },
+        headers=admin["headers"],
+    )
+    assert r.status_code == 403
+    assert "super_admin" in r.text or "مالک" in r.text
+
+
+def test_owner_can_create_product_with_image(client: TestClient) -> None:
+    owner = _user("super_admin")
+    body = _product(client, owner)
+    assert body["price_rial"] == 500_000
+    assert body["image_url"] == "/static/shop/whey.jpg"
+    assert body["variants"][0]["price_rial"] == 550_000
+
+
+def test_admin_cannot_change_price(client: TestClient) -> None:
+    owner = _user("super_admin")
+    admin = _user("admin")
+    product = _product(client, owner)
+    r = client.patch(
+        f"/api/v1/shop/products/{product['id']}",
+        json={"price_rial": 1},
+        headers=admin["headers"],
+    )
+    assert r.status_code == 403
+    assert (
+        client.get(f"/api/v1/shop/products/{product['id']}", headers=admin["headers"]).json()[
+            "price_rial"
+        ]
+        == 500_000
+    )
+
+
+def test_member_can_read_catalog(client: TestClient) -> None:
+    owner = _user("super_admin")
+    member = _user("member")
+    _product(client, owner)
+    r = client.get("/api/v1/shop/products", headers=member["headers"])
+    assert r.status_code == 200
+    assert len(r.json()) >= 1
+
+
+# ── ۳) درگاه و شمارهٔ کارت ──
+def test_admin_cannot_touch_gateway(client: TestClient) -> None:
+    admin = _user("admin")
+    r = client.post(
+        "/api/v1/shop/gateways",
+        json={
+            "kind": "card_to_card",
+            "title": "کارت به کارت بانک ملت",
+            "card_number": "6104" + "1" * 12,
+        },
+        headers=admin["headers"],
+    )
+    assert r.status_code == 403
+
+
+def test_owner_adds_card_and_member_reads_masked(client: TestClient) -> None:
+    owner = _user("super_admin")
+    member = _user("member")
+    card = "6104337712345678"
+    r = client.post(
+        "/api/v1/shop/gateways",
+        json={
+            "kind": "card_to_card",
+            "title": "کارت به کارت — ملت",
+            "is_enabled": True,
+            "card_number": card,
+            "card_holder": "باشگاه ماسل پارادایس",
+            "bank_name": "ملت",
+            "secret_key": "SUPER-SECRET",
+            "instructions": "پس از واریز، شمارهٔ پیگیری را در اپ ثبت کنید.",
+        },
+        headers=owner["headers"],
+    )
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert body["card_number_masked"].endswith("5678")
+    assert card not in str(body), "شمارهٔ کامل کارت نباید برگردد"
+    assert "SUPER-SECRET" not in str(body), "کلید خصوصی نباید برگردد"
+    assert body["secret_configured"] is True
+
+    read = client.get("/api/v1/shop/gateways", headers=member["headers"])
+    assert read.status_code == 200
+    assert read.json()[0]["card_number_masked"].endswith("5678")
+
+
+def test_bad_card_number_rejected(client: TestClient) -> None:
+    owner = _user("super_admin")
+    r = client.post(
+        "/api/v1/shop/gateways",
+        json={"kind": "card_to_card", "title": "کارت", "card_number": "123"},
+        headers=owner["headers"],
+    )
+    assert r.status_code == 400
+    assert "۱۶" in r.text or "16" in r.text
+
+
+# ── ۴) درخواست تأیید (ادمین ← مالک) ──
+def test_admin_requests_price_change_owner_approves(client: TestClient) -> None:
+    owner = _user("super_admin")
+    admin = _user("admin")
+    product = _product(client, owner)
+
+    req = client.post(
+        "/api/v1/shop/change-requests",
+        json={
+            "kind": "product_price",
+            "payload": {"product_id": product["id"], "price_rial": 780_000},
+        },
+        headers=admin["headers"],
+    )
+    assert req.status_code == 200, req.text
+    req_id = req.json()["id"]
+    # تا تأیید، قیمت تغییر نکرده
+    assert (
+        client.get(f"/api/v1/shop/products/{product['id']}", headers=admin["headers"]).json()[
+            "price_rial"
+        ]
+        == 500_000
+    )
+
+    # ادمین نمی‌تواند تأیید کند
+    assert (
+        client.post(
+            f"/api/v1/shop/change-requests/{req_id}/review",
+            json={"approve": True},
+            headers=admin["headers"],
+        ).status_code
+        == 403
+    )
+
+    ok = client.post(
+        f"/api/v1/shop/change-requests/{req_id}/review",
+        json={"approve": True, "note": "تأیید شد"},
+        headers=owner["headers"],
+    )
+    assert ok.status_code == 200, ok.text
+    assert ok.json()["status"] == "approved"
+    assert (
+        client.get(f"/api/v1/shop/products/{product['id']}", headers=owner["headers"]).json()[
+            "price_rial"
+        ]
+        == 780_000
+    )
+
+
+def test_owner_cannot_approve_own_request(client: TestClient) -> None:
+    owner = _user("super_admin")
+    req = client.post(
+        "/api/v1/shop/change-requests",
+        json={
+            "kind": "membership_price",
+            "payload": {"code": "m1", "title": "ماهانه", "price_rial": 1},
+        },
+        headers=owner["headers"],
+    )
+    assert req.status_code == 200, req.text
+    r = client.post(
+        f"/api/v1/shop/change-requests/{req.json()['id']}/review",
+        json={"approve": True},
+        headers=owner["headers"],
+    )
+    assert r.status_code == 400
+    assert "self_review" in r.text
+
+
+def test_member_cannot_create_change_request(client: TestClient) -> None:
+    member = _user("member")
+    r = client.post(
+        "/api/v1/shop/change-requests",
+        json={"kind": "membership_price", "payload": {}},
+        headers=member["headers"],
+    )
+    assert r.status_code in (400, 403)
+
+
+def test_admin_lists_only_own_requests(client: TestClient) -> None:
+    owner = _user("super_admin")
+    admin_a = _user("admin")
+    admin_b = _user("admin")
+    client.post(
+        "/api/v1/shop/change-requests",
+        json={
+            "kind": "membership_price",
+            "payload": {"code": "a", "title": "الف", "price_rial": 1},
+        },
+        headers=admin_a["headers"],
+    )
+    assert client.get("/api/v1/shop/change-requests", headers=admin_b["headers"]).json() == []
+    assert len(client.get("/api/v1/shop/change-requests", headers=owner["headers"]).json()) >= 1
+
+
+# ── ۵) قیمت‌گذاری خدمات ──
+def test_owner_sets_membership_and_coach_price(client: TestClient) -> None:
+    owner = _user("super_admin")
+    member = _user("member")
+    r = client.post(
+        "/api/v1/shop/prices",
+        json={
+            "category": "membership",
+            "code": "gold-3m",
+            "title": "طلایی ۳ ماهه",
+            "price_rial": 6_000_000,
+            "duration_days": 90,
+        },
+        headers=owner["headers"],
+    )
+    assert r.status_code == 200, r.text
+    r2 = client.post(
+        "/api/v1/shop/prices",
+        json={
+            "category": "coach_fee",
+            "code": "pt-1m",
+            "title": "شهریهٔ مربی خصوصی",
+            "price_rial": 3_000_000,
+        },
+        headers=owner["headers"],
+    )
+    assert r2.status_code == 200
+    listed = client.get("/api/v1/shop/prices", headers=member["headers"]).json()
+    assert {p["code"] for p in listed} >= {"gold-3m", "pt-1m"}
+
+
+# ── ۶) سبد و تسویه ──
+def test_price_comes_from_db_not_client(client: TestClient) -> None:
+    owner = _user("super_admin")
+    member = _user("member")
+    product = _product(client, owner, price=500_000, stock=10)
+    _topup(client, member, 500_000)
+    # کلاینت تلاش می‌کند قیمت را عوض کند — اسکیمای سبد اصلاً فیلد قیمت ندارد
+    r = client.post(
+        "/api/v1/shop/cart",
+        json={"product_id": product["id"], "qty": 1, "price_rial": 1},
+        headers=member["headers"],
+    )
+    assert r.status_code == 200, r.text
+    assert r.json()["total_rial"] == 500_000
+
+
+def test_checkout_debits_wallet_and_creates_order(client: TestClient) -> None:
+    owner = _user("super_admin")
+    member = _user("member")
+    product = _product(client, owner, price=300_000, stock=2)
+    _topup(client, member, 1_000_000)
+    client.post(
+        "/api/v1/shop/cart", json={"product_id": product["id"], "qty": 2}, headers=member["headers"]
+    )
+    r = client.post("/api/v1/shop/checkout", json={"method": "wallet"}, headers=member["headers"])
+    assert r.status_code == 200, r.text
+    assert r.json()["status"] == "paid"
+    assert r.json()["total_rial"] == 600_000
+
+    bal = client.get(
+        f"/api/v1/payments/wallet/{_member_id(member)}", headers=member["headers"]
+    ).json()
+    assert bal["balance_rial"] == 400_000
+    orders = client.get("/api/v1/shop/orders", headers=member["headers"]).json()
+    assert orders[0]["status"] == "paid"
+    assert orders[0]["items"][0]["qty"] == 2
+    # سبد خالی شد و موجودی کم شد
+    assert client.get("/api/v1/shop/cart", headers=member["headers"]).json()["count"] == 0
+    assert (
+        client.get(f"/api/v1/shop/products/{product['id']}", headers=member["headers"]).json()[
+            "stock_qty"
+        ]
+        == 0
+    )
+
+
+def test_checkout_insufficient_balance_keeps_cart(client: TestClient) -> None:
+    owner = _user("super_admin")
+    member = _user("member")
+    product = _product(client, owner, price=900_000, stock=5)
+    _topup(client, member, 100_000)
+    client.post(
+        "/api/v1/shop/cart", json={"product_id": product["id"], "qty": 1}, headers=member["headers"]
+    )
+    r = client.post("/api/v1/shop/checkout", json={"method": "wallet"}, headers=member["headers"])
+    assert r.status_code == 400
+    assert "insufficient_balance" in r.text
+    assert client.get("/api/v1/shop/cart", headers=member["headers"]).json()["count"] == 1
+
+
+def test_cart_rejects_beyond_stock(client: TestClient) -> None:
+    owner = _user("super_admin")
+    member = _user("member")
+    product = _product(client, owner, stock=1)
+    r = client.post(
+        "/api/v1/shop/cart", json={"product_id": product["id"], "qty": 2}, headers=member["headers"]
+    )
+    assert r.status_code == 409
+
+
+def test_order_price_is_frozen(client: TestClient) -> None:
+    """قیمت در لحظهٔ ثبت قفل می‌شود — تغییر بعدی محصول فاکتور را عوض نمی‌کند."""
+    owner = _user("super_admin")
+    member = _user("member")
+    product = _product(client, owner, price=200_000)
+    _topup(client, member, 500_000)
+    client.post(
+        "/api/v1/shop/cart", json={"product_id": product["id"], "qty": 1}, headers=member["headers"]
+    )
+    client.post("/api/v1/shop/checkout", json={"method": "wallet"}, headers=member["headers"])
+    client.patch(
+        f"/api/v1/shop/products/{product['id']}",
+        json={"price_rial": 9_999_999},
+        headers=owner["headers"],
+    )
+    order = client.get("/api/v1/shop/orders", headers=member["headers"]).json()[0]
+    assert order["total_rial"] == 200_000
+    assert order["items"][0]["unit_price_rial"] == 200_000
+
+
+def test_member_sees_only_own_orders(client: TestClient) -> None:
+    owner = _user("super_admin")
+    a = _user("member")
+    b = _user("member")
+    product = _product(client, owner, price=100_000)
+    _topup(client, a, 100_000)
+    client.post(
+        "/api/v1/shop/cart", json={"product_id": product["id"], "qty": 1}, headers=a["headers"]
+    )
+    client.post("/api/v1/shop/checkout", json={"method": "wallet"}, headers=a["headers"])
+    assert client.get("/api/v1/shop/orders", headers=b["headers"]).json() == []
+    assert len(client.get("/api/v1/shop/orders", headers=owner["headers"]).json()) == 1
+
+
+def test_member_cannot_change_order_status(client: TestClient) -> None:
+    owner = _user("super_admin")
+    member = _user("member")
+    product = _product(client, owner, price=50_000)
+    _topup(client, member, 50_000)
+    client.post(
+        "/api/v1/shop/cart", json={"product_id": product["id"], "qty": 1}, headers=member["headers"]
+    )
+    oid = client.post(
+        "/api/v1/shop/checkout", json={"method": "wallet"}, headers=member["headers"]
+    ).json()["order_id"]
+    assert (
+        client.patch(
+            f"/api/v1/shop/orders/{oid}", json={"status": "delivered"}, headers=member["headers"]
+        ).status_code
+        == 403
+    )
+
+
+def test_staff_can_mark_delivered(client: TestClient) -> None:
+    owner = _user("super_admin")
+    member = _user("member")
+    product = _product(client, owner, price=50_000)
+    _topup(client, member, 50_000)
+    client.post(
+        "/api/v1/shop/cart", json={"product_id": product["id"], "qty": 1}, headers=member["headers"]
+    )
+    oid = client.post(
+        "/api/v1/shop/checkout", json={"method": "wallet"}, headers=member["headers"]
+    ).json()["order_id"]
+    r = client.patch(
+        f"/api/v1/shop/orders/{oid}", json={"status": "delivered"}, headers=owner["headers"]
+    )
+    assert r.status_code == 200
+    assert r.json()["status"] == "delivered"
+
+
+# ── ۷) سلسله‌مراتب نقش ──
+def test_role_hierarchy_one_way() -> None:
+    from app.security.hierarchy import ROLE_RANK, outranks
+
+    assert outranks("super_admin", "admin")
+    assert outranks("admin", "manager")
+    assert not outranks("admin", "super_admin")
+    assert not outranks("manager", "admin")
+    assert ROLE_RANK["member"] < ROLE_RANK["reception"] < ROLE_RANK["coach"] < ROLE_RANK["manager"]
+
+
+def test_casbin_inheritance_is_one_way() -> None:
+    from security.rbac import enforce
+
+    # super_admin همهٔ اجازه‌های admin را دارد
+    assert enforce("super_admin", "/api/v1/admin/kpis", "GET")
+    # ولی admin به مسیرهای مالکانهٔ نوشتن نمی‌رسد (سطح سرویس هم بسته است)
+    assert not enforce("member", "/api/v1/shop/products", "POST")
+    assert enforce("admin", "/api/v1/shop/products", "GET")
+
+
+def test_super_admin_not_assignable_via_api(client: TestClient) -> None:
+    owner = _user("super_admin")
+    victim = _user("member")
+    r = client.post(
+        f"/api/v1/admin/users/{victim['id']}/role",
+        json={"role": "super_admin"},
+        headers=owner["headers"],
+    )
+    assert r.status_code == 400
+    assert "invalid_role" in r.text
+
+
+def test_admin_cannot_grant_admin(client: TestClient) -> None:
+    admin = _user("admin")
+    victim = _user("member")
+    r = client.post(
+        f"/api/v1/admin/users/{victim['id']}/role",
+        json={"role": "admin"},
+        headers=admin["headers"],
+    )
+    assert r.status_code == 403
+
+
+def test_admin_cannot_demote_super_admin(client: TestClient) -> None:
+    owner = _user("super_admin")
+    admin = _user("admin")
+    r = client.delete(f"/api/v1/admin/users/{owner['id']}/role", headers=admin["headers"])
+    assert r.status_code == 403
+
+
+def test_admin_can_promote_member_to_coach(client: TestClient) -> None:
+    admin = _user("admin")
+    victim = _user("member")
+    r = client.post(
+        f"/api/v1/admin/users/{victim['id']}/role",
+        json={"role": "coach"},
+        headers=admin["headers"],
+    )
+    assert r.status_code == 200, r.text
+    assert r.json()["role"] == "coach"
+
+
+# ── ۸) پوشش مسیرهای جدید در artifact ──
+def test_shop_routes_in_artifact() -> None:
+    """گیت «هیچ مسیر دکوراتیو»: هر مسیر جدید باید در routes.json باشد."""
+    import json
+    from pathlib import Path
+
+    artifact = Path(__file__).resolve().parents[2] / "api" / "routes.json"
+    paths = json.loads(artifact.read_text())["paths"]
+    shop = [p for p in paths if p.startswith("/api/v1/shop")]
+    assert len(shop) >= 13, shop

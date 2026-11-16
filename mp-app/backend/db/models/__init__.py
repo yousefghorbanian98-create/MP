@@ -29,6 +29,17 @@ from db.models.nutrition import BodyWeightLog, FoodLog, MealItem, NutritionPlan
 from db.models.payments import Payment, WalletTransaction
 from db.models.programs import ProgramExercise, ProgramWeek, SetFeedback, WorkoutProgram
 from db.models.segment import LimbMeasurement
+from db.models.shop import (
+    CartItem,
+    ChangeRequest,
+    Order,
+    OrderItem,
+    PaymentGatewayConfig,
+    PriceBook,
+    Product,
+    ProductCategory,
+    ProductVariant,
+)
 
 __all__ = [
     "Assessment14Domain",
@@ -67,6 +78,15 @@ __all__ = [
     "ProgramWeek",
     "ProgressionLadder",
     "ProgressionStep",
+    "CartItem",
+    "ChangeRequest",
+    "Order",
+    "OrderItem",
+    "PaymentGatewayConfig",
+    "PriceBook",
+    "Product",
+    "ProductCategory",
+    "ProductVariant",
     "RefreshToken",
     "RuleRun",
     "SetFeedback",
