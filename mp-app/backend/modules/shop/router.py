@@ -15,10 +15,11 @@ from pydantic import BaseModel, Field
 
 from app.config import settings
 from app.deps import CurrentUser, DbSession, require_permission
-from modules.shop import service
+
 # همان نمونهٔ سقف نرخ که auth و main استفاده می‌کنند (slowapi). نمونهٔ دوم
 # ساختن باعث می‌شود شمارنده‌ها از هم جدا شوند و سقف دور زده شود.
 from modules.auth.router import limiter
+from modules.shop import service
 
 router = APIRouter(prefix="/shop", tags=["shop"], dependencies=[Depends(require_permission())])
 
