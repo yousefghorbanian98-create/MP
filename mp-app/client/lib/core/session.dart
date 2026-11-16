@@ -2,11 +2,18 @@
 library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'api_client.dart';
 
-final apiClientProvider = Provider<ApiClient>((ref) => ApiClient());
+/// نقطهٔ تزریق HTTP — تست‌ها فقط این را override می‌کنند.
+/// چرا جدا از `apiClientProvider`: سازندهٔ `ApiClient` آدرس را اعتبارسنجی
+/// می‌کند و در تست باید همان مسیر تولیدی طی شود، نه یک کلاینت دست‌ساز.
+final httpClientProvider = Provider<http.Client>((ref) => http.Client());
+
+final apiClientProvider =
+    Provider<ApiClient>((ref) => ApiClient(httpClient: ref.watch(httpClientProvider)));
 
 class AuthState {
   const AuthState({this.accessToken, this.userId, this.userName, this.memberId});

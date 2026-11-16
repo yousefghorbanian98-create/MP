@@ -18,7 +18,24 @@ import '../../core/session.dart';
 import '../../core/theme.dart';
 import '../../shared/widgets/glass_card.dart';
 
-String _rial(num n) => '${n.toString().replaceAllMapped(RegExp(r'(\d)(?=(\d{3})+$)'), (m) => '${m[1]}٬')} ریال';
+/// ارقام فارسی — قرارداد کل پروژه (کاربر فارسی‌زبان). یک‌جا تعریف می‌شود تا
+/// هر صفحه ارقام لاتین نشان ندهد؛ پیش‌تر `fa()` در استودیو بود و Dart نداشت.
+String faDigits(Object value) {
+  const latin = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+  const persian = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+  var out = value.toString();
+  for (var i = 0; i < 10; i++) {
+    out = out.replaceAll(latin[i], persian[i]);
+  }
+  return out;
+}
+
+/// مبلغ با جداکنندهٔ هزارگان فارسی: 2500000 ← ۲٬۵۰۰٬۰۰۰ ریال
+String _rial(num n) {
+  final grouped =
+      n.toString().replaceAllMapped(RegExp(r'(\d)(?=(\d{3})+$)'), (m) => '${m[1]}٬');
+  return '${faDigits(grouped)} ریال';
+}
 
 class ShopPage extends ConsumerWidget {
   const ShopPage({super.key});
@@ -120,7 +137,7 @@ class ShopPage extends ConsumerWidget {
   Future<void> _add(BuildContext context, WidgetRef ref, Map<String, dynamic> product) async {
     final api = ref.read(apiClientProvider);
     try {
-      await api.post('/shop/cart', body: {'product_id': product['id'], 'qty': 1});
+      await api.post('/shop/cart', {'product_id': product['id'], 'qty': 1});
       ref.invalidate(cartProvider);
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -238,18 +255,28 @@ class _ShopSkeleton extends StatelessWidget {
         childAspectRatio: 0.72,
       ),
       itemCount: 4,
+      // بدون انیمیشن تکرارشونده: `repeat()` باعث می‌شود `pumpAndSettle` در
+      // تست هرگز «آرام» نشود و تست بارگذاری به تایم‌اوت بخورد. شیمر یک‌باره
+      // همان حس «در حال آمدن» را می‌دهد.
       itemBuilder: (_, __) => GlassCard(
         padding: const EdgeInsets.all(10),
         child: Column(
           children: [
-            Expanded(child: Container(decoration: BoxDecoration(color: Colors.white10, borderRadius: BorderRadius.circular(12)))),
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white10,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
             const SizedBox(height: 8),
             Container(height: 12, color: Colors.white10),
             const SizedBox(height: 6),
             Container(height: 12, width: 80, color: Colors.white10),
           ],
         ),
-      ).animate(onPlay: (c) => c.repeat()).shimmer(duration: 1200.ms),
+      ).animate().fadeIn(duration: 260.ms),
     );
   }
 }
@@ -271,7 +298,7 @@ class _CartSheetState extends ConsumerState<_CartSheet> {
     final api = ref.read(apiClientProvider);
     setState(() => _busy = true);
     try {
-      final res = await api.post('/shop/checkout', body: {'method': 'wallet'});
+      final res = await api.post('/shop/checkout', {'method': 'wallet'});
       final orderId = (res as Map)['order_id'];
       ref.invalidate(cartProvider);
       ref.invalidate(walletProvider);
