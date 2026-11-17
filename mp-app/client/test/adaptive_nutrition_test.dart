@@ -101,7 +101,7 @@ Widget _wrap(http.Client client) => ProviderScope(
       ],
       child: MaterialApp(
         theme: mpTheme(),
-        home: const Directionality(
+        home: Directionality(
           textDirection: TextDirection.rtl,
           child: Scaffold(body: ListView(children: [AdaptiveNutritionCard()])),
         ),

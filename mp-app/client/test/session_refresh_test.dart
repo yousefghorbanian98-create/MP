@@ -11,12 +11,16 @@
 ///   ۳) اگر refresh هم شکست بخورد، کاربر به صفحهٔ ورود برگردد (نه خطای گنگ)
 library;
 
-import 'dart:convert';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:mp_client/core/api_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+http.Response _utf8Response(String body, int statusCode) => http.Response(
+      body,
+      statusCode,
+      headers: const {'content-type': 'application/json; charset=utf-8'},
+    );
 
 class _ScriptedClient extends http.BaseClient {
   _ScriptedClient(this.script);
@@ -48,7 +52,7 @@ void main() {
   test('۴۰۱ → refresh → تکرار همان درخواست با توکن تازه', () async {
     final client = _ScriptedClient({
       '/protected': [
-        () => http.Response('{"error":{"message":"توکن منقضی"}}', 401),
+        () => _utf8Response('{"error":{"message":"توکن منقضی"}}', 401),
         () => http.Response('{"ok":true}', 200),
       ],
       '/auth/refresh': [
@@ -73,8 +77,8 @@ void main() {
 
   test('اگر refresh شکست بخورد، خطای ۴۰۱ بالا می‌آید و نشست پاک می‌شود', () async {
     final client = _ScriptedClient({
-      '/protected': [() => http.Response('{"error":{"message":"توکن نامعتبر"}}', 401)],
-      '/auth/refresh': [() => http.Response('{"error":{"message":"refresh منقضی"}}', 401)],
+      '/protected': [() => _utf8Response('{"error":{"message":"توکن نامعتبر"}}', 401)],
+      '/auth/refresh': [() => _utf8Response('{"error":{"message":"refresh منقضی"}}', 401)],
     });
 
     var sessionCleared = false;

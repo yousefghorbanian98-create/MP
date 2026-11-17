@@ -9,6 +9,7 @@ import 'theme.dart';
 import '../features/bodycomp/bodycomp_page.dart';
 import '../features/checkin/checkin_page.dart';
 import '../features/classes/classes_page.dart';
+import '../features/chat/member_chat_page.dart';
 import '../features/nutrition/nutrition_page.dart';
 import '../features/profile/profile_page.dart';
 import '../features/progress/progress_page.dart';
