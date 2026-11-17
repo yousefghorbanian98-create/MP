@@ -1,0 +1,29 @@
+# Muscle Paradise — production backend image for the full `infra` Compose stack.
+FROM python:3.11-slim
+
+WORKDIR /app
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+
+COPY mp-app/backend/pyproject.toml ./pyproject.toml
+COPY mp-app/backend/alembic.ini ./alembic.ini
+COPY mp-app/backend/app ./app
+COPY mp-app/backend/api ./api
+COPY mp-app/backend/modules ./modules
+COPY mp-app/backend/db ./db
+COPY mp-app/backend/security ./security
+COPY mp-app/backend/jobs ./jobs
+COPY mp-app/backend/cache ./cache
+COPY mp-app/backend/engine ./engine
+COPY mp-app/backend/eval ./eval
+COPY mp-app/backend/data ./data
+COPY mp-app/backend/scripts ./scripts
+COPY mp-app/backend/static ./static
+COPY mp-app/shared/design-tokens.json ./shared/design-tokens.json
+
+RUN pip install --no-cache-dir .
+
+ENV MP_DATABASE_URL=sqlite:////data/mp.db
+VOLUME ["/data", "/backups"]
+
+EXPOSE 8000
+CMD ["sh", "-c", "if [ -n \"${PROMETHEUS_MULTIPROC_DIR:-}\" ]; then mkdir -p \"$PROMETHEUS_MULTIPROC_DIR\" && rm -f \"$PROMETHEUS_MULTIPROC_DIR\"/*; fi && alembic upgrade head && exec uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers ${WEB_CONCURRENCY:-4} --proxy-headers --forwarded-allow-ips='*'"]

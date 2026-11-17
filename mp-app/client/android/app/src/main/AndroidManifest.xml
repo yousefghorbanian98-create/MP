@@ -1,0 +1,63 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- دسترسی شبکه — ارتباط با سرور محلی (API) — پیداشدن توسط REA-audit: مانیفست release فاقد آن بود -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <application
+        android:label="mp_client"
+        android:name="${applicationName}"
+        android:icon="@mipmap/ic_launcher"
+        android:allowBackup="false"
+        android:networkSecurityConfig="@xml/network_security_config">
+        <!--
+          عمداً بدون android:debuggable.
+
+          تاریخچه (مهم): برای «سخت‌کردن» مانیفست، `android:debuggable="false"` اینجا
+          اضافه شده بود. Android Lint آن را HardcodedDebugMode می‌داند و با
+          `lintVitalRelease` **بیلد release را می‌شکند** — یعنی آن تغییر، اپ را
+          امن‌تر نمی‌کرد، انتشار را متوقف می‌کرد. در اجرای 43828454021 دیده شد.
+
+          نتیجهٔ درست: نبودن این ویژگی، خودش یعنی debug=false در بیلد release
+          (Gradle آن را از buildType می‌گذارد). صحت آن با بازرسی مانیفست
+          **کامپایل‌شده** تأیید می‌شود: `tools/apk_deep_audit.py` (apktool) و
+          `tools/apk_audit.py` (androguard) هر دو روی APK واقعی بررسی می‌کنند،
+          نه روی سورس.
+        -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:taskAffinity=""
+            android:theme="@style/LaunchTheme"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+            android:hardwareAccelerated="true"
+            android:windowSoftInputMode="adjustResize">
+            <!-- Specifies an Android theme to apply to this Activity as soon as
+                 the Android process has started. This theme is visible to the user
+                 while the Flutter UI initializes. After that, this theme continues
+                 to determine the Window background behind the Flutter UI. -->
+            <meta-data
+              android:name="io.flutter.embedding.android.NormalTheme"
+              android:resource="@style/NormalTheme"
+              />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <!-- Don't delete the meta-data below.
+             This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
+        <meta-data
+            android:name="flutterEmbedding"
+            android:value="2" />
+    </application>
+    <!-- Required to query activities that can process text, see:
+         https://developer.android.com/training/package-visibility and
+         https://developer.android.com/reference/android/content/Intent#ACTION_PROCESS_TEXT.
+
+         In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.PROCESS_TEXT"/>
+            <data android:mimeType="text/plain"/>
+        </intent>
+    </queries>
+</manifest>

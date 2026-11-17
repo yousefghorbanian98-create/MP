@@ -1,0 +1,58 @@
+# Muscle Paradise — ساخت و push ایمیج‌های Docker به GHCR
+name: mp-container
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  build-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Compute full-SHA and optional version tags
+        id: image-tags
+        shell: bash
+        env:
+          IMAGE_OWNER: ${{ github.repository_owner }}
+        run: |
+          set -euo pipefail
+          owner="${IMAGE_OWNER,,}"
+          [[ "$owner" =~ ^[a-z0-9._-]+$ ]] || { echo "Invalid GHCR owner" >&2; exit 1; }
+          [[ "$GITHUB_SHA" =~ ^[0-9a-f]{40}$ ]] || { echo "GITHUB_SHA must be a full commit SHA" >&2; exit 1; }
+          backend="${REGISTRY}/${owner}/mp-backend:${GITHUB_SHA}"
+          studio="${REGISTRY}/${owner}/mp-studio:${GITHUB_SHA}"
+          if [[ "$GITHUB_REF_TYPE" == "tag" && "$GITHUB_REF_NAME" =~ ^v[0-9]+(\.[0-9]+){1,2}([-+][A-Za-z0-9.-]+)?$ ]]; then
+            backend+=$'\n'"${REGISTRY}/${owner}/mp-backend:${GITHUB_REF_NAME}"
+            studio+=$'\n'"${REGISTRY}/${owner}/mp-studio:${GITHUB_REF_NAME}"
+          fi
+          {
+            printf 'backend<<EOF\n%s\nEOF\n' "$backend"
+            printf 'studio<<EOF\n%s\nEOF\n' "$studio"
+          } >> "$GITHUB_OUTPUT"
+      - name: Build & push backend
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: mp-app/infra/Dockerfile.backend
+          push: true
+          tags: ${{ steps.image-tags.outputs.backend }}
+      - name: Build & push studio
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: mp-app/studio/Dockerfile
+          push: true
+          tags: ${{ steps.image-tags.outputs.studio }}

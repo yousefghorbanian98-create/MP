@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 420" role="img" aria-labelledby="title desc">
+  <title id="title">Muscle Paradise — monochrome lockup for light surfaces</title>
+  <desc id="desc">Draft one-color dark mark and editable wordmark on a light background.</desc>
+  <rect width="1280" height="420" fill="#F6F8F7"/>
+  <g transform="translate(30 25) scale(1.65)" fill="none" stroke="#0B0F14" stroke-width="20" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M28 166L58 110L87 139L115 80L144 103L160 58V166M160 58H191C220 58 220 101 191 101H160"/>
+    <circle cx="160" cy="58" r="10" fill="#0B0F14" stroke="none"/>
+  </g>
+  <text x="448" y="185" font-family="Vazirmatn, sans-serif" font-size="74" font-weight="700" letter-spacing="7" fill="#0B0F14">MUSCLE</text>
+  <text x="454" y="262" font-family="Vazirmatn, sans-serif" font-size="54" font-weight="400" letter-spacing="12" fill="#0B0F14">PARADISE</text>
+</svg>

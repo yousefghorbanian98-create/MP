@@ -1,0 +1,155 @@
+# Full self-hosted stack: Studio + FastAPI + Valkey + Prometheus/exporter + backup + Caddy.
+# Required production secrets and the real public domain/email are supplied in .env.
+
+services:
+  backend:
+    build:
+      context: ../..
+      dockerfile: mp-app/infra/Dockerfile.backend
+    image: ghcr.io/${IMAGE_OWNER:?set IMAGE_OWNER}/mp-backend:${IMAGE_TAG:?set IMAGE_TAG}
+    restart: unless-stopped
+    environment:
+      MP_ENVIRONMENT: production
+      MP_DATABASE_URL: sqlite:////data/mp.db
+      MP_SECRET_KEY: ${MP_SECRET_KEY:?set MP_SECRET_KEY}
+      MP_BIOMETRIC_KEY: ${MP_BIOMETRIC_KEY:?set base64 MP_BIOMETRIC_KEY (32 random bytes)}
+      MP_CORS_ORIGINS: ${MP_CORS_ORIGINS:?set the production HTTPS origins}
+      MP_VALKEY_URL: redis://valkey:6379/0
+      MP_SMS_PROVIDER: ${MP_SMS_PROVIDER:?set webmagfa or kavenegar}
+      MP_SMS_API_URL: ${MP_SMS_API_URL:-}
+      MP_SMS_API_KEY: ${MP_SMS_API_KEY:-}
+      MP_SMS_USERNAME: ${MP_SMS_USERNAME:-}
+      MP_SMS_PASSWORD: ${MP_SMS_PASSWORD:-}
+      MP_SMS_ORIGINATOR: ${MP_SMS_ORIGINATOR:-}
+      MP_PAYMENT_GATEWAY: ${MP_PAYMENT_GATEWAY:?set zarinpal}
+      MP_ZARINPAL_MERCHANT_ID: ${MP_ZARINPAL_MERCHANT_ID:?set the live merchant ID}
+      MP_PAYMENT_SANDBOX: ${MP_PAYMENT_SANDBOX:-false}
+      PROMETHEUS_MULTIPROC_DIR: /tmp/prometheus-multiproc
+    volumes:
+      - mp-data:/data
+    tmpfs:
+      - /tmp/prometheus-multiproc
+    expose:
+      - "8000"
+    depends_on:
+      valkey:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://localhost:8000/api/v1/health/ready')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  studio:
+    build:
+      context: ../..
+      dockerfile: mp-app/studio/Dockerfile
+    image: ghcr.io/${IMAGE_OWNER:?set IMAGE_OWNER}/mp-studio:${IMAGE_TAG:?set IMAGE_TAG}
+    restart: unless-stopped
+    expose:
+      - "80"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  # First archive immediately after API readiness, then daily. Failed jobs retry hourly.
+  backup:
+    image: ghcr.io/${IMAGE_OWNER:?set IMAGE_OWNER}/mp-backend:${IMAGE_TAG:?set IMAGE_TAG}
+    pull_policy: never
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    command:
+      - sh
+      - -c
+      - |
+        while true; do
+          python scripts/backup.py backup --db /data/mp.db --out /backups || { echo 'backup failed; retrying in 1h' >&2; sleep 3600; continue; }
+          sleep 86400
+        done
+    volumes:
+      - mp-data:/data:ro
+      - mp-backups:/backups
+
+  valkey:
+    # Valkey (BSD-3-Clause), Redis protocol compatible; no host port is published.
+    image: valkey/valkey:9.1.3
+    restart: unless-stopped
+    command: ["valkey-server", "--appendonly", "yes", "--maxmemory", "256mb", "--maxmemory-policy", "noeviction"]
+    volumes:
+      - valkey-data:/data
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+
+  valkey-exporter:
+    image: oliver006/redis_exporter:v1.97.0
+    restart: unless-stopped
+    environment:
+      REDIS_ADDR: redis://valkey:6379
+    expose:
+      - "9121"
+    depends_on:
+      valkey:
+        condition: service_healthy
+
+  prometheus:
+    image: prom/prometheus:v3.16.0
+    restart: unless-stopped
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --config.expand-env
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=15d
+    environment:
+      PROMETHEUS_BACKEND_PORT: "8000"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/alerts.yml:/etc/prometheus/alerts.yml:ro
+      - prometheus-data:/prometheus
+    ports:
+      - "127.0.0.1:${PROMETHEUS_PORT:-9090}:9090"
+    depends_on:
+      backend:
+        condition: service_healthy
+      valkey-exporter:
+        condition: service_started
+
+  ollama:
+    image: ollama/ollama:0.40.16
+    restart: unless-stopped
+    volumes:
+      - ollama-models:/root/.ollama
+    # Only internal; model weights remain locked until their individual licences are verified.
+    expose:
+      - "11434"
+
+  caddy:
+    image: caddy:2.11.9
+    restart: unless-stopped
+    environment:
+      TLS_EMAIL: ${TLS_EMAIL:?set TLS_EMAIL}
+      PUBLIC_DOMAIN: ${PUBLIC_DOMAIN:?set PUBLIC_DOMAIN}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - ./media:/srv/media:ro
+    depends_on:
+      backend:
+        condition: service_healthy
+      studio:
+        condition: service_started
+
+volumes:
+  mp-data:
+  mp-backups:
+  valkey-data:
+  ollama-models:
+  caddy-data:
+  prometheus-data:

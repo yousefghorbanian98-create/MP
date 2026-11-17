@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 224" role="img" aria-labelledby="title desc">
+  <title id="title">MP Progress Loop — dark monochrome mark draft</title>
+  <desc id="desc">Single-color dark mark on transparent background, intended for light surfaces. Draft only; no product integration.</desc>
+  <g fill="none" stroke="#0B0F14" stroke-width="20" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M28 166L58 110L87 139L115 80L144 103L160 58V166M160 58H191C220 58 220 101 191 101H160"/>
+    <circle cx="160" cy="58" r="10" fill="#0B0F14" stroke="none"/>
+  </g>
+</svg>

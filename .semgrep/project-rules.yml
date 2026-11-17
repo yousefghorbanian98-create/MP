@@ -1,0 +1,127 @@
+rules:
+  # ── قواعد امنیتی مخصوص این پروژه ──
+  # قاعدهٔ کلی semgrep از semgrep.dev در سندباکس/CI در دسترس نیست، پس
+  # قواعدی که برای **این** کد اهمیت دارند را محلی نگه می‌داریم.
+
+  - id: mp-raw-sql-string-format
+    languages: [python]
+    severity: ERROR
+    message: >
+      SQL خام با f-string/format ساخته شده — خطر تزریق. از پارامتر bind
+      استفاده کنید (text("... :v"), {"v": x}).
+    patterns:
+      - pattern-either:
+          - pattern: $DB.execute(f"...", ...)
+          - pattern: $DB.execute("..." % ..., ...)
+          - pattern: $DB.execute("...".format(...), ...)
+          - pattern: $DB.exec_driver_sql(f"...", ...)
+      - pattern-not-inside: |
+          def $F(...):
+              ...
+              # nosec
+    paths:
+      exclude:
+        - "**/tests/*"
+        - "**/migrations/*"
+
+  - id: mp-jwt-decode-without-verify
+    languages: [python]
+    severity: ERROR
+    message: >
+      jwt.decode با verify=False یا options بدون امضا — پذیرش توکن جعلی.
+    patterns:
+      - pattern: 'jwt.decode(..., options={"verify_signature": False}, ...)'
+    paths:
+      exclude: ["**/tests/*"]
+
+  - id: mp-gateway-payment-verified-without-flag
+    languages: [python]
+    severity: ERROR
+    message: >
+      verify_payment بدون manual= صدا زده شده در مسیر پرداخت درگاهی. اگر
+      مسیر، پرداخت درگاهی را بدون پاسخ امضاشدهٔ درگاه تأیید کند، هر دارندهٔ
+      توکن می‌تواند پول را «وصول‌شده» اعلام کند. (در service، شرط
+      gateway_authority هم لازم است.)
+    patterns:
+      - pattern: verify_payment(...)
+      - pattern-not: verify_payment(..., manual=True, ...)
+    paths:
+      include: ["**/modules/payments/*"]
+      exclude: ["**/tests/*"]
+
+  - id: mp-member-path-without-ownership
+    languages: [python]
+    severity: WARNING
+    message: >
+      تابعی با پارامتر member_id ولی بدون ensure_member_scope: عضو می‌تواند
+      دادهٔ عضو دیگر را بخواند (D-005). اگر مالکیت با user= به سرویس واگذار
+      شده، این هشدار را با کامنت توضیح دهید.
+    patterns:
+      - pattern: |
+          def $F(..., member_id: int, ...):
+              ...
+      - pattern-not: |
+          def $F(...):
+              ...
+              ensure_member_scope(...)
+              ...
+      - pattern-not: |
+          def $F(...):
+              ...
+              service.$M(...)
+              ...
+    paths:
+      include:
+        - "**/modules/*/router.py"
+      exclude:
+        - "**/tests/*"
+  - id: mp-hardcoded-secret
+    languages: [python]
+    severity: ERROR
+    message: >
+      مقدار محرمانهٔ هاردکدشده — کلید/رمز باید از تنظیمات بیاید.
+    patterns:
+      - pattern-either:
+          - pattern: $X = "sk_live_..."
+          - pattern: $X = "AKIA..."
+          - pattern: merchant_id = "..."
+      - pattern-not-inside: |
+          class $C:
+              ...
+    paths:
+      exclude: ["**/tests/*"]
+
+  - id: mp-eval-or-exec
+    languages: [python]
+    severity: ERROR
+    message: اجرای کد پویا (eval/exec) روی ورودی — خطرناک.
+    pattern-either:
+      - pattern: eval(...)
+      - pattern: exec(...)
+    paths:
+      exclude: ["**/tests/*", "**/scripts/*"]
+
+  - id: mp-pickle-loads
+    languages: [python]
+    severity: ERROR
+    message: pickle.loads روی دادهٔ بیرونی = اجرای کد دلخواه.
+    pattern: pickle.loads(...)
+    paths:
+      exclude: ["**/tests/*"]
+
+  - id: mp-react-dangerously-set-html
+    languages: [typescript, javascript]
+    severity: WARNING
+    message: dangerouslySetInnerHTML بدون sanitizer — خطر XSS.
+    pattern: dangerouslySetInnerHTML={...}
+    paths:
+      include: ["*/studio/src/*"]
+
+  - id: mp-ts-localstorage-token-in-query
+    languages: [typescript, javascript]
+    severity: ERROR
+    message: توکن در query string — در لاگ سرور/تاریخچه می‌ماند.
+    patterns:
+      - pattern-regex: '[?&](token|access_token|jwt)=\$\{'
+    paths:
+      include: ["*/studio/src/*"]

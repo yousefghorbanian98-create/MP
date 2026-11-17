@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 224" role="img" aria-labelledby="title desc">
+  <title id="title">Muscle Paradise — Progress Loop mark, refinement 01</title>
+  <desc id="desc">An emerald ascending route suggesting an M, joined to a gold P return form. Draft vector mark; not yet integrated into the app.</desc>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M28 166L58 110L87 139L115 80L144 103L160 58" stroke="#00B86A" stroke-width="20"/>
+    <path d="M160 58V166M160 58H191C220 58 220 101 191 101H160" stroke="#FFD700" stroke-width="20"/>
+    <circle cx="160" cy="58" r="10" fill="#FFD700" stroke="none"/>
+  </g>
+</svg>

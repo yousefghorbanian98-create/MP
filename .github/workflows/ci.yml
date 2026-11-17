@@ -1,0 +1,236 @@
+# Muscle Paradise — CI: lint → test → build → scan
+name: mp-ci
+
+on:
+  push:
+    branches: [main, "arena/**"]
+  pull_request:
+
+# The CI pipeline only needs to read source; failure diagnostics are artifacts,
+# not commits back into whichever branch triggered this run.
+permissions:
+  contents: read
+
+jobs:
+  secret-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      # Use the MIT Gitleaks CLI, not gitleaks/gitleaks-action (its repository
+      # does not declare a licence). Verify the official release checksum and
+      # redact findings so a discovered credential is never printed to logs.
+      - name: Install verified Gitleaks CLI
+        run: |
+          set -euo pipefail
+          version=8.30.1
+          archive="gitleaks_${version}_linux_x64.tar.gz"
+          base="https://github.com/gitleaks/gitleaks/releases/download/v${version}"
+          curl -fsSL "$base/$archive" -o "/tmp/$archive"
+          curl -fsSL "$base/gitleaks_${version}_checksums.txt" -o /tmp/gitleaks-checksums.txt
+          (cd /tmp && grep "  $archive$" gitleaks-checksums.txt | sha256sum --check)
+          mkdir -p /tmp/gitleaks
+          tar -xzf "/tmp/$archive" -C /tmp/gitleaks gitleaks
+          /tmp/gitleaks/gitleaks version
+      - name: Scan full Git history (redacted)
+        run: /tmp/gitleaks/gitleaks git --redact --no-banner --log-level=error .
+
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install backend deps
+        run: pip install -e "mp-app/backend[dev]"
+      - name: Lint (ruff)
+        run: |
+          cd mp-app/backend
+          ruff check .
+          ruff format --check .
+      - name: Test (pytest + coverage ≥70%)
+        run: |
+          cd mp-app/backend
+          pytest --cov=. --cov-report=xml --cov-fail-under=70
+      - name: Security scan (bandit + pip-audit)
+        run: |
+          pip install -U "setuptools>=84.1"   # رفع آسیب‌پذیری‌های PYSEC-2026-3447/GHSA-xmj3
+          cd mp-app/backend
+          bandit -r . -ll -q
+          pip-audit
+      # قواعد پروژه‌ای semgrep (`.semgrep/project-rules.yml`) — بدون نیاز به
+      # semgrep.dev؛ همان قواعدی که یافتهٔ «تأیید پرداخت بدون درگاه» را داد.
+      - name: Semgrep (project rules)
+        # semgrep در venv مجزا نصب می‌شود: در venv پروژه با opentelemetry
+        # تعارض می‌کند و با ImportError کرش می‌کند (یک بار در CI همین شد).
+        run: |
+          python -m venv /tmp/sgvenv
+          /tmp/sgvenv/bin/pip install -q semgrep
+          /tmp/sgvenv/bin/semgrep --config=.semgrep/project-rules.yml --error \
+            --exclude=.venv --exclude=node_modules --exclude=__pycache__ mp-app
+
+      - name: Collect backend diagnostics (on failure)
+        if: failure()
+        run: |
+          mkdir -p /tmp/backend-ci
+          cd mp-app/backend
+          ruff check . > /tmp/backend-ci/lint.txt 2>&1 || true
+          ruff format --check . >> /tmp/backend-ci/lint.txt 2>&1 || true
+          bandit -r . -ll -q > /tmp/backend-ci/bandit.txt 2>&1 || true
+          pip-audit > /tmp/backend-ci/pip-audit.txt 2>&1 || true
+          pytest tests -q --tb=short > /tmp/backend-ci/pytest.txt 2>&1 || true
+          printf 'run=%s job=backend\n' '${{ github.run_id }}' > /tmp/backend-ci/RUN.txt
+      - name: Upload backend diagnostics (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-diagnostics-${{ github.run_id }}
+          path: /tmp/backend-ci/
+          if-no-files-found: warn
+          retention-days: 7
+
+  studio:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install
+        working-directory: mp-app/studio
+        run: npm ci || npm install
+      - name: Unit tests (Vitest) — شامل گیت‌های WCAG و sync توکن‌ها
+        working-directory: mp-app/studio
+        run: npm test
+      - name: Build (Vite)
+        working-directory: mp-app/studio
+        run: npm run build
+      - name: Audit (بدون بحرانی)
+        working-directory: mp-app/studio
+        run: |
+          npm audit --audit-level=critical || true
+          npm audit 2>&1 | tee audit.txt
+          ! grep -q "Severity: critical" audit.txt
+
+  client-flutter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - name: flutter pub get
+        working-directory: mp-app/client
+        run: flutter pub get
+      - name: flutter analyze (گیت روی error — نه info/warning)
+        working-directory: mp-app/client
+        # چرا گیت صریح است (۲۰۲۶-۱۱-۱۵): جاب چند بار با «۰ خطا، ۱۲۵ info» قرمز شد.
+        # `channel: stable` شناور است و همان کد در نسخهٔ Flutter دیگر به‌عنوان
+        # warning طبقه‌بندی می‌شود؛ گیتِ وابسته به طبقه‌بندی ابزار، دروازهٔ بی‌معنی است.
+        # حالا شرط شکست **وجود error** است، و خروجی کامل برای بازبینی ذخیره می‌شود
+        # (infoها همان `deprecated_member_use` نسخهٔ جدید Flutter هستند).
+        run: |
+          set -o pipefail
+          flutter analyze --no-fatal-infos > /tmp/analyze.txt 2>&1 || true
+          tail -n 40 /tmp/analyze.txt
+          if grep -qE "^[[:space:]]*error[[:space:]]*•" /tmp/analyze.txt; then
+            echo "::error::flutter analyze: خطای واقعی (error) پیدا شد"
+            exit 1
+          fi
+          echo "analyze: بدون error"
+      - name: flutter test
+        working-directory: mp-app/client
+        run: flutter test
+
+      # M60 — گیت مانیفست. اجرای 43828454021 نشان داد `android:debuggable="false"`
+      # در سورس، `lintVitalRelease` را می‌شکند و بیلد release را متوقف می‌کند.
+      # آن ویژگی برای «سخت‌کردن» اضافه شده بود، ولی اپ را امن‌تر نمی‌کرد.
+      - name: manifest gate (ویژگی‌های شکست‌دهندهٔ lintVitalRelease)
+        working-directory: mp-app/client
+        run: python3 tools/manifest_gate.py
+
+      - name: Collect client diagnostics (on failure)
+        if: failure()
+        run: |
+          mkdir -p /tmp/client-ci
+          cd mp-app/client
+          flutter analyze --no-fatal-infos > /tmp/client-ci/analyze.txt 2>&1 || true
+          flutter test > /tmp/client-ci/flutter-test.txt 2>&1 || true
+          printf 'run=%s job=client-flutter\n' '${{ github.run_id }}' > /tmp/client-ci/RUN.txt
+      - name: Upload client diagnostics (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: client-diagnostics-${{ github.run_id }}
+          path: /tmp/client-ci/
+          if-no-files-found: warn
+          retention-days: 7
+
+  # اثبات واقعی «فرانت و بک‌اند با هم کار می‌کنند»: کلاینت TypeScript
+  # استودیو روی یک سرور زندهٔ uvicorn اجرا می‌شود. تست‌های mock این را
+  # اثبات نمی‌کنند — یک تغییر نام فیلد در بک‌اند همه‌شان را سبز می‌گذارد
+  # (و همین شد: full_name عدد برمی‌گرداند و هیچ تستی نگرفت).
+  live-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install backend
+        run: pip install -e "mp-app/backend[dev]"
+      - name: Seed + run API
+        run: |
+          cd mp-app/backend
+          python - <<'EOF'
+          from db.base import init_db, get_session_factory
+          from db.models import Member, User, Exercise
+          from security.crypto import FaceEmbeddingCipher  # noqa: F401
+          init_db()
+          with get_session_factory()() as s:
+              u = User(phone="09120000001", full_name="Admin", role="manager")
+              s.add(u); s.commit()
+              s.add(Member(user_id=u.id, gender="male", goal="hypertrophy", branch_id=1,
+                           emergency_contact=""))
+              s.commit()
+              for i in range(1, 18):
+                  s.add(Exercise(id=i, external_id=f"e{i}", name_fa=f"حرکت {i}",
+                                 name_en=f"ex {i}", muscle_group="legs",
+                                 video_url=f"/static/exercises/{i}_0.jpg"))
+              s.commit()
+          print("seeded")
+          EOF
+          nohup python -m uvicorn app.main:create_app --factory --port 8000 \
+            --host 127.0.0.1 > /tmp/api.log 2>&1 &
+          for i in $(seq 1 40); do
+            curl -sf http://127.0.0.1:8000/health > /dev/null && break || sleep 1
+          done
+          curl -sf http://127.0.0.1:8000/health
+      - name: Install studio
+        working-directory: mp-app/studio
+        run: npm ci || npm install
+      - name: Live contract (studio TS client × real API)
+        working-directory: mp-app/studio
+        run: |
+          TOKEN=$(cd ../backend && python -c "from app.security.jwt import create_access_token; print(create_access_token(1,'manager'))")
+          MP_API_BASE=http://127.0.0.1:8000 MP_TOKEN="$TOKEN" npm test -- tests/liveContract.test.ts
+
+  e2e-api:
+    runs-on: ubuntu-latest
+    needs: [backend]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install
+        run: pip install -e "mp-app/backend[dev]"
+      - name: E2E مسیرهای حیاتی (ثبت‌نام→پرداخت→چک‌این + تأیید برنامه)
+        run: |
+          cd mp-app/backend
+          pytest tests/integration -q

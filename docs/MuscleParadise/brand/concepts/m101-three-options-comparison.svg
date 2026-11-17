@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1800 1120" role="img" aria-labelledby="title desc">
+  <title id="title">MP identity — three concept directions in one comparison</title>
+  <desc id="desc">Three draft directions: geometric MP monogram, premium wordmark, and progress loop. All are shown on the same dark emerald and gold canvas. None is selected.</desc>
+  <defs>
+    <g id="mark-a" fill="none" stroke-linecap="square" stroke-linejoin="bevel">
+      <path d="M32 142V52L91 108L150 52" stroke="#00B86A" stroke-width="15"/>
+      <path d="M150 52V142M150 52H192C218 52 218 92 192 92H150" stroke="#FFD700" stroke-width="15"/>
+    </g>
+    <g id="mark-b">
+      <text x="0" y="124" font-family="DejaVu Serif, Georgia, serif" font-size="118" font-weight="700" letter-spacing="-13" fill="#F3F6F8">M<tspan fill="#FFD700">P</tspan></text>
+      <path d="M10 146H145" stroke="#00B86A" stroke-width="5"/>
+    </g>
+    <g id="mark-c" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M32 142L54 88L77 118L103 63L126 89L150 38" stroke="#00B86A" stroke-width="15"/>
+      <path d="M150 38V142M150 38H185C212 38 212 77 185 77H169" stroke="#FFD700" stroke-width="15"/>
+      <circle cx="150" cy="38" r="8" fill="#FFD700" stroke="none"/>
+    </g>
+    <g id="mark-a-mono" fill="none" stroke="#F3F6F8" stroke-width="15" stroke-linecap="square" stroke-linejoin="bevel">
+      <path d="M32 142V52L91 108L150 52V142"/>
+      <path d="M150 52H192C218 52 218 92 192 92H150"/>
+    </g>
+    <g id="mark-b-mono">
+      <text x="0" y="124" font-family="DejaVu Serif, Georgia, serif" font-size="118" font-weight="700" letter-spacing="-13" fill="#F3F6F8">MP</text>
+      <path d="M10 146H145" stroke="#F3F6F8" stroke-width="5"/>
+    </g>
+    <g id="mark-c-mono" fill="none" stroke="#F3F6F8" stroke-width="15" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M32 142L54 88L77 118L103 63L126 89L150 38V142M150 38H185C212 38 212 77 185 77H169"/>
+      <circle cx="150" cy="38" r="8" fill="#F3F6F8" stroke="none"/>
+    </g>
+    <style>
+      .eyebrow { font: 700 14px 'DejaVu Sans', sans-serif; letter-spacing: 3px; fill: #93A2AA; }
+      .heading { font: 700 25px 'DejaVu Sans', sans-serif; letter-spacing: 2px; fill: #F3F6F8; }
+      .desc { font: 400 17px 'DejaVu Sans', sans-serif; fill: #A7B4BA; }
+      .micro { font: 600 12px 'DejaVu Sans', sans-serif; letter-spacing: 1.7px; fill: #87969E; }
+      .sans-main { font: 700 36px 'DejaVu Sans', sans-serif; letter-spacing: 6px; fill: #F3F6F8; }
+      .sans-sub { font: 500 27px 'DejaVu Sans', sans-serif; letter-spacing: 9px; fill: #00B86A; }
+      .serif-main { font: 700 39px 'DejaVu Serif', Georgia, serif; letter-spacing: 2px; fill: #F3F6F8; }
+      .serif-sub { font: 400 28px 'DejaVu Serif', Georgia, serif; letter-spacing: 7px; fill: #D6CBA7; }
+    </style>
+  </defs>
+  <rect width="1800" height="1120" fill="#0B0F14"/>
+  <text x="64" y="56" class="eyebrow">MUSCLE PARADISE  /  M101 CONCEPT REVIEW</text>
+  <text x="1736" y="56" class="eyebrow" text-anchor="end">THREE DIRECTIONS · SAME PALETTE · DRAFT</text>
+  <path d="M64 90H1736" stroke="#29363E"/>
+
+  <g transform="translate(64 126)">
+    <rect width="528" height="906" rx="26" fill="#0F171D" stroke="#2A3942" stroke-width="2"/>
+    <text x="32" y="52" class="eyebrow">A  /  STRUCTURAL MP</text>
+    <rect x="101" y="88" width="326" height="326" rx="42" fill="#0B0F14" stroke="#3B4A52" stroke-width="2"/>
+    <use xlink:href="#mark-a" transform="translate(155 178) scale(0.88)"/>
+    <text x="264" y="470" text-anchor="middle" class="sans-main">MUSCLE</text>
+    <text x="264" y="514" text-anchor="middle" class="sans-sub">PARADISE</text>
+    <path d="M32 556H496" stroke="#29363E"/>
+    <text x="32" y="603" class="heading">DIRECT MP MONOGRAM</text>
+    <text x="32" y="640" class="desc">M and P share a bold geometric spine.</text>
+    <text x="32" y="670" class="desc">Emerald and gold define the letterforms.</text>
+    <g transform="translate(36 727)">
+      <use xlink:href="#mark-a-mono" transform="scale(0.45)"/>
+    </g>
+    <text x="153" y="772" class="micro">ONE-COLOR VERSION</text>
+    <text x="32" y="858" class="micro">POTENTIAL STRENGTH · FAST MP RECOGNITION</text>
+    <text x="32" y="884" class="micro">WATCH-OUT · KEEP THE SHARED STEM DISTINCT</text>
+  </g>
+
+  <g transform="translate(636 126)">
+    <rect width="528" height="906" rx="26" fill="#0F171D" stroke="#2A3942" stroke-width="2"/>
+    <text x="32" y="52" class="eyebrow">B  /  WORDMARK-LED</text>
+    <rect x="101" y="88" width="326" height="326" rx="42" fill="#0B0F14" stroke="#5A523E" stroke-width="2"/>
+    <use xlink:href="#mark-b" transform="translate(174 188) scale(1.08)"/>
+    <text x="264" y="470" text-anchor="middle" class="serif-main">MUSCLE</text>
+    <text x="264" y="514" text-anchor="middle" class="serif-sub">PARADISE</text>
+    <path d="M32 556H496" stroke="#4B4637"/>
+    <text x="32" y="603" class="heading">NAME-FIRST IDENTITY</text>
+    <text x="32" y="640" class="desc">A quieter, premium typographic direction.</text>
+    <text x="32" y="670" class="desc">The MP monogram acts as a compact seal.</text>
+    <g transform="translate(36 727)">
+      <use xlink:href="#mark-b-mono" transform="scale(0.45)"/>
+    </g>
+    <text x="153" y="772" class="micro">ONE-COLOR VERSION</text>
+    <text x="32" y="858" class="micro">POTENTIAL STRENGTH · DISTINCT WORDMARK</text>
+    <text x="32" y="884" class="micro">WATCH-OUT · TYPEFACE IS ONLY A PLACEHOLDER</text>
+  </g>
+
+  <g transform="translate(1208 126)">
+    <rect width="528" height="906" rx="26" fill="#0F171D" stroke="#2A3942" stroke-width="2"/>
+    <text x="32" y="52" class="eyebrow">C  /  PROGRESS LOOP</text>
+    <rect x="101" y="88" width="326" height="326" rx="42" fill="#0B0F14" stroke="#3B4A52" stroke-width="2"/>
+    <use xlink:href="#mark-c" transform="translate(153 178) scale(0.88)"/>
+    <text x="264" y="470" text-anchor="middle" class="sans-main">MUSCLE</text>
+    <text x="264" y="514" text-anchor="middle" class="sans-sub" fill="#A9B8BE">PARADISE</text>
+    <path d="M32 556H496" stroke="#29363E"/>
+    <text x="32" y="603" class="heading">MOTION IN THE MARK</text>
+    <text x="32" y="640" class="desc">An ascending route forms the M; the P returns.</text>
+    <text x="32" y="670" class="desc">The symbol can resolve into a static mark.</text>
+    <g transform="translate(36 727)">
+      <use xlink:href="#mark-c-mono" transform="scale(0.45)"/>
+    </g>
+    <text x="153" y="772" class="micro">ONE-COLOR VERSION</text>
+    <text x="32" y="858" class="micro">POTENTIAL STRENGTH · CLEAR MOTION STORY</text>
+    <text x="32" y="884" class="micro">WATCH-OUT · MOST ABSTRACT AT 16 PX</text>
+  </g>
+
+  <text x="64" y="1080" class="micro">ALL THREE ARE EXPLORATION DRAFTS · NO OPTION SELECTED · SEE INDIVIDUAL BOARDS FOR SIZE TESTS AND STORYBOARDS</text>
+</svg>

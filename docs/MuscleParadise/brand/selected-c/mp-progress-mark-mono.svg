@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 224" role="img" aria-labelledby="title desc">
+  <title id="title">MP Progress Loop — monochrome mark</title>
+  <desc id="desc">Single-color white version of the selected Progress Loop direction.</desc>
+  <g fill="none" stroke="#F3F6F8" stroke-width="20" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M28 166L58 110L87 139L115 80L144 103L160 58V166M160 58H191C220 58 220 101 191 101H160"/>
+    <circle cx="160" cy="58" r="10" fill="#F3F6F8" stroke="none"/>
+  </g>
+</svg>

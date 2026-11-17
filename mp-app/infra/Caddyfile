@@ -1,0 +1,41 @@
+# Muscle Paradise — Caddyfile (ریورس‌پراکسی + هدرهای امنیتی — لایهٔ ۹/۱۱)
+{
+	email {$TLS_EMAIL}
+}
+
+{$PUBLIC_DOMAIN} {
+	encode gzip zstd
+
+	# هدرهای امنیتی (defense in depth — همراه middleware فست‌API)
+	header {
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "no-referrer"
+		Strict-Transport-Security "max-age=63072000; includeSubDomains"
+		-Server
+	}
+
+	# فایل‌های استاتیک (ویدیوهای حرکات — فشرده‌شده با ffmpeg)
+	handle_path /media/* {
+		root * /srv/media
+		file_server
+	}
+
+	# API and liveness remain directly addressable for clients/health probes.
+	handle /api/* {
+		reverse_proxy backend:8000
+	}
+	handle /health {
+		reverse_proxy backend:8000
+	}
+
+	# Studio SPA. Its Nginx also proxies /api, but Caddy routes API directly above.
+	handle {
+		reverse_proxy studio:80
+	}
+
+	log {
+		output file /data/access.log
+		format json
+	}
+}

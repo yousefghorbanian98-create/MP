@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1400 1000" role="img" aria-labelledby="title desc">
+  <title id="title">MP Brand exploration — B, Wordmark-led</title>
+  <desc id="desc">Draft premium typographic concept with an independent serif MP monogram, quiet wordmark, monochrome version, small-size checks, and restrained reveal storyboard.</desc>
+  <defs>
+    <g id="mark-b">
+      <text x="4" y="128" font-family="DejaVu Serif, Georgia, serif" font-size="118" font-weight="700" letter-spacing="-13" fill="#F3F6F8">M<tspan fill="#FFD700">P</tspan></text>
+      <path d="M17 151H149" stroke="#00B86A" stroke-width="5"/>
+    </g>
+    <g id="mark-b-mono">
+      <text x="4" y="128" font-family="DejaVu Serif, Georgia, serif" font-size="118" font-weight="700" letter-spacing="-13" fill="#F3F6F8">MP</text>
+      <path d="M17 151H149" stroke="#F3F6F8" stroke-width="5"/>
+    </g>
+    <style>
+      .eyebrow { font: 700 14px 'DejaVu Sans', sans-serif; letter-spacing: 3px; fill: #91A0A8; }
+      .title { font: 700 17px 'DejaVu Sans', sans-serif; letter-spacing: 2px; fill: #EAF0F2; }
+      .copy { font: 400 14px 'DejaVu Sans', sans-serif; fill: #A7B4BA; }
+      .micro { font: 600 11px 'DejaVu Sans', sans-serif; letter-spacing: 1.5px; fill: #839199; }
+      .brand { font: 700 66px 'DejaVu Serif', Georgia, serif; letter-spacing: 7px; fill: #F3F6F8; }
+      .brand2 { font: 400 48px 'DejaVu Serif', Georgia, serif; letter-spacing: 14px; fill: #D6CBA7; }
+      .number { font: 700 12px 'DejaVu Sans Mono', monospace; fill: #C7D1D5; }
+    </style>
+  </defs>
+  <rect width="1400" height="1000" fill="#0B0F14"/>
+  <path d="M64 100H1336" stroke="#263139" stroke-width="1"/>
+  <text x="64" y="58" class="eyebrow">MUSCLE PARADISE  /  BRAND EXPLORATION  /  M101</text>
+  <text x="1336" y="58" class="eyebrow" text-anchor="end">DRAFT — NOT SELECTED</text>
+
+  <rect x="64" y="130" width="336" height="336" rx="30" fill="#10171D" stroke="#29353D" stroke-width="2"/>
+  <rect x="95" y="161" width="274" height="274" rx="38" fill="#0B0F14" stroke="#5B553F" stroke-width="2"/>
+  <use xlink:href="#mark-b" transform="translate(133 231) scale(0.9)"/>
+  <text x="232" y="492" class="micro" text-anchor="middle">ADAPTIVE ICON · TYPE-LED</text>
+
+  <text x="465" y="191" class="eyebrow">B  /  WORDMARK-LED</text>
+  <text x="465" y="292" class="brand">MUSCLE</text>
+  <text x="470" y="362" class="brand2">PARADISE</text>
+  <path d="M470 399H886" stroke="#6A624B" stroke-width="1"/>
+  <text x="470" y="437" class="copy">A quiet, editorial wordmark; the monogram acts as a small seal.</text>
+  <text x="470" y="465" class="copy">Type treatment is a direction study, not a licensed font decision.</text>
+  <rect x="1005" y="163" width="331" height="276" rx="22" fill="#10171D" stroke="#263139"/>
+  <text x="1034" y="204" class="micro">CORE MARK / MONOCHROME</text>
+  <use xlink:href="#mark-b-mono" transform="translate(1075 243) scale(0.78)"/>
+  <text x="1034" y="402" class="copy">MP holds without the gold accent.</text>
+
+  <rect x="64" y="550" width="1272" height="365" rx="24" fill="#0E151A" stroke="#263139" stroke-width="2"/>
+  <text x="96" y="596" class="title">SMALL-SIZE CHECK</text>
+  <text x="96" y="626" class="copy">The mark is typographic; outline final typography before production.</text>
+  <g>
+    <rect x="100" y="668" width="104" height="112" rx="14" fill="#0B0F14" stroke="#34414A"/>
+    <use xlink:href="#mark-b" transform="translate(148 694) scale(0.104)"/>
+    <text x="152" y="811" class="number" text-anchor="middle">16 px</text>
+    <rect x="224" y="668" width="104" height="112" rx="14" fill="#0B0F14" stroke="#34414A"/>
+    <use xlink:href="#mark-b" transform="translate(260 687) scale(0.156)"/>
+    <text x="276" y="811" class="number" text-anchor="middle">24 px</text>
+    <rect x="348" y="668" width="104" height="112" rx="14" fill="#0B0F14" stroke="#34414A"/>
+    <use xlink:href="#mark-b" transform="translate(392 679) scale(0.208)"/>
+    <text x="400" y="811" class="number" text-anchor="middle">32 px</text>
+    <rect x="472" y="668" width="104" height="112" rx="14" fill="#0B0F14" stroke="#34414A"/>
+    <use xlink:href="#mark-b" transform="translate(508 661) scale(0.312)"/>
+    <text x="524" y="811" class="number" text-anchor="middle">48 px</text>
+  </g>
+  <path d="M616 625V868" stroke="#263139"/>
+  <text x="660" y="596" class="title">MOTION STORYBOARD · 3 BEATS</text>
+  <text x="660" y="626" class="copy">Reveal the seal, draw a fine rule, then settle the wordmark.</text>
+  <g transform="translate(674 680)">
+    <rect width="166" height="116" rx="16" fill="#0B0F14" stroke="#34414A"/>
+    <text x="83" y="73" text-anchor="middle" font-family="DejaVu Serif, Georgia, serif" font-size="52" font-weight="700" fill="#F3F6F8">M</text>
+    <text x="83" y="101" class="micro" text-anchor="middle">01 · SEAL</text>
+  </g>
+  <path d="M851 738H876" stroke="#50616B" stroke-width="2"/>
+  <path d="M871 732L879 738L871 744" fill="none" stroke="#50616B" stroke-width="2"/>
+  <g transform="translate(889 680)">
+    <rect width="166" height="116" rx="16" fill="#0B0F14" stroke="#34414A"/>
+    <text x="83" y="69" text-anchor="middle" font-family="DejaVu Serif, Georgia, serif" font-size="46" font-weight="700" fill="#F3F6F8">M<tspan fill="#FFD700">P</tspan></text>
+    <path d="M42 82H124" stroke="#00B86A" stroke-width="3"/>
+    <text x="83" y="101" class="micro" text-anchor="middle">02 · RULE</text>
+  </g>
+  <path d="M1066 738H1091" stroke="#50616B" stroke-width="2"/>
+  <path d="M1086 732L1094 738L1086 744" fill="none" stroke="#50616B" stroke-width="2"/>
+  <g transform="translate(1104 680)">
+    <rect width="166" height="116" rx="16" fill="#0B0F14" stroke="#34414A"/>
+    <text x="83" y="66" text-anchor="middle" font-family="DejaVu Serif, Georgia, serif" font-size="43" font-weight="700" letter-spacing="2" fill="#F3F6F8">MP</text>
+    <path d="M38 80H128" stroke="#00B86A" stroke-width="3"/>
+    <text x="83" y="101" class="micro" text-anchor="middle">03 · SETTLE</text>
+  </g>
+  <text x="660" y="850" class="micro">OPTIONAL · NO FORCED WAIT · RESPECT REDUCED MOTION</text>
+  <text x="64" y="962" class="micro">CONCEPT B — EXPLORATION ONLY · TYPE PLACEHOLDER · NOT A PRODUCTION ASSET</text>
+  <text x="1336" y="962" class="micro" text-anchor="end">MP / 02</text>
+</svg>

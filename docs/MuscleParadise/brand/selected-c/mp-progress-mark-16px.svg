@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" role="img" aria-labelledby="title desc">
+  <title id="title">MP Progress Loop — 16 px optical cut draft</title>
+  <desc id="desc">Simplified, slightly heavier version intended only for 16 pixel raster use; a separate small-size variant, not a production-approved icon.</desc>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M1.3 14L3.5 9.3L5.6 11.4L7.7 7L8.6 8.4L9.6 3.2" stroke="#00B86A" stroke-width="1.8"/>
+    <path d="M9.6 3.2V14M9.6 3.2H12.1C14.7 3.2 14.7 8.6 12.1 8.6H9.6" stroke="#FFD700" stroke-width="1.8"/>
+  </g>
+</svg>

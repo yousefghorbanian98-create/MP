@@ -1,0 +1,23 @@
+# نقشهٔ ماژول‌های Backend — مرزها و مسئولیت‌ها
+
+> چرخه: M02 | ADR-001 | مرجع اصلی code-review برای «controller فربه»
+
+| ماژول | مسئولیت | وابستگی به ماژول دیگر | جداول اصلی (M03) |
+|-------|---------|------------------------|------------------|
+| `auth` | OTP، JWT access/refresh، ابطال، «خروج همه» | — | User, OtpCode, RefreshToken |
+| `membership` | عضو، پروفایل، اهداف، اشتراک (Membership) | auth | Member, Membership |
+| `payments` | پرداخت (زرین‌پال/نقدی)، کیف‌پول، رسید | membership | Payment, WalletTransaction |
+| `assessment` | ارزیابی ۱۴ دامنه، DomainScore، JP7 | membership | Assessment14Domain, DomainScore, JacksonPollockMeasurement |
+| `programs` | WorkoutProgram، ProgramWeek، تأیید مربی | assessment, ai_engine | WorkoutProgram, ProgramWeek, ProgramExercise |
+| `nutrition` | NutritionPlan، MealItem | ai_engine, content | NutritionPlan, MealItem |
+| `face_id` | FaceTemplate (رمزنگاری)، consent، چک‌این چهره/QR | membership | FaceTemplate, BiometricConsent, CheckIn |
+| `notification` | اعلان درون‌برنامه‌ای/پیامک، یادآوری، jobها | membership | Notification |
+| `ai_engine` | موتور قواعد (ACSM/NSCA) + پل Ollama (فقط متن) | assessment | RuleRun (لاگ خروجی موتور) |
+| `content` | کتابخانهٔ حرکات/غذا (wger/OFF/USDA + seed محلی) | — | Exercise, FoodItem |
+| `admin` | audit log، feature flags، گزارش‌های مدیر | همه (فقط خواندن) | AuditLog, FeatureFlag, Campaign, Offer |
+
+## جریان‌های حیاتی (مسیرهای E2E — M14)
+
+1. **ثبت‌نام → پرداخت → چک‌این:** auth (OTP) → membership → payments (زرین‌پال/نقدی) → face_id (QR/چهره)
+2. **تأیید برنامه توسط مربی:** assessment (۱۴ دامنه + هدف) → ai_engine (قواعد) → programs (draft) → مربی (approve) → notification → عضو
+3. **گیت چهره:** face_id (liveness + SFace match) → CheckIn (< ۲s) → fallback QR

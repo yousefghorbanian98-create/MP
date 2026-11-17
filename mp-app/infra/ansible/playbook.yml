@@ -1,0 +1,46 @@
+# Muscle Paradise — Ansible provisioning (M11)
+# اجرا: ansible-playbook -i inventory.ini playbook.yml
+- name: Provision Muscle Paradise server
+  hosts: gym_servers
+  become: true
+  vars:
+    app_dir: /opt/muscle-paradise
+  tasks:
+    - name: Install prerequisites
+      apt:
+        name:
+          - docker.io
+          - docker-compose-plugin
+          - git
+          - ffmpeg
+          - restic
+        state: present
+        update_cache: true
+
+    - name: Create app directory
+      file:
+        path: "{{ app_dir }}"
+        state: directory
+        owner: "{{ ansible_user }}"
+
+    - name: Copy compose stack
+      copy:
+        src: ../docker-compose.yml
+        dest: "{{ app_dir }}/docker-compose.yml"
+
+    - name: Copy Caddyfile
+      copy:
+        src: ../Caddyfile
+        dest: "{{ app_dir }}/Caddyfile"
+
+    - name: Start stack
+      community.docker.docker_compose_v2:
+        project_src: "{{ app_dir }}"
+        state: present
+
+    - name: Nightly backup cron (restic)
+      cron:
+        name: "mp restic backup"
+        minute: "17"
+        hour: "2"
+        job: "restic backup {{ app_dir }}/data --repo {{ restic_repo }} >> /var/log/mp-backup.log 2>&1"

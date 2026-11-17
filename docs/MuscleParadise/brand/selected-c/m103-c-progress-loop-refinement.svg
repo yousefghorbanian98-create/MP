@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1400" height="1050" viewBox="0 0 1400 1050">
+  <defs>
+    <style>
+      .eyebrow { font: 500 12px 'DejaVu Sans', sans-serif; letter-spacing: 3px; }
+      .label { font: 500 12px 'DejaVu Sans', sans-serif; letter-spacing: 1px; }
+      .small { font: 400 12px 'DejaVu Sans', sans-serif; }
+      .number { font: 500 12px 'DejaVu Sans', sans-serif; }
+      .word { font: 700 38px 'Vazirmatn', 'DejaVu Sans', sans-serif; letter-spacing: 5px; }
+      .tagline { font: 400 24px 'Vazirmatn', 'DejaVu Sans', sans-serif; letter-spacing: 5px; }
+    </style>
+    <g id="mark-c" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M28 166L58 110L87 139L115 80L144 103L160 58" stroke="#00B86A" stroke-width="20"/>
+      <path d="M160 58V166M160 58H191C220 58 220 101 191 101H160" stroke="#FFD700" stroke-width="20"/>
+      <circle cx="160" cy="58" r="10" fill="#FFD700" stroke="none"/>
+    </g>
+    <g id="mark-c-light" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M28 166L58 110L87 139L115 80L144 103L160 58" stroke="#007A4A" stroke-width="20"/>
+      <path d="M160 58V166M160 58H191C220 58 220 101 191 101H160" stroke="#A17B00" stroke-width="20"/>
+      <circle cx="160" cy="58" r="10" fill="#A17B00" stroke="none"/>
+    </g>
+    <g id="mark-c-mono" fill="none" stroke="#F3F6F8" stroke-width="20" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M28 166L58 110L87 139L115 80L144 103L160 58V166M160 58H191C220 58 220 101 191 101H160"/>
+      <circle cx="160" cy="58" r="10" fill="#F3F6F8" stroke="none"/>
+    </g>
+    <g id="mark-c-16" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M1.3 14L3.5 9.3L5.6 11.4L7.7 7L8.6 8.4L9.6 3.2" stroke="#00B86A" stroke-width="1.8"/>
+      <path d="M9.6 3.2V14M9.6 3.2H12.1C14.7 3.2 14.7 8.6 12.1 8.6H9.6" stroke="#FFD700" stroke-width="1.8"/>
+    </g>
+  </defs>
+  <rect width="1400" height="1050" fill="#0B0F14"/>
+  <text x="64" y="52" fill="#9EADB5" class="eyebrow">MUSCLE PARADISE / M103 REFINEMENT 01</text>
+  <text x="960" y="52" fill="#9EADB5" class="eyebrow">C · PROGRESS LOOP · SELECTED DIRECTION</text>
+  <path d="M64 84 H1336" stroke="#26333A" stroke-width="1"/>
+
+  <rect x="64" y="112" width="1272" height="390" rx="24" fill="#10181D" stroke="#263840" stroke-width="2"/>
+  <text x="96" y="150" fill="#8799A2" class="label">DARK PRIMARY LOCKUP · FLAT VECTOR</text>
+  <use xlink:href="#mark-c" transform="translate(77.5 159) scale(1.25)"/>
+  <text x="435" y="283" fill="#F3F6F8" class="word">MUSCLE</text>
+  <text x="441" y="344" fill="#FFD700" class="tagline">PARADISE</text>
+  <path d="M442 367 H846" stroke="#26333A" stroke-width="2"/>
+  <text x="442" y="397" fill="#AAB7BD" class="small">Ascending M rhythm · gold P return · no gradient or bevel</text>
+  <rect x="1010" y="160" width="276" height="276" rx="38" fill="#0B0F14" stroke="#36444B" stroke-width="2"/>
+  <use xlink:href="#mark-c" transform="translate(1057.965 216.498) scale(0.7277)"/>
+  <text x="1024" y="464" fill="#8799A2" class="label">ADAPTIVE ICON · SAFE-ZONE STUDY</text>
+
+  <rect x="64" y="532" width="614" height="332" rx="22" fill="#F6F8F7" stroke="#D5DFDB" stroke-width="2"/>
+  <text x="92" y="572" fill="#71828A" class="label">LIGHT LOCKUP · CONTRAST-CORRECTED ACCENTS</text>
+  <use xlink:href="#mark-c-light" transform="translate(102.6 620.6) scale(0.8)"/>
+  <text x="307" y="700" fill="#0B0F14" class="word">MUSCLE</text>
+  <text x="309" y="750" fill="#795C00" class="tagline">PARADISE</text>
+  <text x="92" y="816" fill="#71828A" class="label">WORDMARK: VAZIRMATN · OFL 1.1 · M103 STATIC CHOICE</text>
+
+  <rect x="700" y="532" width="380" height="332" rx="22" fill="#10181D" stroke="#263840" stroke-width="2"/>
+  <text x="726" y="572" fill="#8799A2" class="label">ONE-COLOR / DARK</text>
+  <use xlink:href="#mark-c-mono" transform="translate(784.6 615.6) scale(0.85)"/>
+  <text x="730" y="804" fill="#F3F6F8" class="word" style="font-size:26px;letter-spacing:3px">MUSCLE</text>
+  <text x="730" y="839" fill="#F3F6F8" class="tagline" style="font-size:18px;letter-spacing:4px">PARADISE</text>
+
+  <rect x="1102" y="532" width="234" height="332" rx="22" fill="#10181D" stroke="#263840" stroke-width="2"/>
+  <text x="1128" y="572" fill="#8799A2" class="label">SIZE CHECK</text>
+  <rect x="1128" y="596" width="56" height="56" rx="10" fill="#0B0F14" stroke="#34414A"/>
+  <use xlink:href="#mark-c-16" transform="translate(1148 616)"/>
+  <text x="1200" y="629" fill="#CBD4D8" class="number">16 px</text>
+  <rect x="1128" y="664" width="56" height="56" rx="10" fill="#0B0F14" stroke="#34414A"/>
+  <use xlink:href="#mark-c" transform="translate(1141.962 679.321) scale(0.113208)"/>
+  <text x="1200" y="697" fill="#CBD4D8" class="number">24 px</text>
+  <rect x="1128" y="732" width="56" height="56" rx="10" fill="#0B0F14" stroke="#34414A"/>
+  <use xlink:href="#mark-c" transform="translate(1137.283 743.094) scale(0.150943)"/>
+  <text x="1200" y="765" fill="#CBD4D8" class="number">32 px</text>
+  <text x="1128" y="824" fill="#8799A2" class="label">16 PX OPTICAL CUT</text>
+  <text x="1128" y="843" fill="#8799A2" class="label">SELECTED · APP UNCHANGED</text>
+
+  <text x="64" y="914" fill="#F3F6F8" class="label">REFINEMENT NOTES</text>
+  <text x="64" y="948" fill="#AAB7BD" class="small">C and the 16px optical cut are selected for this static package; app icon, splash, and Studio are unchanged.</text>
+  <text x="64" y="976" fill="#AAB7BD" class="small">Next: M104 needs a target Android runtime check before launch/reveal work; M105 remains blocked.</text>
+  <text x="64" y="1020" fill="#8799A2" class="label">M103 STATIC IDENTITY PACKAGE · RUNTIME / PRODUCT INTEGRATION STILL PENDING</text>
+</svg>

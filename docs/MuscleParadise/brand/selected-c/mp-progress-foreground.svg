@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">MP Progress Loop — adaptive icon foreground draft</title>
+  <desc id="desc">Transparent foreground draft with generous centered margins. Actual Android adaptive masks have not yet been tested.</desc>
+  <g transform="translate(88.6 104.8) scale(1.35)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M28 166L58 110L87 139L115 80L144 103L160 58" stroke="#00B86A" stroke-width="20"/>
+    <path d="M160 58V166M160 58H191C220 58 220 101 191 101H160" stroke="#FFD700" stroke-width="20"/>
+    <circle cx="160" cy="58" r="10" fill="#FFD700" stroke="none"/>
+  </g>
+</svg>

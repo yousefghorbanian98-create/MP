@@ -1,0 +1,13 @@
+global:
+  scrape_interval: 15s
+rule_files:
+  - /etc/prometheus/alerts.yml
+scrape_configs:
+  - job_name: mp-backend
+    metrics_path: /api/v1/metrics
+    static_configs:
+      - targets: ["backend:${PROMETHEUS_BACKEND_PORT}"]
+  - job_name: valkey
+    static_configs:
+      - targets: ["valkey-exporter:9121"]
+# Grafana can be added separately; Prometheus is bound to loopback by Compose.

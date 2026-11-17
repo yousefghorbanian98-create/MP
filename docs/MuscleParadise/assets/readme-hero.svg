@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="520" viewBox="0 0 1600 520" role="img" aria-labelledby="title desc">
+  <title id="title">Muscle Paradise — Gym Operating System</title>
+  <desc id="desc">A dark emerald and gold banner with a dumbbell and a rising progress graph.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#111a24" />
+      <stop offset="0.58" stop-color="#0b0f14" />
+      <stop offset="1" stop-color="#091813" />
+    </linearGradient>
+    <linearGradient id="emerald" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#00e6a0" />
+      <stop offset="1" stop-color="#00b86a" />
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ffe89a" />
+      <stop offset="1" stop-color="#ffd700" />
+    </linearGradient>
+    <radialGradient id="glow" cx="75%" cy="48%" r="55%">
+      <stop offset="0" stop-color="#00b86a" stop-opacity="0.27" />
+      <stop offset="1" stop-color="#00b86a" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="chartFill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#00b86a" stop-opacity="0.22" />
+      <stop offset="1" stop-color="#00b86a" stop-opacity="0" />
+    </linearGradient>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M 48 0 L 0 0 0 48" fill="none" stroke="#b4c7d8" stroke-opacity="0.045" stroke-width="1" />
+    </pattern>
+    <filter id="softGlow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="15" result="blur" />
+      <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="520" rx="34" fill="url(#bg)" />
+  <rect width="1600" height="520" rx="34" fill="url(#grid)" />
+  <rect width="1600" height="520" rx="34" fill="url(#glow)" />
+  <path d="M0 430 C280 392 455 476 720 430 S1180 365 1600 418" fill="none" stroke="#00b86a" stroke-opacity="0.10" stroke-width="1.5" />
+
+  <g font-family="Inter, Segoe UI, Arial, sans-serif">
+    <text x="112" y="118" fill="#74e5b7" font-size="18" font-weight="700" letter-spacing="5">MP  /  GYM OPERATING SYSTEM</text>
+    <text x="108" y="229" fill="#f4f7f9" font-size="72" font-weight="800" letter-spacing="-2">MUSCLE</text>
+    <text x="108" y="316" fill="#f4f7f9" font-size="72" font-weight="800" letter-spacing="-2">PARADISE</text>
+    <rect x="112" y="348" width="112" height="5" rx="3" fill="url(#gold)" />
+    <text x="112" y="398" fill="#c2cbd2" font-size="22" font-weight="500">Train with intent. Run your gym with clarity.</text>
+    <text x="112" y="444" fill="#8998a5" font-size="17" font-weight="500" letter-spacing="1">MEMBER APP  ·  COACH STUDIO  ·  GYM OPERATIONS</text>
+  </g>
+
+  <g transform="translate(1110 82)">
+    <circle cx="226" cy="178" r="170" fill="#00b86a" fill-opacity="0.055" stroke="#00b86a" stroke-opacity="0.16" stroke-width="1.5" />
+    <circle cx="226" cy="178" r="133" fill="#0d151d" fill-opacity="0.72" stroke="#30434b" stroke-width="1.5" />
+    <path d="M98 268 C143 244 165 259 198 226 C231 194 247 217 277 183 C303 153 330 166 358 118" fill="none" stroke="#00b86a" stroke-opacity="0.23" stroke-width="22" stroke-linecap="round" filter="url(#softGlow)" />
+    <path d="M98 268 C143 244 165 259 198 226 C231 194 247 217 277 183 C303 153 330 166 358 118 L358 294 L98 294 Z" fill="url(#chartFill)" />
+    <path d="M98 268 C143 244 165 259 198 226 C231 194 247 217 277 183 C303 153 330 166 358 118" fill="none" stroke="url(#emerald)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+    <circle cx="358" cy="118" r="7" fill="#ffe89a" stroke="#0b0f14" stroke-width="4" />
+    <g transform="translate(152 95)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M26 83 H148" stroke="#d8e2e7" stroke-opacity="0.75" stroke-width="12" />
+      <path d="M32 50 V116 M50 39 V127 M124 39 V127 M142 50 V116" stroke="url(#emerald)" stroke-width="14" />
+      <path d="M21 65 V101 M153 65 V101" stroke="url(#gold)" stroke-width="10" />
+      <circle cx="86" cy="83" r="7" fill="#f4f7f9" stroke="none" />
+    </g>
+    <text x="226" y="332" text-anchor="middle" fill="#bdcbd1" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="13" letter-spacing="3">PROGRESS, MADE VISIBLE</text>
+  </g>
+
+  <rect x="1" y="1" width="1598" height="518" rx="33" fill="none" stroke="#668078" stroke-opacity="0.28" stroke-width="2" />
+</svg>
