@@ -75,12 +75,13 @@ class AuthController extends StateNotifier<AuthState> {
 
   /// ورود با کد پیامکی — توکن ذخیره و پروفایل بارگیری می‌شود.
   Future<void> loginWithOtp(String phone, String code) async {
+    final api = _api ?? (throw StateError('Authentication API is unavailable'));
     // `_decode` نوع بدنه را نگه می‌دارد (Map/List) — پس اینجا صریح تبدیل می‌کنیم
     final r = Map<String, dynamic>.from(
-        await _api!.post('/auth/otp/verify', {'phone': phone, 'code': code}) as Map);
+        await api.post('/auth/otp/verify', {'phone': phone, 'code': code}) as Map);
     final token = r['access_token'] as String?;
     if (token == null) throw ApiException('توکن دریافت نشد');
-    _api!.accessToken = token;
+    api.accessToken = token;
     final user = r['user'] as Map<String, dynamic>?;
     state = AuthState(
       accessToken: token,
@@ -92,7 +93,8 @@ class AuthController extends StateNotifier<AuthState> {
   }
 
   Future<void> refreshMe() async {
-    final me = Map<String, dynamic>.from(await _api!.get('/members/me') as Map);
+    final api = _api ?? (throw StateError('Authentication API is unavailable'));
+    final me = Map<String, dynamic>.from(await api.get('/members/me') as Map);
     state = state.copyWith(memberId: me['id'] as int?, userName: me['full_name'] as String?);
   }
 
@@ -108,14 +110,15 @@ class AuthController extends StateNotifier<AuthState> {
   /// `true` یعنی «توکن تازه گرفتم، درخواست را دوباره بفرست». اگر refresh
   /// موجود نباشد یا سرور رد کند، `false` و نشست منقضی اعلام می‌شود.
   Future<bool> refreshAccessToken() async {
+    final api = _api;
     final refresh = _refreshToken;
-    if (_api == null || refresh == null) return false;
+    if (api == null || refresh == null) return false;
     try {
       final r = Map<String, dynamic>.from(
-          await _api!.post('/auth/refresh', {'refresh_token': refresh}) as Map);
+          await api.post('/auth/refresh', {'refresh_token': refresh}) as Map);
       final token = r['access_token'] as String?;
       if (token == null) return false;
-      _api!.accessToken = token;
+      api.accessToken = token;
       state = state.copyWith(accessToken: token);
       await _persist(token, r['refresh_token'] as String? ?? refresh);
       return true;
@@ -161,10 +164,11 @@ class AuthController extends StateNotifier<AuthState> {
       }
     }
     var serverRevoked = false;
+    final api = _api;
     final refresh = _refreshToken;
-    if (_api != null && refresh != null) {
+    if (api != null && refresh != null) {
       try {
-        await _api!.post('/auth/logout', {'refresh_token': refresh});
+        await api.post('/auth/logout', {'refresh_token': refresh});
         serverRevoked = true;
       } catch (_) {
         // عمداً بلعیده می‌شود — پایین توضیح داده شده
@@ -181,17 +185,18 @@ class AuthController extends StateNotifier<AuthState> {
 
   /// بازیابی نشست قبلی در شروع برنامه.
   Future<bool> restore() async {
+    final api = _api ?? (throw StateError('Authentication API is unavailable'));
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('mp_token');
     final refresh = prefs.getString('mp_refresh');
     if (token == null || token.isEmpty) return false;
-    _api!.accessToken = token;
+    api.accessToken = token;
     state = AuthState(accessToken: token);
     try {
       final r = Map<String, dynamic>.from(
-          await _api!.post('/auth/refresh', {'refresh_token': refresh ?? token}) as Map);
+          await api.post('/auth/refresh', {'refresh_token': refresh ?? token}) as Map);
       final t = r['access_token'] as String? ?? token;
-      _api!.accessToken = t;
+      api.accessToken = t;
       state = state.copyWith(accessToken: t);
       await _persist(t, r['refresh_token'] as String? ?? (refresh ?? token));
     } catch (_) {
@@ -203,7 +208,7 @@ class AuthController extends StateNotifier<AuthState> {
       await refreshMe();
       return true;
     } catch (_) {
-      _api!.accessToken = null;
+      api.accessToken = null;
       state = const AuthState();
       return false;
     }

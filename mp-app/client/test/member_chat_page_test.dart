@@ -242,6 +242,20 @@ void main() {
     expect(find.textContaining('خوانده‌شده'), findsOneWidget);
   });
 
+  testWidgets('خطای mark-read به‌عنوان موفقیت پنهان نمی‌شود', (tester) async {
+    final client = _MemberChatClient(failRead: true);
+    await tester.pumpWidget(_wrap(client));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('برنامهٔ هفتگی'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const ValueKey('member-chat-mark-read')));
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('ثبت خوانده‌شدن ناموفق بود'), findsOneWidget);
+    expect(find.text('۱ پیام خوانده‌نشده · علامت‌گذاری'), findsOneWidget);
+  });
+
   testWidgets('در خطای ارسال متن حفظ می‌شود و پس از موفقیت پاک می‌شود',
       (tester) async {
     final client = _MemberChatClient(failSend: true);

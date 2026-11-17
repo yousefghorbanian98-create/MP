@@ -18,7 +18,8 @@
 - اجرای full backend معادل coverage gate در CI: **853 passed, 2 skipped**, پوشش **86.30%** (حد لازم 70%); 29 هشدار deprecation/runtime در مجموعه.
 - تست‌های تازه: نام از DB در پاسخ member و staff؛ payload دستکاری‌شده نام را عوض نمی‌کند؛ member نمی‌تواند برای دیگری رزرو کند؛ نام رزرو در feed فقط برای owner است؛ ظرفیت پر، waitlist و عدم افشای نام به staff aggregate.
 - Widget test در `mp-app/client/test/classes_cancel_test.dart` confirmation و label را بررسی می‌کند؛ Flutter/Dart runtime در sandbox موجود نیست، پس این test هنوز اجرا نشده.
-- CI run `44194271168` روی commit `6475455` اجرا شد **پیش از** تغییرات M84–M87ِ باقی‌مانده در worktree. Backend/Studio/live-contract/e2e-api آن سبز شدند؛ client-flutter در analyze fail شد، tests skip شدند, secret-scan هم به‌دلیل matchهای تاریخی fail شد. Analyzer log/artifact از sandbox به علت GitHub artifact redirect/EOF دریافت نشد. جزئیات و یافته‌های secret به‌صورت redacted در `finn/reports/ci-follow-up-441922-441942.md` آمده‌اند. Workflow اکنون در شاخهٔ محلی fallback تشخیصی `dart analyze --format=machine` دارد؛ هنوز CI روی این اصلاح اجرا نشده است.
+- CI `44194271168` روی commit `6475455` اجرا شد، پیش از M84–M87 implementation؛ پس برای این loop شاهد نیست.
+- CI `44198198864` روی commit `b7cd7f1` شامل backend/UI/test M84 بود؛ backend و سایر API jobs پاس شدند، اما analyzer قبل از Flutter tests شکست خورد، پس widget test M84 اجرا نشد و وضعیت همچنان `UNKNOWN` است. علت‌های analyzer جدید با machine-format annotations در `finn/reports/ci-follow-up-441922-441942.md` ثبت و در worktree اصلاح شدند؛ Studio API coverage استثنای M87 هم محلی **4 passed** و full Studio **219 passed/9 skipped + build** شد. CI تازه هنوز لازم است. Secret-scan در هر دو run به‌دلیل matchهای تاریخی fail مانده.
 
 ## بازگشت
 

@@ -3,6 +3,7 @@ library;
 
 import 'dart:convert';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:mp_client/core/api_client.dart';
@@ -12,7 +13,6 @@ import 'package:mp_client/features/feedback/feedback_providers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const _device = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
-const _client = 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb';
 final _now = DateTime.utc(2026, 11, 17, 12);
 
 OfflineFeedbackQueueItem _item({

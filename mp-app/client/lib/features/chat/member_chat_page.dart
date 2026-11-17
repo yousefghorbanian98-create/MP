@@ -52,7 +52,7 @@ class _MemberChatPageState extends ConsumerState<MemberChatPage> {
 
   Future<void> _refreshConversations() async {
     try {
-      await ref.refresh(memberChatConversationsProvider.future);
+      await ref.refresh(memberChatConversationsProvider.future).then<void>((_) {});
     } catch (_) {
       // خطا در AsyncValue نمایش داده می‌شود؛ refresh indicator نباید آن را
       // به empty یا خطای ثانویه تبدیل کند.

@@ -32,7 +32,7 @@
 - گیت کامل backend: `pytest --cov=. --cov-report=term --cov-fail-under=70` → **853 passed, 2 skipped**، پوشش **86.30%** (حد 70%)؛ `ruff check .` و `ruff format --check .` برای کل backend پاس شدند.
 - Workflow YAML parse شد و هر **23** اسکریپت shell توکار `bash -n` را گذراند؛ `git diff --check` نیز پاس شد.
 - `flutter`, `dart`, `java`, `gradle` و `kotlinc` در sandbox موجود نیستند؛ پس `flutter format/analyze/test`، Kotlin compile، Gradle/Android build، round-trip بومی SQLite/MethodChannel و persistence/restart روی دستگاه اجرا نشدند. گیت Tree-sitter/source و backend جایگزین این runtime gateها نیستند.
-- CI `44194271168` commit `6475455` را آزمود؛ source تغییرهای M84–M87 در آن commit حضور نداشت. `flutter analyze` بدون diagnostic قابل‌تجزیه شکست خورد و تست‌های Client اجرا نشدند؛ دانلود artifact با EOF تمام شد. workflow محلی اکنون fallback تشخیصی Dart machine-format دارد و منتظر اجرای CI تازه است. جزئیات: `finn/reports/ci-follow-up-441922-441942.md`.
+- CI `44198198864` روی commit `b7cd7f1` source M84–M87 را آزمود. Backend پاس شد، اما `flutter analyze` diagnostics داد و تست‌های Client skip شدند؛ diagnostics شامل import/cast errors و warnings اکنون در worktree اصلاح شده‌اند. Studio API coverage نیز TODO کهنهٔ route را تشخیص داد؛ همان gate پس از اصلاح به‌صورت محلی **4 passed** و full Studio **219 passed/9 skipped + build** شد. CI تازه برای Flutter و Studio در انتظار است؛ جزئیات redacted در `finn/reports/ci-follow-up-441922-441942.md`.
 
 ## بازتولید در Codespaces
 

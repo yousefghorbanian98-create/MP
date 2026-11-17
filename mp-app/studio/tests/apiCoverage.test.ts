@@ -109,11 +109,10 @@ const ROUTE_EXCEPTIONS: Record<string, Exception> = {
     evidence: null,
     external: "TODO: جریان امن نمایش/چاپ گزارش برای staff؛ token یک‌بارمصرف در این route دیده نشد",
   },
-  // همگام‌سازی آفلاین: سمت Dart هنوز ساخته نشده (Q4)
+  // M87 — outbox محدودِ بازخورد ساختاریافته در Flutter.
   "/api/v1/programs/sync/set-feedback": {
-    why: "صف آفلاین Dart ساخته نشده — این ردیف خودش یک TODO است، نه یک انجام",
-    evidence: null,
-    external: "TODO: Q4 — صف آفلاین Dart",
+    why: "صف آفلاین owner-scoped برای بازخورد ساختاریافته از Flutter به همین endpoint sync می‌کند",
+    evidence: "/programs/sync/set-feedback",
   },
   "/api/v1/programs/from-engine": {
     why: "UIها از /ai/program/generate استفاده می‌کنند که همان service را صدا می‌زند؛ route مستقیم consumer شناخته‌شده‌ای ندارد",
