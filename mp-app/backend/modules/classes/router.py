@@ -67,7 +67,11 @@ def create_class(payload: ClassIn, db: DbSession):
 )
 def book(payload: BookIn, db: DbSession, user: CurrentUser):
     b = service.book(db, class_id=payload.class_id, member_id=payload.member_id, user=user)
-    return {"id": b.id, "status": b.status}
+    return {
+        "id": b.id,
+        "status": b.status,
+        "member_name": service.member_display_name(db, b.member_id),
+    }
 
 
 @router.post(

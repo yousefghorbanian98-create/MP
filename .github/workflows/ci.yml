@@ -187,31 +187,61 @@ jobs:
           set +e
           flutter analyze --no-fatal-infos > /tmp/analyze.txt 2>&1
           analyze_status=$?
+          machine_status=0
+          if [ "$analyze_status" -ne 0 ]; then
+            # Flutter's human-readable analyzer output can change with the floating
+            # stable SDK. Use Dart's documented machine format as a diagnostic
+            # fallback, while retaining flutter analyze as the actual CI gate.
+            dart analyze --format=machine . > /tmp/analyze.machine 2>&1
+            machine_status=$?
+          else
+            : > /tmp/analyze.machine
+          fi
           set -e
           tail -n 40 /tmp/analyze.txt
-          ANALYZE_STATUS="$analyze_status" python3 - <<'PY'
+          ANALYZE_STATUS="$analyze_status" MACHINE_STATUS="$machine_status" python3 - <<'PY'
           import os
           import re
           import sys
           from pathlib import Path
 
           analyze_status = int(os.environ["ANALYZE_STATUS"])
+          machine_status = int(os.environ["MACHINE_STATUS"])
           raw_lines = Path("/tmp/analyze.txt").read_text(encoding="utf-8", errors="replace").splitlines()
           error_lines = [line for line in raw_lines if re.match(r"^\s*error\s*•", line)]
           pattern = re.compile(r"^\s*error\s*•\s*(.*?)\s*•\s*(.+?):(\d+):(\d+)\s*•\s*(.*)$")
+          machine_diagnostics = []
+          for line in Path("/tmp/analyze.machine").read_text(encoding="utf-8", errors="replace").splitlines():
+              fields = line.split("|", 7)
+              if len(fields) == 8 and fields[0] in {"ERROR", "WARNING", "INFO"}:
+                  severity, _kind, code, path, line_number, column, _length, message = fields
+                  machine_diagnostics.append((severity, code, path, line_number, column, message))
+          severity_order = {"ERROR": 0, "WARNING": 1, "INFO": 2}
+          machine_diagnostics.sort(
+              key=lambda item: (severity_order[item[0]], item[2], int(item[3]), int(item[4]))
+          )
 
           def escape(value: str) -> str:
               return value.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A").replace(":", "%3A").replace(",", "%2C")
 
           summary = ["### Flutter analyzer diagnostics"]
-          if not error_lines and analyze_status == 0:
-              print("analyze: no error diagnostics")
-              summary.append("No analyzer errors found.")
-          elif not error_lines:
-              print(f"::error::flutter analyze exited {analyze_status} without a parseable error diagnostic")
-              summary.append(f"Analyzer command failed with exit status {analyze_status}; no parseable diagnostic was emitted.")
-          else:
-              print("::error::flutter analyze: خطای واقعی (error) پیدا شد")
+          if analyze_status == 0:
+              print("analyze: no fatal analyzer diagnostics")
+              summary.append("No fatal analyzer diagnostics found.")
+          elif machine_diagnostics:
+              level = {"ERROR": "error", "WARNING": "warning", "INFO": "notice"}
+              print(f"flutter analyze exited {analyze_status}; Dart machine analyzer status {machine_status}.")
+              for severity, code, path, line_number, column, message in machine_diagnostics[:50]:
+                  annotation = level[severity]
+                  safe_message = f"{message} [{code}]" if code else message
+                  print(
+                      f"::{annotation} file={escape(path)},line={line_number},col={column},title=Dart analyzer::"
+                      f"{escape(safe_message)}"
+                  )
+                  summary.append(f"- `{path}:{line_number}:{column}` — {message} (`{code}`; {severity.lower()})")
+              summary.insert(1, f"Machine-format diagnostics: {len(machine_diagnostics)}.")
+          elif error_lines:
+              print("::error::flutter analyze: error diagnostics found; human-format fallback parsed")
               for line in error_lines[:50]:
                   match = pattern.match(line)
                   if match:
@@ -226,12 +256,17 @@ jobs:
                       print("::error::Flutter analyzer reported an error; see the redacted diagnostic artifact.")
                       summary.append("An analyzer error was reported; its location could not be parsed safely.")
               summary.insert(1, f"Error diagnostics: {len(error_lines)}.")
-          summary.insert(1, f"Analyzer command exit status: {analyze_status}.")
+          else:
+              print(f"::error::flutter analyze exited {analyze_status} without a parseable diagnostic")
+              summary.append(
+                  f"Analyzer command failed with exit status {analyze_status}; Dart machine analysis returned {machine_status} without parseable diagnostics."
+              )
+          summary.insert(1, f"Flutter analyzer exit status: {analyze_status}.")
           summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
           if summary_path:
               with open(summary_path, "a", encoding="utf-8") as stream:
                   stream.write("\n".join(summary) + "\n")
-          sys.exit(1 if error_lines or analyze_status != 0 else 0)
+          sys.exit(1 if analyze_status != 0 else 0)
           PY
       - name: flutter test
         working-directory: mp-app/client
@@ -250,6 +285,7 @@ jobs:
           mkdir -p /tmp/client-ci
           cd mp-app/client
           flutter analyze --no-fatal-infos > /tmp/client-ci/analyze.txt 2>&1 || true
+          dart analyze --format=machine . > /tmp/client-ci/analyze.machine.txt 2>&1 || true
           flutter test > /tmp/client-ci/flutter-test.txt 2>&1 || true
           printf 'run=%s job=client-flutter\n' '${{ github.run_id }}' > /tmp/client-ci/RUN.txt
       - name: Upload client diagnostics (on failure)

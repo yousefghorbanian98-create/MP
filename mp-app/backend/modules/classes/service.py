@@ -6,7 +6,17 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.errors import ApiError, NotFoundError
-from db.models import ClassBooking, GymClass, Member
+from db.models import ClassBooking, GymClass, Member, User
+
+
+def member_display_name(db: Session, member_id: int) -> str | None:
+    """نام نمایشی را از رابطهٔ معتبر Member→User می‌خواند، نه از payload کلاینت."""
+    name = db.execute(
+        select(User.full_name).join(Member, Member.user_id == User.id).where(Member.id == member_id)
+    ).scalar_one_or_none()
+    if not isinstance(name, str):
+        return None
+    return name.strip() or None
 
 
 def create_class(
@@ -94,6 +104,7 @@ def cancel(db: Session, *, class_id: int, member_id: int, user=None) -> ClassBoo
 
 def list_classes(db: Session, *, member_id: int | None = None) -> list[dict]:
     member_bookings: dict[int, str] = {}
+    member_name = member_display_name(db, member_id) if member_id is not None else None
     if member_id is not None:
         rows = db.scalars(
             select(ClassBooking)
@@ -136,5 +147,6 @@ def list_classes(db: Session, *, member_id: int | None = None) -> list[dict]:
         }
         if member_id is not None:
             item["member_booking_status"] = member_bookings.get(c.id)
+            item["member_booking_name"] = member_name if c.id in member_bookings else None
         out.append(item)
     return out

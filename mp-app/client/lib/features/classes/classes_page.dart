@@ -36,8 +36,16 @@ class _ClassesPageState extends ConsumerState<ClassesPage> {
         'member_id': memberId,
       });
       if (!mounted) return;
-      setState(() => _message =
-          '✅ رزرو شد (${r is Map && r['status'] == 'waitlisted' ? 'لیست انتظار' : 'تأییدشده'})');
+      final memberName = r is Map && r['member_name'] is String
+          ? (r['member_name'] as String).trim()
+          : '';
+      final bookingLabel = memberName.isEmpty
+          ? 'رزرو شما ثبت شد'
+          : 'رزرو به نام $memberName ثبت شد';
+      final statusLabel = r is Map && r['status'] == 'waitlisted'
+          ? 'لیست انتظار'
+          : 'تأییدشده';
+      setState(() => _message = '✅ $bookingLabel ($statusLabel)');
       ref.invalidate(classesProvider);
     } catch (e) {
       if (!mounted) return;
@@ -152,12 +160,16 @@ class _ClassTile extends StatelessWidget {
     final full = seats <= 0;
     final bookingStatus = cls['member_booking_status'];
     final booked = bookingStatus == 'confirmed' || bookingStatus == 'waitlisted';
+    final bookingName = cls['member_booking_name'] is String
+        ? (cls['member_booking_name'] as String).trim()
+        : '';
+    final bookingLabel = bookingName.isEmpty ? 'رزرو شما' : 'رزرو به نام $bookingName';
     final details = <String>[
       if (cls['schedule_text'] is String && (cls['schedule_text'] as String).isNotEmpty)
         cls['schedule_text'] as String,
       full ? 'ظرفیت تکمیل' : '$seats صندلی خالی',
-      if (bookingStatus == 'confirmed') 'رزرو شما تأیید شده',
-      if (bookingStatus == 'waitlisted') 'شما در لیست انتظار هستید',
+      if (bookingStatus == 'confirmed') '$bookingLabel تأیید شده',
+      if (bookingStatus == 'waitlisted') '$bookingLabel در لیست انتظار است',
     ].join(' · ');
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),

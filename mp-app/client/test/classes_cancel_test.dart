@@ -12,7 +12,11 @@ import 'package:mp_client/core/theme.dart';
 import 'package:mp_client/features/classes/classes_page.dart';
 
 class _ClassesClient extends http.BaseClient {
+  _ClassesClient({bool initiallyBooked = true}) : booked = initiallyBooked;
+
+  bool booked;
   bool cancelled = false;
+  Map<String, dynamic>? bookBody;
   Map<String, dynamic>? cancelBody;
   int listCalls = 0;
 
@@ -22,17 +26,24 @@ class _ClassesClient extends http.BaseClient {
     dynamic payload;
     if (request.method == 'GET' && path == '/classes') {
       listCalls++;
+      final hasBooking = booked && !cancelled;
       payload = [
         {
           'id': 4,
           'name': 'یوگا',
           'schedule_text': 'امروز',
-          'seats_left': cancelled ? 1 : 0,
-          'confirmed': cancelled ? 0 : 1,
+          'seats_left': hasBooking ? 0 : 1,
+          'confirmed': hasBooking ? 1 : 0,
           'waitlisted': 0,
-          'member_booking_status': cancelled ? null : 'confirmed',
+          'member_booking_status': hasBooking ? 'confirmed' : null,
+          'member_booking_name': hasBooking ? 'سارا از پایگاه داده' : null,
         }
       ];
+    } else if (request.method == 'POST' && path == '/classes/book') {
+      bookBody = jsonDecode((request as http.Request).body) as Map<String, dynamic>;
+      booked = true;
+      cancelled = false;
+      payload = {'id': 19, 'status': 'confirmed', 'member_name': 'سارا از پایگاه داده'};
     } else if (request.method == 'POST' && path == '/classes/cancel') {
       cancelBody = jsonDecode((request as http.Request).body) as Map<String, dynamic>;
       cancelled = true;
@@ -77,7 +88,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('لغو رزرو'), findsOneWidget);
-    expect(find.text('رزرو شما تأیید شده'), findsOneWidget);
+    expect(find.text('رزرو به نام سارا از پایگاه داده تأیید شده'), findsOneWidget);
 
     await tester.tap(find.text('لغو رزرو'));
     await tester.pumpAndSettle();
@@ -88,7 +99,21 @@ void main() {
     expect(client.listCalls, greaterThanOrEqualTo(2),
         reason: 'پس از لغو باید ظرفیت و وضعیت رزرو دوباره از API خوانده شود');
     expect(find.text('✅ رزرو لغو شد'), findsOneWidget);
-    expect(find.text('رزرو شما تأیید شده'), findsNothing);
+    expect(find.text('رزرو به نام سارا از پایگاه داده تأیید شده'), findsNothing);
     expect(find.text('رزرو'), findsOneWidget);
+  });
+
+  testWidgets('تأیید رزرو نام معتبر برگشتی از سرور را نمایش می‌دهد', (tester) async {
+    final client = _ClassesClient(initiallyBooked: false);
+    await tester.pumpWidget(_wrap(client));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('رزرو'));
+    await tester.pumpAndSettle();
+
+    expect(client.bookBody?['class_id'], 4);
+    expect(client.bookBody?['member_id'], 3);
+    expect(find.text('✅ رزرو به نام سارا از پایگاه داده ثبت شد (تأییدشده)'), findsOneWidget);
+    expect(find.text('رزرو به نام سارا از پایگاه داده تأیید شده'), findsOneWidget);
   });
 }

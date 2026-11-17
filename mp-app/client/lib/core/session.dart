@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'api_client.dart';
+import 'offline_feedback_outbox.dart';
 
 /// نقطهٔ تزریق HTTP — تست‌ها فقط این را override می‌کنند.
 /// چرا جدا از `apiClientProvider`: سازندهٔ `ApiClient` آدرس را اعتبارسنجی
@@ -41,9 +42,18 @@ class AuthState {
       );
 }
 
+class PendingOfflineFeedbackException implements Exception {
+  const PendingOfflineFeedbackException(this.count);
+  final int count;
+}
+
 class AuthController extends StateNotifier<AuthState> {
-  AuthController(this._api, {String? refreshToken})
-      : _refreshToken = refreshToken,
+  AuthController(
+    this._api, {
+    String? refreshToken,
+    OfflineFeedbackLocalStore? offlineStore,
+  })  : _refreshToken = refreshToken,
+        _offlineStore = offlineStore,
         super(const AuthState());
 
   /// refresh token در حافظه نگه داشته می‌شود تا خروج بتواند نشست **سرور** را
@@ -56,8 +66,12 @@ class AuthController extends StateNotifier<AuthState> {
   /// «وارد شده» برسد، یا با `overrideWith` نسخهٔ جعلی بسازد که هیچ رفتار
   /// واقعی ندارد. یک سازندهٔ صریح، تست را صادق نگه می‌دارد.
   @visibleForTesting
-  AuthController.test(AuthState initial) : _api = null, super(initial);
+  AuthController.test(AuthState initial, {OfflineFeedbackLocalStore? offlineStore})
+      : _api = null,
+        _offlineStore = offlineStore,
+        super(initial);
   final ApiClient? _api;
+  final OfflineFeedbackLocalStore? _offlineStore;
 
   /// ورود با کد پیامکی — توکن ذخیره و پروفایل بارگیری می‌شود.
   Future<void> loginWithOtp(String phone, String code) async {
@@ -128,7 +142,24 @@ class AuthController extends StateNotifier<AuthState> {
   ///   • خطای شبکه خروج محلی را متوقف **نمی‌کند** — کاربر نباید وقتی سرور در
   ///     دسترس نیست در حساب خودش زندانی شود. ولی خطا بی‌صدا هم نمی‌ماند:
   ///     `serverRevoked` می‌گوید نشست سرور بسته شد یا نه.
-  Future<bool> logout() async {
+  Future<bool> logout({
+    bool keepPendingFeedback = false,
+    bool discardPendingFeedback = false,
+  }) async {
+    if (keepPendingFeedback && discardPendingFeedback) {
+      throw ArgumentError('Choose either keep or discard for the offline feedback queue.');
+    }
+    final ownerMemberId = state.memberId;
+    final offlineStore = _offlineStore;
+    if (offlineStore != null && offlineStore.isSupported && ownerMemberId != null) {
+      final unresolved = await offlineStore.countUnresolved(ownerMemberId);
+      if (unresolved > 0 && !keepPendingFeedback && !discardPendingFeedback) {
+        throw PendingOfflineFeedbackException(unresolved);
+      }
+      if (unresolved > 0 && discardPendingFeedback) {
+        await offlineStore.discardOwner(ownerMemberId);
+      }
+    }
     var serverRevoked = false;
     final refresh = _refreshToken;
     if (_api != null && refresh != null) {
@@ -180,7 +211,10 @@ class AuthController extends StateNotifier<AuthState> {
 }
 
 final authProvider = StateNotifierProvider<AuthController, AuthState>(
-  (ref) => AuthController(ref.watch(apiClientProvider)),
+  (ref) => AuthController(
+    ref.watch(apiClientProvider),
+    offlineStore: ref.watch(offlineFeedbackStoreProvider),
+  ),
 );
 
 /// خروج از حساب — برای دکمه‌های UI.
@@ -188,5 +222,5 @@ final authProvider = StateNotifierProvider<AuthController, AuthState>(
 /// چرا provider جدا: تست‌های ویجت باید بتوانند مسیر واقعی `logout` را
 /// بسنجند بدون اینکه به `StateNotifierProvider` دست بزنند.
 final logoutProvider = Provider<Future<bool> Function()>((ref) {
-  return ref.watch(authProvider.notifier).logout;
+  return () => ref.read(authProvider.notifier).logout();
 });

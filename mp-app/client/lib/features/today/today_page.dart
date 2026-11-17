@@ -10,6 +10,7 @@ import '../../core/app_state.dart';
 import '../../core/session.dart';
 import '../../core/theme.dart';
 import '../../shared/widgets/glass_card.dart';
+import '../feedback/offline_feedback_queue_card.dart';
 import '../feedback/set_feedback_sheet.dart';
 import 'readiness_card.dart';
 import 'today_controller.dart';
@@ -85,6 +86,7 @@ class TodayPage extends ConsumerWidget {
             const SizedBox(height: 14),
             const VolumeCard(),
             const SizedBox(height: 14),
+            const OfflineFeedbackQueueCard(),
             programAsync.when(
               loading: () => const Padding(
                 padding: EdgeInsets.all(40),
@@ -105,7 +107,13 @@ class TodayPage extends ConsumerWidget {
                   ],
                 ),
               ),
-              data: (_) {
+              data: (programs) {
+                final firstProgram = programs.isNotEmpty && programs.first is Map
+                    ? Map<String, dynamic>.from(programs.first as Map)
+                    : null;
+                final programId = firstProgram?['id'] is num
+                    ? (firstProgram!['id'] as num).toInt()
+                    : null;
                 if (exercises.isEmpty) {
                   return GlassCard(
                     child: Column(
@@ -136,6 +144,7 @@ class TodayPage extends ConsumerWidget {
                         index: i,
                         exercise: exercises[i],
                         done: todayState.done.contains(i),
+                        programId: programId,
                       )
                           .animate()
                           .fadeIn(delay: (80 * i).ms, duration: 350.ms)
@@ -152,11 +161,17 @@ class TodayPage extends ConsumerWidget {
 }
 
 class _ExerciseTile extends ConsumerWidget {
-  const _ExerciseTile({required this.index, required this.exercise, required this.done});
+  const _ExerciseTile({
+    required this.index,
+    required this.exercise,
+    required this.done,
+    required this.programId,
+  });
 
   final int index;
   final Map<String, dynamic> exercise;
   final bool done;
+  final int? programId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -213,6 +228,7 @@ class _ExerciseTile extends ConsumerWidget {
                   builder: (_) => SetFeedbackSheet(
                     movementName: (exercise['exercise_name'] as String?) ??
                         'حرکت ${exercise['exercise_id'] ?? ''}',
+                    programId: programId,
                   ),
                 ),
               ),

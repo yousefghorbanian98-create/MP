@@ -5,10 +5,79 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/offline_feedback_outbox.dart';
 import '../../core/session.dart';
 import '../../core/theme.dart';
 import '../../shared/widgets/glass_card.dart';
 import 'phone_change_dialog.dart';
+
+enum _PendingQueueExitChoice { none, cancel, keep, discard }
+
+Future<_PendingQueueExitChoice> _confirmPendingFeedbackExit(
+  BuildContext context,
+  WidgetRef ref,
+  int? ownerMemberId,
+) async {
+  final store = ref.read(offlineFeedbackStoreProvider);
+  if (ownerMemberId == null || !store.isSupported) return _PendingQueueExitChoice.none;
+  late final int count;
+  try {
+    count = await store.countUnresolved(ownerMemberId);
+  } catch (_) {
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('وضعیت صف محلی خوانده نشد؛ برای ایمنی خروج/تغییر شماره لغو شد.')),
+      );
+    }
+    return _PendingQueueExitChoice.cancel;
+  }
+  if (count == 0) return _PendingQueueExitChoice.none;
+  if (!context.mounted) return _PendingQueueExitChoice.cancel;
+
+  final choice = await showDialog<_PendingQueueExitChoice>(
+    context: context,
+    builder: (dialogContext) => AlertDialog(
+      title: const Text('بازخورد همگام‌نشده'),
+      content: Text(
+        '$count مورد هنوز روی دستگاه است. اگر صف را نگه دارید، فقط پس از ورود دوباره به همین حساب قابل ارسال است؛ حساب دیگر آن را نمی‌بیند. می‌توانید به صفحهٔ برنامه برگردید و sync کنید یا صف را صریحاً حذف کنید.',
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(dialogContext, _PendingQueueExitChoice.cancel),
+          child: const Text('انصراف'),
+        ),
+        TextButton(
+          onPressed: () => Navigator.pop(dialogContext, _PendingQueueExitChoice.keep),
+          child: const Text('خروج با نگه‌داشتن صف'),
+        ),
+        TextButton(
+          style: TextButton.styleFrom(foregroundColor: Colors.redAccent),
+          onPressed: () => Navigator.pop(dialogContext, _PendingQueueExitChoice.discard),
+          child: const Text('حذف صف'),
+        ),
+      ],
+    ),
+  );
+  if (choice != _PendingQueueExitChoice.discard || !context.mounted) {
+    return choice ?? _PendingQueueExitChoice.cancel;
+  }
+  final confirmed = await showDialog<bool>(
+    context: context,
+    builder: (dialogContext) => AlertDialog(
+      title: const Text('حذف قطعی صف؟'),
+      content: const Text('این داده‌ها برای همیشه از این دستگاه پاک می‌شوند و به سرور نمی‌رسند.'),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(dialogContext, false), child: const Text('بازگشت')),
+        FilledButton(
+          style: FilledButton.styleFrom(backgroundColor: Colors.redAccent),
+          onPressed: () => Navigator.pop(dialogContext, true),
+          child: const Text('حذف قطعی و ادامه'),
+        ),
+      ],
+    ),
+  );
+  return confirmed == true ? _PendingQueueExitChoice.discard : _PendingQueueExitChoice.cancel;
+}
 
 final meProvider = FutureProvider<Map<String, dynamic>>((ref) async {
   final api = ref.watch(apiClientProvider);
@@ -64,15 +133,33 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
   }
 
   Future<void> _changePhone(String currentPhone) async {
+    final queueChoice = await _confirmPendingFeedbackExit(
+      context,
+      ref,
+      ref.read(authProvider).memberId,
+    );
+    if (queueChoice == _PendingQueueExitChoice.cancel || !mounted) return;
     final changed = await showDialog<bool>(
       context: context,
       builder: (_) => PhoneChangeDialog(currentPhone: currentPhone),
     );
     if (changed != true || !mounted) return;
 
-    // The server revoked every session with the phone update; this also clears
-    // the local credentials before returning the member to OTP login.
-    await ref.read(authProvider.notifier).logout();
+    // The server revoked every session with the phone update. The queue choice
+    // was made before the change; preserve or discard is applied only now.
+    try {
+      await ref.read(authProvider.notifier).logout(
+            keepPendingFeedback: queueChoice == _PendingQueueExitChoice.keep,
+            discardPendingFeedback: queueChoice == _PendingQueueExitChoice.discard,
+          );
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('خروج امن انجام نشد؛ وضعیت صف محلی بررسی شود.')),
+        );
+      }
+      return;
+    }
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('شماره عوض شد؛ برای امنیت با شمارهٔ جدید دوباره وارد شوید.')),
@@ -283,16 +370,43 @@ class _LogoutButtonState extends ConsumerState<_LogoutButton> {
       ),
     );
     if (ok != true || !mounted) return;
+    final queueChoice = await _confirmPendingFeedbackExit(
+      context,
+      ref,
+      ref.read(authProvider).memberId,
+    );
+    if (queueChoice == _PendingQueueExitChoice.cancel || !mounted) return;
     setState(() => _busy = true);
-    final revoke = await ref.read(logoutProvider)();
-    if (!mounted) return;
-    // نشست محلی در هر حالت بسته شد؛ فقط اگر سرور هم بست، همین را بگوییم.
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(revoke
-          ? 'از حساب خارج شدید و نشست سرور بسته شد.'
-          : 'از این دستگاه خارج شدید. سرور در دسترس نبود، پس نشست آن‌جا ممکن است باز بماند.'),
-    ));
-    context.go('/otp');
+    try {
+      final revoke = await ref.read(authProvider.notifier).logout(
+            keepPendingFeedback: queueChoice == _PendingQueueExitChoice.keep,
+            discardPendingFeedback: queueChoice == _PendingQueueExitChoice.discard,
+          );
+      if (!mounted) return;
+      final queueNote = queueChoice == _PendingQueueExitChoice.keep
+          ? ' صف فقط برای همین حساب روی دستگاه باقی ماند.'
+          : '';
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(revoke
+            ? 'از حساب خارج شدید و نشست سرور بسته شد.$queueNote'
+            : 'از این دستگاه خارج شدید. سرور در دسترس نبود، پس نشست آن‌جا ممکن است باز بماند.$queueNote'),
+      ));
+      context.go('/otp');
+    } on PendingOfflineFeedbackException {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('صف تغییر کرده است؛ همگام‌سازی یا تصمیم دربارهٔ آن را دوباره انجام دهید.')),
+        );
+      }
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('خروج امن انجام نشد؛ صف محلی دست‌نخورده باقی ماند.')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
   }
 
   @override

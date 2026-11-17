@@ -12,9 +12,10 @@ import '../../core/theme.dart';
 import 'feedback_providers.dart';
 
 class SetFeedbackSheet extends ConsumerStatefulWidget {
-  const SetFeedbackSheet({super.key, required this.movementName});
+  const SetFeedbackSheet({super.key, required this.movementName, this.programId});
 
   final String movementName;
+  final int? programId;
 
   @override
   ConsumerState<SetFeedbackSheet> createState() => _SetFeedbackSheetState();
@@ -27,6 +28,8 @@ class _SetFeedbackSheetState extends ConsumerState<SetFeedbackSheet> {
   double _soreness = 2;
   bool _submitting = false;
   Map<String, dynamic>? _result;
+  String? _queueMessage;
+  String? _errorMessage;
 
   @override
   void dispose() {
@@ -37,31 +40,65 @@ class _SetFeedbackSheetState extends ConsumerState<SetFeedbackSheet> {
 
   Future<void> _submit() async {
     final reps = int.tryParse(_repsController.text.trim());
-    if (reps == null) {
-      return;
-    }
+    if (reps == null) return;
+    final entry = <String, dynamic>{
+      'movement_id': widget.movementName,
+      // M48-c1 — پیش‌تر همیشه 0 بود، پس autoreg هرگز فعال نمی‌شد و
+      // همهٔ حرکات «وزن بدن» تلقی می‌شدند.
+      'weight': double.tryParse(_weightController.text.trim()) ?? 0,
+      'target_reps': reps,
+      'reps_done': reps,
+      'rir': _rir,
+      'soreness': _soreness.round(),
+    };
     setState(() {
       _submitting = true;
       _result = null;
+      _queueMessage = null;
+      _errorMessage = null;
     });
-    final result = await ref.read(submitSetFeedbackProvider)([
-      {
-        'movement_id': widget.movementName,
-        // M48-c1 — پیش‌تر همیشه 0 بود، پس autoreg هرگز فعال نمی‌شد و
-        // همهٔ حرکات «وزن بدن» تلقی می‌شدند.
-        'weight': double.tryParse(_weightController.text.trim()) ?? 0,
-        'target_reps': reps,
-        'reps_done': reps,
-        'rir': _rir,
-        'soreness': _soreness.round(),
-      },
-    ]);
-    if (!mounted) return;
-    ref.invalidate(readinessProvider);
-    setState(() {
-      _submitting = false;
-      _result = result;
-    });
+    try {
+      var hasNetwork = true;
+      try {
+        hasNetwork = await ref.read(offlineFeedbackNetworkAvailableProvider)();
+      } catch (_) {
+        // Fail closed for offline persistence: if the platform cannot establish
+        // that the request is offline, do not risk queuing a possibly committed write.
+        hasNetwork = true;
+      }
+      if (!hasNetwork) {
+        try {
+          await ref.read(enqueueOfflineFeedbackProvider)(
+            programId: widget.programId,
+            entries: [entry],
+          );
+          ref.invalidate(offlineFeedbackQueueProvider);
+          if (mounted) {
+            setState(() => _queueMessage =
+                'بازخورد ساختاریافته در دستگاه ذخیره شد و هنوز به سرور نرسیده است. درد عضلانی/یادداشت و پیشنهاد خودکار آفلاین ذخیره نمی‌شوند.');
+          }
+        } catch (_) {
+          if (mounted) {
+            setState(() => _errorMessage =
+                'شبکه در دسترس نیست و صف آفلاین Android هم آماده نیست؛ بازخورد ذخیره نشد.');
+          }
+        }
+        return;
+      }
+
+      final result = await ref.read(submitSetFeedbackProvider)([entry]);
+      if (result == null) throw const FormatException('Invalid feedback response');
+      if (!mounted) return;
+      ref.invalidate(readinessProvider);
+      setState(() => _result = result);
+    } catch (_) {
+      if (mounted) {
+        setState(() => _errorMessage =
+            'ارسال بازخورد ناموفق بود. نتیجهٔ درخواست ممکن است نامشخص باشد؛ برای جلوگیری از ثبت تکراری آن را خودکار در صف نگذاشتیم. اتصال را بررسی کنید و سپس وضعیت سرور را بسنجید.');
+      }
+    } finally {
+      if (mounted) setState(() => _submitting = false);
+    }
   }
 
   @override
@@ -138,6 +175,20 @@ class _SetFeedbackSheetState extends ConsumerState<SetFeedbackSheet> {
                   child: Text(_submitting ? 'در حال پردازش…' : 'ثبت بازخورد'),
                 ),
               ),
+              if (_queueMessage != null) ...[
+                const SizedBox(height: 12),
+                Text(
+                  _queueMessage!,
+                  style: const TextStyle(color: MpColors.textSecondary, fontSize: 12),
+                ),
+              ],
+              if (_errorMessage != null) ...[
+                const SizedBox(height: 12),
+                Text(
+                  _errorMessage!,
+                  style: const TextStyle(color: Colors.redAccent, fontSize: 12),
+                ),
+              ],
               if (_result != null) ...[
                 const SizedBox(height: 16),
                 _WhyCard(result: _result!),

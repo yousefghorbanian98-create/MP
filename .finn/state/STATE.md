@@ -1,11 +1,13 @@
 # FINN State — وضعیت جاری لوپ
 
-## Snapshot جاری — hardening عملیاتی و checkpoint شاخه (2026-11-16)
+## Snapshot جاری — M84 تا M87 و CI follow-up (2026-11-16)
 
-- شاخهٔ جاری `arena/4f336f66-mp` (پایه `d64e3b0`) است. کاربر برای همین checkpoint بازبینی‌شده، stage انتخابی، commit و push را صریحاً به همین شاخه مجاز کرد (D-046)؛ این مجوز deployment/release یا تغییر production نیست.
-- backend full **851 passed / 2 skipped**؛ Ruff check/format سبز؛ deployment gate **12 check / 0 warning / 0 problem**. YAML workflow/Compose و shellها parse شدند؛ تست‌های CI artifact، rollback، backup، SMS، monitoring و production config سبز هستند.
-- Docker در sandbox نیست: `docker compose config` و image build/run انجام نشده؛ GitHub Actions/Dokploy/GHCR واقعی، Flutter runtime، backup/restore drill و production migration اجرا نشده‌اند. SHA tagها در GHCR ذاتاً immutable نیستند و wiring Studio را اپراتور باید تأیید کند.
-- در stage/commit، کلید signing و `keystore.properties`، APKهای buildشده و پوشهٔ شواهد face-ID محلی نگه داشته می‌شوند و وارد Git نمی‌شوند؛ هیچ‌کدام از فایل‌های محلی حذف نشده‌اند.
+- شاخهٔ فعال `arena/4f336f66-mp` روی origin در `6475455642eec3f7856aaf4cd7a3c4101063c34e` است (`6475455`). این push شامل fixهای analyzer شناخته‌شده و پاسخ JSON UTF-8 تست session بود؛ فایل‌های M84–M87 در worktree جدا مانده‌اند و هنوز روی remote نیستند.
+- CI run `44194271168` دقیقاً روی `6475455` اجرا شد؛ بنابراین M84–M87 فعلی را اعتبارسنجی نکرد. backend، Studio، live-contract و e2e-api پاس؛ `client-flutter` در `flutter analyze` fail، Flutter test/manifest skip؛ `secret-scan` fail روی matchهای تاریخی. Check annotations نیز diagnostic analyzer قابل‌تجزیه نداشتند و دانلود artifact با EOF شکست خورد. گزارش redacted: `finn/reports/ci-follow-up-441922-441942.md`. Workflow محلی اکنون در شکست analyzer `dart analyze --format=machine` را برای diagnostics جمع می‌کند؛ CI جدید هنوز اجرا نشده.
+- گیت‌های محلی روی worktree: backend full **853 passed / 2 skipped, 86.30% coverage**؛ backend targeted M84/M86 **20 passed**؛ `ruff check .` و `ruff format --check .` پاس؛ Dart Tree-sitter **64 فایل / 0 یافته**؛ Kotlin Tree-sitter **2 فایل / 0 خطای syntax** (نه compile/type-check)؛ Android manifest gate **1 / 0**؛ workflow YAML و 23 shell scripts پاس؛ `git diff --check` پاس. این‌ها Flutter type analysis/widget runtime یا Android build نیستند.
+- **M84 `UNKNOWN`** تا analyzer/widget test روی کد جاری اجرا شود. **M85 `UNKNOWN`** چون source/معیار بالینی و بازبین واجدصلاحیت مصوب نداریم. **M86 `PASS` فقط برای قرارداد/backend**، نه Client. **M87 `UNKNOWN`**؛ outbox Android با feature flag `MP_ANDROID_OFFLINE_FEEDBACK_ENABLED=false` پیاده شده اما Flutter tests، Kotlin/Gradle build، MethodChannel/SQLite restart و دستگاه واقعی اجرا نشده و سیاست رمزنگاری دستگاه تأیید نشده است. M88 از وابستگی M87 جلوتر نمی‌رود.
+- Gitleaks تاریخچه در `44194271168` همچنان fail است. گزارش فقط مسیر/rule/commit را نگه می‌دارد؛ مقادیر خارج از گزارش‌اند. مقادیر password تاریخی با الگوی placeholder واضح نبودند و باید تا تأیید مالک **potentially real/exposed** فرض شوند؛ چرخش credential/signing key را مالک باید جداگانه از مسیر امن بررسی کند. نه allowlist گسترده، نه rewrite تاریخچه، نه دست‌زدن به کلید انجام نشد.
+- `.devcontainer` و handoff فقط آماده شده‌اند؛ Codespace واقعی ساخته/هزینه نشده و ادامهٔ Codespaces طبق deferral تا handoff پایانی متوقف است. `evidence/` و گزارش‌های آرشیوی دست‌نخورده/انتخابی نگه داشته می‌شوند؛ فقط فایل‌های لازم stage می‌شوند. هیچ APK/final bundle، release، deploy، DB تولید، SMS یا پرداخت واقعی انجام نشده.
 
 ## Snapshot تاریخی — پس از M83 (2026-11-16)
 

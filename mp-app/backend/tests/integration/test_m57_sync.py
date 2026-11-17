@@ -100,7 +100,9 @@ def test_offline_queue_is_applied_in_order(client: TestClient) -> None:
         mid,
         [_item("a1", "phone-1", 30), _item("a2", "phone-1", 20), _item("a3", "phone-1", 10)],
     )
+    assert result["member_id"] == mid
     assert result["counts"]["received"] == 3
+    assert result["unchanged_keys"] == []
     assert result["counts"]["applied"] == 3
     assert result["counts"]["rejected"] == 0
 
