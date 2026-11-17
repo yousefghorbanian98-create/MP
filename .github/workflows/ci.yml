@@ -175,13 +175,10 @@ jobs:
       - name: flutter pub get
         working-directory: mp-app/client
         run: flutter pub get
-      - name: flutter analyze (گیت روی error — نه info/warning)
+      - name: flutter analyze (گیت روی error/warning — نه info)
         working-directory: mp-app/client
-        # چرا گیت صریح است (۲۰۲۶-۱۱-۱۵): جاب چند بار با «۰ خطا، ۱۲۵ info» قرمز شد.
-        # `channel: stable` شناور است و همان کد در نسخهٔ Flutter دیگر به‌عنوان
-        # warning طبقه‌بندی می‌شود؛ گیتِ وابسته به طبقه‌بندی ابزار، دروازهٔ بی‌معنی است.
-        # حالا شرط شکست **وجود error** است، و خروجی کامل برای بازبینی ذخیره می‌شود
-        # (infoها همان `deprecated_member_use` نسخهٔ جدید Flutter هستند).
+        # `channel: stable` شناور است. Infoها غیرکشنده‌اند تا deprecation noticeهای
+        # SDK جاب را قرمز نکنند؛ error و warning همچنان گیت را fail می‌کنند.
         run: |
           set -o pipefail
           set +e

@@ -275,6 +275,19 @@ void main() {
     expect(store.lastInserted!.containsKey('access_token'), isFalse);
   });
 
+  test('network availability provider reports offline status', () async {
+    final store = _MemoryStore(network: false);
+    final container = ProviderContainer(overrides: [
+      offlineFeedbackStoreProvider.overrideWithValue(store),
+    ]);
+    addTearDown(container.dispose);
+
+    final isOnline =
+        await container.read(offlineFeedbackNetworkAvailableProvider)();
+
+    expect(isOnline, isFalse);
+  });
+
   test('enqueue provider binds the session owner and drops soreness and free-form fields', () async {
     final store = _MemoryStore();
     final container = ProviderContainer(overrides: [

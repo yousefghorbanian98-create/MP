@@ -19,7 +19,8 @@
 - تست‌های تازه: نام از DB در پاسخ member و staff؛ payload دستکاری‌شده نام را عوض نمی‌کند؛ member نمی‌تواند برای دیگری رزرو کند؛ نام رزرو در feed فقط برای owner است؛ ظرفیت پر، waitlist و عدم افشای نام به staff aggregate.
 - Widget test در `mp-app/client/test/classes_cancel_test.dart` confirmation و label را بررسی می‌کند؛ Flutter/Dart runtime در sandbox موجود نیست، پس این test هنوز اجرا نشده.
 - CI `44194271168` روی commit `6475455` اجرا شد، پیش از M84–M87 implementation؛ پس برای این loop شاهد نیست.
-- CI `44198198864` روی commit `b7cd7f1` شامل backend/UI/test M84 بود؛ backend و سایر API jobs پاس شدند، اما analyzer قبل از Flutter tests شکست خورد، پس widget test M84 اجرا نشد و وضعیت همچنان `UNKNOWN` است. علت‌های analyzer جدید با machine-format annotations در `finn/reports/ci-follow-up-441922-441942.md` ثبت و در worktree اصلاح شدند؛ Studio API coverage استثنای M87 هم محلی **4 passed** و full Studio **219 passed/9 skipped + build** شد. CI تازه هنوز لازم است. Secret-scan در هر دو run به‌دلیل matchهای تاریخی fail مانده.
+- CI `44198198864` روی commit `b7cd7f1` شامل backend/UI/test M84 بود؛ backend/API jobs پاس شدند، اما analyzer پیش از Flutter tests شکست خورد. علت‌های analyzer و Studio coverage در `0ace8fe` اصلاح شدند؛ CI `44200381791` آن fixها را تأیید کرد، با backend/Studio/live-contract/e2e-api سبز.
+- در `44200381791` client analyzer هنوز روی warning `UNUSED_ELEMENT_PARAMETER` در تست outbox شکست خورد و Flutter tests skip شدند؛ پس widget test M84 اجرا نشد و `UNKNOWN` می‌ماند. Worktree patch اکنون offline provider test را با `_MemoryStore(network: false)` اضافه می‌کند تا warning را رفع کند، اما Flutter analyzer/tests هنوز با CI بعدی باید اعتبارسنجی شوند. Secret-scan هر دو run به‌دلیل matchهای تاریخی fail مانده؛ جزئیات redacted در `finn/reports/ci-follow-up-441922-441942.md`.
 
 ## بازگشت
 
