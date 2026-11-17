@@ -33,8 +33,59 @@ jobs:
           mkdir -p /tmp/gitleaks
           tar -xzf "/tmp/$archive" -C /tmp/gitleaks gitleaks
           /tmp/gitleaks/gitleaks version
-      - name: Scan full Git history (redacted)
-        run: /tmp/gitleaks/gitleaks git --redact --no-banner --log-level=error .
+      - name: Scan full Git history (redacted metadata)
+        run: |
+          set +e
+          /tmp/gitleaks/gitleaks git --redact --no-banner --log-level=error \
+            --report-format=json --report-path=/tmp/gitleaks-report.json .
+          scan_status=$?
+          set -e
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          report = Path("/tmp/gitleaks-report.json")
+          findings = []
+          if report.is_file():
+              try:
+                  parsed = json.loads(report.read_text(encoding="utf-8"))
+                  findings = parsed if isinstance(parsed, list) else []
+              except (OSError, json.JSONDecodeError):
+                  findings = []
+
+          def escape_command_value(value: object) -> str:
+              return (
+                  str(value)
+                  .replace("%", "%25")
+                  .replace("\r", "%0D")
+                  .replace("\n", "%0A")
+                  .replace(":", "%3A")
+                  .replace(",", "%2C")
+              )
+
+          summary = ["### Gitleaks scan (redacted metadata)"]
+          summary.append(f"Potential findings: {len(findings)}. Secret values are never included.")
+          for finding in findings[:40]:
+              path = finding.get("File", "unknown path")
+              rule = finding.get("RuleID", "unknown rule")
+              line = finding.get("StartLine", 0)
+              commit = str(finding.get("Commit", ""))[:12]
+              message = f"Potential secret match ({rule}); value withheld; commit {commit or 'unknown'}."
+              print(
+                  f"::error file={escape_command_value(path)},line={line},title=Gitleaks finding::"
+                  f"{escape_command_value(message)}"
+              )
+              summary.append(f"- `{path}:{line}` — `{rule}`; commit `{commit or 'unknown'}` (value withheld).")
+          if not report.is_file():
+              summary.append("No JSON report was produced; inspect the scanner step output after checking access restrictions.")
+              print("::error::Gitleaks failed without a readable JSON report; no secret values were emitted by this summary.")
+          summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
+          if summary_path:
+              with open(summary_path, "a", encoding="utf-8") as stream:
+                  stream.write("\n".join(summary) + "\n")
+          PY
+          exit "$scan_status"
 
   backend:
     runs-on: ubuntu-latest
@@ -133,13 +184,55 @@ jobs:
         # (infoها همان `deprecated_member_use` نسخهٔ جدید Flutter هستند).
         run: |
           set -o pipefail
-          flutter analyze --no-fatal-infos > /tmp/analyze.txt 2>&1 || true
+          set +e
+          flutter analyze --no-fatal-infos > /tmp/analyze.txt 2>&1
+          analyze_status=$?
+          set -e
           tail -n 40 /tmp/analyze.txt
-          if grep -qE "^[[:space:]]*error[[:space:]]*•" /tmp/analyze.txt; then
-            echo "::error::flutter analyze: خطای واقعی (error) پیدا شد"
-            exit 1
-          fi
-          echo "analyze: بدون error"
+          ANALYZE_STATUS="$analyze_status" python3 - <<'PY'
+          import os
+          import re
+          import sys
+          from pathlib import Path
+
+          analyze_status = int(os.environ["ANALYZE_STATUS"])
+          raw_lines = Path("/tmp/analyze.txt").read_text(encoding="utf-8", errors="replace").splitlines()
+          error_lines = [line for line in raw_lines if re.match(r"^\s*error\s*•", line)]
+          pattern = re.compile(r"^\s*error\s*•\s*(.*?)\s*•\s*(.+?):(\d+):(\d+)\s*•\s*(.*)$")
+
+          def escape(value: str) -> str:
+              return value.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A").replace(":", "%3A").replace(",", "%2C")
+
+          summary = ["### Flutter analyzer diagnostics"]
+          if not error_lines and analyze_status == 0:
+              print("analyze: no error diagnostics")
+              summary.append("No analyzer errors found.")
+          elif not error_lines:
+              print(f"::error::flutter analyze exited {analyze_status} without a parseable error diagnostic")
+              summary.append(f"Analyzer command failed with exit status {analyze_status}; no parseable diagnostic was emitted.")
+          else:
+              print("::error::flutter analyze: خطای واقعی (error) پیدا شد")
+              for line in error_lines[:50]:
+                  match = pattern.match(line)
+                  if match:
+                      message, path, line_number, column, code = match.groups()
+                      safe_message = f"{message} [{code}]" if code else message
+                      print(
+                          f"::error file={escape(path)},line={line_number},col={column},title=Dart analyzer::"
+                          f"{escape(safe_message)}"
+                      )
+                      summary.append(f"- `{path}:{line_number}:{column}` — {message} (`{code}`)")
+                  else:
+                      print("::error::Flutter analyzer reported an error; see the redacted diagnostic artifact.")
+                      summary.append("An analyzer error was reported; its location could not be parsed safely.")
+              summary.insert(1, f"Error diagnostics: {len(error_lines)}.")
+          summary.insert(1, f"Analyzer command exit status: {analyze_status}.")
+          summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
+          if summary_path:
+              with open(summary_path, "a", encoding="utf-8") as stream:
+                  stream.write("\n".join(summary) + "\n")
+          sys.exit(1 if error_lines or analyze_status != 0 else 0)
+          PY
       - name: flutter test
         working-directory: mp-app/client
         run: flutter test
