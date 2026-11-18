@@ -397,3 +397,121 @@ jobs:
         run: |
           cd mp-app/backend
           pytest tests/integration -q
+
+  # M108 — گیت «SDK پین‌شده + قالب‌بندی + کامپایل اندروید».
+  # چرا در CI و نه فقط Codespace: دو شاهد از اینها هرگز وجود نداشتند — (۱) `dart format`
+  # هیچ‌جا گیت نبود، (۲) Kotlin/Gradle فقط در `apk.yml` (dispatch/تگ) ساخته می‌شد، یعنی
+  # شکستن Android در یک PR بی‌صدا می‌ماند و M87 به همان دلیل `UNKNOWN` بود.
+  # هزینه: حدود ۵–۸ دقیقه رانر در هر push; بهای آن، شاهدی است که هیچ ادعای Client دیگری
+  # روی SDK شناور سنجیده نمی‌شود. (paths-filter بعداً اختیاری است، نه لازم.)
+  # امضای release عمداً این‌جا نیست: `--debug` هیچ keystore‌ای لمس نمی‌کند (SEC-01 باز است).
+  client-pinned:
+    name: Client — pinned SDK · format gate · Android debug compile
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      FLUTTER_ROOT: ${{ github.workspace }}/.flutter-pin-check
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.50.0"   # باید با ARG FLUTTER_VERSION در .devcontainer/Dockerfile یکی بماند
+          architecture: x64
+      - name: Verify the pin matches the devcontainer (no silent drift)
+        run: |
+          set -o pipefail
+          python3 - <<'PY'
+          import json
+          import pathlib
+          import re
+          import subprocess
+          import sys
+
+          dockerfile = pathlib.Path(".devcontainer/Dockerfile").read_text(encoding="utf-8")
+
+          def arg(name):
+              match = re.search(rf"^ARG\s+{name}=(\S+)\s*$", dockerfile, flags=re.M)
+              if not match:
+                  raise SystemExit(f"{name} missing from .devcontainer/Dockerfile")
+              return match.group(1)
+
+          expected_version = arg("FLUTTER_VERSION")
+          expected_revision = arg("FLUTTER_REVISION")
+          actual = json.loads(subprocess.run(
+              ["flutter", "--version", "--machine"], capture_output=True, text=True, check=True
+          ).stdout)
+          print(f"CI flutter: {actual.get('frameworkVersion')} ({actual.get('frameworkRevision')})")
+          print(f"devcontainer expects: {expected_version} ({expected_revision})")
+          for field, expected in (("frameworkVersion", expected_version), ("frameworkRevision", expected_revision)):
+              if actual.get(field) != expected:
+                  raise SystemExit(
+                      f"pin drift: {field} is {actual.get(field)!r} in CI but {expected!r} in the "
+                      "devcontainer — the Codespace and CI would be validating different SDKs"
+                  )
+          print("Pinned SDK matches the devcontainer.")
+          PY
+      - name: flutter pub get
+        working-directory: mp-app/client
+        run: flutter pub get
+      - name: dart format gate (اولین بار — قبلاً هیچ‌جا گیت نبود)
+        working-directory: mp-app/client
+        # `--output=none` چیزی عوض نمی‌کند و فقط exit code می‌دهد؛ بدون این گیت،
+        # «کد فرمت‌شده» یک ادعای شفاهی بود.
+        run: dart format --output=none --set-exit-if-changed lib test tools
+      - name: flutter analyze (خط/هشدار = شکست)
+        working-directory: mp-app/client
+        run: flutter analyze --no-fatal-infos
+      - name: flutter test + coverage
+        working-directory: mp-app/client
+        run: |
+          set -o pipefail
+          mkdir -p /tmp/client-pinned
+          flutter test --coverage --file-reporter=json:/tmp/client-pinned/flutter-test.json \
+            > /tmp/client-pinned/flutter-test.txt 2>&1
+          status=$?
+          # شمارش از همان گزارش‌گرِ repo خوانده می‌شود (نه از grep روی رنگ‌ها)
+          python3 tools/ci_test_failures.py --summary /tmp/client-pinned/flutter-test.json \
+            | tee /tmp/client-pinned/counts.txt
+          exit "$status"
+      - name: Android debug compile (شاهد Kotlin/Gradle برای M87)
+        working-directory: mp-app/client
+        run: |
+          set -o pipefail
+          flutter build apk --debug 2>&1 | tail -25
+          APK=build/app/outputs/flutter-apk/app-debug.apk
+          test -f "$APK" || { echo "expected $APK after a successful debug build" >&2; exit 1; }
+          du -m "$APK" | tee /tmp/client-pinned/apk-size.txt
+          sha256sum "$APK" | tee /tmp/client-pinned/apk-sha.txt
+      - name: Publish the witness (خواندنی از API، نه فقط از لاگ)
+        if: always()
+        working-directory: mp-app/client
+        run: |
+          set -o pipefail
+          python3 - <<'PY'
+          import os
+          import pathlib
+
+          counts = pathlib.Path("/tmp/client-pinned/counts.txt")
+          count_line = counts.read_text(encoding="utf-8").strip() if counts.is_file() else "counts unavailable"
+          cov = "coverage: lcov missing"
+          lcov = pathlib.Path("coverage/lcov.info")
+          if lcov.is_file():
+              text = lcov.read_text(encoding="utf-8", errors="replace").splitlines()
+              found = sum(int(line[3:]) for line in text if line.startswith("LF:"))
+              hit = sum(int(line[3:]) for line in text if line.startswith("LH:"))
+              if found:
+                  cov = f"coverage {100.0 * hit / found:.1f}% ({hit}/{found} lines)"
+          apk = pathlib.Path("/tmp/client-pinned/apk-size.txt")
+          apk_line = apk.read_text(encoding="utf-8").strip() if apk.is_file() else "no apk (build step failed)"
+          message = (
+              f"pinned-SDK witness — {count_line}; {cov}; debug apk: {apk_line} "
+              "(values only; no assertion text)"
+          )
+          # در workflow command باید % و : escape شوند، وگرنه annotation نصفه می‌شود
+          safe = message.replace("%", "%25").replace(":", "%3A")
+          print(f"::notice title=Client pinned witness::{safe}")
+          summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
+          if summary_path:
+              with open(summary_path, "a", encoding="utf-8") as stream:
+                  stream.write(f"### Client pinned witness\n\n{message}\n")
+          PY
