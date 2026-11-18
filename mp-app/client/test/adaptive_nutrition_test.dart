@@ -129,6 +129,7 @@ void main() {
     final disclaimer = find.textContaining('توصیهٔ درمانی یا رژیم پزشکی نیست');
     _checkpoint('safety-count-${disclaimer.evaluate().length}');
     expect(disclaimer, findsOneWidget);
+    _checkpoint('disclaimer-expect-passed');
   });
 
   testWidgets('دادهٔ ناکافی را نامعلوم می‌گوید و با ثبت وزن، API را تازه می‌کند', (tester) async {
