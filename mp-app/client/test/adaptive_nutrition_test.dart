@@ -92,6 +92,18 @@ Map<String, dynamic> _report({required bool weightLogged, bool enoughData = fals
 
 void _checkpoint(String marker) => print('CI_TEST_CHECKPOINT:$marker');
 
+String _safeExceptionCategory(Object? exception) {
+  if (exception == null) return 'none';
+  final message = exception.toString().toLowerCase();
+  if (message.contains('renderflex') && message.contains('overflow')) return 'renderflex-overflow';
+  if (message.contains('renderbox') && message.contains('not laid out')) return 'renderbox-layout';
+  if (message.contains('viewport')) return 'viewport';
+  if (message.contains('setstate') && message.contains('dispose')) return 'setstate-after-dispose';
+  if (message.contains('disposed')) return 'disposed-object';
+  if (message.contains('timer')) return 'timer';
+  return exception is FlutterError ? 'flutter-other' : 'other';
+}
+
 Widget _wrap(http.Client client) => ProviderScope(
       overrides: [
         httpClientProvider.overrideWithValue(client),
@@ -133,14 +145,7 @@ void main() {
 
     await tester.pumpWidget(const SizedBox.shrink());
     final pendingException = tester.takeException();
-    final exceptionKind = pendingException is FlutterError
-        ? 'flutter-error'
-        : pendingException is StateError
-            ? 'state-error'
-            : pendingException == null
-                ? 'none'
-                : 'other-error';
-    _checkpoint('teardown-$exceptionKind');
+    _checkpoint('teardown-${_safeExceptionCategory(pendingException)}');
     expect(pendingException, isNull);
   });
 
