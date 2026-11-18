@@ -58,33 +58,34 @@ class _NotificationsClient extends http.BaseClient {
 }
 
 Map<String, dynamic> _row(int id, String title, String? readAt) => {
-  'id': id,
-  'member_id': 3,
-  'channel': 'inapp',
-  'title': title,
-  'body': 'متن اعلان نمونه',
-  'kind': 'general',
-  'read_at': readAt,
-  'created_at': '2026-11-16T12:00:00Z',
-};
+      'id': id,
+      'member_id': 3,
+      'channel': 'inapp',
+      'title': title,
+      'body': 'متن اعلان نمونه',
+      'kind': 'general',
+      'read_at': readAt,
+      'created_at': '2026-11-16T12:00:00Z',
+    };
 
 Widget _wrap(http.Client client) => ProviderScope(
-  overrides: [
-    httpClientProvider.overrideWithValue(client),
-    authProvider.overrideWith(
-      (ref) => AuthController.test(
-        AuthState(accessToken: 'test-token', memberId: 3, userName: 'عضو تست'),
+      overrides: [
+        httpClientProvider.overrideWithValue(client),
+        authProvider.overrideWith(
+          (ref) => AuthController.test(
+            AuthState(
+                accessToken: 'test-token', memberId: 3, userName: 'عضو تست'),
+          ),
+        ),
+      ],
+      child: MaterialApp(
+        theme: mpTheme(),
+        home: const Directionality(
+          textDirection: TextDirection.rtl,
+          child: NotificationsPage(),
+        ),
       ),
-    ),
-  ],
-  child: MaterialApp(
-    theme: mpTheme(),
-    home: const Directionality(
-      textDirection: TextDirection.rtl,
-      child: NotificationsPage(),
-    ),
-  ),
-);
+    );
 
 void main() {
   testWidgets(

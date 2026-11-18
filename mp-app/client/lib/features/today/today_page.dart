@@ -122,8 +122,8 @@ class TodayPage extends ConsumerWidget {
               data: (programs) {
                 final firstProgram =
                     programs.isNotEmpty && programs.first is Map
-                    ? Map<String, dynamic>.from(programs.first as Map)
-                    : null;
+                        ? Map<String, dynamic>.from(programs.first as Map)
+                        : null;
                 final programId = firstProgram?['id'] is num
                     ? (firstProgram!['id'] as num).toInt()
                     : null;
@@ -163,11 +163,11 @@ class TodayPage extends ConsumerWidget {
                   children: [
                     for (var i = 0; i < exercises.length; i++)
                       _ExerciseTile(
-                            index: i,
-                            exercise: exercises[i],
-                            done: todayState.done.contains(i),
-                            programId: programId,
-                          )
+                        index: i,
+                        exercise: exercises[i],
+                        done: todayState.done.contains(i),
+                        programId: programId,
+                      )
                           .animate()
                           .fadeIn(delay: (80 * i).ms, duration: 350.ms)
                           .slideX(begin: 0.08),
@@ -254,8 +254,7 @@ class _ExerciseTile extends ConsumerWidget {
                   context: context,
                   isScrollControlled: true,
                   builder: (_) => SetFeedbackSheet(
-                    movementName:
-                        (exercise['exercise_name'] as String?) ??
+                    movementName: (exercise['exercise_name'] as String?) ??
                         'حرکت ${exercise['exercise_id'] ?? ''}',
                     programId: programId,
                   ),

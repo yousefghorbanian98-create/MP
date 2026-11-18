@@ -34,59 +34,59 @@ class _ReadinessClient extends http.BaseClient {
 }
 
 Map<String, dynamic> _report({bool available = true}) => {
-  'member_id': 3,
-  'program_id': available ? 12 : null,
-  'readiness': available
-      ? {
-          'score': 68.4,
-          'band': 'monitor',
-          'recommendation': 'keep',
-          'volume_delta_sets': 0,
-          'reason': 'امتیاز در ناحیهٔ مراقبت است؛ حجم حفظ می‌شود.',
-          'signals': [
-            {
-              'name': 'soreness',
-              'value': 5,
-              'score': 50,
-              'reason': 'درد ثبت‌شده متوسط است.',
-            },
-            {
-              'name': 'rir_mismatch',
-              'value': null,
-              'score': null,
-              'reason': 'RIR هدف در برنامه ثبت نشده است.',
-            },
-          ],
-          'missing_signals': ['rir_mismatch'],
-        }
-      : null,
-  'data_counts': available
-      ? {'feedback_rows': 3, 'sets_last_7_days': 2, 'sets_prior_7_days': 1}
-      : null,
-  'reason': available
-      ? 'بر اساس بازخورد ثبت‌شده'
-      : 'هیچ برنامه‌ای ثبت نشده است.',
-  'note': available ? 'RIR هدف موجود نیست.' : null,
-  'rule_version': 'readiness-report-1.0',
-};
+      'member_id': 3,
+      'program_id': available ? 12 : null,
+      'readiness': available
+          ? {
+              'score': 68.4,
+              'band': 'monitor',
+              'recommendation': 'keep',
+              'volume_delta_sets': 0,
+              'reason': 'امتیاز در ناحیهٔ مراقبت است؛ حجم حفظ می‌شود.',
+              'signals': [
+                {
+                  'name': 'soreness',
+                  'value': 5,
+                  'score': 50,
+                  'reason': 'درد ثبت‌شده متوسط است.',
+                },
+                {
+                  'name': 'rir_mismatch',
+                  'value': null,
+                  'score': null,
+                  'reason': 'RIR هدف در برنامه ثبت نشده است.',
+                },
+              ],
+              'missing_signals': ['rir_mismatch'],
+            }
+          : null,
+      'data_counts': available
+          ? {'feedback_rows': 3, 'sets_last_7_days': 2, 'sets_prior_7_days': 1}
+          : null,
+      'reason':
+          available ? 'بر اساس بازخورد ثبت‌شده' : 'هیچ برنامه‌ای ثبت نشده است.',
+      'note': available ? 'RIR هدف موجود نیست.' : null,
+      'rule_version': 'readiness-report-1.0',
+    };
 
 Widget _wrap(http.Client client) => ProviderScope(
-  overrides: [
-    httpClientProvider.overrideWithValue(client),
-    authProvider.overrideWith(
-      (ref) => AuthController.test(
-        AuthState(accessToken: 'test-token', memberId: 3, userName: 'عضو تست'),
+      overrides: [
+        httpClientProvider.overrideWithValue(client),
+        authProvider.overrideWith(
+          (ref) => AuthController.test(
+            AuthState(
+                accessToken: 'test-token', memberId: 3, userName: 'عضو تست'),
+          ),
+        ),
+      ],
+      child: MaterialApp(
+        theme: mpTheme(),
+        home: Directionality(
+          textDirection: TextDirection.rtl,
+          child: Scaffold(body: ListView(children: [ReadinessCard()])),
+        ),
       ),
-    ),
-  ],
-  child: MaterialApp(
-    theme: mpTheme(),
-    home: Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(body: ListView(children: [ReadinessCard()])),
-    ),
-  ),
-);
+    );
 
 void main() {
   testWidgets(

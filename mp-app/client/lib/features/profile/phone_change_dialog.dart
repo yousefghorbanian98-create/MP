@@ -35,12 +35,12 @@ class _PhoneChangeDialogState extends ConsumerState<PhoneChangeDialog> {
   }
 
   String _asciiDigits(String value) => String.fromCharCodes(
-    value.runes.map((rune) {
-      if (rune >= 0x06f0 && rune <= 0x06f9) return rune - 0x06f0 + 0x30;
-      if (rune >= 0x0660 && rune <= 0x0669) return rune - 0x0660 + 0x30;
-      return rune;
-    }),
-  );
+        value.runes.map((rune) {
+          if (rune >= 0x06f0 && rune <= 0x06f9) return rune - 0x06f0 + 0x30;
+          if (rune >= 0x0660 && rune <= 0x0669) return rune - 0x0660 + 0x30;
+          return rune;
+        }),
+      );
 
   Future<void> _submit() async {
     if (_busy) return;
@@ -96,16 +96,16 @@ class _PhoneChangeDialogState extends ConsumerState<PhoneChangeDialog> {
   }
 
   String get _title => switch (_step) {
-    _PhoneChangeStep.request => 'تغییر شمارهٔ موبایل',
-    _PhoneChangeStep.verifyCurrent => 'تأیید شمارهٔ فعلی',
-    _PhoneChangeStep.verifyNew => 'تأیید شمارهٔ جدید',
-  };
+        _PhoneChangeStep.request => 'تغییر شمارهٔ موبایل',
+        _PhoneChangeStep.verifyCurrent => 'تأیید شمارهٔ فعلی',
+        _PhoneChangeStep.verifyNew => 'تأیید شمارهٔ جدید',
+      };
 
   String get _buttonLabel => switch (_step) {
-    _PhoneChangeStep.request => 'ارسال کد به شمارهٔ فعلی',
-    _PhoneChangeStep.verifyCurrent => 'تأیید کد فعلی و ارسال کد جدید',
-    _PhoneChangeStep.verifyNew => 'تأیید و تغییر شماره',
-  };
+        _PhoneChangeStep.request => 'ارسال کد به شمارهٔ فعلی',
+        _PhoneChangeStep.verifyCurrent => 'تأیید کد فعلی و ارسال کد جدید',
+        _PhoneChangeStep.verifyNew => 'تأیید و تغییر شماره',
+      };
 
   @override
   Widget build(BuildContext context) {
@@ -122,10 +122,10 @@ class _PhoneChangeDialogState extends ConsumerState<PhoneChangeDialog> {
             Text(
               askingForPhone
                   ? 'برای امنیت، ابتدا کد شمارهٔ فعلی و سپس کد شمارهٔ جدید لازم است. '
-                        'اگر به شمارهٔ فعلی دسترسی ندارید، این مسیر بازیابی قابل استفاده نیست.'
+                      'اگر به شمارهٔ فعلی دسترسی ندارید، این مسیر بازیابی قابل استفاده نیست.'
                   : currentStage
-                  ? 'کد تأیید به شمارهٔ فعلی ${widget.currentPhone} فرستاده شد.'
-                  : 'شمارهٔ فعلی تأیید شد؛ کد جداگانه به شمارهٔ جدید فرستاده شد.',
+                      ? 'کد تأیید به شمارهٔ فعلی ${widget.currentPhone} فرستاده شد.'
+                      : 'شمارهٔ فعلی تأیید شد؛ کد جداگانه به شمارهٔ جدید فرستاده شد.',
             ),
             const SizedBox(height: 16),
             if (askingForPhone)

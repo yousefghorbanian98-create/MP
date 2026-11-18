@@ -13,18 +13,15 @@ import '../../shared/widgets/glass_card.dart';
 
 /// پذیرش وزن با ارقام فارسی/عربی؛ مقدار خارج از قرارداد API رد می‌شود.
 double? parseBodyWeightKg(String raw) {
-  var normalized = raw
-      .trim()
-      .replaceAll(',', '')
-      .replaceAll('٬', '')
-      .replaceAll('٫', '.');
+  var normalized =
+      raw.trim().replaceAll(',', '').replaceAll('٬', '').replaceAll('٫', '.');
   normalized = normalized.replaceAllMapped(RegExp(r'[۰-۹٠-٩]'), (match) {
     final code = match.group(0)!.codeUnitAt(0);
     final digit = code >= 0x06F0 && code <= 0x06F9
         ? code - 0x06F0
         : code >= 0x0660 && code <= 0x0669
-        ? code - 0x0660
-        : null;
+            ? code - 0x0660
+            : null;
     return digit?.toString() ?? match.group(0)!;
   });
   final value = double.tryParse(normalized);
@@ -345,7 +342,7 @@ class _AdaptiveNutritionCardState extends ConsumerState<AdaptiveNutritionCard> {
                 action == 'none'
                     ? actionLabel
                     : 'پیشنهاد هفتهٔ بعد: $actionLabel · ${_signed(suggestion['delta_kcal'] as num)} kcal'
-                          '${suggestion['suggested_target_kcal'] is num ? ' → ${_faNumber(suggestion['suggested_target_kcal'] as num)} kcal' : ''}',
+                        '${suggestion['suggested_target_kcal'] is num ? ' → ${_faNumber(suggestion['suggested_target_kcal'] as num)} kcal' : ''}',
                 style: const TextStyle(fontWeight: FontWeight.w700),
               ),
               const SizedBox(height: 4),
@@ -427,27 +424,27 @@ class _Metric extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-    constraints: const BoxConstraints(minWidth: 135),
-    padding: const EdgeInsets.all(10),
-    decoration: BoxDecoration(
-      color: MpColors.surface.withOpacity(0.7),
-      borderRadius: BorderRadius.circular(11),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(color: MpColors.textSecondary, fontSize: 10),
+        constraints: const BoxConstraints(minWidth: 135),
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: MpColors.surface.withOpacity(0.7),
+          borderRadius: BorderRadius.circular(11),
         ),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              style: TextStyle(color: MpColors.textSecondary, fontSize: 10),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              value,
+              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12),
+            ),
+          ],
         ),
-      ],
-    ),
-  );
+      );
 }
 
 class _Tag extends StatelessWidget {
@@ -456,13 +453,13 @@ class _Tag extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-    decoration: BoxDecoration(
-      color: MpColors.primary.withOpacity(0.10),
-      borderRadius: BorderRadius.circular(99),
-    ),
-    child: Text(label, style: const TextStyle(fontSize: 10)),
-  );
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: MpColors.primary.withOpacity(0.10),
+          borderRadius: BorderRadius.circular(99),
+        ),
+        child: Text(label, style: const TextStyle(fontSize: 10)),
+      );
 }
 
 String _todayKey(DateTime date) =>
@@ -480,9 +477,8 @@ String _faNumber(num value) {
 }
 
 String _signed(num value) {
-  final text = value > 0
-      ? '+${value.toStringAsFixed(0)}'
-      : value.toStringAsFixed(0);
+  final text =
+      value > 0 ? '+${value.toStringAsFixed(0)}' : value.toStringAsFixed(0);
   return text.replaceAllMapped(
     RegExp(r'\d'),
     (match) => '۰۱۲۳۴۵۶۷۸۹'[int.parse(match.group(0)!)],

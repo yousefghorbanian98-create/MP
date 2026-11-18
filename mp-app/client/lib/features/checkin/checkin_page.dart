@@ -105,10 +105,10 @@ class _CheckInPageState extends ConsumerState<CheckInPage>
   }
 
   static String _denialLabel(String? reason) => switch (reason) {
-    'membership_expired' => 'اشتراک فعال ندارید یا منقضی شده است',
-    null => 'دلیل نامعلوم',
-    _ => reason,
-  };
+        'membership_expired' => 'اشتراک فعال ندارید یا منقضی شده است',
+        null => 'دلیل نامعلوم',
+        _ => reason,
+      };
 
   Future<void> _grantConsent() async {
     setState(() => _busy = true);
@@ -164,10 +164,10 @@ class _CheckInPageState extends ConsumerState<CheckInPage>
                           ),
                           const SizedBox(height: 14),
                           QrImageView(
-                                data: t['payload'] as String? ?? '',
-                                size: 220,
-                                backgroundColor: Colors.white,
-                              )
+                            data: t['payload'] as String? ?? '',
+                            size: 220,
+                            backgroundColor: Colors.white,
+                          )
                               .animate()
                               .scale(
                                 begin: const Offset(0.9, 0.9),

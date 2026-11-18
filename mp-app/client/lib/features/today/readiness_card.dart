@@ -266,6 +266,6 @@ class ReadinessCard extends ConsumerWidget {
 }
 
 String _fa(String value) => value.replaceAllMapped(
-  RegExp(r'\d'),
-  (match) => '۰۱۲۳۴۵۶۷۸۹'[int.parse(match.group(0)!)],
-);
+      RegExp(r'\d'),
+      (match) => '۰۱۲۳۴۵۶۷۸۹'[int.parse(match.group(0)!)],
+    );

@@ -118,14 +118,13 @@ class ShopPage extends ConsumerWidget {
                 childAspectRatio: 0.72,
               ),
               itemCount: items.length,
-              itemBuilder: (context, i) =>
-                  _ProductCard(
-                        product: items[i],
-                        onAdd: () => _add(context, ref, items[i]),
-                      )
-                      .animate()
-                      .fadeIn(duration: 220.ms, delay: (30 * i).ms)
-                      .slideY(begin: 0.08, end: 0, curve: Curves.easeOutCubic),
+              itemBuilder: (context, i) => _ProductCard(
+                product: items[i],
+                onAdd: () => _add(context, ref, items[i]),
+              )
+                  .animate()
+                  .fadeIn(duration: 220.ms, delay: (30 * i).ms)
+                  .slideY(begin: 0.08, end: 0, curve: Curves.easeOutCubic),
             ),
           );
         },
@@ -406,8 +405,8 @@ class _CartSheetState extends ConsumerState<_CartSheet> {
         error: (e, _) =>
             SizedBox(height: 120, child: Center(child: Text('$e'))),
         data: (c) {
-          final items = ((c['items'] as List?) ?? const [])
-              .cast<Map<String, dynamic>>();
+          final items =
+              ((c['items'] as List?) ?? const []).cast<Map<String, dynamic>>();
           final total = (c['total_rial'] as num?) ?? 0;
           if (items.isEmpty) {
             return const SizedBox(
@@ -454,9 +453,8 @@ class _CartSheetState extends ConsumerState<_CartSheet> {
               const SizedBox(height: 4),
               gateways.maybeWhen(
                 data: (gs) {
-                  final enabled = gs
-                      .where((g) => g['is_enabled'] == true)
-                      .toList();
+                  final enabled =
+                      gs.where((g) => g['is_enabled'] == true).toList();
                   if (enabled.isEmpty) return const SizedBox.shrink();
                   return Padding(
                     padding: const EdgeInsets.only(top: 6),

@@ -42,81 +42,82 @@ class _PushedSection extends StatelessWidget {
 }
 
 GoRouter createMpRouter({String initialLocation = '/home'}) => GoRouter(
-  initialLocation: initialLocation,
-  routes: [
-    // شل تبی — خانه/برنامه/پیشرفت/پروفایل درون AppShell
-    GoRoute(
-      path: '/otp',
-      pageBuilder: (context, state) => const NoTransitionPage(child: OtpPage()),
-    ),
-    GoRoute(
-      path: '/intake',
-      pageBuilder: (context, state) =>
-          const NoTransitionPage(child: IntakePage()),
-    ),
-    GoRoute(
-      path: '/home',
-      pageBuilder: (context, state) =>
-          const NoTransitionPage(child: AppShell()),
-    ),
-    // مسیرهای بخش‌ها (push از گرید خانه)
-    GoRoute(
-      path: '/bodycomp',
-      pageBuilder: (context, state) =>
-          const NoTransitionPage(child: BodyCompPage()),
-    ),
-    GoRoute(
-      path: '/nutrition',
-      pageBuilder: (context, state) =>
-          const NoTransitionPage(child: NutritionPage()),
-    ),
-    GoRoute(
-      path: '/checkin',
-      pageBuilder: (context, state) =>
-          const NoTransitionPage(child: CheckInPage()),
-    ),
-    GoRoute(
-      path: '/wallet',
-      pageBuilder: (context, state) =>
-          const NoTransitionPage(child: WalletPage()),
-    ),
-    GoRoute(
-      path: '/classes',
-      pageBuilder: (context, state) =>
-          const NoTransitionPage(child: ClassesPage()),
-    ),
-    GoRoute(
-      path: '/chat',
-      pageBuilder: (context, state) =>
-          const NoTransitionPage(child: MemberChatPage()),
-    ),
-    GoRoute(
-      path: '/shop',
-      pageBuilder: (context, state) =>
-          const NoTransitionPage(child: ShopPage()),
-    ),
-    GoRoute(
-      path: '/notifications',
-      pageBuilder: (context, state) =>
-          const NoTransitionPage(child: NotificationsPage()),
-    ),
-    // M22-c4: مسیرهای گرید خانه که قبلاً route نداشتند (دکمه‌های شکسته)
-    GoRoute(
-      path: '/today',
-      pageBuilder: (context, state) =>
-          const NoTransitionPage(child: TodayPage()),
-    ),
-    GoRoute(
-      path: '/progress',
-      pageBuilder: (context, state) => const NoTransitionPage(
-        child: _PushedSection(title: 'پیشرفت', child: ProgressPage()),
-      ),
-    ),
-    GoRoute(
-      path: '/profile',
-      pageBuilder: (context, state) => const NoTransitionPage(
-        child: _PushedSection(title: 'پروفایل', child: ProfilePage()),
-      ),
-    ),
-  ],
-);
+      initialLocation: initialLocation,
+      routes: [
+        // شل تبی — خانه/برنامه/پیشرفت/پروفایل درون AppShell
+        GoRoute(
+          path: '/otp',
+          pageBuilder: (context, state) =>
+              const NoTransitionPage(child: OtpPage()),
+        ),
+        GoRoute(
+          path: '/intake',
+          pageBuilder: (context, state) =>
+              const NoTransitionPage(child: IntakePage()),
+        ),
+        GoRoute(
+          path: '/home',
+          pageBuilder: (context, state) =>
+              const NoTransitionPage(child: AppShell()),
+        ),
+        // مسیرهای بخش‌ها (push از گرید خانه)
+        GoRoute(
+          path: '/bodycomp',
+          pageBuilder: (context, state) =>
+              const NoTransitionPage(child: BodyCompPage()),
+        ),
+        GoRoute(
+          path: '/nutrition',
+          pageBuilder: (context, state) =>
+              const NoTransitionPage(child: NutritionPage()),
+        ),
+        GoRoute(
+          path: '/checkin',
+          pageBuilder: (context, state) =>
+              const NoTransitionPage(child: CheckInPage()),
+        ),
+        GoRoute(
+          path: '/wallet',
+          pageBuilder: (context, state) =>
+              const NoTransitionPage(child: WalletPage()),
+        ),
+        GoRoute(
+          path: '/classes',
+          pageBuilder: (context, state) =>
+              const NoTransitionPage(child: ClassesPage()),
+        ),
+        GoRoute(
+          path: '/chat',
+          pageBuilder: (context, state) =>
+              const NoTransitionPage(child: MemberChatPage()),
+        ),
+        GoRoute(
+          path: '/shop',
+          pageBuilder: (context, state) =>
+              const NoTransitionPage(child: ShopPage()),
+        ),
+        GoRoute(
+          path: '/notifications',
+          pageBuilder: (context, state) =>
+              const NoTransitionPage(child: NotificationsPage()),
+        ),
+        // M22-c4: مسیرهای گرید خانه که قبلاً route نداشتند (دکمه‌های شکسته)
+        GoRoute(
+          path: '/today',
+          pageBuilder: (context, state) =>
+              const NoTransitionPage(child: TodayPage()),
+        ),
+        GoRoute(
+          path: '/progress',
+          pageBuilder: (context, state) => const NoTransitionPage(
+            child: _PushedSection(title: 'پیشرفت', child: ProgressPage()),
+          ),
+        ),
+        GoRoute(
+          path: '/profile',
+          pageBuilder: (context, state) => const NoTransitionPage(
+            child: _PushedSection(title: 'پروفایل', child: ProfilePage()),
+          ),
+        ),
+      ],
+    );

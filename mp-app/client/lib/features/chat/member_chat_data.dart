@@ -66,28 +66,28 @@ class MemberChatThread {
 /// فهرست یا پیام قرار نمی‌گیرد. API هویت را از نشست Bearer استخراج می‌کند.
 final memberChatConversationsProvider =
     FutureProvider<List<MemberChatConversation>>((ref) async {
-      final memberId = ref.watch(
-        authProvider.select((state) => state.memberId),
-      );
-      if (memberId == null) {
-        throw ApiException('شناسهٔ عضو در نشست موجود نیست');
-      }
+  final memberId = ref.watch(
+    authProvider.select((state) => state.memberId),
+  );
+  if (memberId == null) {
+    throw ApiException('شناسهٔ عضو در نشست موجود نیست');
+  }
 
-      final api = ref.watch(apiClientProvider);
-      final raw = await api.get('/chat/conversations');
-      if (raw is! List) throw ApiException('ساختار فهرست گفتگوها معتبر نیست');
+  final api = ref.watch(apiClientProvider);
+  final raw = await api.get('/chat/conversations');
+  if (raw is! List) throw ApiException('ساختار فهرست گفتگوها معتبر نیست');
 
-      final conversations = <MemberChatConversation>[];
-      for (final row in raw) {
-        if (row is! Map) throw ApiException('رکورد گفتگو معتبر نیست');
-        final conversation = _parseConversation(Map<String, dynamic>.from(row));
-        if (conversation.memberId != memberId) {
-          throw ApiException('گفتگوی دریافتی به عضو جاری تعلق ندارد');
-        }
-        conversations.add(conversation);
-      }
-      return conversations;
-    });
+  final conversations = <MemberChatConversation>[];
+  for (final row in raw) {
+    if (row is! Map) throw ApiException('رکورد گفتگو معتبر نیست');
+    final conversation = _parseConversation(Map<String, dynamic>.from(row));
+    if (conversation.memberId != memberId) {
+      throw ApiException('گفتگوی دریافتی به عضو جاری تعلق ندارد');
+    }
+    conversations.add(conversation);
+  }
+  return conversations;
+});
 
 final memberChatThreadProvider = FutureProvider.family<MemberChatThread, int>((
   ref,

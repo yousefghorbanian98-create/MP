@@ -183,11 +183,11 @@ class _MuscleVolumeRow extends StatelessWidget {
   };
 
   Color _statusColor(String status) => switch (status) {
-    'below_mv' || 'mrv_exceeded' => MpColors.danger,
-    'between_mv_mev' || 'above_mav' => MpColors.accent,
-    'mev' || 'mav' => MpColors.primary,
-    _ => MpColors.textSecondary,
-  };
+        'below_mv' || 'mrv_exceeded' => MpColors.danger,
+        'between_mv_mev' || 'above_mav' => MpColors.accent,
+        'mev' || 'mav' => MpColors.primary,
+        _ => MpColors.textSecondary,
+      };
 
   @override
   Widget build(BuildContext context) {
@@ -247,25 +247,22 @@ class _MuscleVolumeRow extends StatelessWidget {
             child: Stack(
               children: [
                 PositionedDirectional(
-                  start:
-                      (constraints.maxWidth *
-                              fraction(landmarks['mav_min'] as num))
-                          .toDouble(),
-                  width:
-                      (constraints.maxWidth *
-                              (fraction(landmarks['mav_max'] as num) -
-                                  fraction(landmarks['mav_min'] as num)))
-                          .clamp(0.0, constraints.maxWidth)
-                          .toDouble(),
-
+                  start: (constraints.maxWidth *
+                          fraction(landmarks['mav_min'] as num))
+                      .toDouble(),
+                  width: (constraints.maxWidth *
+                          (fraction(landmarks['mav_max'] as num) -
+                              fraction(landmarks['mav_min'] as num)))
+                      .clamp(0.0, constraints.maxWidth)
+                      .toDouble(),
                   top: 0,
                   bottom: 0,
                   child: Container(color: MpColors.primary.withOpacity(0.20)),
                 ),
                 PositionedDirectional(
                   start: 0,
-                  width: (constraints.maxWidth * fraction(effective))
-                      .toDouble(),
+                  width:
+                      (constraints.maxWidth * fraction(effective)).toDouble(),
                   top: 0,
                   bottom: 0,
                   child: Container(color: color),
@@ -319,6 +316,6 @@ String _n(num value) =>
     value % 1 == 0 ? value.toInt().toString() : value.toStringAsFixed(1);
 
 String _fa(String value) => value.replaceAllMapped(
-  RegExp(r'\d'),
-  (match) => '۰۱۲۳۴۵۶۷۸۹'[int.parse(match.group(0)!)],
-);
+      RegExp(r'\d'),
+      (match) => '۰۱۲۳۴۵۶۷۸۹'[int.parse(match.group(0)!)],
+    );

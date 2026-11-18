@@ -44,25 +44,26 @@ class _FakeClient extends http.BaseClient {
 }
 
 Widget _wrap(http.Client client) => ProviderScope(
-  overrides: [
-    httpClientProvider.overrideWithValue(client),
-    authProvider.overrideWith(
-      (ref) => AuthController.test(AuthState(accessToken: 't', memberId: 3)),
-    ),
-  ],
-  child: MaterialApp(
-    theme: mpTheme(),
-    home: const Directionality(
-      textDirection: TextDirection.rtl,
-      child: BodyCompPage(),
-    ),
-  ),
-);
+      overrides: [
+        httpClientProvider.overrideWithValue(client),
+        authProvider.overrideWith(
+          (ref) =>
+              AuthController.test(AuthState(accessToken: 't', memberId: 3)),
+        ),
+      ],
+      child: MaterialApp(
+        theme: mpTheme(),
+        home: const Directionality(
+          textDirection: TextDirection.rtl,
+          child: BodyCompPage(),
+        ),
+      ),
+    );
 
 void main() {
   test('هیچ مقدار اندازه‌گیریِ هاردکدشده‌ای در صفحه نمانده', () {
-    final src = File('lib/features/bodycomp/bodycomp_page.dart')
-        .readAsStringSync();
+    final src =
+        File('lib/features/bodycomp/bodycomp_page.dart').readAsStringSync();
     // آنچه ممنوع است «عدد اندازه‌گیری» است، نه هر رقم فارسی: ارقام فارسی
     // برای **تاریخ** و **برچسب** مجازند (تبدیل نمایشی‌اند). پس الگو را
     // دقیق می‌کنیم: عددی که با ٪ / کیلو / میلی‌متر / «کیلوگرم» آمده باشد.
@@ -84,8 +85,8 @@ void main() {
   });
 
   test('اعداد ساختگی قدیمی (۱۲٫۴ / ۷۸٫۵ / ۳۴٫۱) رفته‌اند', () {
-    final src = File('lib/features/bodycomp/bodycomp_page.dart')
-        .readAsStringSync();
+    final src =
+        File('lib/features/bodycomp/bodycomp_page.dart').readAsStringSync();
     for (final fake in ['۱۲٫۴', '۷۸٫۵', '۳۴٫۱', '۱۵٫۰', '۱۳٫۶']) {
       expect(
         src.contains(fake),

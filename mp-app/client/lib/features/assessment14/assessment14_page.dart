@@ -152,8 +152,8 @@ class _Assessment14PageState extends ConsumerState<Assessment14Page> {
                         style: TextStyle(color: MpColors.textSecondary),
                       );
                     }
-                    final axes = (matrix['axes'] as List)
-                        .cast<Map<String, dynamic>>();
+                    final axes =
+                        (matrix['axes'] as List).cast<Map<String, dynamic>>();
                     return Column(children: axes.map(_AxisRow.new).toList());
                   },
                 ),

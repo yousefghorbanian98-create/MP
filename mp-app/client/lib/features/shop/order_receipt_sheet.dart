@@ -123,8 +123,8 @@ class _ReceiptBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final lines = ((data['lines'] as List?) ?? const [])
-        .cast<Map<String, dynamic>>();
+    final lines =
+        ((data['lines'] as List?) ?? const []).cast<Map<String, dynamic>>();
     final itemsTotal = (data['items_total_rial'] as num?) ?? 0;
     final total = (data['total_rial'] as num?) ?? 0;
     final payment = data['payment'] is Map

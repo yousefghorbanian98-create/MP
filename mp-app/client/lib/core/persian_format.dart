@@ -30,9 +30,9 @@ String rial(num amount, {String unit = 'ریال'}) {
       ? amount.toInt()
       : amount;
   final grouped = value.toString().replaceAllMapped(
-    RegExp(r'(\d)(?=(\d{3})+$)'),
-    (m) => '${m[1]}٬',
-  );
+        RegExp(r'(\d)(?=(\d{3})+$)'),
+        (m) => '${m[1]}٬',
+      );
   final text = faDigits(grouped);
   return unit.isEmpty ? text : '$text $unit';
 }

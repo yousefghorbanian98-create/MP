@@ -47,9 +47,8 @@ class _ClassesPageState extends ConsumerState<ClassesPage> {
       final bookingLabel = memberName.isEmpty
           ? 'رزرو شما ثبت شد'
           : 'رزرو به نام $memberName ثبت شد';
-      final statusLabel = r is Map && r['status'] == 'waitlisted'
-          ? 'لیست انتظار'
-          : 'تأییدشده';
+      final statusLabel =
+          r is Map && r['status'] == 'waitlisted' ? 'لیست انتظار' : 'تأییدشده';
       setState(() => _message = '✅ $bookingLabel ($statusLabel)');
       ref.invalidate(classesProvider);
     } catch (e) {
@@ -82,9 +81,8 @@ class _ClassesPageState extends ConsumerState<ClassesPage> {
       ref.read(hapticsProvider).success();
       final status = response is Map ? response['status'] : null;
       setState(
-        () => _message = status == 'cancelled'
-            ? '✅ رزرو لغو شد'
-            : '✅ درخواست لغو ثبت شد',
+        () => _message =
+            status == 'cancelled' ? '✅ رزرو لغو شد' : '✅ درخواست لغو ثبت شد',
       );
       ref.invalidate(classesProvider);
     } catch (e) {
@@ -144,14 +142,14 @@ class _ClassesPageState extends ConsumerState<ClassesPage> {
                   children: [
                     for (var i = 0; i < list.length; i++)
                       _ClassTile(
-                            cls: list[i] as Map<String, dynamic>,
-                            onBook: _book,
-                            onCancel: _cancel,
-                            isBusy: _busyClassIds.contains(
-                              ((list[i] as Map<String, dynamic>)['id'] as num?)
-                                  ?.toInt(),
-                            ),
-                          )
+                        cls: list[i] as Map<String, dynamic>,
+                        onBook: _book,
+                        onCancel: _cancel,
+                        isBusy: _busyClassIds.contains(
+                          ((list[i] as Map<String, dynamic>)['id'] as num?)
+                              ?.toInt(),
+                        ),
+                      )
                           // Q5/M98 — اگر سیستم‌عامل «کاهش حرکت» را روشن کرده،
                           // همان ظاهر نهایی بدون پخش انیمیشن نشان داده می‌شود.
                           .animate(target: MpMotion.target(context))
@@ -191,9 +189,8 @@ class _ClassTile extends StatelessWidget {
     final bookingName = cls['member_booking_name'] is String
         ? (cls['member_booking_name'] as String).trim()
         : '';
-    final bookingLabel = bookingName.isEmpty
-        ? 'رزرو شما'
-        : 'رزرو به نام $bookingName';
+    final bookingLabel =
+        bookingName.isEmpty ? 'رزرو شما' : 'رزرو به نام $bookingName';
     final details = <String>[
       if (cls['schedule_text'] is String &&
           (cls['schedule_text'] as String).isNotEmpty)
@@ -241,26 +238,26 @@ class _ClassTile extends StatelessWidget {
                 backgroundColor: booked
                     ? MpColors.accent
                     : full
-                    ? MpColors.surface
-                    : MpColors.primary,
+                        ? MpColors.surface
+                        : MpColors.primary,
               ),
               onPressed: isBusy
                   ? null
                   : booked
-                  ? () => onCancel(cls)
-                  : full
-                  ? null
-                  : () => onBook(cls),
+                      ? () => onCancel(cls)
+                      : full
+                          ? null
+                          : () => onBook(cls),
               child: Text(
                 isBusy
                     ? 'در حال…'
                     : booked
-                    ? bookingStatus == 'waitlisted'
-                          ? 'لغو انتظار'
-                          : 'لغو رزرو'
-                    : full
-                    ? 'کامل'
-                    : 'رزرو',
+                        ? bookingStatus == 'waitlisted'
+                            ? 'لغو انتظار'
+                            : 'لغو رزرو'
+                        : full
+                            ? 'کامل'
+                            : 'رزرو',
               ),
             ),
           ],

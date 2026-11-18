@@ -85,14 +85,16 @@ class _SetFeedbackSheetState extends ConsumerState<SetFeedbackSheet> {
           haptics.warning();
           if (mounted) {
             setState(
-              () => _queueMessage = 'بازخورد ساختاریافته در دستگاه ذخیره شد و هنوز به سرور نرسیده است. درد عضلانی/یادداشت و پیشنهاد خودکار آفلاین ذخیره نمی‌شوند.',
+              () => _queueMessage =
+                  'بازخورد ساختاریافته در دستگاه ذخیره شد و هنوز به سرور نرسیده است. درد عضلانی/یادداشت و پیشنهاد خودکار آفلاین ذخیره نمی‌شوند.',
             );
           }
         } catch (_) {
           haptics.warning();
           if (mounted) {
             setState(
-              () => _errorMessage = 'شبکه در دسترس نیست و صف آفلاین Android هم آماده نیست؛ بازخورد ذخیره نشد.',
+              () => _errorMessage =
+                  'شبکه در دسترس نیست و صف آفلاین Android هم آماده نیست؛ بازخورد ذخیره نشد.',
             );
           }
         }
@@ -110,7 +112,8 @@ class _SetFeedbackSheetState extends ConsumerState<SetFeedbackSheet> {
       haptics.warning();
       if (mounted) {
         setState(
-          () => _errorMessage = 'ارسال بازخورد ناموفق بود. نتیجهٔ درخواست ممکن است نامشخص باشد؛ برای جلوگیری از ثبت تکراری آن را خودکار در صف نگذاشتیم. اتصال را بررسی کنید و سپس وضعیت سرور را بسنجید.',
+          () => _errorMessage =
+              'ارسال بازخورد ناموفق بود. نتیجهٔ درخواست ممکن است نامشخص باشد؛ برای جلوگیری از ثبت تکراری آن را خودکار در صف نگذاشتیم. اتصال را بررسی کنید و سپس وضعیت سرور را بسنجید.',
         );
       }
     } finally {

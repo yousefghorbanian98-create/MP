@@ -73,23 +73,24 @@ class _ClassesClient extends http.BaseClient {
 }
 
 Widget _wrap(http.Client client, {RecordingHaptics? haptics}) => ProviderScope(
-  overrides: [
-    if (haptics != null) hapticsProvider.overrideWith((ref) => haptics),
-    httpClientProvider.overrideWithValue(client),
-    authProvider.overrideWith(
-      (ref) => AuthController.test(
-        AuthState(accessToken: 'test-token', memberId: 3, userName: 'عضو تست'),
+      overrides: [
+        if (haptics != null) hapticsProvider.overrideWith((ref) => haptics),
+        httpClientProvider.overrideWithValue(client),
+        authProvider.overrideWith(
+          (ref) => AuthController.test(
+            AuthState(
+                accessToken: 'test-token', memberId: 3, userName: 'عضو تست'),
+          ),
+        ),
+      ],
+      child: MaterialApp(
+        theme: mpTheme(),
+        home: const Directionality(
+          textDirection: TextDirection.rtl,
+          child: Scaffold(body: ClassesPage()),
+        ),
       ),
-    ),
-  ],
-  child: MaterialApp(
-    theme: mpTheme(),
-    home: const Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(body: ClassesPage()),
-    ),
-  ),
-);
+    );
 
 void main() {
   testWidgets('رزرو خود عضو را لغو و ظرفیت/وضعیت تازه را از API می‌گیرد', (

@@ -43,12 +43,13 @@ class AuthState {
     int? userId,
     String? userName,
     int? memberId,
-  }) => AuthState(
-    accessToken: accessToken ?? this.accessToken,
-    userId: userId ?? this.userId,
-    userName: userName ?? this.userName,
-    memberId: memberId ?? this.memberId,
-  );
+  }) =>
+      AuthState(
+        accessToken: accessToken ?? this.accessToken,
+        userId: userId ?? this.userId,
+        userName: userName ?? this.userName,
+        memberId: memberId ?? this.memberId,
+      );
 }
 
 class PendingOfflineFeedbackException implements Exception {
@@ -61,9 +62,9 @@ class AuthController extends StateNotifier<AuthState> {
     this._api, {
     String? refreshToken,
     OfflineFeedbackLocalStore? offlineStore,
-  }) : _refreshToken = refreshToken,
-       _offlineStore = offlineStore,
-       super(const AuthState());
+  })  : _refreshToken = refreshToken,
+        _offlineStore = offlineStore,
+        super(const AuthState());
 
   /// refresh token در حافظه نگه داشته می‌شود تا خروج بتواند نشست **سرور** را
   /// هم ببندد (`POST /auth/logout`). نسخهٔ قبلی فقط access token را می‌شناخت.
@@ -78,9 +79,9 @@ class AuthController extends StateNotifier<AuthState> {
   AuthController.test(
     AuthState initial, {
     OfflineFeedbackLocalStore? offlineStore,
-  }) : _api = null,
-       _offlineStore = offlineStore,
-       super(initial);
+  })  : _api = null,
+        _offlineStore = offlineStore,
+        super(initial);
   final ApiClient? _api;
   final OfflineFeedbackLocalStore? _offlineStore;
 

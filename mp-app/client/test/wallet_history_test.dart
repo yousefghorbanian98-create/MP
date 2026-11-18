@@ -109,20 +109,21 @@ class _PagedWalletClient extends http.BaseClient {
 
 /// authProvider با هویت عضو override می‌شود تا wallet/balance/ledger واقعی سنجیده شوند.
 Widget _wrap(http.Client client) => ProviderScope(
-  overrides: [
-    httpClientProvider.overrideWithValue(client),
-    authProvider.overrideWith(
-      (ref) => AuthController.test(AuthState(accessToken: 't', memberId: 1)),
-    ),
-  ],
-  child: MaterialApp(
-    theme: mpTheme(),
-    home: const Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(body: WalletPage()),
-    ),
-  ),
-);
+      overrides: [
+        httpClientProvider.overrideWithValue(client),
+        authProvider.overrideWith(
+          (ref) =>
+              AuthController.test(AuthState(accessToken: 't', memberId: 1)),
+        ),
+      ],
+      child: MaterialApp(
+        theme: mpTheme(),
+        home: const Directionality(
+          textDirection: TextDirection.rtl,
+          child: Scaffold(body: WalletPage()),
+        ),
+      ),
+    );
 
 void main() {
   testWidgets('تاریخچهٔ پرداخت از API می‌آید و مبلغ/وضعیت را نشان می‌دهد', (

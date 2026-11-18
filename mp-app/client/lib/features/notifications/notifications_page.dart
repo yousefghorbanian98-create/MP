@@ -94,9 +94,8 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                   ),
                 ),
                 data: (rows) {
-                  final unreadCount = rows
-                      .where((row) => row['read_at'] == null)
-                      .length;
+                  final unreadCount =
+                      rows.where((row) => row['read_at'] == null).length;
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -183,11 +182,10 @@ class _NotificationTile extends StatelessWidget {
     final id = (notification['id'] as num).toInt();
     final unread = notification['read_at'] == null;
     final title = notification['title'] as String;
-    final body = notification['body'] is String
-        ? notification['body'] as String
-        : '';
-    final createdAt = DateTime.parse(notification['created_at'] as String)
-        .toLocal();
+    final body =
+        notification['body'] is String ? notification['body'] as String : '';
+    final createdAt =
+        DateTime.parse(notification['created_at'] as String).toLocal();
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: GlassCard(
@@ -249,6 +247,6 @@ class _NotificationTile extends StatelessWidget {
 }
 
 String _toPersianDigits(String value) => value.replaceAllMapped(
-  RegExp(r'\d'),
-  (match) => '۰۱۲۳۴۵۶۷۸۹'[int.parse(match.group(0)!)],
-);
+      RegExp(r'\d'),
+      (match) => '۰۱۲۳۴۵۶۷۸۹'[int.parse(match.group(0)!)],
+    );

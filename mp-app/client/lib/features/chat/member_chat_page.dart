@@ -163,9 +163,8 @@ class _MemberChatPageState extends ConsumerState<MemberChatPage> {
         ],
       ),
       body: SafeArea(
-        child: conversation == null
-            ? _conversationList()
-            : _thread(conversation),
+        child:
+            conversation == null ? _conversationList() : _thread(conversation),
       ),
     );
   }
@@ -337,22 +336,24 @@ class _MemberChatPageState extends ConsumerState<MemberChatPage> {
   }
 
   Widget _threadStatus(MemberChatConversation conversation) => Padding(
-    padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-    child: Row(
-      children: [
-        const Icon(Icons.support_agent, color: MpColors.primaryLight, size: 22),
-        const SizedBox(width: 8),
-        const Expanded(
-          child: Text(
-            'گفتگو با مربی',
-            style: TextStyle(fontWeight: FontWeight.w700),
-          ),
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+        child: Row(
+          children: [
+            const Icon(Icons.support_agent,
+                color: MpColors.primaryLight, size: 22),
+            const SizedBox(width: 8),
+            const Expanded(
+              child: Text(
+                'گفتگو با مربی',
+                style: TextStyle(fontWeight: FontWeight.w700),
+              ),
+            ),
+            if (conversation.status == 'closed')
+              const Chip(
+                  label: Text('بسته'), visualDensity: VisualDensity.compact),
+          ],
         ),
-        if (conversation.status == 'closed')
-          const Chip(label: Text('بسته'), visualDensity: VisualDensity.compact),
-      ],
-    ),
-  );
+      );
 
   Widget _messageList(List<MemberChatMessage> messages) {
     if (messages.isEmpty) {
@@ -378,54 +379,54 @@ class _MemberChatPageState extends ConsumerState<MemberChatPage> {
   }
 
   Widget _composer(MemberChatConversation conversation) => SafeArea(
-    top: false,
-    child: Padding(
-      padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Expanded(
-            child: TextField(
-              key: const ValueKey('member-chat-composer'),
-              controller: _messageController,
-              enabled: !_sending,
-              textDirection: TextDirection.rtl,
-              minLines: 1,
-              maxLines: 4,
-              maxLength: 2000,
-              decoration: const InputDecoration(
-                hintText: 'پیام خود را بنویسید…',
-                filled: true,
-                counterText: '',
-                border: OutlineInputBorder(),
-                contentPadding: EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 10,
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Expanded(
+                child: TextField(
+                  key: const ValueKey('member-chat-composer'),
+                  controller: _messageController,
+                  enabled: !_sending,
+                  textDirection: TextDirection.rtl,
+                  minLines: 1,
+                  maxLines: 4,
+                  maxLength: 2000,
+                  decoration: const InputDecoration(
+                    hintText: 'پیام خود را بنویسید…',
+                    filled: true,
+                    counterText: '',
+                    border: OutlineInputBorder(),
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 10,
+                    ),
+                  ),
+                  onChanged: (_) => setState(() {
+                    _actionError = null;
+                  }),
                 ),
               ),
-              onChanged: (_) => setState(() {
-                _actionError = null;
-              }),
-            ),
+              const SizedBox(width: 8),
+              IconButton.filled(
+                tooltip: 'ارسال پیام',
+                onPressed: _sending || _messageController.text.trim().isEmpty
+                    ? null
+                    : () => _sendMessage(conversation),
+                icon: _sending
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.send),
+              ),
+            ],
           ),
-          const SizedBox(width: 8),
-          IconButton.filled(
-            tooltip: 'ارسال پیام',
-            onPressed: _sending || _messageController.text.trim().isEmpty
-                ? null
-                : () => _sendMessage(conversation),
-            icon: _sending
-                ? const SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Icon(Icons.send),
-          ),
-        ],
-      ),
-    ),
-  );
+        ),
+      );
 }
 
 class _ConversationTile extends StatelessWidget {
@@ -463,8 +464,8 @@ class _ConversationTile extends StatelessWidget {
                       conversation.status == 'closed'
                           ? 'گفتگو بسته شده'
                           : date == null
-                          ? 'هنوز پیامی ندارد'
-                          : 'آخرین پیام · $date',
+                              ? 'هنوز پیامی ندارد'
+                              : 'آخرین پیام · $date',
                       style: const TextStyle(
                         fontSize: 12,
                         color: MpColors.textSecondary,
@@ -493,18 +494,18 @@ class _MessageBubble extends StatelessWidget {
     final alignment = message.isSystem
         ? Alignment.center
         : isOwn
-        ? AlignmentDirectional.centerEnd
-        : AlignmentDirectional.centerStart;
+            ? AlignmentDirectional.centerEnd
+            : AlignmentDirectional.centerStart;
     final color = message.isSystem
         ? MpColors.surface
         : isOwn
-        ? MpColors.primary.withOpacity(0.22)
-        : MpColors.surface.withOpacity(0.92);
+            ? MpColors.primary.withOpacity(0.22)
+            : MpColors.surface.withOpacity(0.92);
     final sender = message.isSystem
         ? 'پیام سامانه'
         : isOwn
-        ? 'شما'
-        : 'مربی';
+            ? 'شما'
+            : 'مربی';
     final time = _formatChatTime(message.createdAt);
 
     return Align(
@@ -552,15 +553,15 @@ class _ActionMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-    child: Text(
-      message,
-      textAlign: TextAlign.center,
-      style: TextStyle(
-        color: isError ? MpColors.danger : MpColors.primaryLight,
-      ),
-    ),
-  );
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        child: Text(
+          message,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: isError ? MpColors.danger : MpColors.primaryLight,
+          ),
+        ),
+      );
 }
 
 String? _formatChatTime(String? iso) {
@@ -574,6 +575,6 @@ String? _formatChatTime(String? iso) {
 }
 
 String _persianDigits(String value) => value.replaceAllMapped(
-  RegExp(r'\d'),
-  (match) => '۰۱۲۳۴۵۶۷۸۹'[int.parse(match.group(0)!)],
-);
+      RegExp(r'\d'),
+      (match) => '۰۱۲۳۴۵۶۷۸۹'[int.parse(match.group(0)!)],
+    );

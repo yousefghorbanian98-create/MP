@@ -60,61 +60,62 @@ class _AdaptiveClient extends http.BaseClient {
 Map<String, dynamic> _report({
   required bool weightLogged,
   bool enoughData = false,
-}) => {
-  'member_id': 3,
-  'goal': 'weight_loss',
-  'current_target_kcal': enoughData ? 2100 : null,
-  'plan_id': enoughData ? 8 : null,
-  'estimate': {
-    'tdee_kcal': enoughData ? 2650.0 : null,
-    'confidence': enoughData ? 'medium' : 'insufficient',
-    'data_state': enoughData ? 'estimated' : 'insufficient_intake',
-    'mean_intake_kcal': enoughData ? 2100.0 : null,
-    'reason': enoughData
-        ? 'TDEE از روند واقعی وزن و مصرف ثبت‌شده برآورد شده است.'
-        : 'فقط ۰ روز غذا ثبت شده؛ دادهٔ کافی برای تخمین وجود ندارد.',
-    'trend': {
-      'slope_kg_per_week': enoughData ? -0.5 : null,
-      'notes': <String>[],
-    },
-    'assumptions': enoughData
-        ? ['فقط روزهای ثبت‌شده محاسبه شده‌اند']
-        : <String>[],
-  },
-  'suggestion': {
-    'suggested_target_kcal': enoughData ? 2300 : null,
-    'delta_kcal': enoughData ? 200 : 0,
-    'action': enoughData ? 'increase' : 'none',
-    'reason': enoughData
-        ? 'هدف فعلی با روند نیاز به تعدیل دارد.'
-        : 'TDEE نامعلوم است؛ تغییری پیشنهاد نمی‌شود.',
-    'capped': false,
-  },
-  'data_counts': {
-    'weight_entries': weightLogged ? 1 : (enoughData ? 28 : 0),
-    'intake_days': enoughData ? 28 : 0,
-  },
-  'latest_weight_kg': weightLogged ? 74.5 : (enoughData ? 78.0 : null),
-  'rule_version': 'adaptive-nutrition-1.0',
-};
+}) =>
+    {
+      'member_id': 3,
+      'goal': 'weight_loss',
+      'current_target_kcal': enoughData ? 2100 : null,
+      'plan_id': enoughData ? 8 : null,
+      'estimate': {
+        'tdee_kcal': enoughData ? 2650.0 : null,
+        'confidence': enoughData ? 'medium' : 'insufficient',
+        'data_state': enoughData ? 'estimated' : 'insufficient_intake',
+        'mean_intake_kcal': enoughData ? 2100.0 : null,
+        'reason': enoughData
+            ? 'TDEE از روند واقعی وزن و مصرف ثبت‌شده برآورد شده است.'
+            : 'فقط ۰ روز غذا ثبت شده؛ دادهٔ کافی برای تخمین وجود ندارد.',
+        'trend': {
+          'slope_kg_per_week': enoughData ? -0.5 : null,
+          'notes': <String>[],
+        },
+        'assumptions':
+            enoughData ? ['فقط روزهای ثبت‌شده محاسبه شده‌اند'] : <String>[],
+      },
+      'suggestion': {
+        'suggested_target_kcal': enoughData ? 2300 : null,
+        'delta_kcal': enoughData ? 200 : 0,
+        'action': enoughData ? 'increase' : 'none',
+        'reason': enoughData
+            ? 'هدف فعلی با روند نیاز به تعدیل دارد.'
+            : 'TDEE نامعلوم است؛ تغییری پیشنهاد نمی‌شود.',
+        'capped': false,
+      },
+      'data_counts': {
+        'weight_entries': weightLogged ? 1 : (enoughData ? 28 : 0),
+        'intake_days': enoughData ? 28 : 0,
+      },
+      'latest_weight_kg': weightLogged ? 74.5 : (enoughData ? 78.0 : null),
+      'rule_version': 'adaptive-nutrition-1.0',
+    };
 
 Widget _wrap(http.Client client) => ProviderScope(
-  overrides: [
-    httpClientProvider.overrideWithValue(client),
-    authProvider.overrideWith(
-      (ref) => AuthController.test(
-        AuthState(accessToken: 'test-token', memberId: 3, userName: 'عضو تست'),
+      overrides: [
+        httpClientProvider.overrideWithValue(client),
+        authProvider.overrideWith(
+          (ref) => AuthController.test(
+            AuthState(
+                accessToken: 'test-token', memberId: 3, userName: 'عضو تست'),
+          ),
+        ),
+      ],
+      child: MaterialApp(
+        theme: mpTheme(),
+        home: Directionality(
+          textDirection: TextDirection.rtl,
+          child: Scaffold(body: ListView(children: [AdaptiveNutritionCard()])),
+        ),
       ),
-    ),
-  ],
-  child: MaterialApp(
-    theme: mpTheme(),
-    home: Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(body: ListView(children: [AdaptiveNutritionCard()])),
-    ),
-  ),
-);
+    );
 
 void main() {
   testWidgets('TDEE و delta را از report API نمایش می‌دهد، نه محاسبهٔ Client', (
@@ -161,9 +162,8 @@ void main() {
         greaterThanOrEqualTo(2),
       );
       expect(client.postedBody?['member_id'], 3);
-      final entry =
-          (client.postedBody?['entries'] as List).single
-              as Map<String, dynamic>;
+      final entry = (client.postedBody?['entries'] as List).single
+          as Map<String, dynamic>;
       expect(entry['weight_kg'], 74.5);
       expect(entry['logged_for_date'], matches(RegExp(r'^\d{4}-\d{2}-\d{2}$')));
       expect(find.textContaining('۱ ثبت وزن'), findsOneWidget);

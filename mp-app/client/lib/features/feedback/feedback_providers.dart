@@ -10,23 +10,21 @@ import '../../core/offline_feedback_outbox.dart';
 import '../../core/session.dart';
 
 /// ارسال آنلاین بازخورد ست‌ها ← پیشنهاد جلسهٔ بعد (وزن/حجم + دلیل).
-final submitSetFeedbackProvider =
-    Provider<
-      Future<Map<String, dynamic>?> Function(List<Map<String, dynamic>>)
-    >((ref) {
-      return (entries) async {
-        final api = ref.read(apiClientProvider);
-        final auth = ref.read(authProvider);
-        final memberId = auth.memberId;
-        if (memberId == null) return null;
-        final r = await api.post('/programs/set-feedback', {
-          'member_id': memberId,
-          'entries': entries,
-        });
-        if (r is Map<String, dynamic>) return r;
-        return null;
-      };
+final submitSetFeedbackProvider = Provider<
+    Future<Map<String, dynamic>?> Function(List<Map<String, dynamic>>)>((ref) {
+  return (entries) async {
+    final api = ref.read(apiClientProvider);
+    final auth = ref.read(authProvider);
+    final memberId = auth.memberId;
+    if (memberId == null) return null;
+    final r = await api.post('/programs/set-feedback', {
+      'member_id': memberId,
+      'entries': entries,
     });
+    if (r is Map<String, dynamic>) return r;
+    return null;
+  };
+});
 
 final offlineFeedbackOutboxProvider = Provider<OfflineFeedbackOutbox>(
   (ref) => OfflineFeedbackOutbox(ref.watch(offlineFeedbackStoreProvider)),
@@ -72,9 +70,7 @@ final enqueueOfflineFeedbackProvider = Provider<EnqueueOfflineFeedback>((ref) {
       );
     }
     // soreness, notes and all unknown fields are deliberately dropped here.
-    return ref
-        .read(offlineFeedbackOutboxProvider)
-        .enqueue(
+    return ref.read(offlineFeedbackOutboxProvider).enqueue(
           ownerMemberId: ownerMemberId,
           programId: programId,
           movementId: movementId,
@@ -88,18 +84,18 @@ final enqueueOfflineFeedbackProvider = Provider<EnqueueOfflineFeedback>((ref) {
 
 final offlineFeedbackNetworkAvailableProvider =
     Provider<Future<bool> Function()>(
-      (ref) => ref.read(offlineFeedbackStoreProvider).hasInternetNetwork,
-    );
+  (ref) => ref.read(offlineFeedbackStoreProvider).hasInternetNetwork,
+);
 
 /// Rows are always read by the active member ID and the native query repeats
 /// that owner predicate. Unsupported platforms intentionally expose no queue.
 final offlineFeedbackQueueProvider =
     FutureProvider<List<OfflineFeedbackQueueItem>>((ref) async {
-      final ownerMemberId = ref.watch(authProvider).memberId;
-      final store = ref.watch(offlineFeedbackStoreProvider);
-      if (ownerMemberId == null || !store.isSupported) return const [];
-      return store.listForOwner(ownerMemberId, limit: 500);
-    });
+  final ownerMemberId = ref.watch(authProvider).memberId;
+  final store = ref.watch(offlineFeedbackStoreProvider);
+  if (ownerMemberId == null || !store.isSupported) return const [];
+  return store.listForOwner(ownerMemberId, limit: 500);
+});
 
 typedef SyncOfflineFeedbackQueue = Future<OfflineFeedbackSyncResult> Function();
 
@@ -110,9 +106,7 @@ final syncOfflineFeedbackQueueProvider = Provider<SyncOfflineFeedbackQueue>((
     final ownerMemberId = ref.read(authProvider).memberId;
     if (ownerMemberId == null)
       return const OfflineFeedbackSyncResult(authRequired: true);
-    return ref
-        .read(offlineFeedbackSyncServiceProvider)
-        .syncOwner(
+    return ref.read(offlineFeedbackSyncServiceProvider).syncOwner(
           currentMemberId: ownerMemberId,
           ownerMemberId: ownerMemberId,
           api: ref.read(apiClientProvider),

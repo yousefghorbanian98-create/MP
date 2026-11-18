@@ -27,8 +27,8 @@ class TodayController extends StateNotifier<TodayState> {
 
 final todayControllerProvider =
     StateNotifierProvider<TodayController, TodayState>(
-      (ref) => TodayController(ref),
-    );
+  (ref) => TodayController(ref),
+);
 
 /// تمرین‌های امروز از برنامهٔ واقعی.
 final todayWorkoutProvider = Provider<List<Map<String, dynamic>>>((ref) {
