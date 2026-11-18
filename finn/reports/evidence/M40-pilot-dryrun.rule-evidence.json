@@ -1,0 +1,18 @@
+{
+  "micro": "M40-c2",
+  "gate": "S8 (dry-run پایلوت)",
+  "date": "2026-11-14",
+  "loop": [
+    "POST /axis-assessments (۱۰ آزمون واقعی — باتری کامل AXIS_TEST_MAP)",
+    "GET /{id}/matrix (۱۴ محور — هر محور: وضعیت چهارگانه + دلیل)",
+    "engine.prescribe_axis_work (تجویز محور-آگاه از کاتالوگ واقعی CatalogExercise)",
+    "POST /programs/set-feedback (RIR/درد ← پیشنهاد وزن/حجم)",
+    "POST /{id}/review (مدیر — approve + audit)"
+  ],
+  "result": "tests/integration/test_pilot_dry_run.py — 1 passed (حلقهٔ کامل صفر خطا)",
+  "findings": [
+    "ثبت آزمون بدون تاریخ تولد به‌درستی رد می‌شود (missing_birthdate — «داده ناشناخته است نه صفر»)",
+    "seed_criteria برای آزمون‌های criterion (plank) الزامی است — پیش‌نیاز راه‌اندازی پایلوت ثبت شد"
+  ],
+  "protocol": "docs/MuscleParadise/PILOT-PROTOCOL-M40.md (pilot-1.0 — معیارهای موفقیت از پیش تعریف‌شده + طرح تکرار ۴ هفته‌ای)"
+}

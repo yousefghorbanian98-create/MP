@@ -1,0 +1,305 @@
+{
+  "rule_id": "M34c1-progression-ladders",
+  "date": "2026-11-14",
+  "status": "verified",
+  "method": "هر پله به ردیف واقعی catalog_exercises پیوند دارد (external_id حل‌شده از exercises.json) — نگهبان check_names هر نام مفقود را با خطای صریح رد می‌کند",
+  "ladders": [
+    {
+      "key": "pushup",
+      "name_fa": "شنای سوئدی",
+      "axis_focus": {
+        "3": 0.8,
+        "5": 0.5,
+        "7": 0.4
+      },
+      "steps": [
+        {
+          "no": 1,
+          "catalog_name": "Incline Push-Up",
+          "name_fa": "شنای سوئدی شیب‌دار"
+        },
+        {
+          "no": 2,
+          "catalog_name": "Pushups",
+          "name_fa": "شنای سوئدی استاندارد"
+        },
+        {
+          "no": 3,
+          "catalog_name": "Push-Ups With Feet Elevated",
+          "name_fa": "شنای سوئدی پاها بالاتر"
+        }
+      ]
+    },
+    {
+      "key": "squat",
+      "name_fa": "اسکوات",
+      "axis_focus": {
+        "3": 0.9,
+        "9": 0.6,
+        "2": 0.3
+      },
+      "steps": [
+        {
+          "no": 1,
+          "catalog_name": "Chair Squat",
+          "name_fa": "اسکوات روی صندلی"
+        },
+        {
+          "no": 2,
+          "catalog_name": "Bodyweight Squat",
+          "name_fa": "اسکوات با وزن بدن"
+        },
+        {
+          "no": 3,
+          "catalog_name": "Dumbbell Squat",
+          "name_fa": "اسکوات دمبل"
+        },
+        {
+          "no": 4,
+          "catalog_name": "Barbell Squat",
+          "name_fa": "اسکوات هالتر"
+        },
+        {
+          "no": 5,
+          "catalog_name": "Front Squat (Clean Grip)",
+          "name_fa": "اسکوات فرانت"
+        }
+      ]
+    },
+    {
+      "key": "pullup",
+      "name_fa": "بارفیکس",
+      "axis_focus": {
+        "3": 0.8,
+        "10": 0.5,
+        "5": 0.4
+      },
+      "steps": [
+        {
+          "no": 1,
+          "catalog_name": "Band Assisted Pull-Up",
+          "name_fa": "بارفیکس با کش کمکی"
+        },
+        {
+          "no": 2,
+          "catalog_name": "Pullups",
+          "name_fa": "بارفیکس استاندارد"
+        },
+        {
+          "no": 3,
+          "catalog_name": "Chin-Up",
+          "name_fa": "چین‌آپ"
+        },
+        {
+          "no": 4,
+          "catalog_name": "V-Bar Pullup",
+          "name_fa": "بارفیکس وی‌بار"
+        },
+        {
+          "no": 5,
+          "catalog_name": "Wide-Grip Rear Pull-Up",
+          "name_fa": "بارفیکس دست‌باز پشت"
+        }
+      ]
+    },
+    {
+      "key": "plank",
+      "name_fa": "پلانک",
+      "axis_focus": {
+        "7": 0.8,
+        "5": 0.5
+      },
+      "steps": [
+        {
+          "no": 1,
+          "catalog_name": "Plank",
+          "name_fa": "پلانک"
+        },
+        {
+          "no": 2,
+          "catalog_name": "Side Bridge",
+          "name_fa": "پلانک جانبی"
+        },
+        {
+          "no": 3,
+          "catalog_name": "Push Up to Side Plank",
+          "name_fa": "شنای سوئدی به پلانک جانبی"
+        }
+      ]
+    },
+    {
+      "key": "hinge",
+      "name_fa": "لولا شدن باسن",
+      "axis_focus": {
+        "9": 0.9,
+        "3": 0.7,
+        "13": 0.3
+      },
+      "steps": [
+        {
+          "no": 1,
+          "catalog_name": "Good Morning",
+          "name_fa": "گود مورنینگ"
+        },
+        {
+          "no": 2,
+          "catalog_name": "Romanian Deadlift",
+          "name_fa": "ددلیفت رومانیایی"
+        },
+        {
+          "no": 3,
+          "catalog_name": "Barbell Deadlift",
+          "name_fa": "ددلیفت هالتر"
+        },
+        {
+          "no": 4,
+          "catalog_name": "Kettlebell One-Legged Deadlift",
+          "name_fa": "ددلیفت تک‌پا کتل‌بل"
+        }
+      ]
+    },
+    {
+      "key": "lunge",
+      "name_fa": "لانج",
+      "axis_focus": {
+        "3": 0.7,
+        "2": 0.5,
+        "9": 0.4
+      },
+      "steps": [
+        {
+          "no": 1,
+          "catalog_name": "Bodyweight Walking Lunge",
+          "name_fa": "لانج راه رفتنی با وزن بدن"
+        },
+        {
+          "no": 2,
+          "catalog_name": "Dumbbell Lunges",
+          "name_fa": "لانج دمبل"
+        },
+        {
+          "no": 3,
+          "catalog_name": "Barbell Lunge",
+          "name_fa": "لانج هالتر"
+        }
+      ]
+    },
+    {
+      "key": "dip",
+      "name_fa": "دیپ",
+      "axis_focus": {
+        "3": 0.8,
+        "5": 0.5,
+        "10": 0.3
+      },
+      "steps": [
+        {
+          "no": 1,
+          "catalog_name": "Bench Dips",
+          "name_fa": "دیپ نیمکت"
+        },
+        {
+          "no": 2,
+          "catalog_name": "Dips - Triceps Version",
+          "name_fa": "دیپ پشت بازو"
+        },
+        {
+          "no": 3,
+          "catalog_name": "Parallel Bar Dip",
+          "name_fa": "دیپ میله‌های موازی"
+        },
+        {
+          "no": 4,
+          "catalog_name": "Ring Dips",
+          "name_fa": "دیپ حلقه"
+        }
+      ]
+    },
+    {
+      "key": "row",
+      "name_fa": "کشش افقی",
+      "axis_focus": {
+        "3": 0.7,
+        "6": 0.5,
+        "10": 0.4
+      },
+      "steps": [
+        {
+          "no": 1,
+          "catalog_name": "One-Arm Dumbbell Row",
+          "name_fa": "روئینگ تک‌دست دمبل"
+        },
+        {
+          "no": 2,
+          "catalog_name": "Bent Over Barbell Row",
+          "name_fa": "روئینگ خمیده هالتر"
+        }
+      ]
+    },
+    {
+      "key": "core",
+      "name_fa": "شکم و پایداری مرکز",
+      "axis_focus": {
+        "7": 0.9,
+        "5": 0.5
+      },
+      "steps": [
+        {
+          "no": 1,
+          "catalog_name": "Crunches",
+          "name_fa": "کرانچ"
+        },
+        {
+          "no": 2,
+          "catalog_name": "Air Bike",
+          "name_fa": "ایر بایک"
+        },
+        {
+          "no": 3,
+          "catalog_name": "Flat Bench Lying Leg Raise",
+          "name_fa": "بالا آوردن پا روی نیمکت"
+        },
+        {
+          "no": 4,
+          "catalog_name": "Hanging Leg Raise",
+          "name_fa": "بالا آوردن پا معلق"
+        }
+      ]
+    },
+    {
+      "key": "glute-bridge",
+      "name_fa": "پل سرینی",
+      "axis_focus": {
+        "3": 0.6,
+        "7": 0.5,
+        "6": 0.4
+      },
+      "steps": [
+        {
+          "no": 1,
+          "catalog_name": "Butt Lift (Bridge)",
+          "name_fa": "پل باسن"
+        },
+        {
+          "no": 2,
+          "catalog_name": "Single Leg Glute Bridge",
+          "name_fa": "پل سرینی تک‌پا"
+        },
+        {
+          "no": 3,
+          "catalog_name": "Barbell Glute Bridge",
+          "name_fa": "پل سرینی هالتر"
+        }
+      ]
+    }
+  ],
+  "boundaries": [
+    "وزن‌های axis_focus کارشناسی/candidate است تا بازبینی ECC-3 و بازخورد M38",
+    "ترتیب پله‌ها «حدس آموزشی رایج» است، نه آزمون‌شده روی جمعیت — در پایلوت M40 بازبینی می‌شود"
+  ],
+  "verified_by": "finn (ECC-3), S6 چرخهٔ M34-c1",
+  "evidence": [
+    "tests/unit/test_progressions.py (5 tests)",
+    "pipeline run: 10 ladders / 36 steps / 36 linked (output-audit)"
+  ]
+}

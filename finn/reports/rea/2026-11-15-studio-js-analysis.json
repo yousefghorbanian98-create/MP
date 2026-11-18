@@ -1,0 +1,315 @@
+{
+ "evidence_id": "ev_f064be7f1c4ccd7becb5ba45b9a8bf06f5e2aa98927a2e7cab60f0c2d62a5284",
+ "subject": {
+  "name": "studio",
+  "digest": {
+   "sha256": "2bf4aac60e387b631a6866af0b3f3f84fd9057c11c736b68ff2e6964b61c2241"
+  },
+  "local_path": "/home/user/MP/mp-app/studio",
+  "format": "directory",
+  "architecture": null
+ },
+ "provider": {
+  "id": "rea-javascript-application",
+  "name": "REA JavaScript application analyzer",
+  "version": "1"
+ },
+ "operation": "analyze_javascript_application",
+ "coverage_note": "full record not committed (9.3MB); regenerate with analyze-javascript-application",
+ "normalized_summary": {
+  "browser_windows": 1,
+  "explicit_web_preferences": 3,
+  "preload_entrypoints": 1,
+  "context_bridge_apis": 1,
+  "exposed_api_members": 1,
+  "ipc": {
+   "operations": 0,
+   "literal_channels": 0,
+   "dynamic_channel_operations": 0,
+   "renderer_transmissions": 0,
+   "renderer_listeners": 0,
+   "main_handlers": 0,
+   "paired_renderer_transmissions": 0,
+   "ambiguous_renderer_transmissions": 0,
+   "unpaired_literal_renderer_transmissions": 0
+  },
+  "sender_validation_observations": 0,
+  "utility_processes": 0,
+  "resolved_utility_entrypoints": 0,
+  "native_addon_bindings": 0,
+  "resolved_native_addon_bindings": 0,
+  "protocol_registrations": 0,
+  "v8_cached_data_compilations": 0,
+  "electron_semantics": "recovered"
+ },
+ "statistics": {
+  "relevant_files": 39,
+  "nested_asar_containers": 0,
+  "text_bytes_read": 233965,
+  "invalid_utf8_files": 0,
+  "parsed_javascript_files": 35,
+  "skipped_javascript_files": 0,
+  "visited_ast_nodes": 11124,
+  "findings": 310,
+  "modules": 0,
+  "parse_failures": 0
+ },
+ "route_inventory_sources": [
+  {
+   "key": "electron/main.cjs",
+   "sha256": "f757a3c48e89225cfc73fd9b4da3a44f368954b6d4f5b797d4af0e2d25650192",
+   "status": "complete",
+   "reported_route_capacity": null,
+   "reason": null
+  },
+  {
+   "key": "electron/preload.cjs",
+   "sha256": "83cd9b4e6c5e2cb31f0fb5d2a76b202b8bbc81183353032edfb4576377609ac1",
+   "status": "complete",
+   "reported_route_capacity": null,
+   "reason": null
+  },
+  {
+   "key": "postcss.config.js",
+   "sha256": "e32657baf631d7c5f4dc67b4b2ee0ec8e7d5b3c41860e09cddce7c0377cd80bc",
+   "status": "complete",
+   "reported_route_capacity": null,
+   "reason": null
+  },
+  {
+   "key": "public/sw.js",
+   "sha256": "8f8c66d95bd521798f2f679ca15514ce6a99a568108e15a117064273a5370f0d",
+   "status": "complete",
+   "reported_route_capacity": null,
+   "reason": null
+  },
+  {
+   "key": "src/App.tsx",
+   "sha256": "7746a3758367c0d89ca56f257f259805cbec6c03cec3ddb7e9093e7410901cf7",
+   "status": "complete",
+   "reported_route_capacity": null,
+   "reason": null
+  },
+  {
+   "key": "src/components/AnimatedCounter.tsx",
+   "sha256": "53f6ca00fb9a19bb127712c417e63e3b3c922ef4c76198f7a30b891e5f3c3abb",
+   "status": "complete",
+   "reported_route_capacity": null,
+   "reason": null
+  },
+  {
+   "key": "src/components/AttendanceChart.tsx",
+   "sha256": "2cfe3ffde3e5d17071c76b1b4e58189c900e43be75924e9aab320fb96e8ec63a",
+   "status": "complete",
+   "reported_route_capacity": null,
+   "reason": null
+  },
+  {
+   "key": "src/components/KpiCard.tsx",
+   "sha256": "178448a3f49dc904828e16bd9fa311216b470812a4ec061102f5222b5c5f2ef4",
+   "status": "complete",
+   "reported_route_capacity": null,
+   "reason": null
+  },
+  {
+   "key": "src/components/MemberTable.tsx",
+   "sha256": "0ee3add2ecff893df98b7b5160bd63478cbcb3b6e889a5e9b70b18854c2f3b80",
+   "status": "complete",
+   "reported_route_capacity": null,
+   "reason": null
+  },
+  {
+   "key": "src/components/RoleManager.tsx",
+   "sha256": "e4175375f3426f635c34fd0b6ff7af7202585d06dac19496842931df083f729b",
+   "status": "complete",
+   "reported_route_capacity": null,
+   "reason": null
+  },
+  {
+   "key": "src/components/ScheduleTimeline.tsx",
+   "sha256": "5e614b1f665aef72078ce98ac8c5f638cf55712904a2f70d54426e647b81557d",
+   "status": "complete",
+   "reported_route_capacity": null,
+   "reason": null
+  },
+  {
+   "key": "src/components/Sidebar.tsx",
+   "sha256": "f766e5ef5ed6a3c05bcb8b6c4a00e462d1763b58b54c7318d6f944fd2b8dc735",
+   "status": "complete",
+   "reported_route_capacity": null,
+   "reason": null
+  },
+  {
+   "key": "src/components/TopBar.tsx",
+   "sha256": "6833e8c66c0434e1193ea7f3f8044eb94da807f4f63a7734343fa55d542d79a7",
+   "status": "complete",
+   "reported_route_capacity": null,
+   "reason": null
+  },
+  {
+   "key": "src/components/UpdateBanner.tsx",
+   "sha256": "cbc230ebf3d24b3d3746c1e154b57f3c359a2afe1c4a8d23d0a0c60977641113",
+   "status": "complete",
+   "reported_route_capacity": null,
+   "reason": null
+  },
+  {
+   "key": "src/data/mock.ts",
+   "sha256": "395df48bcc6f1511ed26bb0f67293fd1cfed186aaf35786cc939c1f575e95a0b",
+   "status": "complete",
+   "reported_route_capacity": null,
+   "reason": null
+  },
+  {
+   "key": "src/lib/adminApi.ts",
+   "sha256": "40a28e6603e5e610aae3cb19653b4ad2e3a69396bf409d128033f592f0e38359",
+   "status": "complete",
+   "reported_route_capacity": null,
+   "reason": null
+  },
+  {
+   "key": "src/lib/update.ts",
+   "sha256": "070d1c450bed515c3ac6772d7291ff5897bfcd8b0d9ae27a621480c1125fe297",
+   "status": "complete",
+   "reported_route_capacity": null,
+   "reason": null
+  },
+  {
+   "key": "src/main.tsx",
+   "sha256": "2b75b934ad407e59203acf67637206c99b3283b611493825f2c2425f40e96983",
+   "status": "complete",
+   "reported_route_capacity": null,
+   "reason": null
+  },
+  {
+   "key": "src/pages/Analytics.tsx",
+   "sha256": "fb6414c6fc1602375da360dcd74e84b7c3da7deb38a8822e56668ef687098f55",
+   "status": "complete",
+   "reported_route_capacity": null,
+   "reason": null
+  },
+  {
+   "key": "src/pages/CheckIn.tsx",
+   "sha256": "23a69718386148c6771e92418f730d06c135b9954c238782e16bad2f268b9313",
+   "status": "complete",
+   "reported_route_capacity": null,
+   "reason": null
+  },
+  {
+   "key": "src/pages/Dashboard.tsx",
+   "sha256": "7d9b699b7fdd64435f9b9468f05e17187b793dd044c6f9c65af0acff1f300a54",
+   "status": "complete",
+   "reported_route_capacity": null,
+   "reason": null
+  },
+  {
+   "key": "src/pages/Finance.tsx",
+   "sha256": "1f4d81c8937500e3b5875ae3b9ed7603e81c81e3f43685b012be03b9ea0582e1",
+   "status": "complete",
+   "reported_route_capacity": null,
+   "reason": null
+  },
+  {
+   "key": "src/pages/Members.tsx",
+   "sha256": "69a6f5b66b7218362915d44d69f4848e03e5ca99a985bf0b9b3b23b614ca3d00",
+   "status": "complete",
+   "reported_route_capacity": null,
+   "reason": null
+  },
+  {
+   "key": "src/pages/Programs.tsx",
+   "sha256": "4ca69904ff95529080c08d595dedd3298169e7b3c7d3f0812ccc8ae0dc355552",
+   "status": "complete",
+   "reported_route_capacity": null,
+   "reason": null
+  },
+  {
+   "key": "src/pages/Settings.tsx",
+   "sha256": "64f2c28226c5aa61dc46cba73a8e658de36c3342238aef70fcb9dacd9a6675f1",
+   "status": "complete",
+   "reported_route_capacity": null,
+   "reason": null
+  },
+  {
+   "key": "src/stores/appStore.ts",
+   "sha256": "4361409e6fb95700443affb0a8fe13cb7c74de402efddd9d6925d7ecab8c8db5",
+   "status": "complete",
+   "reported_route_capacity": null,
+   "reason": null
+  },
+  {
+   "key": "src/vite-env.d.ts",
+   "sha256": "65996936fbb042915f7b74a200fcdde7e410f32a669b1ab9597cfaa4b0faddb5",
+   "status": "complete",
+   "reported_route_capacity": null,
+   "reason": null
+  },
+  {
+   "key": "tailwind.config.js",
+   "sha256": "621cdb67060180c5e53f7f1e6cf7891ac27aba761d82a38fd00419ce178cc051",
+   "status": "complete",
+   "reported_route_capacity": null,
+   "reason": null
+  },
+  {
+   "key": "tests/adminApi.test.ts",
+   "sha256": "c02c9212b63d6e6db9256a6d292b1b6fce46acab9d7a91538ebe6d76cc6635d8",
+   "status": "complete",
+   "reported_route_capacity": null,
+   "reason": null
+  },
+  {
+   "key": "tests/appStore.test.ts",
+   "sha256": "f0e279bc2fd93bb94ed342620a1be0504e53590e8037204fbeec6f5688b5cac8",
+   "status": "complete",
+   "reported_route_capacity": null,
+   "reason": null
+  },
+  {
+   "key": "tests/components.test.tsx",
+   "sha256": "24903e276bc0e50bf2499efa0a63ca601982ded114d3bdaccffd7525486e14ba",
+   "status": "complete",
+   "reported_route_capacity": null,
+   "reason": null
+  },
+  {
+   "key": "tests/design-tokens.test.ts",
+   "sha256": "27ee74fcd238f5b8d645c55f2bf2904d6321c83514ae646f44c946cc53bf1771",
+   "status": "complete",
+   "reported_route_capacity": null,
+   "reason": null
+  },
+  {
+   "key": "tests/update.test.ts",
+   "sha256": "78830684051df35fe2e31d1d6d333a7fdf1b13e175fee491e2e725e22393ffb2",
+   "status": "complete",
+   "reported_route_capacity": null,
+   "reason": null
+  },
+  {
+   "key": "vite.config.ts",
+   "sha256": "098667142f38b1e62ae68592430e5408ff10fbe0f23e54f8d45b27a8dac934c5",
+   "status": "complete",
+   "reported_route_capacity": null,
+   "reason": null
+  },
+  {
+   "key": "vitest.config.ts",
+   "sha256": "549dc80955d38c5a885f0a11bc6e208189d87d8270b68d5f2881f176389caab0",
+   "status": "complete",
+   "reported_route_capacity": null,
+   "reason": null
+  }
+ ],
+ "integrity_contradictions": [],
+ "limitations": [
+  "CommonJS and ESM binding relationships were recovered from inert syntax and resolved only within the inventoried artifact container.",
+  "Electron API identity follows proven lexical module aliases and structurally verified module-namespace interop. Other reassignments, dynamic selections, and visibly overwritten namespace members are unresolved; missing findings do not establish absence. Arbitrary call side effects and runtime registration are not evaluated.",
+  "Electron relationships are derived from inert syntax; runtime registration, reachability, defaults, and enforcement remain unproven.",
+  "Graph coverage is incomplete; unavailable facts remain explicit and must not be read as absence.",
+  "JavaScript and HTML were parsed as inert text; bundle bootstrap code was never executed.",
+  "Static imports, entrypoints, workers, endpoints, and storage relationships do not prove runtime execution.",
+  "Static paths and relationships may remain unresolved when expressions are dynamic or obfuscated.",
+  "Webpack/Rspack factories were recovered from AST literals; REA did not invoke push handlers or bundle bootstrap code."
+ ]
+}

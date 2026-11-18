@@ -1,0 +1,38 @@
+{
+  "rule_id": "M35c1-norm-tables",
+  "date": "2026-11-14",
+  "status": "verified",
+  "method": "seed نُرم‌های صدکی آزمون‌های میدانی از منابع منتشرشده (E13: هیچ عددی از حافظه)",
+  "sources": [
+    {
+      "url": "https://fitnessnorms.com/strength/push-ups/",
+      "content": "صدک‌های ۵/۲۵/۵۰/۷۵/۹۵ شنای سوئدی یک دقیقه‌ای، جنس×بازهٔ سنی (۲۰ تا ۶۹) — جداول سبک ACSM"
+    },
+    {
+      "url": "https://fitnessnorms.com/flexibility/sit-and-reach/",
+      "content": "بازهٔ ۲۵–۷۵ نشست و رسیدن (cm) برای ۲۰ تا ۶۹ + صدک‌های ۵/۵۰/۹۵ برای ۶۰+"
+    },
+    {
+      "url": "https://media.cleveland.com/pdextra/other/push-ups.pdf",
+      "content": "SDC بازتست (Institute for Aerobics Research 1991)"
+    },
+    {
+      "url": "https://www.instituteofpersonaltrainers.com/",
+      "content": "SDC نشست و رسیدن ≈ ۴٫۵ cm"
+    }
+  ],
+  "rows": {
+    "pushup_1min": 10,
+    "sit_and_reach": 20,
+    "total": 30
+  },
+  "boundaries": [
+    "جدول‌های منبع عمدتاً غربی‌اند — محدودیت مستند پایان‌نامه (سند شدنی)",
+    "صدک‌های sit_and_reach برای ۲۰–۵۹ فقط ۲۵ و ۷۵ مستند است → موتور امتیازدهی باید quality=range_estimate برگرداند (M35-c2)",
+    "پروتکل زنان در بسیاری جداول ACSM شنای زانو است — در UI ثبت می‌شود"
+  ],
+  "verified_by": "finn (ECC-3 + ECC-4), S6/S7 چرخهٔ M35-c1",
+  "evidence": [
+    "tests/unit/test_norms.py (3 tests)"
+  ]
+}

@@ -1,0 +1,89 @@
+[
+  {
+    "apk": "app-arm64-v8a-release.apk",
+    "apk_bytes": 19484317,
+    "apktool": "2.9.3",
+    "decoded_files": 473,
+    "permissions": [
+      "android.permission.INTERNET",
+      "ir.muscleparadise.mp_client.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+    ],
+    "flags": {
+      "debuggable": false,
+      "allow_backup": false,
+      "cleartext_permitted": true,
+      "exported_components": 2
+    },
+    "exported_activities": [
+      "ir.muscleparadise.mp_client.MainActivity"
+    ],
+    "exported_receivers": [
+      "androidx.profileinstaller.ProfileInstallReceiver"
+    ],
+    "unprotected_exported": [],
+    "manifest_findings": [
+      "cleartextTrafficPermitted=true — مهارش در لایهٔ اپ است (isPrivateHost)، نه مانیفست"
+    ],
+    "payload_findings": [],
+    "dart_source_shipped": [],
+    "ok": true
+  },
+  {
+    "apk": "app-armeabi-v7a-release.apk",
+    "apk_bytes": 17251737,
+    "apktool": "2.9.3",
+    "decoded_files": 473,
+    "permissions": [
+      "android.permission.INTERNET",
+      "ir.muscleparadise.mp_client.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+    ],
+    "flags": {
+      "debuggable": false,
+      "allow_backup": false,
+      "cleartext_permitted": true,
+      "exported_components": 2
+    },
+    "exported_activities": [
+      "ir.muscleparadise.mp_client.MainActivity"
+    ],
+    "exported_receivers": [
+      "androidx.profileinstaller.ProfileInstallReceiver"
+    ],
+    "unprotected_exported": [],
+    "manifest_findings": [
+      "cleartextTrafficPermitted=true — مهارش در لایهٔ اپ است (isPrivateHost)، نه مانیفست"
+    ],
+    "payload_findings": [],
+    "dart_source_shipped": [],
+    "ok": true
+  },
+  {
+    "apk": "app-x86_64-release.apk",
+    "apk_bytes": 20785269,
+    "apktool": "2.9.3",
+    "decoded_files": 473,
+    "permissions": [
+      "android.permission.INTERNET",
+      "ir.muscleparadise.mp_client.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+    ],
+    "flags": {
+      "debuggable": false,
+      "allow_backup": false,
+      "cleartext_permitted": true,
+      "exported_components": 2
+    },
+    "exported_activities": [
+      "ir.muscleparadise.mp_client.MainActivity"
+    ],
+    "exported_receivers": [
+      "androidx.profileinstaller.ProfileInstallReceiver"
+    ],
+    "unprotected_exported": [],
+    "manifest_findings": [
+      "cleartextTrafficPermitted=true — مهارش در لایهٔ اپ است (isPrivateHost)، نه مانیفست"
+    ],
+    "payload_findings": [],
+    "dart_source_shipped": [],
+    "ok": true
+  }
+]

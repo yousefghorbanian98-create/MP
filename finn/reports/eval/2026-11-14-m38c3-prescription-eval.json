@@ -1,0 +1,22 @@
+{
+  "checks": [
+    {
+      "name": "axis_coverage",
+      "passed": true,
+      "errors": []
+    },
+    {
+      "name": "population_gates",
+      "passed": true,
+      "errors": []
+    },
+    {
+      "name": "load_accounting",
+      "passed": true,
+      "errors": []
+    }
+  ],
+  "passed": 3,
+  "failed": 0,
+  "rule_version": "g4-prescription-1.0"
+}

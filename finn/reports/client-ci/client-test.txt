@@ -1,0 +1,422 @@
+
+lib/core/session.dart:16:7: Error: Can't infer the type of 'apiClientProvider': circularity found during type inference.
+Specify the type explicitly.
+final apiClientProvider = Provider<ApiClient>((ref) {
+      ^^^^^^^^^^^^^^^^^
+::group::❌ loading /home/runner/work/MP/MP/mp-app/client/test/assessment14_page_test.dart (failed)
+Failed to load "/home/runner/work/MP/MP/mp-app/client/test/assessment14_page_test.dart":
+Compilation failed for testPath=/home/runner/work/MP/MP/mp-app/client/test/assessment14_page_test.dart: lib/core/session.dart:16:7: Error: Can't infer the type of 'apiClientProvider': circularity found during type inference.
+Specify the type explicitly.
+final apiClientProvider = Provider<ApiClient>((ref) {
+      ^^^^^^^^^^^^^^^^^
+.
+
+::endgroup::
+::group::❌ loading /home/runner/work/MP/MP/mp-app/client/test/assessment14_page_test.dart (failed after test completion)
+Error: The Dart compiler exited unexpectedly.
+package:flutter_tools/src/base/common.dart 36:3  throwToolExit
+package:flutter_tools/src/compile.dart 1029:11   DefaultResidentCompiler._compile.<fn>
+dart:async/future_impl.dart 961:45               Future._propagateToListeners.handleValueCallback
+dart:async/future_impl.dart 990:13               Future._propagateToListeners
+dart:async/future_impl.dart 874:9                Future._propagateToListeners
+dart:async/future_impl.dart 732:5                Future._completeWithValue
+dart:async/future_impl.dart 816:7                Future._asyncCompleteWithValue.<fn>
+dart:async/zone.dart 474:14                      Zone.runGuarded
+dart:async/zone.dart 604:18                      Zone.bindCallbackGuarded.<fn>
+dart:async/schedule_microtask.dart 40:35         _microtaskLoop
+dart:async/schedule_microtask.dart 49:5          _startMicrotaskLoop
+dart:isolate-patch/isolate_patch.dart 127:13     _runPendingImmediateCallback
+dart:isolate-patch/isolate_patch.dart 193:5      _RawReceivePort._handleMessage
+::endgroup::
+lib/core/session.dart:16:7: Error: Can't infer the type of 'apiClientProvider': circularity found during type inference.
+Specify the type explicitly.
+final apiClientProvider = Provider<ApiClient>((ref) {
+      ^^^^^^^^^^^^^^^^^
+::group::❌ loading /home/runner/work/MP/MP/mp-app/client/test/logout_button_test.dart (failed)
+Failed to load "/home/runner/work/MP/MP/mp-app/client/test/logout_button_test.dart":
+Compilation failed for testPath=/home/runner/work/MP/MP/mp-app/client/test/logout_button_test.dart: lib/core/session.dart:16:7: Error: Can't infer the type of 'apiClientProvider': circularity found during type inference.
+Specify the type explicitly.
+final apiClientProvider = Provider<ApiClient>((ref) {
+      ^^^^^^^^^^^^^^^^^
+.
+
+::endgroup::
+::group::❌ loading /home/runner/work/MP/MP/mp-app/client/test/assessment14_page_test.dart (failed after test completion)
+Error: The Dart compiler exited unexpectedly.
+package:flutter_tools/src/base/common.dart 36:3  throwToolExit
+package:flutter_tools/src/compile.dart 1029:11   DefaultResidentCompiler._compile.<fn>
+dart:async/future_impl.dart 961:45               Future._propagateToListeners.handleValueCallback
+dart:async/future_impl.dart 990:13               Future._propagateToListeners
+dart:async/future_impl.dart 874:9                Future._propagateToListeners
+dart:async/future_impl.dart 732:5                Future._completeWithValue
+dart:async/future_impl.dart 816:7                Future._asyncCompleteWithValue.<fn>
+dart:async/zone.dart 474:14                      Zone.runGuarded
+dart:async/zone.dart 604:18                      Zone.bindCallbackGuarded.<fn>
+dart:async/schedule_microtask.dart 40:35         _microtaskLoop
+dart:async/schedule_microtask.dart 49:5          _startMicrotaskLoop
+dart:isolate-patch/isolate_patch.dart 127:13     _runPendingImmediateCallback
+dart:isolate-patch/isolate_patch.dart 193:5      _RawReceivePort._handleMessage
+::endgroup::
+::group::❌ /home/runner/work/MP/MP/mp-app/client/test/session_refresh_test.dart: ۴۰۱ → refresh → تکرار همان درخواست با توکن تازه (failed)
+Invalid argument (string): Contains invalid characters.: "{\"error\":{\"message\":\"توکن منقضی\"}}"
+dart:convert                                   Latin1Codec.encode
+package:http/src/response.dart 39:49           new Response
+test/session_refresh_test.dart 51:20           main.<fn>.<fn>
+test/session_refresh_test.dart 35:28           _ScriptedClient.send
+package:http/src/base_client.dart 93:38        BaseClient._sendUnstreamed
+package:http/src/base_client.dart 27:7         BaseClient.get
+package:mp_client/core/api_client.dart 127:30  ApiClient.get.<fn>
+package:mp_client/core/api_client.dart 108:23  ApiClient._send
+package:mp_client/core/api_client.dart 127:12  ApiClient.get
+test/session_refresh_test.dart 63:30           main.<fn>
+::endgroup::
+::group::❌ /home/runner/work/MP/MP/mp-app/client/test/session_refresh_test.dart: اگر refresh شکست بخورد، خطای ۴۰۱ بالا می‌آید و نشست پاک می‌شود (failed)
+Expected: throws <Instance of 'ApiException'>
+  Actual: <Instance of 'Future<dynamic>'>
+   Which: threw ArgumentError:<Invalid argument (string): Contains invalid characters.: "{\"error\":{\"message\":\"توکن نامعتبر\"}}">
+          stack dart:convert                                       Latin1Codec.encode
+                package:http/src/response.dart 39:49               new Response
+                test/session_refresh_test.dart 76:33               main.<fn>.<fn>
+                test/session_refresh_test.dart 35:28               _ScriptedClient.send
+                package:http/src/base_client.dart 93:38            BaseClient._sendUnstreamed
+                package:http/src/base_client.dart 27:7             BaseClient.get
+                package:mp_client/core/api_client.dart 127:30      ApiClient.get.<fn>
+                package:mp_client/core/api_client.dart 108:23      ApiClient._send
+                package:mp_client/core/api_client.dart 127:12      ApiClient.get
+                test/session_refresh_test.dart 88:27               main.<fn>
+                ===== asynchronous gap ===========================
+                package:matcher                                    expectLater
+                package:flutter_test/src/widget_tester.dart 507:8  expectLater
+                test/session_refresh_test.dart 88:11               main.<fn>
+                
+          which is not an instance of 'ApiException'
+
+package:matcher                                    expectLater
+package:flutter_test/src/widget_tester.dart 507:8  expectLater
+test/session_refresh_test.dart 88:11               main.<fn>
+::endgroup::
+::group::❌ /home/runner/work/MP/MP/mp-app/client/test/session_refresh_test.dart: ۴۰۱ فقط یک‌بار refresh می‌کند — حلقهٔ بی‌پایان ممنوع (failed)
+Expected: <1>
+  Actual: <0>
+refresh دوباره و دوباره = حلقهٔ بی‌پایان روی سرور
+
+package:matcher                                     expect
+package:flutter_test/src/widget_tester.dart 473:18  expect
+test/session_refresh_test.dart 107:5                main.<fn>
+::endgroup::
+::group::✅ Passing tests
+✅ /home/runner/work/MP/MP/mp-app/client/test/session_refresh_test.dart: refresh خودش ۴۰۱ نگیرد — وگرنه بازگشتی می‌شود
+lib/core/session.dart:16:7: Error: Can't infer the type of 'apiClientProvider': circularity found during type inference.
+Specify the type explicitly.
+final apiClientProvider = Provider<ApiClient>((ref) {
+      ^^^^^^^^^^^^^^^^^
+::endgroup::
+::group::❌ loading /home/runner/work/MP/MP/mp-app/client/test/wallet_history_test.dart (failed)
+Failed to load "/home/runner/work/MP/MP/mp-app/client/test/wallet_history_test.dart":
+Compilation failed for testPath=/home/runner/work/MP/MP/mp-app/client/test/wallet_history_test.dart: lib/core/session.dart:16:7: Error: Can't infer the type of 'apiClientProvider': circularity found during type inference.
+Specify the type explicitly.
+final apiClientProvider = Provider<ApiClient>((ref) {
+      ^^^^^^^^^^^^^^^^^
+.
+
+::endgroup::
+::group::❌ loading /home/runner/work/MP/MP/mp-app/client/test/assessment14_page_test.dart (failed after test completion)
+Error: The Dart compiler exited unexpectedly.
+package:flutter_tools/src/base/common.dart 36:3  throwToolExit
+package:flutter_tools/src/compile.dart 1029:11   DefaultResidentCompiler._compile.<fn>
+dart:async/future_impl.dart 961:45               Future._propagateToListeners.handleValueCallback
+dart:async/future_impl.dart 990:13               Future._propagateToListeners
+dart:async/future_impl.dart 874:9                Future._propagateToListeners
+dart:async/future_impl.dart 732:5                Future._completeWithValue
+dart:async/future_impl.dart 816:7                Future._asyncCompleteWithValue.<fn>
+dart:async/zone.dart 474:14                      Zone.runGuarded
+dart:async/zone.dart 604:18                      Zone.bindCallbackGuarded.<fn>
+dart:async/schedule_microtask.dart 40:35         _microtaskLoop
+dart:async/schedule_microtask.dart 49:5          _startMicrotaskLoop
+dart:isolate-patch/isolate_patch.dart 127:13     _runPendingImmediateCallback
+dart:isolate-patch/isolate_patch.dart 193:5      _RawReceivePort._handleMessage
+::endgroup::
+lib/core/session.dart:16:7: Error: Can't infer the type of 'apiClientProvider': circularity found during type inference.
+Specify the type explicitly.
+final apiClientProvider = Provider<ApiClient>((ref) {
+      ^^^^^^^^^^^^^^^^^
+::group::❌ loading /home/runner/work/MP/MP/mp-app/client/test/today_controller_test.dart (failed)
+Failed to load "/home/runner/work/MP/MP/mp-app/client/test/today_controller_test.dart":
+Compilation failed for testPath=/home/runner/work/MP/MP/mp-app/client/test/today_controller_test.dart: lib/core/session.dart:16:7: Error: Can't infer the type of 'apiClientProvider': circularity found during type inference.
+Specify the type explicitly.
+final apiClientProvider = Provider<ApiClient>((ref) {
+      ^^^^^^^^^^^^^^^^^
+.
+
+::endgroup::
+::group::❌ loading /home/runner/work/MP/MP/mp-app/client/test/assessment14_page_test.dart (failed after test completion)
+Error: The Dart compiler exited unexpectedly.
+package:flutter_tools/src/base/common.dart 36:3  throwToolExit
+package:flutter_tools/src/compile.dart 1029:11   DefaultResidentCompiler._compile.<fn>
+dart:async/future_impl.dart 961:45               Future._propagateToListeners.handleValueCallback
+dart:async/future_impl.dart 990:13               Future._propagateToListeners
+dart:async/future_impl.dart 874:9                Future._propagateToListeners
+dart:async/future_impl.dart 732:5                Future._completeWithValue
+dart:async/future_impl.dart 816:7                Future._asyncCompleteWithValue.<fn>
+dart:async/zone.dart 474:14                      Zone.runGuarded
+dart:async/zone.dart 604:18                      Zone.bindCallbackGuarded.<fn>
+dart:async/schedule_microtask.dart 40:35         _microtaskLoop
+dart:async/schedule_microtask.dart 49:5          _startMicrotaskLoop
+dart:isolate-patch/isolate_patch.dart 127:13     _runPendingImmediateCallback
+dart:isolate-patch/isolate_patch.dart 193:5      _RawReceivePort._handleMessage
+::endgroup::
+lib/core/session.dart:16:7: Error: Can't infer the type of 'apiClientProvider': circularity found during type inference.
+Specify the type explicitly.
+final apiClientProvider = Provider<ApiClient>((ref) {
+      ^^^^^^^^^^^^^^^^^
+::group::❌ loading /home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart (failed)
+Failed to load "/home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart":
+Compilation failed for testPath=/home/runner/work/MP/MP/mp-app/client/test/api_client_test.dart: lib/core/session.dart:16:7: Error: Can't infer the type of 'apiClientProvider': circularity found during type inference.
+Specify the type explicitly.
+final apiClientProvider = Provider<ApiClient>((ref) {
+      ^^^^^^^^^^^^^^^^^
+.
+
+::endgroup::
+::group::❌ loading /home/runner/work/MP/MP/mp-app/client/test/assessment14_page_test.dart (failed after test completion)
+Error: The Dart compiler exited unexpectedly.
+package:flutter_tools/src/base/common.dart 36:3  throwToolExit
+package:flutter_tools/src/compile.dart 1029:11   DefaultResidentCompiler._compile.<fn>
+dart:async/future_impl.dart 961:45               Future._propagateToListeners.handleValueCallback
+dart:async/future_impl.dart 990:13               Future._propagateToListeners
+dart:async/future_impl.dart 874:9                Future._propagateToListeners
+dart:async/future_impl.dart 732:5                Future._completeWithValue
+dart:async/future_impl.dart 816:7                Future._asyncCompleteWithValue.<fn>
+dart:async/zone.dart 474:14                      Zone.runGuarded
+dart:async/zone.dart 604:18                      Zone.bindCallbackGuarded.<fn>
+dart:async/schedule_microtask.dart 40:35         _microtaskLoop
+dart:async/schedule_microtask.dart 49:5          _startMicrotaskLoop
+dart:isolate-patch/isolate_patch.dart 127:13     _runPendingImmediateCallback
+dart:isolate-patch/isolate_patch.dart 193:5      _RawReceivePort._handleMessage
+::endgroup::
+::group::✅ Passing tests
+✅ /home/runner/work/MP/MP/mp-app/client/test/membership_test.dart: ۲۳ ساعت مانده = ۱ روز، نه ۰ (همان باگ LEDGER #13)
+✅ /home/runner/work/MP/MP/mp-app/client/test/membership_test.dart: ۲۴ روز کامل = ۲۴
+✅ /home/runner/work/MP/MP/mp-app/client/test/membership_test.dart: دقیقاً همین لحظه = ۰
+✅ /home/runner/work/MP/MP/mp-app/client/test/membership_test.dart: گذشته = ۰، نه منفی
+✅ /home/runner/work/MP/MP/mp-app/client/test/membership_test.dart: null و رشتهٔ نامعتبر = null («نامعلوم»، نه صفر)
+✅ /home/runner/work/MP/MP/mp-app/client/test/membership_test.dart: ۱ ثانیه مانده = ۱ روز (سقف، نه صفر)
+lib/core/session.dart:16:7: Error: Can't infer the type of 'apiClientProvider': circularity found during type inference.
+Specify the type explicitly.
+final apiClientProvider = Provider<ApiClient>((ref) {
+      ^^^^^^^^^^^^^^^^^
+::endgroup::
+::group::❌ loading /home/runner/work/MP/MP/mp-app/client/test/shop_page_test.dart (failed)
+Failed to load "/home/runner/work/MP/MP/mp-app/client/test/shop_page_test.dart":
+Compilation failed for testPath=/home/runner/work/MP/MP/mp-app/client/test/shop_page_test.dart: lib/core/session.dart:16:7: Error: Can't infer the type of 'apiClientProvider': circularity found during type inference.
+Specify the type explicitly.
+final apiClientProvider = Provider<ApiClient>((ref) {
+      ^^^^^^^^^^^^^^^^^
+.
+
+::endgroup::
+::group::❌ loading /home/runner/work/MP/MP/mp-app/client/test/assessment14_page_test.dart (failed after test completion)
+Error: The Dart compiler exited unexpectedly.
+package:flutter_tools/src/base/common.dart 36:3  throwToolExit
+package:flutter_tools/src/compile.dart 1029:11   DefaultResidentCompiler._compile.<fn>
+dart:async/future_impl.dart 961:45               Future._propagateToListeners.handleValueCallback
+dart:async/future_impl.dart 990:13               Future._propagateToListeners
+dart:async/future_impl.dart 874:9                Future._propagateToListeners
+dart:async/future_impl.dart 732:5                Future._completeWithValue
+dart:async/future_impl.dart 816:7                Future._asyncCompleteWithValue.<fn>
+dart:async/zone.dart 474:14                      Zone.runGuarded
+dart:async/zone.dart 604:18                      Zone.bindCallbackGuarded.<fn>
+dart:async/schedule_microtask.dart 40:35         _microtaskLoop
+dart:async/schedule_microtask.dart 49:5          _startMicrotaskLoop
+dart:isolate-patch/isolate_patch.dart 127:13     _runPendingImmediateCallback
+dart:isolate-patch/isolate_patch.dart 193:5      _RawReceivePort._handleMessage
+::endgroup::
+lib/core/session.dart:16:7: Error: Can't infer the type of 'apiClientProvider': circularity found during type inference.
+Specify the type explicitly.
+final apiClientProvider = Provider<ApiClient>((ref) {
+      ^^^^^^^^^^^^^^^^^
+::group::❌ loading /home/runner/work/MP/MP/mp-app/client/test/home_banner_test.dart (failed)
+Failed to load "/home/runner/work/MP/MP/mp-app/client/test/home_banner_test.dart":
+Compilation failed for testPath=/home/runner/work/MP/MP/mp-app/client/test/home_banner_test.dart: lib/core/session.dart:16:7: Error: Can't infer the type of 'apiClientProvider': circularity found during type inference.
+Specify the type explicitly.
+final apiClientProvider = Provider<ApiClient>((ref) {
+      ^^^^^^^^^^^^^^^^^
+.
+
+::endgroup::
+::group::❌ loading /home/runner/work/MP/MP/mp-app/client/test/assessment14_page_test.dart (failed after test completion)
+Error: The Dart compiler exited unexpectedly.
+package:flutter_tools/src/base/common.dart 36:3  throwToolExit
+package:flutter_tools/src/compile.dart 1029:11   DefaultResidentCompiler._compile.<fn>
+dart:async/future_impl.dart 961:45               Future._propagateToListeners.handleValueCallback
+dart:async/future_impl.dart 990:13               Future._propagateToListeners
+dart:async/future_impl.dart 874:9                Future._propagateToListeners
+dart:async/future_impl.dart 732:5                Future._completeWithValue
+dart:async/future_impl.dart 816:7                Future._asyncCompleteWithValue.<fn>
+dart:async/zone.dart 474:14                      Zone.runGuarded
+dart:async/zone.dart 604:18                      Zone.bindCallbackGuarded.<fn>
+dart:async/schedule_microtask.dart 40:35         _microtaskLoop
+dart:async/schedule_microtask.dart 49:5          _startMicrotaskLoop
+dart:isolate-patch/isolate_patch.dart 127:13     _runPendingImmediateCallback
+dart:isolate-patch/isolate_patch.dart 193:5      _RawReceivePort._handleMessage
+::endgroup::
+lib/core/session.dart:16:7: Error: Can't infer the type of 'apiClientProvider': circularity found during type inference.
+Specify the type explicitly.
+final apiClientProvider = Provider<ApiClient>((ref) {
+      ^^^^^^^^^^^^^^^^^
+::group::❌ loading /home/runner/work/MP/MP/mp-app/client/test/logout_test.dart (failed)
+Failed to load "/home/runner/work/MP/MP/mp-app/client/test/logout_test.dart":
+Compilation failed for testPath=/home/runner/work/MP/MP/mp-app/client/test/logout_test.dart: lib/core/session.dart:16:7: Error: Can't infer the type of 'apiClientProvider': circularity found during type inference.
+Specify the type explicitly.
+final apiClientProvider = Provider<ApiClient>((ref) {
+      ^^^^^^^^^^^^^^^^^
+.
+
+::endgroup::
+::group::❌ loading /home/runner/work/MP/MP/mp-app/client/test/assessment14_page_test.dart (failed after test completion)
+Error: The Dart compiler exited unexpectedly.
+package:flutter_tools/src/base/common.dart 36:3  throwToolExit
+package:flutter_tools/src/compile.dart 1029:11   DefaultResidentCompiler._compile.<fn>
+dart:async/future_impl.dart 961:45               Future._propagateToListeners.handleValueCallback
+dart:async/future_impl.dart 990:13               Future._propagateToListeners
+dart:async/future_impl.dart 874:9                Future._propagateToListeners
+dart:async/future_impl.dart 732:5                Future._completeWithValue
+dart:async/future_impl.dart 816:7                Future._asyncCompleteWithValue.<fn>
+dart:async/zone.dart 474:14                      Zone.runGuarded
+dart:async/zone.dart 604:18                      Zone.bindCallbackGuarded.<fn>
+dart:async/schedule_microtask.dart 40:35         _microtaskLoop
+dart:async/schedule_microtask.dart 49:5          _startMicrotaskLoop
+dart:isolate-patch/isolate_patch.dart 127:13     _runPendingImmediateCallback
+dart:isolate-patch/isolate_patch.dart 193:5      _RawReceivePort._handleMessage
+::endgroup::
+lib/core/session.dart:16:7: Error: Can't infer the type of 'apiClientProvider': circularity found during type inference.
+Specify the type explicitly.
+final apiClientProvider = Provider<ApiClient>((ref) {
+      ^^^^^^^^^^^^^^^^^
+::group::❌ loading /home/runner/work/MP/MP/mp-app/client/test/set_feedback_sheet_test.dart (failed)
+Failed to load "/home/runner/work/MP/MP/mp-app/client/test/set_feedback_sheet_test.dart":
+Compilation failed for testPath=/home/runner/work/MP/MP/mp-app/client/test/set_feedback_sheet_test.dart: lib/core/session.dart:16:7: Error: Can't infer the type of 'apiClientProvider': circularity found during type inference.
+Specify the type explicitly.
+final apiClientProvider = Provider<ApiClient>((ref) {
+      ^^^^^^^^^^^^^^^^^
+.
+
+::endgroup::
+::group::❌ loading /home/runner/work/MP/MP/mp-app/client/test/assessment14_page_test.dart (failed after test completion)
+Error: The Dart compiler exited unexpectedly.
+package:flutter_tools/src/base/common.dart 36:3  throwToolExit
+package:flutter_tools/src/compile.dart 1029:11   DefaultResidentCompiler._compile.<fn>
+dart:async/future_impl.dart 961:45               Future._propagateToListeners.handleValueCallback
+dart:async/future_impl.dart 990:13               Future._propagateToListeners
+dart:async/future_impl.dart 874:9                Future._propagateToListeners
+dart:async/future_impl.dart 732:5                Future._completeWithValue
+dart:async/future_impl.dart 816:7                Future._asyncCompleteWithValue.<fn>
+dart:async/zone.dart 474:14                      Zone.runGuarded
+dart:async/zone.dart 604:18                      Zone.bindCallbackGuarded.<fn>
+dart:async/schedule_microtask.dart 40:35         _microtaskLoop
+dart:async/schedule_microtask.dart 49:5          _startMicrotaskLoop
+dart:isolate-patch/isolate_patch.dart 127:13     _runPendingImmediateCallback
+dart:isolate-patch/isolate_patch.dart 193:5      _RawReceivePort._handleMessage
+::endgroup::
+lib/core/session.dart:16:7: Error: Can't infer the type of 'apiClientProvider': circularity found during type inference.
+Specify the type explicitly.
+final apiClientProvider = Provider<ApiClient>((ref) {
+      ^^^^^^^^^^^^^^^^^
+::group::❌ loading /home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart (failed)
+Failed to load "/home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart":
+Compilation failed for testPath=/home/runner/work/MP/MP/mp-app/client/test/today_page_test.dart: lib/core/session.dart:16:7: Error: Can't infer the type of 'apiClientProvider': circularity found during type inference.
+Specify the type explicitly.
+final apiClientProvider = Provider<ApiClient>((ref) {
+      ^^^^^^^^^^^^^^^^^
+.
+
+::endgroup::
+::group::❌ loading /home/runner/work/MP/MP/mp-app/client/test/assessment14_page_test.dart (failed after test completion)
+Error: The Dart compiler exited unexpectedly.
+package:flutter_tools/src/base/common.dart 36:3  throwToolExit
+package:flutter_tools/src/compile.dart 1029:11   DefaultResidentCompiler._compile.<fn>
+dart:async/future_impl.dart 961:45               Future._propagateToListeners.handleValueCallback
+dart:async/future_impl.dart 990:13               Future._propagateToListeners
+dart:async/future_impl.dart 874:9                Future._propagateToListeners
+dart:async/future_impl.dart 732:5                Future._completeWithValue
+dart:async/future_impl.dart 816:7                Future._asyncCompleteWithValue.<fn>
+dart:async/zone.dart 474:14                      Zone.runGuarded
+dart:async/zone.dart 604:18                      Zone.bindCallbackGuarded.<fn>
+dart:async/schedule_microtask.dart 40:35         _microtaskLoop
+dart:async/schedule_microtask.dart 49:5          _startMicrotaskLoop
+dart:isolate-patch/isolate_patch.dart 127:13     _runPendingImmediateCallback
+dart:isolate-patch/isolate_patch.dart 193:5      _RawReceivePort._handleMessage
+::endgroup::
+lib/core/session.dart:16:7: Error: Can't infer the type of 'apiClientProvider': circularity found during type inference.
+Specify the type explicitly.
+final apiClientProvider = Provider<ApiClient>((ref) {
+      ^^^^^^^^^^^^^^^^^
+::group::❌ loading /home/runner/work/MP/MP/mp-app/client/test/home_page_test.dart (failed)
+Failed to load "/home/runner/work/MP/MP/mp-app/client/test/home_page_test.dart":
+Compilation failed for testPath=/home/runner/work/MP/MP/mp-app/client/test/home_page_test.dart: lib/core/session.dart:16:7: Error: Can't infer the type of 'apiClientProvider': circularity found during type inference.
+Specify the type explicitly.
+final apiClientProvider = Provider<ApiClient>((ref) {
+      ^^^^^^^^^^^^^^^^^
+.
+
+::endgroup::
+::group::❌ loading /home/runner/work/MP/MP/mp-app/client/test/assessment14_page_test.dart (failed after test completion)
+Error: The Dart compiler exited unexpectedly.
+package:flutter_tools/src/base/common.dart 36:3  throwToolExit
+package:flutter_tools/src/compile.dart 1029:11   DefaultResidentCompiler._compile.<fn>
+dart:async/future_impl.dart 961:45               Future._propagateToListeners.handleValueCallback
+dart:async/future_impl.dart 990:13               Future._propagateToListeners
+dart:async/future_impl.dart 874:9                Future._propagateToListeners
+dart:async/future_impl.dart 732:5                Future._completeWithValue
+dart:async/future_impl.dart 816:7                Future._asyncCompleteWithValue.<fn>
+dart:async/zone.dart 474:14                      Zone.runGuarded
+dart:async/zone.dart 604:18                      Zone.bindCallbackGuarded.<fn>
+dart:async/schedule_microtask.dart 40:35         _microtaskLoop
+dart:async/schedule_microtask.dart 49:5          _startMicrotaskLoop
+dart:isolate-patch/isolate_patch.dart 127:13     _runPendingImmediateCallback
+dart:isolate-patch/isolate_patch.dart 193:5      _RawReceivePort._handleMessage
+::endgroup::
+lib/core/session.dart:16:7: Error: Can't infer the type of 'apiClientProvider': circularity found during type inference.
+Specify the type explicitly.
+final apiClientProvider = Provider<ApiClient>((ref) {
+      ^^^^^^^^^^^^^^^^^
+::group::❌ loading /home/runner/work/MP/MP/mp-app/client/test/face_consent_gate_test.dart (failed)
+Failed to load "/home/runner/work/MP/MP/mp-app/client/test/face_consent_gate_test.dart":
+Compilation failed for testPath=/home/runner/work/MP/MP/mp-app/client/test/face_consent_gate_test.dart: lib/core/session.dart:16:7: Error: Can't infer the type of 'apiClientProvider': circularity found during type inference.
+Specify the type explicitly.
+final apiClientProvider = Provider<ApiClient>((ref) {
+      ^^^^^^^^^^^^^^^^^
+.
+
+::endgroup::
+::group::❌ loading /home/runner/work/MP/MP/mp-app/client/test/assessment14_page_test.dart (failed after test completion)
+Error: The Dart compiler exited unexpectedly.
+package:flutter_tools/src/base/common.dart 36:3  throwToolExit
+package:flutter_tools/src/compile.dart 1029:11   DefaultResidentCompiler._compile.<fn>
+dart:async/future_impl.dart 961:45               Future._propagateToListeners.handleValueCallback
+dart:async/future_impl.dart 990:13               Future._propagateToListeners
+dart:async/future_impl.dart 874:9                Future._propagateToListeners
+dart:async/future_impl.dart 732:5                Future._completeWithValue
+dart:async/future_impl.dart 816:7                Future._asyncCompleteWithValue.<fn>
+dart:async/zone.dart 474:14                      Zone.runGuarded
+dart:async/zone.dart 604:18                      Zone.bindCallbackGuarded.<fn>
+dart:async/schedule_microtask.dart 40:35         _microtaskLoop
+dart:async/schedule_microtask.dart 49:5          _startMicrotaskLoop
+dart:isolate-patch/isolate_patch.dart 127:13     _runPendingImmediateCallback
+dart:isolate-patch/isolate_patch.dart 193:5      _RawReceivePort._handleMessage
+::endgroup::
+lib/core/session.dart:16:7: Error: Can't infer the type of 'apiClientProvider': circularity found during type inference.
+Specify the type explicitly.
+final apiClientProvider = Provider<ApiClient>((ref) {
+      ^^^^^^^^^^^^^^^^^
+::group::❌ loading /home/runner/work/MP/MP/mp-app/client/test/bodycomp_real_data_test.dart (failed)
+Failed to load "/home/runner/work/MP/MP/mp-app/client/test/bodycomp_real_data_test.dart":
+Compilation failed for testPath=/home/runner/work/MP/MP/mp-app/client/test/bodycomp_real_data_test.dart: lib/core/session.dart:16:7: Error: Can't infer the type of 'apiClientProvider': circularity found during type inference.
+Specify the type explicitly.
+final apiClientProvider = Provider<ApiClient>((ref) {
+      ^^^^^^^^^^^^^^^^^
+.
+
+::endgroup::
+
+::error::7 tests passed, 16 failed.

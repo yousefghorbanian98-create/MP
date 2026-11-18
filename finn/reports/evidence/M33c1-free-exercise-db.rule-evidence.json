@@ -1,0 +1,29 @@
+{
+  "rule_id": "M33c1-free-exercise-db",
+  "date": "2026-11-14",
+  "status": "verified",
+  "source": {
+    "name": "yuhonas/free-exercise-db",
+    "url": "https://github.com/yuhonas/free-exercise-db",
+    "commit": "f00c92c7dcf1216a928a52c3706c7ce8e2f71ed5",
+    "file": "dist/exercises.json",
+    "sha256": "5bb747e3fc658f095a60dcbf6d53c96627acdcc6ffb6fffde86f7e26995d40bf",
+    "exercise_count": 876
+  },
+  "license": {
+    "id": "Unlicense",
+    "commercial_use": true,
+    "attribution_required": false,
+    "copyleft": false,
+    "notice_file": "NOTICE-THIRD-PARTY.md",
+    "review": "خوانده و تأیید شد — مالکیت عمومی، بدون الزام انتساب؛ منبع با وجود این در NOTICE ثبت شد (E12)."
+  },
+  "scope": "کاتالوگ حرکتی سامانهٔ ۱۴ توانایی — برچسب‌زنی محوری در M33-c3؛ تصاویر upstream وارد نشده‌اند.",
+  "verified_by": "finn (ECC-4 + ECC-3), S6/S7 چرخهٔ M33-c1",
+  "evidence": [
+    "tests/unit/test_catalog_import.py::test_vendor_file_present_and_digest_matches",
+    "tests/unit/test_catalog_import.py::test_verify_source_rejects_tampered",
+    "tests/unit/test_catalog_import.py::test_import_catalog_full_count_and_source_record",
+    "tests/unit/test_catalog_import.py::test_import_catalog_idempotent"
+  ]
+}

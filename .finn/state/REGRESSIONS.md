@@ -110,3 +110,9 @@
 - رگرسیون‌ها: (۱) جابه‌جاکردنِ گیتِ فرمت به **پیش از** `pub get` یا به پیش از analyze/test/apk ممنوع؛ (۲) `git add -A` در workflow فرمت ممنوع (R-037)؛ (۳) برای ساختن PR در CI، سیاست مخزن را چک کن: `POST /pulls` با job token بدون «Allow GitHub Actions to create and approve pull requests» 403 می‌دهد — شکستِ PR نباید گام را فیل کند اگر شاخه و شواهدش منتشر شده‌اند.
 - وضعیت: پس از PR #2، `dart format --set-exit-if-changed` روی درختِ resolve‌شده صفر است و گیت کشنده باقی می‌ماند.
 - قاعدهٔ اثباتِ layout: whitespace آزاد؛ کاما تنها «درست پیش از `)]}>`» (افزودن یا حذف). طبقه‌بند در `client-format-fix.yml` همین را روی `git show HEAD:path` در برابر `git show :path` می‌سنجد و ۹ حالت آزمایش دارد (جابه‌جایی آرگومان و متن افزوده/کاسته باید `semantic` بدهند).
+
+## R-039 (M109) — «آیا تغییری هست؟» را به مسیرهایِ خودِ تغییر محدود کن
+
+- قاعده: هر تشخیص «کاری نیست / چیزی برای انتشار هست» باید روی **همان globی** باشد که گام تولید می‌کند (`git status --porcelain -- '*.dart'`، `git diff --cached --name-only`) — نه `git status` خام.
+- چرا: `flutter pub get`/`flutter analyze` خودشان `analysis_options.yaml` را دست‌کاری می‌کنند، پس درخت همیشه کثیف است؛ در run `44353087941` روی **درختِ کاملاً فرمت‌شده** گارد «nothing to do» فعال نشد، workflow تا `git commit` پیش رفت و با «nothing added to commit» فیل شد (proof همان‌جا `staged=0` را درست گزارش کرده بود — عدد درست، نتیجهٔ اشتباه).
+- هم‌جنسِ R-037 (ممنوعیت `git add -A`): هر دو از یک ریشه‌اند — ابزارِ Flutter در محیطِ کار فایل می‌گذارد، پس هر سنجشِ «تمیزی» باید scoped باشد.

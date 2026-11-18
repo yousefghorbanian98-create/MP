@@ -1,0 +1,26 @@
+{
+  "micro": "M39-c3",
+  "gate": "S3c",
+  "date": "2026-11-14",
+  "endpoint": "POST /api/v1/programs/set-feedback",
+  "setup": {
+    "server": "uvicorn app.main:create_app --factory :8021 (scratch DB /tmp/s3c_m39.db، migration head)",
+    "seed": "scripts/seed_s3c_m39.py (super_admin + member 1)",
+    "locustfile": "scripts/locust_m39c3.py",
+    "load": "20 users, spawn 5/s, 30s"
+  },
+  "results": {
+    "requests": 4077,
+    "failures": 0,
+    "rps": 136.66,
+    "p50_ms": 10,
+    "p95_ms": 37,
+    "p99_ms": 82,
+    "max_ms": 170
+  },
+  "findings_during_run": [
+    "شکاف policy واقعی: member اجازهٔ POST بازخورد خودش را نداشت ← اضافه شد",
+    "شکاف policy واقعی: super_admin اصلاً در POLICIES ثبت نشده بود ← اضافه شد (تست regression: tests/unit/test_rbac_policies.py)"
+  ],
+  "decision_chain": "داده (RIR/درد ست) ← قاعده (autoreg-1.0 + set-feedback-1.0) ← تصمیم (وزن/حجم بعد) + دلیل — بدون عدد از LLM (E04)"
+}

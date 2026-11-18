@@ -112,7 +112,12 @@ jobs:
         run: |
           set -o pipefail
           dart format lib test tools 2>&1 | tail -3 | tee /tmp/m109/format.txt
-          if [ -z "$(git status --porcelain)" ]; then
+          # «آیا کاری بود؟» باید به *.dart محدود شود: `flutter pub get` (گام ۴) خودش
+          # analysis_options.yaml را دست‌کاری می‌کند، پس `git status` خالیِ کل درخت هیچ‌وقت
+          # اتفاق نمی‌افتد و workflow روی درختِ تمیز هم تا «git commit» پیش می‌رفت و همان‌جا
+          # با «nothing added to commit» می‌سوخت (run 44353087941؛ proof درست گفته بود
+          # staged=0).
+          if [ -z "$(git status --porcelain -- '*.dart')" ]; then
             echo "nothing to format — the debt is already paid here; no PR will be opened"
             echo "NO_CHANGES=1" >> "$GITHUB_ENV"
           fi
@@ -247,6 +252,10 @@ jobs:
           BASE: ${{ inputs.base_ref || github.ref_name }}
         run: |
           set -o pipefail
+          if [ -z "$(git diff --cached --name-only)" ]; then
+            echo "nothing staged — nothing to publish; no branch, no PR"
+            exit 0
+          fi
           git config user.name  "arena-agent"
           git config user.email "arena-agent@users.noreply.github.com"
           git checkout -b "$BRANCH"

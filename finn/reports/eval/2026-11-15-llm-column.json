@@ -1,0 +1,10 @@
+{
+  "generated_at": "2026-11-15T21:20:06.520427+00:00",
+  "column": "LLM (G4b)",
+  "version": "llm-column-1.0",
+  "llm_available": false,
+  "reason": "Ollama در دسترس نیست (URLError) — ستون LLM قابل پر کردن نیست",
+  "scenarios_attempted": 27,
+  "scenarios_comparable": 0,
+  "conclusion": "ستون LLM پر نشد: Ollama در محیط ساخت نصب نیست. عددی ساخته نشد."
+}

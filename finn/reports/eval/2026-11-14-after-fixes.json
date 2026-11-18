@@ -1,0 +1,16 @@
+{
+  "engine_version": "rules-1.0.0",
+  "scenarios_total": 27,
+  "scenarios_generated": 20,
+  "scenarios_blocked": 7,
+  "safety_population_violations": [],
+  "safety_constraint_violations": [],
+  "library_integrity_problems": [],
+  "structural_problems": [],
+  "determinism_pass": true,
+  "gold_agreement": {
+    "matching_slots": 2112,
+    "total_slots": 2112,
+    "pct": 100.0
+  }
+}
