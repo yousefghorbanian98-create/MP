@@ -90,46 +90,6 @@ Map<String, dynamic> _report({required bool weightLogged, bool enoughData = fals
       'rule_version': 'adaptive-nutrition-1.0',
     };
 
-void _checkpoint(String marker) => print('CI_TEST_CHECKPOINT:$marker');
-
-String _safeExceptionCategory(Object? exception) {
-  if (exception == null) return 'none';
-  final message = exception.toString().toLowerCase();
-  const signatures = <(String, String)>[
-    ('multiple exceptions', 'multiple'),
-    ('renderflex', 'renderflex'),
-    ('renderbox', 'renderbox'),
-    ('renderparagraph', 'paragraph'),
-    ('overflow', 'overflow'),
-    ('not laid out', 'not-laid-out'),
-    ('viewport', 'viewport'),
-    ('animation', 'animation'),
-    ('ticker', 'ticker'),
-    ('disposed', 'disposed'),
-    ('setstate', 'setstate'),
-    ('deactivated', 'deactivated'),
-    ('directionality', 'directionality'),
-    ('localization', 'localization'),
-    ('focus', 'focus'),
-    ('controller', 'controller'),
-    ('material', 'material'),
-    ('provider', 'provider'),
-    ('ancestor', 'ancestor'),
-    ('semantics', 'semantics'),
-    ('timer', 'timer'),
-    ('context', 'context'),
-    ('assertion', 'assertion'),
-    ('widget', 'widget'),
-  ];
-  final matched = signatures
-      .where((signature) => message.contains(signature.$1))
-      .map((signature) => signature.$2)
-      .take(4)
-      .join('-');
-  if (matched.isNotEmpty) return 'flutter-$matched';
-  return exception is FlutterError ? 'flutter-other' : 'other';
-}
-
 Widget _wrap(http.Client client) => ProviderScope(
       overrides: [
         httpClientProvider.overrideWithValue(client),
@@ -151,28 +111,15 @@ Widget _wrap(http.Client client) => ProviderScope(
 void main() {
   testWidgets('TDEE و delta را از report API نمایش می‌دهد، نه محاسبهٔ Client', (tester) async {
     final client = _AdaptiveClient()..enoughData = true;
-    _checkpoint('widget-mount');
     await tester.pumpWidget(_wrap(client));
-    _checkpoint('widget-settle');
     await tester.pumpAndSettle();
 
-    _checkpoint('api-request');
     expect(client.calls, contains('GET /nutrition/member/3/adaptive'));
-    _checkpoint('tdee-value');
     expect(find.text('۲۶۵۰ kcal'), findsOneWidget);
-    _checkpoint('target-and-intake');
     expect(find.text('۲۱۰۰ kcal'), findsWidgets);
-    _checkpoint('suggested-delta');
     expect(find.textContaining('+۲۰۰ kcal → ۲۳۰۰ kcal'), findsOneWidget);
-    final disclaimer = find.textContaining('توصیهٔ درمانی یا رژیم پزشکی نیست');
-    _checkpoint('safety-count-${disclaimer.evaluate().length}');
-    expect(disclaimer, findsOneWidget);
-    _checkpoint('disclaimer-expect-passed');
-
-    await tester.pumpWidget(const SizedBox.shrink());
-    final pendingException = tester.takeException();
-    _checkpoint('teardown-${_safeExceptionCategory(pendingException)}');
-    expect(pendingException, isNull);
+    expect(find.text('فرض‌های برآورد'), findsOneWidget);
+    expect(find.textContaining('توصیهٔ درمانی یا رژیم پزشکی نیست'), findsOneWidget);
   });
 
   testWidgets('دادهٔ ناکافی را نامعلوم می‌گوید و با ثبت وزن، API را تازه می‌کند', (tester) async {

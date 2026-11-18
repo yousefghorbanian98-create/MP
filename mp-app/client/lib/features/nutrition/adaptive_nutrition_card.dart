@@ -306,20 +306,23 @@ class _AdaptiveNutritionCardState extends ConsumerState<AdaptiveNutritionCard> {
             ),
         ],
         if (assumptions.isNotEmpty)
-          ExpansionTile(
-            tilePadding: EdgeInsets.zero,
-            title: const Text('فرض‌های برآورد', style: TextStyle(fontSize: 11)),
-            children: [
-              for (final assumption in assumptions)
-                Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 4),
-                    child: Text('• $assumption',
-                        style: TextStyle(color: MpColors.textSecondary, fontSize: 10)),
+          Material(
+            type: MaterialType.transparency,
+            child: ExpansionTile(
+              tilePadding: EdgeInsets.zero,
+              title: const Text('فرض‌های برآورد', style: TextStyle(fontSize: 11)),
+              children: [
+                for (final assumption in assumptions)
+                  Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 4),
+                      child: Text('• $assumption',
+                          style: TextStyle(color: MpColors.textSecondary, fontSize: 10)),
+                    ),
                   ),
-                ),
-            ],
+              ],
+            ),
           ),
         const SizedBox(height: 8),
         const Text(
