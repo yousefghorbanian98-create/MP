@@ -130,6 +130,18 @@ void main() {
     _checkpoint('safety-count-${disclaimer.evaluate().length}');
     expect(disclaimer, findsOneWidget);
     _checkpoint('disclaimer-expect-passed');
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    final pendingException = tester.takeException();
+    final exceptionKind = pendingException is FlutterError
+        ? 'flutter-error'
+        : pendingException is StateError
+            ? 'state-error'
+            : pendingException == null
+                ? 'none'
+                : 'other-error';
+    _checkpoint('teardown-$exceptionKind');
+    expect(pendingException, isNull);
   });
 
   testWidgets('دادهٔ ناکافی را نامعلوم می‌گوید و با ثبت وزن، API را تازه می‌کند', (tester) async {
