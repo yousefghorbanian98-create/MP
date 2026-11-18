@@ -13,18 +13,23 @@ import '../../shared/widgets/glass_card.dart';
 
 /// پذیرش وزن با ارقام فارسی/عربی؛ مقدار خارج از قرارداد API رد می‌شود.
 double? parseBodyWeightKg(String raw) {
-  var normalized = raw.trim().replaceAll(',', '').replaceAll('٬', '').replaceAll('٫', '.');
+  var normalized = raw
+      .trim()
+      .replaceAll(',', '')
+      .replaceAll('٬', '')
+      .replaceAll('٫', '.');
   normalized = normalized.replaceAllMapped(RegExp(r'[۰-۹٠-٩]'), (match) {
     final code = match.group(0)!.codeUnitAt(0);
     final digit = code >= 0x06F0 && code <= 0x06F9
         ? code - 0x06F0
         : code >= 0x0660 && code <= 0x0669
-            ? code - 0x0660
-            : null;
+        ? code - 0x0660
+        : null;
     return digit?.toString() ?? match.group(0)!;
   });
   final value = double.tryParse(normalized);
-  if (value == null || !value.isFinite || value < 20 || value > 400) return null;
+  if (value == null || !value.isFinite || value < 20 || value > 400)
+    return null;
   return value;
 }
 
@@ -32,7 +37,8 @@ class AdaptiveNutritionCard extends ConsumerStatefulWidget {
   const AdaptiveNutritionCard({super.key});
 
   @override
-  ConsumerState<AdaptiveNutritionCard> createState() => _AdaptiveNutritionCardState();
+  ConsumerState<AdaptiveNutritionCard> createState() =>
+      _AdaptiveNutritionCardState();
 }
 
 class _AdaptiveNutritionCardState extends ConsumerState<AdaptiveNutritionCard> {
@@ -65,12 +71,15 @@ class _AdaptiveNutritionCardState extends ConsumerState<AdaptiveNutritionCard> {
       _message = null;
     });
     try {
-      final raw = await ref.read(apiClientProvider).post('/nutrition/weight-logs', {
-        'member_id': memberId,
-        'entries': [
-          {'weight_kg': weight, 'logged_for_date': _todayKey(DateTime.now())},
-        ],
-      });
+      final raw = await ref.read(apiClientProvider).post(
+        '/nutrition/weight-logs',
+        {
+          'member_id': memberId,
+          'entries': [
+            {'weight_kg': weight, 'logged_for_date': _todayKey(DateTime.now())},
+          ],
+        },
+      );
       if (raw is! Map) throw const FormatException('پاسخ ثبت وزن نامعتبر است');
       final response = Map<String, dynamic>.from(raw);
       final logged = response['logged'];
@@ -86,7 +95,9 @@ class _AdaptiveNutritionCardState extends ConsumerState<AdaptiveNutritionCard> {
             .whereType<String>()
             .join(' · ');
         if (!mounted) return;
-        setState(() => _error = reasons.isEmpty ? 'سرور وزن را نپذیرفت' : reasons);
+        setState(
+          () => _error = reasons.isEmpty ? 'سرور وزن را نپذیرفت' : reasons,
+        );
         return;
       }
       if (logged + updated <= 0) {
@@ -124,10 +135,21 @@ class _AdaptiveNutritionCardState extends ConsumerState<AdaptiveNutritionCard> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('تغذیهٔ سازگار', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                    Text(
+                      'تغذیهٔ سازگار',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
                     SizedBox(height: 3),
-                    Text('TDEE و تغییر هدف از روند وزن و ثبت غذا',
-                        style: TextStyle(fontSize: 11, color: MpColors.textSecondary)),
+                    Text(
+                      'TDEE و تغییر هدف از روند وزن و ثبت غذا',
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: MpColors.textSecondary,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -144,7 +166,10 @@ class _AdaptiveNutritionCardState extends ConsumerState<AdaptiveNutritionCard> {
               padding: EdgeInsets.symmetric(vertical: 16),
               child: Row(
                 children: [
-                  SizedBox.square(dimension: 20, child: CircularProgressIndicator(strokeWidth: 2)),
+                  SizedBox.square(
+                    dimension: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
                   SizedBox(width: 10),
                   Text('در حال محاسبه از داده‌های واقعی…'),
                 ],
@@ -153,8 +178,10 @@ class _AdaptiveNutritionCardState extends ConsumerState<AdaptiveNutritionCard> {
             error: (error, _) => Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('گزارش تغذیه دریافت نشد: $error',
-                    style: const TextStyle(color: MpColors.danger, fontSize: 12)),
+                Text(
+                  'گزارش تغذیه دریافت نشد: $error',
+                  style: const TextStyle(color: MpColors.danger, fontSize: 12),
+                ),
                 TextButton(
                   onPressed: () => ref.invalidate(adaptiveNutritionProvider),
                   child: const Text('تلاش دوباره'),
@@ -171,18 +198,28 @@ class _AdaptiveNutritionCardState extends ConsumerState<AdaptiveNutritionCard> {
           const SizedBox(height: 4),
           Text(
             'برای تخمین روند، وزن و روزهای ثبت‌شدهٔ غذا لازم است. ثبت دوبارهٔ امروز، مقدار همان روز را به‌روزرسانی می‌کند.',
-            style: TextStyle(color: MpColors.textSecondary, fontSize: 11, height: 1.5),
+            style: TextStyle(
+              color: MpColors.textSecondary,
+              fontSize: 11,
+              height: 1.5,
+            ),
           ),
           const SizedBox(height: 8),
           if (_message != null)
             Padding(
               padding: const EdgeInsets.only(bottom: 6),
-              child: Text(_message!, style: const TextStyle(color: MpColors.primaryLight)),
+              child: Text(
+                _message!,
+                style: const TextStyle(color: MpColors.primaryLight),
+              ),
             ),
           if (_error != null)
             Padding(
               padding: const EdgeInsets.only(bottom: 6),
-              child: Text(_error!, style: const TextStyle(color: MpColors.danger)),
+              child: Text(
+                _error!,
+                style: const TextStyle(color: MpColors.danger),
+              ),
             ),
           Row(
             children: [
@@ -190,7 +227,9 @@ class _AdaptiveNutritionCardState extends ConsumerState<AdaptiveNutritionCard> {
                 child: TextField(
                   key: const Key('adaptive-weight-field'),
                   controller: _weightController,
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
                   textDirection: TextDirection.ltr,
                   decoration: const InputDecoration(
                     labelText: 'وزن (کیلوگرم)',
@@ -234,7 +273,9 @@ class _AdaptiveNutritionCardState extends ConsumerState<AdaptiveNutritionCard> {
       'low' => 'اطمینان کم',
       _ => 'دادهٔ ناکافی',
     };
-    final notes = trend['notes'] is List ? (trend['notes'] as List).whereType<String>().toList() : <String>[];
+    final notes = trend['notes'] is List
+        ? (trend['notes'] as List).whereType<String>().toList()
+        : <String>[];
     final assumptions = estimate['assumptions'] is List
         ? (estimate['assumptions'] as List).whereType<String>().toList()
         : <String>[];
@@ -246,10 +287,24 @@ class _AdaptiveNutritionCardState extends ConsumerState<AdaptiveNutritionCard> {
           spacing: 8,
           runSpacing: 8,
           children: [
-            _Metric(label: 'TDEE برآوردی', value: tdee == null ? 'نامعلوم' : '${_faNumber(tdee)} kcal'),
-            _Metric(label: 'هدف فعلی', value: target == null ? 'بدون برنامهٔ تأییدشده' : '${_faNumber(target)} kcal'),
-            _Metric(label: 'میانگین مصرف ثبت‌شده', value: intake == null ? 'نامعلوم' : '${_faNumber(intake)} kcal'),
-            _Metric(label: 'روند وزن', value: slope == null ? 'نامعلوم' : '${_faNumber(slope)} kg/هفته'),
+            _Metric(
+              label: 'TDEE برآوردی',
+              value: tdee == null ? 'نامعلوم' : '${_faNumber(tdee)} kcal',
+            ),
+            _Metric(
+              label: 'هدف فعلی',
+              value: target == null
+                  ? 'بدون برنامهٔ تأییدشده'
+                  : '${_faNumber(target)} kcal',
+            ),
+            _Metric(
+              label: 'میانگین مصرف ثبت‌شده',
+              value: intake == null ? 'نامعلوم' : '${_faNumber(intake)} kcal',
+            ),
+            _Metric(
+              label: 'روند وزن',
+              value: slope == null ? 'نامعلوم' : '${_faNumber(slope)} kg/هفته',
+            ),
           ],
         ),
         const SizedBox(height: 8),
@@ -261,12 +316,20 @@ class _AdaptiveNutritionCardState extends ConsumerState<AdaptiveNutritionCard> {
             _Tag('${_faNumber(counts['weight_entries'] as num)} ثبت وزن'),
             _Tag('${_faNumber(counts['intake_days'] as num)} روز ثبت غذا'),
             if (report['latest_weight_kg'] is num)
-              _Tag('آخرین وزن ${_faNumber(report['latest_weight_kg'] as num)} کیلوگرم'),
+              _Tag(
+                'آخرین وزن ${_faNumber(report['latest_weight_kg'] as num)} کیلوگرم',
+              ),
           ],
         ),
         const SizedBox(height: 8),
-        Text(estimate['reason'] as String,
-            style: TextStyle(color: MpColors.textSecondary, fontSize: 11, height: 1.5)),
+        Text(
+          estimate['reason'] as String,
+          style: TextStyle(
+            color: MpColors.textSecondary,
+            fontSize: 11,
+            height: 1.5,
+          ),
+        ),
         const SizedBox(height: 6),
         Container(
           width: double.infinity,
@@ -282,17 +345,25 @@ class _AdaptiveNutritionCardState extends ConsumerState<AdaptiveNutritionCard> {
                 action == 'none'
                     ? actionLabel
                     : 'پیشنهاد هفتهٔ بعد: $actionLabel · ${_signed(suggestion['delta_kcal'] as num)} kcal'
-                    '${suggestion['suggested_target_kcal'] is num ? ' → ${_faNumber(suggestion['suggested_target_kcal'] as num)} kcal' : ''}',
+                          '${suggestion['suggested_target_kcal'] is num ? ' → ${_faNumber(suggestion['suggested_target_kcal'] as num)} kcal' : ''}',
                 style: const TextStyle(fontWeight: FontWeight.w700),
               ),
               const SizedBox(height: 4),
-              Text(suggestion['reason'] as String,
-                  style: TextStyle(color: MpColors.textSecondary, fontSize: 11, height: 1.5)),
+              Text(
+                suggestion['reason'] as String,
+                style: TextStyle(
+                  color: MpColors.textSecondary,
+                  fontSize: 11,
+                  height: 1.5,
+                ),
+              ),
               if (suggestion['capped'] == true)
                 const Padding(
                   padding: EdgeInsets.only(top: 4),
-                  child: Text('محدودیت تغییر هفتگی API اعمال شده است.',
-                      style: TextStyle(color: MpColors.accent, fontSize: 10)),
+                  child: Text(
+                    'محدودیت تغییر هفتگی API اعمال شده است.',
+                    style: TextStyle(color: MpColors.accent, fontSize: 10),
+                  ),
                 ),
             ],
           ),
@@ -302,7 +373,10 @@ class _AdaptiveNutritionCardState extends ConsumerState<AdaptiveNutritionCard> {
           for (final note in notes)
             Padding(
               padding: const EdgeInsets.only(bottom: 3),
-              child: Text('• $note', style: const TextStyle(color: MpColors.accent, fontSize: 10)),
+              child: Text(
+                '• $note',
+                style: const TextStyle(color: MpColors.accent, fontSize: 10),
+              ),
             ),
         ],
         if (assumptions.isNotEmpty)
@@ -310,15 +384,23 @@ class _AdaptiveNutritionCardState extends ConsumerState<AdaptiveNutritionCard> {
             type: MaterialType.transparency,
             child: ExpansionTile(
               tilePadding: EdgeInsets.zero,
-              title: const Text('فرض‌های برآورد', style: TextStyle(fontSize: 11)),
+              title: const Text(
+                'فرض‌های برآورد',
+                style: TextStyle(fontSize: 11),
+              ),
               children: [
                 for (final assumption in assumptions)
                   Align(
                     alignment: AlignmentDirectional.centerStart,
                     child: Padding(
                       padding: const EdgeInsets.only(bottom: 4),
-                      child: Text('• $assumption',
-                          style: TextStyle(color: MpColors.textSecondary, fontSize: 10)),
+                      child: Text(
+                        '• $assumption',
+                        style: TextStyle(
+                          color: MpColors.textSecondary,
+                          fontSize: 10,
+                        ),
+                      ),
                     ),
                   ),
               ],
@@ -327,7 +409,11 @@ class _AdaptiveNutritionCardState extends ConsumerState<AdaptiveNutritionCard> {
         const SizedBox(height: 8),
         const Text(
           'این عدد یک تخمین بر پایهٔ ثبت وزن و غذاست؛ توصیهٔ درمانی یا رژیم پزشکی نیست. برای نیازهای پزشکی با متخصص مشورت کنید.',
-          style: TextStyle(color: MpColors.textSecondary, fontSize: 10, height: 1.5),
+          style: TextStyle(
+            color: MpColors.textSecondary,
+            fontSize: 10,
+            height: 1.5,
+          ),
         ),
       ],
     );
@@ -341,21 +427,27 @@ class _Metric extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        constraints: const BoxConstraints(minWidth: 135),
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: MpColors.surface.withOpacity(0.7),
-          borderRadius: BorderRadius.circular(11),
+    constraints: const BoxConstraints(minWidth: 135),
+    padding: const EdgeInsets.all(10),
+    decoration: BoxDecoration(
+      color: MpColors.surface.withOpacity(0.7),
+      borderRadius: BorderRadius.circular(11),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(color: MpColors.textSecondary, fontSize: 10),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(label, style: TextStyle(color: MpColors.textSecondary, fontSize: 10)),
-            const SizedBox(height: 4),
-            Text(value, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12)),
-          ],
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12),
         ),
-      );
+      ],
+    ),
+  );
 }
 
 class _Tag extends StatelessWidget {
@@ -364,13 +456,13 @@ class _Tag extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        decoration: BoxDecoration(
-          color: MpColors.primary.withOpacity(0.10),
-          borderRadius: BorderRadius.circular(99),
-        ),
-        child: Text(label, style: const TextStyle(fontSize: 10)),
-      );
+    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+    decoration: BoxDecoration(
+      color: MpColors.primary.withOpacity(0.10),
+      borderRadius: BorderRadius.circular(99),
+    ),
+    child: Text(label, style: const TextStyle(fontSize: 10)),
+  );
 }
 
 String _todayKey(DateTime date) =>
@@ -381,10 +473,18 @@ String _faNumber(num value) {
   final text = number == number.roundToDouble()
       ? number.toStringAsFixed(0)
       : number.toStringAsFixed(1);
-  return text.replaceAllMapped(RegExp(r'\d'), (match) => '۰۱۲۳۴۵۶۷۸۹'[int.parse(match.group(0)!)]);
+  return text.replaceAllMapped(
+    RegExp(r'\d'),
+    (match) => '۰۱۲۳۴۵۶۷۸۹'[int.parse(match.group(0)!)],
+  );
 }
 
 String _signed(num value) {
-  final text = value > 0 ? '+${value.toStringAsFixed(0)}' : value.toStringAsFixed(0);
-  return text.replaceAllMapped(RegExp(r'\d'), (match) => '۰۱۲۳۴۵۶۷۸۹'[int.parse(match.group(0)!)]);
+  final text = value > 0
+      ? '+${value.toStringAsFixed(0)}'
+      : value.toStringAsFixed(0);
+  return text.replaceAllMapped(
+    RegExp(r'\d'),
+    (match) => '۰۱۲۳۴۵۶۷۸۹'[int.parse(match.group(0)!)],
+  );
 }

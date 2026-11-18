@@ -69,15 +69,29 @@ class _MpBottomNav extends StatelessWidget {
   Widget build(BuildContext context) {
     const items = <({IconData icon, IconData active, String label})>[
       (icon: Icons.home_outlined, active: Icons.home, label: 'خانه'),
-      (icon: Icons.fitness_center_outlined, active: Icons.fitness_center, label: 'برنامه'),
-      (icon: Icons.insights_outlined, active: Icons.insights, label: 'توانایی‌ها'),
-      (icon: Icons.trending_up_outlined, active: Icons.trending_up, label: 'پیشرفت'),
+      (
+        icon: Icons.fitness_center_outlined,
+        active: Icons.fitness_center,
+        label: 'برنامه',
+      ),
+      (
+        icon: Icons.insights_outlined,
+        active: Icons.insights,
+        label: 'توانایی‌ها',
+      ),
+      (
+        icon: Icons.trending_up_outlined,
+        active: Icons.trending_up,
+        label: 'پیشرفت',
+      ),
       (icon: Icons.person_outline, active: Icons.person, label: 'پروفایل'),
     ];
     return Container(
       decoration: BoxDecoration(
         color: MpColors.surface.withOpacity(0.92),
-        border: Border(top: BorderSide(color: MpColors.primary.withOpacity(0.18))),
+        border: Border(
+          top: BorderSide(color: MpColors.primary.withOpacity(0.18)),
+        ),
       ),
       child: SafeArea(
         child: SizedBox(
@@ -93,8 +107,10 @@ class _MpBottomNav extends StatelessWidget {
                       children: [
                         // نشانگر متحرک بالای تب فعال
                         AnimatedContainer(
-                          duration:
-                              MpMotion.dur(context, const Duration(milliseconds: 250)),
+                          duration: MpMotion.dur(
+                            context,
+                            const Duration(milliseconds: 250),
+                          ),
                           curve: Curves.easeOutCubic,
                           height: 3,
                           width: i == index ? 24 : 0,
@@ -112,12 +128,16 @@ class _MpBottomNav extends StatelessWidget {
                         ),
                         AnimatedScale(
                           scale: i == index ? 1.12 : 1.0,
-                          duration:
-                              MpMotion.dur(context, const Duration(milliseconds: 200)),
+                          duration: MpMotion.dur(
+                            context,
+                            const Duration(milliseconds: 200),
+                          ),
                           curve: Curves.easeOutBack,
                           child: Icon(
                             i == index ? items[i].active : items[i].icon,
-                            color: i == index ? MpColors.primary : MpColors.textSecondary,
+                            color: i == index
+                                ? MpColors.primary
+                                : MpColors.textSecondary,
                             size: 24,
                           ),
                         ),
@@ -126,8 +146,12 @@ class _MpBottomNav extends StatelessWidget {
                           items[i].label,
                           style: TextStyle(
                             fontSize: 11,
-                            color: i == index ? MpColors.primary : MpColors.textSecondary,
-                            fontWeight: i == index ? FontWeight.w700 : FontWeight.w400,
+                            color: i == index
+                                ? MpColors.primary
+                                : MpColors.textSecondary,
+                            fontWeight: i == index
+                                ? FontWeight.w700
+                                : FontWeight.w400,
                           ),
                         ),
                       ],

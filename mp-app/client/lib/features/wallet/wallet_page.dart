@@ -24,8 +24,10 @@ class WalletPage extends ConsumerWidget {
           GlassCard(
             child: Column(
               children: [
-                Text('موجودی کیف پول',
-                    style: TextStyle(color: MpColors.textSecondary)),
+                Text(
+                  'موجودی کیف پول',
+                  style: TextStyle(color: MpColors.textSecondary),
+                ),
                 const SizedBox(height: 8),
                 if (ledger.isLoading)
                   const Padding(
@@ -35,23 +37,34 @@ class WalletPage extends ConsumerWidget {
                 else if (ledger.error != null)
                   Column(
                     children: [
-                      const Text('ماندهٔ کیف‌پول در دسترس نیست',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: MpColors.danger)),
+                      const Text(
+                        'ماندهٔ کیف‌پول در دسترس نیست',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: MpColors.danger),
+                      ),
                       const SizedBox(height: 8),
                       OutlinedButton(
-                        onPressed: () => ref.read(walletLedgerProvider.notifier).loadFirstPage(),
+                        onPressed: () => ref
+                            .read(walletLedgerProvider.notifier)
+                            .loadFirstPage(),
                         child: const Text('تلاش دوباره'),
                       ),
                     ],
                   )
                 else if (ledger.balanceRial != null)
                   Text(
-                    '${_fmt(ledger.balanceRial!)} ریال',
-                    style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w900),
-                  ).animate().fadeIn(duration: 500.ms).scale(
-                      begin: const Offset(0.95, 0.95),
-                      curve: Curves.easeOutBack),
+                        '${_fmt(ledger.balanceRial!)} ریال',
+                        style: const TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      )
+                      .animate()
+                      .fadeIn(duration: 500.ms)
+                      .scale(
+                        begin: const Offset(0.95, 0.95),
+                        curve: Curves.easeOutBack,
+                      ),
               ],
             ),
           ),
@@ -66,8 +79,10 @@ class WalletPage extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('شارژ کیف پول',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text(
+                  'شارژ کیف پول',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
                 const SizedBox(height: 8),
                 Text(
                   'برای شارژ به پذیرش باشگاه مراجعه کنید یا از درگاه پرداخت استفاده کنید.',
@@ -103,40 +118,56 @@ class _WalletLedger extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('دفتر گردش کیف پول', style: TextStyle(fontWeight: FontWeight.bold)),
+          const Text(
+            'دفتر گردش کیف پول',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 4),
-          Text('شارژ و برداشت واقعی از دفتر سرور · جدیدترین مورد در ابتدا',
-              style: TextStyle(color: MpColors.textSecondary, fontSize: 11)),
+          Text(
+            'شارژ و برداشت واقعی از دفتر سرور · جدیدترین مورد در ابتدا',
+            style: TextStyle(color: MpColors.textSecondary, fontSize: 11),
+          ),
           const SizedBox(height: 10),
           if (ledger.isLoading)
             const Center(
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 12),
-                child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)),
+                child: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
               ),
             )
           else if (ledger.error != null)
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('دریافت دفتر کیف‌پول ناموفق بود: ${ledger.error}',
-                    style: const TextStyle(color: MpColors.danger, fontSize: 12)),
+                Text(
+                  'دریافت دفتر کیف‌پول ناموفق بود: ${ledger.error}',
+                  style: const TextStyle(color: MpColors.danger, fontSize: 12),
+                ),
                 const SizedBox(height: 6),
                 OutlinedButton(
-                  onPressed: () => ref.read(walletLedgerProvider.notifier).loadFirstPage(),
+                  onPressed: () =>
+                      ref.read(walletLedgerProvider.notifier).loadFirstPage(),
                   child: const Text('تلاش دوباره'),
                 ),
               ],
             )
           else if (ledger.transactions.isEmpty)
-            Text('هنوز تراکنشی در کیف‌پول ثبت نشده است.',
-                style: TextStyle(color: MpColors.textSecondary, fontSize: 13))
+            Text(
+              'هنوز تراکنشی در کیف‌پول ثبت نشده است.',
+              style: TextStyle(color: MpColors.textSecondary, fontSize: 13),
+            )
           else ...[
             for (final row in ledger.transactions) _transactionRow(row),
             if (ledger.loadMoreError != null) ...[
               const SizedBox(height: 6),
-              Text('دریافت موارد قدیمی‌تر ناموفق بود: ${ledger.loadMoreError}',
-                  style: const TextStyle(color: MpColors.danger, fontSize: 12)),
+              Text(
+                'دریافت موارد قدیمی‌تر ناموفق بود: ${ledger.loadMoreError}',
+                style: const TextStyle(color: MpColors.danger, fontSize: 12),
+              ),
             ],
             if (ledger.nextBeforeId != null)
               Align(
@@ -144,7 +175,8 @@ class _WalletLedger extends ConsumerWidget {
                 child: OutlinedButton.icon(
                   onPressed: ledger.isLoadingMore
                       ? null
-                      : () => ref.read(walletLedgerProvider.notifier).loadMore(),
+                      : () =>
+                            ref.read(walletLedgerProvider.notifier).loadMore(),
                   icon: ledger.isLoadingMore
                       ? const SizedBox(
                           width: 16,
@@ -152,7 +184,11 @@ class _WalletLedger extends ConsumerWidget {
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
                       : const Icon(Icons.history),
-                  label: Text(ledger.isLoadingMore ? 'در حال دریافت…' : 'تراکنش‌های قدیمی‌تر'),
+                  label: Text(
+                    ledger.isLoadingMore
+                        ? 'در حال دریافت…'
+                        : 'تراکنش‌های قدیمی‌تر',
+                  ),
                 ),
               ),
           ],
@@ -181,7 +217,9 @@ class _WalletLedger extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  description.isEmpty ? (credit ? 'شارژ کیف پول' : 'پرداخت از کیف پول') : description,
+                  description.isEmpty
+                      ? (credit ? 'شارژ کیف پول' : 'پرداخت از کیف پول')
+                      : description,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(fontSize: 13),
@@ -223,18 +261,29 @@ class _PaymentHistory extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('تاریخچهٔ پرداخت', style: TextStyle(fontWeight: FontWeight.bold)),
+          const Text(
+            'تاریخچهٔ پرداخت',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 8),
           payments.when(
             loading: () => const Padding(
               padding: EdgeInsets.symmetric(vertical: 12),
-              child: Center(child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))),
+              child: Center(
+                child: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+              ),
             ),
             error: (e, _) => Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('دریافت تاریخچه ناموفق بود: $e',
-                    style: const TextStyle(color: MpColors.danger, fontSize: 12)),
+                Text(
+                  'دریافت تاریخچه ناموفق بود: $e',
+                  style: const TextStyle(color: MpColors.danger, fontSize: 12),
+                ),
                 const SizedBox(height: 6),
                 OutlinedButton(
                   onPressed: () => ref.invalidate(myPaymentsProvider),
@@ -244,55 +293,67 @@ class _PaymentHistory extends ConsumerWidget {
             ),
             data: (rows) {
               if (rows.isEmpty) {
-                return Text('هنوز پرداختی ثبت نشده است.',
-                    style: TextStyle(color: MpColors.textSecondary, fontSize: 13));
+                return Text(
+                  'هنوز پرداختی ثبت نشده است.',
+                  style: TextStyle(color: MpColors.textSecondary, fontSize: 13),
+                );
               }
               return Column(
                 children: [
                   for (final (i, p) in rows.take(20).indexed)
                     Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 5),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  (p['description'] as String?)?.isNotEmpty == true
-                                      ? p['description'] as String
-                                      : 'پرداخت #${p['id']}',
-                                  style: const TextStyle(fontSize: 13),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
+                          padding: const EdgeInsets.symmetric(vertical: 5),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      (p['description'] as String?)
+                                                  ?.isNotEmpty ==
+                                              true
+                                          ? p['description'] as String
+                                          : 'پرداخت #${p['id']}',
+                                      style: const TextStyle(fontSize: 13),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    Text(
+                                      '${_labels[p['status']] ?? p['status']} · ${p['method'] ?? '—'}',
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        color: p['status'] == 'failed'
+                                            ? MpColors.danger
+                                            : MpColors.textSecondary,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                Text(
-                                  '${_labels[p['status']] ?? p['status']} · ${p['method'] ?? '—'}',
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    color: p['status'] == 'failed'
-                                        ? MpColors.danger
-                                        : MpColors.textSecondary,
-                                  ),
+                              ),
+                              Text(
+                                '${_fmtRial(((p['amount_rial'] as num?) ?? 0).toInt())} ریال',
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                          Text(
-                            '${_fmtRial(((p['amount_rial'] as num?) ?? 0).toInt())} ریال',
-                            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
-                          ),
-                        ],
-                      ),
-                    )
+                        )
                         .animate(delay: (i * 30).ms)
                         .fadeIn(duration: 220.ms)
                         .slideX(begin: 0.06, end: 0),
                   if (rows.length > 20)
                     Padding(
                       padding: const EdgeInsets.only(top: 6),
-                      child: Text('۲۰ مورد آخر از ${_fmtRial(rows.length)} پرداخت',
-                          style: TextStyle(color: MpColors.textSecondary, fontSize: 11)),
+                      child: Text(
+                        '۲۰ مورد آخر از ${_fmtRial(rows.length)} پرداخت',
+                        style: TextStyle(
+                          color: MpColors.textSecondary,
+                          fontSize: 11,
+                        ),
+                      ),
                     ),
                 ],
               );

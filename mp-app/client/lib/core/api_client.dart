@@ -36,22 +36,22 @@ bool isPrivateHost(String host) {
 /// خطای پیکربندی — آدرس API با سیاست شبکه سازگار نیست.
 class InsecureBaseUrlError extends ArgumentError {
   InsecureBaseUrlError(String baseUrl)
-      : super(
-          'آدرس API با HTTP روی میزبان عمومی مجاز نیست: $baseUrl — '
-          'یا از بازهٔ LAN استفاده کنید یا HTTPS بدهید.',
-        );
+    : super(
+        'آدرس API با HTTP روی میزبان عمومی مجاز نیست: $baseUrl — '
+        'یا از بازهٔ LAN استفاده کنید یا HTTPS بدهید.',
+      );
 }
 
 class ApiClient {
   ApiClient({http.Client? httpClient, String? baseUrl})
-      : _http = httpClient ?? http.Client(),
-        baseUrl = _validated(
-          baseUrl ??
-              const String.fromEnvironment(
-                'MP_API',
-                defaultValue: 'http://10.0.2.2:8000/api/v1',
-              ),
-        );
+    : _http = httpClient ?? http.Client(),
+      baseUrl = _validated(
+        baseUrl ??
+            const String.fromEnvironment(
+              'MP_API',
+              defaultValue: 'http://10.0.2.2:8000/api/v1',
+            ),
+      );
 
   /// اعتبارسنجی سیاست شبکه در زمان ساخت کلاینت (نه در اولین درخواست).
   static String _validated(String url) {
@@ -96,9 +96,9 @@ class ApiClient {
   }
 
   Map<String, String> get _headers => {
-        'Content-Type': 'application/json',
-        if (accessToken != null) 'Authorization': 'Bearer $accessToken',
-      };
+    'Content-Type': 'application/json',
+    if (accessToken != null) 'Authorization': 'Bearer $accessToken',
+  };
 
   /// اجرای درخواست با یک بار تلاش دوباره پس از refresh.
   ///
@@ -109,7 +109,8 @@ class ApiClient {
     bool allowSessionRefresh = true,
   }) async {
     var r = await call();
-    if (!allowSessionRefresh || r.statusCode != 401 || _refresher == null) return _decode(r);
+    if (!allowSessionRefresh || r.statusCode != 401 || _refresher == null)
+      return _decode(r);
 
     final ok = await (_refreshing ??= () async {
       try {
@@ -127,7 +128,9 @@ class ApiClient {
   }
 
   Future<dynamic> get(String path) async {
-    return _send(() => _http.get(Uri.parse('$baseUrl$path'), headers: _headers));
+    return _send(
+      () => _http.get(Uri.parse('$baseUrl$path'), headers: _headers),
+    );
   }
 
   Future<dynamic> post(String path, Map<String, dynamic> body) async {
@@ -145,11 +148,13 @@ class ApiClient {
   }
 
   Future<dynamic> put(String path, Map<String, dynamic> body) async {
-    return _send(() => _http.put(
-          Uri.parse('$baseUrl$path'),
-          headers: _headers,
-          body: jsonEncode(body),
-        ));
+    return _send(
+      () => _http.put(
+        Uri.parse('$baseUrl$path'),
+        headers: _headers,
+        body: jsonEncode(body),
+      ),
+    );
   }
 
   /// PATCH و DELETE — تا M60 در این کلاینت **نبودند**.
@@ -159,15 +164,19 @@ class ApiClient {
   /// نداشت؛ یعنی عضو نمی‌توانست تعداد را عوض کند یا قلمی را حذف کند و سبد
   /// فقط خواندنی بود. endpointهای بی‌مصرف، همان باگ «کد مرده» هستند.
   Future<dynamic> patch(String path, Map<String, dynamic> body) async {
-    return _send(() => _http.patch(
-          Uri.parse('$baseUrl$path'),
-          headers: _headers,
-          body: jsonEncode(body),
-        ));
+    return _send(
+      () => _http.patch(
+        Uri.parse('$baseUrl$path'),
+        headers: _headers,
+        body: jsonEncode(body),
+      ),
+    );
   }
 
   Future<dynamic> delete(String path) async {
-    return _send(() => _http.delete(Uri.parse('$baseUrl$path'), headers: _headers));
+    return _send(
+      () => _http.delete(Uri.parse('$baseUrl$path'), headers: _headers),
+    );
   }
 
   /// رمزگشایی پاسخ — **هم شیء و هم آرایه**.
@@ -193,7 +202,8 @@ class ApiClient {
         msg = err['message'] as String;
       } else if (decoded['detail'] is String) {
         msg = decoded['detail'] as String;
-      } else if (decoded['detail'] is Map && decoded['detail']['message'] is String) {
+      } else if (decoded['detail'] is Map &&
+          decoded['detail']['message'] is String) {
         msg = decoded['detail']['message'] as String;
       }
     }

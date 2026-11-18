@@ -30,22 +30,22 @@ final axisMatrixProvider = FutureProvider<Map<String, dynamic>?>((ref) async {
 /// ارسال آزمون‌های جدید — تابع قابل override برای تست.
 final submitAxisTestsProvider =
     Provider<Future<bool> Function(List<Map<String, dynamic>>)>((ref) {
-  return (tests) async {
-    final api = ref.read(apiClientProvider);
-    final auth = ref.read(authProvider);
-    final memberId = auth.memberId;
-    if (memberId == null) return false;
-    final r = await api.post('/axis-assessments', {
-      'member_id': memberId,
-      'tests': tests,
+      return (tests) async {
+        final api = ref.read(apiClientProvider);
+        final auth = ref.read(authProvider);
+        final memberId = auth.memberId;
+        if (memberId == null) return false;
+        final r = await api.post('/axis-assessments', {
+          'member_id': memberId,
+          'tests': tests,
+        });
+        if (r is Map<String, dynamic>) {
+          ref.invalidate(axisMatrixProvider);
+          return true;
+        }
+        return false;
+      };
     });
-    if (r is Map<String, dynamic>) {
-      ref.invalidate(axisMatrixProvider);
-      return true;
-    }
-    return false;
-  };
-});
 
 /// برچسب فارسی آزمون‌های میدانی برای فرم ورود.
 const Map<String, String> testLabelsFa = {

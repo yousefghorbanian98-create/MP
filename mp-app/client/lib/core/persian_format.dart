@@ -26,9 +26,13 @@ String faDigits(Object value) {
 String rial(num amount, {String unit = 'ریال'}) {
   // JSON می‌تواند 5000000.0 بدهد (نه 5000000)؛ «۵٬۰۰۰٬۰۰۰٫۰ ریال» در رسید فقط
   // نویز است، پس عدد صحیحِ double به همان شکل صحیح قالب‌بندی می‌شود.
-  final value = amount is! int && amount == amount.roundToDouble() ? amount.toInt() : amount;
-  final grouped =
-      value.toString().replaceAllMapped(RegExp(r'(\d)(?=(\d{3})+$)'), (m) => '${m[1]}٬');
+  final value = amount is! int && amount == amount.roundToDouble()
+      ? amount.toInt()
+      : amount;
+  final grouped = value.toString().replaceAllMapped(
+    RegExp(r'(\d)(?=(\d{3})+$)'),
+    (m) => '${m[1]}٬',
+  );
   final text = faDigits(grouped);
   return unit.isEmpty ? text : '$text $unit';
 }

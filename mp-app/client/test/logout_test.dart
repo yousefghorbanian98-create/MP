@@ -33,12 +33,20 @@ class _FakeClient extends http.BaseClient {
     final path = request.url.path.replaceFirst('/api/v1', '');
     calls.add('${request.method} $path');
     if (path == '/auth/logout' && failLogout) {
-      return http.StreamedResponse(Stream.value(utf8.encode('{"error":{"message":"x"}}')), 500,
-          headers: {'content-type': 'application/json'}, request: request);
+      return http.StreamedResponse(
+        Stream.value(utf8.encode('{"error":{"message":"x"}}')),
+        500,
+        headers: {'content-type': 'application/json'},
+        request: request,
+      );
     }
     final bytes = jsonEncode({'ok': true}).codeUnits;
-    return http.StreamedResponse(Stream.value(bytes), 200,
-        headers: {'content-type': 'application/json'}, request: request);
+    return http.StreamedResponse(
+      Stream.value(bytes),
+      200,
+      headers: {'content-type': 'application/json'},
+      request: request,
+    );
   }
 }
 
@@ -64,8 +72,11 @@ void main() {
     final prefs = await SharedPreferences.getInstance();
     expect(prefs.getString('mp_token'), isNull);
     expect(prefs.getString('mp_refresh'), isNull);
-    expect(http_.calls.contains('POST /auth/logout'), isTrue,
-        reason: 'پاک‌کردن محلی کافی نیست؛ نشست سمت سرور هم باید باطل شود');
+    expect(
+      http_.calls.contains('POST /auth/logout'),
+      isTrue,
+      reason: 'پاک‌کردن محلی کافی نیست؛ نشست سمت سرور هم باید باطل شود',
+    );
   });
 
   test('اگر سرور در دسترس نباشد، خروج محلی انجام می‌شود', () async {
@@ -76,8 +87,11 @@ void main() {
 
     await auth.logout();
 
-    expect(auth.state.loggedIn, isFalse,
-        reason: 'کاربر نباید با خطای سرور در حساب خودش زندانی شود');
+    expect(
+      auth.state.loggedIn,
+      isFalse,
+      reason: 'کاربر نباید با خطای سرور در حساب خودش زندانی شود',
+    );
     final prefs = await SharedPreferences.getInstance();
     expect(prefs.getString('mp_token'), isNull);
   });

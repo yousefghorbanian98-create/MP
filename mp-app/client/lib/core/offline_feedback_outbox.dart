@@ -18,7 +18,9 @@ import 'api_client.dart';
 String formatOfflineTimestamp(DateTime value) {
   final utc = value.toUtc();
   String two(int number) => number.toString().padLeft(2, '0');
-  final fraction = (utc.millisecond * 1000 + utc.microsecond).toString().padLeft(6, '0');
+  final fraction = (utc.millisecond * 1000 + utc.microsecond)
+      .toString()
+      .padLeft(6, '0');
   return '${utc.year.toString().padLeft(4, '0')}-${two(utc.month)}-${two(utc.day)}T${two(utc.hour)}:${two(utc.minute)}:${two(utc.second)}.${fraction}Z';
 }
 
@@ -68,16 +70,16 @@ class OfflineFeedbackQueueItem {
   /// Only the documented server allowlist is sent. Local owner, status, retry
   /// data, raw errors, soreness, notes, and credentials never leave this device.
   Map<String, Object?> toSyncItem() => {
-        'client_id': clientId,
-        'device_id': deviceId,
-        'program_id': programId,
-        'updated_at': updatedAt,
-        'movement_id': movementId,
-        'weight': weight,
-        'target_reps': targetReps,
-        'reps_done': repsDone,
-        'rir': rir,
-      };
+    'client_id': clientId,
+    'device_id': deviceId,
+    'program_id': programId,
+    'updated_at': updatedAt,
+    'movement_id': movementId,
+    'weight': weight,
+    'target_reps': targetReps,
+    'reps_done': repsDone,
+    'rir': rir,
+  };
 
   factory OfflineFeedbackQueueItem.fromMap(Map<Object?, Object?> raw) {
     final id = raw['id'];
@@ -92,19 +94,32 @@ class OfflineFeedbackQueueItem {
     final updatedAt = raw['updated_at'];
     final status = raw['status'];
     final attempts = raw['attempts'];
-    if (id is! num || ownerId is! num || clientId is! String || deviceId is! String ||
-        movementId is! String || weight is! num || targetReps is! num || repsDone is! num ||
-        createdAt is! String || updatedAt is! String || status is! String || attempts is! num) {
+    if (id is! num ||
+        ownerId is! num ||
+        clientId is! String ||
+        deviceId is! String ||
+        movementId is! String ||
+        weight is! num ||
+        targetReps is! num ||
+        repsDone is! num ||
+        createdAt is! String ||
+        updatedAt is! String ||
+        status is! String ||
+        attempts is! num) {
       throw const FormatException('Offline feedback record is invalid');
     }
-    final parsedStatus = OfflineFeedbackStatus.values.where((value) => value.name == status);
-    if (parsedStatus.isEmpty) throw const FormatException('Offline feedback status is invalid');
+    final parsedStatus = OfflineFeedbackStatus.values.where(
+      (value) => value.name == status,
+    );
+    if (parsedStatus.isEmpty)
+      throw const FormatException('Offline feedback status is invalid');
     final programId = raw['program_id'];
     final rir = raw['rir'];
     final nextAttemptAt = raw['next_attempt_at'];
     final lastErrorCode = raw['last_error_code'];
     final syncedAt = raw['synced_at'];
-    if ((programId != null && programId is! num) || (rir != null && rir is! num) ||
+    if ((programId != null && programId is! num) ||
+        (rir != null && rir is! num) ||
         (nextAttemptAt != null && nextAttemptAt is! String) ||
         (lastErrorCode != null && lastErrorCode is! String) ||
         (syncedAt != null && syncedAt is! String)) {
@@ -136,15 +151,26 @@ abstract interface class OfflineFeedbackLocalStore {
   bool get isSupported;
   Future<bool> hasInternetNetwork();
   Future<OfflineFeedbackQueueItem> enqueue(Map<String, Object?> record);
-  Future<List<OfflineFeedbackQueueItem>> listForOwner(int ownerMemberId, {int limit = 100});
+  Future<List<OfflineFeedbackQueueItem>> listForOwner(
+    int ownerMemberId, {
+    int limit = 100,
+  });
   Future<int> countUnresolved(int ownerMemberId);
   Future<List<OfflineFeedbackQueueItem>> listDue(
     int ownerMemberId, {
     required DateTime now,
     int limit = 100,
   });
-  Future<void> markSynced(int ownerMemberId, int id, {required DateTime syncedAt});
-  Future<void> markConflict(int ownerMemberId, int id, {required String errorCode});
+  Future<void> markSynced(
+    int ownerMemberId,
+    int id, {
+    required DateTime syncedAt,
+  });
+  Future<void> markConflict(
+    int ownerMemberId,
+    int id, {
+    required String errorCode,
+  });
   Future<void> markRetry(
     int ownerMemberId,
     int id, {
@@ -169,7 +195,7 @@ class OfflineFeedbackStoreException implements Exception {
 
 class MethodChannelOfflineFeedbackStore implements OfflineFeedbackLocalStore {
   MethodChannelOfflineFeedbackStore({MethodChannel? channel})
-      : _channel = channel ?? const MethodChannel(_channelName);
+    : _channel = channel ?? const MethodChannel(_channelName);
 
   static const _channelName = 'ir.muscleparadise.mp_client/offline_feedback';
   static const _featureEnabled = bool.fromEnvironment(
@@ -180,11 +206,15 @@ class MethodChannelOfflineFeedbackStore implements OfflineFeedbackLocalStore {
 
   @override
   bool get isSupported =>
-      _featureEnabled && !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
+      _featureEnabled &&
+      !kIsWeb &&
+      defaultTargetPlatform == TargetPlatform.android;
 
   void _requireSupported() {
     if (!isSupported) {
-      throw const OfflineFeedbackStoreException('Offline feedback is available only on an explicitly enabled Android build.');
+      throw const OfflineFeedbackStoreException(
+        'Offline feedback is available only on an explicitly enabled Android build.',
+      );
     }
   }
 
@@ -192,12 +222,17 @@ class MethodChannelOfflineFeedbackStore implements OfflineFeedbackLocalStore {
     _requireSupported();
     try {
       final result = await _channel.invokeMethod<T>(method, arguments);
-      if (result == null) throw const FormatException('Native outbox returned no result');
+      if (result == null)
+        throw const FormatException('Native outbox returned no result');
       return result;
     } on PlatformException {
-      throw const OfflineFeedbackStoreException('Android offline storage is unavailable.');
+      throw const OfflineFeedbackStoreException(
+        'Android offline storage is unavailable.',
+      );
     } on MissingPluginException {
-      throw const OfflineFeedbackStoreException('Android offline storage is unavailable.');
+      throw const OfflineFeedbackStoreException(
+        'Android offline storage is unavailable.',
+      );
     }
   }
 
@@ -214,12 +249,17 @@ class MethodChannelOfflineFeedbackStore implements OfflineFeedbackLocalStore {
   }
 
   @override
-  Future<List<OfflineFeedbackQueueItem>> listForOwner(int ownerMemberId, {int limit = 100}) async {
+  Future<List<OfflineFeedbackQueueItem>> listForOwner(
+    int ownerMemberId, {
+    int limit = 100,
+  }) async {
     final result = await _invoke<List<dynamic>>('listForOwner', {
       'owner_member_id': ownerMemberId,
       'limit': limit,
     });
-    return result.map((item) => OfflineFeedbackQueueItem.fromMap(item as Map)).toList();
+    return result
+        .map((item) => OfflineFeedbackQueueItem.fromMap(item as Map))
+        .toList();
   }
 
   @override
@@ -237,11 +277,17 @@ class MethodChannelOfflineFeedbackStore implements OfflineFeedbackLocalStore {
       'now': formatOfflineTimestamp(now),
       'limit': limit,
     });
-    return result.map((item) => OfflineFeedbackQueueItem.fromMap(item as Map)).toList();
+    return result
+        .map((item) => OfflineFeedbackQueueItem.fromMap(item as Map))
+        .toList();
   }
 
   @override
-  Future<void> markSynced(int ownerMemberId, int id, {required DateTime syncedAt}) async {
+  Future<void> markSynced(
+    int ownerMemberId,
+    int id, {
+    required DateTime syncedAt,
+  }) async {
     await _invoke<bool>('markSynced', {
       'owner_member_id': ownerMemberId,
       'id': id,
@@ -250,7 +296,11 @@ class MethodChannelOfflineFeedbackStore implements OfflineFeedbackLocalStore {
   }
 
   @override
-  Future<void> markConflict(int ownerMemberId, int id, {required String errorCode}) async {
+  Future<void> markConflict(
+    int ownerMemberId,
+    int id, {
+    required String errorCode,
+  }) async {
     await _invoke<bool>('markConflict', {
       'owner_member_id': ownerMemberId,
       'id': id,
@@ -277,7 +327,10 @@ class MethodChannelOfflineFeedbackStore implements OfflineFeedbackLocalStore {
 
   @override
   Future<void> manualRetry(int ownerMemberId, int id) async {
-    await _invoke<bool>('manualRetry', {'owner_member_id': ownerMemberId, 'id': id});
+    await _invoke<bool>('manualRetry', {
+      'owner_member_id': ownerMemberId,
+      'id': id,
+    });
   }
 
   @override
@@ -290,8 +343,8 @@ class OfflineFeedbackOutbox {
     this.store, {
     DateTime Function()? clock,
     String Function()? idGenerator,
-  })  : _clock = clock ?? DateTime.now,
-        _idGenerator = idGenerator ?? _secureId;
+  }) : _clock = clock ?? DateTime.now,
+       _idGenerator = idGenerator ?? _secureId;
 
   final OfflineFeedbackLocalStore store;
   final DateTime Function() _clock;
@@ -301,22 +354,29 @@ class OfflineFeedbackOutbox {
   static final Random _random = Random.secure();
   static const _devicePreferenceKey = 'mp_offline_feedback_device_id';
 
-  static String _secureId() => List<int>.generate(16, (_) => _random.nextInt(256))
-      .map((byte) => byte.toRadixString(16).padLeft(2, '0'))
-      .join();
+  static String _secureId() => List<int>.generate(
+    16,
+    (_) => _random.nextInt(256),
+  ).map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
 
   Future<String> _deviceId() => _deviceIdFuture ??= () async {
-        final preferences = await SharedPreferences.getInstance();
-        final saved = preferences.getString(_devicePreferenceKey);
-        if (saved != null && RegExp(r'^[a-f0-9]{32}$').hasMatch(saved)) return saved;
-        final generated = _idGenerator();
-        if (!RegExp(r'^[a-f0-9]{32}$').hasMatch(generated)) {
-          throw const OfflineFeedbackStoreException('A stable local device ID could not be created.');
-        }
-        final stored = await preferences.setString(_devicePreferenceKey, generated);
-        if (!stored) throw const OfflineFeedbackStoreException('A stable local device ID could not be saved.');
-        return generated;
-      }();
+    final preferences = await SharedPreferences.getInstance();
+    final saved = preferences.getString(_devicePreferenceKey);
+    if (saved != null && RegExp(r'^[a-f0-9]{32}$').hasMatch(saved))
+      return saved;
+    final generated = _idGenerator();
+    if (!RegExp(r'^[a-f0-9]{32}$').hasMatch(generated)) {
+      throw const OfflineFeedbackStoreException(
+        'A stable local device ID could not be created.',
+      );
+    }
+    final stored = await preferences.setString(_devicePreferenceKey, generated);
+    if (!stored)
+      throw const OfflineFeedbackStoreException(
+        'A stable local device ID could not be saved.',
+      );
+    return generated;
+  }();
 
   Future<OfflineFeedbackQueueItem> enqueue({
     required int ownerMemberId,
@@ -328,23 +388,34 @@ class OfflineFeedbackOutbox {
     required double? rir,
   }) async {
     if (!store.isSupported) {
-      throw const OfflineFeedbackStoreException('Offline feedback is available only on an explicitly enabled Android build.');
+      throw const OfflineFeedbackStoreException(
+        'Offline feedback is available only on an explicitly enabled Android build.',
+      );
     }
     if (ownerMemberId <= 0 ||
         (programId != null && programId <= 0) ||
-        movementId.trim().isEmpty || movementId.length > 60 ||
-        !weight.isFinite || weight < 0 || weight > 500 ||
-        targetReps < 0 || targetReps > 200 ||
-        repsDone < 0 || repsDone > 200 ||
+        movementId.trim().isEmpty ||
+        movementId.length > 60 ||
+        !weight.isFinite ||
+        weight < 0 ||
+        weight > 500 ||
+        targetReps < 0 ||
+        targetReps > 200 ||
+        repsDone < 0 ||
+        repsDone > 200 ||
         (rir != null && (!rir.isFinite || rir < 0 || rir > 10))) {
-      throw const FormatException('Feedback is outside the offline allowlist or range.');
+      throw const FormatException(
+        'Feedback is outside the offline allowlist or range.',
+      );
     }
     final now = _clock().toUtc();
     final timestamp = formatOfflineTimestamp(now);
     final deviceId = await _deviceId();
     final clientId = _idGenerator();
     if (!RegExp(r'^[a-f0-9]{32}$').hasMatch(clientId)) {
-      throw const OfflineFeedbackStoreException('A stable local item ID could not be created.');
+      throw const OfflineFeedbackStoreException(
+        'A stable local item ID could not be created.',
+      );
     }
     return store.enqueue({
       'owner_member_id': ownerMemberId,
@@ -386,11 +457,15 @@ class OfflineFeedbackSyncResult {
   String get message {
     if (ownerMismatch) return 'صف متعلق به حساب دیگری است و ارسال نشد.';
     if (authRequired) return 'برای همگام‌سازی، با همان حساب دوباره وارد شوید.';
-    if (invalidResponse) return 'پاسخ سرور قابل تأیید نبود؛ داده در صف تعارض نگه داشته شد.';
+    if (invalidResponse)
+      return 'پاسخ سرور قابل تأیید نبود؛ داده در صف تعارض نگه داشته شد.';
     if (notDue) return 'زمان تلاش بعدی هنوز نرسیده است.';
-    if (conflicts > 0) return '$synced مورد همگام شد؛ $conflicts مورد برای بررسی نگه داشته شد.';
-    if (failed > 0) return '$synced مورد همگام شد؛ $failed مورد پس از تلاش‌های خودکار ناموفق ماند.';
-    if (retrying > 0) return '$synced مورد همگام شد؛ تلاش دوباره با فاصلهٔ زمانی انجام می‌شود.';
+    if (conflicts > 0)
+      return '$synced مورد همگام شد؛ $conflicts مورد برای بررسی نگه داشته شد.';
+    if (failed > 0)
+      return '$synced مورد همگام شد؛ $failed مورد پس از تلاش‌های خودکار ناموفق ماند.';
+    if (retrying > 0)
+      return '$synced مورد همگام شد؛ تلاش دوباره با فاصلهٔ زمانی انجام می‌شود.';
     if (synced == 0) return 'موردی برای همگام‌سازیِ اکنون آماده نیست.';
     return '$synced مورد پس از تأیید سرور همگام شد.';
   }
@@ -398,7 +473,7 @@ class OfflineFeedbackSyncResult {
 
 class OfflineFeedbackSyncService {
   OfflineFeedbackSyncService(this.store, {DateTime Function()? clock})
-      : _clock = clock ?? DateTime.now;
+    : _clock = clock ?? DateTime.now;
 
   final OfflineFeedbackLocalStore store;
   final DateTime Function() _clock;
@@ -411,7 +486,9 @@ class OfflineFeedbackSyncService {
     required ApiClient api,
   }) async {
     if (!store.isSupported) {
-      throw const OfflineFeedbackStoreException('Offline feedback is available only on an explicitly enabled Android build.');
+      throw const OfflineFeedbackStoreException(
+        'Offline feedback is available only on an explicitly enabled Android build.',
+      );
     }
     if (currentMemberId <= 0 || currentMemberId != ownerMemberId) {
       return const OfflineFeedbackSyncResult(ownerMismatch: true);
@@ -423,11 +500,17 @@ class OfflineFeedbackSyncService {
     final rows = await store.listDue(ownerMemberId, now: now, limit: 100);
     if (rows.isEmpty) {
       final all = await store.listForOwner(ownerMemberId, limit: 500);
-      final waiting = all.any((row) => row.status == OfflineFeedbackStatus.retry);
+      final waiting = all.any(
+        (row) => row.status == OfflineFeedbackStatus.retry,
+      );
       return OfflineFeedbackSyncResult(notDue: waiting);
     }
-    if (rows.any((row) => row.ownerMemberId != ownerMemberId ||
-        (row.status != OfflineFeedbackStatus.pending && row.status != OfflineFeedbackStatus.retry))) {
+    if (rows.any(
+      (row) =>
+          row.ownerMemberId != ownerMemberId ||
+          (row.status != OfflineFeedbackStatus.pending &&
+              row.status != OfflineFeedbackStatus.retry),
+    )) {
       return const OfflineFeedbackSyncResult(ownerMismatch: true);
     }
 
@@ -445,8 +528,12 @@ class OfflineFeedbackSyncService {
         await _markAllConflict(rows, ownerMemberId, 'server_rejected');
         return OfflineFeedbackSyncResult(conflicts: rows.length);
       }
-      return _retryAll(rows, ownerMemberId, now,
-          errorCode: error.statusCode == null ? 'network' : 'server_5xx');
+      return _retryAll(
+        rows,
+        ownerMemberId,
+        now,
+        errorCode: error.statusCode == null ? 'network' : 'server_5xx',
+      );
     } catch (_) {
       return _retryAll(rows, ownerMemberId, now, errorCode: 'network');
     }
@@ -454,7 +541,10 @@ class OfflineFeedbackSyncService {
     final parsed = _parseResponse(response, rows, ownerMemberId);
     if (parsed == null) {
       await _markAllConflict(rows, ownerMemberId, 'invalid_response');
-      return OfflineFeedbackSyncResult(conflicts: rows.length, invalidResponse: true);
+      return OfflineFeedbackSyncResult(
+        conflicts: rows.length,
+        invalidResponse: true,
+      );
     }
 
     var synced = 0;
@@ -464,20 +554,40 @@ class OfflineFeedbackSyncService {
       final result = parsed.results[row.syncKey]!;
       final action = result['action'];
       final winner = result['winner'];
-      final duplicateAck = ackedDuplicates.contains(row.syncKey) &&
-          action == 'conflict_resolved' && winner == 'server';
-      final clientAck = (action == 'accept' || action == 'conflict_resolved') && winner == 'client';
+      final duplicateAck =
+          ackedDuplicates.contains(row.syncKey) &&
+          action == 'conflict_resolved' &&
+          winner == 'server';
+      final clientAck =
+          (action == 'accept' || action == 'conflict_resolved') &&
+          winner == 'client';
       if (duplicateAck || clientAck) {
-        await store.markSynced(ownerMemberId, row.id, syncedAt: _clock().toUtc());
+        await store.markSynced(
+          ownerMemberId,
+          row.id,
+          syncedAt: _clock().toUtc(),
+        );
         synced++;
       } else if (action == 'reject_stale') {
-        await store.markConflict(ownerMemberId, row.id, errorCode: 'server_stale');
+        await store.markConflict(
+          ownerMemberId,
+          row.id,
+          errorCode: 'server_stale',
+        );
         conflicts++;
       } else if (action == 'reject_clock_skew') {
-        await store.markConflict(ownerMemberId, row.id, errorCode: 'clock_skew');
+        await store.markConflict(
+          ownerMemberId,
+          row.id,
+          errorCode: 'clock_skew',
+        );
         conflicts++;
       } else {
-        await store.markConflict(ownerMemberId, row.id, errorCode: 'invalid_response');
+        await store.markConflict(
+          ownerMemberId,
+          row.id,
+          errorCode: 'invalid_response',
+        );
         conflicts++;
       }
     }
@@ -487,7 +597,8 @@ class OfflineFeedbackSyncService {
   Future<void> retryFailed(int ownerMemberId) async {
     final rows = await store.listForOwner(ownerMemberId, limit: 500);
     for (final row in rows) {
-      if (row.ownerMemberId == ownerMemberId && row.status == OfflineFeedbackStatus.failed) {
+      if (row.ownerMemberId == ownerMemberId &&
+          row.status == OfflineFeedbackStatus.failed) {
         await store.manualRetry(ownerMemberId, row.id);
       }
     }
@@ -535,10 +646,13 @@ class OfflineFeedbackSyncService {
     List<OfflineFeedbackQueueItem> rows,
     int expectedOwnerMemberId,
   ) {
-    if (raw is! Map || raw['member_id'] is! num ||
+    if (raw is! Map ||
+        raw['member_id'] is! num ||
         (raw['member_id'] as num).toInt() != expectedOwnerMemberId ||
-        raw['results'] is! List || raw['unchanged_keys'] is! List ||
-        raw['counts'] is! Map || raw['counts']['received'] is! num ||
+        raw['results'] is! List ||
+        raw['unchanged_keys'] is! List ||
+        raw['counts'] is! Map ||
+        raw['counts']['received'] is! num ||
         (raw['counts']['received'] as num).toInt() != rows.length) {
       return null;
     }
@@ -549,14 +663,19 @@ class OfflineFeedbackSyncService {
     }
     final results = <String, Map<String, dynamic>>{};
     for (final item in raw['results'] as List) {
-      if (item is! Map || item['entity_key'] is! String || item['action'] is! String) return null;
+      if (item is! Map ||
+          item['entity_key'] is! String ||
+          item['action'] is! String)
+        return null;
       final key = item['entity_key'] as String;
       if (results.containsKey(key)) return null;
       results[key] = Map<String, dynamic>.from(item);
     }
     final expected = rows.map((row) => row.syncKey).toSet();
-    if (results.length != rows.length || !results.keys.toSet().containsAll(expected) ||
-        !expected.containsAll(results.keys) || !expected.containsAll(unchanged)) {
+    if (results.length != rows.length ||
+        !results.keys.toSet().containsAll(expected) ||
+        !expected.containsAll(results.keys) ||
+        !expected.containsAll(unchanged)) {
       return null;
     }
     for (final result in results.values) {
@@ -567,7 +686,10 @@ class OfflineFeedbackSyncService {
 }
 
 class _ParsedSyncResponse {
-  const _ParsedSyncResponse({required this.results, required this.unchangedKeys});
+  const _ParsedSyncResponse({
+    required this.results,
+    required this.unchangedKeys,
+  });
   final Map<String, Map<String, dynamic>> results;
   final Set<String> unchangedKeys;
 }

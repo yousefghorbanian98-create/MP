@@ -66,29 +66,33 @@ class MemberChatThread {
 /// فهرست یا پیام قرار نمی‌گیرد. API هویت را از نشست Bearer استخراج می‌کند.
 final memberChatConversationsProvider =
     FutureProvider<List<MemberChatConversation>>((ref) async {
-  final memberId = ref.watch(authProvider.select((state) => state.memberId));
-  if (memberId == null) {
-    throw ApiException('شناسهٔ عضو در نشست موجود نیست');
-  }
+      final memberId = ref.watch(
+        authProvider.select((state) => state.memberId),
+      );
+      if (memberId == null) {
+        throw ApiException('شناسهٔ عضو در نشست موجود نیست');
+      }
 
-  final api = ref.watch(apiClientProvider);
-  final raw = await api.get('/chat/conversations');
-  if (raw is! List) throw ApiException('ساختار فهرست گفتگوها معتبر نیست');
+      final api = ref.watch(apiClientProvider);
+      final raw = await api.get('/chat/conversations');
+      if (raw is! List) throw ApiException('ساختار فهرست گفتگوها معتبر نیست');
 
-  final conversations = <MemberChatConversation>[];
-  for (final row in raw) {
-    if (row is! Map) throw ApiException('رکورد گفتگو معتبر نیست');
-    final conversation = _parseConversation(Map<String, dynamic>.from(row));
-    if (conversation.memberId != memberId) {
-      throw ApiException('گفتگوی دریافتی به عضو جاری تعلق ندارد');
-    }
-    conversations.add(conversation);
-  }
-  return conversations;
-});
+      final conversations = <MemberChatConversation>[];
+      for (final row in raw) {
+        if (row is! Map) throw ApiException('رکورد گفتگو معتبر نیست');
+        final conversation = _parseConversation(Map<String, dynamic>.from(row));
+        if (conversation.memberId != memberId) {
+          throw ApiException('گفتگوی دریافتی به عضو جاری تعلق ندارد');
+        }
+        conversations.add(conversation);
+      }
+      return conversations;
+    });
 
-final memberChatThreadProvider =
-    FutureProvider.family<MemberChatThread, int>((ref, conversationId) async {
+final memberChatThreadProvider = FutureProvider.family<MemberChatThread, int>((
+  ref,
+  conversationId,
+) async {
   final memberId = ref.watch(authProvider.select((state) => state.memberId));
   if (memberId == null) throw ApiException('شناسهٔ عضو در نشست موجود نیست');
   if (conversationId < 1) throw ApiException('شناسهٔ گفتگو نامعتبر است');
@@ -107,7 +111,9 @@ final memberChatThreadProvider =
   final messages = <MemberChatMessage>[];
   for (final row in payload['messages'] as List) {
     if (row is! Map) throw ApiException('رکورد پیام معتبر نیست');
-    messages.add(parseMemberChatMessage(Map<String, dynamic>.from(row), conversationId));
+    messages.add(
+      parseMemberChatMessage(Map<String, dynamic>.from(row), conversationId),
+    );
   }
   return MemberChatThread(
     conversationId: conversationId,
@@ -122,11 +128,15 @@ MemberChatConversation _parseConversation(Map<String, dynamic> row) {
   final coachId = row['coach_id'];
   final subject = row['subject'];
   final status = row['status'];
-  if (id is! int || id < 1 ||
-      memberId is! int || memberId < 1 ||
-      coachId is! int || coachId < 1 ||
+  if (id is! int ||
+      id < 1 ||
+      memberId is! int ||
+      memberId < 1 ||
+      coachId is! int ||
+      coachId < 1 ||
       subject is! String ||
-      status is! String || !const {'open', 'closed'}.contains(status)) {
+      status is! String ||
+      !const {'open', 'closed'}.contains(status)) {
     throw ApiException('اطلاعات دریافتی گفتگو ناقص یا نامعتبر است');
   }
   return MemberChatConversation(
@@ -135,22 +145,31 @@ MemberChatConversation _parseConversation(Map<String, dynamic> row) {
     coachId: coachId,
     subject: subject,
     status: status,
-    lastMessageAt: _nullableTimestamp(row['last_message_at'], 'زمان آخرین پیام'),
+    lastMessageAt: _nullableTimestamp(
+      row['last_message_at'],
+      'زمان آخرین پیام',
+    ),
     createdAt: _nullableTimestamp(row['created_at'], 'زمان ساخت گفتگو'),
   );
 }
 
-MemberChatMessage parseMemberChatMessage(Map<String, dynamic> row, int conversationId) {
+MemberChatMessage parseMemberChatMessage(
+  Map<String, dynamic> row,
+  int conversationId,
+) {
   final id = row['id'];
   final responseConversationId = row['conversation_id'];
   final senderId = row['sender_id'];
   final senderRole = row['sender_role'];
   final body = row['body'];
   final isSystem = row['is_system'];
-  if (id is! int || id < 1 ||
+  if (id is! int ||
+      id < 1 ||
       responseConversationId != conversationId ||
-      senderId is! int || senderId < 1 ||
-      senderRole is! String || !const {'member', 'coach'}.contains(senderRole) ||
+      senderId is! int ||
+      senderId < 1 ||
+      senderRole is! String ||
+      !const {'member', 'coach'}.contains(senderRole) ||
       body is! String ||
       isSystem is! bool) {
     throw ApiException('اطلاعات دریافتی پیام ناقص یا نامعتبر است');

@@ -23,7 +23,11 @@ import '../../core/theme.dart';
 import '../../shared/widgets/glass_card.dart';
 
 /// باز کردن شیت رسید از هر جای فروشگاه.
-Future<void> showOrderReceipt(BuildContext context, WidgetRef ref, int orderId) {
+Future<void> showOrderReceipt(
+  BuildContext context,
+  WidgetRef ref,
+  int orderId,
+) {
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
@@ -80,14 +84,20 @@ class OrderReceiptSheet extends ConsumerWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.receipt_long_outlined,
-                      color: MpColors.danger, size: 34),
+                  const Icon(
+                    Icons.receipt_long_outlined,
+                    color: MpColors.danger,
+                    size: 34,
+                  ),
                   const SizedBox(height: 8),
-                  Text('رسید سفارش #$orderId خوانده نشد\n$e',
-                      textAlign: TextAlign.center),
+                  Text(
+                    'رسید سفارش #$orderId خوانده نشد\n$e',
+                    textAlign: TextAlign.center,
+                  ),
                   const SizedBox(height: 12),
                   OutlinedButton(
-                    onPressed: () => ref.invalidate(orderReceiptProvider(orderId)),
+                    onPressed: () =>
+                        ref.invalidate(orderReceiptProvider(orderId)),
                     child: const Text('تلاش دوباره'),
                   ),
                 ],
@@ -113,7 +123,8 @@ class _ReceiptBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final lines = ((data['lines'] as List?) ?? const []).cast<Map<String, dynamic>>();
+    final lines = ((data['lines'] as List?) ?? const [])
+        .cast<Map<String, dynamic>>();
     final itemsTotal = (data['items_total_rial'] as num?) ?? 0;
     final total = (data['total_rial'] as num?) ?? 0;
     final payment = data['payment'] is Map
@@ -136,13 +147,20 @@ class _ReceiptBody extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.receipt_long_outlined,
-                  color: MpColors.primaryLight, size: 22),
+              const Icon(
+                Icons.receipt_long_outlined,
+                color: MpColors.primaryLight,
+                size: 22,
+              ),
               const SizedBox(width: 8),
               Expanded(
-                child: Text('رسید سفارش',
-                    style: const TextStyle(
-                        fontWeight: FontWeight.w800, fontSize: 16)),
+                child: Text(
+                  'رسید سفارش',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w800,
+                    fontSize: 16,
+                  ),
+                ),
               ),
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
@@ -168,7 +186,9 @@ class _ReceiptBody extends StatelessWidget {
                                     ? 'شناسهٔ رسید از سرور نیامد'
                                     : receiptNo,
                                 style: const TextStyle(
-                                    fontWeight: FontWeight.w800, fontSize: 14),
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 14,
+                                ),
                               ),
                             ),
                             _StatusChip(status: status),
@@ -176,8 +196,10 @@ class _ReceiptBody extends StatelessWidget {
                         ),
                         const SizedBox(height: 6),
                         if (memberName.isNotEmpty) ...[
-                          Text('تحویل به: $memberName',
-                              style: const TextStyle(fontSize: 12.5)),
+                          Text(
+                            'تحویل به: $memberName',
+                            style: const TextStyle(fontSize: 12.5),
+                          ),
                           const SizedBox(height: 2),
                         ],
                         Text(
@@ -188,12 +210,16 @@ class _ReceiptBody extends StatelessWidget {
                               'صدور رسید: ${formatJalaliDate(issuedAt)}',
                           ].join(' · '),
                           style: const TextStyle(
-                              fontSize: 12, color: MpColors.textSecondary),
+                            fontSize: 12,
+                            color: MpColors.textSecondary,
+                          ),
                         ),
                         if (note.isNotEmpty) ...[
                           const SizedBox(height: 6),
-                          Text('یادداشت: $note',
-                              style: const TextStyle(fontSize: 12.5)),
+                          Text(
+                            'یادداشت: $note',
+                            style: const TextStyle(fontSize: 12.5),
+                          ),
                         ],
                       ],
                     ),
@@ -201,8 +227,10 @@ class _ReceiptBody extends StatelessWidget {
                   const SizedBox(height: 10),
                   if (lines.isEmpty)
                     const GlassCard(
-                      child: Text('هیچ قلمی در این سفارش ثبت نشده است',
-                          textAlign: TextAlign.center),
+                      child: Text(
+                        'هیچ قلمی در این سفارش ثبت نشده است',
+                        textAlign: TextAlign.center,
+                      ),
                     )
                   else
                     for (final line in lines) _ReceiptLine(line: line),
@@ -211,19 +239,25 @@ class _ReceiptBody extends StatelessWidget {
                     child: Column(
                       children: [
                         _AmountRow(
-                            label: 'جمع اقلام',
-                            amountRial: itemsTotal,
-                            emphasized: false),
+                          label: 'جمع اقلام',
+                          amountRial: itemsTotal,
+                          emphasized: false,
+                        ),
                         const Divider(height: 18),
                         _AmountRow(
-                            label: 'قابل پرداخت', amountRial: total, emphasized: true),
+                          label: 'قابل پرداخت',
+                          amountRial: total,
+                          emphasized: true,
+                        ),
                         if (totalsDisagree)
                           Padding(
                             padding: const EdgeInsets.only(top: 6),
                             child: Text(
                               'مبلغ کل همان است که سرور ثبت کرده؛ با جمع اقلام یکسان نیست.',
                               style: const TextStyle(
-                                  fontSize: 11.5, color: MpColors.accentSoft),
+                                fontSize: 11.5,
+                                color: MpColors.accentSoft,
+                              ),
                             ),
                           ),
                       ],
@@ -234,8 +268,10 @@ class _ReceiptBody extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('پرداخت',
-                            style: TextStyle(fontWeight: FontWeight.w700)),
+                        const Text(
+                          'پرداخت',
+                          style: TextStyle(fontWeight: FontWeight.w700),
+                        ),
                         const SizedBox(height: 4),
                         Text(
                           payment == null
@@ -251,7 +287,9 @@ class _ReceiptBody extends StatelessWidget {
                                     'زمان پرداخت: ${formatJalaliDate(_date(payment['paid_at'])!)}',
                                 ].join(' · '),
                           style: const TextStyle(
-                              fontSize: 12.5, color: MpColors.textSecondary),
+                            fontSize: 12.5,
+                            color: MpColors.textSecondary,
+                          ),
                         ),
                       ],
                     ),
@@ -260,7 +298,9 @@ class _ReceiptBody extends StatelessWidget {
                   Text(
                     'این رسید فقط خواندنی است؛ مبلغ و اقلام را سرور تعیین می‌کند.',
                     style: TextStyle(
-                        fontSize: 11, color: MpColors.textSecondary.withOpacity(0.85)),
+                      fontSize: 11,
+                      color: MpColors.textSecondary.withOpacity(0.85),
+                    ),
                   ),
                 ],
               ),
@@ -293,7 +333,11 @@ class _StatusChip extends StatelessWidget {
       ),
       child: Text(
         orderStatusLabel(status),
-        style: TextStyle(fontSize: 11.5, color: color, fontWeight: FontWeight.w700),
+        style: TextStyle(
+          fontSize: 11.5,
+          color: color,
+          fontWeight: FontWeight.w700,
+        ),
       ),
     );
   }
@@ -323,7 +367,10 @@ class _ReceiptLine extends StatelessWidget {
                 children: [
                   Text(
                     variant.isEmpty ? title : '$title — $variant',
-                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                    ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -331,7 +378,9 @@ class _ReceiptLine extends StatelessWidget {
                   Text(
                     '${rial(unitPrice)} × ${faDigits(qty)}',
                     style: const TextStyle(
-                        fontSize: 11.5, color: MpColors.textSecondary),
+                      fontSize: 11.5,
+                      color: MpColors.textSecondary,
+                    ),
                   ),
                 ],
               ),
@@ -339,11 +388,14 @@ class _ReceiptLine extends StatelessWidget {
             const SizedBox(width: 8),
             Semantics(
               label: 'مبلغ این قلم',
-              child: Text(rial(lineTotal),
-                  style: const TextStyle(
-                      fontSize: 12.5,
-                      fontWeight: FontWeight.w800,
-                      color: MpColors.accentSoft)),
+              child: Text(
+                rial(lineTotal),
+                style: const TextStyle(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w800,
+                  color: MpColors.accentSoft,
+                ),
+              ),
             ),
           ],
         ),

@@ -40,9 +40,13 @@ class TodayPage extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('سلام، ${auth.userName ?? 'ورزشکار'} 👋',
-                            style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.w900)),
+                        Text(
+                          'سلام، ${auth.userName ?? 'ورزشکار'} 👋',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
                         const SizedBox(height: 4),
                         Text(
                           exercises.isEmpty
@@ -71,7 +75,9 @@ class TodayPage extends ConsumerWidget {
                           child: Text(
                             '${(todayState.progress(exercises.length) * 100).round()}٪',
                             style: const TextStyle(
-                                fontSize: 13, fontWeight: FontWeight.bold),
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ],
@@ -95,10 +101,16 @@ class TodayPage extends ConsumerWidget {
               error: (e, _) => GlassCard(
                 child: Column(
                   children: [
-                    const Icon(Icons.wifi_off, color: MpColors.danger, size: 40),
+                    const Icon(
+                      Icons.wifi_off,
+                      color: MpColors.danger,
+                      size: 40,
+                    ),
                     const SizedBox(height: 8),
-                    Text('خطا در دریافت برنامه: $e',
-                        textAlign: TextAlign.center),
+                    Text(
+                      'خطا در دریافت برنامه: $e',
+                      textAlign: TextAlign.center,
+                    ),
                     const SizedBox(height: 10),
                     OutlinedButton(
                       onPressed: () => ref.invalidate(myProgramsProvider),
@@ -108,7 +120,8 @@ class TodayPage extends ConsumerWidget {
                 ),
               ),
               data: (programs) {
-                final firstProgram = programs.isNotEmpty && programs.first is Map
+                final firstProgram =
+                    programs.isNotEmpty && programs.first is Map
                     ? Map<String, dynamic>.from(programs.first as Map)
                     : null;
                 final programId = firstProgram?['id'] is num
@@ -118,15 +131,24 @@ class TodayPage extends ConsumerWidget {
                   return GlassCard(
                     child: Column(
                       children: [
-                        const Icon(Icons.fitness_center,
-                            size: 44, color: MpColors.primary),
+                        const Icon(
+                          Icons.fitness_center,
+                          size: 44,
+                          color: MpColors.primary,
+                        ),
                         const SizedBox(height: 10),
-                        const Text('هنوز برنامه‌ای ندارید',
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold)),
+                        const Text(
+                          'هنوز برنامه‌ای ندارید',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         const SizedBox(height: 6),
-                        Text('با چند پرسش ساده، برنامهٔ اختصاصی شما ساخته می‌شود',
-                            style: TextStyle(color: MpColors.textSecondary)),
+                        Text(
+                          'با چند پرسش ساده، برنامهٔ اختصاصی شما ساخته می‌شود',
+                          style: TextStyle(color: MpColors.textSecondary),
+                        ),
                         const SizedBox(height: 14),
                         FilledButton.icon(
                           onPressed: () => context.push('/intake'),
@@ -141,11 +163,11 @@ class TodayPage extends ConsumerWidget {
                   children: [
                     for (var i = 0; i < exercises.length; i++)
                       _ExerciseTile(
-                        index: i,
-                        exercise: exercises[i],
-                        done: todayState.done.contains(i),
-                        programId: programId,
-                      )
+                            index: i,
+                            exercise: exercises[i],
+                            done: todayState.done.contains(i),
+                            programId: programId,
+                          )
                           .animate()
                           .fadeIn(delay: (80 * i).ms, duration: 350.ms)
                           .slideX(begin: 0.08),
@@ -181,8 +203,7 @@ class _ExerciseTile extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
-          onTap: () =>
-              ref.read(todayControllerProvider.notifier).toggle(index),
+          onTap: () => ref.read(todayControllerProvider.notifier).toggle(index),
           child: Row(
             children: [
               AnimatedScale(
@@ -206,42 +227,56 @@ class _ExerciseTile extends ConsumerWidget {
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         decoration: done ? TextDecoration.lineThrough : null,
-                        color: done ? MpColors.textSecondary : MpColors.textPrimary,
+                        color: done
+                            ? MpColors.textSecondary
+                            : MpColors.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 3),
                     Text(
                       '${exercise['sets']} ست × ${exercise['reps']} — استراحت ${exercise['rest_seconds']} ثانیه',
                       style: TextStyle(
-                          fontSize: 12, color: MpColors.textSecondary),
+                        fontSize: 12,
+                        color: MpColors.textSecondary,
+                      ),
                     ),
                   ],
                 ),
               ),
               IconButton(
                 tooltip: 'بازخورد ست',
-                icon: const Icon(Icons.rate_review_outlined,
-                    size: 20, color: MpColors.textSecondary),
+                icon: const Icon(
+                  Icons.rate_review_outlined,
+                  size: 20,
+                  color: MpColors.textSecondary,
+                ),
                 onPressed: () => showModalBottomSheet<void>(
                   context: context,
                   isScrollControlled: true,
                   builder: (_) => SetFeedbackSheet(
-                    movementName: (exercise['exercise_name'] as String?) ??
+                    movementName:
+                        (exercise['exercise_name'] as String?) ??
                         'حرکت ${exercise['exercise_id'] ?? ''}',
                     programId: programId,
                   ),
                 ),
               ),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
                 decoration: BoxDecoration(
                   color: MpColors.primary.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Text('${exercise['load_pct']}٪ بار',
-                    style: const TextStyle(
-                        fontSize: 11, color: MpColors.primaryLight)),
+                child: Text(
+                  '${exercise['load_pct']}٪ بار',
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: MpColors.primaryLight,
+                  ),
+                ),
               ),
             ],
           ),

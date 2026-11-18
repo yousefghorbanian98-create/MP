@@ -35,17 +35,27 @@ class ProgressPage extends ConsumerWidget {
           GlassCard(
             child: Row(
               children: [
-                const Icon(Icons.trending_up, color: MpColors.primary, size: 36),
+                const Icon(
+                  Icons.trending_up,
+                  color: MpColors.primary,
+                  size: 36,
+                ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('روند پیشرفت شما',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                      Text('ارزیابی‌های مربی — داده‌های شما فقط توسط ادمین ثبت می‌شود',
-                          style: TextStyle(
-                              fontSize: 12, color: MpColors.textSecondary)),
+                      const Text(
+                        'روند پیشرفت شما',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        'ارزیابی‌های مربی — داده‌های شما فقط توسط ادمین ثبت می‌شود',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: MpColors.textSecondary,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -55,24 +65,33 @@ class ProgressPage extends ConsumerWidget {
           const SizedBox(height: 12),
           assessments.when(
             loading: () => const Center(
-                child: Padding(
-              padding: EdgeInsets.all(40),
-              child: CircularProgressIndicator(),
-            )),
-            error: (e, _) => GlassCard(
-                child: Text('خطا: $e', textAlign: TextAlign.center)),
+              child: Padding(
+                padding: EdgeInsets.all(40),
+                child: CircularProgressIndicator(),
+              ),
+            ),
+            error: (e, _) =>
+                GlassCard(child: Text('خطا: $e', textAlign: TextAlign.center)),
             data: (list) {
               if (list.isEmpty) {
                 return GlassCard(
                   child: Column(
                     children: [
-                      const Icon(Icons.insights, size: 40, color: MpColors.info),
+                      const Icon(
+                        Icons.insights,
+                        size: 40,
+                        color: MpColors.info,
+                      ),
                       const SizedBox(height: 8),
-                      const Text('هنوز ارزیابی ثبت نشده است',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      const Text(
+                        'هنوز ارزیابی ثبت نشده است',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                       const SizedBox(height: 6),
-                      Text('پس از ارزیابی توسط مربی، روند شما اینجا دیده می‌شود',
-                          style: TextStyle(color: MpColors.textSecondary)),
+                      Text(
+                        'پس از ارزیابی توسط مربی، روند شما اینجا دیده می‌شود',
+                        style: TextStyle(color: MpColors.textSecondary),
+                      ),
                     ],
                   ),
                 );
@@ -83,8 +102,10 @@ class ProgressPage extends ConsumerWidget {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 10),
                       child: GlassCard(
-                        child: Text('ارزیابی شمارهٔ ${(a as Map<String, dynamic>)['id']}',
-                            style: const TextStyle(fontWeight: FontWeight.bold)),
+                        child: Text(
+                          'ارزیابی شمارهٔ ${(a as Map<String, dynamic>)['id']}',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
                       ),
                     ),
                 ],

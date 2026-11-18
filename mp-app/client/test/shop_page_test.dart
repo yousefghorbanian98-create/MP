@@ -62,7 +62,12 @@ void main() {
           'variants': <dynamic>[],
         },
       ],
-      '/shop/cart': {'member_id': 1, 'items': <dynamic>[], 'total_rial': 0, 'count': 0},
+      '/shop/cart': {
+        'member_id': 1,
+        'items': <dynamic>[],
+        'total_rial': 0,
+        'count': 0,
+      },
     });
 
     await tester.pumpWidget(
@@ -93,7 +98,12 @@ void main() {
   testWidgets('کاتالوگ خالی ← پیام راهنما، نه صفحهٔ سفید', (tester) async {
     final fake = _FakeClient({
       '/shop/products': <dynamic>[],
-      '/shop/cart': {'member_id': 1, 'items': <dynamic>[], 'total_rial': 0, 'count': 0},
+      '/shop/cart': {
+        'member_id': 1,
+        'items': <dynamic>[],
+        'total_rial': 0,
+        'count': 0,
+      },
     });
 
     await tester.pumpWidget(
@@ -119,7 +129,9 @@ void main() {
   // نداشت و ردیف سبد فقط `×۲` نشان می‌داد. تست زیر هر سه عمل را می‌سنجد و
   // **مسیر و متد** را هم چک می‌کند تا اگر کسی دکمه را به مسیر اشتباه وصل کرد
   // گرفته شود.
-  testWidgets('سبد: افزایش، کاهش و حذف قلم واقعاً به سرور می‌رود', (tester) async {
+  testWidgets('سبد: افزایش، کاهش و حذف قلم واقعاً به سرور می‌رود', (
+    tester,
+  ) async {
     final fake = _FakeClient({
       '/shop/products': <dynamic>[],
       '/shop/cart': {

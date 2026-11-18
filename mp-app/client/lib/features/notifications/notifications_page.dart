@@ -25,7 +25,9 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
     if (_busyIds.contains(notificationId)) return;
     setState(() => _busyIds.add(notificationId));
     try {
-      await ref.read(apiClientProvider).post('/notifications/$notificationId/read', {});
+      await ref
+          .read(apiClientProvider)
+          .post('/notifications/$notificationId/read', {});
       if (!mounted) return;
       setState(() => _message = 'اعلان به‌عنوان خوانده‌شده ثبت شد');
       ref.invalidate(myNotificationsProvider);
@@ -57,7 +59,10 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
               if (_message != null)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 10),
-                  child: Text(_message!, style: const TextStyle(color: MpColors.primaryLight)),
+                  child: Text(
+                    _message!,
+                    style: const TextStyle(color: MpColors.primaryLight),
+                  ),
                 ),
               notifications.when(
                 loading: () => const GlassCard(
@@ -69,34 +74,49 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                 error: (error, _) => GlassCard(
                   child: Column(
                     children: [
-                      const Icon(Icons.error_outline, color: MpColors.danger, size: 36),
+                      const Icon(
+                        Icons.error_outline,
+                        color: MpColors.danger,
+                        size: 36,
+                      ),
                       const SizedBox(height: 8),
-                      Text('دریافت اعلان‌ها ناموفق بود: $error', textAlign: TextAlign.center),
+                      Text(
+                        'دریافت اعلان‌ها ناموفق بود: $error',
+                        textAlign: TextAlign.center,
+                      ),
                       const SizedBox(height: 8),
                       OutlinedButton(
-                        onPressed: () => ref.invalidate(myNotificationsProvider),
+                        onPressed: () =>
+                            ref.invalidate(myNotificationsProvider),
                         child: const Text('تلاش دوباره'),
                       ),
                     ],
                   ),
                 ),
                 data: (rows) {
-                  final unreadCount = rows.where((row) => row['read_at'] == null).length;
+                  final unreadCount = rows
+                      .where((row) => row['read_at'] == null)
+                      .length;
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       GlassCard(
                         child: Row(
                           children: [
-                            const Icon(Icons.notifications_active_outlined,
-                                color: MpColors.primary, size: 28),
+                            const Icon(
+                              Icons.notifications_active_outlined,
+                              color: MpColors.primary,
+                              size: 28,
+                            ),
                             const SizedBox(width: 12),
                             Expanded(
                               child: Text(
                                 unreadCount == 0
                                     ? 'همهٔ اعلان‌ها خوانده شده‌اند'
                                     : '${_toPersianDigits('$unreadCount')} اعلان خوانده‌نشده',
-                                style: const TextStyle(fontWeight: FontWeight.w700),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
                             ),
                           ],
@@ -106,22 +126,35 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                       if (rows.isEmpty)
                         const GlassCard(
                           child: Padding(
-                            padding: EdgeInsets.symmetric(vertical: 28, horizontal: 12),
+                            padding: EdgeInsets.symmetric(
+                              vertical: 28,
+                              horizontal: 12,
+                            ),
                             child: Column(
                               children: [
-                                Icon(Icons.notifications_none, size: 38, color: MpColors.textSecondary),
+                                Icon(
+                                  Icons.notifications_none,
+                                  size: 38,
+                                  color: MpColors.textSecondary,
+                                ),
                                 SizedBox(height: 8),
-                                Text('اعلانی ندارید', textAlign: TextAlign.center),
+                                Text(
+                                  'اعلانی ندارید',
+                                  textAlign: TextAlign.center,
+                                ),
                               ],
                             ),
                           ),
                         )
                       else
-                        for (final row in rows) _NotificationTile(
-                          notification: row,
-                          isBusy: _busyIds.contains((row['id'] as num).toInt()),
-                          onMarkRead: _markRead,
-                        ),
+                        for (final row in rows)
+                          _NotificationTile(
+                            notification: row,
+                            isBusy: _busyIds.contains(
+                              (row['id'] as num).toInt(),
+                            ),
+                            onMarkRead: _markRead,
+                          ),
                     ],
                   );
                 },
@@ -150,8 +183,11 @@ class _NotificationTile extends StatelessWidget {
     final id = (notification['id'] as num).toInt();
     final unread = notification['read_at'] == null;
     final title = notification['title'] as String;
-    final body = notification['body'] is String ? notification['body'] as String : '';
-    final createdAt = DateTime.parse(notification['created_at'] as String).toLocal();
+    final body = notification['body'] is String
+        ? notification['body'] as String
+        : '';
+    final createdAt = DateTime.parse(notification['created_at'] as String)
+        .toLocal();
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: GlassCard(
@@ -167,17 +203,28 @@ class _NotificationTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: const TextStyle(fontWeight: FontWeight.w700)),
+                  Text(
+                    title,
+                    style: const TextStyle(fontWeight: FontWeight.w700),
+                  ),
                   if (body.isNotEmpty) ...[
                     const SizedBox(height: 5),
-                    Text(body, style: TextStyle(color: MpColors.textSecondary, height: 1.5)),
+                    Text(
+                      body,
+                      style: TextStyle(
+                        color: MpColors.textSecondary,
+                        height: 1.5,
+                      ),
+                    ),
                   ],
                   const SizedBox(height: 7),
                   Text(
                     '${unread ? 'خوانده‌نشده' : 'خوانده‌شده'} · ${formatJalaliDate(createdAt)}',
                     style: TextStyle(
                       fontSize: 11,
-                      color: unread ? MpColors.primaryLight : MpColors.textSecondary,
+                      color: unread
+                          ? MpColors.primaryLight
+                          : MpColors.textSecondary,
                     ),
                   ),
                 ],
@@ -202,6 +249,6 @@ class _NotificationTile extends StatelessWidget {
 }
 
 String _toPersianDigits(String value) => value.replaceAllMapped(
-      RegExp(r'\d'),
-      (match) => '۰۱۲۳۴۵۶۷۸۹'[int.parse(match.group(0)!)],
-    );
+  RegExp(r'\d'),
+  (match) => '۰۱۲۳۴۵۶۷۸۹'[int.parse(match.group(0)!)],
+);

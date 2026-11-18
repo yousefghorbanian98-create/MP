@@ -45,11 +45,14 @@ class _PagedWalletClient extends http.BaseClient {
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
     final path = request.url.path.replaceFirst('/api/v1', '');
     final query = request.url.queryParameters;
-    calls.add('${request.method} $path${request.url.hasQuery ? '?${request.url.query}' : ''}');
+    calls.add(
+      '${request.method} $path${request.url.hasQuery ? '?${request.url.query}' : ''}',
+    );
     late final Object payload;
     if (path == '/payments') {
       payload = <dynamic>[];
-    } else if (path == '/payments/wallet/1/transactions' && query['before_id'] == null) {
+    } else if (path == '/payments/wallet/1/transactions' &&
+        query['before_id'] == null) {
       payload = {
         'member_id': 1,
         'balance_rial': 70000,
@@ -73,7 +76,8 @@ class _PagedWalletClient extends http.BaseClient {
         ],
         'next_before_id': 2,
       };
-    } else if (path == '/payments/wallet/1/transactions' && query['before_id'] == '2') {
+    } else if (path == '/payments/wallet/1/transactions' &&
+        query['before_id'] == '2') {
       payload = {
         'member_id': 1,
         'balance_rial': 70000,
@@ -105,23 +109,25 @@ class _PagedWalletClient extends http.BaseClient {
 
 /// authProvider با هویت عضو override می‌شود تا wallet/balance/ledger واقعی سنجیده شوند.
 Widget _wrap(http.Client client) => ProviderScope(
-      overrides: [
-        httpClientProvider.overrideWithValue(client),
-        authProvider.overrideWith(
-          (ref) => AuthController.test(AuthState(accessToken: 't', memberId: 1)),
-        ),
-      ],
-      child: MaterialApp(
-        theme: mpTheme(),
-        home: const Directionality(
-          textDirection: TextDirection.rtl,
-          child: Scaffold(body: WalletPage()),
-        ),
-      ),
-    );
+  overrides: [
+    httpClientProvider.overrideWithValue(client),
+    authProvider.overrideWith(
+      (ref) => AuthController.test(AuthState(accessToken: 't', memberId: 1)),
+    ),
+  ],
+  child: MaterialApp(
+    theme: mpTheme(),
+    home: const Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(body: WalletPage()),
+    ),
+  ),
+);
 
 void main() {
-  testWidgets('تاریخچهٔ پرداخت از API می‌آید و مبلغ/وضعیت را نشان می‌دهد', (tester) async {
+  testWidgets('تاریخچهٔ پرداخت از API می‌آید و مبلغ/وضعیت را نشان می‌دهد', (
+    tester,
+  ) async {
     final fake = _FakeClient({
       '/payments/wallet/1/transactions': {
         'member_id': 1,
@@ -174,7 +180,10 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(fake.calls, contains('GET /payments'));
-    expect(fake.calls, contains('GET /payments/wallet/1/transactions?limit=20'));
+    expect(
+      fake.calls,
+      contains('GET /payments/wallet/1/transactions?limit=20'),
+    );
     expect(fake.calls, isNot(contains('GET /payments/wallet/1')));
     expect(find.text('دفتر گردش کیف پول'), findsOneWidget);
     expect(find.text('85,000 ریال'), findsOneWidget);
@@ -212,7 +221,9 @@ void main() {
     expect(find.text('هنوز تراکنشی در کیف‌پول ثبت نشده است.'), findsOneWidget);
   });
 
-  testWidgets('دفتر بزرگ‌تر با نشانگر قبل از شناسه صفحه‌بندی می‌شود', (tester) async {
+  testWidgets('دفتر بزرگ‌تر با نشانگر قبل از شناسه صفحه‌بندی می‌شود', (
+    tester,
+  ) async {
     final client = _PagedWalletClient();
     await tester.pumpWidget(_wrap(client));
     await tester.pumpAndSettle();
@@ -224,7 +235,10 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('شارژ اولیه'), findsOneWidget);
-    expect(client.calls.where((call) => call.contains('/transactions')).length, 2);
+    expect(
+      client.calls.where((call) => call.contains('/transactions')).length,
+      2,
+    );
     expect(client.calls.last, contains('before_id=2'));
     expect(find.text('تراکنش‌های قدیمی‌تر'), findsNothing);
   });
@@ -253,6 +267,9 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('دادهٔ خصوصی عضو دیگر'), findsNothing);
-    expect(find.textContaining('دفتر کیف‌پول متعلق به عضو نشست نیست'), findsOneWidget);
+    expect(
+      find.textContaining('دفتر کیف‌پول متعلق به عضو نشست نیست'),
+      findsOneWidget,
+    );
   });
 }

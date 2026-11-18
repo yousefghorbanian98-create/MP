@@ -18,7 +18,8 @@ class _PhoneChangeClient extends http.BaseClient {
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
     requests.add(request);
-    final body = jsonDecode((request as http.Request).body) as Map<String, dynamic>;
+    final body =
+        jsonDecode((request as http.Request).body) as Map<String, dynamic>;
     final path = request.url.path;
     late final int status;
     late final Map<String, dynamic> payload;
@@ -29,10 +30,14 @@ class _PhoneChangeClient extends http.BaseClient {
         'expires_in': 120,
         'dev_code': '111111',
       };
-    } else if (path.endsWith('/auth/phone-change/verify-old') && body['code'] == '000000') {
+    } else if (path.endsWith('/auth/phone-change/verify-old') &&
+        body['code'] == '000000') {
       status = 400;
       payload = {
-        'error': {'code': 'invalid_otp', 'message': 'کد شمارهٔ فعلی نادرست است'},
+        'error': {
+          'code': 'invalid_otp',
+          'message': 'کد شمارهٔ فعلی نادرست است',
+        },
       };
     } else if (path.endsWith('/auth/phone-change/verify-old')) {
       status = 200;
@@ -65,16 +70,18 @@ class _ProfileClient extends http.BaseClient {
     if (!request.url.path.endsWith('/members/me')) {
       throw StateError('Unexpected profile request: ${request.url.path}');
     }
-    final bytes = utf8.encode(jsonEncode({
-      'id': 3,
-      'user_id': 7,
-      'full_name': 'عضو آزمون',
-      'phone': '09121234567',
-      'goal': 'fitness',
-      'gender': 'male',
-      'height_cm': 175,
-      'constraints': '[]',
-    }));
+    final bytes = utf8.encode(
+      jsonEncode({
+        'id': 3,
+        'user_id': 7,
+        'full_name': 'عضو آزمون',
+        'phone': '09121234567',
+        'goal': 'fitness',
+        'gender': 'male',
+        'height_cm': 175,
+        'constraints': '[]',
+      }),
+    );
     return http.StreamedResponse(
       Stream.value(bytes),
       200,
@@ -97,29 +104,32 @@ class _PhoneChangeHarnessState extends State<_PhoneChangeHarness> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextButton(
-                onPressed: () async {
-                  final result = await showDialog<bool>(
-                    context: context,
-                    builder: (_) => const PhoneChangeDialog(currentPhone: '09121234567'),
-                  );
-                  if (mounted) setState(() => _result = '$result');
-                },
-                child: const Text('باز کردن'),
-              ),
-              Text('نتیجه: $_result'),
-            ],
+    body: Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextButton(
+            onPressed: () async {
+              final result = await showDialog<bool>(
+                context: context,
+                builder: (_) =>
+                    const PhoneChangeDialog(currentPhone: '09121234567'),
+              );
+              if (mounted) setState(() => _result = '$result');
+            },
+            child: const Text('باز کردن'),
           ),
-        ),
-      );
+          Text('نتیجه: $_result'),
+        ],
+      ),
+    ),
+  );
 }
 
 void main() {
-  testWidgets('تأیید شمارهٔ فعلی سپس جدید؛ خطای کد، شماره را تغییر نمی‌دهد', (tester) async {
+  testWidgets('تأیید شمارهٔ فعلی سپس جدید؛ خطای کد، شماره را تغییر نمی‌دهد', (
+    tester,
+  ) async {
     final httpClient = _PhoneChangeClient();
     final api = ApiClient(
       httpClient: httpClient,
@@ -165,25 +175,31 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('نتیجه: true'), findsOneWidget);
 
-    expect(
-      httpClient.requests.map((request) => request.url.path).toList(),
-      [
-        '/api/v1/auth/phone-change/request',
-        '/api/v1/auth/phone-change/verify-old',
-        '/api/v1/auth/phone-change/verify-old',
-        '/api/v1/auth/phone-change/confirm',
-      ],
-    );
+    expect(httpClient.requests.map((request) => request.url.path).toList(), [
+      '/api/v1/auth/phone-change/request',
+      '/api/v1/auth/phone-change/verify-old',
+      '/api/v1/auth/phone-change/verify-old',
+      '/api/v1/auth/phone-change/confirm',
+    ]);
     for (final request in httpClient.requests) {
       expect(request.headers['Authorization'], 'Bearer session-token');
     }
-    final requestBody = jsonDecode((httpClient.requests.first as http.Request).body);
+    final requestBody = jsonDecode(
+      (httpClient.requests.first as http.Request).body,
+    );
     expect(requestBody, {'new_phone': '09123456789'});
-    final confirmBody = jsonDecode((httpClient.requests.last as http.Request).body);
-    expect(confirmBody, {'challenge_id': 'challenge-m82-test', 'code': '222222'});
+    final confirmBody = jsonDecode(
+      (httpClient.requests.last as http.Request).body,
+    );
+    expect(confirmBody, {
+      'challenge_id': 'challenge-m82-test',
+      'code': '222222',
+    });
   });
 
-  testWidgets('پروفایل عضو، تغییر شماره را به دیالوگ دو مرحله‌ای وصل می‌کند', (tester) async {
+  testWidgets('پروفایل عضو، تغییر شماره را به دیالوگ دو مرحله‌ای وصل می‌کند', (
+    tester,
+  ) async {
     final api = ApiClient(
       httpClient: _ProfileClient(),
       baseUrl: 'https://api.example.test/api/v1',

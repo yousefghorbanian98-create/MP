@@ -76,7 +76,10 @@ class ShopPage extends ConsumerWidget {
               children: [
                 const Icon(Icons.wifi_off, color: MpColors.danger, size: 40),
                 const SizedBox(height: 8),
-                Text('دریافت محصولات ناموفق بود\n$e', textAlign: TextAlign.center),
+                Text(
+                  'دریافت محصولات ناموفق بود\n$e',
+                  textAlign: TextAlign.center,
+                ),
                 const SizedBox(height: 12),
                 OutlinedButton(
                   onPressed: () {
@@ -115,13 +118,14 @@ class ShopPage extends ConsumerWidget {
                 childAspectRatio: 0.72,
               ),
               itemCount: items.length,
-              itemBuilder: (context, i) => _ProductCard(
-                product: items[i],
-                onAdd: () => _add(context, ref, items[i]),
-              )
-                  .animate()
-                  .fadeIn(duration: 220.ms, delay: (30 * i).ms)
-                  .slideY(begin: 0.08, end: 0, curve: Curves.easeOutCubic),
+              itemBuilder: (context, i) =>
+                  _ProductCard(
+                        product: items[i],
+                        onAdd: () => _add(context, ref, items[i]),
+                      )
+                      .animate()
+                      .fadeIn(duration: 220.ms, delay: (30 * i).ms)
+                      .slideY(begin: 0.08, end: 0, curve: Curves.easeOutCubic),
             ),
           );
         },
@@ -129,7 +133,11 @@ class ShopPage extends ConsumerWidget {
     );
   }
 
-  Future<void> _add(BuildContext context, WidgetRef ref, Map<String, dynamic> product) async {
+  Future<void> _add(
+    BuildContext context,
+    WidgetRef ref,
+    Map<String, dynamic> product,
+  ) async {
     final api = ref.read(apiClientProvider);
     try {
       await api.post('/shop/cart', {'product_id': product['id'], 'qty': 1});
@@ -182,7 +190,11 @@ class _ProductCard extends StatelessWidget {
                   ? Container(
                       width: double.infinity,
                       color: MpColors.primary.withOpacity(0.10),
-                      child: const Icon(Icons.inventory_2_outlined, size: 40, color: MpColors.primaryLight),
+                      child: const Icon(
+                        Icons.inventory_2_outlined,
+                        size: 40,
+                        color: MpColors.primaryLight,
+                      ),
                     )
                   : Image.network(
                       image,
@@ -190,7 +202,10 @@ class _ProductCard extends StatelessWidget {
                       fit: BoxFit.cover,
                       errorBuilder: (_, __, ___) => Container(
                         color: MpColors.primary.withOpacity(0.10),
-                        child: const Icon(Icons.image_not_supported_outlined, color: MpColors.primaryLight),
+                        child: const Icon(
+                          Icons.image_not_supported_outlined,
+                          color: MpColors.primaryLight,
+                        ),
                       ),
                     ),
             ),
@@ -200,7 +215,11 @@ class _ProductCard extends StatelessWidget {
             (product['title'] as String?) ?? '',
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700, color: MpColors.textPrimary),
+            style: const TextStyle(
+              fontSize: 12.5,
+              fontWeight: FontWeight.w700,
+              color: MpColors.textPrimary,
+            ),
           ),
           const SizedBox(height: 4),
           Row(
@@ -208,7 +227,11 @@ class _ProductCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   rial(price),
-                  style: const TextStyle(fontSize: 11.5, color: MpColors.accentSoft, fontWeight: FontWeight.w800),
+                  style: const TextStyle(
+                    fontSize: 11.5,
+                    color: MpColors.accentSoft,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
               ),
               if (compare != null && compare > price)
@@ -229,7 +252,10 @@ class _ProductCard extends StatelessWidget {
             child: FilledButton(
               onPressed: soldOut ? null : onAdd,
               style: FilledButton.styleFrom(padding: EdgeInsets.zero),
-              child: Text(soldOut ? 'ناموجود' : 'افزودن به سبد', style: const TextStyle(fontSize: 11.5)),
+              child: Text(
+                soldOut ? 'ناموجود' : 'افزودن به سبد',
+                style: const TextStyle(fontSize: 11.5),
+              ),
             ),
           ),
         ],
@@ -344,7 +370,9 @@ class _CartSheetState extends ConsumerState<_CartSheet> {
       ref.read(hapticsProvider).success();
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('سفارش #$orderId ثبت شد و از کیف‌پول پرداخت شد')),
+        SnackBar(
+          content: Text('سفارش #$orderId ثبت شد و از کیف‌پول پرداخت شد'),
+        ),
       );
     } catch (e) {
       if (!mounted) return;
@@ -371,19 +399,30 @@ class _CartSheetState extends ConsumerState<_CartSheet> {
         bottom: MediaQuery.of(context).viewInsets.bottom + 20,
       ),
       child: cart.when(
-        loading: () => const SizedBox(height: 160, child: Center(child: CircularProgressIndicator())),
-        error: (e, _) => SizedBox(height: 120, child: Center(child: Text('$e'))),
+        loading: () => const SizedBox(
+          height: 160,
+          child: Center(child: CircularProgressIndicator()),
+        ),
+        error: (e, _) =>
+            SizedBox(height: 120, child: Center(child: Text('$e'))),
         data: (c) {
-          final items = ((c['items'] as List?) ?? const []).cast<Map<String, dynamic>>();
+          final items = ((c['items'] as List?) ?? const [])
+              .cast<Map<String, dynamic>>();
           final total = (c['total_rial'] as num?) ?? 0;
           if (items.isEmpty) {
-            return const SizedBox(height: 140, child: Center(child: Text('سبد خالی است')));
+            return const SizedBox(
+              height: 140,
+              child: Center(child: Text('سبد خالی است')),
+            );
           }
           return Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('سبد خرید', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+              const Text(
+                'سبد خرید',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+              ),
               const SizedBox(height: 8),
               // M60/B2 — سبد تا امروز فقط خواندنی بود: تعداد فقط نمایش داده
               // می‌شد و راهی برای کم/زیاد کردن یا حذف نبود، در حالی که سرور
@@ -403,25 +442,35 @@ class _CartSheetState extends ConsumerState<_CartSheet> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text('قابل پرداخت'),
-                  Text(rial(total), style: const TextStyle(fontWeight: FontWeight.w800, color: MpColors.accentSoft)),
+                  Text(
+                    rial(total),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w800,
+                      color: MpColors.accentSoft,
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 4),
               gateways.maybeWhen(
                 data: (gs) {
-                  final enabled = gs.where((g) => g['is_enabled'] == true).toList();
+                  final enabled = gs
+                      .where((g) => g['is_enabled'] == true)
+                      .toList();
                   if (enabled.isEmpty) return const SizedBox.shrink();
                   return Padding(
                     padding: const EdgeInsets.only(top: 6),
                     child: Wrap(
                       spacing: 6,
                       children: enabled
-                          .map((g) => Chip(
-                                label: Text(
-                                  '${g['title']}${(g['card_number_masked'] as String?)?.isNotEmpty == true ? ' · ${g['card_number_masked']}' : ''}',
-                                  style: const TextStyle(fontSize: 10.5),
-                                ),
-                              ))
+                          .map(
+                            (g) => Chip(
+                              label: Text(
+                                '${g['title']}${(g['card_number_masked'] as String?)?.isNotEmpty == true ? ' · ${g['card_number_masked']}' : ''}',
+                                style: const TextStyle(fontSize: 10.5),
+                              ),
+                            ),
+                          )
                           .toList(),
                     ),
                   );
@@ -435,7 +484,11 @@ class _CartSheetState extends ConsumerState<_CartSheet> {
                 child: FilledButton(
                   onPressed: _busy ? null : _checkout,
                   child: _busy
-                      ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
                       : const Text('پرداخت از کیف‌پول'),
                 ),
               ),
@@ -484,7 +537,10 @@ class _CartRow extends StatelessWidget {
                 ),
                 Text(
                   rial((line['line_total_rial'] as num?) ?? 0),
-                  style: const TextStyle(fontSize: 12, color: MpColors.textSecondary),
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: MpColors.textSecondary,
+                  ),
                 ),
               ],
             ),
@@ -507,7 +563,11 @@ class _CartRow extends StatelessWidget {
           IconButton(
             tooltip: 'حذف از سبد',
             onPressed: busy ? null : onRemove,
-            icon: const Icon(Icons.delete_outline, size: 20, color: Colors.redAccent),
+            icon: const Icon(
+              Icons.delete_outline,
+              size: 20,
+              color: Colors.redAccent,
+            ),
           ),
         ],
       ),

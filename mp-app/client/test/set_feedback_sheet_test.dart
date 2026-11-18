@@ -19,8 +19,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          if (haptics != null)
-            hapticsProvider.overrideWith((ref) => haptics),
+          if (haptics != null) hapticsProvider.overrideWith((ref) => haptics),
           submitSetFeedbackProvider.overrideWithValue((entries) async {
             captured?.addAll(entries);
             return {
@@ -31,9 +30,10 @@ void main() {
                   'weight_action': 'keep_bodyweight',
                   'next_sets': null, // M48-c1: deload عدد مطلق نمی‌دهد
                   'volume_action': 'deload',
-                  'reason': 'درد عضلانی ۸/۱۰ ≥ ۷ ← کاهش یک ست جلسهٔ بعد (بازیابی)',
+                  'reason':
+                      'درد عضلانی ۸/۱۰ ≥ ۷ ← کاهش یک ست جلسهٔ بعد (بازیابی)',
                   'rule_version': 'set-feedback-1.0',
-                }
+                },
               ],
               'applied': {
                 'weeks_updated': 2,
@@ -46,7 +46,9 @@ void main() {
           }),
         ],
         child: const MaterialApp(
-          home: Scaffold(body: SetFeedbackSheet(movementName: 'شنای سوئدی سطح ۱')),
+          home: Scaffold(
+            body: SetFeedbackSheet(movementName: 'شنای سوئدی سطح ۱'),
+          ),
         ),
       ),
     );
@@ -55,14 +57,19 @@ void main() {
 
   testWidgets('renders feedback form with sliders and submit', (tester) async {
     await pumpSheet(tester);
-    expect(find.textContaining('بازخورد ست — شنای سوئدی سطح ۱'), findsOneWidget);
+    expect(
+      find.textContaining('بازخورد ست — شنای سوئدی سطح ۱'),
+      findsOneWidget,
+    );
     // M48-c1 — دو فیلد: وزنه + تکرار (پیش‌تر فقط تکرار بود و weight همیشه ۰ می‌رفت)
     expect(find.byType(TextField), findsNWidgets(2));
     expect(find.byType(Slider), findsNWidgets(2));
     expect(find.widgetWithText(FilledButton, 'ثبت بازخورد'), findsOneWidget);
   });
 
-  testWidgets('submit shows why-card with data-rule-decision chain', (tester) async {
+  testWidgets('submit shows why-card with data-rule-decision chain', (
+    tester,
+  ) async {
     final captured = <Map<String, dynamic>>[];
     final haptics = RecordingHaptics();
     await pumpSheet(tester, captured: captured, haptics: haptics);
@@ -92,7 +99,9 @@ void main() {
     expect(haptics.events, isEmpty);
   });
 
-  testWidgets('M48-c1: shows that the suggestion was actually applied', (tester) async {
+  testWidgets('M48-c1: shows that the suggestion was actually applied', (
+    tester,
+  ) async {
     await pumpSheet(tester);
     await tester.enterText(find.byType(TextField).at(1), '12');
     await tester.tap(find.widgetWithText(FilledButton, 'ثبت بازخورد'));
@@ -101,7 +110,9 @@ void main() {
     expect(find.textContaining('2 هفته'), findsOneWidget);
   });
 
-  testWidgets('M98/UX-G3: ارسال ناموفق پالس هشدار می‌دهد، نه پالس موفق', (tester) async {
+  testWidgets('M98/UX-G3: ارسال ناموفق پالس هشدار می‌دهد، نه پالس موفق', (
+    tester,
+  ) async {
     final haptics = RecordingHaptics();
     await tester.pumpWidget(
       ProviderScope(
@@ -112,7 +123,9 @@ void main() {
           }),
         ],
         child: const MaterialApp(
-          home: Scaffold(body: SetFeedbackSheet(movementName: 'شنای سوئدی سطح ۱')),
+          home: Scaffold(
+            body: SetFeedbackSheet(movementName: 'شنای سوئدی سطح ۱'),
+          ),
         ),
       ),
     );
@@ -126,7 +139,9 @@ void main() {
     expect(find.textContaining('چرا این تغییر؟'), findsNothing);
   });
 
-  testWidgets('M48-c1: sends the real weight, not hardcoded zero', (tester) async {
+  testWidgets('M48-c1: sends the real weight, not hardcoded zero', (
+    tester,
+  ) async {
     final captured = <Map<String, dynamic>>[];
     await pumpSheet(tester, captured: captured);
     await tester.enterText(find.byType(TextField).at(0), '62.5');

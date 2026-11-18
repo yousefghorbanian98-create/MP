@@ -39,18 +39,29 @@ class ProgramResult extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        const Icon(Icons.fitness_center, color: MpColors.primary),
+                        const Icon(
+                          Icons.fitness_center,
+                          color: MpColors.primary,
+                        ),
                         const SizedBox(width: 8),
-                        Text('برنامهٔ $goal — ${weeks.length} هفته',
-                            style: const TextStyle(
-                                fontSize: 17, fontWeight: FontWeight.bold)),
+                        Text(
+                          'برنامهٔ $goal — ${weeks.length} هفته',
+                          style: const TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ],
                     ),
                     if (engineVersion.isNotEmpty) ...[
                       const SizedBox(height: 6),
-                      Text('نسخهٔ موتور: $engineVersion',
-                          style:
-                              TextStyle(color: MpColors.textSecondary, fontSize: 12)),
+                      Text(
+                        'نسخهٔ موتور: $engineVersion',
+                        style: TextStyle(
+                          color: MpColors.textSecondary,
+                          fontSize: 12,
+                        ),
+                      ),
                     ],
                     if (explanation.isNotEmpty) ...[
                       const SizedBox(height: 10),
@@ -87,8 +98,10 @@ class ProgramResult extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('هفتهٔ ${week['week_number']} — ${week['focus'] ?? ''}',
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+            Text(
+              'هفتهٔ ${week['week_number']} — ${week['focus'] ?? ''}',
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+            ),
             const SizedBox(height: 8),
             ...exercises.map(_exerciseRow),
           ],
@@ -105,23 +118,31 @@ class ProgramResult extends StatelessWidget {
         children: [
           Expanded(
             flex: 3,
-            child: Text('حرکت ${ex['exercise_id']} — روز ${ex['day']}',
-                style: const TextStyle(fontSize: 13)),
+            child: Text(
+              'حرکت ${ex['exercise_id']} — روز ${ex['day']}',
+              style: const TextStyle(fontSize: 13),
+            ),
           ),
           Expanded(
             flex: 3,
-            child: Text('${ex['sets']} × ${ex['reps']}',
-                style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+            child: Text(
+              '${ex['sets']} × ${ex['reps']}',
+              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+            ),
           ),
           Expanded(
             flex: 2,
-            child: Text('${ex['load_pct']}٪',
-                style: TextStyle(fontSize: 13, color: MpColors.primary)),
+            child: Text(
+              '${ex['load_pct']}٪',
+              style: TextStyle(fontSize: 13, color: MpColors.primary),
+            ),
           ),
           Expanded(
             flex: 2,
-            child: Text('${ex['rest_seconds']}s',
-                style: TextStyle(fontSize: 12, color: MpColors.textSecondary)),
+            child: Text(
+              '${ex['rest_seconds']}s',
+              style: TextStyle(fontSize: 12, color: MpColors.textSecondary),
+            ),
           ),
         ],
       ),
@@ -133,11 +154,17 @@ class ProgramResult extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('برنامهٔ غذایی شما',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+          const Text(
+            'برنامهٔ غذایی شما',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+          ),
           const SizedBox(height: 8),
-          Text('کالری روزانه: ${n['target_kcal'] ?? n['daily_kcal']} کیلوکالری'),
-          Text('پروتئین: ${n['protein_g']} گرم — کربوهیدرات: ${n['carbs_g']} گرم — چربی: ${n['fat_g']} گرم'),
+          Text(
+            'کالری روزانه: ${n['target_kcal'] ?? n['daily_kcal']} کیلوکالری',
+          ),
+          Text(
+            'پروتئین: ${n['protein_g']} گرم — کربوهیدرات: ${n['carbs_g']} گرم — چربی: ${n['fat_g']} گرم',
+          ),
         ],
       ),
     );

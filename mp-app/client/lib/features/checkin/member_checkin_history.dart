@@ -13,32 +13,36 @@ const _historyPageSize = 30;
 
 final memberCheckInHistoryProvider =
     FutureProvider.family<Map<String, dynamic>, int>((ref, offset) async {
-  final api = ref.watch(apiClientProvider);
-  final raw = await api.get('/members/me/checkins?limit=$_historyPageSize&offset=$offset');
-  if (raw is! Map) throw ApiException('ساختار پاسخ سوابق حضور معتبر نیست');
+      final api = ref.watch(apiClientProvider);
+      final raw = await api.get(
+        '/members/me/checkins?limit=$_historyPageSize&offset=$offset',
+      );
+      if (raw is! Map) throw ApiException('ساختار پاسخ سوابق حضور معتبر نیست');
 
-  final payload = Map<String, dynamic>.from(raw);
-  final rows = payload['items'];
-  if (rows is! List || payload['has_more'] is! bool) {
-    throw ApiException('ساختار پاسخ سوابق حضور ناقص است');
-  }
-  final items = <Map<String, dynamic>>[];
-  for (final row in rows) {
-    if (row is! Map) throw ApiException('رکورد حضور معتبر نیست');
-    final item = Map<String, dynamic>.from(row);
-    if (item['checkin_id'] is! int ||
-        item['method'] is! String ||
-        item['result'] is! String ||
-        item['denial_reason'] is! String ||
-        item['is_open'] is! bool ||
-        (item['checked_in_at'] != null && item['checked_in_at'] is! String) ||
-        (item['checked_out_at'] != null && item['checked_out_at'] is! String)) {
-      throw ApiException('رکورد حضور معتبر نیست');
-    }
-    items.add(item);
-  }
-  return {...payload, 'items': items};
-});
+      final payload = Map<String, dynamic>.from(raw);
+      final rows = payload['items'];
+      if (rows is! List || payload['has_more'] is! bool) {
+        throw ApiException('ساختار پاسخ سوابق حضور ناقص است');
+      }
+      final items = <Map<String, dynamic>>[];
+      for (final row in rows) {
+        if (row is! Map) throw ApiException('رکورد حضور معتبر نیست');
+        final item = Map<String, dynamic>.from(row);
+        if (item['checkin_id'] is! int ||
+            item['method'] is! String ||
+            item['result'] is! String ||
+            item['denial_reason'] is! String ||
+            item['is_open'] is! bool ||
+            (item['checked_in_at'] != null &&
+                item['checked_in_at'] is! String) ||
+            (item['checked_out_at'] != null &&
+                item['checked_out_at'] is! String)) {
+          throw ApiException('رکورد حضور معتبر نیست');
+        }
+        items.add(item);
+      }
+      return {...payload, 'items': items};
+    });
 
 class MemberCheckInHistoryPage extends ConsumerStatefulWidget {
   const MemberCheckInHistoryPage({super.key});
@@ -48,7 +52,8 @@ class MemberCheckInHistoryPage extends ConsumerStatefulWidget {
       _MemberCheckInHistoryPageState();
 }
 
-class _MemberCheckInHistoryPageState extends ConsumerState<MemberCheckInHistoryPage> {
+class _MemberCheckInHistoryPageState
+    extends ConsumerState<MemberCheckInHistoryPage> {
   final List<Map<String, dynamic>> _olderItems = [];
   bool _loadingMore = false;
   bool? _hasMoreOverride;
@@ -65,7 +70,9 @@ class _MemberCheckInHistoryPageState extends ConsumerState<MemberCheckInHistoryP
       final page = await ref.read(memberCheckInHistoryProvider(offset).future);
       if (!mounted) return;
       setState(() {
-        _olderItems.addAll((page['items'] as List).cast<Map<String, dynamic>>());
+        _olderItems.addAll(
+          (page['items'] as List).cast<Map<String, dynamic>>(),
+        );
         _hasMoreOverride = page['has_more'] as bool;
       });
     } catch (error) {
@@ -96,9 +103,11 @@ class _MemberCheckInHistoryPageState extends ConsumerState<MemberCheckInHistoryP
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('دریافت سوابق حضور ناموفق بود: $error',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(color: MpColors.danger)),
+              Text(
+                'دریافت سوابق حضور ناموفق بود: $error',
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: MpColors.danger),
+              ),
               const SizedBox(height: 10),
               OutlinedButton(
                 onPressed: _retryFirstPage,
@@ -109,7 +118,8 @@ class _MemberCheckInHistoryPageState extends ConsumerState<MemberCheckInHistoryP
         ),
       ),
       data: (payload) {
-        final firstPage = (payload['items'] as List).cast<Map<String, dynamic>>();
+        final firstPage = (payload['items'] as List)
+            .cast<Map<String, dynamic>>();
         final items = [...firstPage, ..._olderItems];
         final hasMore = _hasMoreOverride ?? (payload['has_more'] as bool);
         return ListView(
@@ -119,11 +129,14 @@ class _MemberCheckInHistoryPageState extends ConsumerState<MemberCheckInHistoryP
             Row(
               children: [
                 const Expanded(
-                  child: Text('سوابق حضور',
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w800,
-                          color: MpColors.textPrimary)),
+                  child: Text(
+                    'سوابق حضور',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      color: MpColors.textPrimary,
+                    ),
+                  ),
                 ),
                 IconButton(
                   tooltip: 'تازه‌سازی سوابق',
@@ -135,8 +148,10 @@ class _MemberCheckInHistoryPageState extends ConsumerState<MemberCheckInHistoryP
             const SizedBox(height: 12),
             if (items.isEmpty)
               const GlassCard(
-                child: Text('هنوز سابقهٔ حضوری ثبت نشده است.',
-                    style: TextStyle(color: MpColors.textSecondary)),
+                child: Text(
+                  'هنوز سابقهٔ حضوری ثبت نشده است.',
+                  style: TextStyle(color: MpColors.textSecondary),
+                ),
               )
             else
               for (final item in items) ...[
@@ -144,8 +159,10 @@ class _MemberCheckInHistoryPageState extends ConsumerState<MemberCheckInHistoryP
                 const SizedBox(height: 10),
               ],
             if (_loadMoreError != null) ...[
-              Text('دریافت سوابق قدیمی‌تر ناموفق بود: $_loadMoreError',
-                  style: const TextStyle(color: MpColors.danger)),
+              Text(
+                'دریافت سوابق قدیمی‌تر ناموفق بود: $_loadMoreError',
+                style: const TextStyle(color: MpColors.danger),
+              ),
               TextButton(
                 onPressed: _loadingMore
                     ? null
@@ -210,23 +227,40 @@ class _CheckInHistoryItem extends StatelessWidget {
                   ),
                 ),
               ),
-              Text(method, style: const TextStyle(fontSize: 12, color: MpColors.textSecondary)),
+              Text(
+                method,
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: MpColors.textSecondary,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 8),
-          Text('ورود: ${_formatMemberDateTime(item['checked_in_at'] as String?)}',
-              style: const TextStyle(fontSize: 12, color: MpColors.textPrimary)),
+          Text(
+            'ورود: ${_formatMemberDateTime(item['checked_in_at'] as String?)}',
+            style: const TextStyle(fontSize: 12, color: MpColors.textPrimary),
+          ),
           if (checkedOutAt != null)
-            Text('خروج: ${_formatMemberDateTime(checkedOutAt)}',
-                style: const TextStyle(fontSize: 12, color: MpColors.textPrimary))
+            Text(
+              'خروج: ${_formatMemberDateTime(checkedOutAt)}',
+              style: const TextStyle(fontSize: 12, color: MpColors.textPrimary),
+            )
           else if (item['is_open'] == true)
-            const Text('زمان خروج ثبت نشده است',
-                style: TextStyle(fontSize: 11, color: MpColors.textSecondary)),
+            const Text(
+              'زمان خروج ثبت نشده است',
+              style: TextStyle(fontSize: 11, color: MpColors.textSecondary),
+            ),
           if (!successful && reason.isNotEmpty)
             Padding(
               padding: const EdgeInsets.only(top: 5),
-              child: Text('دلیل: ${_denialReasonFa(reason)}',
-                  style: const TextStyle(fontSize: 11, color: MpColors.textSecondary)),
+              child: Text(
+                'دلیل: ${_denialReasonFa(reason)}',
+                style: const TextStyle(
+                  fontSize: 11,
+                  color: MpColors.textSecondary,
+                ),
+              ),
             ),
         ],
       ),
@@ -235,9 +269,9 @@ class _CheckInHistoryItem extends StatelessWidget {
 }
 
 String _denialReasonFa(String reason) => switch (reason) {
-      'membership_expired' => 'اشتراک فعال نیست یا منقضی شده است',
-      _ => reason,
-    };
+  'membership_expired' => 'اشتراک فعال نیست یا منقضی شده است',
+  _ => reason,
+};
 
 String _formatMemberDateTime(String? value) {
   if (value == null) return 'زمان نامعلوم';
@@ -246,7 +280,8 @@ String _formatMemberDateTime(String? value) {
   final local = parsed.toLocal();
   final date =
       '${local.year}/${local.month.toString().padLeft(2, '0')}/${local.day.toString().padLeft(2, '0')}';
-  final time = '${local.hour.toString().padLeft(2, '0')}:${local.minute.toString().padLeft(2, '0')}';
+  final time =
+      '${local.hour.toString().padLeft(2, '0')}:${local.minute.toString().padLeft(2, '0')}';
   return '${_toPersianDigits(date)} · ${_toPersianDigits(time)}';
 }
 

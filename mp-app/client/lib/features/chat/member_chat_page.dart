@@ -52,7 +52,9 @@ class _MemberChatPageState extends ConsumerState<MemberChatPage> {
 
   Future<void> _refreshConversations() async {
     try {
-      await ref.refresh(memberChatConversationsProvider.future).then<void>((_) {});
+      await ref
+          .refresh(memberChatConversationsProvider.future)
+          .then<void>((_) {});
     } catch (_) {
       // خطا در AsyncValue نمایش داده می‌شود؛ refresh indicator نباید آن را
       // به empty یا خطای ثانویه تبدیل کند.
@@ -100,7 +102,10 @@ class _MemberChatPageState extends ConsumerState<MemberChatPage> {
     }
   }
 
-  Future<void> _markRead(MemberChatConversation conversation, int unreadCount) async {
+  Future<void> _markRead(
+    MemberChatConversation conversation,
+    int unreadCount,
+  ) async {
     if (_markingRead || unreadCount < 1) return;
     setState(() {
       _markingRead = true;
@@ -113,12 +118,16 @@ class _MemberChatPageState extends ConsumerState<MemberChatPage> {
         '/chat/conversations/${conversation.id}/read',
         const <String, dynamic>{},
       );
-      if (raw is! Map || raw['marked_read'] is! int || (raw['marked_read'] as int) < 0) {
+      if (raw is! Map ||
+          raw['marked_read'] is! int ||
+          (raw['marked_read'] as int) < 0) {
         throw ApiException('پاسخ ثبت خوانده‌شدن معتبر نیست');
       }
       final count = raw['marked_read'] as int;
       if (!mounted) return;
-      setState(() => _actionNotice = '${_persianDigits('$count')} پیام خوانده شد');
+      setState(
+        () => _actionNotice = '${_persianDigits('$count')} پیام خوانده شد',
+      );
       ref.invalidate(memberChatThreadProvider(conversation.id));
     } catch (error) {
       if (!mounted) return;
@@ -173,10 +182,14 @@ class _MemberChatPageState extends ConsumerState<MemberChatPage> {
             children: [
               const Icon(Icons.error_outline, color: MpColors.danger, size: 38),
               const SizedBox(height: 8),
-              Text('دریافت گفتگوها ناموفق بود: $error', textAlign: TextAlign.center),
+              Text(
+                'دریافت گفتگوها ناموفق بود: $error',
+                textAlign: TextAlign.center,
+              ),
               const SizedBox(height: 10),
               OutlinedButton(
-                onPressed: () => ref.invalidate(memberChatConversationsProvider),
+                onPressed: () =>
+                    ref.invalidate(memberChatConversationsProvider),
                 child: const Text('تلاش دوباره'),
               ),
             ],
@@ -192,7 +205,11 @@ class _MemberChatPageState extends ConsumerState<MemberChatPage> {
             const GlassCard(
               child: Row(
                 children: [
-                  Icon(Icons.forum_outlined, color: MpColors.primaryLight, size: 26),
+                  Icon(
+                    Icons.forum_outlined,
+                    color: MpColors.primaryLight,
+                    size: 26,
+                  ),
                   SizedBox(width: 12),
                   Expanded(
                     child: Text(
@@ -210,16 +227,24 @@ class _MemberChatPageState extends ConsumerState<MemberChatPage> {
                   padding: EdgeInsets.symmetric(vertical: 18, horizontal: 8),
                   child: Column(
                     children: [
-                      Icon(Icons.chat_bubble_outline,
-                          size: 38, color: MpColors.textSecondary),
+                      Icon(
+                        Icons.chat_bubble_outline,
+                        size: 38,
+                        color: MpColors.textSecondary,
+                      ),
                       SizedBox(height: 8),
-                      Text('هنوز گفتگویی ندارید',
-                          style: TextStyle(fontWeight: FontWeight.w700)),
+                      Text(
+                        'هنوز گفتگویی ندارید',
+                        style: TextStyle(fontWeight: FontWeight.w700),
+                      ),
                       SizedBox(height: 6),
                       Text(
                         'برای آغاز گفتگو، از مربی خود بخواهید در سامانهٔ مجموعه به شما پیام بدهد.',
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: MpColors.textSecondary, height: 1.5),
+                        style: TextStyle(
+                          color: MpColors.textSecondary,
+                          height: 1.5,
+                        ),
                       ),
                     ],
                   ),
@@ -251,10 +276,14 @@ class _MemberChatPageState extends ConsumerState<MemberChatPage> {
             children: [
               const Icon(Icons.error_outline, color: MpColors.danger, size: 38),
               const SizedBox(height: 8),
-              Text('دریافت پیام‌ها ناموفق بود: $error', textAlign: TextAlign.center),
+              Text(
+                'دریافت پیام‌ها ناموفق بود: $error',
+                textAlign: TextAlign.center,
+              ),
               const SizedBox(height: 10),
               OutlinedButton(
-                onPressed: () => ref.invalidate(memberChatThreadProvider(conversation.id)),
+                onPressed: () =>
+                    ref.invalidate(memberChatThreadProvider(conversation.id)),
                 child: const Text('تلاش دوباره'),
               ),
             ],
@@ -308,23 +337,22 @@ class _MemberChatPageState extends ConsumerState<MemberChatPage> {
   }
 
   Widget _threadStatus(MemberChatConversation conversation) => Padding(
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-        child: Row(
-          children: [
-            const Icon(Icons.support_agent, color: MpColors.primaryLight, size: 22),
-            const SizedBox(width: 8),
-            const Expanded(
-              child: Text('گفتگو با مربی',
-                  style: TextStyle(fontWeight: FontWeight.w700)),
-            ),
-            if (conversation.status == 'closed')
-              const Chip(
-                label: Text('بسته'),
-                visualDensity: VisualDensity.compact,
-              ),
-          ],
+    padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+    child: Row(
+      children: [
+        const Icon(Icons.support_agent, color: MpColors.primaryLight, size: 22),
+        const SizedBox(width: 8),
+        const Expanded(
+          child: Text(
+            'گفتگو با مربی',
+            style: TextStyle(fontWeight: FontWeight.w700),
+          ),
         ),
-      );
+        if (conversation.status == 'closed')
+          const Chip(label: Text('بسته'), visualDensity: VisualDensity.compact),
+      ],
+    ),
+  );
 
   Widget _messageList(List<MemberChatMessage> messages) {
     if (messages.isEmpty) {
@@ -350,51 +378,54 @@ class _MemberChatPageState extends ConsumerState<MemberChatPage> {
   }
 
   Widget _composer(MemberChatConversation conversation) => SafeArea(
-        top: false,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Expanded(
-                child: TextField(
-                  key: const ValueKey('member-chat-composer'),
-                  controller: _messageController,
-                  enabled: !_sending,
-                  textDirection: TextDirection.rtl,
-                  minLines: 1,
-                  maxLines: 4,
-                  maxLength: 2000,
-                  decoration: const InputDecoration(
-                    hintText: 'پیام خود را بنویسید…',
-                    filled: true,
-                    counterText: '',
-                    border: OutlineInputBorder(),
-                    contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                  ),
-                  onChanged: (_) => setState(() {
-                    _actionError = null;
-                  }),
+    top: false,
+    child: Padding(
+      padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Expanded(
+            child: TextField(
+              key: const ValueKey('member-chat-composer'),
+              controller: _messageController,
+              enabled: !_sending,
+              textDirection: TextDirection.rtl,
+              minLines: 1,
+              maxLines: 4,
+              maxLength: 2000,
+              decoration: const InputDecoration(
+                hintText: 'پیام خود را بنویسید…',
+                filled: true,
+                counterText: '',
+                border: OutlineInputBorder(),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
                 ),
               ),
-              const SizedBox(width: 8),
-              IconButton.filled(
-                tooltip: 'ارسال پیام',
-                onPressed: _sending || _messageController.text.trim().isEmpty
-                    ? null
-                    : () => _sendMessage(conversation),
-                icon: _sending
-                    ? const SizedBox(
-                        width: 18,
-                        height: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Icon(Icons.send),
-              ),
-            ],
+              onChanged: (_) => setState(() {
+                _actionError = null;
+              }),
+            ),
           ),
-        ),
-      );
+          const SizedBox(width: 8),
+          IconButton.filled(
+            tooltip: 'ارسال پیام',
+            onPressed: _sending || _messageController.text.trim().isEmpty
+                ? null
+                : () => _sendMessage(conversation),
+            icon: _sending
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(Icons.send),
+          ),
+        ],
+      ),
+    ),
+  );
 }
 
 class _ConversationTile extends StatelessWidget {
@@ -423,17 +454,21 @@ class _ConversationTile extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(conversation.title,
-                        style: const TextStyle(fontWeight: FontWeight.w700)),
+                    Text(
+                      conversation.title,
+                      style: const TextStyle(fontWeight: FontWeight.w700),
+                    ),
                     const SizedBox(height: 4),
                     Text(
                       conversation.status == 'closed'
                           ? 'گفتگو بسته شده'
                           : date == null
-                              ? 'هنوز پیامی ندارد'
-                              : 'آخرین پیام · $date',
+                          ? 'هنوز پیامی ندارد'
+                          : 'آخرین پیام · $date',
                       style: const TextStyle(
-                          fontSize: 12, color: MpColors.textSecondary),
+                        fontSize: 12,
+                        color: MpColors.textSecondary,
+                      ),
                     ),
                   ],
                 ),
@@ -458,20 +493,26 @@ class _MessageBubble extends StatelessWidget {
     final alignment = message.isSystem
         ? Alignment.center
         : isOwn
-            ? AlignmentDirectional.centerEnd
-            : AlignmentDirectional.centerStart;
+        ? AlignmentDirectional.centerEnd
+        : AlignmentDirectional.centerStart;
     final color = message.isSystem
         ? MpColors.surface
         : isOwn
-            ? MpColors.primary.withOpacity(0.22)
-            : MpColors.surface.withOpacity(0.92);
-    final sender = message.isSystem ? 'پیام سامانه' : isOwn ? 'شما' : 'مربی';
+        ? MpColors.primary.withOpacity(0.22)
+        : MpColors.surface.withOpacity(0.92);
+    final sender = message.isSystem
+        ? 'پیام سامانه'
+        : isOwn
+        ? 'شما'
+        : 'مربی';
     final time = _formatChatTime(message.createdAt);
 
     return Align(
       alignment: alignment,
       child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: MediaQuery.sizeOf(context).width * 0.82),
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.sizeOf(context).width * 0.82,
+        ),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 10),
           decoration: BoxDecoration(
@@ -485,9 +526,15 @@ class _MessageBubble extends StatelessWidget {
               Text(message.body, style: const TextStyle(height: 1.45)),
               const SizedBox(height: 5),
               Text(
-                [sender, if (time != null) time, if (message.readAt != null) 'خوانده‌شده']
-                    .join(' · '),
-                style: const TextStyle(fontSize: 10, color: MpColors.textSecondary),
+                [
+                  sender,
+                  if (time != null) time,
+                  if (message.readAt != null) 'خوانده‌شده',
+                ].join(' · '),
+                style: const TextStyle(
+                  fontSize: 10,
+                  color: MpColors.textSecondary,
+                ),
               ),
             ],
           ),
@@ -505,13 +552,15 @@ class _ActionMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        child: Text(
-          message,
-          textAlign: TextAlign.center,
-          style: TextStyle(color: isError ? MpColors.danger : MpColors.primaryLight),
-        ),
-      );
+    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+    child: Text(
+      message,
+      textAlign: TextAlign.center,
+      style: TextStyle(
+        color: isError ? MpColors.danger : MpColors.primaryLight,
+      ),
+    ),
+  );
 }
 
 String? _formatChatTime(String? iso) {
@@ -519,11 +568,12 @@ String? _formatChatTime(String? iso) {
   final parsed = DateTime.tryParse(iso);
   if (parsed == null) return null;
   final local = parsed.toLocal();
-  final time = '${local.hour.toString().padLeft(2, '0')}:${local.minute.toString().padLeft(2, '0')}';
+  final time =
+      '${local.hour.toString().padLeft(2, '0')}:${local.minute.toString().padLeft(2, '0')}';
   return '${formatJalaliDate(local)} · ${_persianDigits(time)}';
 }
 
 String _persianDigits(String value) => value.replaceAllMapped(
-      RegExp(r'\d'),
-      (match) => '۰۱۲۳۴۵۶۷۸۹'[int.parse(match.group(0)!)],
-    );
+  RegExp(r'\d'),
+  (match) => '۰۱۲۳۴۵۶۷۸۹'[int.parse(match.group(0)!)],
+);

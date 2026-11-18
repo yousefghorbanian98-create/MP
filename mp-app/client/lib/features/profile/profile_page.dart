@@ -19,14 +19,19 @@ Future<_PendingQueueExitChoice> _confirmPendingFeedbackExit(
   int? ownerMemberId,
 ) async {
   final store = ref.read(offlineFeedbackStoreProvider);
-  if (ownerMemberId == null || !store.isSupported) return _PendingQueueExitChoice.none;
+  if (ownerMemberId == null || !store.isSupported)
+    return _PendingQueueExitChoice.none;
   late final int count;
   try {
     count = await store.countUnresolved(ownerMemberId);
   } catch (_) {
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('وضعیت صف محلی خوانده نشد؛ برای ایمنی خروج/تغییر شماره لغو شد.')),
+        const SnackBar(
+          content: Text(
+            'وضعیت صف محلی خوانده نشد؛ برای ایمنی خروج/تغییر شماره لغو شد.',
+          ),
+        ),
       );
     }
     return _PendingQueueExitChoice.cancel;
@@ -43,16 +48,19 @@ Future<_PendingQueueExitChoice> _confirmPendingFeedbackExit(
       ),
       actions: [
         TextButton(
-          onPressed: () => Navigator.pop(dialogContext, _PendingQueueExitChoice.cancel),
+          onPressed: () =>
+              Navigator.pop(dialogContext, _PendingQueueExitChoice.cancel),
           child: const Text('انصراف'),
         ),
         TextButton(
-          onPressed: () => Navigator.pop(dialogContext, _PendingQueueExitChoice.keep),
+          onPressed: () =>
+              Navigator.pop(dialogContext, _PendingQueueExitChoice.keep),
           child: const Text('خروج با نگه‌داشتن صف'),
         ),
         TextButton(
           style: TextButton.styleFrom(foregroundColor: Colors.redAccent),
-          onPressed: () => Navigator.pop(dialogContext, _PendingQueueExitChoice.discard),
+          onPressed: () =>
+              Navigator.pop(dialogContext, _PendingQueueExitChoice.discard),
           child: const Text('حذف صف'),
         ),
       ],
@@ -65,9 +73,14 @@ Future<_PendingQueueExitChoice> _confirmPendingFeedbackExit(
     context: context,
     builder: (dialogContext) => AlertDialog(
       title: const Text('حذف قطعی صف؟'),
-      content: const Text('این داده‌ها برای همیشه از این دستگاه پاک می‌شوند و به سرور نمی‌رسند.'),
+      content: const Text(
+        'این داده‌ها برای همیشه از این دستگاه پاک می‌شوند و به سرور نمی‌رسند.',
+      ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(dialogContext, false), child: const Text('بازگشت')),
+        TextButton(
+          onPressed: () => Navigator.pop(dialogContext, false),
+          child: const Text('بازگشت'),
+        ),
         FilledButton(
           style: FilledButton.styleFrom(backgroundColor: Colors.redAccent),
           onPressed: () => Navigator.pop(dialogContext, true),
@@ -76,7 +89,9 @@ Future<_PendingQueueExitChoice> _confirmPendingFeedbackExit(
       ],
     ),
   );
-  return confirmed == true ? _PendingQueueExitChoice.discard : _PendingQueueExitChoice.cancel;
+  return confirmed == true
+      ? _PendingQueueExitChoice.discard
+      : _PendingQueueExitChoice.cancel;
 }
 
 final meProvider = FutureProvider<Map<String, dynamic>>((ref) async {
@@ -148,21 +163,30 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     // The server revoked every session with the phone update. The queue choice
     // was made before the change; preserve or discard is applied only now.
     try {
-      await ref.read(authProvider.notifier).logout(
+      await ref
+          .read(authProvider.notifier)
+          .logout(
             keepPendingFeedback: queueChoice == _PendingQueueExitChoice.keep,
-            discardPendingFeedback: queueChoice == _PendingQueueExitChoice.discard,
+            discardPendingFeedback:
+                queueChoice == _PendingQueueExitChoice.discard,
           );
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('خروج امن انجام نشد؛ وضعیت صف محلی بررسی شود.')),
+          const SnackBar(
+            content: Text('خروج امن انجام نشد؛ وضعیت صف محلی بررسی شود.'),
+          ),
         );
       }
       return;
     }
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('شماره عوض شد؛ برای امنیت با شمارهٔ جدید دوباره وارد شوید.')),
+      const SnackBar(
+        content: Text(
+          'شماره عوض شد؛ برای امنیت با شمارهٔ جدید دوباره وارد شوید.',
+        ),
+      ),
     );
     context.go('/otp');
   }
@@ -179,9 +203,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('خطا در دریافت پروفایل: $e',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(color: Colors.redAccent)),
+                Text(
+                  'خطا در دریافت پروفایل: $e',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.redAccent),
+                ),
                 const SizedBox(height: 12),
                 OutlinedButton(
                   onPressed: () => ref.invalidate(meProvider),
@@ -192,7 +218,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
           ),
         ),
         data: (m) {
-          _name.text = _editing ? _name.text : (m['full_name'] as String? ?? '');
+          _name.text = _editing
+              ? _name.text
+              : (m['full_name'] as String? ?? '');
           _height.text = _editing
               ? _height.text
               : ((m['height_cm'] as int?)?.toString() ?? '');
@@ -213,20 +241,33 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             gradient: LinearGradient(
-                              colors: [MpColors.primary, MpColors.primary.withOpacity(0.5)],
+                              colors: [
+                                MpColors.primary,
+                                MpColors.primary.withOpacity(0.5),
+                              ],
                               begin: Alignment.topRight,
                               end: Alignment.bottomLeft,
                             ),
                           ),
-                          child: const Icon(Icons.person, size: 48, color: Colors.white),
+                          child: const Icon(
+                            Icons.person,
+                            size: 48,
+                            color: Colors.white,
+                          ),
                         ),
                         const SizedBox(height: 12),
-                        Text(m['full_name'] as String? ?? 'بدون نام',
-                            style: const TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.w900)),
+                        Text(
+                          m['full_name'] as String? ?? 'بدون نام',
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
                         const SizedBox(height: 4),
-                        Text(m['phone'] as String? ?? '',
-                            style: TextStyle(color: MpColors.textSecondary)),
+                        Text(
+                          m['phone'] as String? ?? '',
+                          style: TextStyle(color: MpColors.textSecondary),
+                        ),
                         TextButton.icon(
                           onPressed: _busy
                               ? null
@@ -238,13 +279,13 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  GlassCard(
-                    child: _editing ? _editForm() : _viewForm(m),
-                  ),
+                  GlassCard(child: _editing ? _editForm() : _viewForm(m)),
                   const SizedBox(height: 12),
                   if (_error != null)
-                    Text(_error!,
-                        style: const TextStyle(color: Colors.redAccent)),
+                    Text(
+                      _error!,
+                      style: const TextStyle(color: Colors.redAccent),
+                    ),
                   const SizedBox(height: 8),
                   Row(
                     children: [
@@ -252,10 +293,13 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                         child: _editing
                             ? FilledButton(
                                 onPressed: _busy ? null : _save,
-                                child: Text(_busy ? 'در حال ذخیره…' : 'ذخیرهٔ تغییرات'),
+                                child: Text(
+                                  _busy ? 'در حال ذخیره…' : 'ذخیرهٔ تغییرات',
+                                ),
                               )
                             : OutlinedButton.icon(
-                                onPressed: () => setState(() => _editing = true),
+                                onPressed: () =>
+                                    setState(() => _editing = true),
                                 icon: const Icon(Icons.edit),
                                 label: const Text('ویرایش پروفایل'),
                               ),
@@ -286,8 +330,16 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     return Column(
       children: [
         _row('هدف تمرینی', goals[m['goal'] as String?] ?? '—'),
-        _row('جنس', (m['gender'] as String?) == 'female' ? 'زن' : ((m['gender'] as String?) == 'male' ? 'مرد' : '—')),
-        _row('قد', m['height_cm'] != null ? '${m['height_cm']} سانتی‌متر' : '—'),
+        _row(
+          'جنس',
+          (m['gender'] as String?) == 'female'
+              ? 'زن'
+              : ((m['gender'] as String?) == 'male' ? 'مرد' : '—'),
+        ),
+        _row(
+          'قد',
+          m['height_cm'] != null ? '${m['height_cm']} سانتی‌متر' : '—',
+        ),
         _row('محدودیت‌ها', (m['constraints'] as String?) ?? '—'),
       ],
     );
@@ -298,12 +350,18 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
       children: [
         TextField(
           controller: _name,
-          decoration: const InputDecoration(labelText: 'نام کامل', border: OutlineInputBorder()),
+          decoration: const InputDecoration(
+            labelText: 'نام کامل',
+            border: OutlineInputBorder(),
+          ),
         ),
         const SizedBox(height: 12),
         DropdownButtonFormField<String>(
           initialValue: _goal.isEmpty ? null : _goal,
-          decoration: const InputDecoration(labelText: 'هدف تمرینی', border: OutlineInputBorder()),
+          decoration: const InputDecoration(
+            labelText: 'هدف تمرینی',
+            border: OutlineInputBorder(),
+          ),
           items: const [
             DropdownMenuItem(value: 'hypertrophy', child: Text('افزایش حجم')),
             DropdownMenuItem(value: 'strength', child: Text('قدرت')),
@@ -315,7 +373,10 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
         const SizedBox(height: 12),
         DropdownButtonFormField<String>(
           initialValue: _gender,
-          decoration: const InputDecoration(labelText: 'جنس', border: OutlineInputBorder()),
+          decoration: const InputDecoration(
+            labelText: 'جنس',
+            border: OutlineInputBorder(),
+          ),
           items: const [
             DropdownMenuItem(value: 'male', child: Text('مرد')),
             DropdownMenuItem(value: 'female', child: Text('زن')),
@@ -326,7 +387,10 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
         TextField(
           controller: _height,
           keyboardType: TextInputType.number,
-          decoration: const InputDecoration(labelText: 'قد (سانتی‌متر)', border: OutlineInputBorder()),
+          decoration: const InputDecoration(
+            labelText: 'قد (سانتی‌متر)',
+            border: OutlineInputBorder(),
+          ),
         ),
       ],
     );
@@ -337,7 +401,10 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
         children: [
-          SizedBox(width: 110, child: Text(label, style: TextStyle(color: MpColors.textSecondary))),
+          SizedBox(
+            width: 110,
+            child: Text(label, style: TextStyle(color: MpColors.textSecondary)),
+          ),
           Expanded(child: Text(value)),
         ],
       ),
@@ -362,10 +429,17 @@ class _LogoutButtonState extends ConsumerState<_LogoutButton> {
       builder: (ctx) => AlertDialog(
         title: const Text('خروج از حساب'),
         content: const Text(
-            'از حساب خارج می‌شوید. برای ورود دوباره به کد پیامکی نیاز دارید.'),
+          'از حساب خارج می‌شوید. برای ورود دوباره به کد پیامکی نیاز دارید.',
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('انصراف')),
-          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('خروج')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('انصراف'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('خروج'),
+          ),
         ],
       ),
     );
@@ -378,30 +452,43 @@ class _LogoutButtonState extends ConsumerState<_LogoutButton> {
     if (queueChoice == _PendingQueueExitChoice.cancel || !mounted) return;
     setState(() => _busy = true);
     try {
-      final revoke = await ref.read(authProvider.notifier).logout(
+      final revoke = await ref
+          .read(authProvider.notifier)
+          .logout(
             keepPendingFeedback: queueChoice == _PendingQueueExitChoice.keep,
-            discardPendingFeedback: queueChoice == _PendingQueueExitChoice.discard,
+            discardPendingFeedback:
+                queueChoice == _PendingQueueExitChoice.discard,
           );
       if (!mounted) return;
       final queueNote = queueChoice == _PendingQueueExitChoice.keep
           ? ' صف فقط برای همین حساب روی دستگاه باقی ماند.'
           : '';
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(revoke
-            ? 'از حساب خارج شدید و نشست سرور بسته شد.$queueNote'
-            : 'از این دستگاه خارج شدید. سرور در دسترس نبود، پس نشست آن‌جا ممکن است باز بماند.$queueNote'),
-      ));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            revoke
+                ? 'از حساب خارج شدید و نشست سرور بسته شد.$queueNote'
+                : 'از این دستگاه خارج شدید. سرور در دسترس نبود، پس نشست آن‌جا ممکن است باز بماند.$queueNote',
+          ),
+        ),
+      );
       context.go('/otp');
     } on PendingOfflineFeedbackException {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('صف تغییر کرده است؛ همگام‌سازی یا تصمیم دربارهٔ آن را دوباره انجام دهید.')),
+          const SnackBar(
+            content: Text(
+              'صف تغییر کرده است؛ همگام‌سازی یا تصمیم دربارهٔ آن را دوباره انجام دهید.',
+            ),
+          ),
         );
       }
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('خروج امن انجام نشد؛ صف محلی دست‌نخورده باقی ماند.')),
+          const SnackBar(
+            content: Text('خروج امن انجام نشد؛ صف محلی دست‌نخورده باقی ماند.'),
+          ),
         );
       }
     } finally {

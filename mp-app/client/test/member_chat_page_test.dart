@@ -26,7 +26,9 @@ class _MemberChatClient extends http.BaseClient {
   });
 
   final conversations = <Map<String, dynamic>>[_conversation()];
-  final messages = <int, List<Map<String, dynamic>>>{41: [_coachMessage()]};
+  final messages = <int, List<Map<String, dynamic>>>{
+    41: [_coachMessage()],
+  };
   final calls = <String>[];
   final queryParameters = <Map<String, String>>[];
   final requestBodies = <Map<String, dynamic>>[];
@@ -54,8 +56,10 @@ class _MemberChatClient extends http.BaseClient {
     } else if (request.method == 'GET' && path == '/notifications/member/3') {
       payload = <dynamic>[];
     } else {
-      final messagePath = RegExp(r'^/chat/conversations/(\d+)/messages$').firstMatch(path);
-      final readPath = RegExp(r'^/chat/conversations/(\d+)/read$').firstMatch(path);
+      final messagePath = RegExp(r'^/chat/conversations/(\d+)/messages$')
+          .firstMatch(path);
+      final readPath = RegExp(r'^/chat/conversations/(\d+)/read$')
+          .firstMatch(path);
       if (request.method == 'GET' && messagePath != null) {
         final conversationId = int.parse(messagePath.group(1)!);
         if (messageListFailures > 0) {
@@ -109,7 +113,8 @@ class _MemberChatClient extends http.BaseClient {
         } else {
           final conversationId = int.parse(readPath.group(1)!);
           var marked = 0;
-          for (final row in messages[conversationId] ?? <Map<String, dynamic>>[]) {
+          for (final row
+              in messages[conversationId] ?? <Map<String, dynamic>>[]) {
             if (row['sender_id'] != 4 && row['read_at'] == null) {
               row['read_at'] = '2026-11-16T12:20:00Z';
               marked++;
@@ -134,94 +139,103 @@ class _MemberChatClient extends http.BaseClient {
   }
 
   static Map<String, dynamic> _decodeRequestBody(http.BaseRequest request) {
-    if (request is! http.Request || request.body.isEmpty) return <String, dynamic>{};
+    if (request is! http.Request || request.body.isEmpty)
+      return <String, dynamic>{};
     final decoded = jsonDecode(request.body);
-    return decoded is Map ? Map<String, dynamic>.from(decoded) : <String, dynamic>{};
+    return decoded is Map
+        ? Map<String, dynamic>.from(decoded)
+        : <String, dynamic>{};
   }
 }
 
-Map<String, dynamic> _conversation({int memberId = 3, String status = 'open'}) => {
-      'id': 41,
-      'member_id': memberId,
-      'coach_id': 9,
-      'subject': 'برنامهٔ هفتگی',
-      'status': status,
-      'last_message_at': '2026-11-16T10:30:00Z',
-      'created_at': '2026-11-15T12:00:00Z',
-    };
+Map<String, dynamic> _conversation({
+  int memberId = 3,
+  String status = 'open',
+}) => {
+  'id': 41,
+  'member_id': memberId,
+  'coach_id': 9,
+  'subject': 'برنامهٔ هفتگی',
+  'status': status,
+  'last_message_at': '2026-11-16T10:30:00Z',
+  'created_at': '2026-11-15T12:00:00Z',
+};
 
 Map<String, dynamic> _coachMessage({String? readAt}) => {
-      'id': 51,
-      'conversation_id': 41,
-      'sender_id': 9,
-      'sender_role': 'coach',
-      'body': 'برای تمرین امروز وزنه را سبک‌تر انتخاب کن.',
-      'is_system': false,
-      'read_at': readAt,
-      'created_at': '2026-11-16T10:30:00Z',
-    };
+  'id': 51,
+  'conversation_id': 41,
+  'sender_id': 9,
+  'sender_role': 'coach',
+  'body': 'برای تمرین امروز وزنه را سبک‌تر انتخاب کن.',
+  'is_system': false,
+  'read_at': readAt,
+  'created_at': '2026-11-16T10:30:00Z',
+};
 
 Map<String, dynamic> _error(String message) => {
-      'error': {'code': 'test_error', 'message': message},
-    };
+  'error': {'code': 'test_error', 'message': message},
+};
 
 Widget _withProviders(_MemberChatClient client, Widget child) => ProviderScope(
-      overrides: [
-        httpClientProvider.overrideWithValue(client),
-        authProvider.overrideWith(
-          (ref) => AuthController.test(
-            AuthState(
-              accessToken: 'member-token',
-              userId: 4,
-              memberId: 3,
-              userName: 'عضو تست',
-            ),
-          ),
+  overrides: [
+    httpClientProvider.overrideWithValue(client),
+    authProvider.overrideWith(
+      (ref) => AuthController.test(
+        AuthState(
+          accessToken: 'member-token',
+          userId: 4,
+          memberId: 3,
+          userName: 'عضو تست',
         ),
-      ],
-      child: child,
-    );
+      ),
+    ),
+  ],
+  child: child,
+);
 
 Widget _wrap(_MemberChatClient client) => _withProviders(
-      client,
-      MaterialApp(
-        theme: mpTheme(),
-        home: const Directionality(
-          textDirection: TextDirection.rtl,
-          child: MemberChatPage(),
-        ),
-      ),
-    );
+  client,
+  MaterialApp(
+    theme: mpTheme(),
+    home: const Directionality(
+      textDirection: TextDirection.rtl,
+      child: MemberChatPage(),
+    ),
+  ),
+);
 
 Widget _wrapWithRouter(_MemberChatClient client) => _withProviders(
-      client,
-      MaterialApp.router(
-        theme: mpTheme(),
-        routerConfig: createMpRouter(initialLocation: '/home'),
-        builder: (context, child) => Directionality(
-          textDirection: TextDirection.rtl,
-          child: child!,
-        ),
-      ),
-    );
+  client,
+  MaterialApp.router(
+    theme: mpTheme(),
+    routerConfig: createMpRouter(initialLocation: '/home'),
+    builder: (context, child) =>
+        Directionality(textDirection: TextDirection.rtl, child: child!),
+  ),
+);
 
 void main() {
-  testWidgets('فهرست را از endpoint عضو می‌خواند، بدون شناسهٔ قابل‌انتخاب',
-      (tester) async {
+  testWidgets('فهرست را از endpoint عضو می‌خواند، بدون شناسهٔ قابل‌انتخاب', (
+    tester,
+  ) async {
     final client = _MemberChatClient();
     await tester.pumpWidget(_wrap(client));
     await tester.pumpAndSettle();
 
     expect(client.calls, contains('GET /chat/conversations'));
-    expect(client.queryParameters.first, isEmpty,
-        reason: 'member_id از کلاینت یا query فرستاده نمی‌شود');
+    expect(
+      client.queryParameters.first,
+      isEmpty,
+      reason: 'member_id از کلاینت یا query فرستاده نمی‌شود',
+    );
     expect(client.calls.any((call) => call.contains('member_id=')), isFalse);
     expect(find.text('برنامهٔ هفتگی'), findsOneWidget);
     expect(find.textContaining('آخرین پیام'), findsOneWidget);
   });
 
-  testWidgets('پیام مربی را می‌خواند و mark-read را به API می‌فرستد',
-      (tester) async {
+  testWidgets('پیام مربی را می‌خواند و mark-read را به API می‌فرستد', (
+    tester,
+  ) async {
     final client = _MemberChatClient();
     await tester.pumpWidget(_wrap(client));
     await tester.pumpAndSettle();
@@ -229,7 +243,10 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(client.calls, contains('GET /chat/conversations/41/messages'));
-    expect(find.text('برای تمرین امروز وزنه را سبک‌تر انتخاب کن.'), findsOneWidget);
+    expect(
+      find.text('برای تمرین امروز وزنه را سبک‌تر انتخاب کن.'),
+      findsOneWidget,
+    );
     expect(find.text('۱ پیام خوانده‌نشده · علامت‌گذاری'), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('member-chat-mark-read')));
@@ -256,8 +273,9 @@ void main() {
     expect(find.text('۱ پیام خوانده‌نشده · علامت‌گذاری'), findsOneWidget);
   });
 
-  testWidgets('در خطای ارسال متن حفظ می‌شود و پس از موفقیت پاک می‌شود',
-      (tester) async {
+  testWidgets('در خطای ارسال متن حفظ می‌شود و پس از موفقیت پاک می‌شود', (
+    tester,
+  ) async {
     final client = _MemberChatClient(failSend: true);
     await tester.pumpWidget(_wrap(client));
     await tester.pumpAndSettle();
@@ -271,7 +289,10 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(client.requestBodies.single, {'body': 'سؤال دربارهٔ برنامه'});
-    expect(tester.widget<TextField>(composer).controller!.text, 'سؤال دربارهٔ برنامه');
+    expect(
+      tester.widget<TextField>(composer).controller!.text,
+      'سؤال دربارهٔ برنامه',
+    );
     expect(find.textContaining('ارسال پیام ناموفق بود'), findsOneWidget);
 
     client.failSend = false;
@@ -285,15 +306,19 @@ void main() {
     expect(find.text('سؤال دربارهٔ برنامه'), findsOneWidget);
   });
 
-  testWidgets('فهرست خالی صادقانه است و گفتگوی اشتباه نمی‌سازد',
-      (tester) async {
+  testWidgets('فهرست خالی صادقانه است و گفتگوی اشتباه نمی‌سازد', (
+    tester,
+  ) async {
     final client = _MemberChatClient()..conversations.clear();
     await tester.pumpWidget(_wrap(client));
     await tester.pumpAndSettle();
 
     expect(find.text('هنوز گفتگویی ندارید'), findsOneWidget);
     expect(find.textContaining('از مربی خود بخواهید'), findsOneWidget);
-    expect(client.calls.where((call) => call == 'POST /chat/conversations'), isEmpty);
+    expect(
+      client.calls.where((call) => call == 'POST /chat/conversations'),
+      isEmpty,
+    );
   });
 
   testWidgets('خطای فهرست empty جا زده نمی‌شود و retry دارد', (tester) async {
@@ -307,28 +332,43 @@ void main() {
     await tester.tap(find.text('تلاش دوباره'));
     await tester.pumpAndSettle();
 
-    expect(client.calls.where((call) => call == 'GET /chat/conversations').length, 2);
+    expect(
+      client.calls.where((call) => call == 'GET /chat/conversations').length,
+      2,
+    );
     expect(find.text('برنامهٔ هفتگی'), findsOneWidget);
   });
 
-  testWidgets('خطای خواندن پیام‌ها retry می‌شود و به گفتگوی خالی تبدیل نمی‌شود',
-      (tester) async {
-    final client = _MemberChatClient(messageListFailures: 1);
-    await tester.pumpWidget(_wrap(client));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('برنامهٔ هفتگی'));
-    await tester.pumpAndSettle();
+  testWidgets(
+    'خطای خواندن پیام‌ها retry می‌شود و به گفتگوی خالی تبدیل نمی‌شود',
+    (tester) async {
+      final client = _MemberChatClient(messageListFailures: 1);
+      await tester.pumpWidget(_wrap(client));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('برنامهٔ هفتگی'));
+      await tester.pumpAndSettle();
 
-    expect(find.textContaining('دریافت پیام‌ها ناموفق بود'), findsOneWidget);
-    expect(find.text('هنوز پیامی در این گفتگو نیست. پیام خود را بنویسید.'), findsNothing);
+      expect(find.textContaining('دریافت پیام‌ها ناموفق بود'), findsOneWidget);
+      expect(
+        find.text('هنوز پیامی در این گفتگو نیست. پیام خود را بنویسید.'),
+        findsNothing,
+      );
 
-    await tester.tap(find.text('تلاش دوباره'));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text('تلاش دوباره'));
+      await tester.pumpAndSettle();
 
-    expect(client.calls.where((call) => call == 'GET /chat/conversations/41/messages').length,
-        2);
-    expect(find.text('برای تمرین امروز وزنه را سبک‌تر انتخاب کن.'), findsOneWidget);
-  });
+      expect(
+        client.calls
+            .where((call) => call == 'GET /chat/conversations/41/messages')
+            .length,
+        2,
+      );
+      expect(
+        find.text('برای تمرین امروز وزنه را سبک‌تر انتخاب کن.'),
+        findsOneWidget,
+      );
+    },
+  );
 
   testWidgets('پاسخ خارج از مالکیت نشست رد می‌شود', (tester) async {
     final client = _MemberChatClient();
@@ -336,7 +376,10 @@ void main() {
     await tester.pumpWidget(_wrap(client));
     await tester.pumpAndSettle();
 
-    expect(find.textContaining('گفتگوی دریافتی به عضو جاری تعلق ندارد'), findsOneWidget);
+    expect(
+      find.textContaining('گفتگوی دریافتی به عضو جاری تعلق ندارد'),
+      findsOneWidget,
+    );
     expect(find.text('برنامهٔ هفتگی'), findsNothing);
     expect(client.calls.any((call) => call.contains('member_id=')), isFalse);
   });
@@ -349,12 +392,16 @@ void main() {
     await tester.tap(find.text('برنامهٔ هفتگی'));
     await tester.pumpAndSettle();
 
-    expect(find.text('این گفتگو بسته شده است و پیام تازه نمی‌پذیرد.'), findsOneWidget);
+    expect(
+      find.text('این گفتگو بسته شده است و پیام تازه نمی‌پذیرد.'),
+      findsOneWidget,
+    );
     expect(find.byKey(const ValueKey('member-chat-composer')), findsNothing);
   });
 
-  testWidgets('ورودی گفتگو از گرید خانه به صفحهٔ چت واقعی می‌رسد',
-      (tester) async {
+  testWidgets('ورودی گفتگو از گرید خانه به صفحهٔ چت واقعی می‌رسد', (
+    tester,
+  ) async {
     final client = _MemberChatClient();
     await tester.pumpWidget(_wrapWithRouter(client));
     await tester.pumpAndSettle();

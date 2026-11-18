@@ -27,19 +27,28 @@ final Provider<ApiClient> apiClientProvider = Provider<ApiClient>((ref) {
 });
 
 class AuthState {
-  const AuthState({this.accessToken, this.userId, this.userName, this.memberId});
+  const AuthState({
+    this.accessToken,
+    this.userId,
+    this.userName,
+    this.memberId,
+  });
   final String? accessToken;
   final int? userId;
   final String? userName;
   final int? memberId;
   bool get loggedIn => accessToken != null;
-  AuthState copyWith({String? accessToken, int? userId, String? userName, int? memberId}) =>
-      AuthState(
-        accessToken: accessToken ?? this.accessToken,
-        userId: userId ?? this.userId,
-        userName: userName ?? this.userName,
-        memberId: memberId ?? this.memberId,
-      );
+  AuthState copyWith({
+    String? accessToken,
+    int? userId,
+    String? userName,
+    int? memberId,
+  }) => AuthState(
+    accessToken: accessToken ?? this.accessToken,
+    userId: userId ?? this.userId,
+    userName: userName ?? this.userName,
+    memberId: memberId ?? this.memberId,
+  );
 }
 
 class PendingOfflineFeedbackException implements Exception {
@@ -52,9 +61,9 @@ class AuthController extends StateNotifier<AuthState> {
     this._api, {
     String? refreshToken,
     OfflineFeedbackLocalStore? offlineStore,
-  })  : _refreshToken = refreshToken,
-        _offlineStore = offlineStore,
-        super(const AuthState());
+  }) : _refreshToken = refreshToken,
+       _offlineStore = offlineStore,
+       super(const AuthState());
 
   /// refresh token در حافظه نگه داشته می‌شود تا خروج بتواند نشست **سرور** را
   /// هم ببندد (`POST /auth/logout`). نسخهٔ قبلی فقط access token را می‌شناخت.
@@ -66,10 +75,12 @@ class AuthController extends StateNotifier<AuthState> {
   /// «وارد شده» برسد، یا با `overrideWith` نسخهٔ جعلی بسازد که هیچ رفتار
   /// واقعی ندارد. یک سازندهٔ صریح، تست را صادق نگه می‌دارد.
   @visibleForTesting
-  AuthController.test(AuthState initial, {OfflineFeedbackLocalStore? offlineStore})
-      : _api = null,
-        _offlineStore = offlineStore,
-        super(initial);
+  AuthController.test(
+    AuthState initial, {
+    OfflineFeedbackLocalStore? offlineStore,
+  }) : _api = null,
+       _offlineStore = offlineStore,
+       super(initial);
   final ApiClient? _api;
   final OfflineFeedbackLocalStore? _offlineStore;
 
@@ -78,7 +89,8 @@ class AuthController extends StateNotifier<AuthState> {
     final api = _api ?? (throw StateError('Authentication API is unavailable'));
     // `_decode` نوع بدنه را نگه می‌دارد (Map/List) — پس اینجا صریح تبدیل می‌کنیم
     final r = Map<String, dynamic>.from(
-        await api.post('/auth/otp/verify', {'phone': phone, 'code': code}) as Map);
+      await api.post('/auth/otp/verify', {'phone': phone, 'code': code}) as Map,
+    );
     final token = r['access_token'] as String?;
     if (token == null) throw ApiException('توکن دریافت نشد');
     api.accessToken = token;
@@ -95,7 +107,10 @@ class AuthController extends StateNotifier<AuthState> {
   Future<void> refreshMe() async {
     final api = _api ?? (throw StateError('Authentication API is unavailable'));
     final me = Map<String, dynamic>.from(await api.get('/members/me') as Map);
-    state = state.copyWith(memberId: me['id'] as int?, userName: me['full_name'] as String?);
+    state = state.copyWith(
+      memberId: me['id'] as int?,
+      userName: me['full_name'] as String?,
+    );
   }
 
   Future<void> _persist(String token, String refresh) async {
@@ -115,7 +130,8 @@ class AuthController extends StateNotifier<AuthState> {
     if (api == null || refresh == null) return false;
     try {
       final r = Map<String, dynamic>.from(
-          await api.post('/auth/refresh', {'refresh_token': refresh}) as Map);
+        await api.post('/auth/refresh', {'refresh_token': refresh}) as Map,
+      );
       final token = r['access_token'] as String?;
       if (token == null) return false;
       api.accessToken = token;
@@ -150,11 +166,15 @@ class AuthController extends StateNotifier<AuthState> {
     bool discardPendingFeedback = false,
   }) async {
     if (keepPendingFeedback && discardPendingFeedback) {
-      throw ArgumentError('Choose either keep or discard for the offline feedback queue.');
+      throw ArgumentError(
+        'Choose either keep or discard for the offline feedback queue.',
+      );
     }
     final ownerMemberId = state.memberId;
     final offlineStore = _offlineStore;
-    if (offlineStore != null && offlineStore.isSupported && ownerMemberId != null) {
+    if (offlineStore != null &&
+        offlineStore.isSupported &&
+        ownerMemberId != null) {
       final unresolved = await offlineStore.countUnresolved(ownerMemberId);
       if (unresolved > 0 && !keepPendingFeedback && !discardPendingFeedback) {
         throw PendingOfflineFeedbackException(unresolved);
@@ -194,7 +214,9 @@ class AuthController extends StateNotifier<AuthState> {
     state = AuthState(accessToken: token);
     try {
       final r = Map<String, dynamic>.from(
-          await api.post('/auth/refresh', {'refresh_token': refresh ?? token}) as Map);
+        await api.post('/auth/refresh', {'refresh_token': refresh ?? token})
+            as Map,
+      );
       final t = r['access_token'] as String? ?? token;
       api.accessToken = t;
       state = state.copyWith(accessToken: t);

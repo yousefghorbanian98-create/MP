@@ -37,7 +37,9 @@ class _OtpPageState extends ConsumerState<OtpPage> {
     });
     try {
       final api = ref.read(apiClientProvider);
-      final r = await api.post('/auth/otp/request', {'phone': _phone.text.trim()});
+      final r = await api.post('/auth/otp/request', {
+        'phone': _phone.text.trim(),
+      });
       setState(() {
         _codeSent = true;
         _devCode = r['dev_code'] as String?;
@@ -55,10 +57,9 @@ class _OtpPageState extends ConsumerState<OtpPage> {
       _error = null;
     });
     try {
-      await ref.read(authProvider.notifier).loginWithOtp(
-            _phone.text.trim(),
-            _code.text.trim(),
-          );
+      await ref
+          .read(authProvider.notifier)
+          .loginWithOtp(_phone.text.trim(), _code.text.trim());
       if (mounted) context.go('/home');
     } catch (e) {
       setState(() => _error = e.toString());
@@ -79,13 +80,17 @@ class _OtpPageState extends ConsumerState<OtpPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Text('ورود به Muscle Paradise',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                const Text(
+                  'ورود به Muscle Paradise',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                ),
                 const SizedBox(height: 8),
-                Text('شمارهٔ موبایل خود را وارد کنید',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: MpColors.textSecondary)),
+                Text(
+                  'شمارهٔ موبایل خود را وارد کنید',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: MpColors.textSecondary),
+                ),
                 const SizedBox(height: 24),
                 TextField(
                   controller: _phone,
@@ -105,7 +110,9 @@ class _OtpPageState extends ConsumerState<OtpPage> {
                     decoration: InputDecoration(
                       labelText: 'کد تایید',
                       border: const OutlineInputBorder(),
-                      helperText: _devCode != null ? 'کد آزمایشی: $_devCode' : null,
+                      helperText: _devCode != null
+                          ? 'کد آزمایشی: $_devCode'
+                          : null,
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -113,13 +120,20 @@ class _OtpPageState extends ConsumerState<OtpPage> {
                 if (_error != null)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 12),
-                    child: Text(_error!, style: const TextStyle(color: Colors.redAccent)),
+                    child: Text(
+                      _error!,
+                      style: const TextStyle(color: Colors.redAccent),
+                    ),
                   ),
                 FilledButton(
-                  onPressed: _busy ? null : (_codeSent ? _verify : _requestCode),
-                  child: Text(_busy
-                      ? 'لطفاً صبر کنید…'
-                      : (_codeSent ? 'ورود' : 'ارسال کد تایید')),
+                  onPressed: _busy
+                      ? null
+                      : (_codeSent ? _verify : _requestCode),
+                  child: Text(
+                    _busy
+                        ? 'لطفاً صبر کنید…'
+                        : (_codeSent ? 'ورود' : 'ارسال کد تایید'),
+                  ),
                 ),
               ],
             ),
