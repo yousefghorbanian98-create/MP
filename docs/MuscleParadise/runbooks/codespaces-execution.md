@@ -113,7 +113,8 @@ python3 tools/manifest_gate.py 2>&1 | tail -2 | tee -a /tmp/m107/step2-dartgate.
 | ۲ | «diff فقط whitespace است» تنهایش کافی نیست | formatterِ tall-style کامای انتهایی را وقتی فهرست را می‌شکند جابه‌جا می‌کند؛ مقایسه باید با حذف کاماها هم بشود و **جدا شمرده** شود، وگرنه ۶۵ فایلِ سالم رد می‌شوند (این دقیقاً اولین اجرای ما را فیل کرد) |
 | ۳ | بازتولید: `gh workflow run client-format-fix.yml` | dispatch-only است و اگر بدهی صفر باشد هیچ PR نمی‌سازد (`NO_CHANGES=1`) — اجرای مجدد بی‌ضرر است |
 | ۴ | `dart format` را **همیشه بعد از** `flutter pub get` بزن | formatter نسخهٔ زبانی را از `package_config.json` می‌خواند؛ بی‌`pub get` به tall style فرمت می‌کند و با آن، برای `sdk: ">=3.3.0"` این مخزن، به short style. هر دو «درست»اند ولی فقط دومی را گیت می‌پذیرد — و همین تله، PR #1 را یک روز بعد ۵۳ فایلِ «unformatted» کرد |
-| ۵ | در `permissions:` کلید `metadata:` ننویس | «`metadata: read`» در مستندات GITHUB_TOKEN توصیه‌شده به‌نظر می‌رسد، ولی کلیدِ مجازِ `permissions` نیست: GitHub با آن **کل فایل** را رد می‌کند («failed to parse workflow: Unexpected value 'metadata'»، run `44349667465`، صفر job) |
+| ۵ | بعد از یک reformat بزرگ، ٪coverage را با عددِ قبلی مقایسه نکن | `lcov` خط‌به‌خط می‌شمارد؛ فرمت، تعداد خطوطِ قابل‌سنجش را عوض می‌کند (این‌جا ۴۱۴۰ → ۴۴۲۶ خط و ۷۷٫۲٪ → ۷۶٫۷٪، بدون آنکه تستی کم یا زیاد شده باشد). مقایسهٔ درست، تعداد تست‌ها و خطوطِ از‌دست‌رفته است |
+| ۶ | در `permissions:` کلید `metadata:` ننویس | «`metadata: read`» در مستندات GITHUB_TOKEN توصیه‌شده به‌نظر می‌رسد، ولی کلیدِ مجازِ `permissions` نیست: GitHub با آن **کل فایل** را رد می‌کند («failed to parse workflow: Unexpected value 'metadata'»، run `44349667465`، صفر job) |
 
 > تزریق `analysis_options.yaml` یک تصمیمِ باز است، نه کارِ تو: اگر آن exclusion commit نشود،
 > هر `flutter pub get` دوباره بازنویسی‌اش می‌کند. فعلاً commit نشده تا این PR فقط فرمت بماند.
