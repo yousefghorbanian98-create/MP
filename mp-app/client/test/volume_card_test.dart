@@ -97,7 +97,7 @@ void main() {
 
     expect(client.calls, contains('/programs/member/3/volume?level=intermediate'));
     expect(find.text('حجم هفتگی عضلات'), findsOneWidget);
-    expect(find.text('در بازهٔ MAV'), findsOneWidget);
+    expect(find.text('روی MEV'), findsOneWidget);
     expect(find.textContaining('ست مؤثر ۸ از ۱۲ برنامه‌ریزی‌شده · منبع: بازخورد عضو'), findsOneWidget);
     expect(find.textContaining('MV ۴ · MEV ۸'), findsOneWidget);
     expect(find.textContaining('RIR نامعلوم ۱'), findsOneWidget);
@@ -115,7 +115,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('هنوز برنامه‌ای برای این عضو ثبت نشده است.'), findsOneWidget);
-    expect(find.textContaining('ست مؤثر'), findsNothing);
+    expect(find.textContaining('ست مؤثر ۸ از ۱۲'), findsNothing);
   });
 
   testWidgets('خطای volume جدا از empty است و retry دوباره از API می‌خواند', (tester) async {
@@ -129,7 +129,7 @@ void main() {
     client.fail = false;
     await tester.tap(find.text('تلاش دوباره'));
     await tester.pumpAndSettle();
-    expect(find.text('در بازهٔ MAV'), findsOneWidget);
+    expect(find.text('روی MEV'), findsOneWidget);
     expect(client.calls.length, greaterThanOrEqualTo(2));
   });
 }

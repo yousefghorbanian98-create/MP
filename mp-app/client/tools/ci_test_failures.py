@@ -58,6 +58,55 @@ def _failure_location(stack_trace: Any, workspace: Path) -> tuple[str, int] | No
     return None
 
 
+def _text_report_failure_locations(
+    text_report: Path, workspace: Path
+) -> list[tuple[str, tuple[str, int]]]:
+    """Read only test-title/source-line pairs from Flutter's default reporter log."""
+    try:
+        lines = text_report.read_text(encoding="utf-8", errors="replace").splitlines()
+    except OSError:
+        return []
+
+    failures: list[tuple[str, tuple[str, int]]] = []
+    title: str | None = None
+    group_lines: list[str] = []
+
+    def finish_group() -> None:
+        if title is None or "❌" not in title:
+            return
+        location = _failure_location("\n".join(group_lines), workspace)
+        if location is not None:
+            failures.append((title, location))
+
+    for line in lines:
+        if line.startswith("::group::"):
+            finish_group()
+            title = line.removeprefix("::group::")
+            group_lines = []
+        elif line == "::endgroup::":
+            finish_group()
+            title = None
+            group_lines = []
+        elif title is not None:
+            group_lines.append(line)
+    finish_group()
+    return failures
+
+
+def _text_report_location(
+    name: str,
+    path: str | None,
+    groups: list[tuple[str, tuple[str, int]]],
+) -> tuple[str, int] | None:
+    matching = [(title, location) for title, location in groups if name in title]
+    if path and matching:
+        basename = Path(path).name
+        for title, location in matching:
+            if basename in title:
+                return location
+    return matching[0][1] if matching else None
+
+
 def _annotation(message: str) -> None:
     print(f"::error title=Flutter test failures::{_escape_data(message)}")
 
@@ -72,7 +121,7 @@ def main() -> int:
     suites: dict[Any, dict[str, Any]] = {}
     tests: dict[Any, dict[str, Any]] = {}
     failure_locations: dict[Any, tuple[str, int]] = {}
-    failures: list[tuple[str | None, int | None, str, tuple[str, int] | None]] = []
+    failures: list[tuple[Any, str | None, int | None, str]] = []
     passed = 0
     skipped = 0
 
@@ -123,7 +172,7 @@ def main() -> int:
             name = test.get("name")
             if not isinstance(name, str) or not name:
                 name = "unnamed test"
-            failures.append((path, line_number, name, failure_locations.get(test_id)))
+            failures.append((test_id, path, line_number, name))
 
     if not failures:
         _annotation(
@@ -131,13 +180,17 @@ def main() -> int:
         )
         return 0
 
+    text_report_locations = _text_report_failure_locations(report.with_suffix(".txt"), workspace)
     details = [f"Flutter tests: {passed} passed, {len(failures)} failed, {skipped} skipped."]
     details.append("Failed tests (test names and source lines; assertion values omitted):")
-    for path, line_number, name, failure_location in failures[:40]:
+    for test_id, path, line_number, name in failures[:40]:
         location = path or "<unknown source>"
         if line_number:
             location += f":{line_number}"
         detail = f"- {location} — {name}"
+        failure_location = failure_locations.get(test_id) or _text_report_location(
+            name, path, text_report_locations
+        )
         if failure_location:
             failure_path, failure_line = failure_location
             detail += f" (failure frame: {failure_path}:{failure_line})"

@@ -122,7 +122,7 @@ void main() {
 
     expect(find.text('ورود ثبت شد'), findsOneWidget);
     expect(find.text('ورود ثبت نشد'), findsOneWidget);
-    expect(find.text('اشتراک فعال نیست یا منقضی شده است'), findsOneWidget);
+    expect(find.textContaining('اشتراک فعال نیست یا منقضی شده است'), findsOneWidget);
     expect(client.calls, contains('GET /members/me/checkins'));
     expect(client.calls.any((call) => call.contains('/admin/checkins')), isFalse);
     expect(client.calls.every((call) => !call.contains('member_id=')), isTrue,
@@ -190,6 +190,11 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(client.offsets, [0, 30]);
+    await tester.dragUntilVisible(
+      find.text('ثبت پذیرش'),
+      find.byType(Scrollable).first,
+      const Offset(0, -300),
+    );
     expect(find.text('ثبت پذیرش'), findsOneWidget);
   });
 

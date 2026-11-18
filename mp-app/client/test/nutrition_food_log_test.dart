@@ -150,15 +150,20 @@ void main() {
     expect(find.textContaining('۰ کیلوکالری'), findsNothing,
         reason: 'nothing_logged نباید به مصرف واقعی صفر تعبیر شود');
 
+    await tester.ensureVisible(find.byKey(const Key('food-search-field')));
     await tester.enterText(find.byKey(const Key('food-search-field')), 'قورمه سبزی');
+    await tester.ensureVisible(find.byTooltip('جست‌وجو'));
     await tester.tap(find.byTooltip('جست‌وجو'));
     await tester.pumpAndSettle();
     expect(find.text('قورمه سبزی'), findsWidgets);
     expect(find.textContaining('غذای ایرانی'), findsOneWidget);
 
+    await tester.ensureVisible(find.text('انتخاب'));
     await tester.tap(find.text('انتخاب'));
     await tester.pumpAndSettle();
+    await tester.ensureVisible(find.byKey(const Key('food-grams-field')));
     await tester.enterText(find.byKey(const Key('food-grams-field')), '۱۵۰');
+    await tester.ensureVisible(find.byKey(const Key('food-log-save')));
     await tester.tap(find.byKey(const Key('food-log-save')));
     await tester.pumpAndSettle();
 

@@ -88,8 +88,9 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('لغو رزرو'), findsOneWidget);
-    expect(find.text('رزرو به نام سارا از پایگاه داده تأیید شده'), findsOneWidget);
+    expect(find.textContaining('رزرو به نام سارا از پایگاه داده تأیید شده'), findsOneWidget);
 
+    await tester.ensureVisible(find.text('لغو رزرو'));
     await tester.tap(find.text('لغو رزرو'));
     await tester.pumpAndSettle();
 
@@ -99,7 +100,7 @@ void main() {
     expect(client.listCalls, greaterThanOrEqualTo(2),
         reason: 'پس از لغو باید ظرفیت و وضعیت رزرو دوباره از API خوانده شود');
     expect(find.text('✅ رزرو لغو شد'), findsOneWidget);
-    expect(find.text('رزرو به نام سارا از پایگاه داده تأیید شده'), findsNothing);
+    expect(find.textContaining('رزرو به نام سارا از پایگاه داده تأیید شده'), findsNothing);
     expect(find.text('رزرو'), findsOneWidget);
   });
 
@@ -108,12 +109,13 @@ void main() {
     await tester.pumpWidget(_wrap(client));
     await tester.pumpAndSettle();
 
+    await tester.ensureVisible(find.text('رزرو'));
     await tester.tap(find.text('رزرو'));
     await tester.pumpAndSettle();
 
     expect(client.bookBody?['class_id'], 4);
     expect(client.bookBody?['member_id'], 3);
     expect(find.text('✅ رزرو به نام سارا از پایگاه داده ثبت شد (تأییدشده)'), findsOneWidget);
-    expect(find.text('رزرو به نام سارا از پایگاه داده تأیید شده'), findsOneWidget);
+    expect(find.textContaining('رزرو به نام سارا از پایگاه داده تأیید شده'), findsOneWidget);
   });
 }
