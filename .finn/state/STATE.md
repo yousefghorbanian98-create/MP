@@ -230,4 +230,7 @@ backend ۳۵۱ · ruff پاک · bandit ۰H/۰M · tsc ۰ · vitest ۳۰ · semg
 - تست: `tests/integration/test_sandbox_bank.py` = **۲۳** از ۳ سطح (قرارداد بانک / نگاشت آداپتر /
   چرخهٔ کامل مرورگر با replay، جعل و توکنِ خالیِ ردشده — `require_token` روی مسیر عمومی)؛ suite کامل **886 passed / 0 failed / 2 skipped**؛
   `api/routes.json` re-export؛ دو exception مستند در `studio apiCoverage`؛ `'refunded': 'بازگشت خورده'` در کلاینت
-- گزارش: `finn/reports/m110-sandbox-bank.md` · وضعیت: PASS محلی — شاهد CI روی push بعدی ثبت می‌شود
+- شاهد CI روی `3d87da2` (run `44367840730`): **۸/۹ سبز** — backend، e2e-api (Docker stack واقعی با
+  config تازه)، live-contract، studio، client-flutter، pinned-SDK، docs-gate. قرمزِ انتظاری:
+  secret-scan (هفت ردیف SEC-01؛ بازکردنش با allowlist سراسری ممنوع — بازبینی ردیف‌به‌ردیف در
+  صفحهٔ تصمیم‌ها مانده). وضعیت M110: **PASS**
