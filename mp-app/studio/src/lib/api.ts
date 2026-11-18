@@ -503,6 +503,7 @@ export interface PaymentRow {
   method: string;
   status: string;
   reference_id: string;
+  refund_reference?: string | null;
   gateway_authority?: string;
   description: string;
   paid_at: string | null;
@@ -529,11 +530,21 @@ export interface Receipt {
   amount_rial: number;
   paid_at: string | null;
   reference_id: string;
+  refund_reference?: string | null;
+  status?: string;
   [k: string]: unknown;
 }
 
 export function fetchReceipt(paymentId: number, token = getToken(), signal?: AbortSignal) {
   return getJson<Receipt>(`/payments/${paymentId}/receipt`, token, signal);
+}
+
+export function listPayments(token = getToken()) {
+  return getJson<PaymentRow[]>("/payments", token);
+}
+
+export function refundPayment(paymentId: number, token = getToken()) {
+  return postJson<PaymentRow>(`/payments/${paymentId}/refund`, {}, token);
 }
 
 export function failPayment(paymentId: number, token = getToken()) {

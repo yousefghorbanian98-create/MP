@@ -399,6 +399,14 @@ def test_refund_marks_refunded_and_finance_subtracts_it(
     r = client.post(f"/api/v1/payments/{pid}/refund", headers=h)
     assert r.status_code == 200, r.text
     assert r.json()["status"] == "refunded"
+    refund_reference = r.json()["refund_reference"]
+    assert refund_reference
+    assert r.json()["reference_id"] == body["reference_id"]
+    receipt = client.get(f"/api/v1/payments/{pid}/receipt", headers=h)
+    assert receipt.status_code == 200
+    assert receipt.json()["status"] == "refunded"
+    assert receipt.json()["refund_reference"] == refund_reference
+    assert receipt.json()["reference_id"] == body["reference_id"]
 
     after = client.get("/api/v1/payments/finance/summary", headers=fin).json()
     assert after["total_paid_rial"] == before["total_paid_rial"] - 250_000
@@ -407,6 +415,7 @@ def test_refund_marks_refunded_and_finance_subtracts_it(
 
     listing = client.get("/api/v1/payments?status=refunded", headers=h).json()
     assert [x["id"] for x in listing] == [pid]
+    assert listing[0]["refund_reference"] == refund_reference
 
     again = client.post(f"/api/v1/payments/{pid}/refund", headers=h)
     assert again.status_code == 400

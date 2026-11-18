@@ -76,11 +76,6 @@ const ROUTE_EXCEPTIONS: Record<string, Exception> = {
     evidence: null,
     external: "TODO: تأیید caller بیرونی یا حذف route مستقیم پس از بررسی",
   },
-  "/api/v1/payments/{payment_id}/refund": {
-    why: "بازگشت وجه از درگاه (M110) سمت سرویس کامل است؛ هنوز UI «بازگشت وجه» در پنل پذیرش سوار نشده",
-    evidence: null,
-    external: "TODO: افزودن دکمهٔ بازگشت وجه در صفحهٔ پرداختِ استودیو/اپ پذیرش",
-  },
   "/api/v1/payments/{payment_id}/gateway-return": {
     why: "این مسیر را بانکِ واقعی با GET مرورگر باز می‌کند (redirect after pay)، نه کدِ اپ؛ مصرف‌کنندهٔ آن مرورگرِ کاربر است",
     evidence: null,

@@ -42,6 +42,7 @@ class Payment(TimestampMixin, BranchMixin, Base):
         ForeignKey("users.id"), nullable=True
     )  # انتساب مربی (کمیسیون M27)
     reference_id: Mapped[str] = mapped_column(String(80), default="", nullable=False)
+    refund_reference: Mapped[str | None] = mapped_column(String(80), nullable=True)
     # شناسهٔ تراکنش درگاه (زرین‌پال: authority) — بدون آن، verify نمی‌تواند
     # ثابت کند همین تراکنش را تأیید می‌کند و مبلغ از callback جعلی می‌آمد.
     gateway_authority: Mapped[str | None] = mapped_column(String(80), default=None, nullable=True)

@@ -1,10 +1,13 @@
 /// چک‌این واقعی — QR امضاشده + چهره (ثبت/چک‌این از API) (M32).
 library;
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:local_auth/local_auth.dart';
 
 import '../../core/api_client.dart';
 import '../../core/session.dart';
@@ -16,6 +19,15 @@ final qrTokenProvider = FutureProvider<Map<String, dynamic>>((ref) async {
   final api = ref.watch(apiClientProvider);
   final r = await api.get('/face/qr-token');
   return Map<String, dynamic>.from(r as Map);
+});
+
+/// Replaceable in widget tests; device credentials are intentionally not a fallback.
+final qrBiometricProvider = Provider<Future<bool> Function()>((ref) {
+  final auth = LocalAuthentication();
+  return () => auth.authenticate(
+        localizedReason: 'برای نمایش کد ورود احراز هویت کنید',
+        options: const AuthenticationOptions(biometricOnly: true),
+      );
 });
 
 /// متن اطلاعیهٔ حریم خصوصی بیومتریک — از سرور، نه متن ثابت در اپ.
@@ -51,14 +63,68 @@ class CheckInPage extends ConsumerStatefulWidget {
 }
 
 class _CheckInPageState extends ConsumerState<CheckInPage>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   late final TabController _tabs = TabController(length: 3, vsync: this);
   String? _faceMessage;
   bool _busy = false;
   int _historyVersion = 0;
+  bool _qrUnlocked = false;
+  bool _qrAuthenticating = false;
+  String? _qrError;
+  Timer? _qrTimer;
+  int _qrGeneration = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  void _hideQr() {
+    _qrGeneration++;
+    _qrTimer?.cancel();
+    if (mounted) setState(() => _qrUnlocked = false);
+    ref.invalidate(qrTokenProvider);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused || state == AppLifecycleState.hidden ||
+        state == AppLifecycleState.detached) {
+      _hideQr();
+    }
+  }
+
+  Future<void> _unlockQr() async {
+    final generation = ++_qrGeneration;
+    setState(() {
+      _qrAuthenticating = true;
+      _qrError = null;
+    });
+    try {
+      final ok = await ref.read(qrBiometricProvider)();
+      if (!mounted || generation != _qrGeneration) return;
+      if (!ok) {
+        setState(() => _qrError = 'احراز هویت بیومتریک تأیید نشد.');
+        return;
+      }
+      ref.invalidate(qrTokenProvider);
+      setState(() => _qrUnlocked = true);
+      _qrTimer?.cancel();
+      _qrTimer = Timer(const Duration(seconds: 30), _hideQr);
+    } catch (_) {
+      if (mounted && generation == _qrGeneration) {
+        setState(() => _qrError = 'احراز هویت بیومتریک در دسترس نیست.');
+      }
+    } finally {
+      if (mounted) setState(() => _qrAuthenticating = false);
+    }
+  }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _qrTimer?.cancel();
     _tabs.dispose();
     super.dispose();
   }
@@ -127,7 +193,7 @@ class _CheckInPageState extends ConsumerState<CheckInPage>
 
   @override
   Widget build(BuildContext context) {
-    final qr = ref.watch(qrTokenProvider);
+    final qr = _qrUnlocked ? ref.watch(qrTokenProvider) : null;
     final consent = ref.watch(faceConsentProvider);
     return SafeArea(
       child: Column(
@@ -148,7 +214,21 @@ class _CheckInPageState extends ConsumerState<CheckInPage>
               children: [
                 // ── QR ──
                 Center(
-                  child: qr.when(
+                  child: qr == null
+                      ? GlassCard(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Text('برای نمایش QR احراز هویت بیومتریک لازم است'),
+                              if (_qrError != null) Text(_qrError!),
+                              ElevatedButton(
+                                onPressed: _qrAuthenticating ? null : _unlockQr,
+                                child: const Text('نمایش QR'),
+                              ),
+                            ],
+                          ),
+                        )
+                      : qr.when(
                     loading: () => const CircularProgressIndicator(),
                     error: (e, _) => Text('خطا: $e'),
                     data: (t) => GlassCard(
