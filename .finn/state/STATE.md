@@ -207,3 +207,27 @@ backend ۳۵۱ · ruff پاک · bandit ۰H/۰M · tsc ۰ · vitest ۳۰ · semg
 - هیچ گامی در آن run قرمز، شاهد همسایه‌ها را نخورد: analyze/test/apk سبز بودند و publisher هم منتشر شد ✓ (R-036 در عمل)
 - اثبات را سخت‌تر کردیم: «whitespace را حذف کن و برابر بگیر» برای این repo کافی نبود و «کاماها را هم حذف کن» سهل‌گیر است (`(1)` در برابر `(1,)`). قاعدهٔ `client-format-fix` حالا کاما را **فقط کنار بستِ `)]}>`** می‌پذیرد؛ سنجش محلی روی سه بازه: PR#1 = 66 فایل (۱ ws، ۶۵ comma، **۰ semantic**)، PR#2 = 53 (۵۳ ws، **۰ semantic**)، جمعِ M109 = 65 (۰ ws، ۶۵ comma، **۰ semantic**). باقی‌ماندهٔ قاعده (کامای افزوده‌شده دقیقاً پیش `)` در یک عبارت تک‌عضو) در گزارش و در خود کد نوشته شده؛ جبرانش اجرای مجدد analyze + کل test suite روی درخت فرمت‌شده است
 - آخرین دمِ M109: گارد «nothing to format» روی `git status` خام نوشته شده بود و به همین دلیل روی درختِ تمیز فعال نشد (workflow تا `git commit` رفت و سوخت، run `44353087941`)؛ scoped شد به `-- '*.dart'` + یک خروج آرام وقتی چیزی staged نیست (R-039). وضعیت نهایی CI روی `c48f18c`: `client-pinned` **سبز** با `dart format: clean (fatal gate since M109)` و ۱۵۶/۰/۰ — پوشش ۷۶٫۷٪ (۳۳۹۳/۴۴۲۶)؛ عددِ ۷۷٫۲٪ِ پیشین با این مقایسه نشدنی است چون فرمت، خطوط شمارش‌شده را عوض کرد
+
+
+## M110 (۲۰۲۶-۱۱-۲۰) — «پرداخت کامل» بدون پولِ واقعی: بانک صندباکس + بازگشت وجه + مسیر مرورگر
+
+- شش تصمیم مالک در `OWNER-DECISIONS.md` از «پرسش» به «✅ تصمیم مالک» تبدیل شد؛ دو تصحیح مهم:
+  بند ۱ (اپ خصوصی؛ انتشار/پلی‌استور از پرونده حذف، ولی گیت SEC-01 **باز نمی‌شود** — هفت ردیف
+  یکی‌یکی بازبینی) و بند ۵ (مدت نگهداری عکس‌ها **عددِ ما نیست**؛ خودِ عضو انتخاب می‌کند —
+  توصیهٔ قبلیِ «نود روز» superseded و در صفحه اصلاح شد)
+- بانک صندباکس: `mp-app/backend/devtools/sandbox_bank.py` — FastAPI مستقل با قرارداد درگاه ایرانی
+  (purchase→authority، صفحهٔ RTL سه‌دکمه‌ای، بازگشت ۳۰۲ با `Sign` HMAC، verify یک‌بارمصرف
+  ۱۰۰/۱۰۱/۱۰۲/۱۰۳/`-۱`، refund ۲۵۵/۲۵۴) + اهرم‌های آزمون `ttl_seconds/delay_seconds/http_error`
+- `SandboxBankAdapter` + `MP_PAYMENT_GATEWAY=sandbox`؛ خطای ۵۰۰ِ بانک = `gateway_unavailable`
+  (پرداخت pending می‌ماند) نه «نامعتبر»؛ production در **دو لایه** رد می‌کند (config validator + get_gateway)
+- بازگشت وجه واقعاً اضافه شد: `Payment.status=refunded` (بدون مهاجرت — ستون String است)،
+  `POST /{id}/refund`، `finance_summary` با `total_refunded_rial/refunded_count`؛
+  مرجعِ بازگشت عمداً در `reference_id` نوشته نمی‌شود (فقط audit) — M111 آن را دارد
+- حلقهٔ انسانی بسته شد: `GET /api/v1/payments/{id}/gateway-return` تنها مسیر عمومی payments؛
+  گیت `route_guard_gate` اول «بدون guard» گرفت، با ثبت در `PUBLIC` (دلیل‌دار) حل شد — نه skip؛
+  `start_payment` بدون callback_url خودش با `MP_PUBLIC_BASE_URL` می‌سازد؛ استارت‌لت RedirectResponse
+  پیش‌فرض ۳۰۷ می‌دهد (فرم را دوباره POST می‌کند!) — بانک صریحاً ۳۰۲ شد
+- تست: `tests/integration/test_sandbox_bank.py` = **۲۲** از ۳ سطح (قرارداد بانک / نگاشت آداپتر /
+  چرخهٔ کامل مرورگر با replay و جعل)؛ suite کامل **886 passed / 0 failed / 2 skipped**؛
+  `api/routes.json` re-export؛ دو exception مستند در `studio apiCoverage`؛ `'refunded': 'بازگشت خورده'` در کلاینت
+- گزارش: `finn/reports/m110-sandbox-bank.md` · وضعیت: PASS محلی — شاهد CI روی push بعدی ثبت می‌شود

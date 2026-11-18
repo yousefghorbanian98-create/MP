@@ -25,9 +25,15 @@ class Settings(BaseSettings):
     environment: str = "development"
     database_url: str = "sqlite:///./mp.db"
     secret_key: str = DEFAULT_DEV_SECRET
-    payment_gateway: str = "mock"  # mock | zarinpal
+    # نشانی بیرونیِ خودِ سرویس — بانکِ واقعی کاربر را به `callback` همین نشانی برمی‌
+    # گرداند؛ در production باید MP_PUBLIC_BASE_URL=https://domain باشد.
+    public_base_url: str = "http://127.0.0.1:8000"
+    payment_gateway: str = "mock"  # mock | sandbox | zarinpal
     zarinpal_merchant_id: str = ""
     payment_sandbox: bool = True
+    # M110 — بانک صندباکس محلی (devtools/sandbox_bank.py); هیچ اعتبار واقعی نمی‌خواهد
+    sandbox_bank_url: str = "http://127.0.0.1:8088"
+    sandbox_bank_merchant_id: str = "SANDBOX-MERCHANT"
     # کلید رمزنگاری FaceTemplate — در production حتماً از env تزریق می‌شود (base64, 32 bytes)
     biometric_key: str = ""
     access_token_minutes: int = 30
@@ -67,8 +73,8 @@ class Settings(BaseSettings):
     @field_validator("payment_gateway")
     @classmethod
     def _supported_payment_gateway(cls, value: str) -> str:
-        if value not in {"mock", "zarinpal"}:
-            raise ValueError("MP_PAYMENT_GATEWAY باید mock یا zarinpal باشد")
+        if value not in {"mock", "sandbox", "zarinpal"}:
+            raise ValueError("MP_PAYMENT_GATEWAY باید mock، sandbox یا zarinpal باشد")
         return value
 
     @model_validator(mode="after")
@@ -178,6 +184,10 @@ class Settings(BaseSettings):
             problems.append(
                 "درگاه mock در production مجاز نیست؛ MP_PAYMENT_GATEWAY=zarinpal لازم است"
             )
+        if self.payment_gateway == "sandbox":
+            # بانک صندباکس یک سرویس محلی است؛ اگر کسی آن را به production ببرد، یعنی
+            # «تراکنش موفق» را خودمان برای خودمان تأیید می‌کنیم.
+            problems.append("بانک صندباکس (MP_PAYMENT_GATEWAY=sandbox) در production مجاز نیست")
         if self.payment_gateway == "zarinpal":
             if not self.zarinpal_merchant_id:
                 problems.append("MP_ZARINPAL_MERCHANT_ID در production الزامی است")

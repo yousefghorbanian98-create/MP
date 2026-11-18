@@ -25,8 +25,22 @@ def finance_summary(db: Session) -> dict:
         ).scalar()
         or 0
     )
+    # M110: بازگشت وجه، تراکنش را از تاریخچه حذف نمی‌کند — وضعیت `refunded` از
+    # `paid` بیرون می‌رود، پس `total_paid_rial` خودش «ماندِ» باشگاه است و ردّ پولِ
+    # برگشتی در `total_refunded_rial` می‌ماند؛ حسابدار باید هر دو را ببیند.
+    refunded = db.execute(
+        select(func.coalesce(func.sum(Payment.amount_rial), 0)).where(Payment.status == "refunded")
+    ).scalar()
+    count_refunded = (
+        db.execute(
+            select(func.count()).select_from(Payment).where(Payment.status == "refunded")
+        ).scalar()
+        or 0
+    )
     return {
         "total_paid_rial": int(paid),
+        "total_refunded_rial": int(refunded),
+        "refunded_count": int(count_refunded),
         "total_pending_rial": int(pending),
         "paid_count": int(count_paid),
         "generated_at": datetime.now(UTC).isoformat(),

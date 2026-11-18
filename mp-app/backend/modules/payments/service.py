@@ -8,6 +8,7 @@ from datetime import UTC, datetime
 from sqlalchemy import case, func, select
 from sqlalchemy.orm import Session, aliased
 
+from app.config import settings
 from app.errors import ApiError, NotFoundError
 from db.models import Member, Payment, WalletTransaction
 
@@ -94,6 +95,17 @@ def start_payment(db: Session, payment_id: int, callback_url: str = "") -> dict:
         # اگر دو بار authority صادر شود، کدام تراکنش واقعی است؟ هیچ‌کدام معلوم نیست.
         raise ApiError("این پرداخت قبلاً در درگاه آغاز شده است", code="already_started")
 
+    # امضای HMAC تا callback نتواند مبلغ را عوض کند (G8-مالی)
+    token = signed_token(payment.id, payment.amount_rial)
+    if not callback_url:
+        # اگر کلاینت جایی نسازد (مثلاً پرداخت از پنل پذیرش، یا آزمون دستیِ بانک
+        # صندباکس)، بازگشتِ مرورگر به مسیر عمومی gateway-return می‌افتد. بانک‌های
+        # واقعی query را به همین نشانی **اضافه** می‌کنند، پس token در مسیر می‌ماند.
+        callback_url = (
+            f"{settings.public_base_url.rstrip('/')}/api/v1/payments/"
+            f"{payment.id}/gateway-return?token={token}"
+        )
+
     gw = get_gateway()
     try:
         started = gw.start(payment.amount_rial, payment.description or "", callback_url)
@@ -111,8 +123,7 @@ def start_payment(db: Session, payment_id: int, callback_url: str = "") -> dict:
         "authority": started.authority,
         "redirect_url": started.redirect_url,
         "amount_rial": payment.amount_rial,
-        # امضای HMAC تا callback نتواند مبلغ را عوض کند (G8-مالی)
-        "callback_token": signed_token(payment.id, payment.amount_rial),
+        "callback_token": token,
     }
 
 
@@ -203,6 +214,63 @@ def fail_payment(db: Session, payment_id: int) -> Payment:
     from modules.admin.service import audit
 
     audit(db, None, "payment_failed", "payment", payment.id, {})
+    return payment
+
+
+def refund_payment(db: Session, payment_id: int) -> Payment:
+    """بازگشت وجه از درگاه (M110) — فقط پرداخت درگاهیِ تأییدشده، و فقط یک بار.
+
+    سه تصمیم که عمداً گرفته شده:
+
+    ۱) مرجع بازگشت در `reference_id` **ننوشته می‌شود**: آن ستون کد پیگیری بانک برای
+       تراکنش اصلی است و رسیدِ مالی عضو به آن تکیه می‌کند. تا وقتی ستون جداگانه‌ای برای
+       refund نداریم (M111)، شناسهٔ بازگشت فقط در audit می‌نشیند؛ یک عددِ بی‌منبع در
+       ستونِ اشتباه، از نبودنش بدتر است.
+    ۲) وضعیت `refunded` است نه `failed`: «پرداخت شد و بعد برگشت» با «پرداخت نشد» یکی
+       نیست — گزارش مالی باید درآمد را کم کند، نه اینکه تراکنش را از تاریخچه بردارد.
+    ۳) اگر بانک بگوید «قبلاً برگشت خورده» (code 254)، وضعیت را می‌گذاریم `refunded` و
+       خطا نمی‌دهیم: حالتِ واگرا بدتر از تکرارِ بی‌ضرر است (idempotency).
+    """
+    from modules.payments.gateway import PaymentGatewayError, get_gateway
+
+    payment = db.get(Payment, payment_id)
+    if payment is None:
+        raise NotFoundError("پرداخت یافت نشد")
+    if payment.status == "refunded":
+        raise ApiError("این پرداخت قبلاً برگشت خورده است", code="already_refunded")
+    if payment.status != "paid":
+        raise ApiError("فقط پرداخت تأییدشده قابل بازگشت است", code="not_refundable")
+    if not payment.gateway_authority:
+        raise ApiError("این پرداخت مسیر درگاه ندارد", code="wallet_not_gateway")
+
+    gw = get_gateway()
+    refund = getattr(gw, "refund", None)
+    if refund is None:
+        raise ApiError("درگاه فعلی بازگشت وجه را پشتیبانی نمی‌کند", code="refund_unsupported")
+    try:
+        result = refund(payment.gateway_authority, payment.amount_rial)
+    except PaymentGatewayError as exc:
+        raise ApiError(str(exc), code=exc.code) from exc
+    if not result.ok and not result.already:
+        raise ApiError("درگاه بازگشت را تأیید نکرد", code="refund_rejected")
+
+    payment.status = "refunded"
+    db.commit()
+    db.refresh(payment)
+    from modules.admin.service import audit
+
+    audit(
+        db,
+        None,
+        "payment_refunded",
+        "payment",
+        payment.id,
+        {
+            "amount_rial": payment.amount_rial,
+            "refund_ref": result.reference_id,
+            "already": result.already,
+        },
+    )
     return payment
 
 

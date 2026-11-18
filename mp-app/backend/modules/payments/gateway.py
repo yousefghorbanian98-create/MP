@@ -5,6 +5,7 @@ G8-مالی: مبلغ/وضعیت فقط از DB و پاسخ امضاشدهٔ د�
 
 from __future__ import annotations
 
+import contextlib
 import hashlib
 import hmac
 import secrets
@@ -35,12 +36,157 @@ class GatewayVerifyResult:
     card_pan: str = ""  # ماسک‌شده
 
 
+@dataclass
+class GatewayRefundResult:
+    """نتیجهٔ بازگشت وجه — M110. `already` یعنی بانک قبلاً همین تراکنش را برگردانده."""
+
+    ok: bool
+    reference_id: str = ""
+    already: bool = False
+
+
 class GatewayAdapter(Protocol):
     def start(
         self, amount_rial: int, description: str, callback_url: str
     ) -> GatewayStartResult: ...
 
     def verify(self, authority: str, amount_rial: int) -> GatewayVerifyResult: ...
+
+
+# ── M110: بانک صندباکسِ محلی (devtools/sandbox_bank.py) ────────────────────────────
+# چرا یک adapter و نه یک mockِ درون‌پروسه‌ای: MockGateway هرگز «هدایت به بانک»، «امضای
+# callback»، «مهلتِ انقضای authority» و «تأخیر/خطای HTTP شبکه» را نمی‌بیند. این مسیر
+# قرارداد درگاه‌های واقعی را محلی تقلید می‌کند، پس جابه‌جایی به درگاه واقعی فقط عوض‌کردن
+# `MP_PAYMENT_GATEWAY` است — نه بازنویسی جریان.
+_SANDBOX_OK_VERIFY = {100: "ok", 101: "already_verified"}
+_SANDBOX_OK_REFUND = {255: "ok", 254: "already_refunded"}
+_SANDBOX_MESSAGES = {
+    102: "amount_mismatch",
+    103: "not_paid_at_bank",
+    -1: "authority_not_found",
+}
+
+
+class SandboxBankAdapter:
+    """هم‌خوانی HTTP با بانک صندباکس — شروع، تأیید، بازگشت وجه (M110)."""
+
+    def __init__(
+        self,
+        base_url: str,
+        merchant_id: str = "SANDBOX-MERCHANT",
+        timeout: float = 5.0,
+        http_client=None,
+    ):
+        """`http_client` فقط برای آزمون: با `TestClient(بانک)` همان سرویس درون‌پروسه
+        اجرا می‌شود تا suite به پورت/شبکه نیاز نداشته باشد — و مسیر HTTP (فرم،
+        redirect، کد وضعیت، بدنهٔ JSON) همان مسیری است که production می‌رود."""
+        self.base_url = base_url.rstrip("/")
+        self.merchant_id = merchant_id
+        self.timeout = timeout
+        self._http_client = http_client
+
+    @contextlib.contextmanager
+    def _client(self):
+        if self._http_client is not None:
+            yield self._http_client
+            return
+        import httpx
+
+        with httpx.Client(
+            base_url=self.base_url,
+            timeout=self.timeout,
+            headers={"X-Sandbox-Bank": "1"},
+        ) as client:
+            yield client
+
+    @staticmethod
+    def _status(payload: dict) -> int:
+        try:
+            return int((payload or {}).get("result", {}).get("status", -1))
+        except (TypeError, ValueError):
+            return -1
+
+    def start(self, amount_rial: int, description: str, callback_url: str) -> GatewayStartResult:
+        import httpx
+
+        try:
+            with self._client() as client:
+                resp = client.post(
+                    "/api/v1/purchase",
+                    json={
+                        "merchant_id": self.merchant_id,
+                        "amount": amount_rial,
+                        "description": description,
+                        "callback_url": callback_url,
+                    },
+                )
+                resp.raise_for_status()
+                payload = resp.json()
+        except (httpx.HTTPError, OSError, ValueError) as exc:  # شبکه = نامعلوم، نه «ناموفق»
+            raise PaymentGatewayError(
+                "بانک صندباکس در دسترس نیست", code="gateway_unreachable"
+            ) from exc
+        authority = (payload.get("data") or {}).get("authority") or ""
+        if not authority:
+            raise PaymentGatewayError("آغاز پرداخت ناموفق بود", code="start_failed")
+        return GatewayStartResult(
+            authority=authority, redirect_url=f"{self.base_url}/pay/{authority}"
+        )
+
+    def verify(self, authority: str, amount_rial: int) -> GatewayVerifyResult:
+        status, data = self._post_verify("/api/v1/verify", authority, amount_rial)
+        if status in _SANDBOX_OK_VERIFY:
+            return GatewayVerifyResult(
+                ok=True,
+                reference_id=str(data.get("ref_id", "")),
+                card_pan=str(data.get("card_pan", "")),
+            )
+        code = _SANDBOX_MESSAGES.get(status, f"verify_{status}")
+        reason = (data.get("message") or "") if isinstance(data, dict) else ""
+        raise PaymentGatewayError(reason or "تأیید درگاه ناموفق بود", code=code)
+
+    def refund(self, authority: str, amount_rial: int) -> GatewayRefundResult:
+        status, data = self._post_verify("/api/v1/refund", authority, amount_rial)
+        if status == 255:
+            return GatewayRefundResult(ok=True, reference_id=str(data.get("ref_id", "")))
+        if status == 254:
+            return GatewayRefundResult(
+                ok=False, already=True, reference_id=str(data.get("ref_id", ""))
+            )
+        code = _SANDBOX_MESSAGES.get(status, f"refund_{status}")
+        raise PaymentGatewayError(str(data.get("message") or "بازگشت وجه ناموفق بود"), code=code)
+
+    def _post_verify(self, path: str, authority: str, amount_rial: int) -> tuple[int, dict]:
+        import httpx
+
+        try:
+            with self._client() as client:
+                resp = client.post(
+                    path,
+                    json={
+                        "merchant_id": self.merchant_id,
+                        "authority": authority,
+                        "amount": amount_rial,
+                    },
+                )
+                if resp.status_code >= 500:
+                    # ۵۰x یعنی بانک لحظه‌ای خراب است؛ «نامعتبر» نیست. تفاوت همین‌جا
+                    # تعیین می‌کند پرداخت pending بماند و بعداً تأیید شود.
+                    raise PaymentGatewayError(
+                        "بانک صندباکس خطای سرویس داد", code="gateway_unavailable"
+                    )
+                payload = resp.json() if resp.content else {}
+        except (httpx.HTTPError, OSError, ValueError) as exc:
+            raise PaymentGatewayError(
+                "ارتباط با بانک صندباکس قطع شد", code="gateway_unreachable"
+            ) from exc
+        if not isinstance(payload, dict):
+            raise PaymentGatewayError("پاسخ بانک نامفهوم است", code="gateway_bad_response")
+        data = payload.get("data") or {}
+        if not isinstance(data, dict):
+            data = {}
+        data.setdefault("message", str((payload.get("result") or {}).get("message", "")))
+        return self._status(payload), data
 
 
 class MockGateway:
@@ -165,6 +311,16 @@ def get_gateway() -> GatewayAdapter:
                 "درگاه آزمایشی در production غیرفعال است", code="gateway_not_configured"
             )
         return _mock
+    if settings.payment_gateway == "sandbox":
+        if settings.environment == "production":
+            raise PaymentGatewayError(
+                "بانک صندباکس در production غیرفعال است", code="gateway_not_configured"
+            )
+        if not settings.sandbox_bank_url:
+            raise PaymentGatewayError(
+                "نشانی بانک صندباکس تنظیم نشده (MP_SANDBOX_BANK_URL)", code="gateway_not_configured"
+            )
+        return SandboxBankAdapter(settings.sandbox_bank_url, settings.sandbox_bank_merchant_id)
     if settings.payment_gateway == "zarinpal":
         if not settings.zarinpal_merchant_id:
             raise PaymentGatewayError(

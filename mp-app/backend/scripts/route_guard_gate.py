@@ -41,6 +41,14 @@ PUBLIC: dict[tuple[str, str], str] = {
     ("POST", "/api/v1/auth/refresh"): "تعویض refresh token — اعتبار با خود توکن است",
     ("POST", "/api/v1/auth/logout"): "ابطال refresh token — اعتبار با خود توکن است",
     ("GET", "/api/v1/updates/manifest"): "کلاینت پیش از ورود نسخه را می‌پرسد",
+    # بازگشت مرورگر از بانک (M110) — احراز هویتِ session اینجا معنا ندارد: بانکِ واقعی
+    # کاربرِ بدون توکن را با GET به این آدرس می‌فرستد. اعتبار تسویه از سه چیز می‌آید:
+    # tokenِ HMACِ خودِ سرور روی (payment_id, مبلغ)، تطبیق Authority با DB، و verify
+    # یک‌بارمصرف نزد بانک + سقف نرخ ۳۰/دقیقه. جعل فقط «صفحهٔ خطا» می‌سازد.
+    (
+        "GET",
+        "/api/v1/payments/{payment_id}/gateway-return",
+    ): "redirect بانک (M110) — با token امضاشده + سقف نرخ",
     ("GET", "/api/v1/health/ready"): "probe زیرساخت",
     ("GET", "/api/v1/metrics"): "scrape پرومتئوس",
     ("GET", "/health"): "probe زیرساخت",

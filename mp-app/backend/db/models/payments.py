@@ -32,6 +32,9 @@ class Payment(TimestampMixin, BranchMixin, Base):
     method: Mapped[str] = mapped_column(
         String(20), nullable=False, default="zarinpal"
     )  # zarinpal | cash | card | wallet
+    # pending → paid (verify درگاه) → refunded (M110)؛ `failed` از هر حالت اولیه.
+    # ستون رشته‌ای است نه CHECK، پس افزودن وضعیت جدید مهاجرت نمی‌خواهد — ولی
+    # `refunded` عمداً از `failed` جداست: «پول آمد و رفت» با «پول نیامد» یکی نیست.
     status: Mapped[str] = mapped_column(
         String(20), nullable=False, default="pending", index=True
     )  # pending | paid | failed

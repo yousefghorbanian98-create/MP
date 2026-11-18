@@ -76,6 +76,17 @@ const ROUTE_EXCEPTIONS: Record<string, Exception> = {
     evidence: null,
     external: "TODO: تأیید caller بیرونی یا حذف route مستقیم پس از بررسی",
   },
+  "/api/v1/payments/{payment_id}/refund": {
+    why: "بازگشت وجه از درگاه (M110) سمت سرویس کامل است؛ هنوز UI «بازگشت وجه» در پنل پذیرش سوار نشده",
+    evidence: null,
+    external: "TODO: افزودن دکمهٔ بازگشت وجه در صفحهٔ پرداختِ استودیو/اپ پذیرش",
+  },
+  "/api/v1/payments/{payment_id}/gateway-return": {
+    why: "این مسیر را بانکِ واقعی با GET مرورگر باز می‌کند (redirect after pay)، نه کدِ اپ؛ مصرف‌کنندهٔ آن مرورگرِ کاربر است",
+    evidence: null,
+    external: "صفحهٔ پرداختِ بانک (devtools/sandbox_bank.py و درگاه واقعی) کاربر را به همین مسیر برمی‌گرداند",
+    fileEvidence: "mp-app/backend/modules/payments/router.py",
+  },
   "/api/v1/payments/{payment_id}/verify": {
     why: "تأیید دستی نقدی/کارت‌خوان برای پذیرش است؛ Studio/mobile action تسویه ندارد",
     evidence: null,

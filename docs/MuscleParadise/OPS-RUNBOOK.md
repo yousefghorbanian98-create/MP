@@ -75,3 +75,36 @@ MP_DATABASE_URL=sqlite:////tmp/mp-drill/mp.db python -m alembic check     # با
 3. خرابی SMS: بررسی TLS/credential/provider و نتیجهٔ test محدود؛ SMS توسعه را در production فعال نکنید.
 4. رویداد مالی یا دادهٔ بیومتریک: endpointهای audit بررسی شوند و دادهٔ حساس فقط از کانال محدود مجاز دیده شود.
 5. ثبت اقدام، نتیجهٔ restore/rollback و follow-up در CHANGELOG و گزارش incident.
+
+## ۶) پرداخت: صندباکس محلی و درگاه واقعی
+
+دو مسیر تست، هیچ‌کدام پول واقعی نمی‌خواهند. بانک صندباکس (`mp-app/backend/devtools/sandbox_bank.py`)
+همان قرارداد درگاه واقعی را محلی بازی می‌کند: authority، صفحهٔ پرداخت کلیک‌کردنی، بازگشت
+امضاشده، verify یک‌بارمصرف، بازگشت وجه.
+
+تست محلی — دو پنجره، بدون هیچ حسابی:
+
+    cd mp-app/backend
+    uvicorn devtools.sandbox_bank:app --port 8088
+    MP_PAYMENT_GATEWAY=sandbox MP_PUBLIC_BASE_URL=http://127.0.0.1:8000 \
+      uvicorn app.main:app --port 8000
+
+بعد `POST /api/v1/payments` → `POST /{id}/start` → `redirect_url` را در مرورگر باز کن →
+دکمهٔ «پرداخت موفق» → بانک با ۳۰۲ به `/api/v1/payments/{id}/gateway-return` برمی‌گرداند و
+همان‌جا تسویه می‌شود. مسیر بازگشت عمداً بدون لاگین است و در `scripts/route_guard_gate.py`
+به‌عنوان عمومیِ مستند ثبت شده — سه لایهٔ اعتبارش: tokenِ HMAC، تطبیق authority، verifyِ بانک.
+
+تست با شناسهٔ آزمایشیِ خودت (زرین‌پال سندباکس):
+
+    MP_PAYMENT_GATEWAY=zarinpal MP_PAYMENT_SANDBOX=true \
+      MP_ZARINPAL_MERCHANT_ID=<شناسهٔ آزمایشی> \
+      MP_PUBLIC_BASE_URL=<نشانی عمومی که بانک بتواند بازگرداند>
+
+`MP_PUBLIC_BASE_URL` در هر دو لازم است: اگر کلاینت `callback_url` ندهد، پیش‌فرضش از همین
+نشانی ساخته می‌شود. در production دو قفل هم‌زمان فعال‌اند: `validate_production_configuration`
+هم `mock` و هم `sandbox` را رد می‌کند و `get_gateway()` هم در runtime همان کار را می‌کند —
+تنظیمات غلط باعث نمی‌شود بانک صندباکس «درگاه واقعی» جا بزند.
+
+بازگشت وجه: `POST /api/v1/payments/{id}/refund` — فقط پرداختِ درگاهیِ تأییدشده؛ وضعیت
+`refunded` می‌شود (از `total_paid_rial` کم می‌شود، در `total_refunded_rial` ثبت)؛ تکرارش
+`already_refunded` است. مرجعِ بازگشت فعلاً فقط در audit است تا ستون مخصوص خودش (M111) ساخته شود.

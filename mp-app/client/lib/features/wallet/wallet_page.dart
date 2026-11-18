@@ -249,6 +249,8 @@ class _PaymentHistory extends ConsumerWidget {
     'paid': 'پرداخت‌شده',
     'pending': 'در انتظار',
     'failed': 'ناموفق',
+    // M110: «پول آمد و بعد برگشت» — نه ناموفق است نه پرداخت‌شدهٔ نهایی
+    'refunded': 'بازگشت خورده',
   };
 
   @override
