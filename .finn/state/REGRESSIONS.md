@@ -78,3 +78,9 @@
 - تست‌ها: `mp-app/client/test/motion_haptics_test.dart`، `mp-app/client/test/haptics_recorder.dart`، افزوده‌شده به `set_feedback_sheet_test.dart` و `classes_cancel_test.dart`.
 - رگرسیون‌ها: `disableAnimations=true` → `MpMotion.dur` صفر و `target` صفر (و نبودِ MediaQuery → fallback امن)؛ `SystemMpHaptics(enabled: true)` سه فراخوانی روی `SystemChannels.platform` می‌فرستد با آرگومان‌های distinguishable و `enabled: false` صفر فراخوانی؛ ثبت موفق بازخورد = `success` و نه `warning`، ارسال ناموفق = `warning` و نه `success`، و «تکرار خالی → هیچ ارسالی، هیچ پالسی»؛ رزرو/لغو موفق کلاس = یک `success`.
 - وضعیت: Dart static gate **۷۲ فایل / ۰ یافته**؛ هیچ dependency تازه‌ای اضافه نشد؛ behavior واقعی روی دستگاه (شدت/تأخیر) سنجیده نشده و Flutter test محلی اجرا نشده → `UNKNOWN` تا CI.
+
+## R-034 (M90/M98) — شکست‌هایی که فقط `flutter test` واقعی می‌گیرد
+
+- تست‌ها: `mp-app/client/test/motion_haptics_test.dart`، `mp-app/client/test/set_feedback_sheet_test.dart`، `mp-app/client/test/shop_orders_receipt_test.dart`.
+- رگرسیون‌ها: (۱) فرم ثبت بازخورد باید بدون وابستگی به پاسخ کانال پلتفرم به‌روز شود — «اعمال شد» باید حتی وقتی `HapticFeedback` هیچ‌وقت reply نمی‌دهد روی صفحه بیاید (پالس `void`/fire-and-forget)؛ (۲) `SystemMpHaptics` روی `TargetPlatform.android` دقیقاً سه فراخوانی روی `SystemChannels.platform` می‌فرستد و `enabled: false` صفر تا؛ (۳) متن‌های رسید با همان قالب رندرشده تطبیق داده شوند (`… ریال × ۲`) و ردیف‌های جمع با `find.text` (نه textContaining) سنجیده شوند؛ (۴) `items_total_rial` غیرعددی → پیام «جمع اقلام رسید نامعتبر است» با گزینهٔ تلاش دوباره، نه صفحهٔ خطای build؛ (۵) `rial(5000000.0)` → `۵٬۰۰۰٬۰۰۰ ریال` (بی‌`.۰`).
+- وضعیت: این پنج مورد از شکست‌های CI run `44293699567` آمد و در `484fcd8`/`41ae143` رفع شد؛ سبزیِ نهایی از `client-flutter` روی `41ae143` خوانده می‌شود (قبل از آن `UNKNOWN`).

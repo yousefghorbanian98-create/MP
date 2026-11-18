@@ -11,7 +11,24 @@ from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
-MARKDOWN_FILES = (
+
+
+def _module_docs() -> tuple[Path, ...]:
+    """هر صفحهٔ ماژول زیر `architecture/modules/` هم در گیت لینک شرکت می‌کند.
+
+    دلیل: DX-REP-01 می‌گوید سند هر زیرسیستم باید Git-tracked و قابل‌بازتولید باشد؛
+    اگر gate فقط فهرست ثابت را ببیند، یک صفحهٔ تازه با لینک شکسته می‌تواند بی‌صدا
+    وارد Git شود. پوشه که نبود، فهرست خالی است و گیت نمی‌شکند.
+    """
+    folder = ROOT / "docs/MuscleParadise/architecture/modules"
+    if not folder.is_dir():
+        return ()
+    return tuple(
+        path.relative_to(ROOT) for path in sorted(folder.glob("*.md"))
+    )
+
+
+CORE_MARKDOWN_FILES = (
     Path("AGENTS.md"),
     Path("README.md"),
     Path("docs/README.md"),
@@ -20,6 +37,7 @@ MARKDOWN_FILES = (
     Path("docs/MuscleParadise/adr/README.md"),
     Path("docs/MuscleParadise/adr/TEMPLATE.md"),
 )
+MARKDOWN_FILES = (*CORE_MARKDOWN_FILES, *_module_docs())
 REQUIRED_FILES = (*MARKDOWN_FILES, Path("docs/MuscleParadise/assets/knowledge-atlas.svg"))
 MARKDOWN_LINK = re.compile(r"!?\[[^\]]*\]\(([^)]+)\)")
 HTML_REFERENCE = re.compile(r"\b(?:href|src)=[\"']([^\"']+)[\"']", re.IGNORECASE)

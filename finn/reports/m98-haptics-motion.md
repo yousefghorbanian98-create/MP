@@ -47,6 +47,20 @@
 - `SemanticsBinding.instance.accessibleNavigation` برای «فقط‌خواندن‌شدن» اضافه نشد؛ اگر بازخورد لمسی برای کاربری با Accessible Navigation آزارنده باشد، نیاز به تنظیمات کاربر دارد (خارج از این loop).
 - ECC/REA: هیچ subagent اجرا نشد (کلید API/`claude`/REA در این sandbox نیست). چک‌لیست `flutter-reviewer.md` و `a11y-*` به‌صورت دستی اعمال شد؛ به‌عنوان اجرای ایجنت ثبت نمی‌شود.
 
+## اجرا در CI — بازداشت اول و طراحی مجدد API (۲۰۲۶-۱۱-۱۸)
+
+اولین run واقعی پس از push بسته (run `44293699567`، job `client-flutter`): **146 passed / 4 failed** — و هر چهار شکست به همین loop برمی‌گشت:
+
+| شکست CI | تشخیص | رفع |
+|---|---|---|
+| `motion_haptics_test.dart` — خطای کامپایل در خط ۸۶ | `setMockMethodCallHandler<void>` نوشته شده بود، ولی این متد در SDK نسخهٔ CI **ژنریک نیست** (`WRONG_NUMBER_OF_TYPE_ARGUMENTS_ELEMENT`)؛ `dart_gate` (Tree-sitter) این را نمی‌بیند | حذف پارامتر نوع + بالا کشیدن messenger به یک `local`؛ کامنت همان‌جا که «چرا بدون type argument» |
+| `set_feedback_sheet_test.dart:100` — متن «اعمال شد» غیب شد | پالس موفق **بین** نتیجهٔ سرویس و `setState` با `await` بود؛ در تست ویجت (و روی دستگاهی که کانال پاسخ نمی‌دهد) آن future resolve نمی‌شود، پس `setState` هرگز اجرا نمی‌شد | قرارداد جدید: `MpHaptics` سه متد **`void`** است؛ `SystemMpHaptics` با `unawaited(...catchError)` شلیک می‌کند و پالس‌ها بعد از `mounted` check قرار گرفتند — بازخورد دیگر هرگز مسیر درستیِ UI را گیت نمی‌کند |
+
+دو شکست دیگر (`shop_orders_receipt_test.dart`) در گزارش M90 ثبت شده‌اند.
+
+**چرا این یک تغییر رفتار است، نه فقط رفع تست:** ادعای loop «پالس وقتی نتیجه معلوم شد» بود؛ نسخهٔ اول ناخواسته «پالس می‌تواند نمایش نتیجه را برای همیشه نخواباند» شد. حالا قرارداد همان چیزی است که بالای `lib/core/haptics.dart` نوشته شده و `motion_haptics_test.dart` با `pumpEventQueue()` ثابت می‌کند پیام **بدون await کردنِ مسیر UI** به messenger می‌رسد (سه فراخوانی با آرگومان‌های افتراقی؛ `enabled: false` → صفر فراخوانی).
+
+**وضعیت پس از رفع:** `flutter analyze` / `flutter test` همچنان در این sandbox اجرا‌ناپذیرند؛ قضاوت نهایی `client-flutter` در run دوم (`44295081645`) است. تا ثبت همان عدد، M98 `UNKNOWN` می‌ماند — «۷۲ فایل / ۰ یافته» و «تست‌ها منطقی‌اند» جایگزین pass نیستند.
 ## بازگشت
 
 حذف `core/haptics.dart`, `core/motion.dart`, `test/motion_haptics_test.dart`, `test/haptics_recorder.dart` و برگرداندن آن چهار فایل UI و دو فایل تست، رفتار قبلی (بدون پالس، با duration ثابت) را برمی‌گرداند. هیچ API/schema/dependency درگیر نیست.
