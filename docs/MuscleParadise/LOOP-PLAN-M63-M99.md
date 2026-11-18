@@ -111,6 +111,8 @@
 - M87: فقط بخش Dart/تست؛ Kotlin compile و persistence واقعی اندروید هنوز `UNKNOWN`.
 - M85 (معیار بالینی) و M88/M89 (وابسته به M87) اصلاً در این reconcile نیستند: بلوکرشان تصمیم/ابزار بیرونی است.
 
+**قدم بعدیِ اجرا (خارج از این سند):** `finn/reports/m107-codespaces-rails.md` و `runbooks/codespaces-execution.md` — مرحله‌های ۵ و ۶ همان چیزهایی‌اند که M87 (کامپایل Kotlin)، M104 (startup)، M105/M106 (ماسک لانچر) و بُعدِ دستگاهِ M89/M90/M98 را از `UNKNOWN` درمی‌آورند؛ تا لاگِ کاربر، هیچ‌کدام تکان نمی‌خورند.
+
 **شاهدِ شمارش، نه فقط رنگ:** برای اینکه «سبز» با «probe اجرا شد» اشتباه گرفته نشود، `tools/ci_test_failures.py --summary` شمارش pass/fail/skip را در step summary می‌نویسد و رگرسیون `mp-app/backend/tests/regression/test_ci_test_failures.py` رفتارش (و منتشرنشدن مقادیر assertion) را قفل می‌کند.
 
 

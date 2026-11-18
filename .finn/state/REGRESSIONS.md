@@ -84,3 +84,9 @@
 - تست‌ها: `mp-app/client/test/motion_haptics_test.dart`، `mp-app/client/test/set_feedback_sheet_test.dart`، `mp-app/client/test/shop_orders_receipt_test.dart`.
 - رگرسیون‌ها: (۱) فرم ثبت بازخورد باید بدون وابستگی به پاسخ کانال پلتفرم به‌روز شود — «اعمال شد» باید حتی وقتی `HapticFeedback` هیچ‌وقت reply نمی‌دهد روی صفحه بیاید (پالس `void`/fire-and-forget)؛ (۲) `SystemMpHaptics` روی `TargetPlatform.android` دقیقاً سه فراخوانی روی `SystemChannels.platform` می‌فرستد و `enabled: false` صفر تا؛ (۳) متن‌های رسید با همان قالب رندرشده تطبیق داده شوند (`… ریال × ۲`) و ردیف‌های جمع با `find.text` (نه textContaining) سنجیده شوند؛ (۴) `items_total_rial` غیرعددی → پیام «جمع اقلام رسید نامعتبر است» با گزینهٔ تلاش دوباره، نه صفحهٔ خطای build؛ (۵) `rial(5000000.0)` → `۵٬۰۰۰٬۰۰۰ ریال` (بی‌`.۰`).
 - وضعیت: پنج مورد از شکست‌های run `44293699567` بود که در `484fcd8` رفع شدند و **run `44295081645` تأییدشان کرد: 154 passed / 2 failed، و هر دو شکستِ باقی‌مانده فقط تست messenger بود** (نه M90). آن دو با حذف `pumpEventQueue()` در `c672737` و در `41ae143` با pin کردن target platform اصلاح شدند؛ سبز شدن کامل از `client-flutter` روی `c672737` خوانده می‌شود (قبل از آن `UNKNOWN`).
+
+## R-035 (M107) — گیت فایل‌محور نباید به cwd وابسته باشد
+
+- تست‌ها: `mp-app/backend/tests/integration/test_monitoring.py::test_alert_rules_cover_slo_and_down` (همان تست، از دو cwd اجرا شد).
+- رگرسیون: هر گیتی که فایلِ مخزن را می‌خواند باید مسیر را از `Path(__file__)` بگیرد؛ `Path("../infra/…")` یعنی «این تست فقط اگر از `mp-app/backend` اجراش کنی معنی دارد» — و نتیجه‌اش یک شکستِ بی‌ربط به کد است که خواننده را از کل گیت بی‌اعتماد می‌کند (شاهد تاریخی: 861 passed / **1 failed** از ریشه در برابر 867 از زیرپوشه).
+- وضعیت: **رفع شد و سبز از هر دو cwd: 873 passed / 1 skipped** (۲۰۲۶-۱۱-۱۸). `grep -rn 'Path("../' mp-app/backend` حالا صفر مورد دارد.

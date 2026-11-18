@@ -36,6 +36,9 @@ CORE_MARKDOWN_FILES = (
     Path("docs/MuscleParadise/architecture/README.md"),
     Path("docs/MuscleParadise/adr/README.md"),
     Path("docs/MuscleParadise/adr/TEMPLATE.md"),
+    # M107: دستور کار اجرای بیرون از sandbox هم تحت گیت لینک می‌آید؛ مسیرهای
+    # داخلش (devcontainer، runbookها، گزارش‌ها) واقعی‌اند و باید شکستنشان دیده شود.
+    Path("docs/MuscleParadise/runbooks/codespaces-execution.md"),
 )
 MARKDOWN_FILES = (*CORE_MARKDOWN_FILES, *_module_docs())
 REQUIRED_FILES = (*MARKDOWN_FILES, Path("docs/MuscleParadise/assets/knowledge-atlas.svg"))

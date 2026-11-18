@@ -49,7 +49,7 @@ flowchart LR
 | محدودهٔ محصول/رفتار موردانتظار را بفهمی | [PRD](MuscleParadise/PRD.md) | [User stories](MuscleParadise/user-stories/) · [صف ساخت](MuscleParadise/BUILD-QUEUE.md) |
 | قواعد طراحی و هویت بصری را رعایت کنی | [Design system](MuscleParadise/design/design-system.md) | [بریف هویت برند](MuscleParadise/BRAND-IDENTITY-BRIEF-2026-11-16.md) |
 | حریم خصوصی و ریسک‌های داده را بررسی کنی | [سیاست بیومتریک](MuscleParadise/security/biometric-policy.md) | [نگهداری داده](MuscleParadise/DATA-RETENTION.md) · [چک‌لیست OWASP](MuscleParadise/security/owasp-checklist.md) |
-| تست، انتشار یا عملیات را اجرا کنی | [README اصلی](../README.md) | [Deployment](MuscleParadise/DEPLOYMENT.md) · [Ops runbook](MuscleParadise/OPS-RUNBOOK.md) · [Tooling](MuscleParadise/TOOLING-RUNBOOK.md) |
+| تست، انتشار یا عملیات را اجرا کنی | [README اصلی](../README.md) | [Deployment](MuscleParadise/DEPLOYMENT.md) · [Ops runbook](MuscleParadise/OPS-RUNBOOK.md) · [Tooling](MuscleParadise/TOOLING-RUNBOOK.md) · [اجرای Codespace/دستگاه](MuscleParadise/runbooks/codespaces-execution.md) |
 
 ## 🏋️ محصول در دو سطر
 

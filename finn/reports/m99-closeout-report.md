@@ -71,7 +71,7 @@
 |---|---|
 | `pytest -q tests` از `mp-app/backend` | **872 passed / 1 skipped** (۲۱۳s؛ شامل ۵ تست جدیدِ گزارش‌گر CI) — پیش از بازسازی sandbox |
 | `client-flutter` در CI (run `44300167991`) | **✓ سبز** — analyze + `flutter test` (۲۸ فایل تست) + manifest gate |
-| همان suite از ریشهٔ مخزن | 861 passed / 1 failed — تنها شکست `test_monitoring::test_alert_rules_cover_slo_and_down` است که `../infra/monitoring/alerts.yml` را نسبت به cwd باز می‌کند؛ از `mp-app/backend` سبز (10 passed). **ثبت می‌شود، اصلاح نشد** (خارج از دامنهٔ این loops و گیت CI را نمی‌شکند) |
+| همان suite از ریشهٔ مخزن | 861 passed / 1 failed — تنها شکست `test_monitoring::test_alert_rules_cover_slo_and_down` است که `../infra/monitoring/alerts.yml` را نسبت به cwd باز می‌کند؛ از `mp-app/backend` سبز (10 passed). **در M97 اصلاح نشد (خارج از دامنه)؛ در M107 اصلاح شد** — از هر دو cwd سبز (خارج از دامنهٔ این loops و گیت CI را نمی‌شکند) |
 | `ruff check .` · `ruff format --check .` | All checks passed · 311 files already formatted |
 | `bandit -r . -ll` (بدون tests) | rc=0، بدون یافتهٔ medium/high |
 | `npm test` (Studio) | **219 passed / 9 skipped** (33 فایل) |

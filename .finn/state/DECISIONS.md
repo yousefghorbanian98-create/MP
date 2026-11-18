@@ -313,3 +313,11 @@ M00–M17 (`FINN_LOOP.md`)، M22–M31، M33–M40، M63–M99 و M100–M106.
 - **قاعدهٔ کلی که از این می‌ماند:** هر چیز اختیاری (haptics، sound، analytics، toast) باید بعد از state-update و بدون await مسیر باشد؛ «اول پیام، بعد لرزش» هم از نظر UX و هم از نظر invariants.
 - **همراه با تست همان کانال:** چون API دیگر awaitable نیست، `motion_haptics_test.dart` بعد از پالس‌ها صف رویداد را با `tester.runAsync(() => Future.delayed(Duration.zero))` + یک `pump()` تخلیه می‌کند (نه `pumpEventQueue()` — آن زیر FakeAsyncِ `testWidgets` برنمی‌گردد و دو تست را ۱۰ دقیقه نخ می‌کرد، شاهد run `44295081645`) و `debugDefaultTargetPlatformOverride = TargetPlatform.android` را pin می‌کند — روی لینوکس CI `HapticFeedback` no-op است و بدون آن، هم red و هم green هر دو توخالی می‌شدند.
 - **اثر بازگشت:** اگر روزی await لازم شد (مثلاً ترتیب دقیق پالس/حس‌گر)، باید با `Timeout` و بعد از `setState` باشد؛ برگرداندن رابط به `Future<void>` به‌تنهایی همان باگ را برمی‌گرداند.
+
+## D-052 (M107؛ 2026-11-18) — گیت‌های خارج از sandbox به runbook مرحله‌ای split شدند
+
+- **انتخاب:** به‌جای اینکه agent «تقریب» بزند یا وضعیت loopها را با استدلال عوض کند، یک دستور کار اجرا‌شدنی نوشته شد: `docs/MuscleParadise/runbooks/codespaces-execution.md` (مرحله ۰ تا ۸) + `.devcontainer/provision-android-sdk.sh` (اختیاری). کاربر اجرا می‌کند، لاگ می‌فرستد، و **بعد از دیدن لاگ** وضعیت عوض می‌شود.
+- **تقسیم واقعی کار:** Codespace سه گیتِ Flutter/Android-compile/pip-audit را حل می‌کند؛ قدم‌های «دستگاه» (M104 startup، M105/M106 mask، حس haptics، outbox روی restart، QR فیزیکی) **در مرورگر شدنی نیستند** — Codespaces USB و KVM ندارد؛ پس آن‌ها روی لپ‌تاپ با `adb` برنامه‌ریزی شدند، نه در container.
+- **قاعدهٔ provisioning:** نصب Android SDK بیرون از build تصویر می‌ماند، چون `sdkmanager --licenses` یعنی پذیرفتن یک توافق حقوقی از طرف هر سازندهٔ container؛ اسکریپت با `ACCEPT_ANDROID_LICENSES=1` صریح باز می‌شود و بدون `SDK_SHA256` (یا `SDK_ALLOW_UNPINNED=1`) **خروج می‌کند** — ساختن hash حدسی بدتر از نبودش است.
+- **مرز SEC-01:** `apk.yml` trigger نشد؛ همان workflow با keystore موجود در مخزن امضا می‌کند. در runbook هم این هشدار جلوی دستور آمده: خروجی‌اش «شاهد کامپایل» است نه artifact نصب/توزیع.
+- **اثر بازگشت:** سند اختیاری است؛ حذفش هیچ گیت موجودی را نمی‌شکند. تنها تغییر کدِ این loop، cwd-independence در `test_monitoring.py` است.

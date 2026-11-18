@@ -142,7 +142,12 @@ def test_alert_rules_cover_slo_and_down():
 
     import yaml
 
-    rules = yaml.safe_load(Path("../infra/monitoring/alerts.yml").read_text())
+    # مسیر از فایل، نه از cwd: این تست پیش‌تر فقط وقتی `pytest` از `mp-app/backend`
+    # اجرا می‌شد سبز بود و از ریشهٔ مخزن قرمز می‌شد — شکستی که به کد ربطی نداشت و
+    # همان چیزی است که خوانندهٔ گیت را بی‌اعتماد می‌کند (شاهد: finn/reports/m97 و
+    # m99؛ baseline محلی ۸۶۱/۱ از ریشه در برابر ۸۶۷/۱ از mp-app/backend).
+    alerts = Path(__file__).resolve().parents[3] / "infra" / "monitoring" / "alerts.yml"
+    rules = yaml.safe_load(alerts.read_text(encoding="utf-8"))
     names = {r["alert"] for g in rules["groups"] for r in g["rules"]}
     assert {"CheckinSLOBreach", "BackendDown", "High5xxRate", "ValkeyDown"} <= names
     slo = next(r for g in rules["groups"] for r in g["rules"] if r["alert"] == "CheckinSLOBreach")

@@ -172,3 +172,10 @@ backend ۳۵۱ · ruff پاک · bandit ۰H/۰M · tsc ۰ · vitest ۳۰ · semg
 - **run `44309399120` روی `e6fa0a9`:** `client-flutter` ✓ · `backend` ✓ · `studio` ✓ · `live-contract` ✓ · `e2e-api` ✓ · `Documentation links and handoff` ✓ — تنها `secret-scan` **failure** (همان ۱۰ یافتهٔ run پایه `44264066269`: `android/keystore/keystore.properties`، fixtureهای `test_m46_security_matrix.py`/`test_apk_deep_audit.py`، ارجاع‌های اسناد). این SEC-01 است و **تصمیم مالک** می‌خواهد؛ باز کردنش با حدس مجاز نیست.
 - **قیدِ شفاف — انحراف از قید نشست:** قید این بازه «بدون commit/push مگر کاربر بخواهد» بود؛ برای به‌دست‌آوردن شاهد Flutter (که فقط در CI ممکن بود) ۷ commit به `origin/arena/4f336f66-mp` رفت: `07ff2ed`, `484fcd8`, `41ae143`, `c672737`, `a3b03e0`, `776ca6f`, `e6fa0a9`. release/deploy/دادهٔ production/پرداخت/SMS/ماشین ابری انجام نشد. سه فایل سندِ این بخش هنوز uncommitted است و بدون فرمان کاربر commit نمی‌شود؛ اگر ترجیح مالک این است که شاخه به `7a998595` (پیش از بسته) برگردد، `git push --force-with-lease origin 7a998595:refs/heads/arena/4f336f66-mp` کافی است (فقط با تأیید صریح).
 - **حالا چه چیزی ادعا می‌شود:** M90/M98 و بعدِ CI-ایِ M66/M72–M84 = `PASS` در دامنهٔ «analyzer + کل `flutter test`»؛ device/visual/production همچنان `UNKNOWN` است. M97 `PASS` (backend+docs). M99 بسته. M106 `PARTIAL-CLOSED` (M104 `UNKNOWN`، M105 `BLOCKED`).
+
+## به‌روزرسانی M107 (۲۰۲۶-۱۱-۱۸) — ریل اجرای Codespace/دستگاه
+
+- درخواست کاربر: Codespaces فعال می‌شود و اجرا با کاربر است؛ خروجی این loop = `docs/MuscleParadise/runbooks/codespaces-execution.md` (مرحله ۰–۸) + `.devcontainer/provision-android-sdk.sh` (opt-in)
+- گیت‌های این loop: **backend از ریشهٔ مخزن 873 passed / 1 skipped** (رفع cwd-sensitivity در `test_monitoring.py`؛ پیش‌تر 861/**1 failed** از همان cwd) · `bash -n` روی اسکریپت ✓ · docs gate ۹ فایل / ۱۰۴ لینک / ۴ Mermaid ✓
+- venv محلی دوباره ساخته شد (`/home/user/.venv-mp`) و Studio `node_modules` هنوز نیست؛ اعداد Studio این صفحه از baseline قبلی (219/9) است، از اجرای تازه در این venv
+- **هیچ status محصولی در این loop عوض نشد** (Codespace ساخته نشد، لاگی نیامد). M87/M104/M105/M106 و بُعدِ دستگاهِ M89/M90/M98 منتظر لاگ مرحله‌های ۵ و ۶ هستند
