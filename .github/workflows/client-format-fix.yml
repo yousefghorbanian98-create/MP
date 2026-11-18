@@ -22,6 +22,17 @@ on:
         description: 'Branch to format and open the PR against'
         required: true
         default: 'arena/4f336f66-mp'
+  # bootstrap لازم است: GitHub یک workflow تازه‌ را فقط پس از اولین اجرا (یا وقتی روی
+  # default branch باشد) dispatch-پذیر می‌کند — `main` این مخزن فقط README.md دارد، پس
+  # `gh workflow run` با 404 جواب می‌داد. یک push به همین فایل، همان یک بار اجرا را
+  # از مسیر push شروع می‌کند و از آن به بعد dispatch کار می‌کند.
+  push:
+    paths:
+      - '.github/workflows/client-format-fix.yml'
+
+concurrency:
+  group: client-format-fix-${{ github.ref }}
+  cancel-in-progress: false
 
 permissions:
   contents: write
@@ -37,7 +48,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.base_ref }}
+          ref: ${{ inputs.base_ref || github.sha }}
           fetch-depth: 0   # a shallow clone can make the branch push fail on some servers
 
       - uses: subosito/flutter-action@v2
@@ -87,9 +98,14 @@ jobs:
         run: |
           set -o pipefail
           dart format lib test tools 2>&1 | tail -3 | tee /tmp/m109/format.txt
-          test -n "$(git status --porcelain)" || { echo "nothing to format — debt already paid"; exit 1; }
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "nothing to format — the debt is already paid here; no PR will be opened"
+            echo "NO_CHANGES=1" >> "$GITHUB_ENV"
+            exit 0
+          fi
 
       - name: Prove the diff is whitespace-only (and only modifies .dart files)
+        if: env.NO_CHANGES != '1'
         run: |
           set -o pipefail
           python3 - <<'PY' | tee /tmp/m109/proof.txt
@@ -126,10 +142,12 @@ jobs:
           PY
 
       - name: Idempotency (a second `dart format` must change nothing)
+        if: env.NO_CHANGES != '1'
         working-directory: mp-app/client
         run: dart format --output=none --set-exit-if-changed lib test tools | tail -2
 
       - name: Behaviour must be unchanged (analyze + full test suite)
+        if: env.NO_CHANGES != '1'
         working-directory: mp-app/client
         run: |
           set -o pipefail
@@ -143,9 +161,10 @@ jobs:
           exit "$status"
 
       - name: Open the PR
+        if: env.NO_CHANGES != '1'
         env:
           GH_TOKEN: ${{ github.token }}
-          BASE: ${{ inputs.base_ref }}
+          BASE: ${{ inputs.base_ref || github.ref_name }}
         run: |
           set -o pipefail
           git config user.name  "arena-agent"
