@@ -188,3 +188,12 @@ backend ۳۵۱ · ruff پاک · bandit ۰H/۰M · tsc ۰ · vitest ۳۰ · semg
 - یافتهٔ اول: گیت format که *پیش از* بقیه چیده شده بود، با `bash -e` سه گیت بعدی را skip کرد (run `44322049209`) → بازچینش + غیربلاکینگ؛ **۶۵ فایل Dart unformatted** = بدهی ثبت‌شده → **M109**
 - **تصحیح ادعای خودم:** `pip-audit` «هرگز اجرا نشده» نبود؛ در job `backend` بلاکینگ اجرا می‌شود و سبز است (محدودیت واقعی: نبودِ lock در مخزن). `runbooks/codespaces-execution.md` و `m107-*` اصلاح شدند
 - گزارش: `finn/reports/m108-ci-pinned-gates.md` · مرحله‌های انسانی باقی‌مانده: M109 (یک دستور) و §۶ (گوشی)
+
+## به‌روزرسانی M109 (۲۰۲۶-۱۱-۱۹) — بدهیِ فرمت، بدون Codespace پرداخت شد
+
+- کاربر دوباره پرسید «واقعاً نمی‌توانی خودت انجام دهی؟» → **بازپرسی، نه تکرار جواب**: token این نشست codespace ساختن/.start/stop را **مجاز** می‌داند (`POST /user/codespaces` → 422 نه 403) ولی `POST /user/keys` → «Resource not accessible by integration» و `ssh.dev.azure.com:22` بسته ⇒ **shell ندارم**؛ اما `workflow_dispatch`، `gh pr create` و merge **باز است**
+- `dart format lib test tools` (۶۵ فایل unformatted) در workflow `client-format-fix` اجرا شد → PR #1 → merge `d9a5bdc` → درخت `mp-app/client` تمیز؛ گیت `dart format` در `client-pinned` **کشنده** شد (`|| echo` حذف)
+- اثباتِ مکانیکی بودن: **۶۶ فایل، همه `M`، همه `.dart`** — ۱ فقط whitespace، ۶۵ جابه‌جایی کامای انتهایی، **۰** تغییر معنایی؛ idempotency ✓؛ `flutter analyze` ✓؛ `flutter test --coverage` ✓ (۱۵۶/۰/۰)
+- دو باگ واقعی که همین loop بیرون داد: `git add -A` در CI سه فایلِ ابزار (`pubspec.lock`، `coverage/lcov.info`، تزریق `analyzer: exclude:` توسط flutter در `analysis_options.yaml`) را داخل commit «فقط فرمت» می‌کشید؛ و `gh pr create` با job token بدون `metadata: read` 403 می‌گرفت و لاگش از API خوانده نمی‌شد
+- باقی‌ماندهٔ انسانی: فقط §۶ (گوشی/`adb`). تصمیم بازِ کوچک: commit کردنِ exclusion تزریقی یا بی‌تغییر گذاشتنش
+- گزارش: `finn/reports/m109-dart-format.md`

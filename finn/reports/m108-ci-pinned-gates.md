@@ -39,12 +39,9 @@
 
 ## ۴) چه چیزی **هنوز** فقط با توست
 
-1. **M109 (یک دستور، ۳۰ ثانیه):** پرداخت بدهیِ فرمت تا گیت بتواند کشنده شود — در همان Codespace:
-   ```bash
-   cd "$(git rev-parse --show-toplevel)/mp-app/client" && dart format lib test tools | tail -3
-   git -C "$(git rev-parse --show-toplevel)" status --porcelain | head
-   ```
-   اگر راضی هستی، `git add -A mp-app/client && git commit -m "style: dart format (M109)" && git push origin HEAD:arena/4f336f66-mp` — من بعدش `|| echo` را برمی‌دارم و گیت را کشنده می‌کنم.
+1. ~~**M109 (یک دستور، ۳۰ ثانیه):**~~ **انجام شد در CI، بدون تو** — `finn/reports/m109-dart-format.md`.
+   (متن اصلی این‌جا پیشنهاد `git add -A mp-app/client` می‌داد؛ همان دستور سه فایل بی‌ربط را داخل
+   commit «فقط فرمت» می‌کشد و در اجرای واقعی دیده شد. `git add -u -- '*.dart'` درستِ آن است.)
 2. **مرحلهٔ ۶ runbook (گوشی):** cold/warm `am start -W` (M104)، `animator_duration_scale 0` (reduced-motion)، حس سه پالس، شیت رسید روی RTL، ماسک لانچر (M105/M106)، صف آفلاین روی restart (M87)، QR فیزیکی (M89). اینها را نه من می‌توانم بزنم نه CI؛ فیزیک است.
 3. **تصمیم‌های باز:** SEC-01 (چرخش کلید → همین `secret-scan` را سبز می‌کند)، face-vs-QR، معیار بالینی M85، merchant درگاه، سیاست storage/consent برای M93–M96.
 

@@ -1,18 +1,19 @@
-# M109 — پرداخت بدهیِ `dart format` (۶۵ فایل، شمارش از annotationِ `client-pinned`)
+# M109 — پرداخت بدهیِ `dart format` (۶۵ فایل، شمارش‌شده در annotationِ `client-pinned`)
 #
 # چرا یک workflow و نه «دست در Codespace کاربر»:
 #   agent sandbox نه `dart` دارد و نه می‌تواند Flutter را نصب کند (egress محدود)، و
 #   ران کردن Codespace تو هم ممکن نیست: `POST /user/keys` با این credential «Resource not
-#   accessible by integration» برمی‌گرداند، پس هیچ کلید SSH مجازی روی اکانت نمی‌نشیند و
-#   `gh codespace ssh` نمی‌تواند وارد شود. چیزی که این token **می‌تواند** dispatch کردنِ
-#   workflow و باز کردنِ PR است — پس فرمت اینجا انجام می‌شود، ولی **نه** با commit مستقیم:
-#   خروجی یک PR است تا یک نفر (ایجنتم، با بازخوانی diff) آن را ببیند.
+#   accessible by integration» برمی‌گرداند، پس هیچ کلید SSH مجازی روی اکانت مجاز نمی‌شود و
+#   `gh codespace ssh` نمی‌تواند وارد شود (ssh.dev.azure.com:22 هم از sandbox بسته است).
+#   چیزی که این token **می‌تواند** dispatch کردنِ workflow و باز کردنِ PR است — پس فرمت
+#   اینجا انجام می‌شود، ولی نه با commit مستقیم: خروجی یک PR است تا diff بازبینی شود.
 #
-# تضمین «فقط فرمت»: برای هر فایل، تمامِ whitespace دو نسخه حذف و بایت‌به‌بایت مقایسه
-# می‌شود؛ اگر حتی یک token عوض شده باشد job فیل می‌شود. به‌علاوه idempotency
-# (`dart format` دوباره نباید چیزی عوض کند) و رفتار (`analyze` + `test --coverage`).
-#
-# فقط `workflow_dispatch`. هیچ keystore، هیچ secret، هیچ artifact قابل‌انتشار.
+# سه درسِ همین loop داخل گام‌ها نشسته است:
+#   ۱) `git add -A` ممنوع — `flutter pub get`/`flutter test --coverage`/flutter خودش
+#      فایل می‌سازند (pubspec.lock، coverage/lcov.info، بلوک analyzer.exclude در
+#      analysis_options.yaml) و در commit «فقط فرمت» می‌نشینند.
+#   2) اثبات باید روی **blobهای staged** باشد، نه روی کل درخت و نه پیش از گام‌های ابزار.
+#   3) هر شکستی باید خودش را با `::error` گزارش کند: لاگ این job از API خوانده نمی‌شود.
 name: client-format-fix (M109)
 
 on:
@@ -22,10 +23,9 @@ on:
         description: 'Branch to format and open the PR against'
         required: true
         default: 'arena/4f336f66-mp'
-  # bootstrap لازم است: GitHub یک workflow تازه‌ را فقط پس از اولین اجرا (یا وقتی روی
-  # default branch باشد) dispatch-پذیر می‌کند — `main` این مخزن فقط README.md دارد، پس
-  # `gh workflow run` با 404 جواب می‌داد. یک push به همین فایل، همان یک بار اجرا را
-  # از مسیر push شروع می‌کند و از آن به بعد dispatch کار می‌کند.
+  # bootstrap لازم است: GitHub یک workflow تازه را تنها پس از اولین اجرا (یا وقتی روی
+  # default branch باشد) dispatch-پذیر می‌کند، و `main` این مخزن فقط README.md دارد —
+  # `gh workflow run` با 404 جواب می‌داد. push به همین فایل، همان اولین اجرا را می‌دهد.
   push:
     paths:
       - '.github/workflows/client-format-fix.yml'
@@ -37,10 +37,14 @@ concurrency:
 permissions:
   contents: write
   pull-requests: write
+  # gh pr create پیش از ساختن PR متادیتای مخزن را می‌خواند؛ نبودِ این grant دقیقاً همان
+  # چیزی بود که «Commit and open the PR» را در run 44348498677 کشت (branch pushed شد،
+  # PR ساخته نشد، و تنها شاهد «exit code 1» بود).
+  metadata: read
 
 jobs:
   format-client:
-    name: dart format · proof it is whitespace-only · analyze + test
+    name: dart format · proof it is layout-only · analyze + test · PR
     runs-on: ubuntu-latest
     timeout-minutes: 25
     env:
@@ -49,11 +53,11 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.base_ref || github.sha }}
-          fetch-depth: 0   # a shallow clone can make the branch push fail on some servers
+          fetch-depth: 0   # یک clone کم‌عمق می‌تواند push شاخهٔ تازه را رد کند
 
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.50.0"   # همان پینِ .devcontainer/Dockerfile — چک پایین
+          flutter-version: "3.50.0"   # همان پینِ .devcontainer/Dockerfile — گام بعد چک می‌کند
           architecture: x64
 
       - name: Refuse to run if the SDK pin drifted from the devcontainer
@@ -76,8 +80,8 @@ jobs:
           ).stdout)
           print(f"flutter here: {got.get('frameworkVersion')} ({got.get('frameworkRevision')})")
           print(f"devcontainer: {want_v} ({want_r})")
-          # Formatting is version-sensitive: a drifted SDK would produce a diff the repo's
-          # own gate rejects. Better to refuse than to open a PR that CI then fails.
+          # فرمت خروجی‌گراست: با SDKِ drift‌کرده، diff‌ای می‌سازیم که خودِ گیتِ repo ردش
+          # می‌کند. بهتر است رد کنیم تا اینکه PR‌ای باز شود که CI بعداً قرمزش می‌کند.
           for field, want in (("frameworkVersion", want_v), ("frameworkRevision", want_r)):
               if got.get(field) != want:
                   raise SystemExit(f"refusing to format: {field} != devcontainer pin")
@@ -91,7 +95,8 @@ jobs:
           dart format --output=none --set-exit-if-changed lib test tools \
             > /tmp/m109/before.txt 2>&1 || true
           grep -c '^Changed' /tmp/m109/before.txt > /tmp/m109/before-count.txt || true
-          echo "unformatted before: $(cat /tmp/m109/before-count.txt)" | tee /tmp/m109/summary.txt
+          printf 'unformatted before: %s\n' "$(cat /tmp/m109/before-count.txt 2>/dev/null || echo '?')" \
+            | tee /tmp/m109/summary.txt
 
       - name: Format
         working-directory: mp-app/client
@@ -101,17 +106,13 @@ jobs:
           if [ -z "$(git status --porcelain)" ]; then
             echo "nothing to format — the debt is already paid here; no PR will be opened"
             echo "NO_CHANGES=1" >> "$GITHUB_ENV"
-            exit 0
           fi
 
-
       - name: Idempotency (a second `dart format` must change nothing)
-        if: env.NO_CHANGES != '1'
         working-directory: mp-app/client
         run: dart format --output=none --set-exit-if-changed lib test tools | tail -2
 
       - name: Behaviour must be unchanged (analyze + full test suite)
-        if: env.NO_CHANGES != '1'
         working-directory: mp-app/client
         run: |
           set -o pipefail
@@ -124,12 +125,6 @@ jobs:
           tail -2 /tmp/m109/flutter-test.txt || true
           exit "$status"
 
-      # ── دو گام آخر روی «چیزی که واقعاً commit می‌شود» قضاوت می‌کنند، نه روی کل درخت:
-      # اولین اجرای این workflow با `git add -A` سه فایل بی‌ربط را داخل commitِ «فقط فرمت»
-      # کشید — coverage/lcov.info و pubspec.lock (خروجی `flutter test --coverage` و
-      # `pub get`) و بلوک analyzer.exclude که خودِ `flutter` در analysis_options.yaml
-      # تزریق می‌کند. یک commit مکانیکی باید مکانیکی بماند، پس اینجا فقط .dartهای tracked
-      # stage می‌شوند و اثبات روی خودِ blobهای staged انجام می‌شود.
       - name: Stage only tracked .dart modifications
         if: env.NO_CHANGES != '1'
         run: |
@@ -154,8 +149,6 @@ jobs:
               return subprocess.run(args, capture_output=True, text=True, check=True).stdout
 
           def notice(level, text):
-              # job logs of this repo are not readable through the API, so the diagnosis has
-              # to travel as an annotation — see .finn/state/REGRESSIONS.md R-036
               safe = text.replace("%", "%25").replace("\n", "%0A")
               print(f"::{level} title=m109 layout-proof::{safe}")
 
@@ -166,13 +159,13 @@ jobs:
           layout, commas, problems = [], [], []
           for path in paths:
               old = run("git", "show", f"HEAD:{path}")   # committed content
-              new = run("git", "show", f":{path}")       # staged blob — what the commit will hold
+              new = run("git", "show", f":{path}")       # staged blob — what the commit holds
               if flat(old) == flat(new):
                   layout.append(path)
               elif flat(old).replace(",", "") == flat(new).replace(",", ""):
-                  # the tall-style formatter moves trailing commas when it splits an argument
-                  # list; a comma there is only a separator, so this is still layout — counted
-                  # apart so it can never hide inside the whitespace claim
+                  # فرمتِ tall-style کامای انتهایی را وقتی فهرست را می‌شکند جابه‌جا می‌کند؛
+                  # آنجا کاما فقط جداکننده است، پس این هم layout است — ولی جدا شمرده
+                  # می‌شود تا هرگز ادعای «فقط whitespace» را قاپ نمی‌زند.
                   commas.append(path)
               else:
                   a, b = flat(old), flat(new)
@@ -216,7 +209,10 @@ jobs:
           echo "proof: $(grep -E '^staged=' /tmp/m109/proof.txt | tail -1)" >> /tmp/m109/commit.txt
           echo "tests: $(tail -1 /tmp/m109/after.txt 2>/dev/null)" >> /tmp/m109/commit.txt
           git commit -q -F /tmp/m109/commit.txt
-          git push -q origin "HEAD:refs/heads/$BRANCH"
+          # $BRANCH شاخهٔ یک‌بارمصرفِ همین job است (همیشه از صفر ساخته می‌شود و خودش هرگز
+          # merge نمی‌شود؛ فقط PR می‌شود). force یعنی «بازسازیِ deterministic» و هرگز روی
+          # arena/… یا main اعمال نمی‌شود.
+          git push -q --force origin "HEAD:refs/heads/$BRANCH"
           {
             echo "## M109 — \`dart format\` on \`mp-app/client\` (\`lib\`, \`test\`, \`tools\`)"
             echo
@@ -227,4 +223,12 @@ jobs:
             echo "- generated by \`${GITHUB_WORKFLOW}\` on \`${{ github.sha }}\` (run \`${{ github.run_id }}\`); nothing is committed to \`${BASE}\` directly."
             echo "- the proof compares **staged blobs**, so tool output and flutter's own \`analysis_options.yaml\` injection cannot ride along."
           } > /tmp/m109/body.md
-          gh pr create --base "$BASE" --head "$BRANCH" --title "style(client): dart format lib test tools (M109)" --body-file /tmp/m109/body.md
+          # stderr هم به‌صورت annotation نوشته می‌شود؛ لاگ این job از API خوانده نمی‌شود
+          # (REGRESSIONS R-036) و بدون آن تنها شاهدِ شکست «exit code 1» است.
+          if ! gh pr create --base "$BASE" --head "$BRANCH" \
+              --title "style(client): dart format lib test tools (M109)" \
+              --body-file /tmp/m109/body.md 2>/tmp/m109/pr.err; then
+            err=$(tr '\n' ' ' < /tmp/m109/pr.err | cut -c1-400 | tr '%' '#')
+            echo "::error title=m109 pr::gh pr create failed: ${err}"
+            exit 1
+          fi

@@ -15,10 +15,10 @@
 > | ۲ (coverage) | ✓ `flutter test --coverage` | 77.2% (3195/4140 خط از `lib/`) |
 > | ۳ (backend: pytest/ruff/bandit/**pip-audit**) | ✓ job `backend` — **از قبل**؛ `pip-audit` آن‌جا بلاکینگ است | سبز ⇒ هیچ CVE شناخته‌شده‌ای در نسخه‌های resolve‌شدهٔ امروز نیست (lock در مخزن نیست؛ این تنها محدودیتش) |
 > | ۵ (`flutter build apk --debug`) | ✓ `client-pinned` | کامپایل Kotlin/Gradle سبز ⇒ بُعد compile در M87 از `UNKNOWN` درآمد |
-> | ۲ (format) | ⚠ **audit غیربلاکینگ** | ۶۵ فایل unformatted → **M109**، و تنها کاری که از تو خواسته می‌شود (مرحلهٔ ۲-الف پایین) |
+> | ۲ (format) | ✓ گیت **کشنده** از M109 (PR #1) | ۶۵ فایل unformatted → ۰؛ `dart format --set-exit-if-changed` حالا CI را می‌شکند |
 >
-> **با تو فقط این دو می‌مانند:** (الف) پرداخت بدهیِ فرمت — یک دستور، ۳۰ ثانیه؛ (ب) مرحلهٔ ۶ و ۷ —
-> گوشی واقعی، چون Codespace نه USB دارد نه KVM. بقیهٔ مراحل را همچنان می‌توانی برای
+> **با تو فقط یک چیز می‌ماند:** مرحلهٔ ۶ و ۷ — گوشی واقعی، چون Codespace نه USB دارد نه KVM.
+> بدهیِ فرمت (M109) هم در CI پرداخت شد، نه روی دوش تو: `finn/reports/m109-dart-format.md`. بقیهٔ مراحل را همچنان می‌توانی برای
 > بازتولید محلی اجرا کنی، ولی **شاهدِ لازم نیستند**؛ لاگشان را برای «تأیید» می‌فرست اگر خواستی.
 >
 > فهرست چیزهایی که در agent sandbox نشد: `flutter analyze`/`flutter test`/build (SDK نیست)، Android SDK/Gradle،
@@ -31,7 +31,8 @@
 |---|---|
 | برای هر مرحله: نسخهٔ ابزار، **خروجی کامل**، و `echo "exit=$?"` را کپی کن | بدون exit code، «بدون خطا» یعنی «خوانده نشد» |
 | لاگ را در یک فایل کنار بگذار: `tee /tmp/m107/step2-client.txt` | بعداً فقط همین فایل شاهد است، نه حافظهٔ گفتگو |
-| `pubspec.lock`، `.dart_tool/`، `build/`، `.gradle/`، `local.properties` را commit نکن | gen‌شده‌اند؛ lockfile باید جدا بازبینی شود (regression R-014) |
+| `pubspec.lock`، `.dart_tool/`، `build/`، `.gradle/`، `local.properties` را commit نکن | gen‌شده‌اند؛ lockfile باید جدا بازبینی شود (regression R-014). در CI هم همین: `git add -A` بعد از `flutter pub get`/`test --coverage` این‌ها را داخل commit «فقط فرمت» می‌کشد (M109) |
+| اثباتِ «تغییر مکانیکی» روی **چیزی که stage شده** باشد، نه کل درخت | گام‌های بعدی (pub get، analyze، test) خودشان فایل می‌سازند؛ اگر proof پیش از آن‌ها اجرا شود، چیزی را تأیید می‌کند که commit نخواهد شد |
 | هیچ‌جا keystore، `key.properties`، token، یا secret واقعی بازسازی/append نکن | SEC-01 مسئلهٔ چرخش کلید است، نه نبود فایل |
 | اگر مرحله‌ای شکست، **همان‌جا بایست** و لاگ را بفرست | زنجیره‌کردن مراحل روی پایهٔ شکسته، شاهد جعل می‌کند |
 
@@ -95,20 +96,25 @@ python3 tools/manifest_gate.py 2>&1 | tail -2 | tee -a /tmp/m107/step2-dartgate.
 | `flutter test` با صفر شکست و **بدون skip** | همان loopها + probe سطح messengerِ M98 (`test/motion_haptics_test.dart`) |
 | `dart_gate` ۷۲ فایل / ۰ یافته | سازگاری گیت ایستا با analyzer واقعی (ادعای جایگزینی ندارد) |
 
-## ۲-الف) تنها کاری که واقعاً از تو خواسته می‌شود — M109 (بدهیِ فرمت)
+## ۲-الف) M109 — بسته شد در CI؛ چیزی از تو خواسته نشد
 
-```bash
-cd "$(git rev-parse --show-toplevel)/mp-app/client"
-dart format lib test tools 2>&1 | tail -3
-git -C "$(git rev-parse --show-toplevel)" status --porcelain | head -20   # فقط فایل‌های .dart
-```
+بدهیِ فرمت را workflow `client-format-fix` پرداخت (PR #1، commit `d9a5bdc`): `dart format lib test tools`
+روی همان SDK پین‌شده اجرا شد، سپس اثباتِ «فقط چیدمان» روی **blobهای staged** — ۶۶ فایل، همه `M`،
+۱ فقط whitespace و ۶۵ با جابه‌جایی کامای انتهایی، **۰** تغییر معنایی — به‌علاوهٔ idempotency
+(اجرای دوم بی‌تغییر) و `flutter analyze` + `flutter test --coverage` سبز روی درخت فرمت‌شده.
+بعد از merge، گیتِ `dart format` در `client-pinned` `|| echo` را از دست داد و **کشنده** شد:
+یک فایلِ فرمت‌نشده از این به بعد CI را می‌شکند، نه اینکه عددش در annotation بخوابد.
 
-اگر diff فقط فرمت بود (بدون تغییر معنا)، commit و push کن؛ من همان لحظهٔ `|| echo` را از
-`client-pinned` برمی‌دارم تا گیت **کشنده** شود. تا پیش از آن، گیت در حالت audit است و
-عدد ۶۵ فایل در annotation هر run دیده می‌شود — پس بدهی پنهان نمی‌شود.
-(انتخابِ «فرمت‌کردنِ خودکار در CI با commit ربات» را عمداً نکردم: `ci.yml`
-`permissions: contents: read` است و write دادن به workflow برای یک style commit، ریسکش
-بزرگ‌تر از سودش است. اگر خواستی، همان را با `workflow_dispatch` مجزا و صریح می‌سازیم.)
+سه چیزی که همین‌جا یاد گرفتیم و به کار تو هم می‌آید:
+
+| # | نکته | چرا |
+|---|---|---|
+| ۱ | بعد از `flutter pub get` / `flutter test --coverage` هرگز `git add -A` نکن | `pubspec.lock`، `coverage/lcov.info` و بلوک `analyzer: exclude:` که **خودِ flutter** در `analysis_options.yaml` تزریق می‌کند، کنار فرمت stage می‌شوند — یک commit مکانیکی از آن لحظه مکانیکی نیست. `git add -u -- '*.dart'` همان چیزی است که می‌خواهی |
+| ۲ | «diff فقط whitespace است» تنهایش کافی نیست | formatterِ tall-style کامای انتهایی را وقتی فهرست را می‌شکند جابه‌جا می‌کند؛ مقایسه باید با حذف کاماها هم بشود و **جدا شمرده** شود، وگرنه ۶۵ فایلِ سالم رد می‌شوند (این دقیقاً اولین اجرای ما را فیل کرد) |
+| ۳ | بازتولید: `gh workflow run client-format-fix.yml` | dispatch-only است و اگر بدهی صفر باشد هیچ PR نمی‌سازد (`NO_CHANGES=1`) — اجرای مجدد بی‌ضرر است |
+
+> تزریق `analysis_options.yaml` یک تصمیمِ باز است، نه کارِ تو: اگر آن exclusion commit نشود،
+> هر `flutter pub get` دوباره بازنویسی‌اش می‌کند. فعلاً commit نشده تا این PR فقط فرمت بماند.
 
 ## ۳) گیت‌های بک‌اند (اختیاری — CI اینها را می‌سنجد)
 

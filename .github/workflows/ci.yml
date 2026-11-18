@@ -482,17 +482,26 @@ jobs:
       # نو نباید جلوی شاهد اصلی را بگیرد. فعلاً شمارش می‌شود و بلاک نمی‌کند؛ پس از یک
       # commit مکانیکیِ «dart format lib test tools» در M109 به گیت کشنده برگردانده می‌شود
       # (بدهی پنهان نمی‌ماند: عدد در annotation و step summary می‌آید).
-      - name: dart format audit (غیربلاکینگ تا پرداخت بدهی)
+      - name: dart format gate (M109 — کشنده)
         working-directory: mp-app/client
         run: |
           set -o pipefail
           mkdir -p /tmp/client-pinned
-          # `|| true` عمدی است: bash -e در گام‌های CI، و یک audit غیربلاکینگ نباید
-          # خودش step را بشکند (وگرنه دوباره شاهدِ بعدی را می‌خورد).
-          dart format --output=none --set-exit-if-changed lib test tools \
-            > /tmp/client-pinned/format.txt 2>&1 || echo "dart format reported a non-zero exit (advisory)"
-          grep -c '^Changed' /tmp/client-pinned/format.txt > /tmp/client-pinned/format-count.txt || true
-          echo "unformatted files: $(cat /tmp/client-pinned/format-count.txt 2>/dev/null || echo '?') (advisory until M109)"
+          # M109 (PR #1، commit d9a5bdc) ۶۵ فایل unformatted را صفر کرد، پس این گام از
+          # «audit» به «gate» تبدیل می‌شود: یک فایلِ فرمت‌نشده از این به بعد CI را می‌شکند.
+          # کشنده‌بودن امن است چون این گام *پس از* analyze/test/apk چیده شده و گام
+          # «Publish the witness» با if: always() شاهد را می‌نویسد — درسی که run
+          # 44322049209 داد (گیت تازه نباید شاهد همسایه‌هایش را بخورد).
+          if dart format --output=none --set-exit-if-changed lib test tools \
+            > /tmp/client-pinned/format.txt 2>&1; then
+            echo "clean" > /tmp/client-pinned/format-status.txt
+          else
+            n=$(grep -c '^Changed' /tmp/client-pinned/format.txt || true)
+            printf '%s unformatted\n' "${n:-?}" > /tmp/client-pinned/format-status.txt
+            echo "::error title=flutter format::dart format wants to restyle ${n:-?} file(s) — run \`dart format lib test tools\` in mp-app/client (M109 left it at zero; keep it there)"
+            exit 1
+          fi
+          cat /tmp/client-pinned/format-status.txt
       - name: Publish the witness (خواندنی از API، نه فقط از لاگ)
         if: always()
         working-directory: mp-app/client
@@ -514,11 +523,11 @@ jobs:
                   cov = f"coverage {100.0 * hit / found:.1f}% ({hit}/{found} lines)"
           apk = pathlib.Path("/tmp/client-pinned/apk-size.txt")
           apk_line = apk.read_text(encoding="utf-8").strip() if apk.is_file() else "no apk (build step failed)"
-          fmt = pathlib.Path("/tmp/client-pinned/format-count.txt")
-          offending = fmt.read_text(encoding="utf-8").strip() if fmt.is_file() else "?"
+          fmt = pathlib.Path("/tmp/client-pinned/format-status.txt")
+          format_state = fmt.read_text(encoding="utf-8").strip() if fmt.is_file() else "not measured"
           message = (
               f"pinned-SDK witness — {count_line}; {cov}; debug apk: {apk_line}; "
-              f"dart format: {offending} file(s) still unformatted (advisory until M109) "
+              f"dart format: {format_state} (fatal gate since M109) "
               "(values only; no assertion text)"
           )
           # `%` (و CR/LF) در workflow command باید escape شود؛ `:` نه — escape کردنش

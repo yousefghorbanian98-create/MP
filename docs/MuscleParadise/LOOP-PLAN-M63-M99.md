@@ -118,4 +118,11 @@
 **شاهدِ شمارش، نه فقط رنگ:** برای اینکه «سبز» با «probe اجرا شد» اشتباه گرفته نشود، `tools/ci_test_failures.py --summary` شمارش pass/fail/skip را در step summary می‌نویسد و رگرسیون `mp-app/backend/tests/regression/test_ci_test_failures.py` رفتارش (و منتشرنشدن مقادیر assertion) را قفل می‌کند.
 
 
+**گام M109 (۲۰۲۶-۱۱-۱۹، `65bbb5e`):** بازپرسیدنِ «این را واقعاً فقط انسان می‌تواند؟» یک بار دیگر جواب داد.
+codespace برای من هنوز بست است (`POST /user/keys` → «Resource not accessible by integration»، پس هیچ کلید SSH
+مجاز نمی‌شود؛ `ssh.dev.azure.com:22` از sandbox بسته است) — ولی **dispatch + PR** باز بود، پس ۶۵ فایلِ
+unformatted را workflow `client-format-fix` فرمت کرد، اثبات را روی blobهای staged داد (۱ فقط whitespace،
+۶۵ جابه‌جایی کاما، ۰ تغییر معنایی)، idempotency و analyze + test را سبز کرد، و PR #1 ساخته‌شده را من
+بازبینی و merge کردم. گیت `dart format` از آن پس کشنده است. تنها ردیفِ باقی‌مانده با انسان: §۶ گوشی.
+
 > پس از هر loop، فقط ردیف همان loop و دفتر وضعیت به‌روز شود. اگر BLOCKED/UNKNOWN شد، دلیل و وابستگی دقیق ثبت و بلافاصله به loop بعدیِ مستقل برو.
