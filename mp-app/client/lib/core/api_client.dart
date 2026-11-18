@@ -104,9 +104,12 @@ class ApiClient {
   ///
   /// چرا فقط **یک** بار: اگر سرور با توکن تازه هم ۴۰۱ بدهد، تلاش دوبارهٔ
   /// بی‌پایان یعنی حلقه روی سرور. یک بار، سپس شکست صریح.
-  Future<dynamic> _send(Future<http.Response> Function() call) async {
+  Future<dynamic> _send(
+    Future<http.Response> Function() call, {
+    bool allowSessionRefresh = true,
+  }) async {
     var r = await call();
-    if (r.statusCode != 401 || _refresher == null) return _decode(r);
+    if (!allowSessionRefresh || r.statusCode != 401 || _refresher == null) return _decode(r);
 
     final ok = await (_refreshing ??= () async {
       try {
@@ -128,11 +131,17 @@ class ApiClient {
   }
 
   Future<dynamic> post(String path, Map<String, dynamic> body) async {
-    return _send(() => _http.post(
-          Uri.parse('$baseUrl$path'),
-          headers: _headers,
-          body: jsonEncode(body),
-        ));
+    // The refresh request itself must bypass the 401 interceptor. Otherwise a
+    // rejected refresh recursively calls the same refresher (and can deadlock).
+    final isRefreshRequest = Uri.parse(path).path == '/auth/refresh';
+    return _send(
+      () => _http.post(
+        Uri.parse('$baseUrl$path'),
+        headers: _headers,
+        body: jsonEncode(body),
+      ),
+      allowSessionRefresh: !isRefreshRequest,
+    );
   }
 
   Future<dynamic> put(String path, Map<String, dynamic> body) async {

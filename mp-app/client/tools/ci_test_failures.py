@@ -3,16 +3,26 @@
 
 The Dart test JSON protocol can include assertion values and arbitrary printed
 messages. This helper intentionally reports only test names, suite paths, and
-source lines; it never forwards error text or stack traces into CI annotations.
+source line numbers; it never forwards error text or stack traces into CI.
 """
 
 from __future__ import annotations
 
 import json
 import os
+import re
 import sys
 from pathlib import Path
 from typing import Any
+
+# A stack trace may use a file URI or package:mp_client URI. Match only a Dart
+# source path and line number; no stack-frame text is ever copied to output.
+_FILE_LOCATION = re.compile(
+    r"(?<![A-Za-z0-9_])(?P<path>(?:mp-app/client/)?(?:test|lib)/[^:\s()]+\.dart):(?P<line>\d+)(?::\d+)?"
+)
+_PACKAGE_LOCATION = re.compile(
+    r"package:mp_client/(?P<path>[^:\s()]+\.dart):(?P<line>\d+)(?::\d+)?"
+)
 
 
 def _escape_data(value: str) -> str:
@@ -24,11 +34,28 @@ def _repo_path(raw_path: Any, workspace: Path) -> str | None:
         return None
     path = Path(raw_path)
     if not path.is_absolute():
-        path = workspace / "mp-app" / "client" / path
+        if path.parts[:2] == ("mp-app", "client"):
+            path = workspace / path
+        else:
+            path = workspace / "mp-app" / "client" / path
     try:
         return path.resolve().relative_to(workspace).as_posix()
     except ValueError:
         return path.name
+
+
+def _failure_location(stack_trace: Any, workspace: Path) -> tuple[str, int] | None:
+    if not isinstance(stack_trace, str):
+        return None
+    for pattern in (_FILE_LOCATION, _PACKAGE_LOCATION):
+        for match in pattern.finditer(stack_trace):
+            raw_path = match.group("path")
+            if pattern is _PACKAGE_LOCATION and not raw_path.startswith(("test/", "lib/")):
+                raw_path = f"lib/{raw_path}"
+            path = _repo_path(raw_path, workspace)
+            if path and path.startswith("mp-app/client/"):
+                return path, int(match.group("line"))
+    return None
 
 
 def _annotation(message: str) -> None:
@@ -44,7 +71,8 @@ def main() -> int:
     workspace = Path(os.environ.get("GITHUB_WORKSPACE", Path.cwd())).resolve()
     suites: dict[Any, dict[str, Any]] = {}
     tests: dict[Any, dict[str, Any]] = {}
-    failures: list[tuple[str | None, int | None, str]] = []
+    failure_locations: dict[Any, tuple[str, int]] = {}
+    failures: list[tuple[str | None, int | None, str, tuple[str, int] | None]] = []
     passed = 0
     skipped = 0
 
@@ -71,6 +99,12 @@ def main() -> int:
             test = event.get("test")
             if isinstance(test, dict):
                 tests[test.get("id")] = test
+        elif event_type == "error":
+            test_id = event.get("testID")
+            stack_trace = event.get("stackTrace", event.get("stack_trace"))
+            location = _failure_location(stack_trace, workspace)
+            if test_id is not None and location is not None:
+                failure_locations.setdefault(test_id, location)
         elif event_type == "testDone":
             result = event.get("result")
             if event.get("skipped") or result == "skipped":
@@ -80,7 +114,8 @@ def main() -> int:
                 passed += 1
                 continue
 
-            test = tests.get(event.get("testID"), {})
+            test_id = event.get("testID")
+            test = tests.get(test_id, {})
             suite = suites.get(test.get("suiteID"), {})
             path = _repo_path(suite.get("path"), workspace)
             raw_line_number = test.get("root_line") or test.get("line")
@@ -88,7 +123,7 @@ def main() -> int:
             name = test.get("name")
             if not isinstance(name, str) or not name:
                 name = "unnamed test"
-            failures.append((path, line_number, name))
+            failures.append((path, line_number, name, failure_locations.get(test_id)))
 
     if not failures:
         _annotation(
@@ -97,12 +132,16 @@ def main() -> int:
         return 0
 
     details = [f"Flutter tests: {passed} passed, {len(failures)} failed, {skipped} skipped."]
-    details.append("Failed tests (source locations; assertion values omitted):")
-    for path, line_number, name in failures[:40]:
+    details.append("Failed tests (test names and source lines; assertion values omitted):")
+    for path, line_number, name, failure_location in failures[:40]:
         location = path or "<unknown source>"
         if line_number:
             location += f":{line_number}"
-        details.append(f"- {location} — {name}")
+        detail = f"- {location} — {name}"
+        if failure_location:
+            failure_path, failure_line = failure_location
+            detail += f" (failure frame: {failure_path}:{failure_line})"
+        details.append(detail)
     if len(failures) > 40:
         details.append(f"- {len(failures) - 40} additional failures omitted.")
     _annotation("\n".join(details))

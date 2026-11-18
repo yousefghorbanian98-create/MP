@@ -46,6 +46,17 @@ class _ScriptedClient extends http.BaseClient {
   }
 }
 
+Future<bool> _refreshAccess(ApiClient api) async {
+  try {
+    final response = await api.post('/auth/refresh', {'refresh_token': 'refresh-1'});
+    if (response is! Map || response['access_token'] is! String) return false;
+    api.accessToken = response['access_token'] as String;
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
+
 void main() {
   setUp(() => SharedPreferences.setMockInitialValues({}));
 
@@ -61,7 +72,7 @@ void main() {
     });
 
     final api = ApiClient(httpClient: client);
-    api.attachSession(refresher: () async => true);
+    api.attachSession(refresher: () => _refreshAccess(api));
     api.accessToken = 'expired';
 
     final result = await api.get('/protected');
@@ -84,12 +95,13 @@ void main() {
     var sessionCleared = false;
     final api = ApiClient(httpClient: client);
     api.attachSession(
-      refresher: () async => false,
+      refresher: () => _refreshAccess(api),
       onSessionLost: () => sessionCleared = true,
     );
     api.accessToken = 'expired';
 
     await expectLater(api.get('/protected'), throwsA(isA<ApiException>()));
+    expect(client.calls, ['GET /protected', 'POST /auth/refresh']);
     expect(sessionCleared, isTrue, reason: 'کاربر باید به ورود برگردد، نه دیدن خطای گنگ');
   });
 
@@ -104,7 +116,7 @@ void main() {
     });
 
     final api = ApiClient(httpClient: client);
-    api.attachSession(refresher: () async => true);
+    api.attachSession(refresher: () => _refreshAccess(api));
     api.accessToken = 'expired';
 
     await expectLater(api.get('/protected'), throwsA(isA<ApiException>()));
@@ -112,14 +124,22 @@ void main() {
         reason: 'refresh دوباره و دوباره = حلقهٔ بی‌پایان روی سرور');
   });
 
-  test('refresh خودش ۴۰۱ نگیرد — وگرنه بازگشتی می‌شود', () async {
+  test('پاسخ ۴۰۱ از endpoint تمدید، خودش دوباره refresh را اجرا نمی‌کند', () async {
     final client = _ScriptedClient({
-      '/auth/refresh': [() => http.Response('{"access_token":"fresh"}', 200)],
-      '/data': [() => http.Response('{"ok":1}', 200)],
+      '/auth/refresh': [() => http.Response('{}', 401)],
     });
+    var refresherCalls = 0;
     final api = ApiClient(httpClient: client);
-    api.attachSession(refresher: () async => true);
-    await api.get('/data');
-    expect(client.calls, ['GET /data']);
+    api.attachSession(refresher: () async {
+      refresherCalls++;
+      return true;
+    });
+
+    await expectLater(
+      api.post('/auth/refresh', {'refresh_token': 'refresh-1'}),
+      throwsA(isA<ApiException>()),
+    );
+    expect(client.calls, ['POST /auth/refresh']);
+    expect(refresherCalls, 0);
   });
 }
