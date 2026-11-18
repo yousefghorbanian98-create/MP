@@ -265,9 +265,20 @@ jobs:
                   stream.write("\n".join(summary) + "\n")
           sys.exit(1 if analyze_status != 0 else 0)
           PY
+      # Keep a JSON sidecar so CI can annotate failed test names/locations without
+      # exposing assertion values or stack traces in public check output.
       - name: flutter test
         working-directory: mp-app/client
-        run: flutter test
+        run: |
+          mkdir -p /tmp/client-ci
+          set +e
+          flutter test --file-reporter=json:/tmp/client-ci/flutter-test.json > /tmp/client-ci/flutter-test.txt 2>&1
+          test_status=$?
+          set -e
+          if [ "$test_status" -ne 0 ]; then
+            python3 tools/ci_test_failures.py /tmp/client-ci/flutter-test.json
+          fi
+          exit "$test_status"
 
       # M60 — گیت مانیفست. اجرای 43828454021 نشان داد `android:debuggable="false"`
       # در سورس، `lintVitalRelease` را می‌شکند و بیلد release را متوقف می‌کند.
@@ -283,7 +294,15 @@ jobs:
           cd mp-app/client
           flutter analyze --no-fatal-infos > /tmp/client-ci/analyze.txt 2>&1 || true
           dart analyze --format=machine . > /tmp/client-ci/analyze.machine.txt 2>&1 || true
-          flutter test > /tmp/client-ci/flutter-test.txt 2>&1 || true
+          if [ ! -f /tmp/client-ci/flutter-test.json ]; then
+            set +e
+            flutter test --file-reporter=json:/tmp/client-ci/flutter-test.json > /tmp/client-ci/flutter-test.txt 2>&1
+            test_status=$?
+            set -e
+            if [ "$test_status" -ne 0 ]; then
+              python3 tools/ci_test_failures.py /tmp/client-ci/flutter-test.json
+            fi
+          fi
           printf 'run=%s job=client-flutter\n' '${{ github.run_id }}' > /tmp/client-ci/RUN.txt
       - name: Upload client diagnostics (on failure)
         if: failure()

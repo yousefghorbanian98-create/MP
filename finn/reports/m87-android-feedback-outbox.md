@@ -22,7 +22,7 @@
 
 `test/offline_feedback_outbox_test.dart` سناریوهای allowlist، stable device ID، fixed-width timestamp، owner binding و response-owner mismatch، duplicate با `unchanged_keys`، stale conflict، 5xx retry/error-code redaction، auth، response ناقص، و انتخاب logout/discard را پوشش می‌دهد.
 
-این تست‌ها در این نوبت **اجرا نشده‌اند**؛ Flutter/Dart executable در sandbox وجود ندارد. Native SQLite restart/write-read، Kotlin compile، Android device lifecycle، plugin/channel round-trip و end-to-end قطع/وصل نیز آزموده نشده‌اند. بنابراین M87 `PASS` نیست و خروجی static Dart gate هم جایگزین runtime محسوب نمی‌شود.
+Flutter/Dart executable در sandbox محلی وجود ندارد. CI `44202586219` full Flutter test suite را اجرا کرد، اما نتیجه aggregate **101 passed / 13 failed** بود و annotationها testهای fail را نام نبردند؛ بنابراین نتیجهٔ فردی سناریوهای outbox در این run نامعلوم است. Native SQLite restart/write-read، Kotlin compile، Android device lifecycle، plugin/channel round-trip و end-to-end قطع/وصل نیز آزموده نشده‌اند. پس M87 `PASS` نیست و خروجی static Dart gate جایگزین runtime محسوب نمی‌شود.
 
 ### Validation قابل‌اجرا در sandbox در 2026-11-16
 
@@ -33,7 +33,7 @@
 - Workflow YAML parse شد و هر **23** اسکریپت shell توکار `bash -n` را گذراند؛ `git diff --check` نیز پاس شد.
 - `flutter`, `dart`, `java`, `gradle` و `kotlinc` در sandbox موجود نیستند؛ پس `flutter format/analyze/test`، Kotlin compile، Gradle/Android build، round-trip بومی SQLite/MethodChannel و persistence/restart روی دستگاه اجرا نشدند. گیت Tree-sitter/source و backend جایگزین این runtime gateها نیستند.
 - CI `44198198864` روی commit `b7cd7f1` source M84–M87 را آزمود. Backend پاس شد؛ analyzer fail شد، client tests skip شدند، و Studio API coverage به‌دلیل TODO کهنه fail شد. علت‌های analyzer و Studio exception در `0ace8fe` اصلاح شدند؛ run CI جدید `44200381791` backend/Studio/live-contract/e2e-api را پاس کرد و Studio API coverage را تأیید کرد.
-- در `44200381791`، `flutter analyze` هنوز به‌دلیل warning `UNUSED_ELEMENT_PARAMETER` برای `_MemoryStore.network` شکست خورد؛ client tests و manifest gate skip شدند. Patch جاری از `_MemoryStore(network: false)` در تست `offlineFeedbackNetworkAvailableProvider` استفاده می‌کند تا این warning رفع و رفتار offline-status پوشش داده شود. Flutter/Dart محلی نیستند و این تست اجرا نشده؛ analyzer و client tests منتظر CI بعدی‌اند. Gitleaks نیز به‌دلیل همان matchهای تاریخی fail مانده. جزئیات redacted: `finn/reports/ci-follow-up-441922-441942.md`.
+- در `44200381791`، analyzer به‌دلیل warning `UNUSED_ELEMENT_PARAMETER` شکست خورد و tests skip شدند؛ تست connectivity با `_MemoryStore(network: false)` آن warning را رفع کرد. CI `44202586219`، analyzer را پاس کرد ولی Flutter suite را با **101 passed / 13 failed** بست؛ aggregate annotation test names ندارد و artifact/log با EOF دانلود نشد. نمی‌توان نتیجهٔ تست offline provider یا outbox را از این run تعیین کرد. Patch diagnostic فعلی نام و source line تست‌های fail را در annotation بعدی نشان می‌دهد، بدون assertion values. `MP_ANDROID_OFFLINE_FEEDBACK_ENABLED=false` باقی می‌ماند؛ native SQLite/MethodChannel, restart/device و encryption policy همچنان اجرا/تأیید نشده‌اند. Gitleaks نیز روی همان matchهای تاریخی fail مانده. جزئیات redacted: `finn/reports/ci-follow-up-441922-441942.md`.
 
 ## بازتولید در Codespaces
 
