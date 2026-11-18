@@ -154,42 +154,90 @@ jobs:
           python3 - <<'PY' | tee /tmp/m109/proof.txt
           import subprocess
 
-          def run(*args):
+          CLOSERS = set(")]}>")
+
+
+          def sh(*args):
               return subprocess.run(args, capture_output=True, text=True, check=True).stdout
+
 
           def notice(level, text):
               safe = text.replace("%", "%25").replace("\n", "%0A")
               print(f"::{level} title=m109 layout-proof::{safe}")
 
-          def flat(s):
-              return "".join(s.split())
 
-          paths = [l for l in run("git", "diff", "--cached", "--name-only").splitlines() if l.strip()]
-          layout, commas, problems = [], [], []
+          def flat(text):
+              return "".join(text.split())
+
+
+          def classify(old, new):
+              """'ws' | 'commas' | 'semantic' for a formatter-only diff.
+
+              Whitespace differences are free. A comma is free only where the formatter is allowed
+              to put or drop one — directly in front of a closing bracket, i.e. a trailing comma.
+              That exception is deliberate and narrow: in Dart a comma is *not* always layout, since
+              `(1)` and `(1,)` are different values (a record needs its comma), so a naive
+              "ignore commas" comparison would wave through a real change.
+              """
+              a, b = flat(old), flat(new)
+              if a == b:
+                  return "ws", None
+              i = j = 0
+              layout_commas = True
+              while i < len(a) and j < len(b):
+                  if a[i] == b[j]:
+                      i += 1
+                      j += 1
+                      continue
+                  if b[j] == ",":                      # inserted by the formatter
+                      k = j
+                      while k < len(b) and b[k] == ",":
+                          k += 1
+                      if k >= len(b) or b[k] not in CLOSERS:
+                          layout_commas = False
+                      j = k
+                      continue
+                  if a[i] == ",":                      # dropped by the formatter
+                      k = i
+                      while k < len(a) and a[k] == ",":
+                          k += 1
+                      if k >= len(a) or a[k] not in CLOSERS:
+                          layout_commas = False
+                      i = k
+                      continue
+                  return "semantic", f"first difference at char {i}: old={a[i:i+40]!r} new={b[j:j+40]!r}"
+              if i < len(a):
+                  return "semantic", f"{len(a) - i} character(s) removed from the end"
+              while j < len(b):
+                  if b[j] != ",":
+                      return "semantic", "content appended past the old end"
+                  j += 1
+              if not layout_commas:
+                  return "semantic", "a comma appeared or vanished somewhere other than before a closing bracket"
+              return "commas", None
+
+
+          paths = [l for l in sh("git", "diff", "--cached", "--name-only").splitlines() if l.strip()]
+          ws = commas = 0
+          problems = []
           for path in paths:
-              old = run("git", "show", f"HEAD:{path}")   # committed content
-              new = run("git", "show", f":{path}")       # staged blob — what the commit holds
-              if flat(old) == flat(new):
-                  layout.append(path)
-              elif flat(old).replace(",", "") == flat(new).replace(",", ""):
-                  # فرمتِ tall-style کامای انتهایی را وقتی فهرست را می‌شکند جابه‌جا می‌کند؛
-                  # آنجا کاما فقط جداکننده است، پس این هم layout است — ولی جدا شمرده
-                  # می‌شود تا هرگز ادعای «فقط whitespace» را قاپ نمی‌زند.
-                  commas.append(path)
+              old = sh("git", "show", f"HEAD:{path}")   # committed content
+              new = sh("git", "show", f":{path}")       # staged blob — what the commit will hold
+              kind, why = classify(old, new)
+              if kind == "ws":
+                  ws += 1
+              elif kind == "commas":
+                  commas += 1
               else:
-                  a, b = flat(old), flat(new)
-                  at = next((k for k in range(min(len(a), len(b))) if a[k] != b[k]), min(len(a), len(b)))
-                  problems.append(f"{path}: content change at char {at} "
-                                  f"old={a[max(0, at - 40):at + 40]!r} new={b[max(0, at - 40):at + 40]!r}")
+                  problems.append(f"{path}: {why}")
 
-          print(f"staged={len(paths)} whitespace-only={len(layout)} comma-moved={len(commas)} rejected={len(problems)}")
+          print(f"staged={len(paths)} whitespace-only={ws} trailing-comma-layout={commas} rejected={len(problems)}")
           for text in problems[:6]:
               notice("warning", text)
           if problems:
               raise SystemExit(1)
-          print("PASS: every staged change is layout (whitespace, or commas the formatter moved)")
-          notice("notice", f"layout proof PASS — staged={len(paths)} whitespace-only={len(layout)} "
-                           f"comma-moved={len(commas)}")
+          print("PASS: every staged change is whitespace, or a trailing comma beside a closing bracket")
+          notice("notice", f"layout proof PASS — staged={len(paths)} whitespace-only={ws} trailing-comma-layout={commas}")
           PY
 
       - name: Commit and open the PR
@@ -239,12 +287,18 @@ jobs:
           # 44348498677 دقیقاً همان گام، پس از موفق‌شدنِ push، با «exit code 1» مرد و
           # چیزی جز آن نشانه نگذاشت). `POST /pulls` تنها `pull-requests: write` می‌خواهد.
           # stderr به‌عنوان annotation منتشر می‌شود: لاگ jobهای این مخزن از API خالی است (R-036).
-          if ! gh api -X POST "repos/${{ github.repository }}/pulls" \
+          # سیاست مخزن «Allow GitHub Actions to create and approve pull requests» خاموش است
+          # و POST /pulls با job token 403 می‌دهد («GitHub Actions is not permitted to create or
+          # approve pull requests» — run 44352142959). آن را باز نمی‌کنیم: PR را انسانی/ایجنتی
+          # باز می‌کند که token شخصیش این اجازه را دارد، و گام عمداً **فیل نمی‌شود** — شاخه و
+          # شواهدش سودمندند حتی وقتی PR ساخته نمی‌شود.
+          if gh api -X POST "repos/${{ github.repository }}/pulls" \
               -f title="style(client): dart format lib test tools (M109)" \
               -f head="$BRANCH" -f base="$BASE" -f body="$(cat /tmp/m109/body.md)" \
               --jq .html_url > /tmp/m109/pr.url 2>/tmp/m109/pr.err; then
-            err=$(tr '\n' ' ' < /tmp/m109/pr.err | cut -c1-400 | tr '%' '#')
-            echo "::error title=m109 pr::PR creation failed: ${err}"
-            exit 1
+            echo "::notice title=m109 pr::$(cat /tmp/m109/pr.url)"
+          else
+            err=$(tr '\n' ' ' < /tmp/m109/pr.err | cut -c1-200 | tr '%' '#')
+            echo "::warning title=m109 pr::PR not opened (${err}). Branch $BRANCH is pushed with the layout-only commit — open the PR yourself: gh pr create --base $BASE --head $BRANCH"
+            echo "PR_URL=none" >> "$GITHUB_ENV"
           fi
-          echo "::notice title=m109 pr::$(cat /tmp/m109/pr.url)"

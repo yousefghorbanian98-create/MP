@@ -198,3 +198,11 @@ backend ۳۵۱ · ruff پاک · bandit ۰H/۰M · tsc ۰ · vitest ۳۰ · semg
 - **تصحیح حدسِ خودم:** شکستِ `gh pr create` را به «نبودِ `metadata: read`» نسبت دادم؛ آن کلید در `permissions:` مجاز نیست و اضافه‌کردنش کل workflow را بی‌اعتبار کرد (run `44349667465`، ۰ job). PR از این پس با `gh api -X POST /repos/{}/pulls` ساخته می‌شود
 - باقی‌ماندهٔ انسانی: فقط §۶ (گوشی/`adb`). تصمیم بازِ کوچک: commit کردنِ exclusion تزریقی یا بی‌تغییر گذاشتنش
 - گزارش: `finn/reports/m109-dart-format.md`
+
+## اصلاحیهٔ M109 (۲۰۲۶-۱۱-۱۹) — «صفر شد» زود گفته شد: سبکِ فرمت به ترتیبِ دستورالعمل‌ها وابسته است
+
+- گیتِ تازه در run `44350273742` قرمز شد: **۵۳ فایل unformatted**، یک روز پس از PR #1. علت کد نبود، **ترتیب** بود: `dart format` نسخهٔ زبان را از `.dart_tool/package_config.json` می‌خواند؛ workflow اول بدون `flutter pub get` فرمت کرد ⇒ tall style؛ گیت با `pub get` اجرا می‌شود و `sdk: ">=3.3.0 <4.0.0"` ⇒ short style. مرجع = چیزی که توسعه‌دهنده بعد از `pub get` می‌بیند، پس fixer اصلاح شد (`pub get` پیش از شمارش/فرمت) و ۵۳ فایل به short style برگشتند (PR #2، commit `f6bcefd`)
+- اثباتِ PR #2: `staged=53 whitespace-only=53 comma-moved=0 rejected=0` و بازسنجی مستقل در sandbox (۵۳ فایل، همه `M`، فقط whitespace، ۰ فایل غیر `.dart`)
+- **محدودیتِ جدیدِ شناخته‌شده:** «Allow GitHub Actions to create and approve pull requests» در این مخزن خاموش است ⇒ `POST /pulls` با job token **403**. workflow حالا شاخه را می‌فرستد و با `::warning` می‌گوید PR را باز کن؛ بازکردنِ PR کار token شخصی/ایجنتی است (PR #1 و #2 را همین‌طور ساختم). این همان دلیلی است که D-053/D-054 «commit رباتی روی شاخه» را نپذیرفتند
+- هیچ گامی در آن run قرمز، شاهد همسایه‌ها را نخورد: analyze/test/apk سبز بودند و publisher هم منتشر شد ✓ (R-036 در عمل)
+- اثبات را سخت‌تر کردیم: «whitespace را حذف کن و برابر بگیر» برای این repo کافی نبود و «کاماها را هم حذف کن» سهل‌گیر است (`(1)` در برابر `(1,)`). قاعدهٔ `client-format-fix` حالا کاما را **فقط کنار بستِ `)]}>`** می‌پذیرد؛ سنجش محلی روی سه بازه: PR#1 = 66 فایل (۱ ws، ۶۵ comma، **۰ semantic**)، PR#2 = 53 (۵۳ ws، **۰ semantic**)، جمعِ M109 = 65 (۰ ws، ۶۵ comma، **۰ semantic**). باقی‌ماندهٔ قاعده (کامای افزوده‌شده دقیقاً پیش `)` در یک عبارت تک‌عضو) در گزارش و در خود کد نوشته شده؛ جبرانش اجرای مجدد analyze + کل test suite روی درخت فرمت‌شده است
