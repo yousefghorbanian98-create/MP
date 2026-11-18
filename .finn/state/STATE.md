@@ -184,7 +184,7 @@ backend ۳۵۱ · ruff پاک · bandit ۰H/۰M · tsc ۰ · vitest ۳۰ · semg
 
 - پرسش کاربر: «خودت در Codespace انجام می‌دهی؟» → **نه**: credential این sandbox یک App token با scope مخزن است (`gh api /user/codespaces` → 0، `X-OAuth-Scopes` خالی ⇒ `gh codespace ssh` ممکن نیست). راه درست: گیت‌ها را از «دستی» به **CI** بردن
 - job جدید `client-pinned`: pin-check همسان با `.devcontainer/Dockerfile` · `dart format` (audit) · `flutter analyze` · `flutter test --coverage` · `flutter build apk --debug`
-- **شاهد (run `44323120295`، sha `2ac6ecc`)**: 156 passed / 0 failed / **0 skipped** · coverage **77.2%** (3195/4140) · debug apk 151MB ساخته شد ⇒ **M87: کامپایل Kotlin/Gradle تأیید شد** (device/persistence/encryption هنوز `UNKNOWN`؛ M88/M89 همچنان `BLOCKED` چون گوشی لازم دارند)
+- **شاهد (run `44323120295`، sha `2ac6ecc`؛ و run `44325309997` روی `7a3486a` پس از خواناکردنِ annotation — هر ۸ step سبز)**: 156 passed / 0 failed / **0 skipped** · coverage **77.2%** (3195/4140) · debug apk 151MB ساخته شد ⇒ **M87: کامپایل Kotlin/Gradle تأیید شد** (device/persistence/encryption هنوز `UNKNOWN`؛ M88/M89 همچنان `BLOCKED` چون گوشی لازم دارند)
 - یافتهٔ اول: گیت format که *پیش از* بقیه چیده شده بود، با `bash -e` سه گیت بعدی را skip کرد (run `44322049209`) → بازچینش + غیربلاکینگ؛ **۶۵ فایل Dart unformatted** = بدهی ثبت‌شده → **M109**
 - **تصحیح ادعای خودم:** `pip-audit` «هرگز اجرا نشده» نبود؛ در job `backend` بلاکینگ اجرا می‌شود و سبز است (محدودیت واقعی: نبودِ lock در مخزن). `runbooks/codespaces-execution.md` و `m107-*` اصلاح شدند
 - گزارش: `finn/reports/m108-ci-pinned-gates.md` · مرحله‌های انسانی باقی‌مانده: M109 (یک دستور) و §۶ (گوشی)
