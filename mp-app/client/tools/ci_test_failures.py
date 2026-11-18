@@ -124,6 +124,7 @@ def main() -> int:
     suites: dict[Any, dict[str, Any]] = {}
     tests: dict[Any, dict[str, Any]] = {}
     failure_locations: dict[Any, tuple[str, int]] = {}
+    checkpoints: dict[Any, str] = {}
     failures: list[tuple[Any, str | None, int | None, str]] = []
     passed = 0
     skipped = 0
@@ -151,6 +152,14 @@ def main() -> int:
             test = event.get("test")
             if isinstance(test, dict):
                 tests[test.get("id")] = test
+        elif event_type == "print":
+            test_id = event.get("testID")
+            message = event.get("message")
+            prefix = "CI_TEST_CHECKPOINT:"
+            if test_id is not None and isinstance(message, str) and message.startswith(prefix):
+                marker = message.removeprefix(prefix).strip()
+                if re.fullmatch(r"[a-z0-9_-]{1,60}", marker):
+                    checkpoints[test_id] = marker
         elif event_type == "error":
             test_id = event.get("testID")
             stack_trace = event.get("stackTrace", event.get("stack_trace"))
@@ -197,6 +206,9 @@ def main() -> int:
         if failure_location:
             failure_path, failure_line = failure_location
             detail += f" (failure frame: {failure_path}:{failure_line})"
+        checkpoint = checkpoints.get(test_id)
+        if checkpoint:
+            detail += f" (checkpoint: {checkpoint})"
         details.append(detail)
     if len(failures) > 40:
         details.append(f"- {len(failures) - 40} additional failures omitted.")

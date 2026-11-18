@@ -90,6 +90,8 @@ Map<String, dynamic> _report({required bool weightLogged, bool enoughData = fals
       'rule_version': 'adaptive-nutrition-1.0',
     };
 
+void _checkpoint(String marker) => print('CI_TEST_CHECKPOINT:$marker');
+
 Widget _wrap(http.Client client) => ProviderScope(
       overrides: [
         httpClientProvider.overrideWithValue(client),
@@ -111,13 +113,20 @@ Widget _wrap(http.Client client) => ProviderScope(
 void main() {
   testWidgets('TDEE و delta را از report API نمایش می‌دهد، نه محاسبهٔ Client', (tester) async {
     final client = _AdaptiveClient()..enoughData = true;
+    _checkpoint('widget-mount');
     await tester.pumpWidget(_wrap(client));
+    _checkpoint('widget-settle');
     await tester.pumpAndSettle();
 
+    _checkpoint('api-request');
     expect(client.calls, contains('GET /nutrition/member/3/adaptive'));
+    _checkpoint('tdee-value');
     expect(find.text('۲۶۵۰ kcal'), findsOneWidget);
+    _checkpoint('target-and-intake');
     expect(find.text('۲۱۰۰ kcal'), findsWidgets);
+    _checkpoint('suggested-delta');
     expect(find.textContaining('+۲۰۰ kcal → ۲۳۰۰ kcal'), findsOneWidget);
+    _checkpoint('safety-note');
     expect(find.textContaining('توصیهٔ درمانی یا رژیم پزشکی نیست'), findsOneWidget);
   });
 
