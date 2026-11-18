@@ -286,6 +286,13 @@ jobs:
           flutter test --file-reporter=json:/tmp/client-ci/flutter-test.json > /tmp/client-ci/flutter-test.txt 2>&1
           test_status=$?
           set -e
+          # همیشه شمارش را در step summary بنویس: «جاب سبز» با «یک probe skip شد»
+          # یکی نیست، و بدون این خط، سبزیِ M98 (messenger-level haptics) قابل
+          # بازخوانی نبود. مقادیر assertion هرگز منتشر نمی‌شوند.
+          if [ -n "$GITHUB_STEP_SUMMARY" ]; then
+            python3 tools/ci_test_failures.py --summary /tmp/client-ci/flutter-test.json \
+              >> "$GITHUB_STEP_SUMMARY" || true
+          fi
           if [ "$test_status" -ne 0 ]; then
             python3 tools/ci_test_failures.py /tmp/client-ci/flutter-test.json
           fi

@@ -32,8 +32,8 @@
 | `vitest run tests/apiCoverage.test.ts` | **4 passed** — مسیر رسید همچنان مصرف‌شده است و exception بی‌مصرف اضافه نشد |
 | `npm test` (کل Studio) | **219 passed / 9 skipped** (33 فایل) — بدون رگرسیون در گیت‌های مصرف API/دیزاین‌توکن |
 | Backend | بدون تغییر؛ baseline همان loop قبل: کل suite از ریشه **861 passed / 1 skipped / 1 failed** (آن شکست cwd-sensitive در `test_monitoring` است، توضیح در `finn/reports/m97-migration-drift.md`) |
-| `flutter pub get` / `flutter analyze` / `flutter test` | **اجرا‌نشده** — `flutter`/`dart` در sandbox نصب نیستند؛ نصب SDK از `dl.google.com` هم از این محیط ممکن نیست (فقط hostهای مشخص دسترسی دارند) |
-| CI | پس از push بستهٔ نهایی (D-047) در جاب `client-flutter` سنجیده می‌شود؛ نتیجهٔ همان run در `LOOP-PLAN-M63-M99.md` و `finn/reports/m99-*` ثبت می‌شود |
+| `flutter pub get` / `flutter analyze` / `flutter test` | **محلی اجرا‌نشده** — `flutter`/`dart` در sandbox نصب نیستند؛ نصب SDK از `dl.google.com` هم از این محیط ممکن نیست (فقط hostهای مشخص دسترسی دارند) |
+| **CI `client-flutter` روی `776ca6f`** | **✓ سبز** — analyze + `flutter test` (۷ تست این فایل اجرا‌شده، نه skip) + manifest gate؛ مسیر رسیدن به سبز در همین گزارش است |
 
 ## محدودیت‌ها و چیزهایی که ادعا نمی‌شود
 
@@ -56,7 +56,9 @@ run `44293699567` / job `client-flutter` (اولین اجرای واقعی پس 
 
 **چیزی که تغییر نکرد:** قرارداد اصلی loop — فقط `GET`، رد payload نامطابق، و «هیچ مبلغی در کلاینت ساخته/تصحیح نمی‌شود» — همان تست‌ها سبز بودند و دست نخوردند.
 
-**وضعیت:** تا ثبت عدد run دوم (`44295081645`) از همان job، M90 `UNKNOWN` است؛ UI/تست‌ها نوشته شده‌اند ولی «دیده‌شدن روی دستگاه» هنوز شاهدی ندارد.
+**تأیید رفع در CI:** run دوم (`44295081645`، همین job) **154 passed / 2 failed** شد و **هیچ‌کدام از دو شکست مربوط به M90 نبود** — هر دو تست messenger فایل M98 بودند (باگ خودِ تخلیهٔ صف، `pumpEventQueue` زیر FakeAsync؛ ثبت در `finn/reports/m98-haptics-motion.md`). یعنی هفت تست M90 — از جمله رد payload عضو دیگر، retry روی ۵۰۳ و «فقط GET» — روی `flutter test` واقعی سبزند، و `flutter analyze` هم بدون error از همین commitها رد شد.
+
+**وضعیت نهایی:** M90 **PASS برای دامنه‌ای که CI می‌سنجد** — `client-flutter` روی `776ca6f` (run `44300167991`) با `flutter analyze` و `flutter test` سبز، و هر ۷ تست همین فایل در همان run اجرا شدند (نه skip). اما «دیده‌شدن روی دستگاه» (overflow، ارتفاع `0.78` شیت، فونت Vazirmatn واقعی، اشتراک/چاپ) هنوز شاهده ندارد و در `LOOP-PLAN` ادعا نمی‌شود.
 ## بازگشت
 
 حذف سه فایل جدید (`persian_format.dart`, `order_receipt_sheet.dart`, `my_orders_sheet.dart`)، `test/shop_orders_receipt_test.dart` و provider افزوده‌شده، و برگرداندن `shop_page.dart` به تعریف محلی `faDigits`/`_rial`، کل قابلیت را برمی‌گرداند. رفتار پرداخت/سبد تغییری نکرده است.

@@ -153,5 +153,15 @@ backend ۳۵۱ · ruff پاک · bandit ۰H/۰M · tsc ۰ · vitest ۳۰ · semg
 - **M90** رسید سفارش عضو در اپ: `orderReceiptProvider` + «سفارش‌های من»/شیت رسید (fail-closed، فقط GET) → `UNKNOWN` تا CI
 - **M98** `MpHaptics` + `MpMotion` (کاهش حرکت) در بازخورد ست/کلاس/فروشگاه/شل → `UNKNOWN` تا CI؛ shared-element عمداً نه
 - گیت‌های محلی پس از این دو loop: backend **867 passed / 1 skipped** (از `mp-app/backend`) · Studio **219 passed / 9 skipped** + build · ruff check/format سبز · bandit `-ll` پاک · Dart static gate **۷۲ فایل / ۰ یافته** · docs gate **7 فایل / 99 لینک / ۳ Mermaid**
-- ابزار این nوبت: venv محلی `/home/user/.venv-mp` (backend deps + ruff/bandit + tree-sitter برای `dart_gate`) و `node_modules` استودیو از npm — بیرون از snapshot؛ برای بازتولید: `python3 -m venv .venv && pip install -e "mp-app/backend[dev]" tree-sitter tree-sitter-dart`
+- ابزار: venv محلی `/home/user/.venv-mp` (backend deps + ruff/bandit + tree-sitter برای `dart_gate`) و `node_modules` استودیو — **هر دو بیرون snapshot بودند و با بازسازی sandbox از بین رفتند**؛ اعداد backend/ruff/studio این صفحه از اجرای پیش از بازسازی است و برای بازتولید: `python3 -m venv .venv && pip install -e "mp-app/backend[dev]" tree-sitter tree-sitter-dart` (سپس `npm ci` در Studio). بعد از بازسازی، `git fetch` + `git reset --mixed 776ca6f` checkout محلی (که روی پایه `d64e3b0` افتاده بود) را هم‌تراز کرد؛ هیچ commit از دست نرفت چون همه روی `origin` بودند
 - مرحلهٔ بعدی: **M99** — گزارش شواهد/بلوکرهاب، تطبیق با CI پس از push طبق D-047، و نهایی‌سازی handoff Codespaces؛ بدون release/deploy/ساخت ماشین ابری
+
+## به‌روزرسانی M90/M98 — reconciled با CI (۲۰۲۶-۱۱-۱۸)
+
+- push بسته طبق D-047 انجام شد: `07ff2ed` (بسته) → `484fcd8`/`41ae143`/`c672737`/`a3b03e0` (رفع‌ها) → `776ca6f` (head سبز)
+- **`client-flutter` روی `776ca6f` سبز**: `flutter analyze` (گیت error+warning) ✓ · `flutter test` ✓ · manifest gate ✓ — پس M90 و M98 از `UNKNOWN` به `PASS` (دامنهٔ client/CI) رفتند
+- مسیرِ رسیدن به سبز (همین، ارزش ثبت‌شدن دارد): run اول **146 passed / 4 failed** (کامپایل mock، await روی کانال، دو انتظارِ متن نادرست) → run دوم **154/2** با دو timeout ده‌دقیقه‌ای (`pumpEventQueue` زیر FakeAsync) → run سوم **۲ شکستِ fail-fast** (invariant بایندینگ روی override داخل `testWidgets`) → run چهارم `flutter analyze` قرمز با `UNNECESSARY_CAST` (پس `flutter test` skip شد) → run پنجم سبز
+- **یافتهٔ ابزارساز**: «جاب سبز» گواهی نمی‌داد که probe اجرا شده؛ `ci_test_failures.py --summary` اضافه شد که شمارش pass/fail/skip را در step summary می‌نویسد، با رگرسیون `mp-app/backend/tests/regression/test_ci_test_failures.py` (۵ تست، شامل «مقدار assertion منتشر نشود»)
+- گیت‌های محلی پس از این دوره: backend **872 passed / 1 skipped** (از `mp-app/backend`) · ruff check + format سبز · bandit `-ll` پاک · Dart static gate **۷۲ فایل / ۰ یافته** · docs gate **8 فایل / 10۳ لینک / ۴ Mermaid** (page ماژول `architecture/modules/shop.md` + کشف خودکار گیت)
+- CI بقیهٔ jobها روی همین sha: backend ✓ studio ✓ live-contract ✓ docs ✓ · تنها قرمزِ باقی‌مانده `secret-scan` است که مجموعهٔ یافته‌هایش با run قبل **یکی** است (SEC-01/keystore و fixtureهای تست) و ریشه‌اش تصمیم مالک است، نه این بسته
+- مرحلهٔ بعدی: هیچ آیتم M63–M99 در این محیط اجرا‌شدنی نمانده — `UNKNOWN`های باقی‌مانده device/CI-خاص‌اند و `BLOCKED`ها (M68، M69، M85، M88/M89 وابسته به M87) تصمیم مالک می‌خواهند؛ track برند هم M104 `UNKNOWN` / M105 `BLOCKED` است

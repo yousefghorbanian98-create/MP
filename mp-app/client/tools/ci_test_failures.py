@@ -4,6 +4,12 @@
 The Dart test JSON protocol can include assertion values and arbitrary printed
 messages. This helper intentionally reports only test names, suite paths, and
 source line numbers; it never forwards error text or stack traces into CI.
+
+``--summary`` prints a one-line count for the job summary (``GITHUB_STEP_SUMMARY``)
+and never annotates. That mode exists because a green run used to be unreadable:
+"client-flutter success" did not say whether a test was *skipped* — and a skipped
+probe is not a witness. Counting passes/skips keeps that visible without exposing
+anything from the reports.
 """
 
 from __future__ import annotations
@@ -114,12 +120,20 @@ def _annotation(message: str) -> None:
     print(f"::error title=Flutter test failures::{_escape_data(message)}")
 
 
-def main() -> int:
-    if len(sys.argv) != 2:
+def main(argv: list[str] | None = None) -> int:
+    args = list(sys.argv[1:] if argv is None else argv)
+    summary_mode = False
+    if args and args[0] == "--summary":
+        summary_mode = True
+        args = args[1:]
+    if len(args) != 1:
+        if summary_mode:
+            print("Flutter test summary unavailable: no JSON report path was given.")
+            return 0
         _annotation("Flutter test diagnostics were not given a JSON report path.")
         return 0
 
-    report = Path(sys.argv[1])
+    report = Path(args[0])
     workspace = Path(os.environ.get("GITHUB_WORKSPACE", Path.cwd())).resolve()
     suites: dict[Any, dict[str, Any]] = {}
     tests: dict[Any, dict[str, Any]] = {}
@@ -131,6 +145,11 @@ def main() -> int:
     try:
         lines = report.read_text(encoding="utf-8", errors="replace").splitlines()
     except OSError:
+        if summary_mode:
+            # حالت خلاصه هیچ‌وقت annotation قرمز نمی‌فرستد: این خط در step موفق هم
+            # اجرا می‌شود، و یک ::error بی‌دلیل «report missing» معادل اتهام کاذب است.
+            print("Flutter test summary unavailable: the machine-readable report is missing.")
+            return 0
         _annotation("Flutter tests failed; the machine-readable test report is missing.")
         return 0
 
@@ -176,6 +195,13 @@ def main() -> int:
             if not isinstance(name, str) or not name:
                 name = "unnamed test"
             failures.append((test_id, path, line_number, name))
+
+    if summary_mode:
+        print(
+            f"Flutter tests: {passed} passed, {len(failures)} failed, {skipped} skipped "
+            "(names only; assertion values never leave the runner)."
+        )
+        return 0
 
     if not failures:
         _annotation(

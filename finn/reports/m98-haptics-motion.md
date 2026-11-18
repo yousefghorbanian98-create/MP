@@ -35,8 +35,8 @@
 | `dart_gate.py --include-tests` (Tree-sitter) | **۷۲ فایل Dart، ۰ یافته** (پس از آخرین ویرایش) |
 | `npm test` در Studio | **219 passed / 9 skipped** — طراحی/دیزاین‌توکن و coverage API تحت‌تأثیر این تغییرات Client قرار نگرفتند |
 | backend | بدون تغییر در این loop؛ baseline M97: کل suite **861 passed / 1 skipped** + یک شکست cwd-sensitive مستندشده |
-| `flutter analyze` / `flutter test` / build | **اجرا‌نشده** (SDK نیست؛ `dl.google.com` هم از این sandbox در دسترس نیست) |
-| CI | پس از push بستهٔ نهایی (D-047) در `client-flutter` سنجیده می‌شود؛ نتیجه در `LOOP-PLAN-M63-M99.md` ثبت می‌شود |
+| `flutter analyze` / `flutter test` / build | **محلی اجرا‌نشده** (SDK نیست؛ `dl.google.com` هم از این sandbox در دسترس نیست) |
+| **CI `client-flutter` روی `776ca6f`** | **✓ سبز** — analyze (گیت error+warning) + `flutter test` + manifest gate؛ پس از ۴ run قرمز با علل متفاوت (`44293699567`, `44295081645`, `44298469682`, `44299228685`) |
 
 ## محدودیت‌ها (بدون ادعای polish فراگیر)
 
@@ -60,7 +60,25 @@
 
 **چرا این یک تغییر رفتار است، نه فقط رفع تست:** ادعای loop «پالس وقتی نتیجه معلوم شد» بود؛ نسخهٔ اول ناخواسته «پالس می‌تواند نمایش نتیجه را برای همیشه نخواباند» شد. حالا قرارداد همان چیزی است که بالای `lib/core/haptics.dart` نوشته شده و `motion_haptics_test.dart` با `pumpEventQueue()` ثابت می‌کند پیام **بدون await کردنِ مسیر UI** به messenger می‌رسد (سه فراخوانی با آرگومان‌های افتراقی؛ `enabled: false` → صفر فراخوانی).
 
-**وضعیت پس از رفع:** `flutter analyze` / `flutter test` همچنان در این sandbox اجرا‌ناپذیرند؛ قضاوت نهایی `client-flutter` در run دوم (`44295081645`) است. تا ثبت همان عدد، M98 `UNKNOWN` می‌ماند — «۷۲ فایل / ۰ یافته» و «تست‌ها منطقی‌اند» جایگزین pass نیستند.
+### round دوم CI — رفع‌ها سبز، ولی خودِ تستِ من آویزان می‌شد
+
+run `44295081645`: **154 passed / 2 failed**، زمان job ≈ ۲۱ دقیقه (قبلاً ۸ دقیقه). دو شکست، همان دو تست messenger بودند و هیچ‌کدام assertion معمولی نبود: هرکدام **timeout ده‌دقیقه‌ای** خورد. علت: برای دیدنِ پیام‌های fire-and-forget صف رویداد را با `pumpEventQueue()` تخلیه می‌کردم — آن تابع روی `Future.delayed` واقعی منتظر می‌ماند، ولی داخل `testWidgets` زمان فقط با `pump()` جلو می‌رود، پس هیچ‌وقت برنمی‌گشت.
+
+رفع (`c672737`): `drain(tester)` = `await tester.runAsync(() => Future.delayed(Duration.zero))` و یک `pump()`. با همین تغییر، تست «سه فراخوانی» دیگر به زمان fake وابسته نیست و تست «`enabled: false` → صفر فراخوانی» هم معنا دارد (قبلاً روی لینوکس CI بی‌صدا سبز می‌شد؛ برای همین `debugDefaultTargetPlatformOverride = TargetPlatform.android` هم در `41ae143` اضافه شد).
+
+### دورهای ۳ تا ۵ — harness، نه assertion
+
+| run | sha | نتیجه | تشخیص و رفع |
+|---|---|---|---|
+| `44298469682` | `c672737` | 154 passed / **2 failed** (سریع، بی‌timeout) | هر دو تست messenger بودند، **از جمله تستی که فقط «صفر فراخوانی» را می‌سنجد** — پس مشکل شمارش پالس نبود، خودِ environment `testWidgets` بود (FakeAsync + تغییر `debugDefaultTargetPlatformOverride` داخل بدنه که با invariant بایندینگ درگیر می‌شود). رفع: گروه haptics از `testWidgets` به `test()` معمولی با `TestWidgetsFlutterBinding.ensureInitialized()` و mock روی `defaultBinaryMessenger` منتقل شد؛ override داخل تست و با `addTearDown` برگردانده می‌شود؛ event loop واقعی است و یک `Future.delayed(Duration.zero)` برای دیدنِ پیام در mock کافی است |
+| `44299228685` | `a3b03e0` | `flutter analyze` **قرمز**، `flutter test` skip شد | `UNNECESSARY_CAST` (warning) روی `… as TestDefaultBinaryMessenger`؛ این گیت فقط `--no-fatal-infos` می‌دهد پس warningها کشنده‌اند. رفع (`776ca6f`): حذف کست زائد، با کامنت «چرا اینجا cast برای وضوح مجاز نیست» |
+| `44300167991` | `776ca6f` | **client-flutter ✓ سبز** | `pub get` ✓ · `flutter analyze` ✓ · `flutter test` ✓ · manifest gate ✓ |
+
+### یک ادعای صادقانه دربارهٔ «سبز بودن»
+
+سبزیِ این جاب به‌تنهایی ثابت نمی‌کرد probe اجرا شده: اگر `HapticFeedback` روی runner پیامی نمی‌فرستاد، تست اول `markTestSkipped` می‌خورد و جاب سبز می‌ماند. برای همین `--summary` به `tools/ci_test_failures.py` اضافه شد (شمارش pass/fail/**skip** در step summary، بدون هیچ مقدار assertion) و رگرسیون `mp-app/backend/tests/regression/test_ci_test_failures.py` (۵ تست) رفتارش را — از جمله «متن error/stack به خروجی نرود» — قفل می‌کند. شمارش همین run از artifact/summary خوانده می‌شود؛ ادعای «صفر skip» فقط وقتی نوشته می‌شود که همان عدد دیده شده باشد.
+
+**وضعیت نهایی:** برای دامنه‌ای که CI می‌سنجد (analyzer + widget/unit test) این loop **PASS** است؛ «شدت/تأخیر/احساس واقعی روی گوشی» همچنان سنجیده نشده و ادعا نمی‌شود. تا ثبت همان عدد، M98 `UNKNOWN` می‌ماند — «۷۲ فایل / ۰ یافته» و «تست‌ها منطقی‌اند» جایگزین pass نیستند.
 ## بازگشت
 
 حذف `core/haptics.dart`, `core/motion.dart`, `test/motion_haptics_test.dart`, `test/haptics_recorder.dart` و برگرداندن آن چهار فایل UI و دو فایل تست، رفتار قبلی (بدون پالس، با duration ثابت) را برمی‌گرداند. هیچ API/schema/dependency درگیر نیست.
