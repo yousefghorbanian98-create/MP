@@ -104,26 +104,26 @@ class _PhoneChangeHarnessState extends State<_PhoneChangeHarness> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    body: Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextButton(
-            onPressed: () async {
-              final result = await showDialog<bool>(
-                context: context,
-                builder: (_) =>
-                    const PhoneChangeDialog(currentPhone: '09121234567'),
-              );
-              if (mounted) setState(() => _result = '$result');
-            },
-            child: const Text('باز کردن'),
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextButton(
+                onPressed: () async {
+                  final result = await showDialog<bool>(
+                    context: context,
+                    builder: (_) =>
+                        const PhoneChangeDialog(currentPhone: '09121234567'),
+                  );
+                  if (mounted) setState(() => _result = '$result');
+                },
+                child: const Text('باز کردن'),
+              ),
+              Text('نتیجه: $_result'),
+            ],
           ),
-          Text('نتیجه: $_result'),
-        ],
-      ),
-    ),
-  );
+        ),
+      );
 }
 
 void main() {

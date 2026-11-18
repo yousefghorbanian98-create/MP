@@ -56,10 +56,10 @@ class _MemberChatClient extends http.BaseClient {
     } else if (request.method == 'GET' && path == '/notifications/member/3') {
       payload = <dynamic>[];
     } else {
-      final messagePath = RegExp(r'^/chat/conversations/(\d+)/messages$')
-          .firstMatch(path);
-      final readPath = RegExp(r'^/chat/conversations/(\d+)/read$')
-          .firstMatch(path);
+      final messagePath =
+          RegExp(r'^/chat/conversations/(\d+)/messages$').firstMatch(path);
+      final readPath =
+          RegExp(r'^/chat/conversations/(\d+)/read$').firstMatch(path);
       if (request.method == 'GET' && messagePath != null) {
         final conversationId = int.parse(messagePath.group(1)!);
         if (messageListFailures > 0) {
@@ -151,68 +151,69 @@ class _MemberChatClient extends http.BaseClient {
 Map<String, dynamic> _conversation({
   int memberId = 3,
   String status = 'open',
-}) => {
-  'id': 41,
-  'member_id': memberId,
-  'coach_id': 9,
-  'subject': 'برنامهٔ هفتگی',
-  'status': status,
-  'last_message_at': '2026-11-16T10:30:00Z',
-  'created_at': '2026-11-15T12:00:00Z',
-};
+}) =>
+    {
+      'id': 41,
+      'member_id': memberId,
+      'coach_id': 9,
+      'subject': 'برنامهٔ هفتگی',
+      'status': status,
+      'last_message_at': '2026-11-16T10:30:00Z',
+      'created_at': '2026-11-15T12:00:00Z',
+    };
 
 Map<String, dynamic> _coachMessage({String? readAt}) => {
-  'id': 51,
-  'conversation_id': 41,
-  'sender_id': 9,
-  'sender_role': 'coach',
-  'body': 'برای تمرین امروز وزنه را سبک‌تر انتخاب کن.',
-  'is_system': false,
-  'read_at': readAt,
-  'created_at': '2026-11-16T10:30:00Z',
-};
+      'id': 51,
+      'conversation_id': 41,
+      'sender_id': 9,
+      'sender_role': 'coach',
+      'body': 'برای تمرین امروز وزنه را سبک‌تر انتخاب کن.',
+      'is_system': false,
+      'read_at': readAt,
+      'created_at': '2026-11-16T10:30:00Z',
+    };
 
 Map<String, dynamic> _error(String message) => {
-  'error': {'code': 'test_error', 'message': message},
-};
+      'error': {'code': 'test_error', 'message': message},
+    };
 
 Widget _withProviders(_MemberChatClient client, Widget child) => ProviderScope(
-  overrides: [
-    httpClientProvider.overrideWithValue(client),
-    authProvider.overrideWith(
-      (ref) => AuthController.test(
-        AuthState(
-          accessToken: 'member-token',
-          userId: 4,
-          memberId: 3,
-          userName: 'عضو تست',
+      overrides: [
+        httpClientProvider.overrideWithValue(client),
+        authProvider.overrideWith(
+          (ref) => AuthController.test(
+            AuthState(
+              accessToken: 'member-token',
+              userId: 4,
+              memberId: 3,
+              userName: 'عضو تست',
+            ),
+          ),
         ),
-      ),
-    ),
-  ],
-  child: child,
-);
+      ],
+      child: child,
+    );
 
 Widget _wrap(_MemberChatClient client) => _withProviders(
-  client,
-  MaterialApp(
-    theme: mpTheme(),
-    home: const Directionality(
-      textDirection: TextDirection.rtl,
-      child: MemberChatPage(),
-    ),
-  ),
-);
+      client,
+      MaterialApp(
+        theme: mpTheme(),
+        home: const Directionality(
+          textDirection: TextDirection.rtl,
+          child: MemberChatPage(),
+        ),
+      ),
+    );
 
 Widget _wrapWithRouter(_MemberChatClient client) => _withProviders(
-  client,
-  MaterialApp.router(
-    theme: mpTheme(),
-    routerConfig: createMpRouter(initialLocation: '/home'),
-    builder: (context, child) =>
-        Directionality(textDirection: TextDirection.rtl, child: child!),
-  ),
-);
+      client,
+      MaterialApp.router(
+        theme: mpTheme(),
+        routerConfig: createMpRouter(initialLocation: '/home'),
+        builder: (context, child) =>
+            Directionality(textDirection: TextDirection.rtl, child: child!),
+      ),
+    );
 
 void main() {
   testWidgets('فهرست را از endpoint عضو می‌خواند، بدون شناسهٔ قابل‌انتخاب', (

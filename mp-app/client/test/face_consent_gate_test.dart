@@ -43,11 +43,11 @@ class _FakeClient extends http.BaseClient {
     final payload = switch (path) {
       '/face/qr-token' => {'payload': 'QR-PAYLOAD', 'member_id': 3},
       '/members/me/face-consent' => {
-        'member_id': 3,
-        'consent': consent,
-        'policy_version': consent ? 'v1' : null,
-        'enrolled': enrolled,
-      },
+          'member_id': 3,
+          'consent': consent,
+          'policy_version': consent ? 'v1' : null,
+          'enrolled': enrolled,
+        },
       '/face/privacy-notice' => {'text': 'متن اطلاعیه'},
       _ => {'status': 'ok', 'result': 'ok'},
     };
@@ -62,20 +62,21 @@ class _FakeClient extends http.BaseClient {
 }
 
 Widget _wrap(http.Client client) => ProviderScope(
-  overrides: [
-    httpClientProvider.overrideWithValue(client),
-    authProvider.overrideWith(
-      (ref) => AuthController.test(AuthState(accessToken: 't', memberId: 3)),
-    ),
-  ],
-  child: MaterialApp(
-    theme: mpTheme(),
-    home: const Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(body: CheckInPage()),
-    ),
-  ),
-);
+      overrides: [
+        httpClientProvider.overrideWithValue(client),
+        authProvider.overrideWith(
+          (ref) =>
+              AuthController.test(AuthState(accessToken: 't', memberId: 3)),
+        ),
+      ],
+      child: MaterialApp(
+        theme: mpTheme(),
+        home: const Directionality(
+          textDirection: TextDirection.rtl,
+          child: Scaffold(body: CheckInPage()),
+        ),
+      ),
+    );
 
 Future<void> _openFaceTab(WidgetTester tester) async {
   await tester.pumpAndSettle();
@@ -138,9 +139,8 @@ void main() {
     await tester.tap(find.text('چک‌این'));
     await tester.pumpAndSettle();
 
-    final checkin = client.bodies
-        .where((b) => b['path'] == '/face/checkin')
-        .toList();
+    final checkin =
+        client.bodies.where((b) => b['path'] == '/face/checkin').toList();
     expect(checkin, isNotEmpty, reason: 'دکمه باید درخواست را واقعاً بفرستد');
     expect(
       checkin.single['method'],

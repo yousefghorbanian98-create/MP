@@ -110,9 +110,8 @@ class _OtpPageState extends ConsumerState<OtpPage> {
                     decoration: InputDecoration(
                       labelText: 'کد تایید',
                       border: const OutlineInputBorder(),
-                      helperText: _devCode != null
-                          ? 'کد آزمایشی: $_devCode'
-                          : null,
+                      helperText:
+                          _devCode != null ? 'کد آزمایشی: $_devCode' : null,
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -126,9 +125,8 @@ class _OtpPageState extends ConsumerState<OtpPage> {
                     ),
                   ),
                 FilledButton(
-                  onPressed: _busy
-                      ? null
-                      : (_codeSent ? _verify : _requestCode),
+                  onPressed:
+                      _busy ? null : (_codeSent ? _verify : _requestCode),
                   child: Text(
                     _busy
                         ? 'لطفاً صبر کنید…'

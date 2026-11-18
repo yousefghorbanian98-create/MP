@@ -39,9 +39,8 @@ DateTime? parseMembershipExpiry(String? iso) {
 int? daysUntilExpiry(String? iso, {DateTime? now}) {
   final expires = parseMembershipExpiry(iso);
   if (expires == null) return null;
-  final remainingMicros = expires
-      .difference((now ?? DateTime.now()).toUtc())
-      .inMicroseconds;
+  final remainingMicros =
+      expires.difference((now ?? DateTime.now()).toUtc()).inMicroseconds;
   if (remainingMicros <= 0) return 0;
   const microsPerDay = 86400000000;
   return (remainingMicros + microsPerDay - 1) ~/ microsPerDay;
@@ -150,8 +149,7 @@ const _jalaliMonths = <String>[
 (int, int, int) _toJalali(int gy, int gm, int gd) {
   const gDayMonth = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
   final gy2 = gm > 2 ? gy + 1 : gy;
-  var days =
-      355666 +
+  var days = 355666 +
       (365 * gy) +
       ((gy2 + 3) ~/ 4) -
       ((gy2 + 99) ~/ 100) +

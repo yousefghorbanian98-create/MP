@@ -18,8 +18,8 @@ class _HistoryClient extends http.BaseClient {
     this.hasMore = false,
     List<Map<String, dynamic>>? items,
     List<Map<String, dynamic>>? nextPage,
-  }) : items = items ?? _defaultItems,
-       nextPage = nextPage ?? const [];
+  })  : items = items ?? _defaultItems,
+        nextPage = nextPage ?? const [];
 
   bool failNext;
   final bool hasMore;
@@ -94,23 +94,25 @@ final _defaultItems = [
 Widget _wrap(
   http.Client client, {
   Widget child = const MemberCheckInHistoryPage(),
-}) => ProviderScope(
-  overrides: [
-    httpClientProvider.overrideWithValue(client),
-    authProvider.overrideWith(
-      (ref) => AuthController.test(
-        AuthState(accessToken: 'test-token', memberId: 3, userName: 'عضو تست'),
+}) =>
+    ProviderScope(
+      overrides: [
+        httpClientProvider.overrideWithValue(client),
+        authProvider.overrideWith(
+          (ref) => AuthController.test(
+            AuthState(
+                accessToken: 'test-token', memberId: 3, userName: 'عضو تست'),
+          ),
+        ),
+      ],
+      child: MaterialApp(
+        theme: mpTheme(),
+        home: Directionality(
+          textDirection: TextDirection.rtl,
+          child: Scaffold(body: child),
+        ),
       ),
-    ),
-  ],
-  child: MaterialApp(
-    theme: mpTheme(),
-    home: Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(body: child),
-    ),
-  ),
-);
+    );
 
 void main() {
   testWidgets('سوابق واقعی و ورود ردشده را فقط از مسیر عضو جاری نشان می‌دهد', (

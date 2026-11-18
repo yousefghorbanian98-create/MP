@@ -163,9 +163,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     // The server revoked every session with the phone update. The queue choice
     // was made before the change; preserve or discard is applied only now.
     try {
-      await ref
-          .read(authProvider.notifier)
-          .logout(
+      await ref.read(authProvider.notifier).logout(
             keepPendingFeedback: queueChoice == _PendingQueueExitChoice.keep,
             discardPendingFeedback:
                 queueChoice == _PendingQueueExitChoice.discard,
@@ -218,9 +216,8 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
           ),
         ),
         data: (m) {
-          _name.text = _editing
-              ? _name.text
-              : (m['full_name'] as String? ?? '');
+          _name.text =
+              _editing ? _name.text : (m['full_name'] as String? ?? '');
           _height.text = _editing
               ? _height.text
               : ((m['height_cm'] as int?)?.toString() ?? '');
@@ -452,9 +449,7 @@ class _LogoutButtonState extends ConsumerState<_LogoutButton> {
     if (queueChoice == _PendingQueueExitChoice.cancel || !mounted) return;
     setState(() => _busy = true);
     try {
-      final revoke = await ref
-          .read(authProvider.notifier)
-          .logout(
+      final revoke = await ref.read(authProvider.notifier).logout(
             keepPendingFeedback: queueChoice == _PendingQueueExitChoice.keep,
             discardPendingFeedback:
                 queueChoice == _PendingQueueExitChoice.discard,

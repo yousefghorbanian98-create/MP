@@ -13,36 +13,34 @@ const _historyPageSize = 30;
 
 final memberCheckInHistoryProvider =
     FutureProvider.family<Map<String, dynamic>, int>((ref, offset) async {
-      final api = ref.watch(apiClientProvider);
-      final raw = await api.get(
-        '/members/me/checkins?limit=$_historyPageSize&offset=$offset',
-      );
-      if (raw is! Map) throw ApiException('ساختار پاسخ سوابق حضور معتبر نیست');
+  final api = ref.watch(apiClientProvider);
+  final raw = await api.get(
+    '/members/me/checkins?limit=$_historyPageSize&offset=$offset',
+  );
+  if (raw is! Map) throw ApiException('ساختار پاسخ سوابق حضور معتبر نیست');
 
-      final payload = Map<String, dynamic>.from(raw);
-      final rows = payload['items'];
-      if (rows is! List || payload['has_more'] is! bool) {
-        throw ApiException('ساختار پاسخ سوابق حضور ناقص است');
-      }
-      final items = <Map<String, dynamic>>[];
-      for (final row in rows) {
-        if (row is! Map) throw ApiException('رکورد حضور معتبر نیست');
-        final item = Map<String, dynamic>.from(row);
-        if (item['checkin_id'] is! int ||
-            item['method'] is! String ||
-            item['result'] is! String ||
-            item['denial_reason'] is! String ||
-            item['is_open'] is! bool ||
-            (item['checked_in_at'] != null &&
-                item['checked_in_at'] is! String) ||
-            (item['checked_out_at'] != null &&
-                item['checked_out_at'] is! String)) {
-          throw ApiException('رکورد حضور معتبر نیست');
-        }
-        items.add(item);
-      }
-      return {...payload, 'items': items};
-    });
+  final payload = Map<String, dynamic>.from(raw);
+  final rows = payload['items'];
+  if (rows is! List || payload['has_more'] is! bool) {
+    throw ApiException('ساختار پاسخ سوابق حضور ناقص است');
+  }
+  final items = <Map<String, dynamic>>[];
+  for (final row in rows) {
+    if (row is! Map) throw ApiException('رکورد حضور معتبر نیست');
+    final item = Map<String, dynamic>.from(row);
+    if (item['checkin_id'] is! int ||
+        item['method'] is! String ||
+        item['result'] is! String ||
+        item['denial_reason'] is! String ||
+        item['is_open'] is! bool ||
+        (item['checked_in_at'] != null && item['checked_in_at'] is! String) ||
+        (item['checked_out_at'] != null && item['checked_out_at'] is! String)) {
+      throw ApiException('رکورد حضور معتبر نیست');
+    }
+    items.add(item);
+  }
+  return {...payload, 'items': items};
+});
 
 class MemberCheckInHistoryPage extends ConsumerStatefulWidget {
   const MemberCheckInHistoryPage({super.key});
@@ -118,8 +116,8 @@ class _MemberCheckInHistoryPageState
         ),
       ),
       data: (payload) {
-        final firstPage = (payload['items'] as List)
-            .cast<Map<String, dynamic>>();
+        final firstPage =
+            (payload['items'] as List).cast<Map<String, dynamic>>();
         final items = [...firstPage, ..._olderItems];
         final hasMore = _hasMoreOverride ?? (payload['has_more'] as bool);
         return ListView(
@@ -269,9 +267,9 @@ class _CheckInHistoryItem extends StatelessWidget {
 }
 
 String _denialReasonFa(String reason) => switch (reason) {
-  'membership_expired' => 'اشتراک فعال نیست یا منقضی شده است',
-  _ => reason,
-};
+      'membership_expired' => 'اشتراک فعال نیست یا منقضی شده است',
+      _ => reason,
+    };
 
 String _formatMemberDateTime(String? value) {
   if (value == null) return 'زمان نامعلوم';

@@ -10,16 +10,13 @@ import '../../core/session.dart';
 
 const _walletPageSize = 20;
 
-final walletLedgerProvider =
-    StateNotifierProvider.autoDispose<
-      WalletLedgerController,
-      WalletLedgerState
-    >(
-      (ref) => WalletLedgerController(
-        api: ref.watch(apiClientProvider),
-        memberId: ref.watch(authProvider).memberId,
-      ),
-    );
+final walletLedgerProvider = StateNotifierProvider.autoDispose<
+    WalletLedgerController, WalletLedgerState>(
+  (ref) => WalletLedgerController(
+    api: ref.watch(apiClientProvider),
+    memberId: ref.watch(authProvider).memberId,
+  ),
+);
 
 class WalletLedgerState {
   const WalletLedgerState({
@@ -45,9 +42,9 @@ class WalletLedgerState {
 
 class WalletLedgerController extends StateNotifier<WalletLedgerState> {
   WalletLedgerController({required this.api, required this.memberId})
-    : super(
-        WalletLedgerState(memberId: memberId, isLoading: memberId != null),
-      ) {
+      : super(
+          WalletLedgerState(memberId: memberId, isLoading: memberId != null),
+        ) {
     if (memberId == null) {
       state = const WalletLedgerState(error: 'شناسهٔ عضو در نشست موجود نیست');
     } else {

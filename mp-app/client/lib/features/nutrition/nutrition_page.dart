@@ -138,18 +138,15 @@ class NutritionPage extends ConsumerWidget {
 
 /// مقدار ورودی با رقم فارسی/عربی یا لاتین؛ محدودیت endpoint هم رعایت می‌شود.
 double? parseFoodLogGrams(String raw) {
-  var normalized = raw
-      .trim()
-      .replaceAll(',', '')
-      .replaceAll('٬', '')
-      .replaceAll('٫', '.');
+  var normalized =
+      raw.trim().replaceAll(',', '').replaceAll('٬', '').replaceAll('٫', '.');
   normalized = normalized.replaceAllMapped(RegExp(r'[۰-۹٠-٩]'), (match) {
     final code = match.group(0)!.codeUnitAt(0);
     final digit = code >= 0x06F0 && code <= 0x06F9
         ? code - 0x06F0
         : code >= 0x0660 && code <= 0x0669
-        ? code - 0x0660
-        : null;
+            ? code - 0x0660
+            : null;
     return digit?.toString() ?? match.group(0)!;
   });
   final value = double.tryParse(normalized);
@@ -176,12 +173,12 @@ String _dateKey(DateTime date) =>
     '${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
 
 String _mealName(dynamic slot) => switch (slot) {
-  'breakfast' => 'صبحانه',
-  'lunch' => 'ناهار',
-  'dinner' => 'شام',
-  'snack' => 'میان‌وعده',
-  _ => 'وعدهٔ نامشخص',
-};
+      'breakfast' => 'صبحانه',
+      'lunch' => 'ناهار',
+      'dinner' => 'شام',
+      'snack' => 'میان‌وعده',
+      _ => 'وعدهٔ نامشخص',
+    };
 
 class _DailyFoodLog extends ConsumerStatefulWidget {
   const _DailyFoodLog();

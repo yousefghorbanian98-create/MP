@@ -17,10 +17,10 @@ import 'package:mp_client/core/api_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 http.Response _utf8Response(String body, int statusCode) => http.Response(
-  body,
-  statusCode,
-  headers: const {'content-type': 'application/json; charset=utf-8'},
-);
+      body,
+      statusCode,
+      headers: const {'content-type': 'application/json; charset=utf-8'},
+    );
 
 class _ScriptedClient extends http.BaseClient {
   _ScriptedClient(this.script);

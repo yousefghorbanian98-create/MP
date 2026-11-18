@@ -128,8 +128,8 @@ class _OrderRow extends ConsumerWidget {
     final id = (order['id'] as num?)?.toInt();
     final status = (order['status'] as String?) ?? '';
     final total = (order['total_rial'] as num?) ?? 0;
-    final items = ((order['items'] as List?) ?? const [])
-        .cast<Map<String, dynamic>>();
+    final items =
+        ((order['items'] as List?) ?? const []).cast<Map<String, dynamic>>();
     final itemCount = items.fold<int>(
       0,
       (sum, line) => sum + ((line['qty'] as num?)?.toInt() ?? 0),

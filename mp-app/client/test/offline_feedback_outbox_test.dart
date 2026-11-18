@@ -21,25 +21,26 @@ OfflineFeedbackQueueItem _item({
   OfflineFeedbackStatus status = OfflineFeedbackStatus.pending,
   int attempts = 0,
   String? nextAttemptAt,
-}) => OfflineFeedbackQueueItem(
-  id: id,
-  ownerMemberId: owner,
-  clientId: 'c$id',
-  deviceId: _device,
-  programId: 12,
-  movementId: 'squat',
-  weight: 80,
-  targetReps: 10,
-  repsDone: 9,
-  rir: 2,
-  createdAt: _now.toIso8601String(),
-  updatedAt: _now.toIso8601String(),
-  status: status,
-  attempts: attempts,
-  nextAttemptAt: nextAttemptAt,
-  lastErrorCode: null,
-  syncedAt: null,
-);
+}) =>
+    OfflineFeedbackQueueItem(
+      id: id,
+      ownerMemberId: owner,
+      clientId: 'c$id',
+      deviceId: _device,
+      programId: 12,
+      movementId: 'squat',
+      weight: 80,
+      targetReps: 10,
+      repsDone: 9,
+      rir: 2,
+      createdAt: _now.toIso8601String(),
+      updatedAt: _now.toIso8601String(),
+      status: status,
+      attempts: attempts,
+      nextAttemptAt: nextAttemptAt,
+      lastErrorCode: null,
+      syncedAt: null,
+    );
 
 class _MemoryStore implements OfflineFeedbackLocalStore {
   _MemoryStore({this.network = true});
@@ -74,10 +75,11 @@ class _MemoryStore implements OfflineFeedbackLocalStore {
   Future<List<OfflineFeedbackQueueItem>> listForOwner(
     int ownerMemberId, {
     int limit = 100,
-  }) async => rows
-      .where((row) => row.ownerMemberId == ownerMemberId)
-      .take(limit)
-      .toList();
+  }) async =>
+      rows
+          .where((row) => row.ownerMemberId == ownerMemberId)
+          .take(limit)
+          .toList();
 
   @override
   Future<int> countUnresolved(int ownerMemberId) async => rows
@@ -93,18 +95,19 @@ class _MemoryStore implements OfflineFeedbackLocalStore {
     int ownerMemberId, {
     required DateTime now,
     int limit = 100,
-  }) async => rows
-      .where((row) {
-        if (row.ownerMemberId != ownerMemberId) return false;
-        if (row.status == OfflineFeedbackStatus.pending) return true;
-        if (row.status != OfflineFeedbackStatus.retry) return false;
-        final due = row.nextAttemptAt == null
-            ? null
-            : DateTime.tryParse(row.nextAttemptAt!);
-        return due == null || !due.isAfter(now);
-      })
-      .take(limit)
-      .toList();
+  }) async =>
+      rows
+          .where((row) {
+            if (row.ownerMemberId != ownerMemberId) return false;
+            if (row.status == OfflineFeedbackStatus.pending) return true;
+            if (row.status != OfflineFeedbackStatus.retry) return false;
+            final due = row.nextAttemptAt == null
+                ? null
+                : DateTime.tryParse(row.nextAttemptAt!);
+            return due == null || !due.isAfter(now);
+          })
+          .take(limit)
+          .toList();
 
   @override
   Future<void> markSynced(
@@ -156,9 +159,8 @@ class _MemoryStore implements OfflineFeedbackLocalStore {
             ? OfflineFeedbackStatus.failed
             : OfflineFeedbackStatus.retry,
         attempts: attempts,
-        nextAttemptAt: attempts >= maxAttempts
-            ? null
-            : nextAttemptAt.toIso8601String(),
+        nextAttemptAt:
+            attempts >= maxAttempts ? null : nextAttemptAt.toIso8601String(),
         lastErrorCode: errorCode,
       );
     });
@@ -205,25 +207,26 @@ class _MemoryStore implements OfflineFeedbackLocalStore {
     String? nextAttemptAt,
     String? lastErrorCode,
     String? syncedAt,
-  }) => OfflineFeedbackQueueItem(
-    id: row.id,
-    ownerMemberId: row.ownerMemberId,
-    clientId: row.clientId,
-    deviceId: row.deviceId,
-    programId: row.programId,
-    movementId: row.movementId,
-    weight: row.weight,
-    targetReps: row.targetReps,
-    repsDone: row.repsDone,
-    rir: row.rir,
-    createdAt: row.createdAt,
-    updatedAt: row.updatedAt,
-    status: status ?? row.status,
-    attempts: attempts ?? row.attempts,
-    nextAttemptAt: nextAttemptAt,
-    lastErrorCode: lastErrorCode,
-    syncedAt: syncedAt ?? row.syncedAt,
-  );
+  }) =>
+      OfflineFeedbackQueueItem(
+        id: row.id,
+        ownerMemberId: row.ownerMemberId,
+        clientId: row.clientId,
+        deviceId: row.deviceId,
+        programId: row.programId,
+        movementId: row.movementId,
+        weight: row.weight,
+        targetReps: row.targetReps,
+        repsDone: row.repsDone,
+        rir: row.rir,
+        createdAt: row.createdAt,
+        updatedAt: row.updatedAt,
+        status: status ?? row.status,
+        attempts: attempts ?? row.attempts,
+        nextAttemptAt: nextAttemptAt,
+        lastErrorCode: lastErrorCode,
+        syncedAt: syncedAt ?? row.syncedAt,
+      );
 }
 
 class _FakeHttpClient extends http.BaseClient {
@@ -251,15 +254,16 @@ Map<String, dynamic> _response({
   required String action,
   required String? winner,
   List<String> unchanged = const [],
-}) => {
-  'member_id': 3,
-  'results': [
-    {'entity_key': '$_device:c1', 'action': action, 'winner': winner},
-  ],
-  'counts': {'received': 1, 'applied': 1, 'rejected': 0},
-  'applied_keys': <String>[],
-  'unchanged_keys': unchanged,
-};
+}) =>
+    {
+      'member_id': 3,
+      'results': [
+        {'entity_key': '$_device:c1', 'action': action, 'winner': winner},
+      ],
+      'counts': {'received': 1, 'applied': 1, 'rejected': 0},
+      'applied_keys': <String>[],
+      'unchanged_keys': unchanged,
+    };
 
 ApiClient _api(_FakeHttpClient client) =>
     ApiClient(httpClient: client, baseUrl: 'https://api.example.test/api/v1')
@@ -270,7 +274,9 @@ void main() {
 
   setUp(() => SharedPreferences.setMockInitialValues({}));
 
-  test('stored timestamps use fixed-width UTC text for stable FIFO/backoff ordering', () {
+  test(
+      'stored timestamps use fixed-width UTC text for stable FIFO/backoff ordering',
+      () {
     final early = formatOfflineTimestamp(
       DateTime.utc(2026, 11, 17, 12, 0, 0, 0, 100),
     );
@@ -353,7 +359,9 @@ void main() {
     expect(isOnline, isFalse);
   });
 
-  test('enqueue provider binds the session owner and drops soreness and free-form fields', () async {
+  test(
+      'enqueue provider binds the session owner and drops soreness and free-form fields',
+      () async {
     final store = _MemoryStore();
     final container = ProviderContainer(
       overrides: [
@@ -489,7 +497,9 @@ void main() {
     expect(store.rows.single.lastErrorCode, 'server_stale');
   });
 
-  test('HTTP 5xx stores only a redacted retry code; auth failure stops without sending as another owner', () async {
+  test(
+      'HTTP 5xx stores only a redacted retry code; auth failure stops without sending as another owner',
+      () async {
     final store = _MemoryStore()..rows.add(_item());
     final service = OfflineFeedbackSyncService(store, clock: () => _now);
     final failedApi = _api(

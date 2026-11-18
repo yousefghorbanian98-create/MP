@@ -35,22 +35,22 @@ class _FakeClient extends http.BaseClient {
 }
 
 Widget _wrap(http.Client client) => ProviderScope(
-  overrides: [
-    httpClientProvider.overrideWithValue(client),
-    authProvider.overrideWith(
-      (ref) => AuthController.test(
-        AuthState(accessToken: 't', memberId: 3, userName: 'عضو تست'),
+      overrides: [
+        httpClientProvider.overrideWithValue(client),
+        authProvider.overrideWith(
+          (ref) => AuthController.test(
+            AuthState(accessToken: 't', memberId: 3, userName: 'عضو تست'),
+          ),
+        ),
+      ],
+      child: MaterialApp(
+        theme: mpTheme(),
+        home: const Directionality(
+          textDirection: TextDirection.rtl,
+          child: Scaffold(body: HomePage()),
+        ),
       ),
-    ),
-  ],
-  child: MaterialApp(
-    theme: mpTheme(),
-    home: const Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(body: HomePage()),
-    ),
-  ),
-);
+    );
 
 void main() {
   testWidgets('بنر هیچ تخفیف/تولدی ادعا نمی‌کند', (tester) async {
@@ -72,10 +72,8 @@ void main() {
   testWidgets('اشتراک فعال تاریخ پایان و روزهای باقی‌مانده را از API می‌گیرد', (
     tester,
   ) async {
-    final expiresAt = DateTime.now()
-        .toUtc()
-        .add(const Duration(days: 24))
-        .toIso8601String();
+    final expiresAt =
+        DateTime.now().toUtc().add(const Duration(days: 24)).toIso8601String();
     final client = _FakeClient({
       '/members/3/memberships': [
         {

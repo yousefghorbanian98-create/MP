@@ -9,34 +9,34 @@ import 'package:mp_client/features/assessment14/assessment14_page.dart';
 import 'package:mp_client/features/assessment14/assessment14_providers.dart';
 
 Map<String, dynamic> _fakeMatrix() => {
-  'assessment_id': 1,
-  'axes': [
-    {
-      'axis': 1,
-      'name_fa': 'تحرک و انعطاف',
-      'score': 62.0,
-      'quality': 'range_estimate',
-      'decision_state': 'covered',
-      'decision_reason': 'دلیل تست',
-    },
-    {
-      'axis': 7,
-      'name_fa': 'پایداری مرکز',
-      'score': 32.0,
-      'quality': 'interpolated',
-      'decision_state': 'direct',
-      'decision_reason': 'دلیل تست',
-    },
-    {
-      'axis': 12,
-      'name_fa': 'بازیابی و مدیریت بار',
-      'score': null,
-      'quality': 'missing',
-      'decision_state': 'unknown',
-      'decision_reason': 'نامعلوم، نه صفر',
-    },
-  ],
-};
+      'assessment_id': 1,
+      'axes': [
+        {
+          'axis': 1,
+          'name_fa': 'تحرک و انعطاف',
+          'score': 62.0,
+          'quality': 'range_estimate',
+          'decision_state': 'covered',
+          'decision_reason': 'دلیل تست',
+        },
+        {
+          'axis': 7,
+          'name_fa': 'پایداری مرکز',
+          'score': 32.0,
+          'quality': 'interpolated',
+          'decision_state': 'direct',
+          'decision_reason': 'دلیل تست',
+        },
+        {
+          'axis': 12,
+          'name_fa': 'بازیابی و مدیریت بار',
+          'score': null,
+          'quality': 'missing',
+          'decision_state': 'unknown',
+          'decision_reason': 'نامعلوم، نه صفر',
+        },
+      ],
+    };
 
 Widget _wrap(Widget child, {List<Override> overrides = const []}) =>
     ProviderScope(

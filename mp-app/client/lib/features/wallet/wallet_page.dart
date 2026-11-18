@@ -53,15 +53,12 @@ class WalletPage extends ConsumerWidget {
                   )
                 else if (ledger.balanceRial != null)
                   Text(
-                        '${_fmt(ledger.balanceRial!)} ریال',
-                        style: const TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      )
-                      .animate()
-                      .fadeIn(duration: 500.ms)
-                      .scale(
+                    '${_fmt(ledger.balanceRial!)} ریال',
+                    style: const TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ).animate().fadeIn(duration: 500.ms).scale(
                         begin: const Offset(0.95, 0.95),
                         curve: Curves.easeOutBack,
                       ),
@@ -176,7 +173,7 @@ class _WalletLedger extends ConsumerWidget {
                   onPressed: ledger.isLoadingMore
                       ? null
                       : () =>
-                            ref.read(walletLedgerProvider.notifier).loadMore(),
+                          ref.read(walletLedgerProvider.notifier).loadMore(),
                   icon: ledger.isLoadingMore
                       ? const SizedBox(
                           width: 16,
@@ -302,45 +299,44 @@ class _PaymentHistory extends ConsumerWidget {
                 children: [
                   for (final (i, p) in rows.take(20).indexed)
                     Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 5),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      (p['description'] as String?)
-                                                  ?.isNotEmpty ==
-                                              true
-                                          ? p['description'] as String
-                                          : 'پرداخت #${p['id']}',
-                                      style: const TextStyle(fontSize: 13),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    Text(
-                                      '${_labels[p['status']] ?? p['status']} · ${p['method'] ?? '—'}',
-                                      style: TextStyle(
-                                        fontSize: 11,
-                                        color: p['status'] == 'failed'
-                                            ? MpColors.danger
-                                            : MpColors.textSecondary,
-                                      ),
-                                    ),
-                                  ],
+                      padding: const EdgeInsets.symmetric(vertical: 5),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  (p['description'] as String?)?.isNotEmpty ==
+                                          true
+                                      ? p['description'] as String
+                                      : 'پرداخت #${p['id']}',
+                                  style: const TextStyle(fontSize: 13),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                              ),
-                              Text(
-                                '${_fmtRial(((p['amount_rial'] as num?) ?? 0).toInt())} ریال',
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w700,
+                                Text(
+                                  '${_labels[p['status']] ?? p['status']} · ${p['method'] ?? '—'}',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: p['status'] == 'failed'
+                                        ? MpColors.danger
+                                        : MpColors.textSecondary,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        )
+                          Text(
+                            '${_fmtRial(((p['amount_rial'] as num?) ?? 0).toInt())} ریال',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
                         .animate(delay: (i * 30).ms)
                         .fadeIn(duration: 220.ms)
                         .slideX(begin: 0.06, end: 0),

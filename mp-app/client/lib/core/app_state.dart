@@ -172,40 +172,40 @@ final nutritionProvider = FutureProvider<Map<String, dynamic>?>((ref) async {
 /// جستجوی غذای موجود در کاتالوگ MP؛ بدون fallback به غذای فرضی/محلی.
 final foodSearchProvider =
     FutureProvider.family<List<Map<String, dynamic>>, String>((
-      ref,
-      query,
-    ) async {
-      final normalized = query.trim();
-      if (normalized.length < 2) return const [];
-      final api = ref.watch(apiClientProvider);
-      final r = await api.get(
-        '/nutrition/foods?q=${Uri.encodeQueryComponent(normalized)}&limit=25',
-      );
-      if (r is! List) {
-        throw const FormatException('پاسخ جستجوی غذا باید یک فهرست باشد');
-      }
-      return r.map((row) {
-        if (row is! Map)
-          throw const FormatException('ردیف غذای دریافتی نامعتبر است');
-        return Map<String, dynamic>.from(row);
-      }).toList();
-    });
+  ref,
+  query,
+) async {
+  final normalized = query.trim();
+  if (normalized.length < 2) return const [];
+  final api = ref.watch(apiClientProvider);
+  final r = await api.get(
+    '/nutrition/foods?q=${Uri.encodeQueryComponent(normalized)}&limit=25',
+  );
+  if (r is! List) {
+    throw const FormatException('پاسخ جستجوی غذا باید یک فهرست باشد');
+  }
+  return r.map((row) {
+    if (row is! Map)
+      throw const FormatException('ردیف غذای دریافتی نامعتبر است');
+    return Map<String, dynamic>.from(row);
+  }).toList();
+});
 
 /// جمع روزانه و ثبت‌های واقعی، عضو-محور و بر اساس تاریخ محلی باشگاه.
 final foodLogDailyProvider =
     FutureProvider.family<Map<String, dynamic>, ({int memberId, String date})>((
-      ref,
-      key,
-    ) async {
-      final api = ref.watch(apiClientProvider);
-      final r = await api.get(
-        '/nutrition/food-logs/member/${key.memberId}/daily?date=${Uri.encodeQueryComponent(key.date)}',
-      );
-      if (r is! Map) {
-        throw const FormatException('پاسخ جمع غذای روزانه باید یک شیء باشد');
-      }
-      return Map<String, dynamic>.from(r);
-    });
+  ref,
+  key,
+) async {
+  final api = ref.watch(apiClientProvider);
+  final r = await api.get(
+    '/nutrition/food-logs/member/${key.memberId}/daily?date=${Uri.encodeQueryComponent(key.date)}',
+  );
+  if (r is! Map) {
+    throw const FormatException('پاسخ جمع غذای روزانه باید یک شیء باشد');
+  }
+  return Map<String, dynamic>.from(r);
+});
 
 /// صندوق اعلان عضو جاری؛ هویت از نشست می‌آید و payload نامعتبر خطای صریح است.
 final myNotificationsProvider = FutureProvider<List<Map<String, dynamic>>>((
@@ -215,9 +215,8 @@ final myNotificationsProvider = FutureProvider<List<Map<String, dynamic>>>((
   if (memberId == null) {
     throw StateError('شناسهٔ عضو برای خواندن اعلان‌ها در نشست موجود نیست');
   }
-  final r = await ref
-      .watch(apiClientProvider)
-      .get('/notifications/member/$memberId');
+  final r =
+      await ref.watch(apiClientProvider).get('/notifications/member/$memberId');
   if (r is! List) {
     throw const FormatException('پاسخ اعلان‌های عضو باید یک فهرست باشد');
   }
@@ -413,45 +412,45 @@ final adaptiveNutritionProvider = FutureProvider<Map<String, dynamic>>((
 /// مسیر `GET` است و جمع‌ها از همان پاسخ خوانده می‌شوند.
 final orderReceiptProvider = FutureProvider.autoDispose
     .family<Map<String, dynamic>, int>((ref, orderId) async {
-      final api = ref.watch(apiClientProvider);
-      final r = await api.get('/shop/orders/$orderId/receipt');
-      if (r is! Map) {
-        throw const FormatException('پاسخ رسید باید یک شیء باشد');
-      }
-      final receipt = Map<String, dynamic>.from(r);
-      if (receipt['order_id'] != orderId) {
-        throw const FormatException('رسید به سفارش دیگری تعلق دارد');
-      }
-      final memberId = ref.watch(authProvider).memberId;
-      if (memberId != null && receipt['member_id'] != memberId) {
-        throw const FormatException('رسید متعلق به عضو این نشست نیست');
-      }
-      final lines = receipt['lines'];
-      if (lines is! List) {
-        throw const FormatException('اقلام رسید باید یک فهرست باشند');
-      }
-      for (final line in lines) {
-        if (line is! Map) {
-          throw const FormatException('یک قلم از رسید ساختار معتبر ندارد');
-        }
-        if (line['unit_price_rial'] is! num ||
-            line['qty'] is! num ||
-            line['line_total_rial'] is! num) {
-          throw const FormatException('مبلغ/تعداد یک قلم از رسید نامعتبر است');
-        }
-      }
-      if (receipt['total_rial'] is! num) {
-        throw const FormatException('مبلغ کل رسید نامعتبر است');
-      }
-      // `items_total_rial` هم همین‌جا بررسی می‌شود: رشته در این فیلد وگرنه
-      // TypeError داخل build ویجت می‌سازد (صفحهٔ قرمز، نه پیام روشن).
-      final itemsTotal = receipt['items_total_rial'];
-      if (itemsTotal != null && itemsTotal is! num) {
-        throw const FormatException('جمع اقلام رسید نامعتبر است');
-      }
-      final status = receipt['status'];
-      if (status != null && status is! String) {
-        throw const FormatException('وضعیت سفارش نامعتبر است');
-      }
-      return receipt;
-    });
+  final api = ref.watch(apiClientProvider);
+  final r = await api.get('/shop/orders/$orderId/receipt');
+  if (r is! Map) {
+    throw const FormatException('پاسخ رسید باید یک شیء باشد');
+  }
+  final receipt = Map<String, dynamic>.from(r);
+  if (receipt['order_id'] != orderId) {
+    throw const FormatException('رسید به سفارش دیگری تعلق دارد');
+  }
+  final memberId = ref.watch(authProvider).memberId;
+  if (memberId != null && receipt['member_id'] != memberId) {
+    throw const FormatException('رسید متعلق به عضو این نشست نیست');
+  }
+  final lines = receipt['lines'];
+  if (lines is! List) {
+    throw const FormatException('اقلام رسید باید یک فهرست باشند');
+  }
+  for (final line in lines) {
+    if (line is! Map) {
+      throw const FormatException('یک قلم از رسید ساختار معتبر ندارد');
+    }
+    if (line['unit_price_rial'] is! num ||
+        line['qty'] is! num ||
+        line['line_total_rial'] is! num) {
+      throw const FormatException('مبلغ/تعداد یک قلم از رسید نامعتبر است');
+    }
+  }
+  if (receipt['total_rial'] is! num) {
+    throw const FormatException('مبلغ کل رسید نامعتبر است');
+  }
+  // `items_total_rial` هم همین‌جا بررسی می‌شود: رشته در این فیلد وگرنه
+  // TypeError داخل build ویجت می‌سازد (صفحهٔ قرمز، نه پیام روشن).
+  final itemsTotal = receipt['items_total_rial'];
+  if (itemsTotal != null && itemsTotal is! num) {
+    throw const FormatException('جمع اقلام رسید نامعتبر است');
+  }
+  final status = receipt['status'];
+  if (status != null && status is! String) {
+    throw const FormatException('وضعیت سفارش نامعتبر است');
+  }
+  return receipt;
+});

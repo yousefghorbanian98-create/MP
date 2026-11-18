@@ -18,23 +18,24 @@ Map<String, dynamic> _orderJson({
   int id = 12,
   String status = 'paid',
   int total = 5000000,
-}) => {
-  'id': id,
-  'member_id': 3,
-  'status': status,
-  'total_rial': total,
-  'payment_id': 88,
-  'note': 'تحویل شنبه',
-  'created_at': '2026-11-10T08:30:00+00:00',
-  'items': [
+}) =>
     {
-      'product_id': 7,
-      'title': 'پروتئین وی',
-      'unit_price_rial': 2500000,
-      'qty': 2,
-    },
-  ],
-};
+      'id': id,
+      'member_id': 3,
+      'status': status,
+      'total_rial': total,
+      'payment_id': 88,
+      'note': 'تحویل شنبه',
+      'created_at': '2026-11-10T08:30:00+00:00',
+      'items': [
+        {
+          'product_id': 7,
+          'title': 'پروتئین وی',
+          'unit_price_rial': 2500000,
+          'qty': 2,
+        },
+      ],
+    };
 
 Map<String, dynamic> _receiptJson({
   int orderId = 12,
@@ -42,38 +43,38 @@ Map<String, dynamic> _receiptJson({
   int itemsTotal = 5000000,
   int total = 5000000,
   List<Map<String, dynamic>>? lines,
-}) => {
-  'receipt_no': 'O-000012',
-  'order_id': orderId,
-  'member_id': member,
-  'member_name': 'سارا تستی',
-  'status': 'paid',
-  'note': 'تحویل شنبه',
-  'created_at': '2026-11-10T08:30:00+00:00',
-  'issued_at': '2026-11-11T10:00:00+00:00',
-  'lines':
-      lines ??
-      [
-        {
-          'product_id': 7,
-          'title': 'پروتئین وی',
-          'variant': 'شکلاتی',
-          'unit_price_rial': 2500000,
-          'qty': 2,
-          'line_total_rial': 5000000,
-        },
-      ],
-  'items_total_rial': itemsTotal,
-  'total_rial': total,
-  'payment': {
-    'id': 88,
-    'method': 'wallet',
-    'status': 'paid',
-    'reference_id': 'WP-777',
-    'paid_at': '2026-11-10T08:31:00+00:00',
-  },
-  'branch': 'Muscle Paradise',
-};
+}) =>
+    {
+      'receipt_no': 'O-000012',
+      'order_id': orderId,
+      'member_id': member,
+      'member_name': 'سارا تستی',
+      'status': 'paid',
+      'note': 'تحویل شنبه',
+      'created_at': '2026-11-10T08:30:00+00:00',
+      'issued_at': '2026-11-11T10:00:00+00:00',
+      'lines': lines ??
+          [
+            {
+              'product_id': 7,
+              'title': 'پروتئین وی',
+              'variant': 'شکلاتی',
+              'unit_price_rial': 2500000,
+              'qty': 2,
+              'line_total_rial': 5000000,
+            },
+          ],
+      'items_total_rial': itemsTotal,
+      'total_rial': total,
+      'payment': {
+        'id': 88,
+        'method': 'wallet',
+        'status': 'paid',
+        'reference_id': 'WP-777',
+        'paid_at': '2026-11-10T08:31:00+00:00',
+      },
+      'branch': 'Muscle Paradise',
+    };
 
 /// فیک HTTP که هم پاسخ و هم کد وضعیت مسیر رسید را کنترل می‌کند.
 class _ShopFakeClient extends http.BaseClient {
@@ -81,8 +82,8 @@ class _ShopFakeClient extends http.BaseClient {
     Map<String, Object>? responses,
     List<Map<String, dynamic>>? orders,
     this.receiptStatus = 200,
-  }) : responses = responses ?? const {},
-       orders = orders ?? const [];
+  })  : responses = responses ?? const {},
+        orders = orders ?? const [];
 
   final Map<String, Object> responses;
   final List<Map<String, dynamic>> orders;
@@ -297,7 +298,8 @@ void main() {
       expect(
         find.textContaining('با جمع اقلام یکسان نیست'),
         findsOneWidget,
-        reason: 'اختلاف باید در همان نگاه پیدا باشد، نه اینکه عددی در کلاینت تصحیح شود',
+        reason:
+            'اختلاف باید در همان نگاه پیدا باشد، نه اینکه عددی در کلاینت تصحیح شود',
       );
       // هیچ جمع‌سازی/تصحیحی در کلاینت نمی‌شود: ۱٬۱۱۱٬۱۱۱×۱ که سرور ۲٬۲۲۲٬۲۲۲ زده
       // نباید به ۱٬۱۱۱٬۱۱۱ تغییر کند.

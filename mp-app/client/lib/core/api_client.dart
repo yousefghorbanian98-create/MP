@@ -36,22 +36,22 @@ bool isPrivateHost(String host) {
 /// خطای پیکربندی — آدرس API با سیاست شبکه سازگار نیست.
 class InsecureBaseUrlError extends ArgumentError {
   InsecureBaseUrlError(String baseUrl)
-    : super(
-        'آدرس API با HTTP روی میزبان عمومی مجاز نیست: $baseUrl — '
-        'یا از بازهٔ LAN استفاده کنید یا HTTPS بدهید.',
-      );
+      : super(
+          'آدرس API با HTTP روی میزبان عمومی مجاز نیست: $baseUrl — '
+          'یا از بازهٔ LAN استفاده کنید یا HTTPS بدهید.',
+        );
 }
 
 class ApiClient {
   ApiClient({http.Client? httpClient, String? baseUrl})
-    : _http = httpClient ?? http.Client(),
-      baseUrl = _validated(
-        baseUrl ??
-            const String.fromEnvironment(
-              'MP_API',
-              defaultValue: 'http://10.0.2.2:8000/api/v1',
-            ),
-      );
+      : _http = httpClient ?? http.Client(),
+        baseUrl = _validated(
+          baseUrl ??
+              const String.fromEnvironment(
+                'MP_API',
+                defaultValue: 'http://10.0.2.2:8000/api/v1',
+              ),
+        );
 
   /// اعتبارسنجی سیاست شبکه در زمان ساخت کلاینت (نه در اولین درخواست).
   static String _validated(String url) {
@@ -96,9 +96,9 @@ class ApiClient {
   }
 
   Map<String, String> get _headers => {
-    'Content-Type': 'application/json',
-    if (accessToken != null) 'Authorization': 'Bearer $accessToken',
-  };
+        'Content-Type': 'application/json',
+        if (accessToken != null) 'Authorization': 'Bearer $accessToken',
+      };
 
   /// اجرای درخواست با یک بار تلاش دوباره پس از refresh.
   ///

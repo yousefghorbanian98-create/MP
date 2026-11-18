@@ -149,9 +149,8 @@ class _MpBottomNav extends StatelessWidget {
                             color: i == index
                                 ? MpColors.primary
                                 : MpColors.textSecondary,
-                            fontWeight: i == index
-                                ? FontWeight.w700
-                                : FontWeight.w400,
+                            fontWeight:
+                                i == index ? FontWeight.w700 : FontWeight.w400,
                           ),
                         ),
                       ],

@@ -74,9 +74,9 @@ class _HomePageState extends State<HomePage> {
           ),
           const SizedBox(height: 12),
           const _SectionsGrid().animate().fadeIn(
-            delay: 120.ms,
-            duration: 450.ms,
-          ),
+                delay: 120.ms,
+                duration: 450.ms,
+              ),
           const SizedBox(height: 20),
           _QuickCheckInCard(onTap: () => context.push('/checkin'))
               .animate()
@@ -214,29 +214,29 @@ class _SubscriptionBanner extends ConsumerWidget {
             : '${summary.daysRemaining} روز باقی‌مانده';
         final (title, body, color, icon) = switch (summary.status) {
           MembershipDisplayStatus.active => (
-            'اشتراک فعال',
-            '${membership?['plan_name'] ?? 'پلن باشگاه'} · $expiryLabel · $daysText',
-            MpColors.primary,
-            Icons.verified_outlined,
-          ),
+              'اشتراک فعال',
+              '${membership?['plan_name'] ?? 'پلن باشگاه'} · $expiryLabel · $daysText',
+              MpColors.primary,
+              Icons.verified_outlined,
+            ),
           MembershipDisplayStatus.expired => (
-            'اشتراک منقضی شده',
-            '$expiryLabel · برای تمدید، با پذیرش باشگاه در ارتباط باشید.',
-            MpColors.accent,
-            Icons.info_outline,
-          ),
+              'اشتراک منقضی شده',
+              '$expiryLabel · برای تمدید، با پذیرش باشگاه در ارتباط باشید.',
+              MpColors.accent,
+              Icons.info_outline,
+            ),
           MembershipDisplayStatus.none => (
-            'اشتراک فعالی ندارید',
-            'برای فعال‌سازی یا تمدید، با پذیرش باشگاه در ارتباط باشید.',
-            MpColors.accent,
-            Icons.info_outline,
-          ),
+              'اشتراک فعالی ندارید',
+              'برای فعال‌سازی یا تمدید، با پذیرش باشگاه در ارتباط باشید.',
+              MpColors.accent,
+              Icons.info_outline,
+            ),
           MembershipDisplayStatus.unknown => (
-            'وضعیت اشتراک نامعلوم',
-            'تاریخ پایان از دادهٔ دریافتی قابل‌تأیید نیست؛ با پذیرش باشگاه تماس بگیرید.',
-            MpColors.accent,
-            Icons.help_outline,
-          ),
+              'وضعیت اشتراک نامعلوم',
+              'تاریخ پایان از دادهٔ دریافتی قابل‌تأیید نیست؛ با پذیرش باشگاه تماس بگیرید.',
+              MpColors.accent,
+              Icons.help_outline,
+            ),
         };
         return TweenAnimationBuilder<double>(
           tween: Tween(begin: 0, end: 1),
@@ -301,9 +301,9 @@ class _SubscriptionBanner extends ConsumerWidget {
 }
 
 String _toPersianDigits(String value) => value.replaceAllMapped(
-  RegExp(r'\d'),
-  (match) => '۰۱۲۳۴۵۶۷۸۹'[int.parse(match.group(0)!)],
-);
+      RegExp(r'\d'),
+      (match) => '۰۱۲۳۴۵۶۷۸۹'[int.parse(match.group(0)!)],
+    );
 
 class _SectionItem {
   const _SectionItem(this.label, this.icon, this.gradient, this.route);
@@ -318,42 +318,78 @@ class _SectionsGrid extends StatelessWidget {
   const _SectionsGrid();
 
   static const _items = <_SectionItem>[
-    _SectionItem('برنامهٔ اختصاصی من', Icons.fitness_center, [
-      Color(0xFF00B86A),
-      Color(0xFF00995A),
-    ], '/intake'),
-    _SectionItem('پیکرسنجی', Icons.show_chart, [
-      Color(0xFF38BDF8),
-      Color(0xFF0EA5E9),
-    ], '/bodycomp'),
-    _SectionItem('تغذیه', Icons.restaurant, [
-      Color(0xFFF59E0B),
-      Color(0xFFD97706),
-    ], '/nutrition'),
-    _SectionItem('چک‌این', Icons.qr_code, [
-      Color(0xFF34D399),
-      Color(0xFF059669),
-    ], '/checkin'),
-    _SectionItem('کیف پول', Icons.account_balance_wallet, [
-      Color(0xFF8B5CF6),
-      Color(0xFF7C3AED),
-    ], '/wallet'),
-    _SectionItem('پیشرفت', Icons.trending_up, [
-      Color(0xFFF472B6),
-      Color(0xFFEC4899),
-    ], '/progress'),
-    _SectionItem('کلاس‌ها', Icons.groups, [
-      Color(0xFFF87171),
-      Color(0xFFEF4444),
-    ], '/classes'),
-    _SectionItem('گفتگو با مربی', Icons.forum_outlined, [
-      Color(0xFF34D399),
-      Color(0xFF059669),
-    ], '/chat'),
-    _SectionItem('فروشگاه', Icons.storefront, [
-      Color(0xFFA3E635),
-      Color(0xFF84CC16),
-    ], '/shop'),
+    _SectionItem(
+        'برنامهٔ اختصاصی من',
+        Icons.fitness_center,
+        [
+          Color(0xFF00B86A),
+          Color(0xFF00995A),
+        ],
+        '/intake'),
+    _SectionItem(
+        'پیکرسنجی',
+        Icons.show_chart,
+        [
+          Color(0xFF38BDF8),
+          Color(0xFF0EA5E9),
+        ],
+        '/bodycomp'),
+    _SectionItem(
+        'تغذیه',
+        Icons.restaurant,
+        [
+          Color(0xFFF59E0B),
+          Color(0xFFD97706),
+        ],
+        '/nutrition'),
+    _SectionItem(
+        'چک‌این',
+        Icons.qr_code,
+        [
+          Color(0xFF34D399),
+          Color(0xFF059669),
+        ],
+        '/checkin'),
+    _SectionItem(
+        'کیف پول',
+        Icons.account_balance_wallet,
+        [
+          Color(0xFF8B5CF6),
+          Color(0xFF7C3AED),
+        ],
+        '/wallet'),
+    _SectionItem(
+        'پیشرفت',
+        Icons.trending_up,
+        [
+          Color(0xFFF472B6),
+          Color(0xFFEC4899),
+        ],
+        '/progress'),
+    _SectionItem(
+        'کلاس‌ها',
+        Icons.groups,
+        [
+          Color(0xFFF87171),
+          Color(0xFFEF4444),
+        ],
+        '/classes'),
+    _SectionItem(
+        'گفتگو با مربی',
+        Icons.forum_outlined,
+        [
+          Color(0xFF34D399),
+          Color(0xFF059669),
+        ],
+        '/chat'),
+    _SectionItem(
+        'فروشگاه',
+        Icons.storefront,
+        [
+          Color(0xFFA3E635),
+          Color(0xFF84CC16),
+        ],
+        '/shop'),
   ];
 
   @override

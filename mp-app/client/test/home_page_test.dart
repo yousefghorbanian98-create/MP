@@ -21,15 +21,15 @@ class _HomeClient extends http.BaseClient {
     final payload = switch (path) {
       '/members/3/memberships' => <dynamic>[],
       '/notifications/member/3' => [
-        for (var id = 1; id <= unread; id++)
-          {
-            'id': id,
-            'title': 'اعلان $id',
-            'body': '',
-            'read_at': null,
-            'created_at': '2026-11-16T12:00:00Z',
-          },
-      ],
+          for (var id = 1; id <= unread; id++)
+            {
+              'id': id,
+              'title': 'اعلان $id',
+              'body': '',
+              'read_at': null,
+              'created_at': '2026-11-16T12:00:00Z',
+            },
+        ],
       _ => <String, dynamic>{},
     };
     final bytes = utf8.encode(jsonEncode(payload));
@@ -44,22 +44,23 @@ class _HomeClient extends http.BaseClient {
 }
 
 Widget wrap({int unread = 0}) => ProviderScope(
-  overrides: [
-    httpClientProvider.overrideWithValue(_HomeClient(unread: unread)),
-    authProvider.overrideWith(
-      (ref) => AuthController.test(
-        AuthState(accessToken: 'test-token', memberId: 3, userName: 'عضو تست'),
+      overrides: [
+        httpClientProvider.overrideWithValue(_HomeClient(unread: unread)),
+        authProvider.overrideWith(
+          (ref) => AuthController.test(
+            AuthState(
+                accessToken: 'test-token', memberId: 3, userName: 'عضو تست'),
+          ),
+        ),
+      ],
+      child: MaterialApp(
+        theme: mpTheme(),
+        home: const Directionality(
+          textDirection: TextDirection.rtl,
+          child: Scaffold(body: HomePage()),
+        ),
       ),
-    ),
-  ],
-  child: MaterialApp(
-    theme: mpTheme(),
-    home: const Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(body: HomePage()),
-    ),
-  ),
-);
+    );
 
 void main() {
   testWidgets('گرید بخش‌های خانه نمایش داده می‌شود', (tester) async {

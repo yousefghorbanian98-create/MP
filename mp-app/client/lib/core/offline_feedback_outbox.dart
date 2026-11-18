@@ -18,9 +18,8 @@ import 'api_client.dart';
 String formatOfflineTimestamp(DateTime value) {
   final utc = value.toUtc();
   String two(int number) => number.toString().padLeft(2, '0');
-  final fraction = (utc.millisecond * 1000 + utc.microsecond)
-      .toString()
-      .padLeft(6, '0');
+  final fraction =
+      (utc.millisecond * 1000 + utc.microsecond).toString().padLeft(6, '0');
   return '${utc.year.toString().padLeft(4, '0')}-${two(utc.month)}-${two(utc.day)}T${two(utc.hour)}:${two(utc.minute)}:${two(utc.second)}.${fraction}Z';
 }
 
@@ -70,16 +69,16 @@ class OfflineFeedbackQueueItem {
   /// Only the documented server allowlist is sent. Local owner, status, retry
   /// data, raw errors, soreness, notes, and credentials never leave this device.
   Map<String, Object?> toSyncItem() => {
-    'client_id': clientId,
-    'device_id': deviceId,
-    'program_id': programId,
-    'updated_at': updatedAt,
-    'movement_id': movementId,
-    'weight': weight,
-    'target_reps': targetReps,
-    'reps_done': repsDone,
-    'rir': rir,
-  };
+        'client_id': clientId,
+        'device_id': deviceId,
+        'program_id': programId,
+        'updated_at': updatedAt,
+        'movement_id': movementId,
+        'weight': weight,
+        'target_reps': targetReps,
+        'reps_done': repsDone,
+        'rir': rir,
+      };
 
   factory OfflineFeedbackQueueItem.fromMap(Map<Object?, Object?> raw) {
     final id = raw['id'];
@@ -195,7 +194,7 @@ class OfflineFeedbackStoreException implements Exception {
 
 class MethodChannelOfflineFeedbackStore implements OfflineFeedbackLocalStore {
   MethodChannelOfflineFeedbackStore({MethodChannel? channel})
-    : _channel = channel ?? const MethodChannel(_channelName);
+      : _channel = channel ?? const MethodChannel(_channelName);
 
   static const _channelName = 'ir.muscleparadise.mp_client/offline_feedback';
   static const _featureEnabled = bool.fromEnvironment(
@@ -343,8 +342,8 @@ class OfflineFeedbackOutbox {
     this.store, {
     DateTime Function()? clock,
     String Function()? idGenerator,
-  }) : _clock = clock ?? DateTime.now,
-       _idGenerator = idGenerator ?? _secureId;
+  })  : _clock = clock ?? DateTime.now,
+        _idGenerator = idGenerator ?? _secureId;
 
   final OfflineFeedbackLocalStore store;
   final DateTime Function() _clock;
@@ -355,28 +354,29 @@ class OfflineFeedbackOutbox {
   static const _devicePreferenceKey = 'mp_offline_feedback_device_id';
 
   static String _secureId() => List<int>.generate(
-    16,
-    (_) => _random.nextInt(256),
-  ).map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
+        16,
+        (_) => _random.nextInt(256),
+      ).map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
 
   Future<String> _deviceId() => _deviceIdFuture ??= () async {
-    final preferences = await SharedPreferences.getInstance();
-    final saved = preferences.getString(_devicePreferenceKey);
-    if (saved != null && RegExp(r'^[a-f0-9]{32}$').hasMatch(saved))
-      return saved;
-    final generated = _idGenerator();
-    if (!RegExp(r'^[a-f0-9]{32}$').hasMatch(generated)) {
-      throw const OfflineFeedbackStoreException(
-        'A stable local device ID could not be created.',
-      );
-    }
-    final stored = await preferences.setString(_devicePreferenceKey, generated);
-    if (!stored)
-      throw const OfflineFeedbackStoreException(
-        'A stable local device ID could not be saved.',
-      );
-    return generated;
-  }();
+        final preferences = await SharedPreferences.getInstance();
+        final saved = preferences.getString(_devicePreferenceKey);
+        if (saved != null && RegExp(r'^[a-f0-9]{32}$').hasMatch(saved))
+          return saved;
+        final generated = _idGenerator();
+        if (!RegExp(r'^[a-f0-9]{32}$').hasMatch(generated)) {
+          throw const OfflineFeedbackStoreException(
+            'A stable local device ID could not be created.',
+          );
+        }
+        final stored =
+            await preferences.setString(_devicePreferenceKey, generated);
+        if (!stored)
+          throw const OfflineFeedbackStoreException(
+            'A stable local device ID could not be saved.',
+          );
+        return generated;
+      }();
 
   Future<OfflineFeedbackQueueItem> enqueue({
     required int ownerMemberId,
@@ -473,7 +473,7 @@ class OfflineFeedbackSyncResult {
 
 class OfflineFeedbackSyncService {
   OfflineFeedbackSyncService(this.store, {DateTime Function()? clock})
-    : _clock = clock ?? DateTime.now;
+      : _clock = clock ?? DateTime.now;
 
   final OfflineFeedbackLocalStore store;
   final DateTime Function() _clock;
@@ -554,12 +554,10 @@ class OfflineFeedbackSyncService {
       final result = parsed.results[row.syncKey]!;
       final action = result['action'];
       final winner = result['winner'];
-      final duplicateAck =
-          ackedDuplicates.contains(row.syncKey) &&
+      final duplicateAck = ackedDuplicates.contains(row.syncKey) &&
           action == 'conflict_resolved' &&
           winner == 'server';
-      final clientAck =
-          (action == 'accept' || action == 'conflict_resolved') &&
+      final clientAck = (action == 'accept' || action == 'conflict_resolved') &&
           winner == 'client';
       if (duplicateAck || clientAck) {
         await store.markSynced(
@@ -665,8 +663,7 @@ class OfflineFeedbackSyncService {
     for (final item in raw['results'] as List) {
       if (item is! Map ||
           item['entity_key'] is! String ||
-          item['action'] is! String)
-        return null;
+          item['action'] is! String) return null;
       final key = item['entity_key'] as String;
       if (results.containsKey(key)) return null;
       results[key] = Map<String, dynamic>.from(item);
