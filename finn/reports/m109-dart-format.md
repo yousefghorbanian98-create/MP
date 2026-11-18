@@ -59,9 +59,15 @@ workflow جدید `client-format-fix` (dispatch-only؛ `contents: write` + `pull
    جدا** بود (`whitespace-only` در برابر `comma-moved`) تا هر دو عدد دیده شوند و چیزی قاپ زده نشود.
 3. **دو نقصِ زیرساختی که شکست‌ها را کور می‌کرد:** GitHub workflow تازه را تا یک‌بار اجرا نشدن
    dispatch-پذیر نمی‌کند (`main` این مخزن فقط README.md دارد → `gh workflow run` 404 می‌داد؛ bootstrap با
-   `push` به همان فایل)، و `gh pr create` با job token بدون `metadata: read` 403 می‌گیرد. دومی دو run را
-   بی‌دلیل سوزاند، چون لاگ jobهای این مخزن از API خالی برمی‌گردد — از آن پس هر شکست با `::error`
-   منتشر می‌شود (همان کانالی که R-036 برای شاهد ساختیم).
+   `push` به همان فایل)، و هیچ شکستی در job بدون `::error` چیزی برای خواندن نمی‌گذارد (لاگ این jobها از
+   API خالی برمی‌گردد — R-036).
+4. **و یک حدسِ غلطِ من، همان‌جا اصلاح شد:** شکستِ «Commit and open the PR» را به «نبودِ
+   `metadata: read`» نسبت دادم و همان را به فایل اضافه کردم — نتیجه بدتر شد: `metadata` کلیدِ مجازِ
+   `permissions` نیست و GitHub کل فایل را رد کرد (run `44349667465`: «failed to parse workflow:
+   Unexpected value 'metadata'»، **صفر job**). راهِ درست و مستقیم: PR با `POST /repos/{}/{}/pulls`
+   ساخته می‌شود که تنها `pull-requests: write` می‌خواهد، و `gh pr create` (با preflight‌های
+   کاربر-محورش) کنار می‌رود. نشانهٔ «۰ job + name = path» یعنی **فایل parse نشد** — نه اینکه کارها
+   شکست خوردند؛ این تشخیص را برای دفعهٔ بعد اینجا می‌نویسم.
 
 ## ۵) حالا چه چیزی عوض شد
 

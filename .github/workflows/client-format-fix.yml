@@ -37,10 +37,9 @@ concurrency:
 permissions:
   contents: write
   pull-requests: write
-  # gh pr create پیش از ساختن PR متادیتای مخزن را می‌خواند؛ نبودِ این grant دقیقاً همان
-  # چیزی بود که «Commit and open the PR» را در run 44348498677 کشت (branch pushed شد،
-  # PR ساخته نشد، و تنها شاهد «exit code 1» بود).
-  metadata: read
+  # `metadata: read` عمداً اینجا نیست: آن یک کلیدِ مجازِ `permissions` نیست و GitHub با
+  # دیدنش **کل فایل** را رد می‌کند — run 44349667465 با «failed to parse workflow:
+  # (Line 43) Unexpected value 'metadata'» و صفر job تمام شد. access به متادیتا ضمنی است.
 
 jobs:
   format-client:
@@ -225,10 +224,17 @@ jobs:
           } > /tmp/m109/body.md
           # stderr هم به‌صورت annotation نوشته می‌شود؛ لاگ این job از API خوانده نمی‌شود
           # (REGRESSIONS R-036) و بدون آن تنها شاهدِ شکست «exit code 1» است.
-          if ! gh pr create --base "$BASE" --head "$BRANCH" \
-              --title "style(client): dart format lib test tools (M109)" \
-              --body-file /tmp/m109/body.md 2>/tmp/m109/pr.err; then
+          # PR از راه REST ساخته می‌شود، نه `gh pr create`: آن فرمان پیش از ساختن،
+          # چند فراخوانی متادیتا/کاربر می‌زند که با job token مجاز نیستند (در run
+          # 44348498677 دقیقاً همان گام، پس از موفق‌شدنِ push، با «exit code 1» مرد و
+          # چیزی جز آن نشانه نگذاشت). `POST /pulls` تنها `pull-requests: write` می‌خواهد.
+          # stderr به‌عنوان annotation منتشر می‌شود: لاگ jobهای این مخزن از API خالی است (R-036).
+          if ! gh api -X POST "repos/${{ github.repository }}/pulls" \
+              -f title="style(client): dart format lib test tools (M109)" \
+              -f head="$BRANCH" -f base="$BASE" -f body="$(cat /tmp/m109/body.md)" \
+              --jq .html_url > /tmp/m109/pr.url 2>/tmp/m109/pr.err; then
             err=$(tr '\n' ' ' < /tmp/m109/pr.err | cut -c1-400 | tr '%' '#')
-            echo "::error title=m109 pr::gh pr create failed: ${err}"
+            echo "::error title=m109 pr::PR creation failed: ${err}"
             exit 1
           fi
+          echo "::notice title=m109 pr::$(cat /tmp/m109/pr.url)"
