@@ -6,6 +6,7 @@
 /// مختلف SDK (impactها در برخی نسخه‌ها `VibrationEffect.vibrate` می‌روند).
 library;
 
+import 'package:flutter/foundation.dart' show TargetPlatform, debugDefaultTargetPlatformOverride;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -72,7 +73,12 @@ void main() {
 
     setUp(() {
       platformCalls = <MethodCall>[];
+      // `_platformFeedback` در `HapticFeedback` روی android/iOS/fuchsia کار می‌کند و
+      // روی linux/macOS/windows no-op است؛ runner لیناکسی CI بدون این override هیچ
+      // فراخوانی‌ای نمی‌دید و تست «پالس رفت» عمداً سبزِ توخالی می‌شد.
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
     });
+    tearDown(() => debugDefaultTargetPlatformOverride = null);
 
     Future<void> bind(WidgetTester tester) async {
       final messenger = tester.binding.defaultBinaryMessenger;
