@@ -142,6 +142,29 @@ jobs:
           if git diff --cached --quiet; then exit 0; fi
           git commit -m "style(client): format QR biometric gate"
           git push origin "HEAD:$BRANCH"
+      - name: Run QR-only widget tests and report diagnostic
+        working-directory: mp-app/client
+        run: |
+          set +e
+          flutter test --reporter=json test/qr_biometric_gate_test.dart > /tmp/qr-test.json
+          status=$?
+          set -e
+          python3 - <<'PYCODE'
+          import json
+          from pathlib import Path
+          for line in Path('/tmp/qr-test.json').read_text().splitlines():
+              try:
+                  event = json.loads(line)
+              except ValueError:
+                  continue
+              if event.get('type') == 'error':
+                  # This isolated test uses only synthetic data. Emit just the first
+                  # exception line, not request data or full stack traces.
+                  text = str(event.get('error', '')).splitlines()[0][:300]
+                  text = text.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+                  print(f'::error title=QR test diagnostic::{text}')
+          PYCODE
+          exit "$status"
 
   format-client:
     if: ${{ github.event_name == 'workflow_dispatch' && !inputs.fingerprint_scan && !inputs.format_qr }}
