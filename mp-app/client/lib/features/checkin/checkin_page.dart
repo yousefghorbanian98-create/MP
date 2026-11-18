@@ -89,7 +89,8 @@ class _CheckInPageState extends ConsumerState<CheckInPage>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused || state == AppLifecycleState.hidden ||
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.hidden ||
         state == AppLifecycleState.detached) {
       _hideQr();
     }
@@ -219,7 +220,8 @@ class _CheckInPageState extends ConsumerState<CheckInPage>
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Text('برای نمایش QR احراز هویت بیومتریک لازم است'),
+                              const Text(
+                                  'برای نمایش QR احراز هویت بیومتریک لازم است'),
                               if (_qrError != null) Text(_qrError!),
                               ElevatedButton(
                                 onPressed: _qrAuthenticating ? null : _unlockQr,
@@ -229,41 +231,42 @@ class _CheckInPageState extends ConsumerState<CheckInPage>
                           ),
                         )
                       : qr.when(
-                    loading: () => const CircularProgressIndicator(),
-                    error: (e, _) => Text('خطا: $e'),
-                    data: (t) => GlassCard(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text(
-                            'برای ورود نشان دهید',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                          loading: () => const CircularProgressIndicator(),
+                          error: (e, _) => Text('خطا: $e'),
+                          data: (t) => GlassCard(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Text(
+                                  'برای ورود نشان دهید',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 14),
+                                QrImageView(
+                                  data: t['payload'] as String? ?? '',
+                                  size: 220,
+                                  backgroundColor: Colors.white,
+                                )
+                                    .animate()
+                                    .scale(
+                                      begin: const Offset(0.9, 0.9),
+                                      duration: 400.ms,
+                                      curve: Curves.easeOutBack,
+                                    )
+                                    .fadeIn(),
+                                const SizedBox(height: 12),
+                                Text(
+                                  'عضو شمارهٔ ${t['member_id']}',
+                                  style:
+                                      TextStyle(color: MpColors.textSecondary),
+                                ),
+                              ],
                             ),
                           ),
-                          const SizedBox(height: 14),
-                          QrImageView(
-                            data: t['payload'] as String? ?? '',
-                            size: 220,
-                            backgroundColor: Colors.white,
-                          )
-                              .animate()
-                              .scale(
-                                begin: const Offset(0.9, 0.9),
-                                duration: 400.ms,
-                                curve: Curves.easeOutBack,
-                              )
-                              .fadeIn(),
-                          const SizedBox(height: 12),
-                          Text(
-                            'عضو شمارهٔ ${t['member_id']}',
-                            style: TextStyle(color: MpColors.textSecondary),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                        ),
                 ),
                 // ── چهره ──
                 Center(

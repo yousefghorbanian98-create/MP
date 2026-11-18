@@ -19,7 +19,9 @@ Widget _page(Future<bool> Function() auth, void Function() onFetch) {
 }
 
 void main() {
-  testWidgets('QR is fetched only after biometric success and hidden after 30 seconds', (tester) async {
+  testWidgets(
+      'QR is fetched only after biometric success and hidden after 30 seconds',
+      (tester) async {
     var fetched = 0;
     await tester.pumpWidget(_page(() async => true, () => fetched++));
     await tester.pump();
