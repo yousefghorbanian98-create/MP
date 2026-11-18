@@ -534,3 +534,16 @@ def test_valid_token_but_cancelled_at_bank_still_not_settleable(client, bank, re
     assert "تأیید نشد" in r.text
     row = client.get(f"/api/v1/payments?member_id={member_id}", headers=h).json()[0]
     assert row["status"] == "pending"
+
+
+def test_public_return_without_token_does_not_settle(client, bank, reception, member_id):
+    """توکنِ خالی روی مسیر عمومی یعنی «امضا اختیاری است» — این عمدًا بسته شده."""
+    h = reception
+    pid, loc = _browser(client, bank, h, member_id)
+    q = parse_qs(loc.query)
+    r = client.get(loc.path, params={"Authority": q["Authority"][0], "token": ""})
+    assert "تأیید نشد" in r.text
+    assert (
+        client.get(f"/api/v1/payments?member_id={member_id}", headers=h).json()[0]["status"]
+        == "pending"
+    )

@@ -221,7 +221,7 @@ def gateway_return(
     # و openapi هم همان را نشان می‌دهد — فقط پایتون pep8 می‌ماند.
     try:
         payment = service.verify_with_gateway(
-            db, payment_id, authority=bank_authority, callback_token=token
+            db, payment_id, authority=bank_authority, callback_token=token, require_token=True
         )
     except ApiError as exc:
         if exc.code == "already_processed":

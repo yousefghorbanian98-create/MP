@@ -128,9 +128,19 @@ def start_payment(db: Session, payment_id: int, callback_url: str = "") -> dict:
 
 
 def verify_with_gateway(
-    db: Session, payment_id: int, authority: str = "", callback_token: str = ""
+    db: Session,
+    payment_id: int,
+    authority: str = "",
+    callback_token: str = "",
+    require_token: bool = False,
 ) -> Payment:
-    """تأیید واقعی: authority باید همان باشد که درگاه صادر کرده، و مبلغ هم‌خوان."""
+    """تأیید واقعی: authority باید همان باشد که درگاه صادر کرده، و مبلغ هم‌خوان.
+
+    `require_token`: مسیر عمومیِ بازگشتِ مرورگر **نباید** با توکنِ خالی رد شود؛
+    نبودِ آن یعنی «امضا اختیاری است» — روی مسیر بدون-لاگین این درست نیست. مسیر
+    داخلیِ POST /callback که توکن را از خودِ پاسخ start می‌گیرد همان سخت‌گیری را
+    دارد و نیازِ به پرچم ندارد، ولی عمداً یکسان رفتار می‌کنیم.
+    """
     from modules.payments.gateway import PaymentGatewayError, get_gateway, verify_token
 
     payment = db.get(Payment, payment_id)
@@ -140,6 +150,8 @@ def verify_with_gateway(
         raise ApiError("این پرداخت قبلاً پردازش شده است", code="already_processed")
     if not payment.gateway_authority:
         raise ApiError("این پرداخت هنوز در درگاه آغاز نشده است", code="not_started")
+    if require_token and not callback_token:
+        raise ApiError("توکن بازگشت نبود — تسویه نمی‌شود", code="missing_token")
     if callback_token and not verify_token(payment_id, payment.amount_rial, callback_token):
         raise ApiError(
             "امضای callback نامعتبر است — مبلغ یا شناسه دست‌کاری شده", code="bad_signature"
