@@ -241,3 +241,16 @@ backend ۳۵۱ · ruff پاک · bandit ۰H/۰M · tsc ۰ · vitest ۳۰ · semg
 - M111: ستون مستقل مرجع بازگشت، migration، ذخیره، رسید و دکمهٔ استودیو اضافه شد. تست بانک ۲۳/۲۳ و migrationها ۱۱/۱۱ و تست استودیو ۲۲۰ گذشتند؛ ۹ تست live-contract محلی skip شدند و گیت CI برای تغییرات جدید هنوز شاهد لازم دارد. lint استودیو به علت نبود eslint در نصب محلی اجرا نشد.
 - L3: قفل بیومتریک با local_auth و پنهان‌شدن پس از ۳۰ ثانیه و هنگام پس‌زمینه‌رفتن پیاده شده؛ Flutter، تست و build اندروید فقط پس از اجرای CI قابل تأییدند، نه در sandbox.
 - L4 عکس‌ها، L5 بازبینی ledger و L6 بستهٔ نهایی هنوز کامل نشده‌اند. هیچ Release یا لینک دانلود جدیدی تا سبزشدن واقعی همهٔ گیت‌ها اعلام نشده است.
+
+### شاهد بعدی L1–L3
+
+- workflow مستقل `.github/workflows/gitleaks-fingerprints.yml` فقط dispatch است؛ GitHub تا
+  ثبت فایل روی default branch آن را مستقل dispatch نمی‌کند، بنابراین همان job با ورودی
+  dispatch در workflow ثبت‌شدهٔ موجود اجرا شد (`44381627718`). workflow مستقل خود هنوز اجرا نشده.
+- پس از پنج ignore دقیق، `secret-scan` در run `44384085051` فقط دو password واقعی را گزارش
+  کرد و شکست خورد؛ آن دو عمداً در فهرست نرفته‌اند.
+- پس از رفع تست lifecycle، تست اختصاصی QR در dispatch `44384084955` سبز شد؛ در run
+  `44384085051` جاب `client-flutter` سبز، و analyze/test در pinned سبز شدند. تا پایان build
+  Android و همهٔ jobهای همان run و تأیید رفتار گوشی واقعی، L3 را کامل/انتشارپذیر فرض نکن.
+- suite کامل backend در sandbox: **887 passed, 2 skipped**. suite Studio: **220 passed,
+  9 skipped** (live-contract محلی skip؛ job جداگانهٔ CI موفق شد).
