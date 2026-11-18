@@ -91,9 +91,14 @@ void main() {
       addTearDown(() => messenger.setMockMethodCallHandler(SystemChannels.platform, null));
     }
 
-    // پالس‌ها fire-and-forget‌اند (بی‌await)، پس یک بار صف رویداد را تخلیه می‌کنیم تا
-    // پیام واقعاً به mock handler برسد.
-    Future<void> drain() => pumpEventQueue();
+    // تخلیهٔ صف رویداد بدون `pumpEventQueue()`: آن تابع زیر FakeAsyncِ testWidgets
+    // روی `Future.delayed` واقعی منتظر می‌ماند و زمان فقط با pump جلو می‌رود — یعنی
+    // بن‌بست تا timeout ده‌دقیقه‌ای (همین، `flutter test` را در run 44295370497
+    // بی‌حرکت کرد). `runAsync` یک دور event loop واقعی به messenger می‌دهد.
+    Future<void> drain(WidgetTester tester) async {
+      await tester.runAsync(() => Future<void>.delayed(Duration.zero));
+      await tester.pump();
+    }
 
     testWidgets('هر سه پالس یک فراخوانی پلتفرم می‌فرستد', (tester) async {
       await bind(tester);
@@ -101,7 +106,7 @@ void main() {
       haptics.select();
       haptics.success();
       haptics.warning();
-      await drain();
+      await drain(tester);
 
       expect(platformCalls, hasLength(3));
       expect(
@@ -122,7 +127,7 @@ void main() {
       haptics.select();
       haptics.success();
       haptics.warning();
-      await drain();
+      await drain(tester);
       expect(platformCalls, isEmpty);
     });
 
