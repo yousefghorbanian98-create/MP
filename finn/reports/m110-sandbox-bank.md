@@ -48,9 +48,11 @@
 
 ## گیت‌ها
 
-- `tests/integration/test_sandbox_bank.py` — **۲۲ تست** از ۳ سطح: قرارداد بانک، نگاشت‌های
+- `tests/integration/test_sandbox_bank.py` — **۲۳ تست** از ۳ سطح: قرارداد بانک، نگاشت‌های
   آداپتر (از جمله ۵۰۳→unavailable و unreachable)، و چرخهٔ کاملِ انسانی
   (شروع → صفحهٔ بانک → ۳۰۲ → gateway-return → تسویه/انصراف/جعل/replay → refund → مالی).
+  اصلاحیهٔ همان نشست (de5c389): روی مسیر عمومی، `require_token=True` — توکنِ خالی
+  یعنی «امضا اختیاری است» و این روی مسیرِ بدون‌لاگین پذیرفته نیست؛ تستِ تازه دارد.
 - suite کامل بک‌اند: **886 passed / 0 failed / 2 skipped** — از جمله گیت تازه‌ی
   `test_route_guard_gate` که مسیر عمومیِ تازه را اول «بدون guard» گرفت و با ثبتِ مستند در
   `PUBLIC` (نه skip) بسته شد.

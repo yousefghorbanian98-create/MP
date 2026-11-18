@@ -227,7 +227,7 @@ backend ۳۵۱ · ruff پاک · bandit ۰H/۰M · tsc ۰ · vitest ۳۰ · semg
   گیت `route_guard_gate` اول «بدون guard» گرفت، با ثبت در `PUBLIC` (دلیل‌دار) حل شد — نه skip؛
   `start_payment` بدون callback_url خودش با `MP_PUBLIC_BASE_URL` می‌سازد؛ استارت‌لت RedirectResponse
   پیش‌فرض ۳۰۷ می‌دهد (فرم را دوباره POST می‌کند!) — بانک صریحاً ۳۰۲ شد
-- تست: `tests/integration/test_sandbox_bank.py` = **۲۲** از ۳ سطح (قرارداد بانک / نگاشت آداپتر /
-  چرخهٔ کامل مرورگر با replay و جعل)؛ suite کامل **886 passed / 0 failed / 2 skipped**؛
+- تست: `tests/integration/test_sandbox_bank.py` = **۲۳** از ۳ سطح (قرارداد بانک / نگاشت آداپتر /
+  چرخهٔ کامل مرورگر با replay، جعل و توکنِ خالیِ ردشده — `require_token` روی مسیر عمومی)؛ suite کامل **886 passed / 0 failed / 2 skipped**؛
   `api/routes.json` re-export؛ دو exception مستند در `studio apiCoverage`؛ `'refunded': 'بازگشت خورده'` در کلاینت
 - گزارش: `finn/reports/m110-sandbox-bank.md` · وضعیت: PASS محلی — شاهد CI روی push بعدی ثبت می‌شود
