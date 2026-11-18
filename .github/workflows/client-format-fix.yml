@@ -157,12 +157,12 @@ jobs:
                   event = json.loads(line)
               except ValueError:
                   continue
-              if event.get('type') == 'error':
-                  # This isolated test uses only synthetic data. Emit just the first
-                  # exception line, not request data or full stack traces.
-                  text = str(event.get('error', '')).splitlines()[0][:300]
-                  text = text.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
-                  print(f'::error title=QR test diagnostic::{text}')
+              if event.get('type') == 'print':
+                  text = str(event.get('message', ''))
+                  for fragment in text.splitlines():
+                      if any(word in fragment for word in ('Exception', 'Expected:', 'Actual:', 'Error:', 'overflowed', 'A Timer', 'pending timers', 'finds')):
+                          fragment = fragment[:250].replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+                          print(f'::error title=QR test diagnostic::{fragment}')
           PYCODE
           exit "$status"
 
