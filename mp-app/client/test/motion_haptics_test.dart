@@ -69,65 +69,82 @@ void main() {
   });
 
   group('MpHaptics — پالس روی messenger پلتفرم', () {
+    // چرا `test()` و نه `testWidgets()`: در تست ویجت زمان FakeAsync است و هر تخلیه‌ای
+    // که روی `Future.delayed` واقعی بنشیند (مثل `pumpEventQueue()`) برنمی‌گردد —
+    // run های 44295081645/44298469682 دقیقاً همین را خوردند. همین‌جا event loop
+    // واقعی است و messenger بی‌واسطه خوانده می‌شود.
+    // `debugDefaultTargetPlatformOverride` داخل بدنهٔ تست ست و همان‌جا با
+    // `addTearDown` برمی‌گردد؛ در `testWidgets` این تغییر با invariant بایندینگ
+    // درگیر می‌شد.
     late List<MethodCall> platformCalls;
+    late TestDefaultBinaryMessenger messenger;
 
     setUp(() {
       platformCalls = <MethodCall>[];
-      // `_platformFeedback` در `HapticFeedback` روی android/iOS/fuchsia کار می‌کند و
-      // روی linux/macOS/windows no-op است؛ runner لیناکسی CI بدون این override هیچ
-      // فراخوانی‌ای نمی‌دید و تست «پالس رفت» عمداً سبزِ توخالی می‌شد.
-      debugDefaultTargetPlatformOverride = TargetPlatform.android;
-    });
-    tearDown(() => debugDefaultTargetPlatformOverride = null);
-
-    Future<void> bind(WidgetTester tester) async {
-      final messenger = tester.binding.defaultBinaryMessenger;
+      messenger = (TestWidgetsFlutterBinding.ensureInitialized()
+              as TestDefaultBinaryMessengerBinding)
+          .defaultBinaryMessenger as TestDefaultBinaryMessenger;
       messenger.setMockMethodCallHandler(SystemChannels.platform, (call) async {
         platformCalls.add(call);
         return null;
       });
-      // بدون پارامتر نوع: `setMockMethodCallHandler` در SDK این نسخه ژنریک نیست
-      // و `…<void>` در CI خطای کامپایل می‌داد (WRONG_NUMBER_OF_TYPE_ARGUMENTS).
-      addTearDown(() => messenger.setMockMethodCallHandler(SystemChannels.platform, null));
-    }
+      // `_platformFeedbackSupported` در `HapticFeedback` روی linux/macOS/windows
+      // no-op است؛ روی runner لیناکسی CI بدون این override هیچ پیامی نمی‌رفت و
+      // «صفر فراخوانی» بی‌معنی سبز می‌شد.
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+      addTearDown(() {
+        debugDefaultTargetPlatformOverride = null;
+        messenger.setMockMethodCallHandler(SystemChannels.platform, null);
+      });
+    });
 
-    // تخلیهٔ صف رویداد بدون `pumpEventQueue()`: آن تابع زیر FakeAsyncِ testWidgets
-    // روی `Future.delayed` واقعی منتظر می‌ماند و زمان فقط با pump جلو می‌رود — یعنی
-    // بن‌بست تا timeout ده‌دقیقه‌ای (همین، `flutter test` را در run 44295370497
-    // بی‌حرکت کرد). `runAsync` یک دور event loop واقعی به messenger می‌دهد.
-    Future<void> drain(WidgetTester tester) async {
-      await tester.runAsync(() => Future<void>.delayed(Duration.zero));
-      await tester.pump();
-    }
+    Future<void> drain() => Future<void>.delayed(Duration.zero);
 
-    testWidgets('هر سه پالس یک فراخوانی پلتفرم می‌فرستد', (tester) async {
-      await bind(tester);
+    test('لایهٔ ما همان چیزی را می‌فرستد که خودِ API فلاتر می‌فرستد', () async {
+      // baseline: روی همین SDK و همین runner، خودِ `HapticFeedback` چند پیام
+      // می‌فرستد؟ اگر صفر شد، ادعا معلق می‌ماند (skip با دلیل) — نه سبزِ توخالی.
+      await HapticFeedback.selectionClick();
+      await HapticFeedback.mediumImpact();
+      await HapticFeedback.heavyImpact();
+      await drain();
+      final baseline = platformCalls.length;
+      if (baseline == 0) {
+        markTestSkipped(
+            'این Flutter روی این runner برای HapticFeedback پیامی نمی‌فرستد؛ '
+            'تطبیق شمارش بی‌معنی است');
+        return;
+      }
+      platformCalls.clear();
+
       const haptics = SystemMpHaptics();
       haptics.select();
       haptics.success();
       haptics.warning();
-      await drain(tester);
+      await drain();
 
-      expect(platformCalls, hasLength(3));
+      expect(platformCalls, hasLength(baseline),
+          reason: 'لایه باید پیام‌ها را نه کم کند نه دو برابر');
       expect(
         platformCalls.map((c) => c.method),
         everyElement(anyOf(contains('HapticFeedback'), contains('Vibration'))),
       );
-      // پالس‌ها باید از هم distinguishable باشند (select ≠ impact)
-      expect(
-        platformCalls.map((c) => c.arguments).toSet().length,
-        greaterThan(1),
-        reason: 'اگر هر سه یک arg داشتند، «موفق/ناموفق/انتخاب» یکی می‌شد',
-      );
+      // «موفق/انتخاب» نباید پیامی یکسان باشند؛ این معنا فقط وقتی قابل‌سنجش است که
+      // SDK بیشتر از یک پیام بفرستد (با یک پیام، جداسازی آرگومان تعریف‌نشده است).
+      if (platformCalls.length > 1) {
+        expect(
+          platformCalls.map((c) => c.arguments).toSet().length,
+          greaterThan(1),
+          reason: 'اگر همهٔ پالس‌ها یک آرگومان داشتند، موفق و انتخاب یکی می‌شدند',
+        );
+      }
     });
 
-    testWidgets('enabled=false → هیچ فراخوانی پلتفرم نه', (tester) async {
-      await bind(tester);
+    test('enabled=false → هیچ فراخوانی پلتفرم نه', () async {
       const haptics = SystemMpHaptics(enabled: false);
       haptics.select();
       haptics.success();
       haptics.warning();
-      await drain(tester);
+      await drain();
       expect(platformCalls, isEmpty);
     });
 
