@@ -2,6 +2,7 @@
 
 - ثبت بر اساس درخواست مستقیم کاربر: 2026-11-17؛ مرز مجوز D-047
 - شاخهٔ مجاز: `arena/4f336f66-mp` (active)
+- **SUPERSEDED (M108، ۲۰۲۶-۱۱-۱۸):** گیت‌های Client/Android به جاب `client-pinned` رفتند و شاهد گرفتند؛ مسیر انسانیِ باقی‌مانده در `docs/MuscleParadise/runbooks/codespaces-execution.md` است (M109 + §۶ دستگاه). این فایل به‌عنوان تاریخچهٔ تصمیم نگه داشته شده.
 - وضعیت یادآوری: **PENDING — Codespace ساخته نشده؛ handoff پایانی M99 نهایی شد (`finn/reports/m99-closeout-report.md`)، ولی ماشین ابری بدون نیاز/هزینه‌ی روشن ساخته نمی‌شود. اگر CI `client-flutter` پس از push سبز باشد، اجرای Codespaces فقط برای device/mask (M104–M106) لازم است، نه برای تکرار suite.**
 - trigger: پس از ثبت loopهای محلیِ قابل‌اجرا تا M98 و پیش از بستن گزارش M99؛ یا اگر M99 برای اجرای Client به شاهد نیاز داشت، در handoff نهایی M99.
 

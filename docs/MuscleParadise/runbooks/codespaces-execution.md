@@ -4,9 +4,26 @@
 > طبق قانون FINN، «اجرا نشدن» و «اجرای ناقص» هیچ‌کدام `PASS` نیستند و من (عامل داخل sandbox) تا دیدن
 > همان خروجی وضعیت loop را عوض نمی‌کنم.
 >
-> فهرست چیزهایی که در sandbox نشد: `flutter analyze`/`flutter test`/build (SDK نیست)، Android SDK/Gradle،
-> `pip-audit` روی `pyproject.toml` (venv غیرpinned محلی)، emulator/دستگاه، ماسک لانچر، و اندازه‌گیری startup.
-> Codespace سه تای اول را حل می‌کند؛ دو تای آخر **روی لپ‌تاپ با گوشی** انجام می‌شود، نه در مرورگر.
+> ## 🔻 به‌روزرسانی ۲۰۲۶-۱۱-۱۸ (M108): بیشتر این مراحل به CI منتقل شد — اول آن را بخوان
+>
+> از جاب `client-pinned` (run `44323120295`، sha `2ac6ecc`) اینها **دیگر دستی خواسته نمی‌شوند**،
+> چون CI هر push را با همان Flutter پین‌شدهٔ devcontainer (`3.50.0` / `ab2912035e16…`) می‌سنجد:
+>
+> | مرحلهٔ پایین | حالا در CI | شاهد جاری |
+> |---|---|---|
+> | ۲ (analyze/test/pinned) | ✓ `client-pinned` | 156 passed / 0 failed / **0 skipped** روی SDK پین‌شده |
+> | ۲ (coverage) | ✓ `flutter test --coverage` | 77.2% (3195/4140 خط از `lib/`) |
+> | ۳ (backend: pytest/ruff/bandit/**pip-audit**) | ✓ job `backend` — **از قبل**؛ `pip-audit` آن‌جا بلاکینگ است | سبز ⇒ هیچ CVE شناخته‌شده‌ای در نسخه‌های resolve‌شدهٔ امروز نیست (lock در مخزن نیست؛ این تنها محدودیتش) |
+> | ۵ (`flutter build apk --debug`) | ✓ `client-pinned` | کامپایل Kotlin/Gradle سبز ⇒ بُعد compile در M87 از `UNKNOWN` درآمد |
+> | ۲ (format) | ⚠ **audit غیربلاکینگ** | ۶۵ فایل unformatted → **M109**، و تنها کاری که از تو خواسته می‌شود (مرحلهٔ ۲-الف پایین) |
+>
+> **با تو فقط این دو می‌مانند:** (الف) پرداخت بدهیِ فرمت — یک دستور، ۳۰ ثانیه؛ (ب) مرحلهٔ ۶ و ۷ —
+> گوشی واقعی، چون Codespace نه USB دارد نه KVM. بقیهٔ مراحل را همچنان می‌توانی برای
+> بازتولید محلی اجرا کنی، ولی **شاهدِ لازم نیستند**؛ لاگشان را برای «تأیید» می‌فرست اگر خواستی.
+>
+> فهرست چیزهایی که در agent sandbox نشد: `flutter analyze`/`flutter test`/build (SDK نیست)، Android SDK/Gradle،
+> emulator/دستگاه، ماسک لانچر، و اندازه‌گیری startup. Codespace و CI سه تای اول را حل کردند؛
+> دو تای آخر **روی لپ‌تاپ با گوشی** انجام می‌شود، نه در مرورگر.
 
 ## ۰) قوانین ثبت (پیش از هر دستور)
 
@@ -78,7 +95,22 @@ python3 tools/manifest_gate.py 2>&1 | tail -2 | tee -a /tmp/m107/step2-dartgate.
 | `flutter test` با صفر شکست و **بدون skip** | همان loopها + probe سطح messengerِ M98 (`test/motion_haptics_test.dart`) |
 | `dart_gate` ۷۲ فایل / ۰ یافته | سازگاری گیت ایستا با analyzer واقعی (ادعای جایگزینی ندارد) |
 
-## ۳) گیت‌های بک‌اند (شامل دو چیزی که هرگز اجرا نشد)
+## ۲-الف) تنها کاری که واقعاً از تو خواسته می‌شود — M109 (بدهیِ فرمت)
+
+```bash
+cd "$(git rev-parse --show-toplevel)/mp-app/client"
+dart format lib test tools 2>&1 | tail -3
+git -C "$(git rev-parse --show-toplevel)" status --porcelain | head -20   # فقط فایل‌های .dart
+```
+
+اگر diff فقط فرمت بود (بدون تغییر معنا)، commit و push کن؛ من همان لحظهٔ `|| echo` را از
+`client-pinned` برمی‌دارم تا گیت **کشنده** شود. تا پیش از آن، گیت در حالت audit است و
+عدد ۶۵ فایل در annotation هر run دیده می‌شود — پس بدهی پنهان نمی‌شود.
+(انتخابِ «فرمت‌کردنِ خودکار در CI با commit ربات» را عمداً نکردم: `ci.yml`
+`permissions: contents: read` است و write دادن به workflow برای یک style commit، ریسکش
+بزرگ‌تر از سودش است. اگر خواستی، همان را با `workflow_dispatch` مجزا و صریح می‌سازیم.)
+
+## ۳) گیت‌های بک‌اند (اختیاری — CI اینها را می‌سنجد)
 
 ```bash
 REPO="$(git rev-parse --show-toplevel)"
@@ -94,8 +126,10 @@ $V -m ruff check . 2>&1 | tail -3 | tee /tmp/m107/step3-ruff.txt
 $V -m ruff format --check . 2>&1 | tail -2 | tee -a /tmp/m107/step3-ruff.txt
 $V -m bandit -r . -ll -q 2>&1 | tail -8 | tee /tmp/m107/step3-bandit.txt; echo "bandit_exit=$?"
 
-# ۱) اولین شاهد CVE-محور روی این منبع. در مخزن lock وجود ندارد، پس عدد «سازگارترین
-#    نسخه‌های امروز» است — همان محدودیتی که CI هم دارد؛ آن را «pinned» گزارش نکن.
+# اختیاری/تکراری: job `backend` در CI همین را **بلاکینگ** اجرا می‌کند (`pip-audit` بدون
+# `|| true`) و سبز است. در مخزن lock وجود ندارد، پس عدد «سازگارترین نسخه‌های امروز» است؛
+# آن را «pinned» گزارش نکن. این خط فقط برای وقتی است که می‌خواهی روی همان container خودت
+# (یا پس از upgrade مشکوک) بازتولید کنی.
 /tmp/m107/venv/bin/pip-audit 2>&1 | tail -25 | tee /tmp/m107/step3-pipaudit.txt
 echo "pipaudit_exit=$?"
 /tmp/m107/venv/bin/pip freeze > /tmp/m107/step3-freeze.txt   # برای اینکه معلوم باشد روی چه نسخه‌هایی سنجیده شد

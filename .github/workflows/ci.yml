@@ -521,8 +521,10 @@ jobs:
               f"dart format: {offending} file(s) still unformatted (advisory until M109) "
               "(values only; no assertion text)"
           )
-          # در workflow command باید % و : escape شوند، وگرنه annotation نصفه می‌شود
-          safe = message.replace("%", "%25").replace(":", "%3A")
+          # `%` (و CR/LF) در workflow command باید escape شود؛ `:` نه — escape کردنش
+          # فقط خروجی را خواندنی‌زدایی می‌کند («Flutter tests%3A 156 passed» در run
+          # 44323120295 دیده شد). پس فقط `%`.
+          safe = message.replace("%", "%25")
           print(f"::notice title=Client pinned witness::{safe}")
           summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
           if summary_path:

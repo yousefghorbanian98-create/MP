@@ -6,7 +6,7 @@
 ## ۱) گپ و آنچه همین‌جا انجام شد
 
 سه چیز در agent sandbox هرگز قابل اجرا نبود و status برخی loopها به همین دلیل `UNKNOWN` ماند:
-Flutter/Dart SDK، Android SDK/Gradle، و `pip-audit` روی منبع پروژه (venv محلی pinned نبود).
+Flutter/Dart SDK، Android SDK/Gradle، و `pip-audit` روی محیطِ ساخته‌شده از `pyproject.toml`.
 Codespaces سه تای اول را ممکن می‌کند؛ بخشی از چهارمی (دستگاه واقعی) **هیچ‌وقت** در Codespace شدنی نیست —
 Codespaces به USB دسترسی ندارد و KVM برای emulator ندارد. پس دستور کار به دو مسیر split شد.
 

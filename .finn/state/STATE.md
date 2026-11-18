@@ -179,3 +179,12 @@ backend ۳۵۱ · ruff پاک · bandit ۰H/۰M · tsc ۰ · vitest ۳۰ · semg
 - گیت‌های این loop: **backend از ریشهٔ مخزن 873 passed / 1 skipped** (رفع cwd-sensitivity در `test_monitoring.py`؛ پیش‌تر 861/**1 failed** از همان cwd) · `bash -n` روی اسکریپت ✓ · docs gate ۹ فایل / ۱۰۴ لینک / ۴ Mermaid ✓
 - venv محلی دوباره ساخته شد (`/home/user/.venv-mp`) و Studio `node_modules` هنوز نیست؛ اعداد Studio این صفحه از baseline قبلی (219/9) است، از اجرای تازه در این venv
 - **هیچ status محصولی در این loop عوض نشد** (Codespace ساخته نشد، لاگی نیامد). M87/M104/M105/M106 و بُعدِ دستگاهِ M89/M90/M98 منتظر لاگ مرحله‌های ۵ و ۶ هستند
+
+## به‌روزرسانی M108 (۲۰۲۶-۱۱-۱۸) — گیت‌های Codespace به CI منتقل شدند
+
+- پرسش کاربر: «خودت در Codespace انجام می‌دهی؟» → **نه**: credential این sandbox یک App token با scope مخزن است (`gh api /user/codespaces` → 0، `X-OAuth-Scopes` خالی ⇒ `gh codespace ssh` ممکن نیست). راه درست: گیت‌ها را از «دستی» به **CI** بردن
+- job جدید `client-pinned`: pin-check همسان با `.devcontainer/Dockerfile` · `dart format` (audit) · `flutter analyze` · `flutter test --coverage` · `flutter build apk --debug`
+- **شاهد (run `44323120295`، sha `2ac6ecc`)**: 156 passed / 0 failed / **0 skipped** · coverage **77.2%** (3195/4140) · debug apk 151MB ساخته شد ⇒ **M87: کامپایل Kotlin/Gradle تأیید شد** (device/persistence/encryption هنوز `UNKNOWN`؛ M88/M89 همچنان `BLOCKED` چون گوشی لازم دارند)
+- یافتهٔ اول: گیت format که *پیش از* بقیه چیده شده بود، با `bash -e` سه گیت بعدی را skip کرد (run `44322049209`) → بازچینش + غیربلاکینگ؛ **۶۵ فایل Dart unformatted** = بدهی ثبت‌شده → **M109**
+- **تصحیح ادعای خودم:** `pip-audit` «هرگز اجرا نشده» نبود؛ در job `backend` بلاکینگ اجرا می‌شود و سبز است (محدودیت واقعی: نبودِ lock در مخزن). `runbooks/codespaces-execution.md` و `m107-*` اصلاح شدند
+- گزارش: `finn/reports/m108-ci-pinned-gates.md` · مرحله‌های انسانی باقی‌مانده: M109 (یک دستور) و §۶ (گوشی)
