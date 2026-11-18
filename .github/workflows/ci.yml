@@ -487,8 +487,15 @@ jobs:
         run: |
           set -o pipefail
           mkdir -p /tmp/client-pinned
-          # M109 (PR #1، commit d9a5bdc) ۶۵ فایل unformatted را صفر کرد، پس این گام از
-          # «audit» به «gate» تبدیل می‌شود: یک فایلِ فرمت‌نشده از این به بعد CI را می‌شکند.
+          # M109 (PR #1) این گام را از «audit» به «gate» تبدیل کرد: یک فایلِ فرمت‌نشده
+          # CI را می‌شکند. دو شرطِ ترتیب که نباید بشکنند:
+          #   ۱) `flutter pub get` پیش از این گام اجرا شده باشد — نسخهٔ زبانی که dart
+          #      format به آن فرمت می‌کند از package_config خوانده می‌شود (این مخزن
+          #      `sdk: ">=3.3.0"` ⇒ short style). بی‌آن، formatter سبکِ تازه‌تر می‌دهد و
+          #      گیت ۵۳ فایل را بی‌دلیل قرمز می‌کند (run 44350273742؛ اولین PRِ M109 هم
+          #      برای همین به بازفرمت نیاز داشت).
+          #   ۲) این گام بعد از analyze/test/apk بماند و «Publish the witness» always()
+          #      باشد — شکستِ فرمت نباید شاهد همسایه‌ها را بخورد (R-036).
           # کشنده‌بودن امن است چون این گام *پس از* analyze/test/apk چیده شده و گام
           # «Publish the witness» با if: always() شاهد را می‌نویسد — درسی که run
           # 44322049209 داد (گیت تازه نباید شاهد همسایه‌هایش را بخورد).
@@ -498,7 +505,8 @@ jobs:
           else
             n=$(grep -c '^Changed' /tmp/client-pinned/format.txt || true)
             printf '%s unformatted\n' "${n:-?}" > /tmp/client-pinned/format-status.txt
-            echo "::error title=flutter format::dart format wants to restyle ${n:-?} file(s) — run \`dart format lib test tools\` in mp-app/client (M109 left it at zero; keep it there)"
+            printf '%s\n' "$(grep '^Changed' /tmp/client-pinned/format.txt | head -6)" | tr '\n' '|' > /tmp/client-pinned/format-files.txt
+            echo "::error title=flutter format::dart format wants to restyle ${n:-?} file(s) — در \`mp-app/client\` بعد از \`flutter pub get\` اجرا کن: dart format lib test tools | first: $(cat /tmp/client-pinned/format-files.txt)"
             exit 1
           fi
           cat /tmp/client-pinned/format-status.txt

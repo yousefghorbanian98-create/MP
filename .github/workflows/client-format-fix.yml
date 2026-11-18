@@ -86,6 +86,16 @@ jobs:
                   raise SystemExit(f"refusing to format: {field} != devcontainer pin")
           PY
 
+      # `flutter pub get` باید **پیش از** هر فراخوانی dart format اجرا شود: نسخهٔ زبانی
+      # که formatter به آن فرمت می‌کند از `.dart_tool/package_config.json` (و در نهایت
+      # `environment: sdk` در pubspec) خوانده می‌شود. بدون آن `dart format` با آخرین
+      # نسخهٔ زبان کار می‌کند (= tall style)؛ با آن، این مخزن (`sdk: ">=3.3.0"`) short
+      # style می‌خواهد. اولین اجرای M109 همین را ندانست و ۵۳ فایل را به سبکِ اشتباه
+      # فرمت کرد — همان‌ها که گیتِ client-pinned روز بعد «unformatted» گزارش کرد.
+      - name: flutter pub get (the formatter reads its language version from here)
+        working-directory: mp-app/client
+        run: flutter pub get > /dev/null
+
       - name: Count the debt before touching anything
         working-directory: mp-app/client
         run: |
@@ -115,7 +125,7 @@ jobs:
         working-directory: mp-app/client
         run: |
           set -o pipefail
-          flutter pub get > /dev/null
+          # pub get همین حالا اجرا شده؛ تکرارش فقط زمان می‌برد
           flutter analyze --no-fatal-infos
           flutter test --coverage --file-reporter=json:/tmp/m109/flutter-test.json \
             > /tmp/m109/flutter-test.txt 2>&1
