@@ -66,20 +66,26 @@ class _ClassesPageState extends ConsumerState<ClassesPage> {
     final memberId = ref.read(authProvider).memberId;
     final classId = (cls['id'] as num?)?.toInt();
     if (memberId == null || classId == null) {
-      setState(() => _message = 'اطلاعات نشست یا کلاس برای لغو رزرو نامعتبر است');
+      setState(
+        () => _message = 'اطلاعات نشست یا کلاس برای لغو رزرو نامعتبر است',
+      );
       return;
     }
     if (_busyClassIds.contains(classId)) return;
     setState(() => _busyClassIds.add(classId));
     try {
-      final response = await ref.read(apiClientProvider).post('/classes/cancel', {
-        'class_id': classId,
-        'member_id': memberId,
-      });
+      final response = await ref.read(apiClientProvider).post(
+        '/classes/cancel',
+        {'class_id': classId, 'member_id': memberId},
+      );
       if (!mounted) return;
       ref.read(hapticsProvider).success();
       final status = response is Map ? response['status'] : null;
-      setState(() => _message = status == 'cancelled' ? '✅ رزرو لغو شد' : '✅ درخواست لغو ثبت شد');
+      setState(
+        () => _message = status == 'cancelled'
+            ? '✅ رزرو لغو شد'
+            : '✅ درخواست لغو ثبت شد',
+      );
       ref.invalidate(classesProvider);
     } catch (e) {
       if (!mounted) return;
@@ -104,38 +110,48 @@ class _ClassesPageState extends ConsumerState<ClassesPage> {
             if (_message != null)
               Padding(
                 padding: const EdgeInsets.only(bottom: 10),
-                child: Text(_message!,
-                    style: const TextStyle(color: MpColors.primaryLight)),
+                child: Text(
+                  _message!,
+                  style: const TextStyle(color: MpColors.primaryLight),
+                ),
               ),
             classes.when(
               loading: () => const Center(
-                  child: Padding(
-                padding: EdgeInsets.all(40),
-                child: CircularProgressIndicator(),
-              )),
+                child: Padding(
+                  padding: EdgeInsets.all(40),
+                  child: CircularProgressIndicator(),
+                ),
+              ),
               error: (e, _) => GlassCard(
-                  child: Text('خطا در دریافت کلاس‌ها: $e',
-                      textAlign: TextAlign.center)),
+                child: Text(
+                  'خطا در دریافت کلاس‌ها: $e',
+                  textAlign: TextAlign.center,
+                ),
+              ),
               data: (list) {
                 if (list.isEmpty) {
                   return const GlassCard(
-                      child: Padding(
-                    padding: EdgeInsets.all(24),
-                    child: Text('کلاسی ثبت نشده است',
-                        textAlign: TextAlign.center),
-                  ));
+                    child: Padding(
+                      padding: EdgeInsets.all(24),
+                      child: Text(
+                        'کلاسی ثبت نشده است',
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  );
                 }
                 return Column(
                   children: [
                     for (var i = 0; i < list.length; i++)
                       _ClassTile(
-                        cls: list[i] as Map<String, dynamic>,
-                        onBook: _book,
-                        onCancel: _cancel,
-                        isBusy: _busyClassIds.contains(
-                          ((list[i] as Map<String, dynamic>)['id'] as num?)?.toInt(),
-                        ),
-                      )
+                            cls: list[i] as Map<String, dynamic>,
+                            onBook: _book,
+                            onCancel: _cancel,
+                            isBusy: _busyClassIds.contains(
+                              ((list[i] as Map<String, dynamic>)['id'] as num?)
+                                  ?.toInt(),
+                            ),
+                          )
                           // Q5/M98 — اگر سیستم‌عامل «کاهش حرکت» را روشن کرده،
                           // همان ظاهر نهایی بدون پخش انیمیشن نشان داده می‌شود.
                           .animate(target: MpMotion.target(context))
@@ -170,13 +186,17 @@ class _ClassTile extends StatelessWidget {
     final seats = (cls['seats_left'] as num? ?? 0).toInt();
     final full = seats <= 0;
     final bookingStatus = cls['member_booking_status'];
-    final booked = bookingStatus == 'confirmed' || bookingStatus == 'waitlisted';
+    final booked =
+        bookingStatus == 'confirmed' || bookingStatus == 'waitlisted';
     final bookingName = cls['member_booking_name'] is String
         ? (cls['member_booking_name'] as String).trim()
         : '';
-    final bookingLabel = bookingName.isEmpty ? 'رزرو شما' : 'رزرو به نام $bookingName';
+    final bookingLabel = bookingName.isEmpty
+        ? 'رزرو شما'
+        : 'رزرو به نام $bookingName';
     final details = <String>[
-      if (cls['schedule_text'] is String && (cls['schedule_text'] as String).isNotEmpty)
+      if (cls['schedule_text'] is String &&
+          (cls['schedule_text'] as String).isNotEmpty)
         cls['schedule_text'] as String,
       full ? 'ظرفیت تکمیل' : '$seats صندلی خالی',
       if (bookingStatus == 'confirmed') '$bookingLabel تأیید شده',
@@ -201,12 +221,17 @@ class _ClassTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(cls['name'] as String? ?? 'کلاس',
-                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                  Text(
+                    cls['name'] as String? ?? 'کلاس',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   const SizedBox(height: 3),
                   Text(
                     details,
-                    style: TextStyle(fontSize: 12, color: MpColors.textSecondary),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: MpColors.textSecondary,
+                    ),
                   ),
                 ],
               ),
@@ -216,26 +241,26 @@ class _ClassTile extends StatelessWidget {
                 backgroundColor: booked
                     ? MpColors.accent
                     : full
-                        ? MpColors.surface
-                        : MpColors.primary,
+                    ? MpColors.surface
+                    : MpColors.primary,
               ),
               onPressed: isBusy
                   ? null
                   : booked
-                      ? () => onCancel(cls)
-                      : full
-                          ? null
-                          : () => onBook(cls),
+                  ? () => onCancel(cls)
+                  : full
+                  ? null
+                  : () => onBook(cls),
               child: Text(
                 isBusy
                     ? 'در حال…'
                     : booked
-                        ? bookingStatus == 'waitlisted'
-                            ? 'لغو انتظار'
-                            : 'لغو رزرو'
-                        : full
-                            ? 'کامل'
-                            : 'رزرو',
+                    ? bookingStatus == 'waitlisted'
+                          ? 'لغو انتظار'
+                          : 'لغو رزرو'
+                    : full
+                    ? 'کامل'
+                    : 'رزرو',
               ),
             ),
           ],

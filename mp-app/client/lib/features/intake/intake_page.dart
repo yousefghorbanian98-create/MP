@@ -154,8 +154,10 @@ class _IntakePageState extends ConsumerState<IntakePage> {
               if (error != null)
                 Padding(
                   padding: const EdgeInsets.only(top: 12),
-                  child: Text(error!,
-                      style: const TextStyle(color: Colors.redAccent)),
+                  child: Text(
+                    error!,
+                    style: const TextStyle(color: Colors.redAccent),
+                  ),
                 ),
               const SizedBox(height: 20),
               Row(
@@ -169,12 +171,12 @@ class _IntakePageState extends ConsumerState<IntakePage> {
                   FilledButton(
                     onPressed: busy
                         ? null
-                        : (step < 2
-                            ? () => setState(() => step++)
-                            : _generate),
-                    child: Text(busy
-                        ? 'در حال تولید…'
-                        : (step < 2 ? 'ادامه' : 'ساخت برنامهٔ من')),
+                        : (step < 2 ? () => setState(() => step++) : _generate),
+                    child: Text(
+                      busy
+                          ? 'در حال تولید…'
+                          : (step < 2 ? 'ادامه' : 'ساخت برنامهٔ من'),
+                    ),
                   ),
                 ],
               ),
@@ -207,8 +209,10 @@ class _IntakePageState extends ConsumerState<IntakePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('هدف تمرینی شما چیست؟',
-            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+        const Text(
+          'هدف تمرینی شما چیست؟',
+          style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+        ),
         const SizedBox(height: 10),
         Wrap(
           spacing: 8,
@@ -221,8 +225,10 @@ class _IntakePageState extends ConsumerState<IntakePage> {
           ],
         ),
         const SizedBox(height: 20),
-        const Text('سطح فعلی شما؟',
-            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+        const Text(
+          'سطح فعلی شما؟',
+          style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+        ),
         const SizedBox(height: 10),
         Wrap(
           spacing: 8,
@@ -233,8 +239,10 @@ class _IntakePageState extends ConsumerState<IntakePage> {
           ],
         ),
         const SizedBox(height: 20),
-        Text('روزهای تمرین در هفته: $days',
-            style: const TextStyle(fontSize: 15)),
+        Text(
+          'روزهای تمرین در هفته: $days',
+          style: const TextStyle(fontSize: 15),
+        ),
         Slider(
           value: days.toDouble(),
           min: 3,
@@ -260,11 +268,15 @@ class _IntakePageState extends ConsumerState<IntakePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('سابقهٔ تمرینی شما',
-            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+        const Text(
+          'سابقهٔ تمرینی شما',
+          style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+        ),
         const SizedBox(height: 6),
-        Text('$_experienceLabel تمرین منظم',
-            style: TextStyle(color: MpColors.textSecondary)),
+        Text(
+          '$_experienceLabel تمرین منظم',
+          style: TextStyle(color: MpColors.textSecondary),
+        ),
         Slider(
           value: experienceMonths,
           min: 0,
@@ -280,7 +292,9 @@ class _IntakePageState extends ConsumerState<IntakePage> {
                 controller: weightCtrl,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
-                    labelText: 'وزن (کیلوگرم)', border: OutlineInputBorder()),
+                  labelText: 'وزن (کیلوگرم)',
+                  border: OutlineInputBorder(),
+                ),
               ),
             ),
             const SizedBox(width: 10),
@@ -289,7 +303,9 @@ class _IntakePageState extends ConsumerState<IntakePage> {
                 controller: ageCtrl,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
-                    labelText: 'سن', border: OutlineInputBorder()),
+                  labelText: 'سن',
+                  border: OutlineInputBorder(),
+                ),
               ),
             ),
           ],
@@ -329,7 +345,9 @@ class _IntakePageState extends ConsumerState<IntakePage> {
         DropdownButtonFormField<String>(
           initialValue: activity,
           decoration: const InputDecoration(
-              labelText: 'سطح فعالیت روزانه', border: OutlineInputBorder()),
+            labelText: 'سطح فعالیت روزانه',
+            border: OutlineInputBorder(),
+          ),
           items: const [
             DropdownMenuItem(value: 'sedentary', child: Text('کم‌تحرک')),
             DropdownMenuItem(value: 'light', child: Text('سبک')),
@@ -347,11 +365,15 @@ class _IntakePageState extends ConsumerState<IntakePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('آسیب یا محدودیت خاصی دارید؟',
-            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+        const Text(
+          'آسیب یا محدودیت خاصی دارید؟',
+          style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+        ),
         const SizedBox(height: 8),
-        Text('موتور برنامه‌ریزی حرکات نامناسب را حذف می‌کند',
-            style: TextStyle(color: MpColors.textSecondary)),
+        Text(
+          'موتور برنامه‌ریزی حرکات نامناسب را حذف می‌کند',
+          style: TextStyle(color: MpColors.textSecondary),
+        ),
         const SizedBox(height: 12),
         Wrap(
           spacing: 8,

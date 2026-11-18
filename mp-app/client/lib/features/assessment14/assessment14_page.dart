@@ -81,8 +81,13 @@ class _Assessment14PageState extends ConsumerState<Assessment14Page> {
                   children: [
                     Icon(Icons.insights, color: MpColors.primary, size: 28),
                     SizedBox(width: 10),
-                    Text('توانایی‌های من',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                    Text(
+                      'توانایی‌های من',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 6),
@@ -95,7 +100,12 @@ class _Assessment14PageState extends ConsumerState<Assessment14Page> {
                   value: _selectedTest,
                   hint: const Text('انتخاب آزمون'),
                   items: testLabelsFa.entries
-                      .map((e) => DropdownMenuItem(value: e.key, child: Text(e.value)))
+                      .map(
+                        (e) => DropdownMenuItem(
+                          value: e.key,
+                          child: Text(e.value),
+                        ),
+                      )
                       .toList(),
                   onChanged: (v) => setState(() => _selectedTest = v),
                 ),
@@ -125,23 +135,26 @@ class _Assessment14PageState extends ConsumerState<Assessment14Page> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('ماتریس ۱۴ توانایی',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text(
+                  'ماتریس ۱۴ توانایی',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
                 const SizedBox(height: 12),
                 matrixAsync.when(
-                  loading: () => const Center(child: CircularProgressIndicator()),
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
                   error: (_, __) => const Text('خطا در دریافت ماتریس'),
                   data: (matrix) {
-                    if (matrix == null || (matrix['axes'] as List?)?.isEmpty != false) {
+                    if (matrix == null ||
+                        (matrix['axes'] as List?)?.isEmpty != false) {
                       return const Text(
                         'هنوز ارزیابی ثبت نشده است — اولین آزمون خود را ثبت کنید',
                         style: TextStyle(color: MpColors.textSecondary),
                       );
                     }
-                    final axes = (matrix['axes'] as List).cast<Map<String, dynamic>>();
-                    return Column(
-                      children: axes.map(_AxisRow.new).toList(),
-                    );
+                    final axes = (matrix['axes'] as List)
+                        .cast<Map<String, dynamic>>();
+                    return Column(children: axes.map(_AxisRow.new).toList());
                   },
                 ),
               ],
@@ -169,8 +182,10 @@ class _AxisRow extends StatelessWidget {
         children: [
           Expanded(
             flex: 4,
-            child: Text('${axis['axis']} ${axis['name_fa']}',
-                style: const TextStyle(fontSize: 12)),
+            child: Text(
+              '${axis['axis']} ${axis['name_fa']}',
+              style: const TextStyle(fontSize: 12),
+            ),
           ),
           Expanded(
             flex: 3,
@@ -188,8 +203,10 @@ class _AxisRow extends StatelessWidget {
                           valueColor: AlwaysStoppedAnimation(color),
                         ),
                       ),
-                      Text('${score.round()}',
-                          style: const TextStyle(fontSize: 10)),
+                      Text(
+                        '${score.round()}',
+                        style: const TextStyle(fontSize: 10),
+                      ),
                     ],
                   ),
           ),

@@ -59,9 +59,11 @@ class BodyCompPage extends ConsumerWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('دریافت روند پیکرسنجی ناموفق بود: $e',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(color: MpColors.danger)),
+                Text(
+                  'دریافت روند پیکرسنجی ناموفق بود: $e',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: MpColors.danger),
+                ),
                 const SizedBox(height: 10),
                 OutlinedButton(
                   onPressed: () => ref.invalidate(jp7TrendProvider),
@@ -74,7 +76,10 @@ class BodyCompPage extends ConsumerWidget {
         data: (data) => ListView(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
           children: [
-            _HeadlineCard(data: data).animate().fadeIn(duration: 380.ms).slideY(begin: 0.06),
+            _HeadlineCard(data: data)
+                .animate()
+                .fadeIn(duration: 380.ms)
+                .slideY(begin: 0.06),
             const SizedBox(height: 12),
             _Jp7TrendChartCard(data: data),
             const SizedBox(height: 12),
@@ -125,21 +130,34 @@ class _HeadlineCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   headline,
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: accent),
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w800,
+                    color: accent,
+                  ),
                 ),
               ),
             ],
           ),
           if (detail.isNotEmpty) ...[
             const SizedBox(height: 8),
-            Text(detail,
-                style: const TextStyle(fontSize: 12, height: 1.8, color: MpColors.textSecondary)),
+            Text(
+              detail,
+              style: const TextStyle(
+                fontSize: 12,
+                height: 1.8,
+                color: MpColors.textSecondary,
+              ),
+            ),
           ],
           if (trend != null) ...[
             const SizedBox(height: 12),
             Row(
               children: [
-                _Stat('تغییر مجموع چین', '${trend['delta_mm'] ?? '—'} میلی‌متر'),
+                _Stat(
+                  'تغییر مجموع چین',
+                  '${trend['delta_mm'] ?? '—'} میلی‌متر',
+                ),
                 const SizedBox(width: 12),
                 _Stat('بازه', '${trend['days'] ?? '—'} روز'),
               ],
@@ -154,7 +172,11 @@ class _HeadlineCard extends StatelessWidget {
             ),
             child: Text(
               _confidenceLabels[confidence] ?? confidence,
-              style: TextStyle(fontSize: 11, color: accent, fontWeight: FontWeight.w700),
+              style: TextStyle(
+                fontSize: 11,
+                color: accent,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
         ],
@@ -175,12 +197,19 @@ class _Stat extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label,
-              style: const TextStyle(fontSize: 11, color: MpColors.textSecondary)),
+          Text(
+            label,
+            style: const TextStyle(fontSize: 11, color: MpColors.textSecondary),
+          ),
           const SizedBox(height: 2),
-          Text(value,
-              style: const TextStyle(
-                  fontSize: 14, fontWeight: FontWeight.w700, color: MpColors.textPrimary)),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+              color: MpColors.textPrimary,
+            ),
+          ),
         ],
       ),
     );
@@ -212,12 +241,19 @@ class _Jp7TrendChartCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('روند مجموع چین‌های پوستی',
-              style: TextStyle(
-                  fontSize: 15, fontWeight: FontWeight.w800, color: MpColors.textPrimary)),
+          const Text(
+            'روند مجموع چین‌های پوستی',
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w800,
+              color: MpColors.textPrimary,
+            ),
+          ),
           const SizedBox(height: 4),
-          const Text('بر اساس اندازه‌گیری‌های ثبت‌شده در سرور',
-              style: TextStyle(fontSize: 11, color: MpColors.textSecondary)),
+          const Text(
+            'بر اساس اندازه‌گیری‌های ثبت‌شده در سرور',
+            style: TextStyle(fontSize: 11, color: MpColors.textSecondary),
+          ),
           const SizedBox(height: 12),
           Semantics(
             container: true,
@@ -236,12 +272,19 @@ class _Jp7TrendChartCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          Text('از ${_dateFa(first.measuredAt)} تا ${_dateFa(last.measuredAt)}',
-              style: const TextStyle(fontSize: 11, color: MpColors.textSecondary)),
+          Text(
+            'از ${_dateFa(first.measuredAt)} تا ${_dateFa(last.measuredAt)}',
+            style: const TextStyle(fontSize: 11, color: MpColors.textSecondary),
+          ),
           const SizedBox(height: 2),
-          Text('ابتدا: $firstValue میلی‌متر  ·  آخر: $lastValue میلی‌متر',
-              style: const TextStyle(
-                  fontSize: 12, fontWeight: FontWeight.w700, color: MpColors.textPrimary)),
+          Text(
+            'ابتدا: $firstValue میلی‌متر  ·  آخر: $lastValue میلی‌متر',
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              color: MpColors.textPrimary,
+            ),
+          ),
         ],
       ),
     );
@@ -263,7 +306,9 @@ List<_Jp7ChartPoint> _jp7ChartPoints(Map<String, dynamic> data) {
       if (row is Map && row['sum_mm'] is num)
         _Jp7ChartPoint(
           sumMm: (row['sum_mm'] as num).toDouble(),
-          measuredAt: row['measured_at'] is String ? row['measured_at'] as String : null,
+          measuredAt: row['measured_at'] is String
+              ? row['measured_at'] as String
+              : null,
         ),
   ];
 }
@@ -343,35 +388,54 @@ class _MeasurementsCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('سوابق اندازه‌گیری',
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: MpColors.textPrimary)),
+          const Text(
+            'سوابق اندازه‌گیری',
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w800,
+              color: MpColors.textPrimary,
+            ),
+          ),
           const SizedBox(height: 12),
           if (rows.isEmpty)
-            Text('هنوز اندازه‌گیری‌ای ثبت نشده است.',
-                style: TextStyle(fontSize: 13, color: MpColors.textSecondary))
+            Text(
+              'هنوز اندازه‌گیری‌ای ثبت نشده است.',
+              style: TextStyle(fontSize: 13, color: MpColors.textSecondary),
+            )
           else
             for (final r in rows.cast<Map>()) ...[
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 9),
                 child: Row(
                   children: [
-                    const Icon(Icons.event_note, size: 18, color: MpColors.textSecondary),
+                    const Icon(
+                      Icons.event_note,
+                      size: 18,
+                      color: MpColors.textSecondary,
+                    ),
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(
                         _dateFa(r['measured_at'] as String?),
-                        style: const TextStyle(fontSize: 13, color: MpColors.textPrimary),
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: MpColors.textPrimary,
+                        ),
                       ),
                     ),
                     Text(
                       '${r['sum_mm'] ?? '—'} میلی‌متر',
                       style: const TextStyle(
-                          fontSize: 13, fontWeight: FontWeight.w700, color: MpColors.primaryLight),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: MpColors.primaryLight,
+                      ),
                     ),
                   ],
                 ),
               ),
-              if (r != rows.last) Divider(color: MpColors.primary.withOpacity(0.10), height: 1),
+              if (r != rows.last)
+                Divider(color: MpColors.primary.withOpacity(0.10), height: 1),
             ],
         ],
       ),
@@ -385,7 +449,8 @@ String _dateFa(String? iso) {
   if (iso == null) return 'تاریخ نامعلوم';
   final d = DateTime.tryParse(iso);
   if (d == null) return 'تاریخ نامعلوم';
-  final g = '${d.year}/${d.month.toString().padLeft(2, '0')}/${d.day.toString().padLeft(2, '0')}';
+  final g =
+      '${d.year}/${d.month.toString().padLeft(2, '0')}/${d.day.toString().padLeft(2, '0')}';
   return _faDigits(g);
 }
 
@@ -416,11 +481,21 @@ class _LockedNote extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Icon(Icons.lock_outline, size: 17, color: MpColors.primaryLight),
+          const Icon(
+            Icons.lock_outline,
+            size: 17,
+            color: MpColors.primaryLight,
+          ),
           const SizedBox(width: 9),
           Expanded(
-            child: Text(note,
-                style: const TextStyle(fontSize: 11.5, height: 1.7, color: MpColors.primaryLight)),
+            child: Text(
+              note,
+              style: const TextStyle(
+                fontSize: 11.5,
+                height: 1.7,
+                color: MpColors.primaryLight,
+              ),
+            ),
           ),
         ],
       ),
@@ -447,7 +522,11 @@ class _StaffOnlyNote extends StatelessWidget {
           Expanded(
             child: Text(
               'ثبت اندازه‌گیری جدید فقط توسط مربی/پذیرش باشگاه انجام می‌شود',
-              style: TextStyle(fontSize: 12, color: MpColors.accentSoft, height: 1.6),
+              style: TextStyle(
+                fontSize: 12,
+                color: MpColors.accentSoft,
+                height: 1.6,
+              ),
             ),
           ),
         ],

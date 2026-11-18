@@ -14,10 +14,12 @@ class OfflineFeedbackQueueCard extends ConsumerStatefulWidget {
   const OfflineFeedbackQueueCard({super.key});
 
   @override
-  ConsumerState<OfflineFeedbackQueueCard> createState() => _OfflineFeedbackQueueCardState();
+  ConsumerState<OfflineFeedbackQueueCard> createState() =>
+      _OfflineFeedbackQueueCardState();
 }
 
-class _OfflineFeedbackQueueCardState extends ConsumerState<OfflineFeedbackQueueCard> {
+class _OfflineFeedbackQueueCardState
+    extends ConsumerState<OfflineFeedbackQueueCard> {
   bool _busy = false;
   String? _message;
 
@@ -32,7 +34,8 @@ class _OfflineFeedbackQueueCardState extends ConsumerState<OfflineFeedbackQueueC
       setState(() => _message = result.message);
       ref.invalidate(offlineFeedbackQueueProvider);
     } catch (_) {
-      if (mounted) setState(() => _message = 'همگام‌سازی کامل نشد؛ داده در صف باقی ماند.');
+      if (mounted)
+        setState(() => _message = 'همگام‌سازی کامل نشد؛ داده در صف باقی ماند.');
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -44,13 +47,18 @@ class _OfflineFeedbackQueueCardState extends ConsumerState<OfflineFeedbackQueueC
       _message = null;
     });
     try {
-      await ref.read(offlineFeedbackSyncServiceProvider).retryFailed(ownerMemberId);
+      await ref
+          .read(offlineFeedbackSyncServiceProvider)
+          .retryFailed(ownerMemberId);
       final result = await ref.read(syncOfflineFeedbackQueueProvider)();
       if (!mounted) return;
       setState(() => _message = result.message);
       ref.invalidate(offlineFeedbackQueueProvider);
     } catch (_) {
-      if (mounted) setState(() => _message = 'تلاش مجدد انجام نشد؛ رکوردها در صف باقی ماندند.');
+      if (mounted)
+        setState(
+          () => _message = 'تلاش مجدد انجام نشد؛ رکوردها در صف باقی ماندند.',
+        );
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -87,7 +95,10 @@ class _OfflineFeedbackQueueCardState extends ConsumerState<OfflineFeedbackQueueC
       ref.invalidate(offlineFeedbackQueueProvider);
       if (mounted) setState(() => _message = 'صف همین حساب حذف شد.');
     } catch (_) {
-      if (mounted) setState(() => _message = 'صف حذف نشد؛ دادهٔ محلی دست‌نخورده باقی ماند.');
+      if (mounted)
+        setState(
+          () => _message = 'صف حذف نشد؛ دادهٔ محلی دست‌نخورده باقی ماند.',
+        );
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -97,7 +108,8 @@ class _OfflineFeedbackQueueCardState extends ConsumerState<OfflineFeedbackQueueC
   Widget build(BuildContext context) {
     final ownerMemberId = ref.watch(authProvider).memberId;
     final store = ref.watch(offlineFeedbackStoreProvider);
-    if (ownerMemberId == null || !store.isSupported) return const SizedBox.shrink();
+    if (ownerMemberId == null || !store.isSupported)
+      return const SizedBox.shrink();
     final queue = ref.watch(offlineFeedbackQueueProvider);
     return queue.when(
       loading: () => const SizedBox.shrink(),
@@ -109,17 +121,30 @@ class _OfflineFeedbackQueueCardState extends ConsumerState<OfflineFeedbackQueueC
       ),
       data: (rows) {
         if (rows.isEmpty) return const SizedBox.shrink();
-        final pending = rows.where((row) => row.status == OfflineFeedbackStatus.pending).length;
-        final retry = rows.where((row) => row.status == OfflineFeedbackStatus.retry).length;
-        final failed = rows.where((row) => row.status == OfflineFeedbackStatus.failed).length;
-        final conflicts = rows.where((row) => row.status == OfflineFeedbackStatus.conflict).length;
-        final synced = rows.where((row) => row.status == OfflineFeedbackStatus.synced).length;
+        final pending = rows
+            .where((row) => row.status == OfflineFeedbackStatus.pending)
+            .length;
+        final retry = rows
+            .where((row) => row.status == OfflineFeedbackStatus.retry)
+            .length;
+        final failed = rows
+            .where((row) => row.status == OfflineFeedbackStatus.failed)
+            .length;
+        final conflicts = rows
+            .where((row) => row.status == OfflineFeedbackStatus.conflict)
+            .length;
+        final synced = rows
+            .where((row) => row.status == OfflineFeedbackStatus.synced)
+            .length;
         final canSync = pending + retry > 0;
         return GlassCard(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('صف بازخورد آفلاین', style: TextStyle(fontWeight: FontWeight.bold)),
+              const Text(
+                'صف بازخورد آفلاین',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 6),
               Text(
                 'در انتظار: $pending · زمان‌بندی retry: $retry · نیازمند تلاش دستی: $failed · تعارض: $conflicts · تأییدشده: $synced',
@@ -132,7 +157,9 @@ class _OfflineFeedbackQueueCardState extends ConsumerState<OfflineFeedbackQueueC
                   child: FilledButton.icon(
                     onPressed: _busy ? null : _sync,
                     icon: const Icon(Icons.sync),
-                    label: Text(_busy ? 'در حال همگام‌سازی…' : 'همگام‌سازی با سرور'),
+                    label: Text(
+                      _busy ? 'در حال همگام‌سازی…' : 'همگام‌سازی با سرور',
+                    ),
                   ),
                 ),
               if (failed > 0)
@@ -154,13 +181,19 @@ class _OfflineFeedbackQueueCardState extends ConsumerState<OfflineFeedbackQueueC
                 ),
               if (_message != null) ...[
                 const SizedBox(height: 8),
-                Text(_message!, style: TextStyle(color: MpColors.textSecondary, fontSize: 12)),
+                Text(
+                  _message!,
+                  style: TextStyle(color: MpColors.textSecondary, fontSize: 12),
+                ),
               ],
               Align(
                 alignment: AlignmentDirectional.centerEnd,
                 child: TextButton.icon(
                   onPressed: _busy ? null : () => _discard(ownerMemberId),
-                  icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
+                  icon: const Icon(
+                    Icons.delete_outline,
+                    color: Colors.redAccent,
+                  ),
                   label: const Text('حذف صف این حساب'),
                 ),
               ),

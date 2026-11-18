@@ -17,10 +17,10 @@ import 'package:mp_client/core/api_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 http.Response _utf8Response(String body, int statusCode) => http.Response(
-      body,
-      statusCode,
-      headers: const {'content-type': 'application/json; charset=utf-8'},
-    );
+  body,
+  statusCode,
+  headers: const {'content-type': 'application/json; charset=utf-8'},
+);
 
 class _ScriptedClient extends http.BaseClient {
   _ScriptedClient(this.script);
@@ -48,7 +48,9 @@ class _ScriptedClient extends http.BaseClient {
 
 Future<bool> _refreshAccess(ApiClient api) async {
   try {
-    final response = await api.post('/auth/refresh', {'refresh_token': 'refresh-1'});
+    final response = await api.post('/auth/refresh', {
+      'refresh_token': 'refresh-1',
+    });
     if (response is! Map || response['access_token'] is! String) return false;
     api.accessToken = response['access_token'] as String;
     return true;
@@ -67,7 +69,8 @@ void main() {
         () => http.Response('{"ok":true}', 200),
       ],
       '/auth/refresh': [
-        () => http.Response('{"access_token":"fresh","refresh_token":"r2"}', 200),
+        () =>
+            http.Response('{"access_token":"fresh","refresh_token":"r2"}', 200),
       ],
     });
 
@@ -86,24 +89,35 @@ void main() {
     expect(api.accessToken, 'fresh', reason: 'توکن تازه باید جایگزین شود');
   });
 
-  test('اگر refresh شکست بخورد، خطای ۴۰۱ بالا می‌آید و نشست پاک می‌شود', () async {
-    final client = _ScriptedClient({
-      '/protected': [() => _utf8Response('{"error":{"message":"توکن نامعتبر"}}', 401)],
-      '/auth/refresh': [() => _utf8Response('{"error":{"message":"refresh منقضی"}}', 401)],
-    });
+  test(
+    'اگر refresh شکست بخورد، خطای ۴۰۱ بالا می‌آید و نشست پاک می‌شود',
+    () async {
+      final client = _ScriptedClient({
+        '/protected': [
+          () => _utf8Response('{"error":{"message":"توکن نامعتبر"}}', 401),
+        ],
+        '/auth/refresh': [
+          () => _utf8Response('{"error":{"message":"refresh منقضی"}}', 401),
+        ],
+      });
 
-    var sessionCleared = false;
-    final api = ApiClient(httpClient: client);
-    api.attachSession(
-      refresher: () => _refreshAccess(api),
-      onSessionLost: () => sessionCleared = true,
-    );
-    api.accessToken = 'expired';
+      var sessionCleared = false;
+      final api = ApiClient(httpClient: client);
+      api.attachSession(
+        refresher: () => _refreshAccess(api),
+        onSessionLost: () => sessionCleared = true,
+      );
+      api.accessToken = 'expired';
 
-    await expectLater(api.get('/protected'), throwsA(isA<ApiException>()));
-    expect(client.calls, ['GET /protected', 'POST /auth/refresh']);
-    expect(sessionCleared, isTrue, reason: 'کاربر باید به ورود برگردد، نه دیدن خطای گنگ');
-  });
+      await expectLater(api.get('/protected'), throwsA(isA<ApiException>()));
+      expect(client.calls, ['GET /protected', 'POST /auth/refresh']);
+      expect(
+        sessionCleared,
+        isTrue,
+        reason: 'کاربر باید به ورود برگردد، نه دیدن خطای گنگ',
+      );
+    },
+  );
 
   test('۴۰۱ فقط یک‌بار refresh می‌کند — حلقهٔ بی‌پایان ممنوع', () async {
     final client = _ScriptedClient({
@@ -120,26 +134,34 @@ void main() {
     api.accessToken = 'expired';
 
     await expectLater(api.get('/protected'), throwsA(isA<ApiException>()));
-    expect(client.calls.where((c) => c == 'POST /auth/refresh').length, 1,
-        reason: 'refresh دوباره و دوباره = حلقهٔ بی‌پایان روی سرور');
-  });
-
-  test('پاسخ ۴۰۱ از endpoint تمدید، خودش دوباره refresh را اجرا نمی‌کند', () async {
-    final client = _ScriptedClient({
-      '/auth/refresh': [() => http.Response('{}', 401)],
-    });
-    var refresherCalls = 0;
-    final api = ApiClient(httpClient: client);
-    api.attachSession(refresher: () async {
-      refresherCalls++;
-      return true;
-    });
-
-    await expectLater(
-      api.post('/auth/refresh', {'refresh_token': 'refresh-1'}),
-      throwsA(isA<ApiException>()),
+    expect(
+      client.calls.where((c) => c == 'POST /auth/refresh').length,
+      1,
+      reason: 'refresh دوباره و دوباره = حلقهٔ بی‌پایان روی سرور',
     );
-    expect(client.calls, ['POST /auth/refresh']);
-    expect(refresherCalls, 0);
   });
+
+  test(
+    'پاسخ ۴۰۱ از endpoint تمدید، خودش دوباره refresh را اجرا نمی‌کند',
+    () async {
+      final client = _ScriptedClient({
+        '/auth/refresh': [() => http.Response('{}', 401)],
+      });
+      var refresherCalls = 0;
+      final api = ApiClient(httpClient: client);
+      api.attachSession(
+        refresher: () async {
+          refresherCalls++;
+          return true;
+        },
+      );
+
+      await expectLater(
+        api.post('/auth/refresh', {'refresh_token': 'refresh-1'}),
+        throwsA(isA<ApiException>()),
+      );
+      expect(client.calls, ['POST /auth/refresh']);
+      expect(refresherCalls, 0);
+    },
+  );
 }

@@ -39,7 +39,9 @@ DateTime? parseMembershipExpiry(String? iso) {
 int? daysUntilExpiry(String? iso, {DateTime? now}) {
   final expires = parseMembershipExpiry(iso);
   if (expires == null) return null;
-  final remainingMicros = expires.difference((now ?? DateTime.now()).toUtc()).inMicroseconds;
+  final remainingMicros = expires
+      .difference((now ?? DateTime.now()).toUtc())
+      .inMicroseconds;
   if (remainingMicros <= 0) return 0;
   const microsPerDay = 86400000000;
   return (remainingMicros + microsPerDay - 1) ~/ microsPerDay;
@@ -77,7 +79,10 @@ MembershipSummary summarizeMemberships(
       status: MembershipDisplayStatus.active,
       membership: current.key,
       expiresAt: current.value,
-      daysRemaining: daysUntilExpiry(current.value.toIso8601String(), now: nowUtc),
+      daysRemaining: daysUntilExpiry(
+        current.value.toIso8601String(),
+        now: nowUtc,
+      ),
     );
   }
 

@@ -9,36 +9,37 @@ import 'package:mp_client/features/assessment14/assessment14_page.dart';
 import 'package:mp_client/features/assessment14/assessment14_providers.dart';
 
 Map<String, dynamic> _fakeMatrix() => {
-      'assessment_id': 1,
-      'axes': [
-        {
-          'axis': 1,
-          'name_fa': 'تحرک و انعطاف',
-          'score': 62.0,
-          'quality': 'range_estimate',
-          'decision_state': 'covered',
-          'decision_reason': 'دلیل تست',
-        },
-        {
-          'axis': 7,
-          'name_fa': 'پایداری مرکز',
-          'score': 32.0,
-          'quality': 'interpolated',
-          'decision_state': 'direct',
-          'decision_reason': 'دلیل تست',
-        },
-        {
-          'axis': 12,
-          'name_fa': 'بازیابی و مدیریت بار',
-          'score': null,
-          'quality': 'missing',
-          'decision_state': 'unknown',
-          'decision_reason': 'نامعلوم، نه صفر',
-        },
-      ],
-    };
+  'assessment_id': 1,
+  'axes': [
+    {
+      'axis': 1,
+      'name_fa': 'تحرک و انعطاف',
+      'score': 62.0,
+      'quality': 'range_estimate',
+      'decision_state': 'covered',
+      'decision_reason': 'دلیل تست',
+    },
+    {
+      'axis': 7,
+      'name_fa': 'پایداری مرکز',
+      'score': 32.0,
+      'quality': 'interpolated',
+      'decision_state': 'direct',
+      'decision_reason': 'دلیل تست',
+    },
+    {
+      'axis': 12,
+      'name_fa': 'بازیابی و مدیریت بار',
+      'score': null,
+      'quality': 'missing',
+      'decision_state': 'unknown',
+      'decision_reason': 'نامعلوم، نه صفر',
+    },
+  ],
+};
 
-Widget _wrap(Widget child, {List<Override> overrides = const []}) => ProviderScope(
+Widget _wrap(Widget child, {List<Override> overrides = const []}) =>
+    ProviderScope(
       overrides: overrides,
       child: MaterialApp(
         home: Scaffold(
@@ -48,22 +49,33 @@ Widget _wrap(Widget child, {List<Override> overrides = const []}) => ProviderSco
     );
 
 void main() {
-  testWidgets('empty state shows prompt when no assessment exists', (tester) async {
-    await tester.pumpWidget(_wrap(
-      const Assessment14Page(),
-      overrides: [axisMatrixProvider.overrideWith((ref) async => null)],
-    ));
+  testWidgets('empty state shows prompt when no assessment exists', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _wrap(
+        const Assessment14Page(),
+        overrides: [axisMatrixProvider.overrideWith((ref) async => null)],
+      ),
+    );
     await tester.pumpAndSettle();
-    expect(find.text('هنوز ارزیابی ثبت نشده است — اولین آزمون خود را ثبت کنید'), findsOneWidget);
+    expect(
+      find.text('هنوز ارزیابی ثبت نشده است — اولین آزمون خود را ثبت کنید'),
+      findsOneWidget,
+    );
   });
 
-  testWidgets('matrix renders axes with scores, dashes and decision chips', (tester) async {
-    await tester.pumpWidget(_wrap(
-      const Assessment14Page(),
-      overrides: [
-        axisMatrixProvider.overrideWith((ref) async => _fakeMatrix()),
-      ],
-    ));
+  testWidgets('matrix renders axes with scores, dashes and decision chips', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _wrap(
+        const Assessment14Page(),
+        overrides: [
+          axisMatrixProvider.overrideWith((ref) async => _fakeMatrix()),
+        ],
+      ),
+    );
     await tester.pumpAndSettle();
 
     expect(find.text('ماتریس ۱۴ توانایی'), findsOneWidget);
@@ -82,18 +94,20 @@ void main() {
 
   testWidgets('submitting a test posts data and confirms', (tester) async {
     List<Map<String, dynamic>>? captured;
-    await tester.pumpWidget(_wrap(
-      const Assessment14Page(),
-      overrides: [
-        axisMatrixProvider.overrideWith((ref) async => null),
-        submitAxisTestsProvider.overrideWith((ref) {
-          return (tests) async {
-            captured = tests;
-            return true;
-          };
-        }),
-      ],
-    ));
+    await tester.pumpWidget(
+      _wrap(
+        const Assessment14Page(),
+        overrides: [
+          axisMatrixProvider.overrideWith((ref) async => null),
+          submitAxisTestsProvider.overrideWith((ref) {
+            return (tests) async {
+              captured = tests;
+              return true;
+            };
+          }),
+        ],
+      ),
+    );
     await tester.pumpAndSettle();
 
     await tester.tap(find.byType(DropdownButtonFormField<String>));
@@ -112,10 +126,12 @@ void main() {
   });
 
   testWidgets('invalid submit shows validation message', (tester) async {
-    await tester.pumpWidget(_wrap(
-      const Assessment14Page(),
-      overrides: [axisMatrixProvider.overrideWith((ref) async => null)],
-    ));
+    await tester.pumpWidget(
+      _wrap(
+        const Assessment14Page(),
+        overrides: [axisMatrixProvider.overrideWith((ref) async => null)],
+      ),
+    );
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('ثبت آزمون'));

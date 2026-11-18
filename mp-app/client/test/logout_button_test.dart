@@ -26,11 +26,20 @@ class _FakeClient extends http.BaseClient {
     final path = request.url.path.replaceFirst('/api/v1', '');
     calls.add('${request.method} $path');
     final payload = path == '/members/me'
-        ? {'id': 3, 'full_name': 'عضو تست', 'phone': '09350000001', 'goal': 'strength'}
+        ? {
+            'id': 3,
+            'full_name': 'عضو تست',
+            'phone': '09350000001',
+            'goal': 'strength',
+          }
         : <String, dynamic>{'ok': true};
     final bytes = utf8.encode(jsonEncode(payload));
-    return http.StreamedResponse(Stream.value(bytes), 200,
-        headers: {'content-type': 'application/json'}, request: request);
+    return http.StreamedResponse(
+      Stream.value(bytes),
+      200,
+      headers: {'content-type': 'application/json'},
+      request: request,
+    );
   }
 }
 
@@ -42,29 +51,37 @@ void main() {
     });
   });
 
-  testWidgets('دکمهٔ خروج وجود دارد، تأیید می‌گیرد و توکن را پاک می‌کند', (tester) async {
+  testWidgets('دکمهٔ خروج وجود دارد، تأیید می‌گیرد و توکن را پاک می‌کند', (
+    tester,
+  ) async {
     final client = _FakeClient();
     final api = ApiClient(httpClient: client)..accessToken = 'access-1';
     final auth = AuthController(api, refreshToken: 'refresh-1');
     await auth.restore();
 
-    await tester.pumpWidget(ProviderScope(
-      overrides: [
-        httpClientProvider.overrideWithValue(client),
-        authProvider.overrideWith((ref) => auth),
-      ],
-      child: MaterialApp(
-        theme: mpTheme(),
-        home: const Directionality(
-          textDirection: TextDirection.rtl,
-          child: Scaffold(body: ProfilePage()),
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          httpClientProvider.overrideWithValue(client),
+          authProvider.overrideWith((ref) => auth),
+        ],
+        child: MaterialApp(
+          theme: mpTheme(),
+          home: const Directionality(
+            textDirection: TextDirection.rtl,
+            child: Scaffold(body: ProfilePage()),
+          ),
         ),
       ),
-    ));
+    );
     await tester.pumpAndSettle();
 
     final button = find.text('خروج از حساب');
-    expect(button, findsOneWidget, reason: 'بدون این دکمه، کاربر هیچ راه خروجی ندارد');
+    expect(
+      button,
+      findsOneWidget,
+      reason: 'بدون این دکمه، کاربر هیچ راه خروجی ندارد',
+    );
 
     await tester.tap(button);
     await tester.pumpAndSettle();
@@ -73,7 +90,10 @@ void main() {
     expect(find.text('انصراف'), findsOneWidget);
     await tester.tap(find.text('انصراف'));
     await tester.pumpAndSettle();
-    expect(await (await SharedPreferences.getInstance()).getString('mp_token'), 'access-1');
+    expect(
+      await (await SharedPreferences.getInstance()).getString('mp_token'),
+      'access-1',
+    );
 
     // این بار تأیید
     await tester.tap(button);
@@ -85,7 +105,10 @@ void main() {
     final prefs = await SharedPreferences.getInstance();
     expect(prefs.getString('mp_token'), isNull);
     expect(prefs.getString('mp_refresh'), isNull);
-    expect(client.calls.contains('POST /auth/logout'), isTrue,
-        reason: 'نشست سمت سرور هم باید بسته شود');
+    expect(
+      client.calls.contains('POST /auth/logout'),
+      isTrue,
+      reason: 'نشست سمت سرور هم باید بسته شود',
+    );
   });
 }

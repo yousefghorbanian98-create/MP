@@ -23,25 +23,36 @@ class NutritionPage extends ConsumerWidget {
         children: [
           plan.when(
             loading: () => const Center(
-                child: Padding(
-              padding: EdgeInsets.all(40),
-              child: CircularProgressIndicator(),
-            )),
-            error: (e, _) => GlassCard(
-                child: Text('خطا: $e', textAlign: TextAlign.center)),
+              child: Padding(
+                padding: EdgeInsets.all(40),
+                child: CircularProgressIndicator(),
+              ),
+            ),
+            error: (e, _) =>
+                GlassCard(child: Text('خطا: $e', textAlign: TextAlign.center)),
             data: (p) {
               if (p == null) {
                 return GlassCard(
                   child: Column(
                     children: [
-                      const Icon(Icons.restaurant, size: 44, color: MpColors.accent),
+                      const Icon(
+                        Icons.restaurant,
+                        size: 44,
+                        color: MpColors.accent,
+                      ),
                       const SizedBox(height: 10),
-                      const Text('برنامهٔ غذایی ندارید',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold)),
+                      const Text(
+                        'برنامهٔ غذایی ندارید',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       const SizedBox(height: 6),
-                      Text('در جریان ساخت برنامه، تغذیه هم محاسبه می‌شود',
-                          style: TextStyle(color: MpColors.textSecondary)),
+                      Text(
+                        'در جریان ساخت برنامه، تغذیه هم محاسبه می‌شود',
+                        style: TextStyle(color: MpColors.textSecondary),
+                      ),
                     ],
                   ),
                 );
@@ -52,12 +63,18 @@ class NutritionPage extends ConsumerWidget {
                   GlassCard(
                     child: Column(
                       children: [
-                        Text('کالری روزانه',
-                            style: TextStyle(color: MpColors.textSecondary)),
+                        Text(
+                          'کالری روزانه',
+                          style: TextStyle(color: MpColors.textSecondary),
+                        ),
                         const SizedBox(height: 6),
-                        Text('$kcal کیلوکالری',
-                            style: const TextStyle(
-                                fontSize: 30, fontWeight: FontWeight.w900)),
+                        Text(
+                          '$kcal کیلوکالری',
+                          style: const TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -74,8 +91,10 @@ class NutritionPage extends ConsumerWidget {
                   if ((p['llm_explanation'] as String? ?? '').isNotEmpty) ...[
                     const SizedBox(height: 12),
                     GlassCard(
-                      child: Text(p['llm_explanation'] as String,
-                          style: const TextStyle(height: 1.8)),
+                      child: Text(
+                        p['llm_explanation'] as String,
+                        style: const TextStyle(height: 1.8),
+                      ),
                     ),
                   ],
                 ],
@@ -97,11 +116,19 @@ class NutritionPage extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(vertical: 14),
         child: Column(
           children: [
-            Text('$grams گرم',
-                style: TextStyle(
-                    fontSize: 18, fontWeight: FontWeight.bold, color: color)),
+            Text(
+              '$grams گرم',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
+            ),
             const SizedBox(height: 4),
-            Text(label, style: TextStyle(fontSize: 12, color: MpColors.textSecondary)),
+            Text(
+              label,
+              style: TextStyle(fontSize: 12, color: MpColors.textSecondary),
+            ),
           ],
         ),
       ),
@@ -111,22 +138,28 @@ class NutritionPage extends ConsumerWidget {
 
 /// مقدار ورودی با رقم فارسی/عربی یا لاتین؛ محدودیت endpoint هم رعایت می‌شود.
 double? parseFoodLogGrams(String raw) {
-  var normalized = raw.trim().replaceAll(',', '').replaceAll('٬', '').replaceAll('٫', '.');
+  var normalized = raw
+      .trim()
+      .replaceAll(',', '')
+      .replaceAll('٬', '')
+      .replaceAll('٫', '.');
   normalized = normalized.replaceAllMapped(RegExp(r'[۰-۹٠-٩]'), (match) {
     final code = match.group(0)!.codeUnitAt(0);
     final digit = code >= 0x06F0 && code <= 0x06F9
         ? code - 0x06F0
         : code >= 0x0660 && code <= 0x0669
-            ? code - 0x0660
-            : null;
+        ? code - 0x0660
+        : null;
     return digit?.toString() ?? match.group(0)!;
   });
   final value = double.tryParse(normalized);
-  if (value == null || !value.isFinite || value <= 0 || value > 5000) return null;
+  if (value == null || !value.isFinite || value <= 0 || value > 5000)
+    return null;
   return value;
 }
 
-String _persianDigits(String value) => value.replaceAllMapped(RegExp(r'\d'), (match) {
+String _persianDigits(String value) =>
+    value.replaceAllMapped(RegExp(r'\d'), (match) {
       return '۰۱۲۳۴۵۶۷۸۹'[int.parse(match.group(0)!)];
     });
 
@@ -143,12 +176,12 @@ String _dateKey(DateTime date) =>
     '${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
 
 String _mealName(dynamic slot) => switch (slot) {
-      'breakfast' => 'صبحانه',
-      'lunch' => 'ناهار',
-      'dinner' => 'شام',
-      'snack' => 'میان‌وعده',
-      _ => 'وعدهٔ نامشخص',
-    };
+  'breakfast' => 'صبحانه',
+  'lunch' => 'ناهار',
+  'dinner' => 'شام',
+  'snack' => 'میان‌وعده',
+  _ => 'وعدهٔ نامشخص',
+};
 
 class _DailyFoodLog extends ConsumerStatefulWidget {
   const _DailyFoodLog();
@@ -201,17 +234,20 @@ class _DailyFoodLogState extends ConsumerState<_DailyFoodLog> {
 
     setState(() => _saving = true);
     try {
-      final response = await ref.read(apiClientProvider).post('/nutrition/food-logs', {
-        'member_id': memberId,
-        'entries': [
-          {
-            'food_id': food['id'],
-            'grams': grams,
-            'meal_slot': _mealSlot,
-            'logged_for_date': day,
-          }
-        ],
-      });
+      final response = await ref.read(apiClientProvider).post(
+        '/nutrition/food-logs',
+        {
+          'member_id': memberId,
+          'entries': [
+            {
+              'food_id': food['id'],
+              'grams': grams,
+              'meal_slot': _mealSlot,
+              'logged_for_date': day,
+            },
+          ],
+        },
+      );
       if (response is! Map) {
         throw const FormatException('پاسخ ثبت خوراکی نامعتبر است');
       }
@@ -224,9 +260,17 @@ class _DailyFoodLogState extends ConsumerState<_DailyFoodLog> {
           _selectedFood = null;
           _gramsController.clear();
         });
-        _notify(result['reason'] is String ? result['reason'] as String : 'وعده ثبت شد');
+        _notify(
+          result['reason'] is String
+              ? result['reason'] as String
+              : 'وعده ثبت شد',
+        );
       } else {
-        _notify(result['reason'] is String ? result['reason'] as String : 'وعده ثبت نشد');
+        _notify(
+          result['reason'] is String
+              ? result['reason'] as String
+              : 'وعده ثبت نشد',
+        );
       }
     } on ApiException catch (error) {
       _notify('ثبت انجام نشد: ${error.message}');
@@ -238,7 +282,8 @@ class _DailyFoodLogState extends ConsumerState<_DailyFoodLog> {
   }
 
   void _notify(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -246,11 +291,16 @@ class _DailyFoodLogState extends ConsumerState<_DailyFoodLog> {
     final memberId = ref.watch(authProvider).memberId;
     if (memberId == null) {
       return const GlassCard(
-        child: Text('برای دیدن و ثبت غذای روزانه، نشست عضو لازم است.', textAlign: TextAlign.center),
+        child: Text(
+          'برای دیدن و ثبت غذای روزانه، نشست عضو لازم است.',
+          textAlign: TextAlign.center,
+        ),
       );
     }
 
-    final day = _dateKey(DateTime.now()); // تاریخ محلی؛ قرارداد food_logs هم محلی است.
+    final day = _dateKey(
+      DateTime.now(),
+    ); // تاریخ محلی؛ قرارداد food_logs هم محلی است.
     final dailyKey = (memberId: memberId, date: day);
     final daily = ref.watch(foodLogDailyProvider(dailyKey));
     final search = ref.watch(foodSearchProvider(_searchQuery ?? ''));
@@ -264,12 +314,18 @@ class _DailyFoodLogState extends ConsumerState<_DailyFoodLog> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Text('ثبت غذای امروز',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+              const Text(
+                'ثبت غذای امروز',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+              ),
               const SizedBox(height: 4),
               Text(
                 'منبع: Food Finder (MIT)؛ مقدارها برای هر ۱۰۰ گرم‌اند. چربی در منبع مستقیم نیست و در دفتر روزانه نمایش داده نمی‌شود.',
-                style: TextStyle(color: MpColors.textSecondary, height: 1.6, fontSize: 11),
+                style: TextStyle(
+                  color: MpColors.textSecondary,
+                  height: 1.6,
+                  fontSize: 11,
+                ),
               ),
               const SizedBox(height: 12),
               TextField(
@@ -308,9 +364,8 @@ class _DailyFoodLogState extends ConsumerState<_DailyFoodLog> {
     ({int memberId, String date}) key,
   ) {
     return daily.when(
-      loading: () => const GlassCard(
-        child: Center(child: CircularProgressIndicator()),
-      ),
+      loading: () =>
+          const GlassCard(child: Center(child: CircularProgressIndicator())),
       error: (_, __) => GlassCard(
         child: Column(
           children: [
@@ -328,18 +383,26 @@ class _DailyFoodLogState extends ConsumerState<_DailyFoodLog> {
           return GlassCard(
             child: Column(
               children: [
-                const Text('مصرف امروز هنوز ثبت نشده است',
-                    style: TextStyle(fontWeight: FontWeight.w800)),
+                const Text(
+                  'مصرف امروز هنوز ثبت نشده است',
+                  style: TextStyle(fontWeight: FontWeight.w800),
+                ),
                 const SizedBox(height: 4),
-                Text('صفر یعنی «ثبت نشده»، نه اینکه چیزی نخورده‌اید.',
-                    style: TextStyle(color: MpColors.textSecondary)),
+                Text(
+                  'صفر یعنی «ثبت نشده»، نه اینکه چیزی نخورده‌اید.',
+                  style: TextStyle(color: MpColors.textSecondary),
+                ),
               ],
             ),
           );
         }
-        if (data['data_state'] != 'logged' || data['totals'] is! Map || data['items'] is! List) {
+        if (data['data_state'] != 'logged' ||
+            data['totals'] is! Map ||
+            data['items'] is! List) {
           return const GlassCard(
-            child: Text('پاسخ دفتر غذای روزانه قابل‌تأیید نیست؛ جمعی نمایش داده نشد.'),
+            child: Text(
+              'پاسخ دفتر غذای روزانه قابل‌تأیید نیست؛ جمعی نمایش داده نشد.',
+            ),
           );
         }
 
@@ -361,12 +424,19 @@ class _DailyFoodLogState extends ConsumerState<_DailyFoodLog> {
             GlassCard(
               child: Column(
                 children: [
-                  Text('جمع ثبت‌شدهٔ امروز',
-                      style: TextStyle(color: MpColors.textSecondary)),
+                  Text(
+                    'جمع ثبت‌شدهٔ امروز',
+                    style: TextStyle(color: MpColors.textSecondary),
+                  ),
                   const SizedBox(height: 5),
-                  Text('${_numberText(totals['kcal'])} کیلوکالری',
-                      key: const Key('food-daily-kcal'),
-                      style: const TextStyle(fontSize: 25, fontWeight: FontWeight.w900)),
+                  Text(
+                    '${_numberText(totals['kcal'])} کیلوکالری',
+                    key: const Key('food-daily-kcal'),
+                    style: const TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
                   const SizedBox(height: 6),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -390,7 +460,9 @@ class _DailyFoodLogState extends ConsumerState<_DailyFoodLog> {
   }
 
   Widget _loggedItem(Map<String, dynamic> item) {
-    final name = item['name_fa'] is String ? item['name_fa'] as String : 'نام غذا نامعلوم';
+    final name = item['name_fa'] is String
+        ? item['name_fa'] as String
+        : 'نام غذا نامعلوم';
     final warning = item['warning'] is String ? item['warning'] as String : '';
     return GlassCard(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
@@ -405,7 +477,10 @@ class _DailyFoodLogState extends ConsumerState<_DailyFoodLog> {
           ),
           if (warning.isNotEmpty) ...[
             const SizedBox(height: 4),
-            Text(warning, style: TextStyle(color: MpColors.accent, fontSize: 11)),
+            Text(
+              warning,
+              style: TextStyle(color: MpColors.accent, fontSize: 11),
+            ),
           ],
         ],
       ),
@@ -418,7 +493,8 @@ class _DailyFoodLogState extends ConsumerState<_DailyFoodLog> {
         padding: EdgeInsets.all(12),
         child: Center(child: CircularProgressIndicator()),
       ),
-      error: (_, __) => const Text('جست‌وجوی کاتالوگ انجام نشد؛ بعداً دوباره تلاش کنید.'),
+      error: (_, __) =>
+          const Text('جست‌وجوی کاتالوگ انجام نشد؛ بعداً دوباره تلاش کنید.'),
       data: (rows) {
         if (rows.isEmpty) {
           return const Text('موردی در کاتالوگ با این نام پیدا نشد.');
@@ -428,7 +504,10 @@ class _DailyFoodLogState extends ConsumerState<_DailyFoodLog> {
             for (final food in rows) ...[
               const SizedBox(height: 6),
               GlassCard(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
                 child: Row(
                   children: [
                     Expanded(
@@ -436,16 +515,26 @@ class _DailyFoodLogState extends ConsumerState<_DailyFoodLog> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            food['name_fa'] is String ? food['name_fa'] as String : 'نام نامعلوم',
+                            food['name_fa'] is String
+                                ? food['name_fa'] as String
+                                : 'نام نامعلوم',
                             style: const TextStyle(fontWeight: FontWeight.w700),
                           ),
                           Text(
                             '${food['category'] ?? 'دسته نامعلوم'} · ${_numberText(food['kcal_per_100g'])} کیلوکالری در ۱۰۰ گرم',
-                            style: TextStyle(color: MpColors.textSecondary, fontSize: 11),
+                            style: TextStyle(
+                              color: MpColors.textSecondary,
+                              fontSize: 11,
+                            ),
                           ),
                           if (food['dry_or_raw'] == true)
-                            Text('وزن خشک/خام؛ مقدار پخته را با این ردیف یکی نگیرید.',
-                                style: TextStyle(color: MpColors.accent, fontSize: 11)),
+                            Text(
+                              'وزن خشک/خام؛ مقدار پخته را با این ردیف یکی نگیرید.',
+                              style: TextStyle(
+                                color: MpColors.accent,
+                                fontSize: 11,
+                              ),
+                            ),
                         ],
                       ),
                     ),
@@ -468,11 +557,16 @@ class _DailyFoodLogState extends ConsumerState<_DailyFoodLog> {
 
   Widget _selectedFoodForm(int memberId, String day) {
     final food = _selectedFood!;
-    final name = food['name_fa'] is String ? food['name_fa'] as String : 'غذای انتخاب‌شده';
+    final name = food['name_fa'] is String
+        ? food['name_fa'] as String
+        : 'غذای انتخاب‌شده';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text('انتخاب‌شده: $name', style: const TextStyle(fontWeight: FontWeight.w700)),
+        Text(
+          'انتخاب‌شده: $name',
+          style: const TextStyle(fontWeight: FontWeight.w700),
+        ),
         const SizedBox(height: 8),
         TextField(
           key: const Key('food-grams-field'),
@@ -503,7 +597,11 @@ class _DailyFoodLogState extends ConsumerState<_DailyFoodLog> {
           key: const Key('food-log-save'),
           onPressed: _saving ? null : () => _save(memberId, day),
           icon: _saving
-              ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator())
+              ? const SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: CircularProgressIndicator(),
+                )
               : const Icon(Icons.add),
           label: Text(_saving ? 'در حال ثبت…' : 'ثبت وعده'),
         ),

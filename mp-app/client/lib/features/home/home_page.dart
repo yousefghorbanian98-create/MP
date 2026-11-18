@@ -48,14 +48,21 @@ class _HomePageState extends State<HomePage> {
                   onTap: () => context.push('/profile'),
                   child: const Padding(
                     padding: EdgeInsets.all(11),
-                    child: Icon(Icons.person_outline, color: MpColors.primaryLight, size: 24),
+                    child: Icon(
+                      Icons.person_outline,
+                      color: MpColors.primaryLight,
+                      size: 24,
+                    ),
                   ),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 16),
-          const _SubscriptionBanner().animate().fadeIn(duration: 450.ms).slideY(begin: -0.12),
+          const _SubscriptionBanner()
+              .animate()
+              .fadeIn(duration: 450.ms)
+              .slideY(begin: -0.12),
           const SizedBox(height: 20),
           Text(
             'بخش‌ها',
@@ -66,7 +73,10 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           const SizedBox(height: 12),
-          const _SectionsGrid().animate().fadeIn(delay: 120.ms, duration: 450.ms),
+          const _SectionsGrid().animate().fadeIn(
+            delay: 120.ms,
+            duration: 450.ms,
+          ),
           const SizedBox(height: 20),
           _QuickCheckInCard(onTap: () => context.push('/checkin'))
               .animate()
@@ -96,20 +106,34 @@ class _NotificationsButton extends ConsumerWidget {
           child: Stack(
             children: [
               const Center(
-                child: Icon(Icons.notifications_outlined, color: MpColors.primaryLight, size: 24),
+                child: Icon(
+                  Icons.notifications_outlined,
+                  color: MpColors.primaryLight,
+                  size: 24,
+                ),
               ),
               if (count > 0)
                 Positioned(
                   top: 3,
                   right: 3,
                   child: Container(
-                    constraints: const BoxConstraints(minWidth: 17, minHeight: 17),
+                    constraints: const BoxConstraints(
+                      minWidth: 17,
+                      minHeight: 17,
+                    ),
                     padding: const EdgeInsets.symmetric(horizontal: 4),
-                    decoration: const BoxDecoration(color: MpColors.danger, shape: BoxShape.circle),
+                    decoration: const BoxDecoration(
+                      color: MpColors.danger,
+                      shape: BoxShape.circle,
+                    ),
                     alignment: Alignment.center,
                     child: Text(
                       count > 9 ? '۹+' : _toPersianDigits('$count'),
-                      style: const TextStyle(color: Colors.white, fontSize: 9, height: 1),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 9,
+                        height: 1,
+                      ),
                     ),
                   ),
                 ),
@@ -134,7 +158,10 @@ class _SearchBar extends StatelessWidget {
       curve: Curves.easeOutCubic,
       builder: (context, t, child) => Opacity(
         opacity: t,
-        child: Transform.translate(offset: Offset(0, 12 * (1 - t)), child: child),
+        child: Transform.translate(
+          offset: Offset(0, 12 * (1 - t)),
+          child: child,
+        ),
       ),
       child: TextField(
         controller: controller,
@@ -187,29 +214,29 @@ class _SubscriptionBanner extends ConsumerWidget {
             : '${summary.daysRemaining} روز باقی‌مانده';
         final (title, body, color, icon) = switch (summary.status) {
           MembershipDisplayStatus.active => (
-              'اشتراک فعال',
-              '${membership?['plan_name'] ?? 'پلن باشگاه'} · $expiryLabel · $daysText',
-              MpColors.primary,
-              Icons.verified_outlined,
-            ),
+            'اشتراک فعال',
+            '${membership?['plan_name'] ?? 'پلن باشگاه'} · $expiryLabel · $daysText',
+            MpColors.primary,
+            Icons.verified_outlined,
+          ),
           MembershipDisplayStatus.expired => (
-              'اشتراک منقضی شده',
-              '$expiryLabel · برای تمدید، با پذیرش باشگاه در ارتباط باشید.',
-              MpColors.accent,
-              Icons.info_outline,
-            ),
+            'اشتراک منقضی شده',
+            '$expiryLabel · برای تمدید، با پذیرش باشگاه در ارتباط باشید.',
+            MpColors.accent,
+            Icons.info_outline,
+          ),
           MembershipDisplayStatus.none => (
-              'اشتراک فعالی ندارید',
-              'برای فعال‌سازی یا تمدید، با پذیرش باشگاه در ارتباط باشید.',
-              MpColors.accent,
-              Icons.info_outline,
-            ),
+            'اشتراک فعالی ندارید',
+            'برای فعال‌سازی یا تمدید، با پذیرش باشگاه در ارتباط باشید.',
+            MpColors.accent,
+            Icons.info_outline,
+          ),
           MembershipDisplayStatus.unknown => (
-              'وضعیت اشتراک نامعلوم',
-              'تاریخ پایان از دادهٔ دریافتی قابل‌تأیید نیست؛ با پذیرش باشگاه تماس بگیرید.',
-              MpColors.accent,
-              Icons.help_outline,
-            ),
+            'وضعیت اشتراک نامعلوم',
+            'تاریخ پایان از دادهٔ دریافتی قابل‌تأیید نیست؛ با پذیرش باشگاه تماس بگیرید.',
+            MpColors.accent,
+            Icons.help_outline,
+          ),
         };
         return TweenAnimationBuilder<double>(
           tween: Tween(begin: 0, end: 1),
@@ -217,7 +244,10 @@ class _SubscriptionBanner extends ConsumerWidget {
           curve: Curves.easeOutCubic,
           builder: (context, t, child) => Opacity(
             opacity: t,
-            child: Transform.translate(offset: Offset(0, 16 * (1 - t)), child: child),
+            child: Transform.translate(
+              offset: Offset(0, 16 * (1 - t)),
+              child: child,
+            ),
           ),
           child: GlassCard(
             padding: const EdgeInsets.all(18),
@@ -244,13 +274,19 @@ class _SubscriptionBanner extends ConsumerWidget {
                       Text(
                         title,
                         style: const TextStyle(
-                            fontSize: 15, fontWeight: FontWeight.w800, color: MpColors.textPrimary),
+                          fontSize: 15,
+                          fontWeight: FontWeight.w800,
+                          color: MpColors.textPrimary,
+                        ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         body,
                         style: TextStyle(
-                            fontSize: 12, color: MpColors.textSecondary, height: 1.6),
+                          fontSize: 12,
+                          color: MpColors.textSecondary,
+                          height: 1.6,
+                        ),
                       ),
                     ],
                   ),
@@ -265,9 +301,9 @@ class _SubscriptionBanner extends ConsumerWidget {
 }
 
 String _toPersianDigits(String value) => value.replaceAllMapped(
-      RegExp(r'\d'),
-      (match) => '۰۱۲۳۴۵۶۷۸۹'[int.parse(match.group(0)!)],
-    );
+  RegExp(r'\d'),
+  (match) => '۰۱۲۳۴۵۶۷۸۹'[int.parse(match.group(0)!)],
+);
 
 class _SectionItem {
   const _SectionItem(this.label, this.icon, this.gradient, this.route);
@@ -282,15 +318,42 @@ class _SectionsGrid extends StatelessWidget {
   const _SectionsGrid();
 
   static const _items = <_SectionItem>[
-    _SectionItem('برنامهٔ اختصاصی من', Icons.fitness_center, [Color(0xFF00B86A), Color(0xFF00995A)], '/intake'),
-    _SectionItem('پیکرسنجی', Icons.show_chart, [Color(0xFF38BDF8), Color(0xFF0EA5E9)], '/bodycomp'),
-    _SectionItem('تغذیه', Icons.restaurant, [Color(0xFFF59E0B), Color(0xFFD97706)], '/nutrition'),
-    _SectionItem('چک‌این', Icons.qr_code, [Color(0xFF34D399), Color(0xFF059669)], '/checkin'),
-    _SectionItem('کیف پول', Icons.account_balance_wallet, [Color(0xFF8B5CF6), Color(0xFF7C3AED)], '/wallet'),
-    _SectionItem('پیشرفت', Icons.trending_up, [Color(0xFFF472B6), Color(0xFFEC4899)], '/progress'),
-    _SectionItem('کلاس‌ها', Icons.groups, [Color(0xFFF87171), Color(0xFFEF4444)], '/classes'),
-    _SectionItem('گفتگو با مربی', Icons.forum_outlined, [Color(0xFF34D399), Color(0xFF059669)], '/chat'),
-    _SectionItem('فروشگاه', Icons.storefront, [Color(0xFFA3E635), Color(0xFF84CC16)], '/shop'),
+    _SectionItem('برنامهٔ اختصاصی من', Icons.fitness_center, [
+      Color(0xFF00B86A),
+      Color(0xFF00995A),
+    ], '/intake'),
+    _SectionItem('پیکرسنجی', Icons.show_chart, [
+      Color(0xFF38BDF8),
+      Color(0xFF0EA5E9),
+    ], '/bodycomp'),
+    _SectionItem('تغذیه', Icons.restaurant, [
+      Color(0xFFF59E0B),
+      Color(0xFFD97706),
+    ], '/nutrition'),
+    _SectionItem('چک‌این', Icons.qr_code, [
+      Color(0xFF34D399),
+      Color(0xFF059669),
+    ], '/checkin'),
+    _SectionItem('کیف پول', Icons.account_balance_wallet, [
+      Color(0xFF8B5CF6),
+      Color(0xFF7C3AED),
+    ], '/wallet'),
+    _SectionItem('پیشرفت', Icons.trending_up, [
+      Color(0xFFF472B6),
+      Color(0xFFEC4899),
+    ], '/progress'),
+    _SectionItem('کلاس‌ها', Icons.groups, [
+      Color(0xFFF87171),
+      Color(0xFFEF4444),
+    ], '/classes'),
+    _SectionItem('گفتگو با مربی', Icons.forum_outlined, [
+      Color(0xFF34D399),
+      Color(0xFF059669),
+    ], '/chat'),
+    _SectionItem('فروشگاه', Icons.storefront, [
+      Color(0xFFA3E635),
+      Color(0xFF84CC16),
+    ], '/shop'),
   ];
 
   @override
@@ -314,7 +377,11 @@ class _SectionsGrid extends StatelessWidget {
 }
 
 class _GridTile extends StatefulWidget {
-  const _GridTile({required this.item, required this.size, required this.index});
+  const _GridTile({
+    required this.item,
+    required this.size,
+    required this.index,
+  });
 
   final _SectionItem item;
   final double size;
@@ -337,7 +404,10 @@ class _GridTileState extends State<_GridTile> {
       curve: Curves.easeOutCubic,
       builder: (context, t, child) => Opacity(
         opacity: t,
-        child: Transform.translate(offset: Offset(0, 14 * (1 - t)), child: child),
+        child: Transform.translate(
+          offset: Offset(0, 14 * (1 - t)),
+          child: child,
+        ),
       ),
       child: GestureDetector(
         onTapDown: (_) => setState(() => _pressed = true),
@@ -376,7 +446,11 @@ class _GridTileState extends State<_GridTile> {
                 Text(
                   item.label,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 11.5, color: MpColors.textPrimary, fontWeight: FontWeight.w600),
+                  style: const TextStyle(
+                    fontSize: 11.5,
+                    color: MpColors.textPrimary,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ],
             ),
@@ -400,7 +474,11 @@ class _QuickCheckInCard extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
         child: Row(
           children: [
-            const Icon(Icons.qr_code_scanner, color: MpColors.primary, size: 28),
+            const Icon(
+              Icons.qr_code_scanner,
+              color: MpColors.primary,
+              size: 28,
+            ),
             const SizedBox(width: 14),
             Expanded(
               child: Column(
@@ -408,12 +486,19 @@ class _QuickCheckInCard extends StatelessWidget {
                 children: const [
                   Text(
                     'چک‌این سریع',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: MpColors.textPrimary),
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w800,
+                      color: MpColors.textPrimary,
+                    ),
                   ),
                   SizedBox(height: 2),
                   Text(
                     'ورود به باشگاه با QR — بدون صف',
-                    style: TextStyle(fontSize: 12, color: MpColors.textSecondary),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: MpColors.textSecondary,
+                    ),
                   ),
                 ],
               ),

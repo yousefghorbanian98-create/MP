@@ -40,15 +40,21 @@ class _ClassesClient extends http.BaseClient {
           'waitlisted': 0,
           'member_booking_status': hasBooking ? 'confirmed' : null,
           'member_booking_name': hasBooking ? 'سارا از پایگاه داده' : null,
-        }
+        },
       ];
     } else if (request.method == 'POST' && path == '/classes/book') {
-      bookBody = jsonDecode((request as http.Request).body) as Map<String, dynamic>;
+      bookBody =
+          jsonDecode((request as http.Request).body) as Map<String, dynamic>;
       booked = true;
       cancelled = false;
-      payload = {'id': 19, 'status': 'confirmed', 'member_name': 'سارا از پایگاه داده'};
+      payload = {
+        'id': 19,
+        'status': 'confirmed',
+        'member_name': 'سارا از پایگاه داده',
+      };
     } else if (request.method == 'POST' && path == '/classes/cancel') {
-      cancelBody = jsonDecode((request as http.Request).body) as Map<String, dynamic>;
+      cancelBody =
+          jsonDecode((request as http.Request).body) as Map<String, dynamic>;
       cancelled = true;
       payload = {'id': 20, 'status': 'cancelled'};
     } else {
@@ -67,52 +73,68 @@ class _ClassesClient extends http.BaseClient {
 }
 
 Widget _wrap(http.Client client, {RecordingHaptics? haptics}) => ProviderScope(
-      overrides: [
-        if (haptics != null) hapticsProvider.overrideWith((ref) => haptics),
-        httpClientProvider.overrideWithValue(client),
-        authProvider.overrideWith(
-          (ref) => AuthController.test(
-            AuthState(accessToken: 'test-token', memberId: 3, userName: 'عضو تست'),
-          ),
-        ),
-      ],
-      child: MaterialApp(
-        theme: mpTheme(),
-        home: const Directionality(
-          textDirection: TextDirection.rtl,
-          child: Scaffold(body: ClassesPage()),
-        ),
+  overrides: [
+    if (haptics != null) hapticsProvider.overrideWith((ref) => haptics),
+    httpClientProvider.overrideWithValue(client),
+    authProvider.overrideWith(
+      (ref) => AuthController.test(
+        AuthState(accessToken: 'test-token', memberId: 3, userName: 'عضو تست'),
       ),
-    );
+    ),
+  ],
+  child: MaterialApp(
+    theme: mpTheme(),
+    home: const Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(body: ClassesPage()),
+    ),
+  ),
+);
 
 void main() {
-  testWidgets('رزرو خود عضو را لغو و ظرفیت/وضعیت تازه را از API می‌گیرد', (tester) async {
+  testWidgets('رزرو خود عضو را لغو و ظرفیت/وضعیت تازه را از API می‌گیرد', (
+    tester,
+  ) async {
     final client = _ClassesClient();
     final haptics = RecordingHaptics();
     await tester.pumpWidget(_wrap(client, haptics: haptics));
     await tester.pumpAndSettle();
 
     expect(find.text('لغو رزرو'), findsOneWidget);
-    expect(find.textContaining('رزرو به نام سارا از پایگاه داده تأیید شده'), findsOneWidget);
+    expect(
+      find.textContaining('رزرو به نام سارا از پایگاه داده تأیید شده'),
+      findsOneWidget,
+    );
 
     await tester.ensureVisible(find.text('لغو رزرو'));
     await tester.tap(find.text('لغو رزرو'));
     await tester.pumpAndSettle();
 
     expect(client.cancelBody?['class_id'], 4);
-    expect(client.cancelBody?['member_id'], 3,
-        reason: 'member_id از نشست کاربر می‌آید، نه از انتخاب آزاد');
-    expect(client.listCalls, greaterThanOrEqualTo(2),
-        reason: 'پس از لغو باید ظرفیت و وضعیت رزرو دوباره از API خوانده شود');
+    expect(
+      client.cancelBody?['member_id'],
+      3,
+      reason: 'member_id از نشست کاربر می‌آید، نه از انتخاب آزاد',
+    );
+    expect(
+      client.listCalls,
+      greaterThanOrEqualTo(2),
+      reason: 'پس از لغو باید ظرفیت و وضعیت رزرو دوباره از API خوانده شود',
+    );
     expect(find.text('✅ رزرو لغو شد'), findsOneWidget);
     // M98/UX-G3 — لغو موفق یک پالس لمسی دارد؛ بی‌صدا «انجام شد» فقط متن است
     expect(haptics.count('success'), 1);
     expect(haptics.count('warning'), 0);
-    expect(find.textContaining('رزرو به نام سارا از پایگاه داده تأیید شده'), findsNothing);
+    expect(
+      find.textContaining('رزرو به نام سارا از پایگاه داده تأیید شده'),
+      findsNothing,
+    );
     expect(find.text('رزرو'), findsOneWidget);
   });
 
-  testWidgets('تأیید رزرو نام معتبر برگشتی از سرور را نمایش می‌دهد', (tester) async {
+  testWidgets('تأیید رزرو نام معتبر برگشتی از سرور را نمایش می‌دهد', (
+    tester,
+  ) async {
     final client = _ClassesClient(initiallyBooked: false);
     final haptics = RecordingHaptics();
     await tester.pumpWidget(_wrap(client, haptics: haptics));
@@ -124,8 +146,14 @@ void main() {
 
     expect(client.bookBody?['class_id'], 4);
     expect(client.bookBody?['member_id'], 3);
-    expect(find.text('✅ رزرو به نام سارا از پایگاه داده ثبت شد (تأییدشده)'), findsOneWidget);
+    expect(
+      find.text('✅ رزرو به نام سارا از پایگاه داده ثبت شد (تأییدشده)'),
+      findsOneWidget,
+    );
     expect(haptics.count('success'), 1);
-    expect(find.textContaining('رزرو به نام سارا از پایگاه داده تأیید شده'), findsOneWidget);
+    expect(
+      find.textContaining('رزرو به نام سارا از پایگاه داده تأیید شده'),
+      findsOneWidget,
+    );
   });
 }

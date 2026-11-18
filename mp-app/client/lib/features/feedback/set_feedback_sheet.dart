@@ -13,7 +13,11 @@ import '../../core/theme.dart';
 import 'feedback_providers.dart';
 
 class SetFeedbackSheet extends ConsumerStatefulWidget {
-  const SetFeedbackSheet({super.key, required this.movementName, this.programId});
+  const SetFeedbackSheet({
+    super.key,
+    required this.movementName,
+    this.programId,
+  });
 
   final String movementName;
   final int? programId;
@@ -80,21 +84,24 @@ class _SetFeedbackSheetState extends ConsumerState<SetFeedbackSheet> {
           // صف آفلاین = موفق نیست، فقط از دست نرفته → پالس هشدار، نه تأیید.
           haptics.warning();
           if (mounted) {
-            setState(() => _queueMessage =
-                'بازخورد ساختاریافته در دستگاه ذخیره شد و هنوز به سرور نرسیده است. درد عضلانی/یادداشت و پیشنهاد خودکار آفلاین ذخیره نمی‌شوند.');
+            setState(
+              () => _queueMessage = 'بازخورد ساختاریافته در دستگاه ذخیره شد و هنوز به سرور نرسیده است. درد عضلانی/یادداشت و پیشنهاد خودکار آفلاین ذخیره نمی‌شوند.',
+            );
           }
         } catch (_) {
           haptics.warning();
           if (mounted) {
-            setState(() => _errorMessage =
-                'شبکه در دسترس نیست و صف آفلاین Android هم آماده نیست؛ بازخورد ذخیره نشد.');
+            setState(
+              () => _errorMessage = 'شبکه در دسترس نیست و صف آفلاین Android هم آماده نیست؛ بازخورد ذخیره نشد.',
+            );
           }
         }
         return;
       }
 
       final result = await ref.read(submitSetFeedbackProvider)([entry]);
-      if (result == null) throw const FormatException('Invalid feedback response');
+      if (result == null)
+        throw const FormatException('Invalid feedback response');
       if (!mounted) return;
       haptics.success();
       ref.invalidate(readinessProvider);
@@ -102,8 +109,9 @@ class _SetFeedbackSheetState extends ConsumerState<SetFeedbackSheet> {
     } catch (_) {
       haptics.warning();
       if (mounted) {
-        setState(() => _errorMessage =
-            'ارسال بازخورد ناموفق بود. نتیجهٔ درخواست ممکن است نامشخص باشد؛ برای جلوگیری از ثبت تکراری آن را خودکار در صف نگذاشتیم. اتصال را بررسی کنید و سپس وضعیت سرور را بسنجید.');
+        setState(
+          () => _errorMessage = 'ارسال بازخورد ناموفق بود. نتیجهٔ درخواست ممکن است نامشخص باشد؛ برای جلوگیری از ثبت تکراری آن را خودکار در صف نگذاشتیم. اتصال را بررسی کنید و سپس وضعیت سرور را بسنجید.',
+        );
       }
     } finally {
       if (mounted) setState(() => _submitting = false);
@@ -135,16 +143,24 @@ class _SetFeedbackSheetState extends ConsumerState<SetFeedbackSheet> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('بازخورد ست — ${widget.movementName}',
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              Text(
+                'بازخورد ست — ${widget.movementName}',
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
               const SizedBox(height: 4),
               const Text(
-                  'RIR یعنی چند تکرار در تانک داشتید؛ درد عضلانی فردا را ۰ تا ۱۰ بسنجید',
-                  style: TextStyle(fontSize: 11, color: MpColors.textSecondary)),
+                'RIR یعنی چند تکرار در تانک داشتید؛ درد عضلانی فردا را ۰ تا ۱۰ بسنجید',
+                style: TextStyle(fontSize: 11, color: MpColors.textSecondary),
+              ),
               const SizedBox(height: 14),
               TextField(
                 controller: _weightController,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
                 decoration: const InputDecoration(
                   labelText: 'وزنه (کیلوگرم) — برای وزن بدن خالی بگذارید',
                   border: OutlineInputBorder(),
@@ -195,7 +211,10 @@ class _SetFeedbackSheetState extends ConsumerState<SetFeedbackSheet> {
                 const SizedBox(height: 12),
                 Text(
                   _queueMessage!,
-                  style: const TextStyle(color: MpColors.textSecondary, fontSize: 12),
+                  style: const TextStyle(
+                    color: MpColors.textSecondary,
+                    fontSize: 12,
+                  ),
                 ),
               ],
               if (_errorMessage != null) ...[
@@ -229,7 +248,8 @@ class _WhyCard extends StatelessWidget {
     if (applied == null) return const [];
     final weeks = applied['weeks_updated'] as int? ?? 0;
     final rows = applied['rows_changed'] as int? ?? 0;
-    final unmatched = (applied['unmatched_movements'] as List?)?.cast<String>() ?? [];
+    final unmatched =
+        (applied['unmatched_movements'] as List?)?.cast<String>() ?? [];
     if (weeks == 0) {
       return [
         Text(
@@ -250,7 +270,8 @@ class _WhyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final suggestions = (result['suggestions'] as List?)?.cast<Map<String, dynamic>>() ?? [];
+    final suggestions =
+        (result['suggestions'] as List?)?.cast<Map<String, dynamic>>() ?? [];
     if (suggestions.isEmpty) return const SizedBox.shrink();
     final s = suggestions.first;
     return Container(
@@ -268,7 +289,10 @@ class _WhyCard extends StatelessWidget {
             children: [
               Icon(Icons.help_outline, size: 18, color: MpColors.primary),
               SizedBox(width: 6),
-              Text('چرا این تغییر؟', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(
+                'چرا این تغییر؟',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
             ],
           ),
           const SizedBox(height: 8),
@@ -278,8 +302,10 @@ class _WhyCard extends StatelessWidget {
             spacing: 12,
             runSpacing: 2,
             children: [
-              Text('وزن بعد: ${s['next_weight']} (${s['weight_action']})',
-                  style: const TextStyle(fontSize: 13)),
+              Text(
+                'وزن بعد: ${s['next_weight']} (${s['weight_action']})',
+                style: const TextStyle(fontSize: 13),
+              ),
               Text(
                 s['next_sets'] == null
                     // M48-c1 — در حالت deload عدد مطلق نداریم؛ کاهش نسبت به
@@ -296,7 +322,8 @@ class _WhyCard extends StatelessWidget {
             'دلیل: ${s['reason']}',
             style: const TextStyle(fontSize: 12, color: MpColors.textSecondary),
           ),
-          if (s['volume_action'] == 'deload' && s['weight_action'] == 'increase')
+          if (s['volume_action'] == 'deload' &&
+              s['weight_action'] == 'increase')
             const Padding(
               padding: EdgeInsets.only(top: 4),
               child: Text(

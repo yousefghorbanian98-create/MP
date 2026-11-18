@@ -10,12 +10,16 @@ import '../../core/session.dart';
 
 const _walletPageSize = 20;
 
-final walletLedgerProvider = StateNotifierProvider.autoDispose<WalletLedgerController, WalletLedgerState>(
-  (ref) => WalletLedgerController(
-    api: ref.watch(apiClientProvider),
-    memberId: ref.watch(authProvider).memberId,
-  ),
-);
+final walletLedgerProvider =
+    StateNotifierProvider.autoDispose<
+      WalletLedgerController,
+      WalletLedgerState
+    >(
+      (ref) => WalletLedgerController(
+        api: ref.watch(apiClientProvider),
+        memberId: ref.watch(authProvider).memberId,
+      ),
+    );
 
 class WalletLedgerState {
   const WalletLedgerState({
@@ -41,7 +45,9 @@ class WalletLedgerState {
 
 class WalletLedgerController extends StateNotifier<WalletLedgerState> {
   WalletLedgerController({required this.api, required this.memberId})
-      : super(WalletLedgerState(memberId: memberId, isLoading: memberId != null)) {
+    : super(
+        WalletLedgerState(memberId: memberId, isLoading: memberId != null),
+      ) {
     if (memberId == null) {
       state = const WalletLedgerState(error: 'شناسهٔ عضو در نشست موجود نیست');
     } else {
@@ -77,7 +83,8 @@ class WalletLedgerController extends StateNotifier<WalletLedgerState> {
   Future<void> loadMore() async {
     final id = memberId;
     final cursor = state.nextBeforeId;
-    if (id == null || cursor == null || state.isLoading || state.isLoadingMore) return;
+    if (id == null || cursor == null || state.isLoading || state.isLoadingMore)
+      return;
 
     final previous = state;
     state = WalletLedgerState(
@@ -91,7 +98,9 @@ class WalletLedgerController extends StateNotifier<WalletLedgerState> {
       final page = await _fetchPage(id, cursor);
       if (!mounted) return;
       final priorIds = previous.transactions.map((row) => row['id']).toSet();
-      final appended = page.transactions.where((row) => !priorIds.contains(row['id'])).toList();
+      final appended = page.transactions
+          .where((row) => !priorIds.contains(row['id']))
+          .toList();
       if (appended.isNotEmpty && previous.transactions.isNotEmpty) {
         final oldestLoaded = previous.transactions.last['id'] as int;
         if ((appended.first['id'] as int) >= oldestLoaded) {
@@ -140,7 +149,8 @@ class WalletLedgerController extends StateNotifier<WalletLedgerState> {
     final rows = <Map<String, dynamic>>[];
     var priorId = 0x7fffffffffffffff;
     for (final raw in rawRows) {
-      if (raw is! Map) throw const FormatException('رکورد دفتر کیف‌پول نامعتبر است');
+      if (raw is! Map)
+        throw const FormatException('رکورد دفتر کیف‌پول نامعتبر است');
       final row = Map<String, dynamic>.from(raw);
       final id = row['id'];
       final amount = row['amount_rial'];
@@ -156,7 +166,9 @@ class WalletLedgerController extends StateNotifier<WalletLedgerState> {
           row['description'] is! String ||
           createdAt is! String ||
           DateTime.tryParse(createdAt) == null) {
-        throw const FormatException('رکورد یا ترتیب دفتر کیف‌پول با قرارداد سرور سازگار نیست');
+        throw const FormatException(
+          'رکورد یا ترتیب دفتر کیف‌پول با قرارداد سرور سازگار نیست',
+        );
       }
       rows.add(row);
       priorId = id;
@@ -167,10 +179,14 @@ class WalletLedgerController extends StateNotifier<WalletLedgerState> {
       throw const FormatException('نشانگر صفحه‌بندی دفتر کیف‌پول نامعتبر است');
     }
     if (rawCursor != null && (rows.isEmpty || rawCursor != rows.last['id'])) {
-      throw const FormatException('نشانگر صفحه‌بندی با آخرین رکورد دفتر هم‌خوان نیست');
+      throw const FormatException(
+        'نشانگر صفحه‌بندی با آخرین رکورد دفتر هم‌خوان نیست',
+      );
     }
     if (rawCursor != null && beforeId != null && rawCursor >= beforeId) {
-      throw const FormatException('نشانگر صفحه‌بندی دفتر کیف‌پول پیشرفتی ندارد');
+      throw const FormatException(
+        'نشانگر صفحه‌بندی دفتر کیف‌پول پیشرفتی ندارد',
+      );
     }
     return _WalletPage(
       balanceRial: balance,

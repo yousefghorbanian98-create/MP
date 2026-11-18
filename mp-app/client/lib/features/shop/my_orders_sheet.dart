@@ -48,12 +48,17 @@ class MyOrdersSheet extends ConsumerWidget {
           children: [
             Row(
               children: [
-                const Icon(Icons.receipt_long_outlined,
-                    color: MpColors.primaryLight, size: 22),
+                const Icon(
+                  Icons.receipt_long_outlined,
+                  color: MpColors.primaryLight,
+                  size: 22,
+                ),
                 const SizedBox(width: 8),
                 const Expanded(
-                  child: Text('سفارش‌های من',
-                      style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+                  child: Text(
+                    'سفارش‌های من',
+                    style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
+                  ),
                 ),
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
@@ -64,14 +69,15 @@ class MyOrdersSheet extends ConsumerWidget {
             const SizedBox(height: 8),
             Expanded(
               child: orders.when(
-                loading: () =>
-                    const Center(child: CircularProgressIndicator()),
+                loading: () => const Center(child: CircularProgressIndicator()),
                 error: (e, _) => GlassCard(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text('دریافت سفارش‌ها ناموفق بود\n$e',
-                          textAlign: TextAlign.center),
+                      Text(
+                        'دریافت سفارش‌ها ناموفق بود\n$e',
+                        textAlign: TextAlign.center,
+                      ),
                       const SizedBox(height: 12),
                       OutlinedButton(
                         onPressed: () => ref.invalidate(shopOrdersProvider),
@@ -85,9 +91,11 @@ class MyOrdersSheet extends ConsumerWidget {
                     return const GlassCard(
                       child: Padding(
                         padding: EdgeInsets.all(20),
-                        child: Text('هنوز سفارشی ثبت نشده است\n'
-                            'هر خریدی که از کیف‌پول انجام شود این‌جا دیده می‌شود.',
-                            textAlign: TextAlign.center),
+                        child: Text(
+                          'هنوز سفارشی ثبت نشده است\n'
+                          'هر خریدی که از کیف‌پول انجام شود این‌جا دیده می‌شود.',
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     );
                   }
@@ -96,8 +104,7 @@ class MyOrdersSheet extends ConsumerWidget {
                     child: ListView(
                       padding: const EdgeInsets.only(bottom: 12),
                       children: [
-                        for (final order in list)
-                          _OrderRow(order: order),
+                        for (final order in list) _OrderRow(order: order),
                       ],
                     ),
                   );
@@ -121,8 +128,12 @@ class _OrderRow extends ConsumerWidget {
     final id = (order['id'] as num?)?.toInt();
     final status = (order['status'] as String?) ?? '';
     final total = (order['total_rial'] as num?) ?? 0;
-    final items = ((order['items'] as List?) ?? const []).cast<Map<String, dynamic>>();
-    final itemCount = items.fold<int>(0, (sum, line) => sum + ((line['qty'] as num?)?.toInt() ?? 0));
+    final items = ((order['items'] as List?) ?? const [])
+        .cast<Map<String, dynamic>>();
+    final itemCount = items.fold<int>(
+      0,
+      (sum, line) => sum + ((line['qty'] as num?)?.toInt() ?? 0),
+    );
     final createdAt = _date(order['created_at']);
     final note = (order['note'] as String?)?.trim() ?? '';
 
@@ -137,7 +148,10 @@ class _OrderRow extends ConsumerWidget {
                 Expanded(
                   child: Text(
                     'سفارش #${faDigits(id ?? 0)}',
-                    style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w800,
+                      fontSize: 14,
+                    ),
                   ),
                 ),
                 Text(
@@ -161,7 +175,10 @@ class _OrderRow extends ConsumerWidget {
                 '${faDigits(itemCount)} قلم',
                 if (note.isNotEmpty) 'یادداشت: $note',
               ].join(' · '),
-              style: const TextStyle(fontSize: 12, color: MpColors.textSecondary),
+              style: const TextStyle(
+                fontSize: 12,
+                color: MpColors.textSecondary,
+              ),
             ),
             const SizedBox(height: 8),
             Row(
@@ -170,7 +187,9 @@ class _OrderRow extends ConsumerWidget {
                   child: Text(
                     rial(total),
                     style: const TextStyle(
-                        fontWeight: FontWeight.w800, color: MpColors.accentSoft),
+                      fontWeight: FontWeight.w800,
+                      color: MpColors.accentSoft,
+                    ),
                   ),
                 ),
                 TextButton.icon(

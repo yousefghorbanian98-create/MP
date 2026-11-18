@@ -18,8 +18,8 @@ class _HistoryClient extends http.BaseClient {
     this.hasMore = false,
     List<Map<String, dynamic>>? items,
     List<Map<String, dynamic>>? nextPage,
-  })  : items = items ?? _defaultItems,
-        nextPage = nextPage ?? const [];
+  }) : items = items ?? _defaultItems,
+       nextPage = nextPage ?? const [];
 
   bool failNext;
   final bool hasMore;
@@ -94,42 +94,53 @@ final _defaultItems = [
 Widget _wrap(
   http.Client client, {
   Widget child = const MemberCheckInHistoryPage(),
-}) =>
-    ProviderScope(
-      overrides: [
-        httpClientProvider.overrideWithValue(client),
-        authProvider.overrideWith(
-          (ref) => AuthController.test(
-            AuthState(accessToken: 'test-token', memberId: 3, userName: 'عضو تست'),
-          ),
-        ),
-      ],
-      child: MaterialApp(
-        theme: mpTheme(),
-        home: Directionality(
-          textDirection: TextDirection.rtl,
-          child: Scaffold(body: child),
-        ),
+}) => ProviderScope(
+  overrides: [
+    httpClientProvider.overrideWithValue(client),
+    authProvider.overrideWith(
+      (ref) => AuthController.test(
+        AuthState(accessToken: 'test-token', memberId: 3, userName: 'عضو تست'),
       ),
-    );
+    ),
+  ],
+  child: MaterialApp(
+    theme: mpTheme(),
+    home: Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(body: child),
+    ),
+  ),
+);
 
 void main() {
-  testWidgets('سوابق واقعی و ورود ردشده را فقط از مسیر عضو جاری نشان می‌دهد',
-      (tester) async {
+  testWidgets('سوابق واقعی و ورود ردشده را فقط از مسیر عضو جاری نشان می‌دهد', (
+    tester,
+  ) async {
     final client = _HistoryClient();
     await tester.pumpWidget(_wrap(client));
     await tester.pumpAndSettle();
 
     expect(find.text('ورود ثبت شد'), findsOneWidget);
     expect(find.text('ورود ثبت نشد'), findsOneWidget);
-    expect(find.textContaining('اشتراک فعال نیست یا منقضی شده است'), findsOneWidget);
+    expect(
+      find.textContaining('اشتراک فعال نیست یا منقضی شده است'),
+      findsOneWidget,
+    );
     expect(client.calls, contains('GET /members/me/checkins'));
-    expect(client.calls.any((call) => call.contains('/admin/checkins')), isFalse);
-    expect(client.calls.every((call) => !call.contains('member_id=')), isTrue,
-        reason: 'شناسهٔ عضو نباید از کلاینت قابل انتخاب باشد');
+    expect(
+      client.calls.any((call) => call.contains('/admin/checkins')),
+      isFalse,
+    );
+    expect(
+      client.calls.every((call) => !call.contains('member_id=')),
+      isTrue,
+      reason: 'شناسهٔ عضو نباید از کلاینت قابل انتخاب باشد',
+    );
   });
 
-  testWidgets('تاریخچهٔ خالی را به‌جای دادهٔ ساختگی نشان می‌دهد', (tester) async {
+  testWidgets('تاریخچهٔ خالی را به‌جای دادهٔ ساختگی نشان می‌دهد', (
+    tester,
+  ) async {
     final client = _HistoryClient(items: []);
     await tester.pumpWidget(_wrap(client));
     await tester.pumpAndSettle();
@@ -138,7 +149,9 @@ void main() {
     expect(find.text('ورود ثبت شد'), findsNothing);
   });
 
-  testWidgets('خطای API را خالی جا نمی‌زند و امکان تلاش دوباره دارد', (tester) async {
+  testWidgets('خطای API را خالی جا نمی‌زند و امکان تلاش دوباره دارد', (
+    tester,
+  ) async {
     final client = _HistoryClient(failNext: true);
     await tester.pumpWidget(_wrap(client));
     await tester.pumpAndSettle();
@@ -149,11 +162,16 @@ void main() {
     await tester.tap(find.text('تلاش دوباره'));
     await tester.pumpAndSettle();
 
-    expect(client.calls.where((call) => call == 'GET /members/me/checkins').length, 2);
+    expect(
+      client.calls.where((call) => call == 'GET /members/me/checkins').length,
+      2,
+    );
     expect(find.text('ورود ثبت شد'), findsOneWidget);
   });
 
-  testWidgets('سوابق قدیمی‌تر با offset صفحهٔ بعد بارگیری می‌شود', (tester) async {
+  testWidgets('سوابق قدیمی‌تر با offset صفحهٔ بعد بارگیری می‌شود', (
+    tester,
+  ) async {
     final firstPage = List<Map<String, dynamic>>.generate(
       30,
       (index) => <String, dynamic>{

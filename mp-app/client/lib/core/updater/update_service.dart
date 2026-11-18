@@ -48,7 +48,11 @@ class UpdateManifest {
 }
 
 class UpdateService {
-  UpdateService({required this.baseUrl, required this.platform, required this.currentVersion});
+  UpdateService({
+    required this.baseUrl,
+    required this.platform,
+    required this.currentVersion,
+  });
 
   final String baseUrl;
   final String platform; // android
@@ -57,16 +61,24 @@ class UpdateService {
   /// بررسی مانیفست — قطعی و بدون side-effect.
   Future<UpdateManifest> check() async {
     final resp = await http.get(
-      Uri.parse('$baseUrl/updates/manifest?platform=$platform&current=$currentVersion'),
+      Uri.parse(
+        '$baseUrl/updates/manifest?platform=$platform&current=$currentVersion',
+      ),
     );
     if (resp.statusCode != 200) {
       throw HttpException('خطای بررسی نسخه: ${resp.statusCode}');
     }
-    return UpdateManifest.fromJson(jsonDecode(resp.body) as Map<String, dynamic>);
+    return UpdateManifest.fromJson(
+      jsonDecode(resp.body) as Map<String, dynamic>,
+    );
   }
 
   /// دانلود patch با تأیید یکپارچگی sha256 — در صورت شکست، full جایگزین می‌شود.
-  Future<File> downloadVerified(String url, String expectedSha256, Directory dir) async {
+  Future<File> downloadVerified(
+    String url,
+    String expectedSha256,
+    Directory dir,
+  ) async {
     final resp = await http.get(Uri.parse('$baseUrl$url'));
     final bytes = resp.bodyBytes;
     final digest = sha256.convert(bytes).toString();
@@ -82,7 +94,11 @@ class UpdateService {
 /// مقایسهٔ نسخه — همگام با backend (قطعی).
 bool isVersionNewer(String candidate, String current) {
   List<int> parse(String v) {
-    final parts = v.trim().split('.').map((c) => int.tryParse(c.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0).toList();
+    final parts = v
+        .trim()
+        .split('.')
+        .map((c) => int.tryParse(c.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0)
+        .toList();
     while (parts.length < 3) {
       parts.add(0);
     }

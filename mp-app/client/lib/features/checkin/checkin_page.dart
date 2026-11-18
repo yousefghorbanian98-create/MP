@@ -80,9 +80,14 @@ class _CheckInPageState extends ConsumerState<CheckInPage>
       final api = ref.read(apiClientProvider);
       final auth = ref.read(authProvider);
       final memberId = auth.memberId;
-      if (memberId == null) throw ApiException('عضو یافت نشد — دوباره وارد شوید');
+      if (memberId == null)
+        throw ApiException('عضو یافت نشد — دوباره وارد شوید');
       final r = Map<String, dynamic>.from(
-          await api.post('/face/checkin', {'member_id': memberId, 'method': 'face'}) as Map);
+        await api.post('/face/checkin', {
+          'member_id': memberId,
+          'method': 'face',
+        }) as Map,
+      );
       final denied = r['result'] == 'denied';
       setState(() {
         _faceMessage = denied
@@ -100,10 +105,10 @@ class _CheckInPageState extends ConsumerState<CheckInPage>
   }
 
   static String _denialLabel(String? reason) => switch (reason) {
-        'membership_expired' => 'اشتراک فعال ندارید یا منقضی شده است',
-        null => 'دلیل نامعلوم',
-        _ => reason,
-      };
+    'membership_expired' => 'اشتراک فعال ندارید یا منقضی شده است',
+    null => 'دلیل نامعلوم',
+    _ => reason,
+  };
 
   Future<void> _grantConsent() async {
     setState(() => _busy = true);
@@ -131,7 +136,11 @@ class _CheckInPageState extends ConsumerState<CheckInPage>
             controller: _tabs,
             indicatorColor: MpColors.primary,
             labelColor: MpColors.primary,
-            tabs: const [Tab(text: 'QR ورود'), Tab(text: 'چهره'), Tab(text: 'سوابق')],
+            tabs: const [
+              Tab(text: 'QR ورود'),
+              Tab(text: 'چهره'),
+              Tab(text: 'سوابق'),
+            ],
           ),
           Expanded(
             child: TabBarView(
@@ -146,24 +155,31 @@ class _CheckInPageState extends ConsumerState<CheckInPage>
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Text('برای ورود نشان دهید',
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold)),
+                          const Text(
+                            'برای ورود نشان دهید',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                           const SizedBox(height: 14),
                           QrImageView(
-                            data: t['payload'] as String? ?? '',
-                            size: 220,
-                            backgroundColor: Colors.white,
-                          )
+                                data: t['payload'] as String? ?? '',
+                                size: 220,
+                                backgroundColor: Colors.white,
+                              )
                               .animate()
                               .scale(
-                                  begin: const Offset(0.9, 0.9),
-                                  duration: 400.ms,
-                                  curve: Curves.easeOutBack)
+                                begin: const Offset(0.9, 0.9),
+                                duration: 400.ms,
+                                curve: Curves.easeOutBack,
+                              )
                               .fadeIn(),
                           const SizedBox(height: 12),
-                          Text('عضو شمارهٔ ${t['member_id']}',
-                              style: TextStyle(color: MpColors.textSecondary)),
+                          Text(
+                            'عضو شمارهٔ ${t['member_id']}',
+                            style: TextStyle(color: MpColors.textSecondary),
+                          ),
                         ],
                       ),
                     ),
@@ -175,28 +191,44 @@ class _CheckInPageState extends ConsumerState<CheckInPage>
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.face_retouching_natural,
-                            size: 56, color: MpColors.primary),
+                        const Icon(
+                          Icons.face_retouching_natural,
+                          size: 56,
+                          color: MpColors.primary,
+                        ),
                         const SizedBox(height: 12),
-                        const Text('چک‌این با چهره',
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                        const Text(
+                          'چک‌این با چهره',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         const SizedBox(height: 6),
                         Text(
-                            'ورود شما ثبت می‌شود. تشخیص چهره در این نسخه انجام نمی‌شود؛ '
-                            'هویت شما با حساب واردشده تأیید می‌شود.',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                color: MpColors.textSecondary, height: 1.6)),
+                          'ورود شما ثبت می‌شود. تشخیص چهره در این نسخه انجام نمی‌شود؛ '
+                          'هویت شما با حساب واردشده تأیید می‌شود.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: MpColors.textSecondary,
+                            height: 1.6,
+                          ),
+                        ),
                         const SizedBox(height: 16),
                         consent.when(
                           loading: () => const Padding(
                             padding: EdgeInsets.symmetric(vertical: 8),
                             child: SizedBox(
-                                width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2)),
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
                           ),
-                          error: (e, _) => Text('وضعیت رضایت خوانده نشد: $e',
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(fontSize: 12)),
+                          error: (e, _) => Text(
+                            'وضعیت رضایت خوانده نشد: $e',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(fontSize: 12),
+                          ),
                           data: (c) {
                             final hasConsent = c['consent'] == true;
                             if (!hasConsent) {
@@ -206,7 +238,11 @@ class _CheckInPageState extends ConsumerState<CheckInPage>
                                   Text(
                                     'برای استفاده از ورود با چهره، ابتدا باید رضایت بیومتریک بدهید.',
                                     textAlign: TextAlign.center,
-                                    style: TextStyle(color: MpColors.accent, fontSize: 12, height: 1.6),
+                                    style: TextStyle(
+                                      color: MpColors.accent,
+                                      fontSize: 12,
+                                      height: 1.6,
+                                    ),
                                   ),
                                   const SizedBox(height: 8),
                                   // متن از سرور می‌آید (US-108: اطلاع قبل از رضایت)
@@ -217,11 +253,13 @@ class _CheckInPageState extends ConsumerState<CheckInPage>
                                       borderRadius: BorderRadius.circular(10),
                                     ),
                                     child: Text(
-                                      notice.valueOrNull ?? 'در حال دریافت متن اطلاعیه…',
+                                      notice.valueOrNull ??
+                                          'در حال دریافت متن اطلاعیه…',
                                       style: TextStyle(
-                                          fontSize: 11,
-                                          height: 1.7,
-                                          color: MpColors.textSecondary),
+                                        fontSize: 11,
+                                        height: 1.7,
+                                        color: MpColors.textSecondary,
+                                      ),
                                     ),
                                   ),
                                   const SizedBox(height: 10),
@@ -245,9 +283,10 @@ class _CheckInPageState extends ConsumerState<CheckInPage>
                                   'ثبت چهره در باشگاه و توسط پذیرش انجام می‌شود.',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                      color: MpColors.textSecondary,
-                                      fontSize: 11.5,
-                                      height: 1.6),
+                                    color: MpColors.textSecondary,
+                                    fontSize: 11.5,
+                                    height: 1.6,
+                                  ),
                                 ),
                               ],
                             );
@@ -259,9 +298,11 @@ class _CheckInPageState extends ConsumerState<CheckInPage>
                         ],
                         if (_faceMessage != null) ...[
                           const SizedBox(height: 12),
-                          Text(_faceMessage!,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(fontSize: 13)),
+                          Text(
+                            _faceMessage!,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(fontSize: 13),
+                          ),
                         ],
                       ],
                     ),

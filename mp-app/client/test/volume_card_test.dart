@@ -22,7 +22,10 @@ class _VolumeClient extends http.BaseClient {
     calls.add('$path?${request.url.query}');
     final payload = fail
         ? {'detail': 'گزارش حجم در دسترس نیست'}
-        : _report(empty: empty, level: request.url.queryParameters['level'] ?? '');
+        : _report(
+            empty: empty,
+            level: request.url.queryParameters['level'] ?? '',
+          );
     final bytes = utf8.encode(jsonEncode(payload));
     return http.StreamedResponse(
       Stream.value(bytes),
@@ -35,90 +38,112 @@ class _VolumeClient extends http.BaseClient {
 }
 
 Map<String, dynamic> _report({bool empty = false, required String level}) => {
-      'member_id': 3,
-      'program_id': empty ? null : 12,
-      'level': level,
-      'muscles': empty
-          ? <dynamic>[]
-          : [
-              {
-                'muscle': 'پشت',
-                'level': level,
-                'planned_sets': 12,
-                'effective_sets': 8,
-                'source_of_number': 'reported_hard_sets',
-                'data_state': 'reported',
-                'hard_sets': 8,
-                'soft_sets': 2,
-                'unknown_rir_sets': 1,
-                'landmarks': {
-                  'muscle': 'پشت',
-                  'level': level,
-                  'mv': 4,
-                  'mev': 8,
-                  'mav_min': 10,
-                  'mav_max': 14,
-                  'mrv': 20,
-                  'hard_set_max_rir': 3,
-                  'source': 'جدول نمونهٔ تمرینی',
-                },
-                'status': 'mev',
-                'suggestion': {'delta_sets': 0, 'reason': 'حجم فعلی حفظ شود'},
-              }
-            ],
-      'reason': empty ? 'هنوز برنامه‌ای برای این عضو ثبت نشده است.' : 'بر اساس برنامه و بازخورد ست‌های عضو.',
-      'rule_version': 'volume-report-1.0',
-    };
+  'member_id': 3,
+  'program_id': empty ? null : 12,
+  'level': level,
+  'muscles': empty
+      ? <dynamic>[]
+      : [
+          {
+            'muscle': 'پشت',
+            'level': level,
+            'planned_sets': 12,
+            'effective_sets': 8,
+            'source_of_number': 'reported_hard_sets',
+            'data_state': 'reported',
+            'hard_sets': 8,
+            'soft_sets': 2,
+            'unknown_rir_sets': 1,
+            'landmarks': {
+              'muscle': 'پشت',
+              'level': level,
+              'mv': 4,
+              'mev': 8,
+              'mav_min': 10,
+              'mav_max': 14,
+              'mrv': 20,
+              'hard_set_max_rir': 3,
+              'source': 'جدول نمونهٔ تمرینی',
+            },
+            'status': 'mev',
+            'suggestion': {'delta_sets': 0, 'reason': 'حجم فعلی حفظ شود'},
+          },
+        ],
+  'reason': empty
+      ? 'هنوز برنامه‌ای برای این عضو ثبت نشده است.'
+      : 'بر اساس برنامه و بازخورد ست‌های عضو.',
+  'rule_version': 'volume-report-1.0',
+};
 
 Widget _wrap(http.Client client) => ProviderScope(
-      overrides: [
-        httpClientProvider.overrideWithValue(client),
-        authProvider.overrideWith(
-          (ref) => AuthController.test(
-            AuthState(accessToken: 'test-token', memberId: 3, userName: 'عضو تست'),
-          ),
-        ),
-      ],
-      child: MaterialApp(
-        theme: mpTheme(),
-        home: Directionality(
-          textDirection: TextDirection.rtl,
-          child: Scaffold(body: ListView(children: [VolumeCard()])),
-        ),
+  overrides: [
+    httpClientProvider.overrideWithValue(client),
+    authProvider.overrideWith(
+      (ref) => AuthController.test(
+        AuthState(accessToken: 'test-token', memberId: 3, userName: 'عضو تست'),
       ),
-    );
+    ),
+  ],
+  child: MaterialApp(
+    theme: mpTheme(),
+    home: Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(body: ListView(children: [VolumeCard()])),
+    ),
+  ),
+);
 
 void main() {
-  testWidgets('حجم و نشانگرها از endpoint عضو می‌آیند و سطح درخواست تغییر می‌کند',
-      (tester) async {
-    final client = _VolumeClient();
-    await tester.pumpWidget(_wrap(client));
-    await tester.pumpAndSettle();
+  testWidgets(
+    'حجم و نشانگرها از endpoint عضو می‌آیند و سطح درخواست تغییر می‌کند',
+    (tester) async {
+      final client = _VolumeClient();
+      await tester.pumpWidget(_wrap(client));
+      await tester.pumpAndSettle();
 
-    expect(client.calls, contains('/programs/member/3/volume?level=intermediate'));
-    expect(find.text('حجم هفتگی عضلات'), findsOneWidget);
-    expect(find.text('روی MEV'), findsOneWidget);
-    expect(find.textContaining('ست مؤثر ۸ از ۱۲ برنامه‌ریزی‌شده · منبع: بازخورد عضو'), findsOneWidget);
-    expect(find.textContaining('MV ۴ · MEV ۸'), findsOneWidget);
-    expect(find.textContaining('RIR نامعلوم ۱'), findsOneWidget);
-    expect(find.textContaining('پیشنهاد هفتهٔ بعد'), findsOneWidget);
+      expect(
+        client.calls,
+        contains('/programs/member/3/volume?level=intermediate'),
+      );
+      expect(find.text('حجم هفتگی عضلات'), findsOneWidget);
+      expect(find.text('روی MEV'), findsOneWidget);
+      expect(
+        find.textContaining(
+          'ست مؤثر ۸ از ۱۲ برنامه‌ریزی‌شده · منبع: بازخورد عضو',
+        ),
+        findsOneWidget,
+      );
+      expect(find.textContaining('MV ۴ · MEV ۸'), findsOneWidget);
+      expect(find.textContaining('RIR نامعلوم ۱'), findsOneWidget);
+      expect(find.textContaining('پیشنهاد هفتهٔ بعد'), findsOneWidget);
 
-    await tester.tap(find.text('مبتدی'));
-    await tester.pumpAndSettle();
-    expect(client.calls, contains('/programs/member/3/volume?level=beginner'));
-    expect(client.calls.last, contains('level=beginner'));
-  });
+      await tester.tap(find.text('مبتدی'));
+      await tester.pumpAndSettle();
+      expect(
+        client.calls,
+        contains('/programs/member/3/volume?level=beginner'),
+      );
+      expect(client.calls.last, contains('level=beginner'));
+    },
+  );
 
-  testWidgets('بدون برنامه حالت empty و علت API را نشان می‌دهد', (tester) async {
+  testWidgets('بدون برنامه حالت empty و علت API را نشان می‌دهد', (
+    tester,
+  ) async {
     final client = _VolumeClient()..empty = true;
     await tester.pumpWidget(_wrap(client));
     await tester.pumpAndSettle();
 
-    expect(find.text('هنوز برنامه‌ای برای این عضو ثبت نشده است.'), findsOneWidget);
+    expect(
+      find.text('هنوز برنامه‌ای برای این عضو ثبت نشده است.'),
+      findsOneWidget,
+    );
     expect(find.textContaining('ست مؤثر ۸ از ۱۲'), findsNothing);
   });
 
-  testWidgets('خطای volume جدا از empty است و retry دوباره از API می‌خواند', (tester) async {
+  testWidgets('خطای volume جدا از empty است و retry دوباره از API می‌خواند', (
+    tester,
+  ) async {
     final client = _VolumeClient()..fail = true;
     await tester.pumpWidget(_wrap(client));
     await tester.pumpAndSettle();
