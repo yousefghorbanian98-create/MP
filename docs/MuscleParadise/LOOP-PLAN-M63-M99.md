@@ -100,6 +100,8 @@
 
 ### یادداشت reconcile با CI (`44300167991`، sha `776ca6f`) — چرا ۱۴ ردیف بالا یک‌جا عوض شد
 
+تأیید دوم: پس از افزودن شمارشِ تست‌ها به CI، همان جاب روی run `44309399120` روی `e6fa0a9` هم سبز ماند (`flutter analyze` ✓ · `flutter test` ✓ · manifest ✓) و job `backend` هم با رگرسیون جدیدِ `test_ci_test_failures.py` سبز شد (ruff · pytest+coverage · bandit+pip-audit · semgrep). متن شمارشِ pass/fail/skip در step summary نوشته می‌شود؛ از API فقط می‌شود دید که هیچ شکستی annotate نشده — پس عدد دقیق را اینجا ادعا نمی‌کنیم، فقط «۰ failure annotation».
+
 پیش از این، تنها شاهدِ نبودِ همهٔ این loopهای Client-محور یک چیز بود: «`flutter analyze`/`flutter test` در این sandbox اجرا‌شدنی نیست». همان دو گیت در جاب `client-flutter` روی `776ca6f` **سبز** اجرا شدند (`pub get` ✓ · analyze با گیتِ error+warning ✓ · کل `flutter test` با ۲۸ فایل تست ✓ · manifest gate ✓). پس بُعدِ «کد کلاینت کامپایل می‌شود و تست‌های ویجت‌مان رد نمی‌شوند» از `UNKNOWN` به شاهد دارویی تبدیل شد، و آن ردیف‌ها همین حالا همین وضعیت را نشان می‌دهند.
 
 **چه چیزی عوض نشد (و ادعا نمی‌شود):**
