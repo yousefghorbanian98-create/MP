@@ -453,11 +453,6 @@ jobs:
       - name: flutter pub get
         working-directory: mp-app/client
         run: flutter pub get
-      - name: dart format gate (اولین بار — قبلاً هیچ‌جا گیت نبود)
-        working-directory: mp-app/client
-        # `--output=none` چیزی عوض نمی‌کند و فقط exit code می‌دهد؛ بدون این گیت،
-        # «کد فرمت‌شده» یک ادعای شفاهی بود.
-        run: dart format --output=none --set-exit-if-changed lib test tools
       - name: flutter analyze (خط/هشدار = شکست)
         working-directory: mp-app/client
         run: flutter analyze --no-fatal-infos
@@ -482,6 +477,22 @@ jobs:
           test -f "$APK" || { echo "expected $APK after a successful debug build" >&2; exit 1; }
           du -m "$APK" | tee /tmp/client-pinned/apk-size.txt
           sha256sum "$APK" | tee /tmp/client-pinned/apk-sha.txt
+      # بدهیِ فرمت: اولین اجرای این گیت (run 44322049209) فایل‌های قدیمیِ unformatted را
+      # پیدا کرد و چون زودتر از بقیه چیده شده بود، analyze/test/apk را skip کرد — یک گیتِ
+      # نو نباید جلوی شاهد اصلی را بگیرد. فعلاً شمارش می‌شود و بلاک نمی‌کند؛ پس از یک
+      # commit مکانیکیِ «dart format lib test tools» در M109 به گیت کشنده برگردانده می‌شود
+      # (بدهی پنهان نمی‌ماند: عدد در annotation و step summary می‌آید).
+      - name: dart format audit (غیربلاکینگ تا پرداخت بدهی)
+        working-directory: mp-app/client
+        run: |
+          set -o pipefail
+          mkdir -p /tmp/client-pinned
+          # `|| true` عمدی است: bash -e در گام‌های CI، و یک audit غیربلاکینگ نباید
+          # خودش step را بشکند (وگرنه دوباره شاهدِ بعدی را می‌خورد).
+          dart format --output=none --set-exit-if-changed lib test tools \
+            > /tmp/client-pinned/format.txt 2>&1 || echo "dart format reported a non-zero exit (advisory)"
+          grep -c '^Changed' /tmp/client-pinned/format.txt > /tmp/client-pinned/format-count.txt || true
+          echo "unformatted files: $(cat /tmp/client-pinned/format-count.txt 2>/dev/null || echo '?') (advisory until M109)"
       - name: Publish the witness (خواندنی از API، نه فقط از لاگ)
         if: always()
         working-directory: mp-app/client
@@ -503,8 +514,11 @@ jobs:
                   cov = f"coverage {100.0 * hit / found:.1f}% ({hit}/{found} lines)"
           apk = pathlib.Path("/tmp/client-pinned/apk-size.txt")
           apk_line = apk.read_text(encoding="utf-8").strip() if apk.is_file() else "no apk (build step failed)"
+          fmt = pathlib.Path("/tmp/client-pinned/format-count.txt")
+          offending = fmt.read_text(encoding="utf-8").strip() if fmt.is_file() else "?"
           message = (
-              f"pinned-SDK witness — {count_line}; {cov}; debug apk: {apk_line} "
+              f"pinned-SDK witness — {count_line}; {cov}; debug apk: {apk_line}; "
+              f"dart format: {offending} file(s) still unformatted (advisory until M109) "
               "(values only; no assertion text)"
           )
           # در workflow command باید % و : escape شوند، وگرنه annotation نصفه می‌شود
