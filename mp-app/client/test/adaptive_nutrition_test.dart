@@ -95,12 +95,38 @@ void _checkpoint(String marker) => print('CI_TEST_CHECKPOINT:$marker');
 String _safeExceptionCategory(Object? exception) {
   if (exception == null) return 'none';
   final message = exception.toString().toLowerCase();
-  if (message.contains('renderflex') && message.contains('overflow')) return 'renderflex-overflow';
-  if (message.contains('renderbox') && message.contains('not laid out')) return 'renderbox-layout';
-  if (message.contains('viewport')) return 'viewport';
-  if (message.contains('setstate') && message.contains('dispose')) return 'setstate-after-dispose';
-  if (message.contains('disposed')) return 'disposed-object';
-  if (message.contains('timer')) return 'timer';
+  const signatures = <(String, String)>[
+    ('multiple exceptions', 'multiple'),
+    ('renderflex', 'renderflex'),
+    ('renderbox', 'renderbox'),
+    ('renderparagraph', 'paragraph'),
+    ('overflow', 'overflow'),
+    ('not laid out', 'not-laid-out'),
+    ('viewport', 'viewport'),
+    ('animation', 'animation'),
+    ('ticker', 'ticker'),
+    ('disposed', 'disposed'),
+    ('setstate', 'setstate'),
+    ('deactivated', 'deactivated'),
+    ('directionality', 'directionality'),
+    ('localization', 'localization'),
+    ('focus', 'focus'),
+    ('controller', 'controller'),
+    ('material', 'material'),
+    ('provider', 'provider'),
+    ('ancestor', 'ancestor'),
+    ('semantics', 'semantics'),
+    ('timer', 'timer'),
+    ('context', 'context'),
+    ('assertion', 'assertion'),
+    ('widget', 'widget'),
+  ];
+  final matched = signatures
+      .where((signature) => message.contains(signature.$1))
+      .map((signature) => signature.$2)
+      .take(4)
+      .join('-');
+  if (matched.isNotEmpty) return 'flutter-$matched';
   return exception is FlutterError ? 'flutter-other' : 'other';
 }
 
