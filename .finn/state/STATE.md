@@ -254,3 +254,16 @@ backend ۳۵۱ · ruff پاک · bandit ۰H/۰M · tsc ۰ · vitest ۳۰ · semg
   Android و همهٔ jobهای همان run و تأیید رفتار گوشی واقعی، L3 را کامل/انتشارپذیر فرض نکن.
 - suite کامل backend در sandbox: **887 passed, 2 skipped**. suite Studio: **220 passed,
   9 skipped** (live-contract محلی skip؛ job جداگانهٔ CI موفق شد).
+
+## M112 — سخت‌کردن مسیر release (۲۰۲۶-۱۱-۱۸)
+
+- run `44385060074` روی `a0ec758` کامل شد: همهٔ jobها به‌جز `secret-scan` سبز؛ pinned SDK،
+  **۱۶۰ تست Flutter و compile debug** را تأیید کرد. این شاهد build انتشار یا دستگاه فیزیکی نیست.
+- fallback خطرناک امضای debug در APK release حذف شد؛ workflow کلید اختصاصی در Secrets،
+  fingerprint گواهی، امضا و audit جداگانهٔ همهٔ ABIها را می‌خواهد و دیگر خودکار release نمی‌سازد.
+  گزارش `finn/reports/m112-release-signing-hardening.md`. تست سیاست release: ۲ موفق محلی.
+- `gh secret list` به HTTP 403 از integration خورد. هیچ کلید تازه‌ای ساخته یا در Secrets
+  قرار داده نشده؛ credential در chat درخواست نشده. بدون مجوز Secrets و کلید قابل‌بازیابی، build
+  امضای release اجراشدنی نیست. کلید تاریخی همچنان افشاشده و دو یافته در گیت فعال‌اند.
+- L4 هنوز پیاده‌سازی نشده؛ L6 و release همچنان باز هستند؛ تا شاهد CI جدید و build release،
+  تغییرات M112 صرفاً در حد کد و تست سیاست‌اند.
