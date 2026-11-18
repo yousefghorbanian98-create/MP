@@ -39,6 +39,9 @@ CORE_MARKDOWN_FILES = (
     # M107: دستور کار اجرای بیرون از sandbox هم تحت گیت لینک می‌آید؛ مسیرهای
     # داخلش (devcontainer، runbookها، گزارش‌ها) واقعی‌اند و باید شکستنشان دیده شود.
     Path("docs/MuscleParadise/runbooks/codespaces-execution.md"),
+    # M109: صف تصمیم‌های مالک هم زیر گیت لینک می‌آید؛ این صفحه تنها جایی است که
+    # «منتظر مالک» به یک متن خواندنی تبدیل می‌شود، پس لینک‌هایش نباید بمیرند.
+    Path("docs/MuscleParadise/OWNER-DECISIONS.md"),
 )
 MARKDOWN_FILES = (*CORE_MARKDOWN_FILES, *_module_docs())
 REQUIRED_FILES = (*MARKDOWN_FILES, Path("docs/MuscleParadise/assets/knowledge-atlas.svg"))
