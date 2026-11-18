@@ -99,11 +99,14 @@ def _text_report_location(
     groups: list[tuple[str, tuple[str, int]]],
 ) -> tuple[str, int] | None:
     matching = [(title, location) for title, location in groups if name in title]
-    if path and matching:
+    if path:
         basename = Path(path).name
-        for title, location in matching:
-            if basename in title:
+        path_matches = [(title, location) for title, location in groups if basename in title]
+        for title, location in path_matches:
+            if name in title:
                 return location
+        if len(path_matches) == 1:
+            return path_matches[0][1]
     return matching[0][1] if matching else None
 
 

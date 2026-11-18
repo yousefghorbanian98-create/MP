@@ -101,7 +101,8 @@ void main() {
     expect(find.text('نیازمند مراقبت'), findsOneWidget);
     expect(find.text('توصیه: حفظ حجم'), findsOneWidget);
     expect(find.textContaining('تشخیص پزشکی نیست'), findsOneWidget);
-    expect(find.textContaining('اختلاف RIR'), findsOneWidget);
+    // The signal is also repeated in the missing-signal summary.
+    expect(find.textContaining('اختلاف RIR'), findsWidgets);
     expect(find.textContaining('RIR هدف در برنامه ثبت نشده'), findsOneWidget);
     expect(client.calls, 1);
   });

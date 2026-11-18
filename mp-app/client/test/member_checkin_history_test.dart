@@ -185,7 +185,11 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(client.offsets, [0]);
-    await tester.ensureVisible(find.text('سوابق قدیمی‌تر'));
+    await tester.dragUntilVisible(
+      find.text('سوابق قدیمی‌تر'),
+      find.byType(Scrollable).first,
+      const Offset(0, -300),
+    );
     await tester.tap(find.text('سوابق قدیمی‌تر'));
     await tester.pumpAndSettle();
 
