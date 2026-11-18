@@ -139,3 +139,19 @@ backend ۳۵۱ · ruff پاک · bandit ۰H/۰M · tsc ۰ · vitest ۳۰ · semg
 - بسته‌شده در این چرخه: D1 (ثبت چهره ۴۰۳)، D2 (چک‌این ۴۲۲)، D3 (نبود logout)،
   D5 (بنر تخفیف دروغین + S2 انقضا)، D6 (گیت دروغ‌گو)، D7 (VolumePanel روی items[0])
 - مرحلهٔ بعدی: D4 (پیکرسنجی جعلی)، D9/D10 (refresh نشست)، S3 (اعلان‌ها)
+
+## به‌روزرسانی M97 (۲۰۲۶-۱۱-۱۸)
+
+- میکرو-چرخهٔ جاری: **M97** (Alembic drift / تاریخچهٔ مهاجرت / مانور backup+restore) — `PASS` برای دامنهٔ backend+docs
+- گیت‌های محلی: backend targeted **36 passed** · کل suite **861 passed / 1 failed (cwd-sensitive) / 1 skipped** · ruff check+format سبز · bandit `-ll` پاک · docs gate **7 فایل / 99 لینک / ۳ Mermaid**
+- یافته و اصلاح: `scripts/backup.py` حالا `verify` و `restore --extras-to` دارد؛ مانور scratch بدون بازنویسی فایل‌های زنده
+- محدودیت ثبت‌شده: SQLite-only؛ لایهٔ CHECK/view/trigger مقایسه نشد؛ DB واقعی/Postgres آزمون نشده؛ Flutter/Codespaces در این sandbox در دسترس نیست
+- مرحلهٔ بعدی: **M98** (UX-G3 haptics + Q5 micro-interactions با test و reduced-motion)، سپس M99 گزارش/بستهٔ نهایی
+
+## به‌روزرسانی M90/M98 (۲۰۲۶-۱۱-۱۸)
+
+- **M90** رسید سفارش عضو در اپ: `orderReceiptProvider` + «سفارش‌های من»/شیت رسید (fail-closed، فقط GET) → `UNKNOWN` تا CI
+- **M98** `MpHaptics` + `MpMotion` (کاهش حرکت) در بازخورد ست/کلاس/فروشگاه/شل → `UNKNOWN` تا CI؛ shared-element عمداً نه
+- گیت‌های محلی پس از این دو loop: backend **867 passed / 1 skipped** (از `mp-app/backend`) · Studio **219 passed / 9 skipped** + build · ruff check/format سبز · bandit `-ll` پاک · Dart static gate **۷۲ فایل / ۰ یافته** · docs gate **7 فایل / 99 لینک / ۳ Mermaid**
+- ابزار این nوبت: venv محلی `/home/user/.venv-mp` (backend deps + ruff/bandit + tree-sitter برای `dart_gate`) و `node_modules` استودیو از npm — بیرون از snapshot؛ برای بازتولید: `python3 -m venv .venv && pip install -e "mp-app/backend[dev]" tree-sitter tree-sitter-dart`
+- مرحلهٔ بعدی: **M99** — گزارش شواهد/بلوکرهاب، تطبیق با CI پس از push طبق D-047، و نهایی‌سازی handoff Codespaces؛ بدون release/deploy/ساخت ماشین ابری

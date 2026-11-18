@@ -6,6 +6,8 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/app_state.dart';
+import '../../core/haptics.dart';
+import '../../core/motion.dart';
 import '../../core/session.dart';
 import '../../core/theme.dart';
 import '../../shared/widgets/glass_card.dart';
@@ -35,6 +37,9 @@ class _ClassesPageState extends ConsumerState<ClassesPage> {
         'class_id': classId,
         'member_id': memberId,
       });
+      // UX-G3/M98 — پالس همین‌جا و **پیش از** هر کار روی UI: بعد از این نقطه await
+      // دیگری نیست، پس `mounted` تا `setState` اعتبارش را نگه می‌دارد.
+      await ref.read(hapticsProvider).success();
       if (!mounted) return;
       final memberName = r is Map && r['member_name'] is String
           ? (r['member_name'] as String).trim()
@@ -48,6 +53,7 @@ class _ClassesPageState extends ConsumerState<ClassesPage> {
       setState(() => _message = '✅ $bookingLabel ($statusLabel)');
       ref.invalidate(classesProvider);
     } catch (e) {
+      await ref.read(hapticsProvider).warning();
       if (!mounted) return;
       setState(() => _message = '⚠ $e');
       ref.invalidate(classesProvider);
@@ -70,11 +76,13 @@ class _ClassesPageState extends ConsumerState<ClassesPage> {
         'class_id': classId,
         'member_id': memberId,
       });
+      await ref.read(hapticsProvider).success();
       if (!mounted) return;
       final status = response is Map ? response['status'] : null;
       setState(() => _message = status == 'cancelled' ? '✅ رزرو لغو شد' : '✅ درخواست لغو ثبت شد');
       ref.invalidate(classesProvider);
     } catch (e) {
+      await ref.read(hapticsProvider).warning();
       if (!mounted) return;
       setState(() => _message = '⚠ لغو انجام نشد: $e');
       // رزرو ممکن است از نشست دیگری لغو شده باشد؛ از API وضعیت تازه بگیر.
@@ -127,7 +135,10 @@ class _ClassesPageState extends ConsumerState<ClassesPage> {
                         isBusy: _busyClassIds.contains(
                           ((list[i] as Map<String, dynamic>)['id'] as num?)?.toInt(),
                         ),
-                      ).animate()
+                      )
+                          // Q5/M98 — اگر سیستم‌عامل «کاهش حرکت» را روشن کرده،
+                          // همان ظاهر نهایی بدون پخش انیمیشن نشان داده می‌شود.
+                          .animate(target: MpMotion.target(context))
                           .fadeIn(delay: (70 * i).ms)
                           .slideY(begin: 0.1),
                   ],

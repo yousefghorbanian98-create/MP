@@ -16,6 +16,28 @@
    - یک flow چک‌این آزمون‌شده را با حساب/دادهٔ آزمایشی اجرا کنید؛ از درخواست ساختگی به endpoint واقعی چهره یا پرداخت استفاده نکنید.
 5. **بکاپ**: استک Compose دارای سرویس backup دوره‌ای به `mp-backups` محلی است. job restic این playbook، اگر با repo/credential واقعی پیکربندی شود، بکاپ ثانویهٔ `/opt/muscle-paradise/data` می‌گیرد؛ از دسترسی repo و نگهداری خارج از سرور اطمینان حاصل کنید. **هر ماه بازیابی واقعی را در محیط جداگانه تمرین کنید**؛ بکاپ اجرا/بازیابی نشده اعتبارسنجی نشده است.
 
+## مهاجرت schema و drift (M97)
+
+دو مسیر provisioning در این پروژه وجود دارد و **باید** همان schema را بسازند:
+
+| مسیر | کجا استفاده می‌شود | چه‌طور |
+|---|---|---|
+| Alembic | production/کانتینر | `CMD` ایمیج قبل از uvicorn، `alembic upgrade head` را اجرا می‌کند |
+| `Base.metadata.create_all` | تست و محیط توسعه | `mp-app/backend/db/base.py: init_db` |
+
+- مرجعِ ساخت، migrationها هستند؛ برای هر تغییر schema یک revision تازه با `upgrade()` و `downgrade()` نوشته می‌شود و `downgrade` توخالی (فقط `pass`) مجاز نیست.
+- قبل از ثبت: روی DB آزمایشی هر سه حالت سنجیده شود — `upgrade head`، `downgrade base`، دوباره `upgrade head`، و `alembic check` که باید «No new upgrade operations detected» بدهد.
+- یک DB قدیمی که فقط با `create_all` ساخته شده، با `alembic stamp head` baseline می‌شود؛ پس از آن `alembic check` باید drift صفر بدهد. هیچ‌گاه schema یک DB موجود را با `ALTER TABLE` دستی عوض نکنید.
+- تاریخچه باید **یک head** داشته باشد؛ اگر دو شاخه ساخته شد، یک merge revision اضافه شود (الگو: `f9b0c1d2e3f4_merge_heads_unique_gateway_authority.py`).
+
+گیت‌های خودکار همین موارد در `mp-app/backend/tests/integration/test_m97_migrations_and_backup.py` (تاریخچه، parity دو مسیر، baseline و مانور backup/restore) و `test_m47_migration_drift.py` (upgrade/downgrade و `alembic check`) هستند. اجرای محلی:
+
+```bash
+cd mp-app/backend && python -m pytest -q \
+  tests/integration/test_m97_migrations_and_backup.py \
+  tests/integration/test_m47_migration_drift.py
+```
+
 ## استک
 | سرویس | نقش | پورت |
 |-------|------|------|

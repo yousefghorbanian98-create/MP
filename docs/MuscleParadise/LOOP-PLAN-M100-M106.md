@@ -1,6 +1,7 @@
 # FINN اجرایی — هویت برند و حرکت MP (M100 تا M106)
 
-> وضعیت جاری: **M100 `PASS` · M101 `PASS` · M102 `PASS` (C منتخب) · M103 `PASS` (static identity) · M104 `UNKNOWN` · M105 `BLOCKED`** | تاریخ: ۲۰۲۶-۱۱-۱۶ | شاخهٔ جاری: `arena/4f336f66-mp`
+> وضعیت جاری: **M100 `PASS` · M101 `PASS` · M102 `PASS` (C منتخب) · M103 `PASS` (static identity) · M104 `UNKNOWN` · M105 `BLOCKED` · M106 `PARTIAL-CLOSED`** | تاریخ: ۲۰۲۶-۱۱-۱۸ | شاخهٔ جاری: `arena/4f336f66-mp`
+> توضیح مسیر: همهٔ ارجاع‌های `brand/…` در این نقشه نسبت به `docs/MuscleParadise/` درست‌اند (`docs/MuscleParadise/brand/{concepts,selected-c}`)؛ ریشهٔ مخزن پوشهٔ `brand/` ندارد. بازبینی static و محدودیت‌های واقعیِ M106: `finn/reports/m106-brand-identity-review.md`.
 > مرجع TODO: `TODO-2026-11-16.md` · پروتکل: `FINN_LOOP.md` · بریف: `BRAND-IDENTITY-BRIEF-2026-11-16.md`.
 > این مسیر مستقلِ طراحی محصول است؛ ترتیب M72–M99 را عوض نمی‌کند و `M99` را از گزارش بازهٔ قبلی به یک release gate تبدیل نمی‌کند.
 
@@ -59,6 +60,6 @@ Motion storyboardِ پیشنهادی برای prototype، نه specification ن�
 | M103 | `PASS` (static identity only) | بستهٔ SVG/PNG، lockupهای Vazirmatn Bold/Regular، رنگی/تک‌رنگ و light/dark، cut 16px و audit رستری موجود در `brand/selected-c/M103-C-PACKAGE.md`; محاسبهٔ contrast و license محلی مستند؛ mask واقعی در M106 مانده و آیکن محصول دست‌نخورده است | 2026-11-16 |
 | M104 | `UNKNOWN` | در workspace `flutter`, `dart`, `adb` پیدا نشد و `ANDROID_HOME`/`ANDROID_SDK_ROOT` خالی‌اند؛ startup cold/warm و restore اندازه‌گیری نشده‌اند؛ روش و run sheet بدون عددسازی در `finn/reports/m104-startup-measurement.md` ثبت شد | 2026-11-16 |
 | M105 | `BLOCKED` | گیت package ثابت M103 پاس شده، اما شواهد runtime/startup لازم از M104 در دسترس نیست؛ هیچ کد محصولی تغییر نکرد | 2026-11-16 |
-| M106 | `PLANNED` | تست launcher mask، دستگاه واقعی و reduced-motion بعد از M105 لازم‌اند | 2026-11-16 |
+| M106 | `PARTIAL-CLOSED` | بازبینی static انجام شد: وجود همهٔ artefactها در `docs/MuscleParadise/brand/`، ابعاد رسترها (۱۶×۱۶ cut جدا از master)، contrastهای محاسبه‌شده، license محلی Vazirmatn و `app_icon.png` دست‌نخورده (git status پاک)؛ لینک‌های بسته با docs gate سبز. گیت‌های device (adaptive mask، سرد/گرم، launch) و اعداد M104 اجرا‌نشده‌اند و reveal ادعا نمی‌شود؛ کاهش حرکت در محصول از M98 (`lib/core/motion.dart`) در دسترس است تا reveal آینده همان را بخواند. گزارش: `finn/reports/m106-brand-identity-review.md` | 2026-11-18 |
 
 > پس از هر loop، فقط وضعیت و شاهد همان loop را به‌روز کن. `PASS` یعنی گیت همان loop با شواهدش بسته شد؛ نه اینکه کل برند یا release تأیید شده باشد.

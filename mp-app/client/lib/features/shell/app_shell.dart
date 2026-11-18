@@ -3,6 +3,7 @@ library;
 
 import 'package:flutter/material.dart';
 
+import '../../core/motion.dart';
 import '../../core/theme.dart';
 import '../assessment14/assessment14_page.dart';
 import '../home/home_page.dart';
@@ -32,7 +33,8 @@ class _AppShellState extends State<AppShell> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 250),
+        // Q5/M98 — با «کاهش حرکت» سیستم‌عامل، تعویض تب بی‌انیمیشن می‌شود.
+        duration: MpMotion.dur(context, const Duration(milliseconds: 250)),
         switchInCurve: Curves.easeOutCubic,
         transitionBuilder: (child, animation) {
           // ترنزیشن نرم: fade + slide از پایین
@@ -91,7 +93,8 @@ class _MpBottomNav extends StatelessWidget {
                       children: [
                         // نشانگر متحرک بالای تب فعال
                         AnimatedContainer(
-                          duration: const Duration(milliseconds: 250),
+                          duration:
+                              MpMotion.dur(context, const Duration(milliseconds: 250)),
                           curve: Curves.easeOutCubic,
                           height: 3,
                           width: i == index ? 24 : 0,
@@ -109,7 +112,8 @@ class _MpBottomNav extends StatelessWidget {
                         ),
                         AnimatedScale(
                           scale: i == index ? 1.12 : 1.0,
-                          duration: const Duration(milliseconds: 200),
+                          duration:
+                              MpMotion.dur(context, const Duration(milliseconds: 200)),
                           curve: Curves.easeOutBack,
                           child: Icon(
                             i == index ? items[i].active : items[i].icon,

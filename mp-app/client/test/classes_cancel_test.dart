@@ -7,9 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
+import 'package:mp_client/core/haptics.dart';
 import 'package:mp_client/core/session.dart';
 import 'package:mp_client/core/theme.dart';
 import 'package:mp_client/features/classes/classes_page.dart';
+
+import 'haptics_recorder.dart';
 
 class _ClassesClient extends http.BaseClient {
   _ClassesClient({bool initiallyBooked = true}) : booked = initiallyBooked;
@@ -63,8 +66,9 @@ class _ClassesClient extends http.BaseClient {
   }
 }
 
-Widget _wrap(http.Client client) => ProviderScope(
+Widget _wrap(http.Client client, {RecordingHaptics? haptics}) => ProviderScope(
       overrides: [
+        if (haptics != null) hapticsProvider.overrideWith((ref) => haptics),
         httpClientProvider.overrideWithValue(client),
         authProvider.overrideWith(
           (ref) => AuthController.test(
@@ -84,7 +88,8 @@ Widget _wrap(http.Client client) => ProviderScope(
 void main() {
   testWidgets('رزرو خود عضو را لغو و ظرفیت/وضعیت تازه را از API می‌گیرد', (tester) async {
     final client = _ClassesClient();
-    await tester.pumpWidget(_wrap(client));
+    final haptics = RecordingHaptics();
+    await tester.pumpWidget(_wrap(client, haptics: haptics));
     await tester.pumpAndSettle();
 
     expect(find.text('لغو رزرو'), findsOneWidget);
@@ -100,13 +105,17 @@ void main() {
     expect(client.listCalls, greaterThanOrEqualTo(2),
         reason: 'پس از لغو باید ظرفیت و وضعیت رزرو دوباره از API خوانده شود');
     expect(find.text('✅ رزرو لغو شد'), findsOneWidget);
+    // M98/UX-G3 — لغو موفق یک پالس لمسی دارد؛ بی‌صدا «انجام شد» فقط متن است
+    expect(haptics.count('success'), 1);
+    expect(haptics.count('warning'), 0);
     expect(find.textContaining('رزرو به نام سارا از پایگاه داده تأیید شده'), findsNothing);
     expect(find.text('رزرو'), findsOneWidget);
   });
 
   testWidgets('تأیید رزرو نام معتبر برگشتی از سرور را نمایش می‌دهد', (tester) async {
     final client = _ClassesClient(initiallyBooked: false);
-    await tester.pumpWidget(_wrap(client));
+    final haptics = RecordingHaptics();
+    await tester.pumpWidget(_wrap(client, haptics: haptics));
     await tester.pumpAndSettle();
 
     await tester.ensureVisible(find.text('رزرو'));
@@ -116,6 +125,7 @@ void main() {
     expect(client.bookBody?['class_id'], 4);
     expect(client.bookBody?['member_id'], 3);
     expect(find.text('✅ رزرو به نام سارا از پایگاه داده ثبت شد (تأییدشده)'), findsOneWidget);
+    expect(haptics.count('success'), 1);
     expect(find.textContaining('رزرو به نام سارا از پایگاه داده تأیید شده'), findsOneWidget);
   });
 }

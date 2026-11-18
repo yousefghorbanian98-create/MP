@@ -226,6 +226,7 @@ flutter run --dart-define=MP_API=http://10.0.2.2:8000/api/v1
 
 | موضوع | سند |
 |---|---|
+| شروع ایجنت AI و انتقال نشست | [راهنمای ایجنت](AGENTS.md) · [نقشهٔ مستندات](docs/README.md) · [handoff جاری](docs/MuscleParadise/SESSION_HANDOFF.md) |
 | نقشهٔ کل محصول و مرز ماژول‌ها | [MASTER MAP](docs/MuscleParadise/MASTER_MAP.md) |
 | معماری C4 و جریان‌های سامانه | [Architecture](docs/MuscleParadise/architecture/c4.md) |
 | نیازمندی‌ها و user storyها | [PRD](docs/MuscleParadise/PRD.md) |

@@ -16,16 +16,42 @@ Production به `MP_SECRET_KEY`, `MP_BIOMETRIC_KEY`, originهای HTTPS، provid
 
 ## ۲) Backup و restore
 
-هر دو Compose پس از readiness فوراً backup می‌گیرند، سپس هر ۲۴ ساعت؛ job ناموفق هر ساعت retry می‌شود. منبع باید `/data/mp.db` باشد؛ snapshot SQLite شامل WAL را در volume محلی `mp-backups` و manifest SHA256 می‌نویسد. برای backup دستی داخل همان محیط:
+هر دو Compose پس از readiness فوراً backup می‌گیرند، سپس هر ۲۴ ساعت؛ job ناموفق هر ساعت retry می‌شود. منبع باید `/data/mp.db` باشد؛ snapshot SQLite شامل WAL را در volume محلی `mp-backups` و manifest SHA256 می‌نویسد.
+
+اسکریپت در `mp-app/backend/scripts/backup.py` است و job کانتینر از WORKDIR همان مسیر (`/srv/mp/backend`) صدا می‌زند؛ از ریشهٔ مخزن مسیر را کامل بدهید:
 
 ```bash
+# داخل کانتینر/با WORKDIR = mp-app/backend:
 python scripts/backup.py backup --db /data/mp.db --out /backups
+
+# از ریشهٔ مخزن (محیط توسعه):
+python mp-app/backend/scripts/backup.py backup --db /path/to/mp.db --out /tmp/mp-backups
 ```
 
 - هر روز موفقیت job و فضای دیسک/آرشیو را بررسی کنید.
 - نسخهٔ رمزگذاری‌شدهٔ backup را خارج از میزبان نگه دارید؛ volume روی همان host به‌تنهایی disaster recovery نیست.
-- ماهانه روی محیط scratch: backup → restore به مسیر موقت → بررسی SHA256 و بازشدن دیتابیس → ثبت زمان RTO/RPO.
+- **تمرین ماهانه روی scratch، بدون نوشتن روی مسیرهای زنده** (M97):
+
+```bash
+python mp-app/backend/scripts/backup.py verify /tmp/mp-backups/mp_backup_<stamp>.tar.gz
+python mp-app/backend/scripts/backup.py restore <archive>.tar.gz \
+  --db /tmp/mp-drill/mp.db --extras-to /tmp/mp-drill
+```
+
+`verify` فقط manifest، SHA256 و `PRAGMA integrity_check` را می‌خواند و نسخهٔ Alembic داخل آرشیو را گزارش می‌دهد؛ هیچ فایلی نمی‌نویسد. در `restore` هم `--extras-to` لازم است: بدون آن، فایل‌های الحاقی آرشیو (`modules/updates/registry.json` و `shared/design-tokens.json`) در **مسیرهای اصلی خودشان** بازنویسی می‌شوند — یعنی یک آرشیو کهنه می‌تواند source/برنامهٔ در حال اجرا را به عقب برگرداند. برای restore تولیدی همان مسیرهای اصلی هدف است، برای تمرین هرگز.
+
+سپس DB بازگردانده‌شده را با همان گیت‌های استقرار بسنجید:
+
+```bash
+cd mp-app/backend
+MP_DATABASE_URL=sqlite:////tmp/mp-drill/mp.db python -m alembic current   # باید head بدهد
+MP_DATABASE_URL=sqlite:////tmp/mp-drill/mp.db python -m alembic check     # باید «No new upgrade operations detected» بدهد
+```
+
+زمان RTO/RPO و نتیجهٔ هر دو دستور در گزارش incident ثبت می‌شود. این زنجیره روی دیتابیس scratch با تست `mp-app/backend/tests/integration/test_m97_migrations_and_backup.py` آزموده شده است؛ روی محیط واقعی باشگاه هنوز اجرا نشده.
+
 - پیش از restore تولیدی: توقف backend، حفظ نسخهٔ فعلی، تأیید آرشیو/DB مقصد و مجوز مالک. هیچ restore تولیدی خودکار اجرا نمی‌شود.
+
 
 ## ۳) پایش و incident
 

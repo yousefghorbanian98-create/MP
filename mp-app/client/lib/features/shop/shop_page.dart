@@ -3,7 +3,8 @@
 /// تاریخچه: تا پیش از M59 این صفحه چهار محصول hardcode داشت و هیچ اتصالی به
 /// بک‌اند نداشت؛ یعنی «فروشگاه» در دمو فقط یک تصویر بود. حالا:
 /// کاتالوگ ← `GET /shop/products`، سبد ← `GET/POST /shop/cart`،
-/// تسویه ← `POST /shop/checkout` (کیف‌پول)، سفارش‌ها ← `GET /shop/orders`.
+/// تسویه ← `POST /shop/checkout` (کیف‌پول)، سفارش‌ها ← `GET /shop/orders`،
+/// رسید ← `GET /shop/orders/{id}/receipt` (M90؛ فقط خواندنی).
 ///
 /// قاعدهٔ امنیتی که کلاینت رعایت می‌کند: **هیچ قیمتی از این صفحه به سرور
 /// فرستاده نمی‌شود.** فقط `product_id` و `qty`؛ مبلغ را سرور از DB می‌سازد.
@@ -14,29 +15,13 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/app_state.dart';
+import '../../core/haptics.dart';
+import '../../core/persian_format.dart';
 import '../../core/session.dart';
 import '../../core/theme.dart';
 import '../../shared/widgets/glass_card.dart';
 import '../wallet/wallet_ledger.dart';
-
-/// ارقام فارسی — قرارداد کل پروژه (کاربر فارسی‌زبان). یک‌جا تعریف می‌شود تا
-/// هر صفحه ارقام لاتین نشان ندهد؛ پیش‌تر `fa()` در استودیو بود و Dart نداشت.
-String faDigits(Object value) {
-  const latin = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-  const persian = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
-  var out = value.toString();
-  for (var i = 0; i < 10; i++) {
-    out = out.replaceAll(latin[i], persian[i]);
-  }
-  return out;
-}
-
-/// مبلغ با جداکنندهٔ هزارگان فارسی: 2500000 ← ۲٬۵۰۰٬۰۰۰ ریال
-String _rial(num n) {
-  final grouped =
-      n.toString().replaceAllMapped(RegExp(r'(\d)(?=(\d{3})+$)'), (m) => '${m[1]}٬');
-  return '${faDigits(grouped)} ریال';
-}
+import 'my_orders_sheet.dart';
 
 class ShopPage extends ConsumerWidget {
   const ShopPage({super.key});
@@ -52,6 +37,15 @@ class ShopPage extends ConsumerWidget {
         backgroundColor: MpColors.background,
         surfaceTintColor: Colors.transparent,
         actions: [
+          // M90 — تاریخچهٔ سفارش و رسید، از همان endpoint مالک‌محور.
+          Padding(
+            padding: const EdgeInsets.only(left: 4),
+            child: TextButton.icon(
+              onPressed: () => showMyOrders(context, ref),
+              icon: const Icon(Icons.receipt_long_outlined),
+              label: const Text('سفارش‌ها'),
+            ),
+          ),
           cart.maybeWhen(
             data: (c) {
               final count = (c['count'] as num?)?.toInt() ?? 0;
@@ -61,7 +55,7 @@ class ShopPage extends ConsumerWidget {
                   onPressed: count == 0 ? null : () => _openCart(context, ref),
                   icon: Badge(
                     isLabelVisible: count > 0,
-                    label: Text('$count'),
+                    label: Text(faDigits(count)),
                     child: const Icon(Icons.shopping_cart_outlined),
                   ),
                   label: const Text('سبد'),
@@ -140,11 +134,13 @@ class ShopPage extends ConsumerWidget {
     try {
       await api.post('/shop/cart', {'product_id': product['id'], 'qty': 1});
       ref.invalidate(cartProvider);
+      await ref.read(hapticsProvider).success();
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('«${product['title']}» به سبد اضافه شد')),
       );
     } catch (e) {
+      await ref.read(hapticsProvider).warning();
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
     }
@@ -211,13 +207,13 @@ class _ProductCard extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  _rial(price),
+                  rial(price),
                   style: const TextStyle(fontSize: 11.5, color: MpColors.accentSoft, fontWeight: FontWeight.w800),
                 ),
               ),
               if (compare != null && compare > price)
                 Text(
-                  _rial(compare),
+                  rial(compare),
                   style: const TextStyle(
                     fontSize: 10,
                     color: MpColors.textSecondary,
@@ -343,6 +339,7 @@ class _CartSheetState extends ConsumerState<_CartSheet> {
       ref.invalidate(walletLedgerProvider);
       ref.invalidate(shopOrdersProvider);
       widget.onDone();
+      await ref.read(hapticsProvider).success();
       if (!mounted) return;
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
@@ -404,7 +401,7 @@ class _CartSheetState extends ConsumerState<_CartSheet> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text('قابل پرداخت'),
-                  Text(_rial(total), style: const TextStyle(fontWeight: FontWeight.w800, color: MpColors.accentSoft)),
+                  Text(rial(total), style: const TextStyle(fontWeight: FontWeight.w800, color: MpColors.accentSoft)),
                 ],
               ),
               const SizedBox(height: 4),
@@ -484,7 +481,7 @@ class _CartRow extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
                 Text(
-                  _rial((line['line_total_rial'] as num?) ?? 0),
+                  rial((line['line_total_rial'] as num?) ?? 0),
                   style: const TextStyle(fontSize: 12, color: MpColors.textSecondary),
                 ),
               ],

@@ -119,3 +119,15 @@ workflowهای CI قبلاً روی failure، branch را fetch/reset می‌ک�
 ## ۲۴. (M81 / M71) Riverpod provider-chain هم API call واقعی است
 گیت دارت فقط alias محلی `api.get(...)` را می‌شمرد و `ref.read(apiClientProvider).post(...)`/`ref.watch(...).get(...)` را نمی‌دید؛ اجرای جاری به‌خاطر `/classes/book` این منفی کاذب را آشکار کرد و چند مسیر واقعی M74/M75 نیز از exceptionهای TODO خوانده می‌شدند.
 → **قانون:** هر scanner مصرف API در Flutter باید call را از expression provider واقعی بشناسد، نه فقط نام متغیر `api`; probe واقعی برای `read/watch(apiClientProvider).<method>` نگه دار و TODO را به call evidence ارتقا بده، نه این‌که مسیر فعال را exception کنی. Regression: `mp-app/studio/tests/apiCoverage.test.ts` (4 passed؛ full Studio 217 passed/9 skipped). M81 Flutter widget test همچنان runtime-UNKNOWN تا Codespaces.
+
+## ۲۵. (M97) drift باید روی هر دو مسیر provisioning سنجیده شود، و restore باید تمرین‌پذیر باشد
+`alembic check` فقط «DB مهاجرت‌کرده = مدل» را می‌سنجد؛ DBای که dev/test با `Base.metadata.create_all` می‌سازد بیرون آن سنجش بود، و `restore` فایل‌های الحاقی را در مسیرهای زنده می‌نوشت، پس «مانور روی scratch» عملاً وجود نداشت.
+→ **قانون:** برای هر تغییر schema، هر دو مسیر (migrations و `create_all`) را در یک تست جدول/ستون/ایندکس مقایسه کن؛ baseline نصب‌های قدیمی فقط با `alembic stamp head` + `alembic check`، نه `ALTER TABLE` دستی؛ تاریخچه باید یک head داشته باشد (گیت، نه احتیاط شفاهی). هر ابزار operational که فایل می‌نویسد باید حالت «فقط بررسی» (`verify`) و مقصد موقت (`--extras-to`) داشته باشد و تستِ رگرسیون «فایل زنده عوض نشد» بدهد. گیت‌ها را با تزریق خرابی راستی‌آزمایی کن تا سبزِ توخالی نشود. Regression: `mp-app/backend/tests/integration/test_m97_migrations_and_backup.py`.
+
+## ۲۶. (M90) پاسخ ۲۰۰ هم می‌تواند دادهٔ اشتباه باشد — کلاینت باید مالکیت را تأیید کند
+endpoint رسید مالکیت را در سرویس چک می‌کند، ولی اگر روزی آن چک برداشته/اشتباه شود، UI قبلی بی‌سؤال‌پرسیدن رسیدِ عضو دیگر را نشان می‌داد. `order_id` و `member_id` پاسخ حالا با درخواست/نشست تطبیق می‌شود و عدم تطابق = خطا، نه نمایش.
+→ **قانون:** هر read مالکیت‌محور در Flutter باید «این رکورد مال این نشست است؟» را تأیید کند و در عدم تطابق fail closed شود؛ هیچ عددی در کلاینت تصحیح نمی‌شود (جمع ناهمخوان نمایش داده می‌شود، نه یکسان). گیت `apiCoverage` را با exception بی‌مصرف کهنه‌اش نکن: مصرف واقعی Client را در همان تست ثبت کن. Regression: `mp-app/client/test/shop_orders_receipt_test.dart`.
+
+## ۲۷. (M98) ادعای haptics/دسترس‌پذیری با «صدا زدن تابع» ثابت نمی‌شود
+`HapticFeedback` در نسخه‌های مختلف SDK مسیر متفاوتی می‌رود (`HapticFeedback.vibrate` در برابر `VibrationEffect.vibrate`)؛ اگر تست فقط `expect(called, isTrue)` روی تابع ما می‌داد، نه رفتن پالس به پلتفرم و نه خاموش‌بودنش اثبات نمی‌شد.
+→ **قانون:** بازخورد لمسی/حرکتی را پشت یک رابط تزریق‌پذیر بگذار، در تست ویجت fake بزن (ترتیب/تعداد)، و لایهٔ سیستمی را با `setMockMethodCallHandler` روی messenger بسنج؛ «کاهش حرکت» را از `MediaQuery.disableAnimations` بخوان و skip کن، نه حذف؛ و پالس را بعد از نتیجهٔ سرویس بفرست. Regression: `mp-app/client/test/motion_haptics_test.dart`.

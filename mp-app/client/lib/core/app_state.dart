@@ -340,3 +340,48 @@ final adaptiveNutritionProvider = FutureProvider<Map<String, dynamic>>((ref) asy
   }
   return report;
 });
+
+/// رسید یک سفارش — `GET /shop/orders/{id}/receipt` (M90).
+///
+/// endpoint از M60/R5 مالکیت‌محور است (عضو فقط سفارش خودش؛ تست backend در
+/// `tests/integration/test_m60_shop.py`)؛ این provider همان مرز را در کلاینت هم
+/// نگه می‌دارد و پاسخ نامطابق را نمایش نمی‌دهد. هیچ مبلغی به سرور فرستاده نمی‌شود:
+/// مسیر `GET` است و جمع‌ها از همان پاسخ خوانده می‌شوند.
+final orderReceiptProvider =
+    FutureProvider.autoDispose.family<Map<String, dynamic>, int>((ref, orderId) async {
+  final api = ref.watch(apiClientProvider);
+  final r = await api.get('/shop/orders/$orderId/receipt');
+  if (r is! Map) {
+    throw const FormatException('پاسخ رسید باید یک شیء باشد');
+  }
+  final receipt = Map<String, dynamic>.from(r);
+  if (receipt['order_id'] != orderId) {
+    throw const FormatException('رسید به سفارش دیگری تعلق دارد');
+  }
+  final memberId = ref.watch(authProvider).memberId;
+  if (memberId != null && receipt['member_id'] != memberId) {
+    throw const FormatException('رسید متعلق به عضو این نشست نیست');
+  }
+  final lines = receipt['lines'];
+  if (lines is! List) {
+    throw const FormatException('اقلام رسید باید یک فهرست باشند');
+  }
+  for (final line in lines) {
+    if (line is! Map) {
+      throw const FormatException('یک قلم از رسید ساختار معتبر ندارد');
+    }
+    if (line['unit_price_rial'] is! num ||
+        line['qty'] is! num ||
+        line['line_total_rial'] is! num) {
+      throw const FormatException('مبلغ/تعداد یک قلم از رسید نامعتبر است');
+    }
+  }
+  if (receipt['total_rial'] is! num) {
+    throw const FormatException('مبلغ کل رسید نامعتبر است');
+  }
+  final status = receipt['status'];
+  if (status != null && status is! String) {
+    throw const FormatException('وضعیت سفارش نامعتبر است');
+  }
+  return receipt;
+});

@@ -67,5 +67,8 @@ mp-app/backend/*.sqlite3
 tmp/
 _ref/
 
+# --- Repowise local index/state (rebuildable; includes generated keys) ---
+.repowise/
+
 # --- Agent MCP registrations (مسیرهای مطلق و محیط‌محلی) ---
 .mcp.json

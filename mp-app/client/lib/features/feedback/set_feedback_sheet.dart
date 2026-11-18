@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/app_state.dart';
+import '../../core/haptics.dart';
 import '../../core/theme.dart';
 import 'feedback_providers.dart';
 
@@ -41,6 +42,9 @@ class _SetFeedbackSheetState extends ConsumerState<SetFeedbackSheet> {
   Future<void> _submit() async {
     final reps = int.tryParse(_repsController.text.trim());
     if (reps == null) return;
+    // UX-G3/M98 — «ثبت شد» باید بدون نگاه کردن به صفحه هم حس شود. خطای پلتفرم
+    // در MpHaptics بلعیده می‌شود، پس این خط هیچ‌وقت ثبت را نمی‌شکند.
+    final haptics = ref.read(hapticsProvider);
     final entry = <String, dynamic>{
       'movement_id': widget.movementName,
       // M48-c1 — پیش‌تر همیشه 0 بود، پس autoreg هرگز فعال نمی‌شد و
@@ -73,11 +77,13 @@ class _SetFeedbackSheetState extends ConsumerState<SetFeedbackSheet> {
             entries: [entry],
           );
           ref.invalidate(offlineFeedbackQueueProvider);
+          await haptics.warning(); // صف آفلاین = موفق نیست، فقط از دست نرفته
           if (mounted) {
             setState(() => _queueMessage =
                 'بازخورد ساختاریافته در دستگاه ذخیره شد و هنوز به سرور نرسیده است. درد عضلانی/یادداشت و پیشنهاد خودکار آفلاین ذخیره نمی‌شوند.');
           }
         } catch (_) {
+          await haptics.warning();
           if (mounted) {
             setState(() => _errorMessage =
                 'شبکه در دسترس نیست و صف آفلاین Android هم آماده نیست؛ بازخورد ذخیره نشد.');
@@ -88,10 +94,14 @@ class _SetFeedbackSheetState extends ConsumerState<SetFeedbackSheet> {
 
       final result = await ref.read(submitSetFeedbackProvider)([entry]);
       if (result == null) throw const FormatException('Invalid feedback response');
+      // M98 — پالس پیش از لمس UI؛ بعدش await دیگری نمی‌ماند تا `mounted`
+      // بین بررسی و `setState` بی‌اعتبار نشود.
+      await haptics.success();
       if (!mounted) return;
       ref.invalidate(readinessProvider);
       setState(() => _result = result);
     } catch (_) {
+      await haptics.warning();
       if (mounted) {
         setState(() => _errorMessage =
             'ارسال بازخورد ناموفق بود. نتیجهٔ درخواست ممکن است نامشخص باشد؛ برای جلوگیری از ثبت تکراری آن را خودکار در صف نگذاشتیم. اتصال را بررسی کنید و سپس وضعیت سرور را بسنجید.');
@@ -157,7 +167,11 @@ class _SetFeedbackSheetState extends ConsumerState<SetFeedbackSheet> {
                 min: 0,
                 max: 5,
                 divisions: 5,
-                onChanged: (v) => setState(() => _rir = v),
+                // tick روی هر گام — همان بازخوردی که اسلایدر بصری می‌دهد، لمسی.
+                onChanged: (v) {
+                  setState(() => _rir = v);
+                  ref.read(hapticsProvider).select();
+                },
               ),
               Text('درد عضلانی: ${_soreness.round()}'),
               Slider(
@@ -165,7 +179,10 @@ class _SetFeedbackSheetState extends ConsumerState<SetFeedbackSheet> {
                 min: 0,
                 max: 10,
                 divisions: 10,
-                onChanged: (v) => setState(() => _soreness = v),
+                onChanged: (v) {
+                  setState(() => _soreness = v);
+                  ref.read(hapticsProvider).select();
+                },
               ),
               const SizedBox(height: 10),
               SizedBox(

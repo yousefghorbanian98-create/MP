@@ -2,7 +2,7 @@
 
 - ثبت بر اساس درخواست مستقیم کاربر: 2026-11-17؛ مرز مجوز D-047
 - شاخهٔ مجاز: `arena/4f336f66-mp` (active)
-- وضعیت یادآوری: **PENDING — Codespace ساخته نشده؛ تا handoff پایانی صف M63–M99 ایجاد/هزینه نکن.**
+- وضعیت یادآوری: **PENDING — Codespace ساخته نشده؛ handoff پایانی M99 نهایی شد (`finn/reports/m99-closeout-report.md`)، ولی ماشین ابری بدون نیاز/هزینه‌ی روشن ساخته نمی‌شود. اگر CI `client-flutter` پس از push سبز باشد، اجرای Codespaces فقط برای device/mask (M104–M106) لازم است، نه برای تکرار suite.**
 - trigger: پس از ثبت loopهای محلیِ قابل‌اجرا تا M98 و پیش از بستن گزارش M99؛ یا اگر M99 برای اجرای Client به شاهد نیاز داشت، در handoff نهایی M99.
 
 ## زیرساخت آماده‌شده
@@ -34,8 +34,12 @@
    flutter test test/session_refresh_test.dart
    flutter test test/classes_cancel_test.dart
    flutter test test/set_feedback_sheet_test.dart
+   flutter test test/shop_orders_receipt_test.dart
+   flutter test test/motion_haptics_test.dart
    flutter test
    ```
+
+3a. **تمرکز این بسته (M90/M98):** دو فایل اخیر، شیت رسید/«سفارش‌های من» و لایهٔ `MpHaptics`/`MpMotion` را می‌سنجند؛ اگر `flutter analyze` در این‌ها warning بدهد، همان‌جا ثبت شود و ادعای pass نکنیم (sandbox محلی فقط Tree-sitter gate داشت: ۷۲ فایل / ۰ یافته).
 
 3. اگر M87 در بستهٔ جاری شامل تست‌های outbox بود، همهٔ آن‌ها نیز با full `flutter test` اجرا شوند. خروجی کامل، exit code هر دستور، نسخهٔ Flutter/Dart، مقدار `frameworkRevision`, نتیجهٔ `pub get` و تعداد تست‌ها ذخیره/ارسال شود. فایل `pubspec.lock` در baseline وجود ندارد؛ هر lockfile که ایجاد شود باید جداگانه بازبینی شود و به‌صورت خودکار commit نشود.
 4. Runtime testهای Widget به Android SDK نیاز ندارند. در این container Android SDK نصب نشده؛ APK build، signing، قبول Android licenses یا استفاده از فایل‌های keystore جزو این handoff نیست و کلیدهای شناخته‌شدهٔ repository نباید لمس/ارسال شوند.

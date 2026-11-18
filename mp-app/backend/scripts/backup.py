@@ -1,10 +1,18 @@
 """بکاپ/بازیابی پایگاه‌داده و فایل‌های حیاتی — M23-c2 (E10).
 
-استفاده:
-    python scripts/backup.py backup  [--out DIR]      → فایل backup_YYYYmmdd_HHMMSS.tar.gz
-    python scripts/backup.py restore ARCHIVE.tar.gz [--db PATH]
+استفاده (از `mp-app/backend/`؛ در کانتینر WORKDIR همان مسیر است):
+    python scripts/backup.py backup  [--out DIR]      → فایل mp_backup_<stamp>.tar.gz
+    python scripts/backup.py verify ARCHIVE.tar.gz    → اعتبارسنجی بدون نوشتن هیچ فایل
+    python scripts/backup.py restore ARCHIVE.tar.gz [--db PATH] [--extras-to DIR]
 
 پشتیبان: دیتابیس SQLite، registry.json، design-tokens — با SHA256 داخل manifest.
+
+چرا `--extras-to` و `verify` (M97): OPS-RUNBOOK ماهانه یک «تمرین restore روی محیط
+scratch» را لازم می‌داند، ولی `restore` فایل‌های الحاقی را همیشه در مسیرهای
+اصلی‌شان (منطقهٔ source/برنامهٔ در حال اجرا) می‌نوشت؛ یعنی تمرینِ بی‌خطر روی
+scratch عملاً ممکن نبود و یک آرشیو کهنه می‌توانست registry.json را بی‌سؤال‌پرسیدن
+بازنویسی کند. حالا تمرین فقط با `verify` (بدون نوشتن) یا `restore --extras-to /tmp/…`
+انجام می‌شود و مسیرهای زنده دست‌نخورده می‌مانند.
 """
 
 from __future__ import annotations
@@ -142,34 +150,86 @@ def _atomic_copy(source: Path, destination: Path) -> None:
             temporary_path.unlink(missing_ok=True)
 
 
-def restore(archive: Path, db_path: Path = DEFAULT_DB) -> dict:
+def _validated_bundle(archive: Path, tmp_path: Path) -> dict:
+    """فقط استخراج و اعتبارسنجی: manifest، اعضا و SHA256. هیچ مسیری را بازنویسی نمی‌کند.
+
+    هم `verify` و هم `restore` از همین یک مسیر عبور می‌کنند تا «تمرین» و «اجرا»
+    هرگز دو سیاست متفاوت داشته باشند (یک‌بار آرشیوی که verify سبز می‌کرد، restore‌اش
+    باید همان فایل‌ها را بپذیرد).
+    """
+    extracted = _extract_archive(archive, tmp_path)
+    if "manifest.json" not in extracted:
+        raise ValueError("backup manifest is missing")
+    try:
+        manifest = json.loads((tmp_path / "manifest.json").read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, UnicodeDecodeError) as exc:
+        raise ValueError("backup manifest is invalid") from exc
+
+    files = manifest.get("files") if isinstance(manifest, dict) else None
+    if not isinstance(files, dict) or "mp.db" not in files:
+        raise ValueError("backup manifest must include mp.db")
+    archived_files = extracted - {"manifest.json"}
+    if archived_files != set(files):
+        raise ValueError("backup archive members do not match the manifest")
+
+    for name, expected_hash in files.items():
+        if (
+            name not in _ARCHIVE_FILES - {"manifest.json"}
+            or not isinstance(expected_hash, str)
+            or re.fullmatch(r"[0-9a-f]{64}", expected_hash) is None
+        ):
+            raise ValueError(f"invalid backup manifest entry: {name!r}")
+        source = tmp_path / name
+        if _sha256(source) != expected_hash:
+            raise ValueError(f"hash mismatch for {name} — backup is corrupt")
+    return manifest
+
+
+def verify(archive: Path) -> dict:
+    """آرشیو را می‌خواند و صحت hash/manifest/SQLite را گزارش می‌دهد — بدون هیچ نوشتن.
+
+    برای تمرین ماهانهٔ OPS-RUNBOOK و برای «آیا این آرشیو اصلاً قابل restore است؟»
+    پیش از توقف سرویس.
+    """
     with tempfile.TemporaryDirectory() as tmp:
         tmp_path = Path(tmp)
-        extracted = _extract_archive(archive, tmp_path)
-        if "manifest.json" not in extracted:
-            raise ValueError("backup manifest is missing")
-        try:
-            manifest = json.loads((tmp_path / "manifest.json").read_text(encoding="utf-8"))
-        except (json.JSONDecodeError, UnicodeDecodeError) as exc:
-            raise ValueError("backup manifest is invalid") from exc
+        manifest = _validated_bundle(archive, tmp_path)
+        checked_db = tmp_path / "checked.db"
+        _snapshot_sqlite(tmp_path / "mp.db", checked_db)
+        with sqlite3.connect(checked_db) as con:
+            tables = [
+                row[0]
+                for row in con.execute(
+                    "SELECT name FROM sqlite_master WHERE type='table' "
+                    "AND name NOT LIKE 'sqlite_%' AND name <> 'alembic_version' "
+                    "ORDER BY name"
+                )
+            ]
+            alembic_rev = None
+            has_version = con.execute(
+                "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='alembic_version'"
+            ).fetchone()[0]
+            if has_version:
+                alembic_rev = con.execute("SELECT version_num FROM alembic_version").fetchone()
+                alembic_rev = alembic_rev[0] if alembic_rev else None
+    return {
+        "archive": archive.name,
+        "created_at": manifest.get("created_at"),
+        "files": dict(manifest["files"]),
+        "tables": len(tables),
+        "alembic_revision": alembic_rev,
+    }
 
-        files = manifest.get("files") if isinstance(manifest, dict) else None
-        if not isinstance(files, dict) or "mp.db" not in files:
-            raise ValueError("backup manifest must include mp.db")
-        archived_files = extracted - {"manifest.json"}
-        if archived_files != set(files):
-            raise ValueError("backup archive members do not match the manifest")
 
-        for name, expected_hash in files.items():
-            if (
-                name not in _ARCHIVE_FILES - {"manifest.json"}
-                or not isinstance(expected_hash, str)
-                or re.fullmatch(r"[0-9a-f]{64}", expected_hash) is None
-            ):
-                raise ValueError(f"invalid backup manifest entry: {name!r}")
-            source = tmp_path / name
-            if _sha256(source) != expected_hash:
-                raise ValueError(f"hash mismatch for {name} — backup is corrupt")
+def restore(archive: Path, db_path: Path = DEFAULT_DB, extras_dir: Path | None = None) -> dict:
+    """بازیابی؛ `extras_dir` مسیر فایل‌های الحاقی را به محل موقت تغییر می‌دهد.
+
+    بدون `extras_dir` رفتار تاریخی (نوشتن در مسیرهای اصلی) حفظ می‌شود تا
+    دستورهای مستندشده نشکنند؛ برای تمرین scratch باید آن را داد.
+    """
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp_path = Path(tmp)
+        manifest = _validated_bundle(archive, tmp_path)
 
         # Re-validate the restored database before replacing the operator's file.
         validated_db = tmp_path / "validated.db"
@@ -177,9 +237,9 @@ def restore(archive: Path, db_path: Path = DEFAULT_DB) -> dict:
         _atomic_copy(validated_db, db_path)
 
         for path in EXTRA_FILES:
-            archived_path = tmp_path / path.name
-            if path.name in files:
-                _atomic_copy(archived_path, path)
+            if path.name in manifest["files"]:
+                destination = path if extras_dir is None else extras_dir / path.name
+                _atomic_copy(tmp_path / path.name, destination)
     return manifest
 
 
@@ -192,13 +252,30 @@ def main(argv: list[str] | None = None) -> int:
     restore_parser = sub.add_parser("restore")
     restore_parser.add_argument("archive", type=Path)
     restore_parser.add_argument("--db", type=Path, default=DEFAULT_DB)
+    restore_parser.add_argument(
+        "--extras-to",
+        type=Path,
+        default=None,
+        metavar="DIR",
+        help="فایل‌های الحاقی را در DIR بنویس، نه در مسیرهای اصلی (تمرین scratch)",
+    )
+    verify_parser = sub.add_parser("verify", help="اعتبارسنجی آرشیو بدون نوشتن هیچ فایل")
+    verify_parser.add_argument("archive", type=Path)
     args = parser.parse_args(argv)
     if args.cmd == "backup":
         path = backup(args.out, args.db)
         print(f"backup created: {path}")
+    elif args.cmd == "verify":
+        summary = verify(args.archive)
+        print(
+            f"backup verified: {summary['archive']} · {summary['tables']} table · "
+            f"alembic={summary['alembic_revision'] or 'نامشخص'} · "
+            f"{len(summary['files'])} فایل در manifest (بدون نوشتن هیچ فایل)"
+        )
     else:
-        manifest = restore(args.archive, args.db)
-        print(f"restored {list(manifest['files'])}")
+        manifest = restore(args.archive, args.db, extras_dir=args.extras_to)
+        target = "scratch" if args.extras_to else "مسیرهای اصلی"
+        print(f"restored {list(manifest['files'])} — extras → {target}")
     return 0
 
 

@@ -60,3 +60,21 @@
 - تست‌ها: `mp-app/backend/tests/integration/test_m83_wallet_ledger.py`; `mp-app/client/test/wallet_history_test.dart`; API coverage در `mp-app/studio/tests/apiCoverage.test.ts`.
 - رگرسیون‌ها: payment history را معادل wallet ledger فرض نکن؛ credit/debit واقعی از `wallet_transactions`، مانده و page rows با یک statement، ترتیب پایدار `id DESC` و cursor `< before_id`؛ عضو فقط دفتر خود، staff برای حساب‌های مجاز audit؛ دفتر خالی balance=0؛ Client باید `member_id` پاسخ و هر ردیف را با نشست تطبیق دهد و مانده را از همان ledger response نمایش دهد.
 - وضعیت: M83 backend integration **2 passed**, full backend **812 passed / 2 skipped**؛ route guard و freshness سبز، routes **119**؛ Studio **219/9** + API coverage و build؛ Dart static **61/0**. Flutter widget tests افزوده‌اند اما Flutter/Dart/Java/Android SDK نیست و runtime اجرا نشده؛ M83 از نظر Client `UNKNOWN` است.
+
+## R-031 (M97) — تاریخچهٔ مهاجرت، parity دو مسیر ساخت DB و مانور backup/restore
+
+- تست‌ها: `mp-app/backend/tests/integration/test_m97_migrations_and_backup.py` (۵ تست)، همراه `test_m47_migration_drift.py` و `test_backup_drill.py`.
+- رگرسیون‌ها: `alembic upgrade head` و `Base.metadata.create_all` باید schema یکسان بدهند (جدول، ستون+nullable، ایندکس دستی؛ `sqlite_autoindex_*` خارج)؛ تاریخچه یک head، بدون revision تکراری/یتیم/parent گم‌شده و بدون فایل بیرون گراف؛ DB قدیمی با `stamp head` baseline می‌شود و بعد `check` صفر drift؛ `verify` آرشیو دست‌کاری‌شده را پیش از هر نوشتن رد می‌کند؛ `restore --extras-to` فایل‌های زنده (`registry.json`, `design-tokens.json`) را بازنویسی نمی‌کند.
+- وضعیت: **36 passed** (M97 + backup drill + M47 + infra + production ops)، Ruff check/format سبز، `bandit -ll` بدون یافته، `docs_gate.py` سبز (7 فایل / 99 لینک / 3 Mermaid). کل backend suite از ریشه: 861 passed / 1 failed — آن یک شکست `test_monitoring::test_alert_rules_cover_slo_and_down` است که مسیر YAML را نسبت به cwd باز می‌کند و از `mp-app/backend` سبز است (۱۰ passed). اجرای واقعی Postgres/DB تولید و Flutter در این sandbox ممکن نیست.
+
+## R-032 (M90) — رسید سفارش عضو: فقط‌خواندنی، بی‌نشت، بی‌جعل مبلغ
+
+- تست‌ها: `mp-app/client/test/shop_orders_receipt_test.dart` (۷ تست)؛ مصرف مسیر در `mp-app/studio/tests/apiCoverage.test.ts`.
+- رگرسیون‌ها: رسید فقط با `GET /shop/orders/{id}/receipt` خوانده شود و هیچ `POST`/`PATCH` با مبلغ از جریان رسید نرود؛ پاسخ با `order_id` یا `member_id` نامطابق نمایش داده نشود؛ `lines` غیرلیست/مبلغ غیر `num` → خطای retry؛ اگر `items_total_rial` ≠ `total_rial` هر دو نمایش داده شوند و یادداشت اختلاف بیاید؛ status ناشناخته به «تأییدشده» ترجمه نشود؛ empty/error/retry و رقم فارسی (نه لاتین) در مبلغ‌ها.
+- وضعیت: Dart static gate **۶۸ فایل / ۰ یافته**؛ `apiCoverage` **4 passed**؛ Studio **219 passed / 9 skipped** + build. Flutter analyzer/widget test در sandbox اجرا نشد (SDK نیست) → برای Client runtime `UNKNOWN` تا `client-flutter` CI.
+
+## R-033 (M98) — پالس لمسی و کاهش حرکت
+
+- تست‌ها: `mp-app/client/test/motion_haptics_test.dart`، `mp-app/client/test/haptics_recorder.dart`، افزوده‌شده به `set_feedback_sheet_test.dart` و `classes_cancel_test.dart`.
+- رگرسیون‌ها: `disableAnimations=true` → `MpMotion.dur` صفر و `target` صفر (و نبودِ MediaQuery → fallback امن)؛ `SystemMpHaptics(enabled: true)` سه فراخوانی روی `SystemChannels.platform` می‌فرستد با آرگومان‌های distinguishable و `enabled: false` صفر فراخوانی؛ ثبت موفق بازخورد = `success` و نه `warning`، ارسال ناموفق = `warning` و نه `success`، و «تکرار خالی → هیچ ارسالی، هیچ پالسی»؛ رزرو/لغو موفق کلاس = یک `success`.
+- وضعیت: Dart static gate **۷۲ فایل / ۰ یافته**؛ هیچ dependency تازه‌ای اضافه نشد؛ behavior واقعی روی دستگاه (شدت/تأخیر) سنجیده نشده و Flutter test محلی اجرا نشده → `UNKNOWN` تا CI.
