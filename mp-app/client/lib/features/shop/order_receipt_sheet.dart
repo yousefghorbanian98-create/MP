@@ -43,7 +43,8 @@ String orderStatusLabel(String? status) {
     'delivered' => 'تحویل‌شده',
     'refunded' => 'بازگشت داده‌شده',
     null || '' => 'نامشخص',
-    _ => status!,
+    // `status` این‌جا non-null است؛ `!` فقط warning analyzer می‌گرفت (CI M90).
+    _ => status,
   };
 }
 

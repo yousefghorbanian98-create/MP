@@ -134,14 +134,14 @@ class ShopPage extends ConsumerWidget {
     try {
       await api.post('/shop/cart', {'product_id': product['id'], 'qty': 1});
       ref.invalidate(cartProvider);
-      await ref.read(hapticsProvider).success();
       if (!context.mounted) return;
+      ref.read(hapticsProvider).success();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('«${product['title']}» به سبد اضافه شد')),
       );
     } catch (e) {
-      await ref.read(hapticsProvider).warning();
       if (!context.mounted) return;
+      ref.read(hapticsProvider).warning();
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
     }
   }
@@ -319,6 +319,7 @@ class _CartSheetState extends ConsumerState<_CartSheet> {
       widget.onDone();
     } catch (e) {
       if (!mounted) return;
+      ref.read(hapticsProvider).warning();
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -339,14 +340,15 @@ class _CartSheetState extends ConsumerState<_CartSheet> {
       ref.invalidate(walletLedgerProvider);
       ref.invalidate(shopOrdersProvider);
       widget.onDone();
-      await ref.read(hapticsProvider).success();
       if (!mounted) return;
+      ref.read(hapticsProvider).success();
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('سفارش #$orderId ثبت شد و از کیف‌پول پرداخت شد')),
       );
     } catch (e) {
       if (!mounted) return;
+      ref.read(hapticsProvider).warning();
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
     } finally {
       if (mounted) setState(() => _busy = false);

@@ -24,8 +24,11 @@ String faDigits(Object value) {
 /// `unit` برای جاهایی است که واحد دیگری نمایش داده می‌شود؛ مبلغ هرگز در کلاینت
 /// محاسبه یا تصحیح نمی‌شود — فقط قالب‌بندی می‌شود (قیمت از سرور می‌آید).
 String rial(num amount, {String unit = 'ریال'}) {
+  // JSON می‌تواند 5000000.0 بدهد (نه 5000000)؛ «۵٬۰۰۰٬۰۰۰٫۰ ریال» در رسید فقط
+  // نویز است، پس عدد صحیحِ double به همان شکل صحیح قالب‌بندی می‌شود.
+  final value = amount is! int && amount == amount.roundToDouble() ? amount.toInt() : amount;
   final grouped =
-      amount.toString().replaceAllMapped(RegExp(r'(\d)(?=(\d{3})+$)'), (m) => '${m[1]}٬');
+      value.toString().replaceAllMapped(RegExp(r'(\d)(?=(\d{3})+$)'), (m) => '${m[1]}٬');
   final text = faDigits(grouped);
   return unit.isEmpty ? text : '$text $unit';
 }

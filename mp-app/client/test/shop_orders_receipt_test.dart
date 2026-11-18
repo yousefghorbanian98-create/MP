@@ -37,6 +37,7 @@ Map<String, dynamic> _receiptJson({
   int member = 3,
   int itemsTotal = 5000000,
   int total = 5000000,
+  List<Map<String, dynamic>>? lines,
 }) =>
     {
       'receipt_no': 'O-000012',
@@ -47,16 +48,17 @@ Map<String, dynamic> _receiptJson({
       'note': 'تحویل شنبه',
       'created_at': '2026-11-10T08:30:00+00:00',
       'issued_at': '2026-11-11T10:00:00+00:00',
-      'lines': [
-        {
-          'product_id': 7,
-          'title': 'پروتئین وی',
-          'variant': 'شکلاتی',
-          'unit_price_rial': 2500000,
-          'qty': 2,
-          'line_total_rial': 5000000,
-        }
-      ],
+      'lines': lines ??
+          [
+            {
+              'product_id': 7,
+              'title': 'پروتئین وی',
+              'variant': 'شکلاتی',
+              'unit_price_rial': 2500000,
+              'qty': 2,
+              'line_total_rial': 5000000,
+            }
+          ],
       'items_total_rial': itemsTotal,
       'total_rial': total,
       'payment': {
@@ -188,7 +190,8 @@ void main() {
     // محتوای رسید از پاسخ سرور
     expect(find.text('O-000012'), findsOneWidget);
     expect(find.textContaining('پروتئین وی — شکلاتی'), findsOneWidget);
-    expect(find.textContaining('۲٬۵۰۰٬۰۰۰ × ۲'), findsOneWidget);
+    // هر قلم = واحد قیمت × تعداد + مبلغ قلم؛ هیچ‌کدام در کلاینت جمع نمی‌شوند.
+    expect(find.textContaining('۲٬۵۰۰٬۰۰۰ ریال × ۲'), findsOneWidget);
     expect(find.textContaining('سارا تستی'), findsWidgets);
     expect(find.textContaining('WP-777'), findsOneWidget);
     expect(find.text('قابل پرداخت'), findsOneWidget);
@@ -209,7 +212,8 @@ void main() {
 
     expect(find.textContaining('رسید متعلق به عضو این نشست نیست'), findsOneWidget);
     expect(find.text('O-000012'), findsNothing);
-    expect(find.textContaining('۲٬۵۰۰٬۰۰۰ × ۲'), findsNothing);
+    // عنوان قلم فقط در بدنهٔ رسید هست؛ نبودنش یعنی پاسخ عضو دیگر رندر نشده
+    expect(find.textContaining('پروتئین وی'), findsNothing);
   });
 
   testWidgets('رسید سفارش دیگر (order_id نامطابق) رد می‌شود', (tester) async {
@@ -228,26 +232,51 @@ void main() {
   });
 
   testWidgets('جمع اقلام و مبلغ کل هر دو نمایش داده می‌شوند اگر سرور یکسان نبود', (tester) async {
+    // اعداد عمداً متفاوت‌اند تا هر مبلغ دقیقاً یک‌بار در صفحه بیاید و
+    // `findsOneWidget` واقعی باشد (مبلغ فهرست سفارش‌ها پشت شیت هم همین‌طور).
     await _openOrdersSheet(
       tester,
       _ShopFakeClient(
-        orders: [_orderJson()],
+        orders: [_orderJson(total: 7000000)],
         responses: {
-          '/shop/orders/12/receipt': _receiptJson(itemsTotal: 4000000, total: 5000000),
+          '/shop/orders/12/receipt': _receiptJson(
+            itemsTotal: 4000000,
+            total: 5000000,
+            lines: [
+              {
+                'product_id': 7,
+                'title': 'پروتئین وی',
+                'variant': 'شکلاتی',
+                'unit_price_rial': 1111111,
+                'qty': 1,
+                'line_total_rial': 2222222,
+              }
+            ],
+          ),
         },
       ),
     );
     await tester.tap(find.text('رسید'));
     await tester.pumpAndSettle();
 
-    expect(find.textContaining('جمع اقلام'), findsOneWidget);
+    // `find.text('جمع اقلام')` نه textContaining: جملهٔ اختلاف هم همین عبارت را در
+    // متن دارد و finder را دوساز می‌کرد (اولین run CI همین را گرفت).
+    expect(find.text('جمع اقلام'), findsOneWidget);
+    expect(find.text('قابل پرداخت'), findsOneWidget);
     expect(find.textContaining('۴٬۰۰۰٬۰۰۰ ریال'), findsOneWidget);
     expect(find.textContaining('۵٬۰۰۰٬۰۰۰ ریال'), findsOneWidget);
+    // قلم هم همان‌طور که سرور فرستاده نمایش داده می‌شود، حتی اگر
+    // line_total_rial با unit_price × qty نخواند: کلاینت هیچ عددی را نمی‌سازد.
+    expect(find.textContaining('۱٬۱۱۱٬۱۱۱ ریال × ۱'), findsOneWidget);
+    expect(find.textContaining('۲٬۲۲۲٬۲۲۲ ریال'), findsOneWidget);
     expect(
       find.textContaining('با جمع اقلام یکسان نیست'),
       findsOneWidget,
       reason: 'اختلاف باید در همان نگاه پیدا باشد، نه اینکه عددی در کلاینت تصحیح شود',
     );
+    // هیچ جمع‌سازی/تصحیحی در کلاینت نمی‌شود: ۱٬۱۱۱٬۱۱۱×۱ که سرور ۲٬۲۲۲٬۲۲۲ زده
+    // نباید به ۱٬۱۱۱٬۱۱۱ تغییر کند.
+    expect(find.textContaining('۱٬۱۱۱٬۱۱۱ ریال'), findsOneWidget);
   });
 
   testWidgets('خطای سرور روی رسید → تلاش دوباره همان مسیر را می‌خواند', (tester) async {

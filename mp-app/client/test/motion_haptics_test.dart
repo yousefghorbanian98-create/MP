@@ -75,25 +75,27 @@ void main() {
     });
 
     Future<void> bind(WidgetTester tester) async {
-      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
-        SystemChannels.platform,
-        (call) async {
-          platformCalls.add(call);
-          return null;
-        },
-      );
-      addTearDown(() =>
-          tester.binding.defaultBinaryMessenger.setMockMethodCallHandler<void>(
-              SystemChannels.platform, null));
+      final messenger = tester.binding.defaultBinaryMessenger;
+      messenger.setMockMethodCallHandler(SystemChannels.platform, (call) async {
+        platformCalls.add(call);
+        return null;
+      });
+      // بدون پارامتر نوع: `setMockMethodCallHandler` در SDK این نسخه ژنریک نیست
+      // و `…<void>` در CI خطای کامپایل می‌داد (WRONG_NUMBER_OF_TYPE_ARGUMENTS).
+      addTearDown(() => messenger.setMockMethodCallHandler(SystemChannels.platform, null));
     }
+
+    // پالس‌ها fire-and-forget‌اند (بی‌await)، پس یک بار صف رویداد را تخلیه می‌کنیم تا
+    // پیام واقعاً به mock handler برسد.
+    Future<void> drain() => pumpEventQueue();
 
     testWidgets('هر سه پالس یک فراخوانی پلتفرم می‌فرستد', (tester) async {
       await bind(tester);
       const haptics = SystemMpHaptics();
-      await haptics.select();
-      await haptics.success();
-      await haptics.warning();
-      await tester.pump();
+      haptics.select();
+      haptics.success();
+      haptics.warning();
+      await drain();
 
       expect(platformCalls, hasLength(3));
       expect(
@@ -111,18 +113,18 @@ void main() {
     testWidgets('enabled=false → هیچ فراخوانی پلتفرم نه', (tester) async {
       await bind(tester);
       const haptics = SystemMpHaptics(enabled: false);
-      await haptics.select();
-      await haptics.success();
-      await haptics.warning();
-      await tester.pump();
+      haptics.select();
+      haptics.success();
+      haptics.warning();
+      await drain();
       expect(platformCalls, isEmpty);
     });
 
-    test('رابط MpHaptics بدون پلتفرم هم قابل استفاده است (fake تست‌ها)', () async {
+    test('رابط MpHaptics بدون پلتفرم هم قابل استفاده است (fake تست‌ها)', () {
       final fake = RecordingHaptics();
-      await fake.select();
-      await fake.success();
-      await fake.warning();
+      fake.select();
+      fake.success();
+      fake.warning();
       expect(fake.events, ['select', 'success', 'warning']);
     });
   });

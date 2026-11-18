@@ -10,22 +10,30 @@
 /// ۳) پلتفرم رومیزی/PWA هیچ موتور لرزشی ندارد؛ فراخوانی باید بی‌ضرر باشد، نه
 ///    exception.
 ///
-/// هر pulse fire-and-forget است و خطا را می‌بلعد: اگر لرزش شکست، ثبت بازخورد یا
-/// لغو رزرو نباید شکست بخورد.
+/// هر pulse به‌صورت fire-and-forget شلیک می‌شود و خطا را می‌بلعد: اگر لرزش شکست، ثبت بازخورد یا لغو
+/// رزرو نباید شکست بخورد.
+///
+/// چرا `void` و نه `Future<void>`: نسخهٔ اول `await ref.read(hapticsProvider).success()`
+/// بود و CI همان را گرفت — در تست ویجت (و روی دستگاهی که کانال پاسخ نمی‌دهد)
+/// `await` روی کانال پلتفرم می‌تواند هرگز resolve نشود، پس `setState` بعدش اجرا
+/// نمی‌شد و متن «اعمال شد» غیب می‌شد (`set_feedback_sheet_test.dart:100`).
+/// بازخورد نباید هرگز بین نتیجهٔ سرویس و به‌روزرسانی UI فاصله بیاندازد.
 library;
+
+import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 abstract interface class MpHaptics {
   /// انتخاب/تغییر مقدار (اسلایدر، تب، عدد) — سبک‌ترین pulse.
-  Future<void> select();
+  void select();
 
   /// عملیات موفق (ثبت شد، لغو شد، پرداخت شد).
-  Future<void> success();
+  void success();
 
   /// عملیات ناموفق یا نتیجه‌ای که کاربر باید بازبینی کند.
-  Future<void> warning();
+  void warning();
 }
 
 /// پیاده‌سازی پیش‌فرض روی API فلاتر.
@@ -35,21 +43,23 @@ class SystemMpHaptics implements MpHaptics {
   final bool enabled;
 
   @override
-  Future<void> select() => _run(HapticFeedback.selectionClick);
+  void select() => _fire(HapticFeedback.selectionClick);
 
   @override
-  Future<void> success() => _run(HapticFeedback.mediumImpact);
+  void success() => _fire(HapticFeedback.mediumImpact);
 
   @override
-  Future<void> warning() => _run(HapticFeedback.heavyImpact);
+  void warning() => _fire(HapticFeedback.heavyImpact);
 
-  Future<void> _run(Future<void> Function() pulse) async {
+  void _fire(Future<void> Function() pulse) {
     if (!enabled) return;
-    try {
-      await pulse();
-    } catch (_) {
-      // MissingPluginException روی دسکتاپ/وب و رد شدن کانال در تست‌ها: بی‌صدا.
-    }
+    // خطای کانال (MissingPluginException روی دسکتاپ/وب، پاسخ‌ندادن در تست) همین‌جا
+    // بلعیده می‌شود تا هیچ فراخوانی معلق بی‌صدا بالا نماند.
+    unawaited(
+      pulse().catchError((Object _) {
+        return;
+      }),
+    );
   }
 }
 

@@ -77,13 +77,14 @@ class _SetFeedbackSheetState extends ConsumerState<SetFeedbackSheet> {
             entries: [entry],
           );
           ref.invalidate(offlineFeedbackQueueProvider);
-          await haptics.warning(); // صف آفلاین = موفق نیست، فقط از دست نرفته
+          // صف آفلاین = موفق نیست، فقط از دست نرفته → پالس هشدار، نه تأیید.
+          haptics.warning();
           if (mounted) {
             setState(() => _queueMessage =
                 'بازخورد ساختاریافته در دستگاه ذخیره شد و هنوز به سرور نرسیده است. درد عضلانی/یادداشت و پیشنهاد خودکار آفلاین ذخیره نمی‌شوند.');
           }
         } catch (_) {
-          await haptics.warning();
+          haptics.warning();
           if (mounted) {
             setState(() => _errorMessage =
                 'شبکه در دسترس نیست و صف آفلاین Android هم آماده نیست؛ بازخورد ذخیره نشد.');
@@ -94,14 +95,12 @@ class _SetFeedbackSheetState extends ConsumerState<SetFeedbackSheet> {
 
       final result = await ref.read(submitSetFeedbackProvider)([entry]);
       if (result == null) throw const FormatException('Invalid feedback response');
-      // M98 — پالس پیش از لمس UI؛ بعدش await دیگری نمی‌ماند تا `mounted`
-      // بین بررسی و `setState` بی‌اعتبار نشود.
-      await haptics.success();
       if (!mounted) return;
+      haptics.success();
       ref.invalidate(readinessProvider);
       setState(() => _result = result);
     } catch (_) {
-      await haptics.warning();
+      haptics.warning();
       if (mounted) {
         setState(() => _errorMessage =
             'ارسال بازخورد ناموفق بود. نتیجهٔ درخواست ممکن است نامشخص باشد؛ برای جلوگیری از ثبت تکراری آن را خودکار در صف نگذاشتیم. اتصال را بررسی کنید و سپس وضعیت سرور را بسنجید.');

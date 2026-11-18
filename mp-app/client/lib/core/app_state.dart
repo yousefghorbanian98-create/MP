@@ -379,6 +379,12 @@ final orderReceiptProvider =
   if (receipt['total_rial'] is! num) {
     throw const FormatException('مبلغ کل رسید نامعتبر است');
   }
+  // `items_total_rial` هم همین‌جا بررسی می‌شود: رشته در این فیلد وگرنه
+  // TypeError داخل build ویجت می‌سازد (صفحهٔ قرمز، نه پیام روشن).
+  final itemsTotal = receipt['items_total_rial'];
+  if (itemsTotal != null && itemsTotal is! num) {
+    throw const FormatException('جمع اقلام رسید نامعتبر است');
+  }
   final status = receipt['status'];
   if (status != null && status is! String) {
     throw const FormatException('وضعیت سفارش نامعتبر است');

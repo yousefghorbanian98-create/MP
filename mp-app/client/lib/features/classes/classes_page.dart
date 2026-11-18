@@ -37,10 +37,10 @@ class _ClassesPageState extends ConsumerState<ClassesPage> {
         'class_id': classId,
         'member_id': memberId,
       });
-      // UX-G3/M98 — پالس همین‌جا و **پیش از** هر کار روی UI: بعد از این نقطه await
-      // دیگری نیست، پس `mounted` تا `setState` اعتبارش را نگه می‌دارد.
-      await ref.read(hapticsProvider).success();
+      // UX-G3/M98 — نتیجهٔ عملیات لمسی هم حس شود. fire-and-forget است (بی‌await)، پس
+      // نه به `mounted` ضرر می‌زند نه به رسیدن پیام روی صفحه.
       if (!mounted) return;
+      ref.read(hapticsProvider).success();
       final memberName = r is Map && r['member_name'] is String
           ? (r['member_name'] as String).trim()
           : '';
@@ -53,8 +53,8 @@ class _ClassesPageState extends ConsumerState<ClassesPage> {
       setState(() => _message = '✅ $bookingLabel ($statusLabel)');
       ref.invalidate(classesProvider);
     } catch (e) {
-      await ref.read(hapticsProvider).warning();
       if (!mounted) return;
+      ref.read(hapticsProvider).warning();
       setState(() => _message = '⚠ $e');
       ref.invalidate(classesProvider);
     } finally {
@@ -76,14 +76,14 @@ class _ClassesPageState extends ConsumerState<ClassesPage> {
         'class_id': classId,
         'member_id': memberId,
       });
-      await ref.read(hapticsProvider).success();
       if (!mounted) return;
+      ref.read(hapticsProvider).success();
       final status = response is Map ? response['status'] : null;
       setState(() => _message = status == 'cancelled' ? '✅ رزرو لغو شد' : '✅ درخواست لغو ثبت شد');
       ref.invalidate(classesProvider);
     } catch (e) {
-      await ref.read(hapticsProvider).warning();
       if (!mounted) return;
+      ref.read(hapticsProvider).warning();
       setState(() => _message = '⚠ لغو انجام نشد: $e');
       // رزرو ممکن است از نشست دیگری لغو شده باشد؛ از API وضعیت تازه بگیر.
       ref.invalidate(classesProvider);

@@ -12,12 +12,13 @@ class RecordingHaptics implements MpHaptics {
 
   int count(String kind) => events.where((e) => e == kind).length;
 
+  // void است، همانند رابط `MpHaptics`: پالس نباید تست (یا UI) را منتظر بگذارد.
   @override
-  Future<void> select() async => events.add('select');
+  void select() => events.add('select');
 
   @override
-  Future<void> success() async => events.add('success');
+  void success() => events.add('success');
 
   @override
-  Future<void> warning() async => events.add('warning');
+  void warning() => events.add('warning');
 }
