@@ -81,9 +81,13 @@ void main() {
 
     setUp(() {
       platformCalls = <MethodCall>[];
+      // بدون کست دوم: `TestDefaultBinaryMessengerBinding.defaultBinaryMessenger`
+      // خودش `TestDefaultBinaryMessenger` است و کست اضافه، `flutter analyze` را با
+      // UNNECESSARY_CAST (warning) قرمز می‌کند — این گیت warning‌ها را هم fail
+      // می‌کند، پس «cast برای وضوح» اینجا مجاز نیست.
       messenger = (TestWidgetsFlutterBinding.ensureInitialized()
               as TestDefaultBinaryMessengerBinding)
-          .defaultBinaryMessenger as TestDefaultBinaryMessenger;
+          .defaultBinaryMessenger;
       messenger.setMockMethodCallHandler(SystemChannels.platform, (call) async {
         platformCalls.add(call);
         return null;
