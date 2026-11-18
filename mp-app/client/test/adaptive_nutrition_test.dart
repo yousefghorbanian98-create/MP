@@ -126,8 +126,9 @@ void main() {
     expect(find.text('۲۱۰۰ kcal'), findsWidgets);
     _checkpoint('suggested-delta');
     expect(find.textContaining('+۲۰۰ kcal → ۲۳۰۰ kcal'), findsOneWidget);
-    _checkpoint('safety-note');
-    expect(find.textContaining('توصیهٔ درمانی یا رژیم پزشکی نیست'), findsOneWidget);
+    final disclaimer = find.textContaining('توصیهٔ درمانی یا رژیم پزشکی نیست');
+    _checkpoint('safety-count-${disclaimer.evaluate().length}');
+    expect(disclaimer, findsOneWidget);
   });
 
   testWidgets('دادهٔ ناکافی را نامعلوم می‌گوید و با ثبت وزن، API را تازه می‌کند', (tester) async {
