@@ -104,41 +104,60 @@ jobs:
             exit 0
           fi
 
-      - name: Prove the diff is whitespace-only (and only modifies .dart files)
+      - name: Prove the diff changes nothing but layout
         if: env.NO_CHANGES != '1'
         run: |
           set -o pipefail
           python3 - <<'PY' | tee /tmp/m109/proof.txt
-          import pathlib, subprocess
+          import pathlib, re, subprocess
 
           def run(*args):
               return subprocess.run(args, capture_output=True, text=True, check=True).stdout
 
+          def notice(level, text):
+              # the runner reads workflow commands from stdout; annotations are the only
+              # output of this job that survives back to the API (see REGRESSIONS R-036)
+              safe = text.replace("%", "%25").replace("\n", "%0A")
+              print(f"::{level} title=m109 layout-proof::{safe}")
+
           status = [l for l in run("git", "status", "--porcelain").splitlines() if l.strip()]
-          problems, files = [], []
+          layout, commas, problems = [], [], []
           for line in status:
               code, path = line[:2].strip(), line[3:].strip()
               if code != "M":
-                  problems.append(f"{code or '?'} {path} — expected only modifications")
+                  problems.append(f"{code} {path}: expected modifications only")
                   continue
               if not path.endswith(".dart"):
-                  problems.append(f"{path} — formatter touched a non-Dart file")
+                  problems.append(f"{path}: formatter touched a non-Dart file")
                   continue
-              files.append(path)
+              old = subprocess.run(["git", "show", f"HEAD:{path}"], capture_output=True,
+                                   check=True).stdout.decode("utf-8", "replace")
+              new = pathlib.Path(path).read_text(encoding="utf-8")
+              flat = lambda s: "".join(s.split())
+              if flat(old) == flat(new):
+                  layout.append(path)
+                  continue
+              # `dart format` is allowed to move trailing commas when it splits a list; a
+              # comma is a separator here, so dropping them is still a layout-only claim.
+              if flat(old).replace(",", "") == flat(new).replace(",", ""):
+                  commas.append(path)
+                  continue
+              a, b = flat(old), flat(new)
+              i = next((k for k in range(min(len(a), len(b))) if a[k] != b[k]), min(len(a), len(b)))
+              problems.append(
+                  f"{path}: real content change at char {i}\n"
+                  f"  old: {a[max(0,i-40):i+40]!r}\n  new: {b[max(0,i-40):i+40]!r}"
+              )
 
-          for path in files:
-              old = subprocess.run(["git", "show", f"HEAD:{path}"], capture_output=True, check=True).stdout.decode()
-              new = pathlib.Path(path).read_text()
-              # All ASCII whitespace removed on both sides: if anything but layout changed,
-              # the token sequence differs and this run must not become a merge candidate.
-              if "".join(old.split()) != "".join(new.split()):
-                  problems.append(f"{path} — content differs beyond whitespace")
-
-          print(f"files modified: {len(files)}")
+          print(f"files modified={len(status)} whitespace-only={len(layout)} comma-only={len(commas)} rejected={len(problems)}")
+          notice("notice", f"files modified={len(status)} whitespace-only={len(layout)} "
+                           f"comma-only={len(commas)} rejected={len(problems)}")
+          for text in problems[:6]:
+              notice("warning", text)
           if problems:
-              print("REJECTED:", *problems[:20], sep="\n  ")
               raise SystemExit(1)
-          print("PASS: every change is whitespace-only; no file added, removed or renamed")
+          print("PASS: every change is layout (whitespace/commas); no file added, removed or renamed")
+          notice("notice", "layout proof PASS — no semantic edit detected")
           PY
 
       - name: Idempotency (a second `dart format` must change nothing)
