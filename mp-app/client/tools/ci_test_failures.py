@@ -2,8 +2,8 @@
 """Emit safe GitHub annotations for failed Dart test names and source locations.
 
 The Dart test JSON protocol can include assertion values and arbitrary printed
-messages. This helper intentionally reports only the test name, suite path, and
-source line; it never forwards error text or stack traces into CI annotations.
+messages. This helper intentionally reports only test names, suite paths, and
+source lines; it never forwards error text or stack traces into CI annotations.
 """
 
 from __future__ import annotations
@@ -13,16 +13,6 @@ import os
 import sys
 from pathlib import Path
 from typing import Any
-
-
-def _escape_property(value: str) -> str:
-    return (
-        value.replace("%", "%25")
-        .replace("\r", "%0D")
-        .replace("\n", "%0A")
-        .replace(":", "%3A")
-        .replace(",", "%2C")
-    )
 
 
 def _escape_data(value: str) -> str:
@@ -41,13 +31,8 @@ def _repo_path(raw_path: Any, workspace: Path) -> str | None:
         return path.name
 
 
-def _annotation(message: str, path: str | None = None, line: int | None = None) -> None:
-    properties = ["title=Flutter test failure"]
-    if path:
-        properties.insert(0, f"file={_escape_property(path)}")
-    if line and line > 0:
-        properties.insert(1 if path else 0, f"line={line}")
-    print(f"::error {','.join(properties)}::{_escape_data(message)}")
+def _annotation(message: str) -> None:
+    print(f"::error title=Flutter test failures::{_escape_data(message)}")
 
 
 def main() -> int:
@@ -60,6 +45,8 @@ def main() -> int:
     suites: dict[Any, dict[str, Any]] = {}
     tests: dict[Any, dict[str, Any]] = {}
     failures: list[tuple[str | None, int | None, str]] = []
+    passed = 0
+    skipped = 0
 
     try:
         lines = report.read_text(encoding="utf-8", errors="replace").splitlines()
@@ -85,8 +72,14 @@ def main() -> int:
             if isinstance(test, dict):
                 tests[test.get("id")] = test
         elif event_type == "testDone":
-            if event.get("skipped") or event.get("result") == "success":
+            result = event.get("result")
+            if event.get("skipped") or result == "skipped":
+                skipped += 1
                 continue
+            if result == "success":
+                passed += 1
+                continue
+
             test = tests.get(event.get("testID"), {})
             suite = suites.get(test.get("suiteID"), {})
             path = _repo_path(suite.get("path"), workspace)
@@ -103,11 +96,16 @@ def main() -> int:
         )
         return 0
 
-    _annotation(f"{len(failures)} Flutter test(s) failed; names and source locations follow.")
+    details = [f"Flutter tests: {passed} passed, {len(failures)} failed, {skipped} skipped."]
+    details.append("Failed tests (source locations; assertion values omitted):")
     for path, line_number, name in failures[:40]:
-        _annotation(f"Failed test: {name}", path, line_number)
+        location = path or "<unknown source>"
+        if line_number:
+            location += f":{line_number}"
+        details.append(f"- {location} — {name}")
     if len(failures) > 40:
-        _annotation(f"{len(failures) - 40} additional test failures omitted from annotations.")
+        details.append(f"- {len(failures) - 40} additional failures omitted.")
+    _annotation("\n".join(details))
     return 0
 
 
