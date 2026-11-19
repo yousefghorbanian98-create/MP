@@ -25,12 +25,15 @@ def test_qr_test_is_a_required_step_before_commit_and_push():
     test = named["Run QR-only widget tests and report diagnostic"]
     commit = named["Commit formatting to the selected branch"]
     assert steps.index(formatting) < steps.index(test) < steps.index(commit)
-    assert 'sha256sum lib/features/checkin/checkin_page.dart test/qr_biometric_gate_test.dart' in formatting["run"]
+    assert (
+        "sha256sum lib/features/checkin/checkin_page.dart test/qr_biometric_gate_test.dart"
+        in formatting["run"]
+    )
     assert '"$RUNNER_TEMP/qr-tested-inputs.sha256"' in formatting["run"]
     assert not test.get("continue-on-error", False)
     assert not commit.get("if"), "commit must retain GitHub's default success() guard"
     assert "flutter test" in test["run"]
-    assert "exit \"$status\"" in test["run"]
+    assert 'exit "$status"' in test["run"]
     assert 'sha256sum --check "$RUNNER_TEMP/qr-tested-inputs.sha256"' in commit["run"]
     assert 'git hash-object --no-filters "$path"' in commit["run"]
     assert 'git rev-parse ":$path"' in commit["run"]
@@ -65,7 +68,7 @@ def test_fake_runner_only_pushes_verified_inputs(tmp_path, test_exit, mutate_aft
         'if [ "$1" = diff ]; then exit 1; fi\n'
         'if [ "$1" = rev-parse ] && [ "$FAKE_BAD_STAGE" = 1 ]; then echo other-hash; exit 0; fi\n'
         'if [ "$1" = hash-object ] || [ "$1" = rev-parse ]; then echo fixture-hash; fi\n'
-        'exit 0\n'
+        "exit 0\n"
     )
     git.chmod(0o755)
     client = tmp_path / "mp-app/client"
@@ -76,8 +79,14 @@ def test_fake_runner_only_pushes_verified_inputs(tmp_path, test_exit, mutate_aft
     manifest = tmp_path / "qr-tested-inputs.sha256"
     with manifest.open("w") as out:
         subprocess.run(
-            ["sha256sum", "lib/features/checkin/checkin_page.dart", "test/qr_biometric_gate_test.dart"],
-            cwd=client, stdout=out, check=True,
+            [
+                "sha256sum",
+                "lib/features/checkin/checkin_page.dart",
+                "test/qr_biometric_gate_test.dart",
+            ],
+            cwd=client,
+            stdout=out,
+            check=True,
         )
     env = {
         **os.environ,
@@ -90,7 +99,9 @@ def test_fake_runner_only_pushes_verified_inputs(tmp_path, test_exit, mutate_aft
     }
     for step in order:
         cwd = tmp_path / step.get("working-directory", ".")
-        result = subprocess.run(["bash", "-e", "-c", step["run"]], cwd=cwd, env=env, capture_output=True)
+        result = subprocess.run(
+            ["bash", "-e", "-c", step["run"]], cwd=cwd, env=env, capture_output=True
+        )
         if result.returncode:
             break  # GitHub's default success() condition skips the commit step.
         if step is test_step and mutate_after_test:

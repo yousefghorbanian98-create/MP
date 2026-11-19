@@ -6,7 +6,8 @@
 
 - PR شمارهٔ ۳ با تأیید مالک در `main` روی merge commit `a238fd1dbc672bdcb8fb355e7d9f94aeaea93eb1` ادغام شد. شاخهٔ پیگیری این نشست `arena/95706efd-mp` از همان main به‌صورت fast-forward به‌روز شد؛ برای SHA فعلی و نتیجهٔ CI این پیگیری وضعیت Git/PR را دوباره بخوانید.
 - R1: تغییر شناسه یا شروع lookup در `PaymentPanel`، انتخاب و رسید قبلی را پاک می‌کند؛ ورودی هنگام درخواست قفل و فراخوانی هم‌زمان در UI با guard همگام رد می‌شود. تست‌های widget برای جستجوی ناموفق/نامعتبر، شبکه، HTTP، بازیابی و درخواست معلق افزوده شدند؛ با fixture و نه بانک واقعی.
-- R2: در `format-qr` اجرای widget test پیش از commit/push است؛ SHA-256 فایل‌های فرمت‌شده بعد از تست تطبیق داده می‌شود و blobهای staged با فایل‌های آزموده تطبیق می‌شوند. تست خودکار synthetic workflow، مسیر موفق و خطای تست و تغییر فایل/مرحله‌بندی را می‌سنجد؛ workflow واقعی از این محیط dispatch نشده است.
+- R2: در `format-qr` اجرای widget test پیش از commit/push است؛ SHA-256 فایل‌های فرمت‌شده بعد از تست تطبیق داده می‌شود و blobهای staged با فایل‌های آزموده تطبیق می‌شوند. تست خودکار synthetic workflow، مسیر موفق و خطای تست و تغییر فایل/مرحله‌بندی را می‌سنجد؛ در زمان نگارش این snapshot، workflow واقعی dispatch نشده است.
+- CI پیگیری روی `ccb771422e0dc198f8cebe4d96742e0ef8248163` در [run 44533091544](https://github.com/yousefghorbanian98-create/MP/actions/runs/44533091544) در lint backend متوقف شد؛ فرمت تست جدید محلی با `ruff format` اصلاح و `ruff check .`, `ruff format --check .` و پنج تست synthetic موفق شدند. نتیجهٔ CI commit بعدی را جداگانه روی همان SHA بررسی کنید.
 - گراف Mermaid [جریان‌های بازبینی](architecture/pr-review-flows-2026-11-18.md) با رفع دو یافته به‌روز شد؛ گراف RepoWise قبلی یک snapshot تاریخی است و این تغییرات را index نکرده است. این کار به معنی تأیید کامل گردش مالی یا release نیست.
 
 ## بازبینی PR و گراف — snapshot تاریخی
