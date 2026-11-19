@@ -38,6 +38,8 @@
 | Q10 گزارش و Next | ledger شاهد per-loop شامل معیارهای دامنه و Q0–Q11، هر فرمان + زمان + exit + تعداد pass/fail/skip، commit/tree/diff شناسه‌دار، لینک CI/run/job/artifact و دامنهٔ شاهد، نام بازبین و نوع استقلال؛ نقص‌های باز، اثر بر dependencyها، تصمیم ادامه/بازگشت و گام بعد. `PASS` فقط با تمام گیت‌های لازم واقعی و بدون blocker؛ `FAIL` شکست؛ `BLOCKED` پیش‌نیاز/دسترسی غایب؛ `UNKNOWN` اجرا نشده/نتیجه نامعلوم. |
 | Q11 کنترل‌های UI از OSS رایگان | هیچ کنترل تعاملی (Switch/Toggle، Checkbox، Radio، Select، Dialog، Tooltip، DatePicker، Tabs، Combobox) از صفر ساخته نمی‌شود. منبع: کتابخانهٔ رایگان با مجوز OSI (MIT/Apache/BSD) و بدون نسخهٔ پولی یا تلمتری؛ برای وب هدلس‌پریمیتیوهای Radix UI / Headless UI / React Aria و برای Flutter ویجت‌های Material/Cupertino خود SDK. برای هر کنترل: نام کتابخانه + نسخه + مجوز + ردیف NOTICE، رفتار RTL/فارسی، کیبورد و screen reader، حالت disabled/loading، و تست موجود. کنترل‌های دست‌ساز موجود باید inventory و در loop مربوط جایگزین شوند؛ افزودن dependency بدون بررسی مجوز/حجم/دسترس‌پذیری ممنوع. `N/A` فقط برای loopهای بدون UI با دلیل. |
 
+**وضعیت Q11 (۲۰۲۶-۱۱-۱۹):** کتابخانه انتخاب و نصب شد — `antd@5.29.3`، `@ant-design/cssinjs@1.24.0`، `@ant-design/icons@5.6.1`، `react-multi-date-picker@4.5.2` (همه MIT). گیت اجرایی `mp-app/studio/tests/uiLibrary.test.ts` و شاهد جلالی `tests/jalaliDate.test.tsx`. کنترل دست‌ساز باقی‌مانده در `src/` صفر است؛ ۱۹ ورودی خام `Shop.tsx` و toast/skeleton جزو باقی‌مانده‌اند. جدول کامل انتخاب/رد: [UI-CONTROLS-Q11](UI-CONTROLS-Q11.md).
+
 ### چرخهٔ اجباری تکرارشونده
 
 1. **Forge:** Q0–Q1 و طراحی برش n، کدنویسی اختصاصی N و ورود C فقط با گیت منشأ؛ هیچ‌کدام را از پیش واردشده قلمداد نکن.

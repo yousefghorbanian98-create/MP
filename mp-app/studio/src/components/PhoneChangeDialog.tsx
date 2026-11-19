@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from "react";
+import { Modal } from "antd";
 import {
   confirmPhoneChange,
   requestPhoneChange,
@@ -96,34 +97,25 @@ export function PhoneChangeDialog({
         : "تأیید و تغییر شماره";
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4" role="presentation">
-      <section
-        aria-labelledby="phone-change-title"
-        aria-modal="true"
-        className="glass-card w-full max-w-lg space-y-4 border border-primary/20 p-6 shadow-2xl"
-        role="dialog"
-      >
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h2 id="phone-change-title" className="text-lg font-bold">{title}</h2>
-            <p className="mt-2 text-sm text-ink-dim">
-              {step === "request"
-                ? "برای امنیت، ابتدا کد شمارهٔ فعلی و سپس کد شمارهٔ جدید لازم است. اگر به شمارهٔ فعلی دسترسی ندارید، این مسیر بازیابی قابل استفاده نیست."
-                : step === "verify-current"
-                  ? `کد تأیید به شمارهٔ فعلی ${currentPhone ?? "حساب"} فرستاده شد.`
-                  : `شمارهٔ فعلی تأیید شد؛ کد جداگانه به ${asciiDigits(newPhone)} فرستاده شد.`}
-            </p>
-          </div>
-          <button
-            aria-label="بستن تغییر شماره"
-            className="focus-ring rounded-lg px-2 py-1 text-ink-dim hover:bg-surface"
-            disabled={busy}
-            onClick={onClose}
-            type="button"
-          >
-            ×
-          </button>
-        </div>
+    <Modal
+      centered
+      cancelText="انصراف"
+      closable={!busy}
+      keyboard={!busy}
+      maskClosable={false}
+      open
+      title={title}
+      footer={null}
+      onCancel={onClose}
+    >
+      <div className="space-y-4">
+        <p className="text-sm text-ink-dim">
+          {step === "request"
+            ? "برای امنیت، ابتدا کد شمارهٔ فعلی و سپس کد شمارهٔ جدید لازم است. اگر به شمارهٔ فعلی دسترسی ندارید، این مسیر بازیابی قابل استفاده نیست."
+            : step === "verify-current"
+              ? `کد تأیید به شمارهٔ فعلی ${currentPhone ?? "حساب"} فرستاده شد.`
+              : `شمارهٔ فعلی تأیید شد؛ کد جداگانه به ${asciiDigits(newPhone)} فرستاده شد.`}
+        </p>
 
         <form className="space-y-4" onSubmit={(event) => void submit(event)}>
           {step === "request" ? (
@@ -187,7 +179,7 @@ export function PhoneChangeDialog({
             </button>
           </div>
         </form>
-      </section>
-    </div>
+      </div>
+    </Modal>
   );
 }

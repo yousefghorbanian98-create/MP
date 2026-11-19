@@ -38,5 +38,19 @@ export default defineConfig({
   build: {
     outDir: "dist",
     chunkSizeWarningLimit: 1200,
+    // Q11 — بعد از افزودن antd باندل تک‌تکه به ~1.26MB رسید و هشدار Vite
+    // رد شد. جدا کردن vendorها دو فایده دارد: مرورگر/PWA فقط چیزی را
+    // دوباره می‌گیرد که تغییر کرده، و باندل کتابخانهٔ UI از کد صفحه‌ها
+    // جدا می‌شود تا اندازه‌اش قابل سنجش بماند.
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          "vendor-antd": ["antd", "@ant-design/icons", "@ant-design/cssinjs"],
+          "vendor-dates": ["react-multi-date-picker", "react-date-object"],
+          "vendor-charts": ["recharts"],
+          "vendor-motion": ["framer-motion"],
+        },
+      },
+    },
   },
 });

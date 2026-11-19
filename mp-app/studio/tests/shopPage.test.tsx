@@ -221,7 +221,8 @@ describe("صفحهٔ فروشگاه — سطوح دسترسی و جریان خر
     const receiptBtn = await screen.findByText("رسید");
     receiptBtn.click();
 
-    const dialog = await screen.findByRole("dialog", { name: "رسید سفارش" });
+    // نام دسترس‌پذیر دیالوگ حالا از عنوان کتابخانه‌ای می‌آید (Q11): «رسید O-000091».
+    const dialog = await screen.findByRole("dialog", { name: /رسید O-000091/ });
     expect(within(dialog).getByText("رسید O-000091")).toBeTruthy();
     expect(within(dialog).getByText("سارا محمدی · وضعیت paid · Muscle Paradise")).toBeTruthy();
     // واریانت در همان سطر کالا می‌آید

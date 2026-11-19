@@ -46,6 +46,7 @@ import {
 } from "../lib/api";
 
 import { roleFromToken } from "../lib/roleNav";
+import { Modal, Select } from "antd";
 
 const rial = (n: number) => `${fa(n)} ریال`;
 
@@ -263,24 +264,15 @@ export function Shop() {
         </section>
       )}
 
-      {receipt && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
-          role="dialog"
-          aria-modal="true"
-          aria-label="رسید سفارش"
-        >
-          <div className="glass-card w-full max-w-lg p-5">
-            <div className="mb-3 flex items-center justify-between">
-              <h3 className="text-base font-semibold">رسید {receipt.receipt_no}</h3>
-              <button
-                type="button"
-                onClick={() => setReceipt(null)}
-                className="focus-ring rounded-lg px-2 py-1 text-xs text-ink-dim"
-              >
-                بستن
-              </button>
-            </div>
+      <Modal
+        centered
+        footer={null}
+        open={Boolean(receipt)}
+        title={receipt ? `رسید ${receipt.receipt_no}` : undefined}
+        onCancel={() => setReceipt(null)}
+      >
+        {receipt && (
+          <div className="space-y-3">
             <p className="text-xs text-ink-dim">
               {receipt.member_name ?? `عضو #${fa(receipt.member_id)}`} · وضعیت {receipt.status} ·{" "}
               {receipt.branch}
@@ -321,8 +313,8 @@ export function Shop() {
               چاپ
             </button>
           </div>
-        </div>
-      )}
+        )}
+      </Modal>
 
       {!loading && tab === "cart" && (
         <section className="glass-card space-y-4 p-5">
@@ -612,13 +604,13 @@ function OwnerConsole({
         </div>
         <input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="آدرس تصویر (مثلاً /static/shop/whey.jpg)" className="focus-ring w-full rounded-xl bg-surface/70 px-3 py-2 text-sm" />
         {imageUrl && <img src={imageUrl} alt="پیش‌نمایش" className="h-28 w-full rounded-xl object-cover" />}
-        <select value={categoryId} onChange={(e) => setCategoryId(Number(e.target.value))} className="focus-ring w-full rounded-xl bg-surface/70 px-3 py-2 text-sm">
-          {categories.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.title} ({c.kind})
-            </option>
-          ))}
-        </select>
+        <Select
+          aria-label="دستهٔ محصول"
+          className="w-full"
+          options={categories.map((c) => ({ value: c.id, label: `${c.title} (${c.kind})` }))}
+          value={categoryId}
+          onChange={(value) => setCategoryId(Number(value))}
+        />
         <button type="submit" className="focus-ring w-full rounded-xl bg-primary px-3 py-2 text-sm font-medium text-white">
           ساخت محصول
         </button>
@@ -645,11 +637,17 @@ function OwnerConsole({
         }}
       >
         <h3 className="text-sm font-bold">دفتر قیمت خدمات</h3>
-        <select value={priceCategory} onChange={(e) => setPriceCategory(e.target.value as PriceRow["category"])} className="focus-ring w-full rounded-xl bg-surface/70 px-3 py-2 text-sm">
-          <option value="membership">اشتراک</option>
-          <option value="coach_fee">شهریهٔ مربی</option>
-          <option value="program_fee">هزینهٔ برنامه</option>
-        </select>
+        <Select
+          aria-label="دستهٔ قیمت"
+          className="w-full"
+          options={[
+            { value: "membership", label: "اشتراک" },
+            { value: "coach_fee", label: "شهریهٔ مربی" },
+            { value: "program_fee", label: "هزینهٔ برنامه" },
+          ]}
+          value={priceCategory}
+          onChange={(value) => setPriceCategory(value as PriceRow["category"])}
+        />
         <div className="grid grid-cols-2 gap-2">
           <input required value={priceCode} onChange={(e) => setPriceCode(e.target.value)} placeholder="کد (gold-3m)" className="focus-ring rounded-xl bg-surface/70 px-3 py-2 text-sm" />
           <input required value={priceValue} onChange={(e) => setPriceValue(e.target.value)} inputMode="numeric" placeholder="مبلغ (ریال)" className="focus-ring rounded-xl bg-surface/70 px-3 py-2 text-sm" />
@@ -685,12 +683,17 @@ function OwnerConsole({
       >
         <h3 className="text-sm font-bold">درگاه و شمارهٔ کارت (فقط مالک)</h3>
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-          <select value={cardKind} onChange={(e) => setCardKind(e.target.value as ShopGateway["kind"])} className="focus-ring rounded-xl bg-surface/70 px-3 py-2 text-sm">
-            <option value="card_to_card">کارت به کارت</option>
-            <option value="zarinpal">زرین‌پال</option>
-            <option value="idpay">آیدی‌پی</option>
-            <option value="cash">نقدی</option>
-          </select>
+          <Select
+            aria-label="نوع درگاه"
+            options={[
+              { value: "card_to_card", label: "کارت به کارت" },
+              { value: "zarinpal", label: "زرین‌پال" },
+              { value: "idpay", label: "آیدی‌پی" },
+              { value: "cash", label: "نقدی" },
+            ]}
+            value={cardKind}
+            onChange={(value) => setCardKind(value as ShopGateway["kind"])}
+          />
           <input required value={cardTitle} onChange={(e) => setCardTitle(e.target.value)} placeholder="عنوان" className="focus-ring rounded-xl bg-surface/70 px-3 py-2 text-sm" />
           <input value={cardNumber} onChange={(e) => setCardNumber(e.target.value)} inputMode="numeric" placeholder="شمارهٔ کارت (۱۶ رقم)" className="focus-ring rounded-xl bg-surface/70 px-3 py-2 text-sm" />
           <input value={cardHolder} onChange={(e) => setCardHolder(e.target.value)} placeholder="نام صاحب کارت" className="focus-ring rounded-xl bg-surface/70 px-3 py-2 text-sm" />
@@ -752,20 +755,24 @@ function AdminRequestForm({
     >
       <h3 className="text-sm font-bold">درخواست تغییر قیمت (ادمین) — منتظر تأیید مالک</h3>
       <div className="grid gap-2 sm:grid-cols-4">
-        <select value={kind} onChange={(e) => setKind(e.target.value)} className="focus-ring rounded-xl bg-surface/70 px-3 py-2 text-sm">
-          <option value="product_price">قیمت محصول</option>
-          <option value="membership_price">قیمت اشتراک</option>
-          <option value="coach_fee">شهریهٔ مربی</option>
-          <option value="program_fee">هزینهٔ برنامه</option>
-        </select>
+        <Select
+          aria-label="نوع تغییر قیمت"
+          options={[
+            { value: "product_price", label: "قیمت محصول" },
+            { value: "membership_price", label: "قیمت اشتراک" },
+            { value: "coach_fee", label: "شهریهٔ مربی" },
+            { value: "program_fee", label: "هزینهٔ برنامه" },
+          ]}
+          value={kind}
+          onChange={(value) => setKind(value)}
+        />
         {kind === "product_price" ? (
-          <select value={productId} onChange={(e) => setProductId(Number(e.target.value))} className="focus-ring rounded-xl bg-surface/70 px-3 py-2 text-sm">
-            {products.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.title}
-              </option>
-            ))}
-          </select>
+          <Select
+            aria-label="محصول"
+            options={products.map((p) => ({ value: p.id, label: p.title }))}
+            value={productId}
+            onChange={(value) => setProductId(Number(value))}
+          />
         ) : (
           <input value={note} onChange={(e) => setNote(e.target.value)} placeholder="کد/عنوان" className="focus-ring rounded-xl bg-surface/70 px-3 py-2 text-sm" />
         )}

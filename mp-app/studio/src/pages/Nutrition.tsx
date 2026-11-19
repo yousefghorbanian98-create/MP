@@ -4,6 +4,8 @@ import { AdaptiveNutritionPanel } from "../components/AdaptiveNutritionPanel";
 import { FoodLibrary } from "../components/FoodLibrary";
 import { useAppStore } from "../stores/appStore";
 import { fa, useApi } from "../lib/useApi";
+import { JalaliDateField } from "../components/ui/JalaliDateField";
+import { Select } from "antd";
 
 /**
  * G5 — تغذیه: جستجوی جدول غذایی واقعی، ثبت وعده، جمع روزانه.
@@ -124,15 +126,7 @@ export function Nutrition() {
   return (
     <div className="space-y-4">
       <div className="glass-card flex flex-wrap items-end gap-3 p-4">
-        <label className="text-xs text-ink-dim">
-          تاریخ
-          <input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            className="focus-ring mt-1 block rounded-lg bg-surface/70 px-3 py-2 text-sm text-ink"
-          />
-        </label>
+        <JalaliDateField label="تاریخ" value={date} onChange={setDate} />
         <div className="text-xs text-ink-dim">
           عضو #{fa(memberId)}
           <p className="mt-1 text-[11px]">ثبت و مشاهدهٔ وعده‌های واقعی — نه برنامهٔ تجویزی</p>
@@ -282,20 +276,16 @@ export function Nutrition() {
         )}
 
         <div className="flex flex-wrap items-end gap-3">
-          <label className="text-xs text-ink-dim">
-            وعده
-            <select
+          <div className="text-xs text-ink-dim">
+            <span>وعده</span>
+            <Select
+              aria-label="وعده"
+              className="mt-1 block w-44"
+              options={slots.map((s) => ({ value: s.key, label: s.label }))}
               value={slot}
-              onChange={(e) => setSlot(e.target.value)}
-              className="focus-ring mt-1 block rounded-lg bg-surface/70 px-3 py-2 text-sm text-ink"
-            >
-              {slots.map((s) => (
-                <option key={s.key} value={s.key}>
-                  {s.label}
-                </option>
-              ))}
-            </select>
-          </label>
+              onChange={(value) => setSlot(value)}
+            />
+          </div>
           <label className="text-xs text-ink-dim">
             وزن (گرم)
             <input

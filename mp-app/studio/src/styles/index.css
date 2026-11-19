@@ -1,5 +1,19 @@
 @import "@fontsource-variable/vazirmatn";
-@tailwind base;
+
+/**
+ * ترتیب @layer — دستور رسمی antd برای هم‌زیستی با Tailwind v3.
+ *
+ * preflight تیلویند داخل `tailwind-base` می‌رود و antd داخل `antd`؛ چون در
+ * ترتیب لایه‌ها `antd` بعد از `tailwind-base` است، استایل کامپوننت‌های antd
+ * بر reset تیلویند می‌چربد. utilities بیرون از لایه‌ها می‌ماند تا کلاس‌های
+ * تیلویند مثل قبل بالاترین اولویت را داشته باشند.
+ */
+@layer tailwind-base, antd;
+
+@layer tailwind-base {
+  @tailwind base;
+}
+
 @tailwind components;
 @tailwind utilities;
 
@@ -71,4 +85,40 @@ body {
   .focus-ring {
     @apply outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-bg;
   }
+}
+
+
+/* ---------- تم تاریک برای تقویم جلالی (react-multi-date-picker) ---------- */
+/* کتابخانه استایل پایه را خودش تزریق می‌کند؛ اینجا فقط رنگ‌ها هم‌خوان پوسته می‌شوند. */
+.mp-jalali-picker .rmdp-wrapper,
+.rmdp-wrapper {
+  background-color: #111827;
+  color: #f3f6f8;
+  border: 1px solid rgba(0, 184, 106, 0.28);
+  box-shadow: 0 8px 32px rgba(2, 6, 12, 0.45);
+}
+
+.rmdp-wrapper .rmdp-day span,
+.rmdp-wrapper .rmdp-week-day,
+.rmdp-wrapper .rmdp-header-values {
+  color: #f3f6f8;
+}
+
+.rmdp-wrapper .rmdp-arrow {
+  border-color: #00b86a;
+}
+
+.rmdp-wrapper .rmdp-day.rmdp-today span {
+  background-color: rgba(0, 184, 106, 0.28);
+  color: #f3f6f8;
+}
+
+.rmdp-wrapper .rmdp-day.rmdp-selected span:not(.highlight) {
+  background-color: #00b86a;
+  color: #04120b;
+}
+
+.rmdp-wrapper .rmdp-arrow-container:hover {
+  background-color: rgba(0, 184, 106, 0.2);
+  box-shadow: none;
 }
