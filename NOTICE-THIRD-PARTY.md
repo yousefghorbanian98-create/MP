@@ -33,6 +33,7 @@
 | Caddy 2.11.9 | Apache-2.0 | TLS/reverse proxy و Studio در stack `infra` |
 | Ollama 0.40.16 | MIT | runtime محلی اختیاری؛ هیچ وزن مدلی در image/repo قفل نیست |
 | Gitleaks CLI 8.30.1 | MIT | اسکن secret در کل Git history؛ binary رسمی با checksum، بدون GitHub Action نامشخص |
+| Repowise 0.61.0 | **AGPL-3.0-or-later** | ابزار توسعهٔ محلی برای مدل معماری مخزن؛ **نه در محصول، نه لینک‌شده، نه توزیع‌شده**. خروجی (`architecture/repowise-model-*.dsl`) مدل کد خودمان است. تلمتری پیش‌فرض روشن است و همیشه با `DO_NOT_TRACK=1` و `REPOWISE_OFFLINE=1` اجرا می‌شود؛ ایندکس ۵۷MB در `.repowise/` است و gitignore شده. بازبینی: `scripts/repo_hygiene_gate.py` |
 
 ثبت مجوز از upstream: [Valkey](https://github.com/valkey-io/valkey), [Prometheus](https://github.com/prometheus/prometheus), [redis_exporter](https://github.com/oliver006/redis_exporter), [Caddy](https://github.com/caddyserver/caddy), [Ollama](https://github.com/ollama/ollama), [Gitleaks](https://github.com/gitleaks/gitleaks). نسخه‌های Compose و CI باید با همین جدول هماهنگ بمانند.
 

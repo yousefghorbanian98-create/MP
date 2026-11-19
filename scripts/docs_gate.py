@@ -45,6 +45,12 @@ CORE_MARKDOWN_FILES = (
     # M109: صف تصمیم‌های مالک هم زیر گیت لینک می‌آید؛ این صفحه تنها جایی است که
     # «منتظر مالک» به یک متن خواندنی تبدیل می‌شود، پس لینک‌هایش نباید بمیرند.
     Path("docs/MuscleParadise/OWNER-DECISIONS.md"),
+    # ۲۰۲۶-۱۱-۱۹: چهار سند تصمیم/نقشه که تا امروز بیرون از گیت بودند. اگر فقط
+    # CORE را ببیند، دیاگرام Mermaid و لینک شکسته در همین اسناد دیده نمی‌شود.
+    Path("docs/MuscleParadise/UI-CONTROLS-Q11.md"),
+    Path("docs/MuscleParadise/AGENT-TOOLING-REVIEWS.md"),
+    Path("docs/MuscleParadise/ROADMAP-NEXT-2026-11-19.md"),
+    Path("docs/MuscleParadise/ARCHITECTURE-LAYERS-AND-STAGES.md"),
 )
 MARKDOWN_FILES = (*CORE_MARKDOWN_FILES, *_module_docs())
 SVG_FILES = (

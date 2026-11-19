@@ -101,6 +101,8 @@ jobs:
           python-version: "3.11"
       - name: Validate agent docs, diagrams, and local links
         run: python3 scripts/docs_gate.py
+      - name: Repository hygiene (no tool index, no .claude/, no agent git hook)
+        run: python3 scripts/repo_hygiene_gate.py
 
   backend:
     runs-on: ubuntu-latest

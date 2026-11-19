@@ -113,3 +113,24 @@
 3. سرویس دائمی یا dependency runtime به محصول اضافه نکند.
 4. حجم و نگهداری‌اش متناسب با یک باشگاه با یک مالک باشد.
 5. اگر «مهارت» است، در قالب Agent Skills بماند و در repo کپی نشود؛ فقط ارجاع داده شود.
+
+## ۸. آنچه در ۲۰۲۶-۱۱-۱۹ واقعاً وارد شد (repo wise / diagram / agent memory)
+
+مالک سه قابلیت را خواست: نقشهٔ مخزن، دیاگرام معماری، و حافظهٔ عامل. این جدول می‌گوید
+کدام واقعاً نصب و اجرا شد و کدام رد شد.
+
+| خواسته | انتخاب | وضعیت | شاهد |
+|---|---|---|---|
+| repo wise | `repowise 0.61.0` | **نصب و اجرا شد** | مدل ۵۸۳ خطی `architecture/repowise-model-2026-11-19.dsl`؛ ۳۲۷ فایل/۲۵۱۰ نماد بک‌اند، ۹۵/۴۴۸ استودیو |
+| diagram | Mermaid + مدل repowise | **اجرا شد** | چهار دیاگرام در [ARCHITECTURE-LAYERS-AND-STAGES](ARCHITECTURE-LAYERS-AND-STAGES.md)؛ گیت مستندات ۱۳ بلوک را می‌سنجد |
+| agent memory | repowise `decision` + اسناد Git | **جزئی** | ذخیره‌گاه تصمیم محلی/آفلاین؛ حافظهٔ رسمی همچنان Git + Markdown |
+| agent memory (جایگزین‌ها) | `tigerless-labs/agent-memory` (MIT) | **BLOCKED** | `requires-python >=3.12`؛ محیط ساخت ۳.۱۱.۲ است |
+| agent memory (جایگزین‌ها) | `basic-memory` | **رد** | AGPL + نیاز به ۳.۱۲ |
+| agent memory (جایگزین‌ها) | `understory` | **رد** | AGPL + `python <3.11` |
+| رسم دیاگرام تصویری | `@mermaid-js/mermaid-cli` (MIT) | **BLOCKED** | Chrome در محیط ساخت نیست؛ رندر روی GitHub انجام می‌شود |
+
+**هزینهٔ پنهانی که باید بدانید:** نصب repowise به‌طور پیش‌فرض `.claude/`،
+`.github/copilot-instructions.md`، `.vscode/mcp.json` و یک `post-commit` hook می‌سازد و
+تلمتری‌اش روشن است. همه حذف/خاموش شد و `scripts/repo_hygiene_gate.py` (که در CI هم اجرا
+می‌شود) جلوی بازگشت خاموش آن‌ها را می‌گیرد.
+
