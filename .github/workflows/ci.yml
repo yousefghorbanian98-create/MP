@@ -104,6 +104,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
+      - name: Interaction map gate (contract drift + stale map)
+        run: python3 scripts/interaction_map.py --check
       - name: Mermaid syntax gate (official parser, headless — no browser)
         run: cd tools/mermaid-check && npm ci --no-audit --no-fund && node check.mjs
       - name: Repository hygiene (no tool index, no .claude/, no agent git hook)

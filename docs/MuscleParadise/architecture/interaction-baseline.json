@@ -1,0 +1,11 @@
+{
+  "untested_surfaces": [
+    "client-feature:auth",
+    "client-feature:core",
+    "client-feature:intake",
+    "client-feature:progress",
+    "studio-page:Analytics",
+    "studio-page:CheckIn",
+    "studio-page:Members"
+  ]
+}

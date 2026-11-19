@@ -1,0 +1,1996 @@
+{
+  "surfaces": [
+    {
+      "surface": "Analytics",
+      "kind": "studio-page",
+      "file": "mp-app/studio/src/pages/Analytics.tsx",
+      "components": [],
+      "controls": {
+        "buttons": 0,
+        "inputs": 0,
+        "numbers": 0,
+        "selects": 0,
+        "modals": 0
+      },
+      "endpoints": [
+        {
+          "function": "fetchChurnRisk",
+          "method": "GET",
+          "path": "/api/v1/admin/analytics/churn-risk",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "fetchLeaderboards",
+          "method": "GET",
+          "path": "/api/v1/admin/analytics/leaderboards",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        }
+      ],
+      "tests": []
+    },
+    {
+      "surface": "Assessment",
+      "kind": "studio-page",
+      "file": "mp-app/studio/src/pages/Assessment.tsx",
+      "components": [
+        "mp-app/studio/src/components/Jp7TrendPanel.tsx",
+        "mp-app/studio/src/components/RemindersPanel.tsx",
+        "mp-app/studio/src/components/SegmentalPanel.tsx"
+      ],
+      "controls": {
+        "buttons": 2,
+        "inputs": 0,
+        "numbers": 0,
+        "selects": 0,
+        "modals": 0
+      },
+      "endpoints": [
+        {
+          "function": "fetchJp7Trend",
+          "method": "GET",
+          "path": "/api/v1/assessments/jp7/member/*/trend",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "recordLimbMeasurement",
+          "method": "POST",
+          "path": "/api/v1/assessments/limb",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "fetchSegmentalReport",
+          "method": "GET",
+          "path": "/api/v1/assessments/limb/member/*/report",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "fetchReminders",
+          "method": "GET",
+          "path": "/api/v1/notifications/reminders/member/*",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        }
+      ],
+      "tests": [
+        "mp-app/studio/tests/jp7Trend.test.tsx"
+      ]
+    },
+    {
+      "surface": "Chat",
+      "kind": "studio-page",
+      "file": "mp-app/studio/src/pages/Chat.tsx",
+      "components": [],
+      "controls": {
+        "buttons": 5,
+        "inputs": 0,
+        "numbers": 0,
+        "selects": 0,
+        "modals": 0
+      },
+      "endpoints": [
+        {
+          "function": "fetchConversations",
+          "method": "GET",
+          "path": "/api/v1/chat/conversations",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "openConversation",
+          "method": "POST",
+          "path": "/api/v1/chat/conversations",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "fetchMessages",
+          "method": "GET",
+          "path": "/api/v1/chat/conversations/*/messages",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "sendMessage",
+          "method": "POST",
+          "path": "/api/v1/chat/conversations/*/messages",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "markConversationRead",
+          "method": "POST",
+          "path": "/api/v1/chat/conversations/*/read",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        }
+      ],
+      "tests": [
+        "mp-app/studio/tests/chatPage.test.tsx"
+      ]
+    },
+    {
+      "surface": "CheckIn",
+      "kind": "studio-page",
+      "file": "mp-app/studio/src/pages/CheckIn.tsx",
+      "components": [],
+      "controls": {
+        "buttons": 1,
+        "inputs": 0,
+        "numbers": 0,
+        "selects": 0,
+        "modals": 0
+      },
+      "endpoints": [
+        {
+          "function": "fetchCheckinFeed",
+          "method": "GET",
+          "path": "/api/v1/admin/checkins",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "coach",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        }
+      ],
+      "tests": []
+    },
+    {
+      "surface": "Dashboard",
+      "kind": "studio-page",
+      "file": "mp-app/studio/src/pages/Dashboard.tsx",
+      "components": [
+        "mp-app/studio/src/components/AttendanceChart.tsx",
+        "mp-app/studio/src/components/KpiCard.tsx",
+        "mp-app/studio/src/components/MemberTable.tsx",
+        "mp-app/studio/src/components/ScheduleTimeline.tsx"
+      ],
+      "controls": {
+        "buttons": 1,
+        "inputs": 0,
+        "numbers": 0,
+        "selects": 0,
+        "modals": 0
+      },
+      "endpoints": [
+        {
+          "function": "fetchAttendance",
+          "method": "GET",
+          "path": "/api/v1/admin/attendance",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "coach",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "fetchKpis",
+          "method": "GET",
+          "path": "/api/v1/admin/kpis",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "fetchMembersSummary",
+          "method": "GET",
+          "path": "/api/v1/admin/members-summary",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "coach",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        }
+      ],
+      "tests": [
+        "mp-app/studio/tests/dashboard.test.tsx"
+      ]
+    },
+    {
+      "surface": "Finance",
+      "kind": "studio-page",
+      "file": "mp-app/studio/src/pages/Finance.tsx",
+      "components": [
+        "mp-app/studio/src/components/PaymentPanel.tsx"
+      ],
+      "controls": {
+        "buttons": 11,
+        "inputs": 0,
+        "numbers": 0,
+        "selects": 1,
+        "modals": 0
+      },
+      "endpoints": [
+        {
+          "function": "listPayments",
+          "method": "GET",
+          "path": "/api/v1/payments",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "createPayment",
+          "method": "POST",
+          "path": "/api/v1/payments",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "confirmGatewayCallback",
+          "method": "POST",
+          "path": "/api/v1/payments/*/callback",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "failPayment",
+          "method": "POST",
+          "path": "/api/v1/payments/*/fail",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "fetchReceipt",
+          "method": "GET",
+          "path": "/api/v1/payments/*/receipt",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "refundPayment",
+          "method": "POST",
+          "path": "/api/v1/payments/*/refund",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "startPayment",
+          "method": "POST",
+          "path": "/api/v1/payments/*/start",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "fetchCommission",
+          "method": "POST",
+          "path": "/api/v1/payments/finance/commission",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "fetchFinanceSummary",
+          "method": "GET",
+          "path": "/api/v1/payments/finance/summary",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        }
+      ],
+      "tests": [
+        "mp-app/studio/tests/financePage.test.tsx"
+      ]
+    },
+    {
+      "surface": "Login",
+      "kind": "studio-page",
+      "file": "mp-app/studio/src/pages/Login.tsx",
+      "components": [],
+      "controls": {
+        "buttons": 3,
+        "inputs": 0,
+        "numbers": 0,
+        "selects": 0,
+        "modals": 0
+      },
+      "endpoints": [],
+      "tests": []
+    },
+    {
+      "surface": "Members",
+      "kind": "studio-page",
+      "file": "mp-app/studio/src/pages/Members.tsx",
+      "components": [
+        "mp-app/studio/src/components/MemberTable.tsx"
+      ],
+      "controls": {
+        "buttons": 4,
+        "inputs": 0,
+        "numbers": 0,
+        "selects": 0,
+        "modals": 0
+      },
+      "endpoints": [
+        {
+          "function": "fetchMembersSummary",
+          "method": "GET",
+          "path": "/api/v1/admin/members-summary",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "coach",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "generateProgram",
+          "method": "POST",
+          "path": "/api/v1/ai/program/generate",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "fetchAssessmentMatrix",
+          "method": "GET",
+          "path": "/api/v1/axis-assessments/*/matrix",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "fetchAssessmentHistory",
+          "method": "GET",
+          "path": "/api/v1/axis-assessments/member/*",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        }
+      ],
+      "tests": []
+    },
+    {
+      "surface": "Nutrition",
+      "kind": "studio-page",
+      "file": "mp-app/studio/src/pages/Nutrition.tsx",
+      "components": [
+        "mp-app/studio/src/components/AdaptiveNutritionPanel.tsx",
+        "mp-app/studio/src/components/FoodLibrary.tsx"
+      ],
+      "controls": {
+        "buttons": 6,
+        "inputs": 0,
+        "numbers": 0,
+        "selects": 1,
+        "modals": 0
+      },
+      "endpoints": [
+        {
+          "function": "logFood",
+          "method": "POST",
+          "path": "/api/v1/nutrition/food-logs",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "fetchDailyNutrition",
+          "method": "GET",
+          "path": "/api/v1/nutrition/food-logs/member/*/daily",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "browseFoods",
+          "method": "GET",
+          "path": "/api/v1/nutrition/foods",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "fetchAdaptiveReport",
+          "method": "GET",
+          "path": "/api/v1/nutrition/member/*/adaptive",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "logWeight",
+          "method": "POST",
+          "path": "/api/v1/nutrition/weight-logs",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        }
+      ],
+      "tests": [
+        "mp-app/studio/tests/nutritionPage.test.tsx"
+      ]
+    },
+    {
+      "surface": "Programs",
+      "kind": "studio-page",
+      "file": "mp-app/studio/src/pages/Programs.tsx",
+      "components": [
+        "mp-app/studio/src/components/AutoregPanel.tsx",
+        "mp-app/studio/src/components/ExerciseLibrary.tsx",
+        "mp-app/studio/src/components/ReadinessPanel.tsx",
+        "mp-app/studio/src/components/SafetyBadge.tsx",
+        "mp-app/studio/src/components/VolumePanel.tsx"
+      ],
+      "controls": {
+        "buttons": 9,
+        "inputs": 0,
+        "numbers": 0,
+        "selects": 0,
+        "modals": 0
+      },
+      "endpoints": [
+        {
+          "function": "suggestNextWeight",
+          "method": "POST",
+          "path": "/api/v1/ai/suggest-weight",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "browseExercises",
+          "method": "GET",
+          "path": "/api/v1/library/exercises",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "fetchProgramsSummary",
+          "method": "GET",
+          "path": "/api/v1/programs",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "coach",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "approveProgram",
+          "method": "POST",
+          "path": "/api/v1/programs/*/approve",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "coach",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "rejectProgram",
+          "method": "POST",
+          "path": "/api/v1/programs/*/reject",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "coach",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "fetchReadiness",
+          "method": "GET",
+          "path": "/api/v1/programs/member/*/readiness",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "fetchMemberVolume",
+          "method": "GET",
+          "path": "/api/v1/programs/member/*/volume",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        }
+      ],
+      "tests": [
+        "mp-app/studio/tests/programsPage.test.tsx"
+      ]
+    },
+    {
+      "surface": "Settings",
+      "kind": "studio-page",
+      "file": "mp-app/studio/src/pages/Settings.tsx",
+      "components": [
+        "mp-app/studio/src/components/RoleManager.tsx"
+      ],
+      "controls": {
+        "buttons": 2,
+        "inputs": 0,
+        "numbers": 0,
+        "selects": 1,
+        "modals": 0
+      },
+      "endpoints": [
+        {
+          "function": "fetchAudit",
+          "method": "GET",
+          "path": "/api/v1/admin/audit",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "fetchFlags",
+          "method": "GET",
+          "path": "/api/v1/admin/flags",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "putFlag",
+          "method": "PUT",
+          "path": "/api/v1/admin/flags",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "fetchUsers",
+          "method": "GET",
+          "path": "/api/v1/admin/users",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "revokeUserRole",
+          "method": "DELETE",
+          "path": "/api/v1/admin/users/*/role",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "setUserRole",
+          "method": "POST",
+          "path": "/api/v1/admin/users/*/role",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        }
+      ],
+      "tests": [
+        "mp-app/studio/tests/settingsRole.test.tsx"
+      ]
+    },
+    {
+      "surface": "Shop",
+      "kind": "studio-page",
+      "file": "mp-app/studio/src/pages/Shop.tsx",
+      "components": [
+        "mp-app/studio/src/components/Feedback.tsx"
+      ],
+      "controls": {
+        "buttons": 17,
+        "inputs": 9,
+        "numbers": 5,
+        "selects": 5,
+        "modals": 2
+      },
+      "endpoints": [],
+      "tests": [
+        "mp-app/studio/tests/shopPage.test.tsx"
+      ]
+    },
+    {
+      "surface": "assessment14",
+      "kind": "client-feature",
+      "file": "mp-app/client/lib/features/assessment14",
+      "components": [],
+      "controls": {
+        "buttons": 0,
+        "inputs": 0,
+        "numbers": 0,
+        "selects": 0,
+        "modals": 0
+      },
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/api/v1/axis-assessments/*/matrix",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/axis-assessments/member/*",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/axis-assessments",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "coach",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        }
+      ],
+      "tests": [
+        "mp-app/client/test/assessment14_page_test.dart"
+      ]
+    },
+    {
+      "surface": "auth",
+      "kind": "client-feature",
+      "file": "mp-app/client/lib/features/auth",
+      "components": [],
+      "controls": {
+        "buttons": 0,
+        "inputs": 0,
+        "numbers": 0,
+        "selects": 0,
+        "modals": 0
+      },
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/api/v1/auth/otp/request",
+          "in_contract": true,
+          "guards": [],
+          "roles": []
+        }
+      ],
+      "tests": []
+    },
+    {
+      "surface": "bodycomp",
+      "kind": "client-feature",
+      "file": "mp-app/client/lib/features/bodycomp",
+      "components": [],
+      "controls": {
+        "buttons": 0,
+        "inputs": 0,
+        "numbers": 0,
+        "selects": 0,
+        "modals": 0
+      },
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/api/v1/assessments/jp7/member/*/trend",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        }
+      ],
+      "tests": [
+        "mp-app/client/test/bodycomp_real_data_test.dart"
+      ]
+    },
+    {
+      "surface": "chat",
+      "kind": "client-feature",
+      "file": "mp-app/client/lib/features/chat",
+      "components": [],
+      "controls": {
+        "buttons": 0,
+        "inputs": 0,
+        "numbers": 0,
+        "selects": 0,
+        "modals": 0
+      },
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/api/v1/chat/conversations",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/chat/conversations/*/messages",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/chat/conversations/*/messages",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/chat/conversations/*/read",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        }
+      ],
+      "tests": [
+        "mp-app/client/test/member_chat_page_test.dart"
+      ]
+    },
+    {
+      "surface": "checkin",
+      "kind": "client-feature",
+      "file": "mp-app/client/lib/features/checkin",
+      "components": [],
+      "controls": {
+        "buttons": 0,
+        "inputs": 0,
+        "numbers": 0,
+        "selects": 0,
+        "modals": 0
+      },
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/api/v1/face/privacy-notice",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/face/qr-token",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/me/checkins",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/me/face-consent",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/face/checkin",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/face/consent",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        }
+      ],
+      "tests": [
+        "mp-app/client/test/face_consent_gate_test.dart",
+        "mp-app/client/test/member_checkin_history_test.dart",
+        "mp-app/client/test/qr_biometric_gate_test.dart"
+      ]
+    },
+    {
+      "surface": "classes",
+      "kind": "client-feature",
+      "file": "mp-app/client/lib/features/classes",
+      "components": [],
+      "controls": {
+        "buttons": 0,
+        "inputs": 0,
+        "numbers": 0,
+        "selects": 0,
+        "modals": 0
+      },
+      "endpoints": [],
+      "tests": [
+        "mp-app/client/test/classes_cancel_test.dart"
+      ]
+    },
+    {
+      "surface": "feedback",
+      "kind": "client-feature",
+      "file": "mp-app/client/lib/features/feedback",
+      "components": [],
+      "controls": {
+        "buttons": 0,
+        "inputs": 0,
+        "numbers": 0,
+        "selects": 0,
+        "modals": 0
+      },
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/api/v1/programs/set-feedback",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        }
+      ],
+      "tests": [
+        "mp-app/client/test/offline_feedback_outbox_test.dart",
+        "mp-app/client/test/set_feedback_sheet_test.dart"
+      ]
+    },
+    {
+      "surface": "home",
+      "kind": "client-feature",
+      "file": "mp-app/client/lib/features/home",
+      "components": [],
+      "controls": {
+        "buttons": 0,
+        "inputs": 0,
+        "numbers": 0,
+        "selects": 0,
+        "modals": 0
+      },
+      "endpoints": [],
+      "tests": [
+        "mp-app/client/test/home_banner_test.dart",
+        "mp-app/client/test/home_page_test.dart"
+      ]
+    },
+    {
+      "surface": "intake",
+      "kind": "client-feature",
+      "file": "mp-app/client/lib/features/intake",
+      "components": [],
+      "controls": {
+        "buttons": 0,
+        "inputs": 0,
+        "numbers": 0,
+        "selects": 0,
+        "modals": 0
+      },
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/api/v1/members/me",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/ai/nutrition/generate",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/ai/program/generate",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/population/gate-check",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/members/me",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        }
+      ],
+      "tests": []
+    },
+    {
+      "surface": "notifications",
+      "kind": "client-feature",
+      "file": "mp-app/client/lib/features/notifications",
+      "components": [],
+      "controls": {
+        "buttons": 0,
+        "inputs": 0,
+        "numbers": 0,
+        "selects": 0,
+        "modals": 0
+      },
+      "endpoints": [],
+      "tests": [
+        "mp-app/client/test/notifications_page_test.dart"
+      ]
+    },
+    {
+      "surface": "nutrition",
+      "kind": "client-feature",
+      "file": "mp-app/client/lib/features/nutrition",
+      "components": [],
+      "controls": {
+        "buttons": 0,
+        "inputs": 0,
+        "numbers": 0,
+        "selects": 0,
+        "modals": 0
+      },
+      "endpoints": [],
+      "tests": [
+        "mp-app/client/test/adaptive_nutrition_test.dart",
+        "mp-app/client/test/nutrition_food_log_test.dart"
+      ]
+    },
+    {
+      "surface": "profile",
+      "kind": "client-feature",
+      "file": "mp-app/client/lib/features/profile",
+      "components": [],
+      "controls": {
+        "buttons": 0,
+        "inputs": 0,
+        "numbers": 0,
+        "selects": 0,
+        "modals": 0
+      },
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/api/v1/members/me",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/auth/phone-change/confirm",
+          "in_contract": true,
+          "guards": [
+            "authenticated"
+          ],
+          "roles": [
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/auth/phone-change/request",
+          "in_contract": true,
+          "guards": [
+            "authenticated"
+          ],
+          "roles": [
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/auth/phone-change/verify-old",
+          "in_contract": true,
+          "guards": [
+            "authenticated"
+          ],
+          "roles": [
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "method": "PUT",
+          "path": "/api/v1/members/me",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        }
+      ],
+      "tests": [
+        "mp-app/client/test/logout_button_test.dart",
+        "mp-app/client/test/phone_change_dialog_test.dart"
+      ]
+    },
+    {
+      "surface": "progress",
+      "kind": "client-feature",
+      "file": "mp-app/client/lib/features/progress",
+      "components": [],
+      "controls": {
+        "buttons": 0,
+        "inputs": 0,
+        "numbers": 0,
+        "selects": 0,
+        "modals": 0
+      },
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/api/v1/assessments/member/*",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        }
+      ],
+      "tests": []
+    },
+    {
+      "surface": "shell",
+      "kind": "client-feature",
+      "file": "mp-app/client/lib/features/shell",
+      "components": [],
+      "controls": {
+        "buttons": 0,
+        "inputs": 0,
+        "numbers": 0,
+        "selects": 0,
+        "modals": 0
+      },
+      "endpoints": [],
+      "tests": []
+    },
+    {
+      "surface": "shop",
+      "kind": "client-feature",
+      "file": "mp-app/client/lib/features/shop",
+      "components": [],
+      "controls": {
+        "buttons": 0,
+        "inputs": 0,
+        "numbers": 0,
+        "selects": 0,
+        "modals": 0
+      },
+      "endpoints": [
+        {
+          "method": "DELETE",
+          "path": "/api/v1/shop/cart/*",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/shop/cart",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/shop/checkout",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        }
+      ],
+      "tests": [
+        "mp-app/client/test/shop_orders_receipt_test.dart",
+        "mp-app/client/test/shop_page_test.dart"
+      ]
+    },
+    {
+      "surface": "today",
+      "kind": "client-feature",
+      "file": "mp-app/client/lib/features/today",
+      "components": [],
+      "controls": {
+        "buttons": 0,
+        "inputs": 0,
+        "numbers": 0,
+        "selects": 0,
+        "modals": 0
+      },
+      "endpoints": [],
+      "tests": [
+        "mp-app/client/test/readiness_card_test.dart",
+        "mp-app/client/test/today_controller_test.dart",
+        "mp-app/client/test/today_page_test.dart",
+        "mp-app/client/test/volume_card_test.dart"
+      ]
+    },
+    {
+      "surface": "wallet",
+      "kind": "client-feature",
+      "file": "mp-app/client/lib/features/wallet",
+      "components": [],
+      "controls": {
+        "buttons": 0,
+        "inputs": 0,
+        "numbers": 0,
+        "selects": 0,
+        "modals": 0
+      },
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/api/v1/payments/wallet/*/transactions",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        }
+      ],
+      "tests": [
+        "mp-app/client/test/wallet_history_test.dart"
+      ]
+    },
+    {
+      "surface": "core",
+      "kind": "client-feature",
+      "file": "mp-app/client/lib/core",
+      "components": [],
+      "controls": {
+        "buttons": 0,
+        "inputs": 0,
+        "numbers": 0,
+        "selects": 0,
+        "modals": 0
+      },
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/api/v1/classes",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/*/memberships",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/members/me",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/nutrition/food-logs/member/*/daily",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/nutrition/foods",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/nutrition/plans/member/*",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/payments",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/payments/wallet/*",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/programs/member/*",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/shop/cart",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/shop/categories",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/shop/gateways",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/shop/orders",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/shop/orders/*/receipt",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/shop/products",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/auth/logout",
+          "in_contract": true,
+          "guards": [],
+          "roles": []
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/auth/otp/verify",
+          "in_contract": true,
+          "guards": [],
+          "roles": []
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/auth/refresh",
+          "in_contract": true,
+          "guards": [],
+          "roles": []
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/programs/sync/set-feedback",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        }
+      ],
+      "tests": []
+    }
+  ],
+  "contract_paths": 137
+}
