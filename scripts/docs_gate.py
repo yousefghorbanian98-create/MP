@@ -51,6 +51,9 @@ CORE_MARKDOWN_FILES = (
     Path("docs/MuscleParadise/AGENT-TOOLING-REVIEWS.md"),
     Path("docs/MuscleParadise/ROADMAP-NEXT-2026-11-19.md"),
     Path("docs/MuscleParadise/ARCHITECTURE-LAYERS-AND-STAGES.md"),
+    # ۲۰۲۶-۱۱-۱۹ (فاز ۱): نقشهٔ سطح تعامل از کد ساخته می‌شود؛ همان هم باید
+    # فاصلهٔ اضافه و لینک مرده نداشته باشد.
+    Path("docs/MuscleParadise/architecture/interaction-map-2026-11-19.md"),
 )
 MARKDOWN_FILES = (*CORE_MARKDOWN_FILES, *_module_docs())
 SVG_FILES = (
