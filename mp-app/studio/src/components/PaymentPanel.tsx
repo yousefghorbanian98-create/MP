@@ -5,6 +5,8 @@ import {
   confirmGatewayCallback,
   failPayment,
   fetchReceipt,
+  listPayments,
+  refundPayment,
   type PaymentStart,
   type PaymentRow,
   type Receipt,
@@ -29,6 +31,7 @@ const fmt = (n: number) => n.toLocaleString("fa-IR");
 
 export function PaymentPanel() {
   const [memberId, setMemberId] = useState("");
+  const [lookupId, setLookupId] = useState("");
   const [amount, setAmount] = useState("500000");
   const [method, setMethod] = useState<"zarinpal" | "cash" | "card">("zarinpal");
   const [tx, setTx] = useState<PaymentRow | null>(null);
@@ -94,6 +97,26 @@ export function PaymentPanel() {
       setReceipt(await fetchReceipt(tx.id));
     });
 
+  const lookup = () =>
+    call(async () => {
+      const id = Number(lookupId);
+      if (!Number.isSafeInteger(id) || id <= 0) throw new Error("شناسهٔ پرداخت نامعتبر است");
+      const payment = (await listPayments()).find((p) => p.id === id);
+      if (!payment) throw new Error("پرداخت یافت نشد");
+      setTx(payment);
+      setStarted(null);
+      setReceipt(null);
+    });
+
+  const refund = () =>
+    call(async () => {
+      if (!tx) throw new Error("تراکنشی نیست");
+      if (!window.confirm(`بازگشت ${fmt(tx.amount_rial)} ریال برای پرداخت #${tx.id}؟`)) return;
+      const updated = await refundPayment(tx.id);
+      setTx(updated);
+      setReceipt(null);
+    });
+
   const reset = () => {
     setTx(null);
     setStarted(null);
@@ -147,6 +170,16 @@ export function PaymentPanel() {
           className="btn-primary px-4 py-2 text-xs disabled:opacity-50"
         >
           {busy ? "…" : "ساخت تراکنش"}
+        </button>
+      </div>
+
+      <div className="flex items-end gap-2 text-xs">
+        <label>شناسهٔ پرداخت موجود
+          <input value={lookupId} onChange={(e) => setLookupId(e.target.value)} inputMode="numeric"
+            className="focus-ring mt-1 block w-28 rounded-lg bg-surface/70 px-3 py-2 text-sm" />
+        </label>
+        <button onClick={() => void lookup()} disabled={busy} className="btn-primary px-4 py-2">
+          بارگذاری پرداخت
         </button>
       </div>
 
@@ -206,7 +239,14 @@ export function PaymentPanel() {
             </button>
           )}
 
-          {tx.status === "paid" && (
+          {tx.status === "paid" && tx.gateway_authority && (
+            <button onClick={() => void refund()} disabled={busy}
+              className="rounded-lg border border-rose-500/40 px-3 py-1.5 text-rose-300 disabled:opacity-50">
+              بازگشت وجه
+            </button>
+          )}
+
+          {(tx.status === "paid" || tx.status === "refunded") && (
             <button
               onClick={() => void loadReceipt()}
               disabled={busy}
@@ -218,9 +258,10 @@ export function PaymentPanel() {
 
           {receipt && (
             <div className="mt-2 rounded-lg border border-emerald-500/30 p-3 text-[11px] leading-6">
-              <p className="font-bold">رسید پرداخت #{receipt.payment_id}</p>
+              <p className="font-bold">{receipt.status === "refunded" ? "رسید بازگشت وجه" : "رسید پرداخت"} #{receipt.payment_id}</p>
               <p>مبلغ: {fmt(receipt.amount_rial)} ریال</p>
-              <p>کد پیگیری: {receipt.reference_id}</p>
+              <p>کد پیگیری پرداخت: {receipt.reference_id}</p>
+              {receipt.status === "refunded" && <p>مرجع بازگشت: {receipt.refund_reference || "ثبت نشده توسط درگاه"}</p>}
               {receipt.paid_at && <p>زمان: {new Date(receipt.paid_at).toLocaleString("fa-IR")}</p>}
             </div>
           )}

@@ -1,5 +1,3 @@
-import java.util.Properties
-
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
@@ -31,28 +29,22 @@ android {
         versionName = flutter.versionName
     }
 
+    // A release must never silently use the public Android debug signing key.
+    // Signing material is supplied by the build environment, not committed to Git.
     signingConfigs {
-        // امضای پایدار انتشار (MP) — همهٔ نسخه‌ها با یک کلید امضا می‌شوند
-        // تا نصبِ روی نسخهٔ قبلی بدون حذف، ممکن بماند (رفع «نصب پکیج شکست خورد»).
         create("release") {
-            val props = Properties()
-            val f = file("../keystore/keystore.properties")
-            if (f.exists()) {
-                f.inputStream().use { props.load(it) }
-                storeFile = file("../" + props.getProperty("storeFile").removePrefix("../"))
-                storePassword = props.getProperty("storePassword")
-                keyAlias = props.getProperty("keyAlias")
-                keyPassword = props.getProperty("keyPassword")
-            }
+            storeType = "PKCS12"
+            val path = System.getenv("MP_ANDROID_KEYSTORE_PATH")
+            if (!path.isNullOrBlank()) storeFile = file(path)
+            storePassword = System.getenv("MP_ANDROID_STORE_PASSWORD")
+            keyAlias = System.getenv("MP_ANDROID_KEY_ALIAS")
+            keyPassword = System.getenv("MP_ANDROID_KEY_PASSWORD")
         }
     }
 
     buildTypes {
         release {
-            signingConfig = if (signingConfigs.getByName("release").storeFile != null)
-                signingConfigs.getByName("release")
-            else
-                signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 }

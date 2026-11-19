@@ -1,0 +1,17 @@
+# Exact, reviewed findings only. Entries below identify synthetic fixtures unless
+# explicitly labeled as retired historical signing credentials.
+# Forged unsigned alg=none JWT used to verify rejection (historical test commit).
+c92c46174de22640f7d977b2e4ab8f61b74e738e:mp-app/backend/tests/integration/test_m46_security_matrix.py:jwt:89
+# Synthetic Stripe-shaped string for secret-pattern regression testing.
+f5b687a18e8c6183ae521673762315e12962bad4:mp-app/backend/tests/regression/test_apk_deep_audit.py:stripe-access-token:62
+# Synthetic AWS-shaped string for secret-pattern regression testing.
+f5b687a18e8c6183ae521673762315e12962bad4:mp-app/backend/tests/regression/test_apk_deep_audit.py:aws-access-token:63
+# Synthetic API-key-shaped string for secret-pattern regression testing.
+f5b687a18e8c6183ae521673762315e12962bad4:mp-app/backend/tests/regression/test_apk_deep_audit.py:generic-api-key:65
+# Forged unsigned alg=none JWT used to verify rejection (current-history commit).
+177f2ab7c2f45a29f135f238ce6eb415441dc16e:mp-app/backend/tests/integration/test_m46_security_matrix.py:jwt:89
+# Owner-approved exception: two REAL signing passwords for an old, retired key.
+# They remain public in history; never reuse this key or its passwords. No path,
+# rule, or global allowlist is implied. Recheck before any policy/history rewrite.
+c6f29449e8a55e0ed1204847357313ca0dd7a9cb:mp-app/client/android/keystore/keystore.properties:generic-api-key:2
+c6f29449e8a55e0ed1204847357313ca0dd7a9cb:mp-app/client/android/keystore/keystore.properties:generic-api-key:4
