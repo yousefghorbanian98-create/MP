@@ -224,14 +224,20 @@ def create_membership_from_plan(db: Session, member_id: int, plan_key: str) -> d
     return {"membership": ms, "invoice": {**resolution, "membership_id": ms.id}}
 
 
-def membership_invoice(db: Session, membership_id: int) -> dict:
-    """صورتحساب/تاریخچه با reason سیاست (M41-c3) — بدون ادعای علمی/فروش."""
+def membership_invoice(db: Session, membership_id: int, user=None) -> dict:
+    """صورتحساب/تاریخچه با reason سیاست (M41-c3) — بدون ادعای علمی/فروش.
+
+    QF-00: نقش `member` فقط صورتحساب اشتراک خودش را می‌بیند؛ کادر (coach/
+    reception/manager/admin) محدود نمی‌شود.
+    """
+    from app.security.ownership import ensure_member_scope
     from db.models import Membership
     from engine.gender_plans import PLAN_POLICY_VERSION
 
     ms = db.get(Membership, membership_id)
     if ms is None:
         raise ApiError("اشتراک یافت نشد", code="not_found")
+    ensure_member_scope(db, user, ms.member_id)
     member = db.get(Member, ms.member_id)
     duration = (_aware(ms.expires_at) - _aware(ms.started_at)).days
     return {

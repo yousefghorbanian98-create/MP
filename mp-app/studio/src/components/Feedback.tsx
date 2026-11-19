@@ -3,16 +3,25 @@
  *
  * چرا این فایل وجود دارد: بازبینی ۲۰۲۶-۱۱-۱۵ نشان داد در کل `src/`
  * هیچ toast/skeleton/modal نبود؛ یعنی دکمه‌ای که کار می‌کرد و دکمه‌ای که
- * شکست می‌خورد **یک‌شکل** دیده می‌شدند. هر سه جزء اینجا مینیمال و بدون
- * وابستگی جدید هستند (framer-motion از قبل هست).
+ * شکست می‌خورد **یک‌شکل** دیده می‌شدند.
  *
- * قواعد دسترس‌پذیری:
+ * Q11 (۲۰۲۶-۱۱-۱۹): دیالوگ تأیید دیگر دست‌ساز نیست؛ `ConfirmDialog` پوستهٔ
+ * نازک روی `Modal` کتابخانهٔ antd است (فوکوس‌تراپ، Escape، aria-modal و
+ * بازگشت فوکوس در خود کتابخانه آزموده شده‌اند). toast و skeleton به‌عنوان
+ * لایهٔ بازخورد باقی می‌مانند چون کامپوننت «کنترل ورودی» نیستند؛ انتقال آن‌ها
+ * به `message`/`Alert` antd کار جدا و با تست جداگانه است.
+ *
+ * قواعد دسترس‌پذیری باقی‌مانده:
  * - toast در `role="status"` + `aria-live="polite"` (خطا: assertive)
- * - modal با `role="dialog"` + `aria-modal`، Escape می‌بندد، فوکوس برمی‌گردد
  * - skeleton با `aria-busy` و احترام به `prefers-reduced-motion`
  */
+import {
+  CheckCircleFilled,
+  ExclamationCircleFilled,
+  InfoCircleFilled,
+} from "@ant-design/icons";
+import { Modal } from "antd";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { useEffect, useRef } from "react";
 import { create } from "zustand";
 
 export type ToastKind = "success" | "error" | "info";
@@ -56,7 +65,11 @@ const KIND_STYLE: Record<ToastKind, string> = {
   info: "border-primary/40 bg-primary/15 text-ink",
 };
 
-const KIND_ICON: Record<ToastKind, string> = { success: "✓", error: "!", info: "i" };
+const KIND_ICON: Record<ToastKind, React.ReactNode> = {
+  success: <CheckCircleFilled aria-hidden="true" />,
+  error: <ExclamationCircleFilled aria-hidden="true" />,
+  info: <InfoCircleFilled aria-hidden="true" />,
+};
 
 export function ToastViewport() {
   const toasts = useToastStore((s) => s.toasts);
@@ -140,82 +153,18 @@ export function ConfirmDialog({
   onConfirm: () => void;
   onCancel: () => void;
 }) {
-  const reduced = useReducedMotion();
-  const ref = useRef<HTMLDivElement>(null);
-  const confirmRef = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    if (!open) return;
-    confirmRef.current?.focus();
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onCancel();
-      if (e.key === "Tab") {
-        // trap ساده: فوکوس از دیالوگ بیرون نزند
-        const nodes = ref.current?.querySelectorAll<HTMLElement>(
-          "button, [href], input, textarea, select",
-        );
-        if (!nodes || nodes.length === 0) return;
-        const first = nodes[0];
-        const last = nodes[nodes.length - 1];
-        if (e.shiftKey && document.activeElement === first) {
-          e.preventDefault();
-          last.focus();
-        } else if (!e.shiftKey && document.activeElement === last) {
-          e.preventDefault();
-          first.focus();
-        }
-      }
-    };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [open, onCancel]);
-
   return (
-    <AnimatePresence>
-      {open && (
-        <motion.div
-          className="fixed inset-0 z-[80] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
-          initial={reduced ? false : { opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={reduced ? undefined : { opacity: 0 }}
-          onClick={onCancel}
-        >
-          <motion.div
-            ref={ref}
-            role="dialog"
-            aria-modal="true"
-            aria-label={title}
-            initial={reduced ? false : { opacity: 0, scale: 0.96, y: 10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={reduced ? undefined : { opacity: 0, scale: 0.97 }}
-            transition={{ duration: reduced ? 0 : 0.2, ease: "easeOut" }}
-            onClick={(e) => e.stopPropagation()}
-            className="glass-card w-[min(94vw,28rem)] space-y-4 p-5"
-          >
-            <h3 className="text-base font-bold">{title}</h3>
-            {body && <p className="text-sm leading-6 text-ink-dim">{body}</p>}
-            <div className="flex justify-end gap-2">
-              <button
-                type="button"
-                onClick={onCancel}
-                className="focus-ring rounded-xl px-4 py-2 text-sm text-ink-dim transition-colors hover:text-ink"
-              >
-                انصراف
-              </button>
-              <button
-                ref={confirmRef}
-                type="button"
-                onClick={onConfirm}
-                className={`focus-ring rounded-xl px-4 py-2 text-sm font-medium text-white transition-transform active:scale-[0.98] ${
-                  danger ? "bg-danger hover:bg-danger/90" : "bg-primary hover:bg-primary/90"
-                }`}
-              >
-                {confirmLabel}
-              </button>
-            </div>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+    <Modal
+      centered
+      cancelText="انصراف"
+      okButtonProps={{ danger }}
+      okText={confirmLabel}
+      open={open}
+      title={title}
+      onCancel={onCancel}
+      onOk={onConfirm}
+    >
+      {body && <p className="text-sm leading-6 text-ink-dim">{body}</p>}
+    </Modal>
   );
 }

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { roleFromToken } from "../lib/roleNav";
+import { Select } from "antd";
 import {
   AuthError,
   fetchAudit,
@@ -75,16 +76,15 @@ export function RoleManager() {
         {users.map((u) => (
           <div key={u.id} className="flex items-center gap-3 rounded-xl bg-surface/60 px-3 py-2">
             <span className="flex-1 truncate text-sm">{u.full_name} · {u.phone}</span>
-            <select
-              className="rounded-lg bg-surface px-2 py-1 text-xs"
-              value={u.role}
+            <Select
+              aria-label={`نقش ${u.full_name}`}
+              className="w-36"
               disabled={busy}
-              onChange={(e) => change(u.id, e.target.value)}
-            >
-              {Object.entries(roleLabels).map(([key, label]) => (
-                <option key={key} value={key}>{label}</option>
-              ))}
-            </select>
+              options={Object.entries(roleLabels).map(([key, label]) => ({ key, value: key, label }))}
+              size="small"
+              value={u.role}
+              onChange={(value) => change(u.id, value)}
+            />
             {u.role !== "member" && (
               <button
                 className="rounded-lg bg-red-500/10 px-2 py-1 text-[11px] text-red-400 disabled:opacity-50"

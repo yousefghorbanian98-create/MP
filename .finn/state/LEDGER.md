@@ -189,3 +189,7 @@ endpoint رسید مالکیت را در سرویس چک می‌کند، ولی 
 ## ۳۴. M113: سیاست بدون اتصال معادل مسیر مالی نیست (۲۰۲۶-۱۱-۱۸)
 
 REA روی OpenAPI، SQLite ساختگی و bundle Studio اجرا شد، اما تحلیل bundle به سقف heap برخورد؛ خروجی موفق ابزار به معنای پوشش کامل نیست. ماشین حالت مستقل و ۵۴ تست، فقط قواعد گذار را بررسی می‌کنند. تصمیم واقعی نیازمند احراز نقش/مالکیت، تراکنش و قفل دیتابیس، اثبات تطبیق بانک و آزمایش رقابت است؛ تا اجرای آن گیت‌ها نباید قابلیت را فعال یا کامل معرفی کرد. گزارش شواهد در `finn/reports/rea/m113-review.md` و برنامه در `docs/MuscleParadise/PLAN-MANUAL-TRANSFER.md` است.
+
+## ۳۵. حذف ECC و انتقال skill مربوط به REA (۲۰۲۶-۱۱-۱۹)
+
+کل `.claude/` (۹۳۱ فایل tracked: ۷۱ agent، ۹۸ command، ۶۳۰ فایل skill، ۱۲۲ rule، ۹ hook)، `LICENSE-ECC` و `.finn/ecc-commit.txt` حذف شدند؛ `install-toolchain.sh` فقط REA را نصب می‌کند. skill مربوط به REA به `tools/rea-skill/reverse-engineer-anything/` منتقل شد تا با حذف `.claude` از دست نرود. بنر «ECC حذف شد» به اسناد عملیاتی اضافه و NOTICE به‌روز شد. هیچ کد محصولی تغییر نکرد.

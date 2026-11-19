@@ -1,0 +1,66 @@
+# Accepted architectural decisions for this repository.
+#
+# Generated and rewritten by repowise; edits survive, comments do not.
+# Commit this file: it is the source of truth, and the index is a copy.
+# Candidates and evidence stay out of it on purpose.
+version: 1
+decisions:
+- id: 46c5a46478f917cb9dad3967fbf2f568
+  title: فروشگاه نمایش‌محور، خرید حضوری
+  decision: کاتالوگ و قیمت و موجودی خواندنی؛ سبد و سفارش و checkout در اپ غیرفعال و در API بسته.
+  reason: خرید در زمان باز بودن باشگاه حضوری انجام می‌شود؛ پرداخت آنلاین لازم نیست.
+  scope:
+  - mp-app/backend/modules/shop
+  - mp-app/client/lib/features/shop
+  currency: active
+  source: agent
+  accepted_at: '2026-11-19T21:47:09.235207'
+  base_token: 62e602167a5e8a4a
+  accepted_by: arena_agent
+  evidence:
+  - mp-app/client/lib/features/shop/shop_page.dart
+- id: 7fe8df48c8ca401e2d34ddb35c8c61b7
+  title: گیت سینتکس دیاگرام با پارسر رسمی Mermaid و بدون مرورگر
+  decision: mermaid@11 + jsdom در Node، هر دو MIT، اجرا در job docs؛ گیت با ۲۳ دیاگرام سبز و حالت شکسته
+    قرمز آزموده شد
+  reason: گیت مستندات فقط اعلان دیاگرام را می‌سنجید؛ بلوک شکسته رد نمی‌شد. بدون Chrome و بدون سرویس بیرونی
+    هم پارس واقعی ممکن است.
+  scope:
+  - docs
+  - tools/mermaid-check
+  currency: active
+  source: agent
+  accepted_at: '2026-11-19T22:00:41.918212'
+  base_token: c8570a3859ed88e0
+  accepted_by: yousefghorbanian98-create
+  evidence:
+  - 4c332eb
+- id: c876c16652c41be219ff4276d7b7bdfe
+  title: ایندکس کد ابزار محلی، هرگز در Git
+  decision: ایندکس در .repowise/ می‌ماند، gitignore است، تلمتری خاموش، و فقط decisions.yaml ردیابی می‌شود.
+  reason: history نباید به داده‌های تولیدشده و دستورالعمل‌های موازی آلوده شود.
+  scope:
+  - .gitignore
+  - scripts/repo_hygiene_gate.py
+  currency: active
+  source: agent
+  accepted_at: '2026-11-19T21:47:11.132816'
+  base_token: 2e7d950176f7142c
+  kind: agreement
+  accepted_by: arena_agent
+  evidence:
+  - .gitignore
+- id: d2ce9ab42f764b66e28a87b584875252
+  title: حذف درگاه پرداخت اینترنتی
+  decision: زرین‌پال و آیدی‌پی از UI و API حذف می‌شوند؛ نقدی و کارت‌خوان و کارت‌به‌کارت می‌مانند.
+  reason: درگاه واقعی نیاز به merchant و هزینه دارد و مسیر اصلی تمدید اشتراک است.
+  scope:
+  - mp-app/backend/modules/payments
+  - mp-app/studio/src/components/PaymentPanel.tsx
+  currency: active
+  source: agent
+  accepted_at: '2026-11-19T21:47:10.194281'
+  base_token: 69283ac023c26de6
+  accepted_by: arena_agent
+  evidence:
+  - mp-app/backend/modules/payments/gateway.py

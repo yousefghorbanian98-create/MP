@@ -2,6 +2,14 @@
 
 > هشدار انتقال ۲۰۲۶-۱۱-۱۸: بخش‌های زیر snapshot تاریخی‌اند. وضعیت و نصب جاری را از `docs/MuscleParadise/SESSION_HANDOFF.md` و `docs/MuscleParadise/BUILDER-START-AND-REPOWISE.md` و با بررسی Git و CI همان SHA بگیرید. QF و QA مستقل هنوز اجرا نشده‌اند؛ policy پرداخت صرفاً جدا و بدون اتصال است.
 
+## حذف ECC — ۲۰۲۶-۱۱-۱۹ (جاری)
+
+- کل دارایی‌های ECC از مخزن پاک شد: `.claude/agents` (۷۱)، `.claude/commands` (۹۸)، `.claude/skills` (۶۳۰ فایل، ۳۱۴ skill)، `.claude/rules` (۱۲۲ فایل)، `.claude/hooks` (۹)، `LICENSE-ECC` و پین `.finn/ecc-commit.txt`. کلون محلی `.finn/ecc` هم حذف شد.
+- `install-toolchain.sh` اکنون فقط REA را نصب می‌کند؛ گزینهٔ `ecc` عمداً خطا می‌دهد.
+- skill مربوط به REA دست‌نخورده منتقل شد: `tools/rea-skill/reverse-engineer-anything/`.
+- نقش‌ها/چک‌لیست‌ها فایل متنی‌اند؛ هیچ runtime یا API مدل لازم نیست. تصمیم ورود کتابخانهٔ رایگان نقش (نامزد: VoltAgent، MIT) باز و منتظر مالک است.
+- اشاره‌های ECC در اسناد تاریخی با بنر «حذف شد» علامت خورده‌اند؛ دستور نصب/فراخوانی ECC دیگر معتبر نیست.
+
 ## Snapshot جاری — M84 تا M87 و CI follow-up (2026-11-16)
 
 - شاخهٔ فعال `arena/4f336f66-mp` روی origin در `b58d0536290b9ad80158c8c67159f6833eaab563` (`b58d053`) است. CI `44247416109` همین commit را آزمود. Worktree اکنون helper را به یک annotation تجمیعی برای همهٔ تست‌های fail تغییر می‌دهد تا محدودیت تعداد annotationهای GitHub چهار نام را حذف نکند؛ این patch هنوز push نشده. Untracked evidence/reports انتخابی stage نشده و دست‌نخورده مانده است.
@@ -49,13 +57,13 @@
 
 ## ابزارها (نسخه‌ها و pinهای ثبت‌شده)
 
-- **ECC:** `affaan-m/ECC` — کامیت `d2ef2680594f9a17526a6e1a2e18b3d242c5d17b` (۲۰۲۶-۱۱-۰۶، v2.2.3)
+- **ECC:** حذف شد (۲۰۲۶-۱۱-۱۹). سابقه: `affaan-m/ECC` — کامیت `d2ef2680…`، v2.2.3
   - ۷۱ ایجنت / ۳۱۴ skill / ۹۸ فرمان / ۲۳ بستهٔ قوانین / hookها → promptهای نصب‌شده در `.claude/`
   - clone کامل در `.finn/ecc/` طی اجرای قبلی تأیید شد؛ این مسیر gitignored و در sandbox فعلی حاضر نیست.
   - ⚠️ نصب قدیمی از فورک `WorldFlowAI/everything-claude-code@432485ba` بود (۲۰۲۶-۰۱-۲۳) — منسوخ شد
 - **REA:** `morluto/rea` v6.9.0 در اجرای قبلی تأیید شد؛ package فعلاً در `~/toolchain/rea` نصب نیست.
   - Node لازم: `^22.23.4 || ^24.22.1 || >=26.12.1`؛ Node سیستم `22.22.3` است → portable `24.22.3` در اجرای قبلی استفاده شد، اما فعلاً وجود ندارد.
-  - skill: `.claude/skills/reverse-engineer-anything` در workspace حاضر است · MCP: `.mcp.json` در این sandbox غایب و توسط اسکریپت بازتولید می‌شود.
+  - skill: `tools/rea-skill/reverse-engineer-anything` در workspace حاضر است · MCP: `.mcp.json` در این sandbox غایب و توسط اسکریپت بازتولید می‌شود.
   - موتور native (Ghidra/Hopper/IDA/JADX): **نصب نیست — لازم هم نیست**
   - اثبات کارکرد: `identify-flutter-build` روی APK خودمان → `flutter_detected: true`, `dart_version 3.14.0`, coverage: partial
   - راهنما: `docs/MuscleParadise/REA-OPERATIONS.md`

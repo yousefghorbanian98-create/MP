@@ -33,6 +33,7 @@
 | Caddy 2.11.9 | Apache-2.0 | TLS/reverse proxy و Studio در stack `infra` |
 | Ollama 0.40.16 | MIT | runtime محلی اختیاری؛ هیچ وزن مدلی در image/repo قفل نیست |
 | Gitleaks CLI 8.30.1 | MIT | اسکن secret در کل Git history؛ binary رسمی با checksum، بدون GitHub Action نامشخص |
+| Repowise 0.61.0 | **AGPL-3.0-or-later** | ابزار توسعهٔ محلی برای مدل معماری مخزن؛ **نه در محصول، نه لینک‌شده، نه توزیع‌شده**. خروجی (`architecture/repowise-model-*.dsl`) مدل کد خودمان است. تلمتری پیش‌فرض روشن است و همیشه با `DO_NOT_TRACK=1` و `REPOWISE_OFFLINE=1` اجرا می‌شود؛ ایندکس ۵۷MB در `.repowise/` است و gitignore شده. بازبینی: `scripts/repo_hygiene_gate.py` |
 
 ثبت مجوز از upstream: [Valkey](https://github.com/valkey-io/valkey), [Prometheus](https://github.com/prometheus/prometheus), [redis_exporter](https://github.com/oliver006/redis_exporter), [Caddy](https://github.com/caddyserver/caddy), [Ollama](https://github.com/ollama/ollama), [Gitleaks](https://github.com/gitleaks/gitleaks). نسخه‌های Compose و CI باید با همین جدول هماهنگ بمانند.
 
@@ -49,11 +50,25 @@
 - Flutter/Dart (BSD-3) — کلاینت اندروید
 - فونت وزیرمتن (Vazirmatn) — SIL OFL 1.1
 
+### کنترل‌های UI استودیو — گیت Q11 (۲۰۲۶-۱۱-۱۹)
+| جزء | نسخهٔ قفل‌شده | مجوز | کاربرد |
+|---|---|---|---|
+| antd | 5.29.3 | MIT | Select، Modal، Switch، Checkbox، Table، Upload، Tooltip، Steps و locale رسمی `fa_IR`؛ RTL با `ConfigProvider direction="rtl"` |
+| @ant-design/cssinjs | 1.24.0 | MIT | `StyleProvider layer` — هم‌زیستی استایل antd با Tailwind v3 |
+| @ant-design/icons | 5.6.1 | MIT | آیکون‌های آماده با `aria-hidden`/اندازهٔ استاندارد |
+| react-multi-date-picker | 4.5.2 | MIT | تقویم/دیت‌پیکر جلالی راست‌به‌چپ (`persian` + `persian_fa`) |
+| react-date-object | 2.1.9 (transitive) | MIT | تبدیل تاریخ میلادی↔جلالی زیر همان دیت‌پیکر |
+| dayjs | 1.11.x (transitive antd) | MIT | موتور تاریخ antd؛ هیچ درخواست شبکه‌ای ندارد |
+
+سیاست: فقط مجوز OSI، بدون نسخهٔ پولی/کلید لایسنس، بدون تلمتری. کتابخانه‌هایی که نسخهٔ Pro دارند (Mantine، AG Grid، MUI X) به‌عنوان «هستهٔ کنترل» انتخاب نشدند تا مرز رایگان/پولی مبهم نماند. `@base-ui-components/react` (نسخهٔ `1.0.0-rc.0`) رد شد: ناشر آن را به `@base-ui/react` تغییر نام داده و نسخهٔ منتشرشده deprecated است.
+
+بازبینی نکرده (باقی‌مانده): SBOM کامل dependencyهای transitive استودیو؛ جدول بالا فقط زنجیرهٔ مستقیم و سهٔ پرریسک را قفل می‌کند.
+
 ## ابزارهای ایجنت توسعه
 | جزء | مجوز | منشأ/ردیابی |
 |---|---|---|
-| ECC agent/configuration files | MIT | فایل‌های `.claude/` از `affaan-m/ECC`، کامیت `d2ef2680594f9a17526a6e1a2e18b3d242c5d17b`; متن مجوز در `.claude/LICENSE-ECC` |
-| REA skill | MIT | کپی محلی در `.claude/skills/reverse-engineer-anything/`; متن upstream license در `.claude/skills/reverse-engineer-anything/LICENSE-REA` (کامیت مجوز: `bb5278c7e2d5b0a423a63858c8b3c9682232e2d2`; نسخهٔ دقیق منبع محتوای محلی ثبت نشده) |
+| — (حذف شد) | MIT | ECC (`affaan-m/ECC`، کامیت `d2ef2680…`) در ۲۰۲۶-۱۱-۱۹ از مخزن حذف شد؛ هیچ فایل ECC در این پروژه توزیع نمی‌شود و attribution آن لازم نیست. سابقه در گزارش‌های تاریخی است. |
+| REA skill | MIT | کپی محلی در `tools/rea-skill/reverse-engineer-anything/`; متن upstream license در `tools/rea-skill/reverse-engineer-anything/LICENSE-REA` (کامیت مجوز: `bb5278c7e2d5b0a423a63858c8b3c9682232e2d2`; نسخهٔ دقیق منبع محتوای محلی ثبت نشده) |
 
 ## مدل‌های هوش مصنوعی
 هیچ مدل وزن‌داری در مخزن موجود نیست (سیاست `model_lock` — D-008). پیش از استقرار، مجوز هر مدل جداگانه تأمین و در همین فایل اضافه می‌شود.

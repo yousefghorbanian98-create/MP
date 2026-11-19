@@ -30,7 +30,7 @@ build/
 .client-build/
 
 # --- FINN loop ---
-# کلون ECC بازتولیدپذیر است (کامیت پین‌شده در .finn/ecc-commit.txt) → ignore می‌شود.
+# ECC در ۲۰۲۶-۱۱-۱۹ حذف شد؛ این ignore فقط برای جلوگیری از ورود یک کلونِ سهوی باقی می‌ماند.
 # فایل‌های وضعیت لوپ (state) عمداً commit می‌شوند تا در برابر پاک‌شدن محیط محفوظ بمانند.
 .finn/ecc/
 
@@ -72,3 +72,8 @@ _ref/
 
 # --- Agent MCP registrations (مسیرهای مطلق و محیط‌محلی) ---
 .mcp.json
+
+# repowise: the decisions manifest is meant to be committed
+!/.repowise/
+/.repowise/*
+!/.repowise/decisions.yaml

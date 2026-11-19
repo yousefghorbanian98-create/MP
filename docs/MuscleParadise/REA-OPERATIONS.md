@@ -27,7 +27,7 @@
 | اجراپذیر | `~/toolchain/rea/node_modules/.bin/rea` |
 | Node لازم | `^22.23.4 \|\| ^24.22.1 \|\| >=26.12.1` — سیستم `22.22.3` بود ← portable `24.22.3` در `~/toolchain/node-linux-x64/bin/node` |
 | Node سیستم | **کافی نیست** — همیشه با Node پرتابل صدا بزنید، وگرنه REA با پیام نسخه خارج می‌شود |
-| skill | `.claude/skills/reverse-engineer-anything/` (۹ فایل، شامل ۸ مرجع تخصصی) |
+| skill | `tools/rea-skill/reverse-engineer-anything/` (۹ فایل، شامل ۸ مرجع تخصصی) |
 | MCP | `.mcp.json` پروژه (gitignored — مسیر مطلق دارد) |
 | موتور native | ❌ Hopper/Ghidra/IDA/JADX/Kuna نصب نیست (عمدی: نیاز نداریم) |
 

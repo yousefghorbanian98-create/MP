@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { fetchAdaptiveReport, logWeight } from "../lib/api";
 import { fa, useApi } from "../lib/useApi";
+import { JalaliDateField } from "./ui/JalaliDateField";
 
 /**
  * G3 — تخمین TDEE واقعی و پیشنهاد اصلاح کالری.
@@ -188,15 +189,7 @@ export function AdaptiveNutritionPanel({ memberId }: { memberId: number }) {
               className="focus-ring mt-1 block w-24 rounded-lg bg-surface/70 px-3 py-2 text-sm"
             />
           </label>
-          <label className="text-xs text-ink-dim">
-            تاریخ
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className="focus-ring mt-1 block rounded-lg bg-surface/70 px-3 py-2 text-sm text-ink"
-            />
-          </label>
+          <JalaliDateField label="تاریخ" value={date} onChange={setDate} />
           <button
             onClick={() => void saveWeight()}
             disabled={busy}

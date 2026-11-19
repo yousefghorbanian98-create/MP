@@ -169,7 +169,9 @@ def create_from_plan(payload: PlanPurchaseIn, db: DbSession):
 
 @router.get("/memberships/{membership_id}/invoice", summary="صورتحساب + reason سیاست (M41-c3)")
 def get_invoice(membership_id: int, db: DbSession, user: CurrentUser):
-    return service.membership_invoice(db, membership_id)
+    # QF-00 — `member` به `/members/*` GET دسترسی دارد؛ بدون فرستادن کاربر،
+    # صورتحساب هر عضوی (شامل gender و price) خواندنی بود.
+    return service.membership_invoice(db, membership_id, user=user)
 
 
 @router.get("/{member_id}", response_model=MemberOut, summary="پروفایل عضو")

@@ -12,6 +12,7 @@ import {
   type Receipt,
 } from "../lib/api";
 import { fa } from "../lib/useApi";
+import { Select } from "antd";
 
 /**
  * Q6 — درگاه پرداخت (پذیرش).
@@ -163,18 +164,20 @@ export function PaymentPanel() {
             className="focus-ring mt-1 block w-36 rounded-lg bg-surface/70 px-3 py-2 text-sm"
           />
         </label>
-        <label className="text-ink-dim">
-          روش
-          <select
+        <div className="text-ink-dim">
+          <span>روش</span>
+          <Select
+            aria-label="روش پرداخت"
+            className="mt-1 block w-44"
+            options={[
+              { value: "zarinpal", label: "درگاه" },
+              { value: "cash", label: "نقدی (پذیرش)" },
+              { value: "card", label: "کارت‌خوان" },
+            ]}
             value={method}
-            onChange={(e) => setMethod(e.target.value as typeof method)}
-            className="focus-ring mt-1 block rounded-lg bg-surface/70 px-3 py-2 text-sm"
-          >
-            <option value="zarinpal">درگاه</option>
-            <option value="cash">نقدی (پذیرش)</option>
-            <option value="card">کارت‌خوان</option>
-          </select>
-        </label>
+            onChange={(value) => setMethod(value as typeof method)}
+          />
+        </div>
         <button
           onClick={() => void create()}
           disabled={busy}

@@ -13,7 +13,7 @@
 | R-006 | `docs/MuscleParadise/finn/install-toolchain.sh` (خودآزمای `bash -n` + اجرای واقعی) | D-025: پین روی فورک منسوخ + نبود بازتولیدپذیری ابزار | 2026-11-15 | ✅ فعال — در فاز ۰ هر نشست اجرا/بررسی می‌شود |
 | R-007 | `.finn/ecc-commit.txt` باید با `git -C .finn/ecc rev-parse HEAD` و بالادست `affaan-m/ECC` بخواند | D-025: انحراف منبع ECC | 2026-11-15 | ✅ فعال |
 | R-008 | وجود `.claude/agents/{planner,architect,tdd-guide,code-reviewer,security-reviewer,build-error-resolver,e2e-runner,refactor-cleaner,doc-updater}.md` | D-025: نصب ناقص ایجنت‌ها | 2026-11-15 | ✅ فعال (خود اسکریپت هم چک می‌کند) |
-| R-009 | وجود `.claude/skills/reverse-engineer-anything/SKILL.md` | D-026: REA بدون skill | 2026-11-15 | ✅ فعال |
+| R-009 | وجود `tools/rea-skill/reverse-engineer-anything/SKILL.md` | D-026: REA بدون skill (مسیر پس از حذف `.claude` در ۲۰۲۶-۱۱-۱۹ تغییر کرد) | 2026-11-19 | ✅ فعال |
 | R-010 | `tests/integration/test_m45_admin_attendance.py` (۹ تست) | M45: endpoint حضور/خلاصهٔ اعضا نبود؛ `days_left` کف می‌گرفت (۳ روز → ۲) | 2026-11-15 | ✅ فعال |
 | R-011 | `tests/integration/test_m45_programs_list.py` (۵ تست) | M45: صفحهٔ برنامه‌ها mock بود و فهرست برنامه در API نبود | 2026-11-15 | ✅ فعال |
 | R-012 | `tests/integration/test_m45_checkin_feed.py` (۵ تست) | M45: جریان ورودها mock بود؛ ورود رد‌شده پنهان می‌شد | 2026-11-15 | ✅ فعال |

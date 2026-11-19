@@ -44,10 +44,6 @@ def rank_of(role: str | None) -> int:
     return ROLE_RANK.get(role or "", 0)
 
 
-def is_staff(role: str | None) -> bool:
-    return (role or "") in STAFF_ROLES
-
-
 def outranks(actor_role: str | None, target_role: str | None) -> bool:
     """آیا `actor` بالاتر از `target` است؟ برابر بودن = خیر."""
     return rank_of(actor_role) > rank_of(target_role)
