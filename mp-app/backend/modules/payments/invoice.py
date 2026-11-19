@@ -41,6 +41,7 @@ def build_receipt(db: Session, payment_id: int, user=None) -> dict:
         "method": payment.method,
         "status": payment.status,
         "reference_id": payment.reference_id,
+        "refund_reference": payment.refund_reference,
         "paid_at": payment.paid_at.isoformat() if payment.paid_at else None,
         "issued_at": datetime.now(UTC).isoformat(),
         "branch": "Muscle Paradise",

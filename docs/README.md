@@ -42,11 +42,12 @@ flowchart LR
 
 | اگر می‌خواهی… | از اینجا شروع کن | مرجع تکمیلی |
 |---|---|---|
-| سریع بفهمی نشست قبل چه کرد و بعد چه باید کرد | [SESSION_HANDOFF](MuscleParadise/SESSION_HANDOFF.md) | [صف و وضعیت جاری](MuscleParadise/TODO-2026-11-16.md) |
-| ساختار سیستم یا مرز بک‌اند را بفهمی | [Architecture Atlas](MuscleParadise/architecture/README.md) | [C4](MuscleParadise/architecture/c4.md) · [نقشهٔ ماژول‌ها](MuscleParadise/architecture/module-map.md) |
+| سریع بفهمی نشست قبل چه کرد و بعد چه باید کرد | [پیش‌نیاز و نصب](MuscleParadise/BUILDER-START-AND-REPOWISE.md) · [SESSION_HANDOFF](MuscleParadise/SESSION_HANDOFF.md) · [هندآف تفصیلی و نشست تازه](MuscleParadise/HANDOFF-PROJECT-2026-11-18.md) | [صف قبلی](MuscleParadise/TODO-2026-11-16.md) و [تصمیم‌های جدید](MuscleParadise/TODO-CLOUD-FINANCE-ACCESS.md) |
+| ساختار سیستم یا مرز بک‌اند را بفهمی | [Architecture Atlas](MuscleParadise/architecture/README.md) | [C4 تاریخی](MuscleParadise/architecture/c4.md) · [نقشهٔ هدف ابری/مالی](MuscleParadise/architecture/cloud-finance-access.md) |
 | چرایی یک انتخاب را پیدا کنی | [فهرست ADRها](MuscleParadise/adr/README.md) | [قالب ADR](MuscleParadise/adr/TEMPLATE.md) |
-| اجرای loop و وضعیت ECC/REA را بفهمی | [پروتکل FINN](MuscleParadise/FINN_LOOP.md) | [نقشهٔ M63–M99](MuscleParadise/LOOP-PLAN-M63-M99.md) · [نقشهٔ M100–M106](MuscleParadise/LOOP-PLAN-M100-M106.md) |
-| محدودهٔ محصول/رفتار موردانتظار را بفهمی | [PRD](MuscleParadise/PRD.md) | [User stories](MuscleParadise/user-stories/) · [صف ساخت](MuscleParadise/BUILD-QUEUE.md) |
+| اجرای loop و وضعیت ECC/REA را بفهمی | [۳۳ میکرولوپ و QA در هر حلقه](MuscleParadise/PLAN-FINN-ECC-MICROLOOPS-QA.md) | [پروتکل FINN](MuscleParadise/FINN_LOOP.md) · [آزمایش ECC](MuscleParadise/REPORT-ECC-SUBAGENT-SMOKE.md) |
+| محدودهٔ محصول/رفتار موردانتظار را بفهمی | [TODO ابری و مالی](MuscleParadise/TODO-CLOUD-FINANCE-ACCESS.md) | [PRD](MuscleParadise/PRD.md) · [User stories](MuscleParadise/user-stories/) · [صف ساخت](MuscleParadise/BUILD-QUEUE.md) |
+| منبع احتمالی کد یا سرویس خارجی را بررسی کنی | [تحقیق OSS](MuscleParadise/OSS-DEEP-RESEARCH-2026-11-18.md) | [REA و مسیر ECC](MuscleParadise/REPORT-REA-ECC-SUBAGENTS.md) · [NOTICE](../NOTICE-THIRD-PARTY.md) |
 | قواعد طراحی و هویت بصری را رعایت کنی | [Design system](MuscleParadise/design/design-system.md) | [بریف هویت برند](MuscleParadise/BRAND-IDENTITY-BRIEF-2026-11-16.md) |
 | حریم خصوصی و ریسک‌های داده را بررسی کنی | [سیاست بیومتریک](MuscleParadise/security/biometric-policy.md) | [نگهداری داده](MuscleParadise/DATA-RETENTION.md) · [چک‌لیست OWASP](MuscleParadise/security/owasp-checklist.md) |
 | تصمیمی باز داری که با کد حل نمی‌شود | [تصمیم‌های مالک](MuscleParadise/OWNER-DECISIONS.md) | بند ۱ (کلید امضا)، بند ۲ (چهره یا کیو‌آر)، بند ۶ (ادغام در `main`) |
@@ -98,3 +99,8 @@ Muscle Paradise یک پلتفرم فارسی‌محور برای عملیات ب
 <div align="center">
   <sub>کد منبع حقیقت رفتار است · Mermaid منبع حقیقت دیاگرام است · handoff پل بین نشست‌هاست</sub>
 </div>
+
+
+## پژوهش و ارزش‌های نامزد — ۲۰۲۶-۱۱-۱۸
+
+[نقشهٔ OV و نقش‌های QF](MuscleParadise/PLAN-OSS-VALUE-MICROLOOPS-2026-11-18.md) · [گزارش محدودیت REA و اجرای ایزولهٔ RepoWise](MuscleParadise/REPORT-OSS-VALUE-DEEP-DIVE-2026-11-18.md) · [دیاگرام هدف](MuscleParadise/architecture/oss-value-flows.md). هیچ OV انجام‌شده نیست. RepoWise روی mirror موقت و بدون مدل اجرا شد؛ index ریشهٔ مخزن refresh نشده و خروجی موقت به‌تنهایی حافظهٔ قابل انتقال نیست.

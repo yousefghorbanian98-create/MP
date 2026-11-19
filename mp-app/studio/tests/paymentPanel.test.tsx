@@ -196,3 +196,32 @@ describe("PaymentPanel — شکست و رسید", () => {
     await waitFor(() => expect(screen.getByText(/رسید پرداخت #7/)).toBeTruthy());
   });
 });
+
+describe("PaymentPanel — refund", () => {
+  it("loads an existing payment, confirms refund and displays its server receipt", async () => {
+    localStorage.setItem("mp_token", "t");
+    vi.spyOn(window, "confirm").mockReturnValue(true);
+    const paidGateway = { ...paid, gateway_authority: "AUTH-1" };
+    const refunded = { ...paidGateway, status: "refunded", refund_reference: "REFUND-1" };
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const url = String(input);
+      if (url.endsWith("/payments")) return new Response(JSON.stringify([paidGateway]));
+      if (url.endsWith("/refund")) return new Response(JSON.stringify(refunded));
+      if (url.endsWith("/receipt")) return new Response(JSON.stringify({
+        payment_id: 7, member_id: 41, amount_rial: 500000,
+        paid_at: null, reference_id: paid.reference_id, status: "refunded", refund_reference: "REFUND-1",
+      }));
+      return new Response("{}", { status: 404 });
+    }));
+    const user = userEvent.setup();
+    render(<PaymentPanel />);
+    await user.type(screen.getByLabelText("شناسهٔ پرداخت موجود"), "7");
+    await user.click(screen.getByRole("button", { name: "بارگذاری پرداخت" }));
+    await user.click(await screen.findByRole("button", { name: "بازگشت وجه" }));
+    expect(await screen.findByText("refunded")).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "بازگشت وجه" })).toBeNull();
+    await user.click(screen.getByRole("button", { name: "نمایش رسید" }));
+    expect(await screen.findByText(/رسید بازگشت وجه #7/)).toBeTruthy();
+    expect(screen.getByText(/مرجع بازگشت: REFUND-1/)).toBeTruthy();
+  });
+});

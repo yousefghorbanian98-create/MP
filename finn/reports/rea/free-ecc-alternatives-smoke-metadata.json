@@ -1,0 +1,108 @@
+{
+  "date_reference": "2026-11-18",
+  "environment": "isolated temporary directory; no project code or credentials",
+  "versions": {
+    "opencode": "1.19.6 npm binary",
+    "superpowers": "22f0b463e7a5e579904dd6211a520321035526f7",
+    "agency_agents": "8ae6164602c95ca78828b148b9052460ee426885"
+  },
+  "synthetic_model": {
+    "type": "scripted loopback HTTP OpenAI-compatible mock",
+    "is_llm": false,
+    "external_model_invoked": false,
+    "note": "Predetermined tool requests and outputs; no inference or quality evaluated."
+  },
+  "skill_load": {
+    "tool": "skill",
+    "input_name": "test-driven-development",
+    "status": "completed",
+    "output_length": 9879,
+    "red_green_markers_present": true
+  },
+  "delegation": {
+    "tool": "task",
+    "status": "completed",
+    "subagent_type": "API Tester",
+    "parent_session_id": "ses_e0d16316fffeURZZuAaRC87ZY2",
+    "child_session_id": "ses_e0d162c02ffeRmWx5NStUELJ0b",
+    "separate_session": true,
+    "child_result_marker_present": true,
+    "agency_role_text_present_in_child_request": true,
+    "superpowers_bootstrap_in_parent_request": true,
+    "request_metadata": [
+      {
+        "kind": "title_mock",
+        "path": "/v1/chat/completions",
+        "tools": [],
+        "roles": [
+          "system",
+          "user",
+          "user"
+        ],
+        "api_role_text_present": false,
+        "superpowers_bootstrap_present": false
+      },
+      {
+        "kind": "parent_forced_task",
+        "path": "/v1/chat/completions",
+        "tools": [
+          "skill",
+          "task"
+        ],
+        "roles": [
+          "system",
+          "user"
+        ],
+        "api_role_text_present": false,
+        "superpowers_bootstrap_present": true
+      },
+      {
+        "kind": "child_mock",
+        "path": "/v1/chat/completions",
+        "tools": [
+          "skill",
+          "task"
+        ],
+        "roles": [
+          "system",
+          "user"
+        ],
+        "api_role_text_present": true,
+        "superpowers_bootstrap_present": false
+      },
+      {
+        "kind": "parent_mock",
+        "path": "/v1/chat/completions",
+        "tools": [
+          "skill",
+          "task"
+        ],
+        "roles": [
+          "system",
+          "user",
+          "assistant",
+          "tool"
+        ],
+        "api_role_text_present": false,
+        "superpowers_bootstrap_present": true
+      }
+    ]
+  },
+  "offline_upstream_test_scripts": {
+    "superpowers": {
+      "passed": 5,
+      "scope": "mock host tests / layout tests"
+    },
+    "agency_agents": {
+      "passed": 3,
+      "scope": "selection, markdown fences, frontmatter"
+    }
+  },
+  "limits": [
+    "No real AI model call",
+    "No autonomous code change or code quality comparison",
+    "No Arena-native integration tested",
+    "No safety certification",
+    "No model API cost observed"
+  ]
+}

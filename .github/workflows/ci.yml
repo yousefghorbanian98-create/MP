@@ -33,6 +33,10 @@ jobs:
           mkdir -p /tmp/gitleaks
           tar -xzf "/tmp/$archive" -C /tmp/gitleaks gitleaks
           /tmp/gitleaks/gitleaks version
+      - name: Verify exact signing exceptions with synthetic secrets
+        env:
+          GITLEAKS: /tmp/gitleaks/gitleaks
+        run: python3 scripts/test_retired_signing_scan.py
       - name: Scan full Git history (redacted metadata)
         run: |
           set +e

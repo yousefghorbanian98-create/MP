@@ -47,6 +47,7 @@ class PaymentOut(BaseModel):
     method: str
     status: str
     reference_id: str
+    refund_reference: str | None = None
     gateway_authority: str = ""
     description: str
     paid_at: datetime | None

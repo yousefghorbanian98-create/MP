@@ -1,0 +1,26 @@
+{
+  "description": "Isolated synthetic ECC planner via Task-only Claude host; metadata, not raw prompt or output.",
+  "host": "claude-code 2.1.328 cached CLI",
+  "ecc_commit": "d2ef2680594f9a17526a6e1a2e18b3d242c5d17b",
+  "agent_source": "ECC agents/planner.md body converted to --agents JSON, tools=[], alias ecc-planner-smoke; not plugin invocation",
+  "agent_source_sha256": "63aba865206bac9cb5887542fb01b97656e7701faff98e091aa77057ba9860bc",
+  "isolation": "temporary cwd and HOME; allowlisted environment excludes credentials; strict-mcp, no session persistence, no slash commands, --tools Task, permission-mode plan",
+  "budget_cap_usd": 0.01,
+  "exit_code": 1,
+  "init_tools": [
+    "Task"
+  ],
+  "custom_agent_registered": true,
+  "result_is_error": true,
+  "result_subtype": "success",
+  "result_auth_issue": true,
+  "assistant_block_metadata": [
+    {
+      "type": "text",
+      "name": null
+    }
+  ],
+  "task_tool_call_observed": false,
+  "parent_child_message_observed": false,
+  "outcome": "BLOCKED: host recognized Task and role, authentication failed; no child call or output observed"
+}

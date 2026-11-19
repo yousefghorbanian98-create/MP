@@ -54,6 +54,22 @@ sequenceDiagram
     Note over M: کلاینت فقط تأیید می‌کند order_id/member_id منطبق‌اند؛<br/>نانطابق = خطا، نه نمایش (M90)
 ```
 
+## مسیر پیشنهادی کارت‌به‌کارت — M113
+
+این نمودار **هدف معماری است، نه نمودار یک مسیر پیاده‌شده یا index به‌روزشدهٔ Repowise**. فعلاً فقط policy مستقل در `mp-app/backend/modules/payments/manual_transfer_policy.py` و تست آن در `mp-app/backend/tests/regression/test_manual_transfer_policy.py` وجود دارد؛ این policy به API یا گردش مالی وصل نیست. جزئیات و وضعیت حلقه‌ها در [طرح M113](../../PLAN-MANUAL-TRANSFER.md) و [گزارش REA](../../../../finn/reports/rea/m113-review.md) است.
+
+```mermaid
+flowchart LR
+    MEMBER[عضو] -. ارسال فیش، هدف .-> API[API با مالکیت و محدودیت، هدف]
+    API -. فایل خصوصی، هدف .-> STORAGE[(ذخیره خصوصی)]
+    STAFF[کارشناس مجاز] -. بررسی، هدف .-> API
+    BANK[گردش بانک] -. تطبیق مستقل، هدف .-> STAFF
+    API -. تصمیم اتمی، هدف .-> PAYMENT[(پرداخت و ledger)]
+    PAYMENT -. ارتباط، هدف .-> ORDER[(سفارش)]
+```
+
+`card` موجود برای کارت‌خوان است و مسیر پیشنهادی `card_to_card` آن را جایگزین نمی‌کند. فیش به‌خودی‌خود اثبات پرداخت نیست؛ همگام‌سازی، نقش‌ها، ذخیره و تسویه هنوز باید اجرا و آزمایش شوند.
+
 ## برچسب صحت
 
 | ادعا | وضعیت | چرا |

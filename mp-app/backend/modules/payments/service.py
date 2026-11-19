@@ -234,10 +234,7 @@ def refund_payment(db: Session, payment_id: int) -> Payment:
 
     سه تصمیم که عمداً گرفته شده:
 
-    ۱) مرجع بازگشت در `reference_id` **ننوشته می‌شود**: آن ستون کد پیگیری بانک برای
-       تراکنش اصلی است و رسیدِ مالی عضو به آن تکیه می‌کند. تا وقتی ستون جداگانه‌ای برای
-       refund نداریم (M111)، شناسهٔ بازگشت فقط در audit می‌نشیند؛ یک عددِ بی‌منبع در
-       ستونِ اشتباه، از نبودنش بدتر است.
+    ۱) مرجع بازگشت در ستون مستقل ثبت می‌شود و مرجع پرداخت اصلی تغییر نمی‌کند.
     ۲) وضعیت `refunded` است نه `failed`: «پرداخت شد و بعد برگشت» با «پرداخت نشد» یکی
        نیست — گزارش مالی باید درآمد را کم کند، نه اینکه تراکنش را از تاریخچه بردارد.
     ۳) اگر بانک بگوید «قبلاً برگشت خورده» (code 254)، وضعیت را می‌گذاریم `refunded` و
@@ -267,6 +264,7 @@ def refund_payment(db: Session, payment_id: int) -> Payment:
         raise ApiError("درگاه بازگشت را تأیید نکرد", code="refund_rejected")
 
     payment.status = "refunded"
+    payment.refund_reference = result.reference_id or None
     db.commit()
     db.refresh(payment)
     from modules.admin.service import audit

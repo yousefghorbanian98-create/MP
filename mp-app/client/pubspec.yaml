@@ -20,6 +20,7 @@ dependencies:
   # داشتند و فقط حجم APK و سطح حمله را بالا می‌بردند. صف آفلاین (Q4)
   # اگر روزی ساخته شود، همان‌جا برمی‌گردند — با کد و تست.
   qr_flutter: ^4.1.0
+  local_auth: ^2.3.0
   image_picker: ^1.1.2
 
 dev_dependencies:

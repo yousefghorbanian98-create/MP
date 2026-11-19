@@ -1,0 +1,178 @@
+{
+  "schema": "HistoricalSourceSummary",
+  "authority": "historical-reference",
+  "root_alias": "$REFERENCE_ROOT",
+  "manifest": {
+    "schema": "HistoricalSourceManifest",
+    "authority": "historical-reference",
+    "manifest_id": "hsm_1d16d26bf0a848ad47a18980dcecb5d00489420c31ec4f8253068f6629d67098",
+    "graph_sha256": "7a3885f9d0f552a7940380774a9c17bd978ccfec0cca364bac4aba1cbbbf7696",
+    "root_sha256": "ccd2252531f45a5b97ca97eac5e30d7f4c83d634f1943222cd24dd36eae22a00",
+    "inventory_state": "partial",
+    "entry_count": 49,
+    "relationship_count": 0
+  },
+  "inventory_state": "partial",
+  "provenance": {
+    "importer": "rea-agents",
+    "importer_version": "6.9.0",
+    "caller": "rea-cli"
+  },
+  "vcs": {
+    "kind": "git",
+    "head": "bc8b9e19120a4ff09947bdbb2342ec99228fefc1",
+    "dirty": null
+  },
+  "languages": [
+    "C++",
+    "Markdown",
+    "Text"
+  ],
+  "manifests": [
+    "CMakeLists.txt"
+  ],
+  "counts": {
+    "entries": 49,
+    "files": 44,
+    "directories": 5,
+    "symlinks": 0,
+    "unknown": 0,
+    "relationships": 0,
+    "parse_failures": 0,
+    "exclusions": 2
+  },
+  "file_content_states": {
+    "hashed": 44,
+    "redacted-secret": 0,
+    "excluded": 0,
+    "unreadable": 0,
+    "unknown": 0
+  },
+  "directory_tree_states": {
+    "enumerated": 5,
+    "partial": 0,
+    "excluded": 0,
+    "unreadable": 0,
+    "unknown": 0
+  },
+  "file_sizes": {
+    "known_bytes": "536337",
+    "unknown_file_count": 0
+  },
+  "exclusions": [
+    {
+      "path": ".git",
+      "entry_kind": "directory",
+      "reason": "default-ignored",
+      "pattern": ".git/"
+    },
+    {
+      "path": "third_party",
+      "entry_kind": "directory",
+      "reason": "caller-excluded",
+      "pattern": "third_party/"
+    }
+  ],
+  "limitations": [
+    "Path identity is revalidated around operations; Node lacks portable descriptor-relative openat traversal, so a syscall-boundary pathname race remains."
+  ],
+  "outline": {
+    "depth": 1,
+    "entries": [
+      {
+        "path": ".gitignore",
+        "kind": "file",
+        "language": null,
+        "size": 241,
+        "content_state": "hashed",
+        "classifications": [
+          "config"
+        ],
+        "limitations": []
+      },
+      {
+        "path": "CMakeLists.txt",
+        "kind": "file",
+        "language": "Text",
+        "size": 4231,
+        "content_state": "hashed",
+        "classifications": [
+          "documentation",
+          "manifest"
+        ],
+        "limitations": []
+      },
+      {
+        "path": "LICENSE",
+        "kind": "file",
+        "language": null,
+        "size": 1079,
+        "content_state": "hashed",
+        "classifications": [
+          "documentation"
+        ],
+        "limitations": []
+      },
+      {
+        "path": "README.md",
+        "kind": "file",
+        "language": "Markdown",
+        "size": 12895,
+        "content_state": "hashed",
+        "classifications": [
+          "documentation"
+        ],
+        "limitations": []
+      },
+      {
+        "path": "SECURITY.md",
+        "kind": "file",
+        "language": "Markdown",
+        "size": 3774,
+        "content_state": "hashed",
+        "classifications": [
+          "documentation"
+        ],
+        "limitations": []
+      },
+      {
+        "path": "gui",
+        "classifications": [
+          "unknown"
+        ],
+        "limitations": [],
+        "kind": "directory",
+        "tree_state": "enumerated"
+      },
+      {
+        "path": "include",
+        "classifications": [
+          "unknown"
+        ],
+        "limitations": [],
+        "kind": "directory",
+        "tree_state": "enumerated"
+      },
+      {
+        "path": "src",
+        "classifications": [
+          "source"
+        ],
+        "limitations": [],
+        "kind": "directory",
+        "tree_state": "enumerated"
+      },
+      {
+        "path": "tests",
+        "classifications": [
+          "source",
+          "test"
+        ],
+        "limitations": [],
+        "kind": "directory",
+        "tree_state": "enumerated"
+      }
+    ],
+    "omitted_entry_count": 40
+  }
+}
