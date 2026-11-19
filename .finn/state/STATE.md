@@ -1,5 +1,7 @@
 # FINN State — وضعیت جاری لوپ
 
+> هشدار انتقال ۲۰۲۶-۱۱-۱۸: بخش‌های زیر snapshot تاریخی‌اند. وضعیت و نصب جاری را از `docs/MuscleParadise/SESSION_HANDOFF.md` و `docs/MuscleParadise/BUILDER-START-AND-REPOWISE.md` و با بررسی Git و CI همان SHA بگیرید. QF و QA مستقل هنوز اجرا نشده‌اند؛ policy پرداخت صرفاً جدا و بدون اتصال است.
+
 ## Snapshot جاری — M84 تا M87 و CI follow-up (2026-11-16)
 
 - شاخهٔ فعال `arena/4f336f66-mp` روی origin در `b58d0536290b9ad80158c8c67159f6833eaab563` (`b58d053`) است. CI `44247416109` همین commit را آزمود. Worktree اکنون helper را به یک annotation تجمیعی برای همهٔ تست‌های fail تغییر می‌دهد تا محدودیت تعداد annotationهای GitHub چهار نام را حذف نکند؛ این patch هنوز push نشده. Untracked evidence/reports انتخابی stage نشده و دست‌نخورده مانده است.
@@ -234,3 +236,43 @@ backend ۳۵۱ · ruff پاک · bandit ۰H/۰M · tsc ۰ · vitest ۳۰ · semg
   config تازه)، live-contract، studio، client-flutter، pinned-SDK، docs-gate. قرمزِ انتظاری:
   secret-scan (هفت ردیف SEC-01؛ بازکردنش با allowlist سراسری ممنوع — بازبینی ردیف‌به‌ردیف در
   صفحهٔ تصمیم‌ها مانده). وضعیت M110: **PASS**
+
+## M111–L1/L3 — کار در جریان (۲۰۲۶-۱۱-۱۸)
+
+- اجرای dispatch `44381627718` با Gitleaks 8.30.1 هفت fingerprint را بدون مقدار راز گزارش کرد. پنج مورد fixture در `.gitleaksignore` با دلیل و ارجاع به §۱ ثبت شدند. دو یافتهٔ دیگر رمز واقعی keystore تاریخی‌اند و **مستثنا نشده‌اند**: تصمیم مالک لغو و حذف رمز واقعی را لازم می‌داند، ولی دستور فعلی دست‌زدن به کلید و بازنویسی تاریخچه را منع می‌کند؛ بنابراین secret-scan و انتشار همچنان مسدودند.
+- M111: ستون مستقل مرجع بازگشت، migration، ذخیره، رسید و دکمهٔ استودیو اضافه شد. تست بانک ۲۳/۲۳ و migrationها ۱۱/۱۱ و تست استودیو ۲۲۰ گذشتند؛ ۹ تست live-contract محلی skip شدند و گیت CI برای تغییرات جدید هنوز شاهد لازم دارد. lint استودیو به علت نبود eslint در نصب محلی اجرا نشد.
+- L3: قفل بیومتریک با local_auth و پنهان‌شدن پس از ۳۰ ثانیه و هنگام پس‌زمینه‌رفتن پیاده شده؛ Flutter، تست و build اندروید فقط پس از اجرای CI قابل تأییدند، نه در sandbox.
+- L4 عکس‌ها، L5 بازبینی ledger و L6 بستهٔ نهایی هنوز کامل نشده‌اند. هیچ Release یا لینک دانلود جدیدی تا سبزشدن واقعی همهٔ گیت‌ها اعلام نشده است.
+
+### شاهد بعدی L1–L3
+
+- workflow مستقل `.github/workflows/gitleaks-fingerprints.yml` فقط dispatch است؛ GitHub تا
+  ثبت فایل روی default branch آن را مستقل dispatch نمی‌کند، بنابراین همان job با ورودی
+  dispatch در workflow ثبت‌شدهٔ موجود اجرا شد (`44381627718`). workflow مستقل خود هنوز اجرا نشده.
+- پس از پنج ignore دقیق، `secret-scan` در run `44384085051` فقط دو password واقعی را گزارش
+  کرد و شکست خورد؛ آن دو عمداً در فهرست نرفته‌اند.
+- پس از رفع تست lifecycle، تست اختصاصی QR در dispatch `44384084955` سبز شد؛ در run
+  `44384085051` جاب `client-flutter` سبز، و analyze/test در pinned سبز شدند. تا پایان build
+  Android و همهٔ jobهای همان run و تأیید رفتار گوشی واقعی، L3 را کامل/انتشارپذیر فرض نکن.
+- suite کامل backend در sandbox: **887 passed, 2 skipped**. suite Studio: **220 passed,
+  9 skipped** (live-contract محلی skip؛ job جداگانهٔ CI موفق شد).
+
+## M112 — سخت‌کردن مسیر release (۲۰۲۶-۱۱-۱۸)
+
+- run `44385060074` روی `a0ec758` کامل شد: همهٔ jobها به‌جز `secret-scan` سبز؛ pinned SDK،
+  **۱۶۰ تست Flutter و compile debug** را تأیید کرد. این شاهد build انتشار یا دستگاه فیزیکی نیست.
+- fallback خطرناک امضای debug در APK release حذف شد؛ workflow کلید اختصاصی در Secrets،
+  fingerprint گواهی، امضا و audit جداگانهٔ همهٔ ABIها را می‌خواهد و دیگر خودکار release نمی‌سازد.
+  گزارش `finn/reports/m112-release-signing-hardening.md`. تست سیاست release: ۲ موفق محلی.
+- `gh secret list` به HTTP 403 از integration خورد. هیچ کلید تازه‌ای ساخته یا در Secrets
+  قرار داده نشده؛ credential در chat درخواست نشده. بدون مجوز Secrets و کلید قابل‌بازیابی، build
+  امضای release اجراشدنی نیست. کلید تاریخی همچنان افشاشده و دو یافته در گیت فعال‌اند.
+- L4 هنوز پیاده‌سازی نشده؛ L6 و release همچنان باز هستند؛ تا شاهد CI جدید و build release،
+  تغییرات M112 صرفاً در حد کد و تست سیاست‌اند.
+
+## به‌روزرسانی M113 (۲۰۲۶-۱۱-۱۸)
+
+- طرح و شواهد: `docs/MuscleParadise/PLAN-MANUAL-TRANSFER.md` و `finn/reports/rea/m113-review.md`؛ تحلیل JS در REA ناقص، MCP/بازبینی مستقل ECC در دسترس نبود.
+- M113-1: policy مستقل و ۵۴ تست محلی؛ **به API، فایل، پرداخت یا ledger متصل نیست**. M113-2 تا M113-12 انجام نشده‌اند و کارت‌به‌کارت آمادهٔ استفاده نیست.
+- شواهد محلی workspace: کل backend **943 passed / 2 skipped**؛ Studio **220 passed / 9 skipped**؛ docs gate موفق. هیچ گیت CI تازه، تست دستگاه یا refresh واقعی Repowise برای این کار اجرا نشده است.
+- انتشار: remote همین شاخه در بررسی `ls-remote` روی `8e72de9` بود اما HEAD محلی `5482930` است و workspace شامل تغییرات پیشین است؛ بدون pull/reset/force push هیچ تغییری روی GitHub در این نوبت منتشر نشده. ادامه با حفظ این تغییرات و حل امن اختلاف تاریخچه ضروری است.

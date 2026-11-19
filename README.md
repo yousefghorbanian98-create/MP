@@ -30,9 +30,13 @@
   <a href="#docs">مستندات</a>
 </p>
 
-> 🚧 **وضعیت پروژه: توسعهٔ فعال.** این مخزن ادعای آماده‌بودن همهٔ مسیرها برای تولید ندارد. پیش از توزیع نسخهٔ Android، گیت‌های Flutter، امنیت و امضای release باید تأیید شوند؛ وضعیت و کارهای باز در [فهرست پیگیری](docs/MuscleParadise/TODO-2026-11-16.md) ثبت شده‌اند.
+> 🚧 **وضعیت پروژه: توسعهٔ فعال، نه آمادهٔ انتشار.** کارکردهای اصلی، امنیت، گیت‌های CI و Android و آزمون دستگاه باید برای نسخهٔ انتشار اثبات شوند. [هدف و تصمیم‌ها](docs/MuscleParadise/TODO-CLOUD-FINANCE-ACCESS.md) · [برنامهٔ میکرولوپ و QA](docs/MuscleParadise/PLAN-FINN-ECC-MICROLOOPS-QA.md) · [هندآف کامل](docs/MuscleParadise/HANDOFF-PROJECT-2026-11-18.md)
 >
-> 🔒 **مجوز:** عمومی‌بودن کد به معنی متن‌بازبودن آن نیست. این پروژه تحت مجوز اختصاصی است؛ لطفاً [LICENSE](LICENSE) را ببینید.
+> 🧭 **برای سازندهٔ بعدی:** ابتدا [پیش‌نیازها و راهنمای ادامه با RepoWise](docs/MuscleParadise/BUILDER-START-AND-REPOWISE.md) را بخوانید؛ index محلی ابزار و فایل‌های محرمانه در Git وجود ندارند و گراف جای کد و آزمون نیست.
+>
+> 🔒 **مجوز:** عمومی‌بودن کد به معنی متن‌بازبودن آن نیست. این پروژه تحت مجوز اختصاصی است؛ [LICENSE](LICENSE) را ببینید.
+>
+> 💳 **هدف پرداخت انتشار اول:** کارت‌به‌کارت با فیش خصوصی، تطبیق انسانی با بانک و فعال‌سازی خودکار اشتراک پس از تأیید. [طرح و گیت‌های M113](docs/MuscleParadise/PLAN-MANUAL-TRANSFER.md) و [شواهد REA](finn/reports/rea/m113-review.md) هدف را توضیح می‌دهند؛ policy مستقل و تست محلی نوشته شده، ولی اتصال کامل، آپلود خصوصی و تأیید بانکی هنوز اثبات نشده‌اند. `card` موجود همچنان کارت‌خوان حضوری است.
 
 <a id="vision"></a>
 ## 🎯 چشم‌انداز
@@ -52,7 +56,7 @@
 | بخش | برای چه کسی؟ | فناوری | مسئولیت اصلی |
 |---|---|---|---|
 | **MP Client** | عضو باشگاه | Flutter · Riverpod | برنامهٔ روزانه، پیشرفت، ارزیابی، عضویت و خرید |
-| **MP Studio** | مربی، پذیرش و مدیر | React · TypeScript · Vite · Electron | اعضا، حضور، برنامه‌ها، گزارش‌ها و عملیات باشگاه |
+| **MP Studio** | کادر و مالک | React · TypeScript · Vite؛ Electron موجود | پنل وب برای اعضا، حضور، برنامه‌ها، گزارش‌ها و عملیات؛ دسکتاپ نصبی الزام انتشار اول نیست |
 | **Gym Kiosk** | مراجعهٔ حضوری | حالت مشترک Client | مسیرهای ورود و چک‌این؛ اتصال انتها‌به‌انتها هنوز در حال تکمیل است |
 | **MP API** | کلاینت‌ها و یکپارچه‌سازی‌ها | FastAPI · SQLAlchemy · Alembic | قرارداد REST نسخه‌دار، احراز هویت، نقش‌ها و منطق دامنه |
 
@@ -80,7 +84,7 @@ flowchart LR
 <a id="architecture"></a>
 ## 🏗️ معماری در یک نگاه
 
-بک‌اند به‌صورت **مونولیت ماژولار** سازمان‌دهی شده است؛ کلاینت‌ها با REST/JSON نسخه‌دار با آن صحبت می‌کنند. این نقشه، نمای مفهومی ساختار و ارتباط‌هاست، نه اثبات عملکرد همهٔ مسیرها یا آمادگی انتشار.
+بک‌اند به‌صورت **مونولیت ماژولار** سازمان‌دهی شده است؛ کلاینت‌ها با REST/JSON نسخه‌دار با آن صحبت می‌کنند. SQLite مسیر پیش‌فرض فعلی است؛ PostgreSQL، بکاپ قابل بازیابی و سرویس اعلان از اهداف بررسی‌نشدهٔ استقرارند. این نقشه نمای مفهومی ساختار و ارتباط‌هاست، نه اثبات عملکرد همهٔ مسیرها یا آمادگی انتشار؛ [نقشهٔ هدف و وضعیت جریان‌ها](docs/MuscleParadise/architecture/cloud-finance-access.md) جزئیات را تفکیک می‌کند.
 
 <div align="center">
   <a href="docs/MuscleParadise/assets/system-architecture.svg"><img src="docs/MuscleParadise/assets/system-architecture.svg" alt="نقشهٔ معماری Muscle Paradise: اپ عضو، Studio و کیوسک در کنار API و ماژول‌های دامنه، پایگاه داده، کش، کارهای زمان‌بندی‌شده و اتصال‌های بیرونی" width="100%"></a>
@@ -93,6 +97,8 @@ flowchart LR
 | **تجربه‌ها** | اپ عضو، Studio برای کادر باشگاه و مسیر کیوسک که اتصال انتها‌به‌انتهای آن هنوز کامل نشده است. |
 | **هسته** | API نسخه‌دار و ماژول‌های دسترسی، عضویت، برنامه، تغذیه، چک‌این، فروش و خدمات پلتفرم. |
 | **داده و خدمات** | SQLite پیش‌فرض و لایهٔ کش؛ وضعیت راه‌اندازی jobها و اتصال‌های بیرونی باید جداگانه تأیید شود. |
+
+**هدف پرداخت انتشار اول:** کارت‌به‌کارت با فیش و تطبیق مستقل انسانی با بانک است؛ مسیر کامل آن هنوز اثبات نشده و با مسیر پرداخت موجود یکسان نیست. [جزئیات جریان و وضعیت](docs/MuscleParadise/architecture/cloud-finance-access.md).
 
 [گراف متنی، راهنمای نمودار و مسیرهای کد](docs/MuscleParadise/architecture/system-atlas.md) · [معماری C4](docs/MuscleParadise/architecture/c4.md) · [نقشهٔ ماژول‌ها](docs/MuscleParadise/architecture/module-map.md)
 
@@ -125,7 +131,11 @@ flowchart LR
 | **داده و حریم خصوصی** | رضایت برای دادهٔ زیستی، حداقل‌سازی داده و راهنمای نگهداری |
 | **انتشار** | فقط پس از سبزشدن گیت‌های مرتبط و بازبینی امضای release |
 
-برای وضعیت دقیق موارد انجام‌شده، نیمه‌تمام و مسدود، به [TODO و شواهد جاری](docs/MuscleParadise/TODO-2026-11-16.md)، [سیاست بیومتریک](docs/MuscleParadise/security/biometric-policy.md) و [سیاست نگهداری داده](docs/MuscleParadise/DATA-RETENTION.md) مراجعه کنید.
+برای وضعیت دقیق، [هندآف کامل](docs/MuscleParadise/HANDOFF-PROJECT-2026-11-18.md)، [TODO ابری و مالی](docs/MuscleParadise/TODO-CLOUD-FINANCE-ACCESS.md)، [صف قبلی و شواهد](docs/MuscleParadise/TODO-2026-11-16.md) و [سیاست نگهداری داده](docs/MuscleParadise/DATA-RETENTION.md) را ببینید. عکس پیشرفت بدن خارج از محدودهٔ محصول است؛ تصویر فیش و کالا موضوع جداگانه‌اند.
+
+هر میکرولوپ یک واحد QA اختصاصی دارد: بررسی اتصال واقعی UI/API/DB، دکمه‌ها و خروجی‌های محدوده، امنیت، رگرسیون، خطا و بار؛ وضعیت اجرا‌نشده `UNKNOWN` است نه PASS. [جزئیات ۳۳ میکرولوپ](docs/MuscleParadise/PLAN-FINN-ECC-MICROLOOPS-QA.md).
+
+CI روی commit `dc572a7c2fbb7ab094297cfec4bd56accca6dc1b` در [run 44507836824](https://github.com/yousefghorbanian98-create/MP/actions/runs/44507836824) هر هشت job را موفق گزارش کرد؛ این نتیجه فقط برای همان commit است، نه الزاماً تغییرات بعدی یا نسخهٔ release امضاشده. برای هر نسخه، run همان commit بررسی شود.
 
 <a id="stack"></a>
 ## 🧰 فناوری‌ها
@@ -201,11 +211,12 @@ flutter run --dart-define=MP_API=http://10.0.2.2:8000/api/v1
 
 | موضوع | سند |
 |---|---|
-| شروع ایجنت AI و انتقال نشست | [راهنمای ایجنت](AGENTS.md) · [نقشهٔ مستندات](docs/README.md) · [handoff جاری](docs/MuscleParadise/SESSION_HANDOFF.md) |
-| نقشهٔ کل محصول و مرز ماژول‌ها | [MASTER MAP](docs/MuscleParadise/MASTER_MAP.md) |
-| معماری C4 و جریان‌های سامانه | [Architecture](docs/MuscleParadise/architecture/c4.md) |
-| نیازمندی‌ها و user storyها | [PRD](docs/MuscleParadise/PRD.md) |
-| برنامهٔ ساخت و کارهای باز | [TODO / وضعیت جاری](docs/MuscleParadise/TODO-2026-11-16.md) |
+| شروع ایجنت AI و انتقال نشست | [راهنمای ایجنت](AGENTS.md) · [نقشهٔ مستندات](docs/README.md) · [handoff جاری](docs/MuscleParadise/SESSION_HANDOFF.md) · [هندآف تفصیلی و راهنمای نشست تازه](docs/MuscleParadise/HANDOFF-PROJECT-2026-11-18.md) |
+| نقشهٔ تاریخی محصول | [MASTER MAP](docs/MuscleParadise/MASTER_MAP.md) |
+| معماری و هدف ابری/مالی | [C4](docs/MuscleParadise/architecture/c4.md) · [جریان‌های هدف](docs/MuscleParadise/architecture/cloud-finance-access.md) |
+| نیازمندی‌ها و user storyها | [PRD](docs/MuscleParadise/PRD.md) · [تصمیم‌های اخیر مالک](docs/MuscleParadise/TODO-CLOUD-FINANCE-ACCESS.md) |
+| برنامهٔ ساخت و کارهای باز | [QF-00 تا QF-32 و QA تکرارشونده](docs/MuscleParadise/PLAN-FINN-ECC-MICROLOOPS-QA.md) · [TODO قبلی](docs/MuscleParadise/TODO-2026-11-16.md) |
+| ابزار و منشأ کد | [تحقیق OSS](docs/MuscleParadise/OSS-DEEP-RESEARCH-2026-11-18.md) · [بررسی REA/ECC](docs/MuscleParadise/REPORT-REA-ECC-SUBAGENTS.md) · [آزمایش زیراجنت](docs/MuscleParadise/REPORT-ECC-SUBAGENT-SMOKE.md) |
 | صف و اولویت‌های محصول | [BUILD QUEUE](docs/MuscleParadise/BUILD-QUEUE.md) |
 | سیستم طراحی | [Design System](docs/MuscleParadise/design/design-system.md) |
 | استقرار و عملیات | [Deployment](docs/MuscleParadise/DEPLOYMENT.md) · [Ops Runbook](docs/MuscleParadise/OPS-RUNBOOK.md) |
@@ -224,3 +235,8 @@ Muscle Paradise نرم‌افزار اختصاصی است. مشاهدهٔ عمو
 </details>
 
 <p align="center"><sub>Designed for stronger training, clearer coaching, and calmer gym operations. 🟢</sub></p>
+
+
+## 🧩 ارزش‌های در حال بررسی برای عضویت و تمرین
+
+[برنامهٔ برش‌های ارزش‌ها و نقش‌ها](docs/MuscleParadise/PLAN-OSS-VALUE-MICROLOOPS-2026-11-18.md) · [گزارش REA و RepoWise](docs/MuscleParadise/REPORT-OSS-VALUE-DEEP-DIVE-2026-11-18.md) · [نقشهٔ هدف جریان‌ها](docs/MuscleParadise/architecture/oss-value-flows.md). این موارد **برنامه‌ریزی‌شده و آزمایش‌نشده‌اند**؛ هیچ کد، داده یا دارایی تازه‌ای از نامزدها وارد محصول نشده است.

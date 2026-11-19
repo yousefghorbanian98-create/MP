@@ -1,0 +1,278 @@
+{
+  "schema": "HistoricalSourceSummary",
+  "authority": "historical-reference",
+  "root_alias": "$REFERENCE_ROOT",
+  "manifest": {
+    "schema": "HistoricalSourceManifest",
+    "authority": "historical-reference",
+    "manifest_id": "hsm_8ec060da660eb0d8ec50c7e4a09937d50226267bf558840fc63c9dce60f251a5",
+    "graph_sha256": "918da2621ceba978a93c488aba3a1472964ec1b9be762dd399ca6e4cca3efdcc",
+    "root_sha256": "ed569fb5bbaf7c3ee163b7092c63e9fd430d221c6414a4e20f6eded5a2fbc9a9",
+    "inventory_state": "partial",
+    "entry_count": 177,
+    "relationship_count": 2
+  },
+  "inventory_state": "partial",
+  "provenance": {
+    "importer": "rea-agents",
+    "importer_version": "6.9.0",
+    "caller": "rea-cli"
+  },
+  "vcs": {
+    "kind": "git",
+    "head": "cc9fb9ac811617ad4bdcb7b4eda4ec00c6a613c0",
+    "dirty": null
+  },
+  "languages": [
+    "Dockerfile",
+    "Go",
+    "JSON",
+    "JavaScript",
+    "Markdown",
+    "Python",
+    "TOML",
+    "Text",
+    "YAML"
+  ],
+  "manifests": [
+    "docker-compose.yml",
+    "examples/django_shop/Dockerfile",
+    "examples/django_shop/requirements.txt",
+    "examples/fastapi_shop/Dockerfile",
+    "examples/fastapi_shop/requirements.txt",
+    "examples/receiver/Dockerfile",
+    "examples/receivers/go/go.mod",
+    "pyproject.toml"
+  ],
+  "counts": {
+    "entries": 177,
+    "files": 136,
+    "directories": 41,
+    "symlinks": 0,
+    "unknown": 0,
+    "relationships": 2,
+    "parse_failures": 0,
+    "exclusions": 1
+  },
+  "file_content_states": {
+    "hashed": 136,
+    "redacted-secret": 0,
+    "excluded": 0,
+    "unreadable": 0,
+    "unknown": 0
+  },
+  "directory_tree_states": {
+    "enumerated": 41,
+    "partial": 0,
+    "excluded": 0,
+    "unreadable": 0,
+    "unknown": 0
+  },
+  "file_sizes": {
+    "known_bytes": "1430054",
+    "unknown_file_count": 0
+  },
+  "exclusions": [
+    {
+      "path": ".git",
+      "entry_kind": "directory",
+      "reason": "default-ignored",
+      "pattern": ".git/"
+    }
+  ],
+  "limitations": [
+    "Module context is unknown in examples/receivers/node/receiver.js; the requested dependency was retained without a proven loader base.",
+    "Path identity is revalidated around operations; Node lacks portable descriptor-relative openat traversal, so a syscall-boundary pathname race remains."
+  ],
+  "outline": {
+    "depth": 1,
+    "entries": [
+      {
+        "path": ".dockerignore",
+        "kind": "file",
+        "language": null,
+        "size": 146,
+        "content_state": "hashed",
+        "classifications": [
+          "unknown"
+        ],
+        "limitations": []
+      },
+      {
+        "path": ".github",
+        "classifications": [
+          "config"
+        ],
+        "limitations": [],
+        "kind": "directory",
+        "tree_state": "enumerated"
+      },
+      {
+        "path": ".gitignore",
+        "kind": "file",
+        "language": null,
+        "size": 264,
+        "content_state": "hashed",
+        "classifications": [
+          "config"
+        ],
+        "limitations": []
+      },
+      {
+        "path": "CHANGELOG.md",
+        "kind": "file",
+        "language": "Markdown",
+        "size": 1867,
+        "content_state": "hashed",
+        "classifications": [
+          "documentation"
+        ],
+        "limitations": []
+      },
+      {
+        "path": "CONTRIBUTING.md",
+        "kind": "file",
+        "language": "Markdown",
+        "size": 2305,
+        "content_state": "hashed",
+        "classifications": [
+          "documentation"
+        ],
+        "limitations": []
+      },
+      {
+        "path": "LICENSE",
+        "kind": "file",
+        "language": null,
+        "size": 1068,
+        "content_state": "hashed",
+        "classifications": [
+          "documentation"
+        ],
+        "limitations": []
+      },
+      {
+        "path": "README.md",
+        "kind": "file",
+        "language": "Markdown",
+        "size": 13216,
+        "content_state": "hashed",
+        "classifications": [
+          "documentation"
+        ],
+        "limitations": []
+      },
+      {
+        "path": "SECURITY.md",
+        "kind": "file",
+        "language": "Markdown",
+        "size": 955,
+        "content_state": "hashed",
+        "classifications": [
+          "documentation"
+        ],
+        "limitations": []
+      },
+      {
+        "path": "benchmarks",
+        "classifications": [
+          "unknown"
+        ],
+        "limitations": [],
+        "kind": "directory",
+        "tree_state": "enumerated"
+      },
+      {
+        "path": "contrib",
+        "classifications": [
+          "unknown"
+        ],
+        "limitations": [],
+        "kind": "directory",
+        "tree_state": "enumerated"
+      },
+      {
+        "path": "docker-compose.yml",
+        "kind": "file",
+        "language": "YAML",
+        "size": 4442,
+        "content_state": "hashed",
+        "classifications": [
+          "manifest"
+        ],
+        "limitations": []
+      },
+      {
+        "path": "docs",
+        "classifications": [
+          "documentation"
+        ],
+        "limitations": [],
+        "kind": "directory",
+        "tree_state": "enumerated"
+      },
+      {
+        "path": "examples",
+        "classifications": [
+          "documentation"
+        ],
+        "limitations": [],
+        "kind": "directory",
+        "tree_state": "enumerated"
+      },
+      {
+        "path": "mkdocs.yml",
+        "kind": "file",
+        "language": "YAML",
+        "size": 1578,
+        "content_state": "hashed",
+        "classifications": [
+          "config"
+        ],
+        "limitations": []
+      },
+      {
+        "path": "pyproject.toml",
+        "kind": "file",
+        "language": "TOML",
+        "size": 4570,
+        "content_state": "hashed",
+        "classifications": [
+          "manifest"
+        ],
+        "limitations": []
+      },
+      {
+        "path": "src",
+        "classifications": [
+          "source"
+        ],
+        "limitations": [],
+        "kind": "directory",
+        "tree_state": "enumerated"
+      },
+      {
+        "path": "tests",
+        "classifications": [
+          "source",
+          "test"
+        ],
+        "limitations": [],
+        "kind": "directory",
+        "tree_state": "enumerated"
+      },
+      {
+        "path": "uv.lock",
+        "kind": "file",
+        "language": null,
+        "size": 936629,
+        "content_state": "hashed",
+        "classifications": [
+          "generated"
+        ],
+        "limitations": []
+      }
+    ],
+    "omitted_entry_count": 159
+  }
+}

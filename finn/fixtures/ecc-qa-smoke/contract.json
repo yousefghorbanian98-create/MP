@@ -1,0 +1,45 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Synthetic transfer trial",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/trial/receipts": {
+      "post": {
+        "operationId": "submitReceipt",
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        }
+      }
+    },
+    "/trial/receipts/{receipt_id}/approve": {
+      "post": {
+        "operationId": "approveReceipt",
+        "parameters": [
+          {
+            "name": "receipt_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Approved"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "No independent match"
+          }
+        }
+      }
+    }
+  }
+}

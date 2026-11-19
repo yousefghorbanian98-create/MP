@@ -1,0 +1,197 @@
+{
+  "schema": "HistoricalSourceSummary",
+  "authority": "historical-reference",
+  "root_alias": "$REFERENCE_ROOT",
+  "manifest": {
+    "schema": "HistoricalSourceManifest",
+    "authority": "historical-reference",
+    "manifest_id": "hsm_8010b9b7d71c92bab31711c8773e801a5077031c203dffbf1684a4e1d9d67515",
+    "graph_sha256": "f80a8dc5f24513f01f50ccc97847bf1d7605ed0281c4dce9c6681351ad3df15a",
+    "root_sha256": "7b0f9dd9994d70b0e49b59321e8477fa87c7e9b9992e9e19914032c08daef29a",
+    "inventory_state": "partial",
+    "entry_count": 33,
+    "relationship_count": 0
+  },
+  "inventory_state": "partial",
+  "provenance": {
+    "importer": "rea-agents",
+    "importer_version": "6.9.0",
+    "caller": "rea-cli"
+  },
+  "vcs": {
+    "kind": "git",
+    "head": "346083719c4b3a6cef1a3d7f3c50011f38a0d77a",
+    "dirty": null
+  },
+  "languages": [
+    "Dockerfile",
+    "Markdown",
+    "Python",
+    "TOML",
+    "YAML"
+  ],
+  "manifests": [
+    "Dockerfile",
+    "docker-compose.yml",
+    "pyproject.toml"
+  ],
+  "counts": {
+    "entries": 33,
+    "files": 26,
+    "directories": 7,
+    "symlinks": 0,
+    "unknown": 0,
+    "relationships": 0,
+    "parse_failures": 0,
+    "exclusions": 1
+  },
+  "file_content_states": {
+    "hashed": 26,
+    "redacted-secret": 0,
+    "excluded": 0,
+    "unreadable": 0,
+    "unknown": 0
+  },
+  "directory_tree_states": {
+    "enumerated": 7,
+    "partial": 0,
+    "excluded": 0,
+    "unreadable": 0,
+    "unknown": 0
+  },
+  "file_sizes": {
+    "known_bytes": "536454",
+    "unknown_file_count": 0
+  },
+  "exclusions": [
+    {
+      "path": ".git",
+      "entry_kind": "directory",
+      "reason": "default-ignored",
+      "pattern": ".git/"
+    }
+  ],
+  "limitations": [
+    "Path identity is revalidated around operations; Node lacks portable descriptor-relative openat traversal, so a syscall-boundary pathname race remains."
+  ],
+  "outline": {
+    "depth": 1,
+    "entries": [
+      {
+        "path": ".dockerignore",
+        "kind": "file",
+        "language": null,
+        "size": 62,
+        "content_state": "hashed",
+        "classifications": [
+          "unknown"
+        ],
+        "limitations": []
+      },
+      {
+        "path": ".github",
+        "classifications": [
+          "config"
+        ],
+        "limitations": [],
+        "kind": "directory",
+        "tree_state": "enumerated"
+      },
+      {
+        "path": ".gitignore",
+        "kind": "file",
+        "language": null,
+        "size": 122,
+        "content_state": "hashed",
+        "classifications": [
+          "config"
+        ],
+        "limitations": []
+      },
+      {
+        "path": "Dockerfile",
+        "kind": "file",
+        "language": "Dockerfile",
+        "size": 358,
+        "content_state": "hashed",
+        "classifications": [
+          "manifest"
+        ],
+        "limitations": []
+      },
+      {
+        "path": "LICENSE",
+        "kind": "file",
+        "language": null,
+        "size": 1068,
+        "content_state": "hashed",
+        "classifications": [
+          "documentation"
+        ],
+        "limitations": []
+      },
+      {
+        "path": "README.md",
+        "kind": "file",
+        "language": "Markdown",
+        "size": 8111,
+        "content_state": "hashed",
+        "classifications": [
+          "documentation"
+        ],
+        "limitations": []
+      },
+      {
+        "path": "docker-compose.yml",
+        "kind": "file",
+        "language": "YAML",
+        "size": 1016,
+        "content_state": "hashed",
+        "classifications": [
+          "manifest"
+        ],
+        "limitations": []
+      },
+      {
+        "path": "docs",
+        "classifications": [
+          "documentation"
+        ],
+        "limitations": [],
+        "kind": "directory",
+        "tree_state": "enumerated"
+      },
+      {
+        "path": "pyproject.toml",
+        "kind": "file",
+        "language": "TOML",
+        "size": 1248,
+        "content_state": "hashed",
+        "classifications": [
+          "manifest"
+        ],
+        "limitations": []
+      },
+      {
+        "path": "src",
+        "classifications": [
+          "source"
+        ],
+        "limitations": [],
+        "kind": "directory",
+        "tree_state": "enumerated"
+      },
+      {
+        "path": "tests",
+        "classifications": [
+          "source",
+          "test"
+        ],
+        "limitations": [],
+        "kind": "directory",
+        "tree_state": "enumerated"
+      }
+    ],
+    "omitted_entry_count": 22
+  }
+}

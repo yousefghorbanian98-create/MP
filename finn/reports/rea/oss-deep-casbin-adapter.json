@@ -1,0 +1,223 @@
+{
+  "schema": "HistoricalSourceSummary",
+  "authority": "historical-reference",
+  "root_alias": "$REFERENCE_ROOT",
+  "manifest": {
+    "schema": "HistoricalSourceManifest",
+    "authority": "historical-reference",
+    "manifest_id": "hsm_6d55221135f13b2975bd032012381ca3c27a950d5befc4f4fc011a9e0125cf04",
+    "graph_sha256": "a1da149b207903cbb7fdd3d48c4f3f6fe3d92ee353c86760edbf654a05f4a4bb",
+    "root_sha256": "a46828fcf174d7bab1266aa072e8f756813c7157979591e1e63c7afb6c4b77c4",
+    "inventory_state": "partial",
+    "entry_count": 23,
+    "relationship_count": 0
+  },
+  "inventory_state": "partial",
+  "provenance": {
+    "importer": "rea-agents",
+    "importer_version": "6.9.0",
+    "caller": "rea-cli"
+  },
+  "vcs": {
+    "kind": "git",
+    "head": "297c753a4292c34ad6243079a8110a07e24b08cd",
+    "dirty": null
+  },
+  "languages": [
+    "INI",
+    "JSON",
+    "Markdown",
+    "Python",
+    "Text",
+    "YAML"
+  ],
+  "manifests": [
+    ".releaserc.json",
+    "requirements.txt",
+    "setup.cfg",
+    "setup.py"
+  ],
+  "counts": {
+    "entries": 23,
+    "files": 18,
+    "directories": 5,
+    "symlinks": 0,
+    "unknown": 0,
+    "relationships": 0,
+    "parse_failures": 0,
+    "exclusions": 1
+  },
+  "file_content_states": {
+    "hashed": 18,
+    "redacted-secret": 0,
+    "excluded": 0,
+    "unreadable": 0,
+    "unknown": 0
+  },
+  "directory_tree_states": {
+    "enumerated": 5,
+    "partial": 0,
+    "excluded": 0,
+    "unreadable": 0,
+    "unknown": 0
+  },
+  "file_sizes": {
+    "known_bytes": "64429",
+    "unknown_file_count": 0
+  },
+  "exclusions": [
+    {
+      "path": ".git",
+      "entry_kind": "directory",
+      "reason": "default-ignored",
+      "pattern": ".git/"
+    }
+  ],
+  "limitations": [
+    "Path identity is revalidated around operations; Node lacks portable descriptor-relative openat traversal, so a syscall-boundary pathname race remains."
+  ],
+  "outline": {
+    "depth": 1,
+    "entries": [
+      {
+        "path": ".coveragerc",
+        "kind": "file",
+        "language": null,
+        "size": 43,
+        "content_state": "hashed",
+        "classifications": [
+          "unknown"
+        ],
+        "limitations": []
+      },
+      {
+        "path": ".github",
+        "classifications": [
+          "config"
+        ],
+        "limitations": [],
+        "kind": "directory",
+        "tree_state": "enumerated"
+      },
+      {
+        "path": ".gitignore",
+        "kind": "file",
+        "language": null,
+        "size": 1236,
+        "content_state": "hashed",
+        "classifications": [
+          "config"
+        ],
+        "limitations": []
+      },
+      {
+        "path": ".releaserc.json",
+        "kind": "file",
+        "language": "JSON",
+        "size": 578,
+        "content_state": "hashed",
+        "classifications": [
+          "manifest"
+        ],
+        "limitations": []
+      },
+      {
+        "path": "CHANGELOG.md",
+        "kind": "file",
+        "language": "Markdown",
+        "size": 4763,
+        "content_state": "hashed",
+        "classifications": [
+          "documentation"
+        ],
+        "limitations": []
+      },
+      {
+        "path": "LICENSE",
+        "kind": "file",
+        "language": null,
+        "size": 11357,
+        "content_state": "hashed",
+        "classifications": [
+          "documentation"
+        ],
+        "limitations": []
+      },
+      {
+        "path": "README.md",
+        "kind": "file",
+        "language": "Markdown",
+        "size": 2963,
+        "content_state": "hashed",
+        "classifications": [
+          "documentation"
+        ],
+        "limitations": []
+      },
+      {
+        "path": "casbin_sqlalchemy_adapter",
+        "classifications": [
+          "unknown"
+        ],
+        "limitations": [],
+        "kind": "directory",
+        "tree_state": "enumerated"
+      },
+      {
+        "path": "examples",
+        "classifications": [
+          "documentation"
+        ],
+        "limitations": [],
+        "kind": "directory",
+        "tree_state": "enumerated"
+      },
+      {
+        "path": "requirements.txt",
+        "kind": "file",
+        "language": "Text",
+        "size": 33,
+        "content_state": "hashed",
+        "classifications": [
+          "documentation",
+          "manifest"
+        ],
+        "limitations": []
+      },
+      {
+        "path": "setup.cfg",
+        "kind": "file",
+        "language": "INI",
+        "size": 28,
+        "content_state": "hashed",
+        "classifications": [
+          "manifest"
+        ],
+        "limitations": []
+      },
+      {
+        "path": "setup.py",
+        "kind": "file",
+        "language": "Python",
+        "size": 1369,
+        "content_state": "hashed",
+        "classifications": [
+          "manifest",
+          "source"
+        ],
+        "limitations": []
+      },
+      {
+        "path": "tests",
+        "classifications": [
+          "source",
+          "test"
+        ],
+        "limitations": [],
+        "kind": "directory",
+        "tree_state": "enumerated"
+      }
+    ],
+    "omitted_entry_count": 10
+  }
+}

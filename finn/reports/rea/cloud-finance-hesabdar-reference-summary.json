@@ -1,0 +1,178 @@
+{
+  "schema": "HistoricalSourceSummary",
+  "authority": "historical-reference",
+  "root_alias": "$REFERENCE_ROOT",
+  "manifest": {
+    "schema": "HistoricalSourceManifest",
+    "authority": "historical-reference",
+    "manifest_id": "hsm_ab75397f101dc91c83e8e5f09d5a484166e218ef88dec4c81ba5c5569a77908f",
+    "graph_sha256": "fa48c0296f7309ea7459717a839ea623e3b9f2c1bf1b1780d86b34ad3e875d92",
+    "root_sha256": "686b460cde550bad889942de8f20a7f5adbb5d24e77187178ef96eb561013dc9",
+    "inventory_state": "partial",
+    "entry_count": 274,
+    "relationship_count": 66
+  },
+  "inventory_state": "partial",
+  "provenance": {
+    "importer": "rea-agents",
+    "importer_version": "6.9.0",
+    "caller": "rea-cli"
+  },
+  "vcs": {
+    "kind": "git",
+    "head": "07902b6b192804f50bc76bb9a48db193c92d0227",
+    "dirty": null
+  },
+  "languages": [
+    "C#",
+    "HTML",
+    "JSON",
+    "JavaScript",
+    "Markdown",
+    "SVG",
+    "TypeScript",
+    "XML",
+    "YAML"
+  ],
+  "manifests": [
+    "frontend/package-lock.json",
+    "frontend/package.json"
+  ],
+  "counts": {
+    "entries": 274,
+    "files": 221,
+    "directories": 53,
+    "symlinks": 0,
+    "unknown": 0,
+    "relationships": 66,
+    "parse_failures": 1,
+    "exclusions": 3
+  },
+  "file_content_states": {
+    "hashed": 221,
+    "redacted-secret": 0,
+    "excluded": 0,
+    "unreadable": 0,
+    "unknown": 0
+  },
+  "directory_tree_states": {
+    "enumerated": 53,
+    "partial": 0,
+    "excluded": 0,
+    "unreadable": 0,
+    "unknown": 0
+  },
+  "file_sizes": {
+    "known_bytes": "4547521",
+    "unknown_file_count": 0
+  },
+  "exclusions": [
+    {
+      "path": ".git",
+      "entry_kind": "directory",
+      "reason": "default-ignored",
+      "pattern": ".git/"
+    },
+    {
+      "path": "frontend/build",
+      "entry_kind": "directory",
+      "reason": "default-ignored",
+      "pattern": "build/"
+    },
+    {
+      "path": "frontend/yarn.lock",
+      "entry_kind": "file",
+      "reason": "project-ignored",
+      "pattern": "yarn.lock"
+    }
+  ],
+  "limitations": [
+    "Path identity is revalidated around operations; Node lacks portable descriptor-relative openat traversal, so a syscall-boundary pathname race remains."
+  ],
+  "outline": {
+    "depth": 1,
+    "entries": [
+      {
+        "path": ".gitignore",
+        "kind": "file",
+        "language": null,
+        "size": 48,
+        "content_state": "hashed",
+        "classifications": [
+          "config"
+        ],
+        "limitations": []
+      },
+      {
+        "path": ".vscode",
+        "classifications": [
+          "unknown"
+        ],
+        "limitations": [],
+        "kind": "directory",
+        "tree_state": "enumerated"
+      },
+      {
+        "path": "LICENSE",
+        "kind": "file",
+        "language": null,
+        "size": 1060,
+        "content_state": "hashed",
+        "classifications": [
+          "documentation"
+        ],
+        "limitations": []
+      },
+      {
+        "path": "README.md",
+        "kind": "file",
+        "language": "Markdown",
+        "size": 3156,
+        "content_state": "hashed",
+        "classifications": [
+          "documentation"
+        ],
+        "limitations": []
+      },
+      {
+        "path": "backend",
+        "classifications": [
+          "unknown"
+        ],
+        "limitations": [],
+        "kind": "directory",
+        "tree_state": "enumerated"
+      },
+      {
+        "path": "frontend",
+        "classifications": [
+          "unknown"
+        ],
+        "limitations": [],
+        "kind": "directory",
+        "tree_state": "enumerated"
+      },
+      {
+        "path": "screenshots",
+        "classifications": [
+          "unknown"
+        ],
+        "limitations": [],
+        "kind": "directory",
+        "tree_state": "enumerated"
+      },
+      {
+        "path": "workspace.code-workspace",
+        "kind": "file",
+        "language": null,
+        "size": 151,
+        "content_state": "hashed",
+        "classifications": [
+          "unknown"
+        ],
+        "limitations": []
+      }
+    ],
+    "omitted_entry_count": 266
+  }
+}

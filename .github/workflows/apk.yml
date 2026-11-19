@@ -62,9 +62,28 @@ jobs:
           cd mp-app/client
           dart run flutter_launcher_icons 2>&1 | tee /tmp/step-icons.txt
 
+      - name: Prepare dedicated release signing material
+        env:
+          KEYSTORE_B64: ${{ secrets.MP_ANDROID_KEYSTORE_BASE64 }}
+          MP_ANDROID_STORE_PASSWORD: ${{ secrets.MP_ANDROID_STORE_PASSWORD }}
+          MP_ANDROID_KEY_ALIAS: ${{ secrets.MP_ANDROID_KEY_ALIAS }}
+          MP_ANDROID_KEY_PASSWORD: ${{ secrets.MP_ANDROID_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          test -n "$KEYSTORE_B64" && test -n "$MP_ANDROID_STORE_PASSWORD" && test -n "$MP_ANDROID_KEY_ALIAS" && test -n "$MP_ANDROID_KEY_PASSWORD" || {
+            echo "::error::Dedicated release signing secrets are required; refusing debug signing."
+            exit 1
+          }
+          umask 077
+          python3 -c 'import base64,os,pathlib; pathlib.Path(os.environ["RUNNER_TEMP"], "mp-release.p12").write_bytes(base64.b64decode(os.environ["KEYSTORE_B64"], validate=True))'
+          echo "MP_ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/mp-release.p12" >> "$GITHUB_ENV"
+
       - name: Build APK + SHA256
         env:
           BUILD_NUMBER: ${{ github.event.inputs.build_number || github.run_number }}
+          MP_ANDROID_STORE_PASSWORD: ${{ secrets.MP_ANDROID_STORE_PASSWORD }}
+          MP_ANDROID_KEY_ALIAS: ${{ secrets.MP_ANDROID_KEY_ALIAS }}
+          MP_ANDROID_KEY_PASSWORD: ${{ secrets.MP_ANDROID_KEY_PASSWORD }}
         run: |
           set -o pipefail
           cd mp-app/client
@@ -78,9 +97,34 @@ jobs:
           else
             flutter build apk --release --split-per-abi --build-number="$BUILD_NUMBER" 2>&1 | tee /tmp/step-build.txt
           fi
-          APK="build/app/outputs/flutter-apk/app-arm64-v8a-release.apk"
-          test -f "$APK"
-          sha256sum "$APK" | tee "$APK.sha256"
+          test -f build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+          for apk in build/app/outputs/flutter-apk/app-*-release.apk; do
+            test -f "$apk"
+            sha256sum "$apk" > "$apk.sha256"
+          done
+
+      - name: Verify release signer on every APK
+        env:
+          EXPECTED_CERT_SHA256: ${{ vars.MP_ANDROID_CERT_SHA256 }}
+        run: |
+          set -euo pipefail
+          expected="$(printf '%s' "$EXPECTED_CERT_SHA256" | tr -d ':' | tr '[:upper:]' '[:lower:]')"
+          [[ "$expected" =~ ^[0-9a-f]{64}$ ]] || {
+            echo "::error::MP_ANDROID_CERT_SHA256 must be the SHA-256 of the dedicated release certificate."
+            exit 1
+          }
+          apksigner="$(find "$ANDROID_HOME/build-tools" -name apksigner -type f | sort -V | tail -1)"
+          test -x "$apksigner"
+          for apk in mp-app/client/build/app/outputs/flutter-apk/app-*-release.apk; do
+            test -f "$apk"
+            output="$("$apksigner" verify --verbose --print-certs "$apk")"
+            count="$(printf '%s\n' "$output" | grep -c '^Signer #[0-9]* certificate SHA-256 digest:')"
+            actual="$(printf '%s\n' "$output" | sed -n 's/^Signer #1 certificate SHA-256 digest: //p' | tr '[:upper:]' '[:lower:]')"
+            if [ "$count" != 1 ] || [ "$actual" != "$expected" ]; then
+              echo "::error::Release signature does not match the pinned certificate."
+              exit 1
+            fi
+          done
 
       # M60 — بازرسی عمیق با apktool واقعی. پیش‌تر این مرحله نبود چون «java/apktool
       # در دسترس نیست»؛ هر دو با PyPI/npm تأمین می‌شوند (jdk4py + apk-revise).
@@ -96,7 +140,16 @@ jobs:
           npm install --silent --no-save apk-revise > /dev/null
           # اسکریپت مسیر پیش‌فرض /tmp/rev/… را می‌شناسد؛ APKTOOL_JAR صریح امن‌تر است
           export APKTOOL_JAR="$PWD/node_modules/apk-revise/bin/apktool.jar"
-          python mp-app/client/tools/apk_deep_audit.py --json --out evidence/m60/apk-deep-audit.json | tee /tmp/step-deep-audit.txt
+          mkdir -p evidence/m60
+          for apk in mp-app/client/build/app/outputs/flutter-apk/app-*-release.apk; do
+            test -f "$apk"
+            name="$(basename "$apk" .apk)"
+            python mp-app/client/tools/apk_deep_audit.py --apk "$apk" --json --out "evidence/m60/${name}-audit.json"
+          done
+
+      - name: Delete temporary release signing material
+        if: always()
+        run: rm -f "$RUNNER_TEMP/mp-release.p12"
 
       - name: Collect APK diagnostics on failure
         if: failure()
@@ -123,61 +176,5 @@ jobs:
             mp-app/client/build/app/outputs/flutter-apk/*.sha256
           if-no-files-found: error
 
-  # فقط جاب تحویلِ دستی می‌تواند روی همان شاخه commit کند؛ build job read-only است.
-  deliver-manual:
-    if: ${{ needs.apk.result == 'success' && github.event_name == 'workflow_dispatch' && !startsWith(github.ref, 'refs/tags/') }}
-    needs: apk
-    runs-on: ubuntu-latest
-    permissions:
-      actions: read
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.ref_name }}
-          fetch-depth: 0
-      - uses: actions/download-artifact@v4
-        with:
-          name: muscleparadise-apk
-          path: mp-app/client/release
-      - name: Commit APK delivery on the selected branch
-        env:
-          BRANCH: ${{ github.ref_name }}
-        run: |
-          set -euo pipefail
-          git config user.name "mp-apk-ci"
-          git config user.email "ci@muscleparadise.local"
-          printf 'built-from: %s run: %s\n' '${{ github.sha }}' '${{ github.run_id }}' > mp-app/client/release/BUILD-INFO.txt
-          git add mp-app/client/release
-          if git diff --cached --quiet; then
-            echo "no changes"
-            exit 0
-          fi
-          git commit -m "mp(apk): deliver APK build ${{ github.run_number }} [skip ci]"
-          git push origin "HEAD:${BRANCH}"
-
-  # تگ فقط artifact را به Release موجود اضافه می‌کند؛ build token هیچ‌گاه write نیست.
-  publish-release:
-    if: ${{ needs.apk.result == 'success' && startsWith(github.ref, 'refs/tags/') }}
-    needs: apk
-    runs-on: ubuntu-latest
-    permissions:
-      actions: read
-      contents: write
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: muscleparadise-apk
-          path: /tmp/muscleparadise-apk
-      - name: Upload APK to existing GitHub Release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE_TAG: ${{ github.ref_name }}
-        run: |
-          set -euo pipefail
-          cd /tmp/muscleparadise-apk
-          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
-            gh release upload "$RELEASE_TAG" *.apk *.sha256 --clobber
-          else
-            echo "release does not exist; artifact remains available from this workflow run"
-          fi
+  # Build output is a CI artifact only. A release must be published separately,
+  # after the exact commit has passed every required gate and release review.

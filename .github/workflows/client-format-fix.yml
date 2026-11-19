@@ -19,6 +19,16 @@ name: client-format-fix (M109)
 on:
   workflow_dispatch:
     inputs:
+      fingerprint_scan:
+        description: 'Print redacted Gitleaks fingerprints instead of formatting'
+        type: boolean
+        required: false
+        default: false
+      format_qr:
+        description: 'Format the QR changes on this branch'
+        type: boolean
+        required: false
+        default: false
       base_ref:
         description: 'Branch to format and open the PR against'
         required: true
@@ -42,7 +52,130 @@ permissions:
   # (Line 43) Unexpected value 'metadata'» و صفر job تمام شد. access به متادیتا ضمنی است.
 
 jobs:
+  gitleaks-fingerprints:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.fingerprint_scan && !inputs.format_qr }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Install verified Gitleaks 8.30.1
+        run: |
+          set -euo pipefail
+          version=8.30.1
+          archive="gitleaks_${version}_linux_x64.tar.gz"
+          base="https://github.com/gitleaks/gitleaks/releases/download/v${version}"
+          curl -fsSL "$base/$archive" -o "/tmp/$archive"
+          curl -fsSL "$base/gitleaks_${version}_checksums.txt" -o /tmp/gitleaks-checksums.txt
+          (cd /tmp && grep "  $archive$" gitleaks-checksums.txt | sha256sum --check)
+          mkdir -p /tmp/gitleaks
+          tar -xzf "/tmp/$archive" -C /tmp/gitleaks gitleaks
+      - name: Report only validated finding metadata
+        run: |
+          set +e
+          /tmp/gitleaks/gitleaks git --redact --no-banner --log-level=error \
+            --report-format=json --report-path=/tmp/gitleaks-report.json .
+          scan_status=$?
+          set -e
+          SCAN_STATUS="$scan_status" python3 - <<'PYCODE'
+          import json
+          import os
+          import re
+          from pathlib import Path
+
+          status = int(os.environ['SCAN_STATUS'])
+          report = Path('/tmp/gitleaks-report.json')
+          if status not in (0, 1) or not report.is_file():
+              raise SystemExit('Scanner failed or report missing')
+          findings = json.loads(report.read_text())
+          if not isinstance(findings, list):
+              raise SystemExit('Unexpected report format')
+          print(f'Findings: {len(findings)}')
+          for item in findings:
+              rule, path, line, commit, fingerprint = (item.get(k) for k in
+                  ('RuleID', 'File', 'StartLine', 'Commit', 'Fingerprint'))
+              # Restrict all output so malformed scanner data cannot inject commands
+              # or leak unexpected fields such as Match, Secret, or source lines.
+              if not (isinstance(rule, str) and re.fullmatch(r'[A-Za-z0-9_-]+', rule)
+                      and isinstance(path, str) and re.fullmatch(r'[A-Za-z0-9_./-]+', path)
+                      and isinstance(line, int) and line > 0
+                      and isinstance(commit, str) and re.fullmatch(r'[0-9a-f]{40}', commit)
+                      and isinstance(fingerprint, str)
+                      and fingerprint == f'{commit}:{path}:{rule}:{line}'):
+                  raise SystemExit('Invalid metadata; refusing to print')
+              message = f'{rule} {path}:{line} {commit} {fingerprint}'
+              print(message)
+              print(f'::notice title=Gitleaks fingerprint::{message}')
+          PYCODE
+
+  format-qr:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.format_qr && !inputs.fingerprint_scan }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.50.0"
+          architecture: x64
+      - name: Resolve dependencies and format only the two QR files
+        working-directory: mp-app/client
+        run: |
+          set -euo pipefail
+          flutter pub get
+          dart format lib/features/checkin/checkin_page.dart test/qr_biometric_gate_test.dart
+          sha256sum lib/features/checkin/checkin_page.dart test/qr_biometric_gate_test.dart > "$RUNNER_TEMP/qr-tested-inputs.sha256"
+      - name: Run QR-only widget tests and report diagnostic
+        working-directory: mp-app/client
+        run: |
+          set +e
+          flutter test --reporter=json test/qr_biometric_gate_test.dart > "$RUNNER_TEMP/qr-test.json"
+          status=$?
+          set -e
+          QR_TEST_REPORT="$RUNNER_TEMP/qr-test.json" python3 - <<'PYCODE'
+          import json
+          import os
+          from pathlib import Path
+          for line in Path(os.environ['QR_TEST_REPORT']).read_text().splitlines():
+              try:
+                  event = json.loads(line)
+              except ValueError:
+                  continue
+              if event.get('type') == 'print':
+                  text = str(event.get('message', ''))
+                  for fragment in text.splitlines():
+                      if any(word in fragment for word in ('Exception', 'Expected:', 'Actual:', 'Error:', 'overflowed', 'A Timer', 'pending timers', 'finds')):
+                          fragment = fragment[:250].replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+                          print(f'::error title=QR test diagnostic::{fragment}')
+          PYCODE
+          exit "$status"
+
+      - name: Commit formatting to the selected branch
+        env:
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          case "$BRANCH" in arena/*) ;; *) echo "Expected arena branch"; exit 1;; esac
+          (cd mp-app/client && sha256sum --check "$RUNNER_TEMP/qr-tested-inputs.sha256")
+          git config user.name mp-ci
+          git config user.email ci@muscleparadise.local
+          git add mp-app/client/lib/features/checkin/checkin_page.dart mp-app/client/test/qr_biometric_gate_test.dart
+          # No clean filter or line-ending conversion may alter the tested bytes.
+          for path in mp-app/client/lib/features/checkin/checkin_page.dart mp-app/client/test/qr_biometric_gate_test.dart; do
+            test "$(git hash-object --no-filters "$path")" = "$(git rev-parse ":$path")"
+          done
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "style(client): format QR biometric gate"
+          git push origin "HEAD:$BRANCH"
+
   format-client:
+    if: ${{ github.event_name == 'workflow_dispatch' && !inputs.fingerprint_scan && !inputs.format_qr }}
     name: dart format · proof it is layout-only · analyze + test · PR
     runs-on: ubuntu-latest
     timeout-minutes: 25
