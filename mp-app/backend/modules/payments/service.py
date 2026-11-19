@@ -75,18 +75,24 @@ def verify_payment(
     return payment
 
 
-def start_payment(db: Session, payment_id: int, callback_url: str = "") -> dict:
+def start_payment(db: Session, payment_id: int, callback_url: str = "", user=None) -> dict:
     """آغاز پرداخت درگاه — authority از درگاه واقعی، نه از ورودی کاربر.
 
     پیش از این `gateway.py` (Mock + زرین‌پال + امضای HMAC) کامل نوشته شده
     بود ولی **هیچ مصرف‌کننده‌ای نداشت**: پرداخت همیشه pending می‌شد و
     verify با هر reference_id دلخواه «پرداخت‌شده» اعلام می‌کرد.
+
+    QF-00: نقش `member` فقط می‌تواند تراکنش خودش را آغاز کند. بدون این
+    سنجش، هر عضو با حدس ID می‌توانست `gateway_authority` تراکنش دیگری را
+    بسازد و با `already_started` مسیر پرداخت صاحب واقعی را بشکند.
     """
+    from app.security.ownership import ensure_record_scope
     from modules.payments.gateway import PaymentGatewayError, get_gateway, signed_token
 
     payment = db.get(Payment, payment_id)
     if payment is None:
         raise NotFoundError("پرداخت یافت نشد")
+    ensure_record_scope(db, user, payment)
     if payment.status != "pending":
         raise ApiError("این پرداخت قبلاً پردازش شده است", code="already_processed")
     if payment.method == "wallet":

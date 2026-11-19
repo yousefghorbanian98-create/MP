@@ -109,7 +109,59 @@ REA در این برش برای پیمایش/قرارداد واقعاً است�
 - یک اجرای اولیهٔ `ruff format --check .` پس از تغییر، تنها به‌علت wrapping خط چاپ در script شکست؛ فایل با `ruff format scripts/export_routes.py` اصلاح و Ruff/format/route-guard دوباره موفق شدند.
 - **محدودیت:** این artifact هنوز OpenAPI declaration است؛ Casbin/endpoint guards، مالکیت هر entity، route-to-actionهای UI و response/errorها جداگانه نیاز به trace دارند. گیت role/QA مستقل و گیت QF-00 کامل نشده است.
 - **CI همان SHA `6f236a8`:** run `44551275122` همهٔ jobها جز `secret-scan` را موفق کرد (Backend، Studio/build/audit، Flutter و Android debug، docs، live-contract، e2e-api). GitHub annotation فقط یک `generic-api-key` در این خط گزارش را نشان داد؛ مقدارها عمداً از گزارش CI خوانده/چاپ نشدند. این خط صرفاً SHA-256 و شناسهٔ opaque تولیدشدهٔ REA است، نه credential. برای حفظ اسکن کامل تاریخچه بدون rewrite، فقط fingerprint دقیق commit/path/rule/line به `.gitleaksignore` افزوده شد؛ هیچ rule/path/global allowlist اضافه نشد. خود اسکن با Gitleaks روی میزبان محلی قابل اجرا نبود؛ metadata redacted annotation تنها شاهد مصرف‌شده است.
-- **CI تأیید exception دقیق:** commit `259a621` (policy + handoff) در run `44553561916` و checkpoint سندی `ae95830` در run `44555108377` هر دو با **هر ۸ job موفق** تأیید شدند: full-history secret-scan و تست regression استثناهای exact/synthetic، backend (lint/tests/security/Semgrep)، Studio tests/build/audit، Flutter، pinned SDK/Android debug، docs، live-contract و e2e-api. run `44555108377` آخرین شاهد CI در زمان ثبت این گزارش است. این نتیجه فقط scan/کدهای همان SHA را می‌پوشاند؛ QF-00 هنوز به‌علت inventory interaction و QA مستقل کامل نیست.
+- **CI تأیید exception دقیق:** commit `259a621` (policy + handoff) در run `44553561916` و checkpoint سندی `ae95830` در run `44555108377` هر دو با **هر ۸ job موفق** تأیید شدند: full-history secret-scan و تست regression استثناهای exact/synthetic، backend (lint/tests/security/Semgrep)، Studio tests/build/audit، Flutter، pinned SDK/Android debug، docs، live-contract و e2e-api. checkpoint سندی `9fb1ea5` نیز در run `44557157005` با **هر ۸ job موفق** تأیید شد (backend، secret-scan، client-flutter، studio، docs، live-contract، client-pinned/Android debug، e2e-api). run `44557157005` آخرین شاهد CI در زمان ثبت این گزارش است. این نتیجه فقط scan/کدهای همان SHA را می‌پوشاند؛ QF-00 هنوز به‌علت inventory interaction و QA مستقل کامل نیست.
+
+### برش دوم در QF-00 — ماتریس دسترسی سطح-route و دو شکاف مالکیت
+
+**نیاز بازتولیدشده:** artifact برش اول فقط method/path/operationId/tags را می‌دانست؛ هیچ‌جا نمی‌شد دید هر operation کدام guard دارد و کدام نقش‌ها واقعاً مجازند. یعنی می‌شد endpoint تازه با guard اشتباه یا policy اصلاح‌شده اضافه شود و artifact همچنان «تازه» بماند.
+
+- **Forge / تست قرمز:** `tests/integration/test_routes_access_matrix.py` ابتدا `KeyError: 'guards'` داد (۲ failed). هیچ فایل runtime پیش از این شاهد تغییر نکرد.
+- **پیاده‌سازی:** `scripts/export_routes.py` اکنون برای هر operation دو فیلد می‌سازد: `guards` (برچسب‌های `__rbac__` از درخت وابستگی همان route) و `roles` (نقش‌هایی که خودِ `security.rbac.enforce` — همان تابع runtime — برای همان method/الگوی مسیر اجازه می‌دهد؛ پارامتر مسیر با نمونهٔ `1` جایگزین می‌شود چون کاسبن سطح-مسیر است). تست تازه، برابری این دو فیلد با اپ/policy را می‌سنجد و ادعای «مسیر بدون guard ولی دارای نقش» یا «مسیر با guard ولی بدون هیچ نقش مجاز» را رد می‌کند. تست freshness قبلی فقط روی فیلدهای اعلامی مقایسه می‌کند تا دو تست استقلال داشته باشند.
+- **نتیجهٔ شمارش (همان ۱۳۷ operation):** ۱۲۸ operation با guard (۱۲۳ `permission` تنها، ۴ `authenticated`، ۱ با دو guard `permission`) و ۹ operation عمومیِ بدون guard — دقیقاً همان ۹ ورودی مستندِ `PUBLIC` در `scripts/route_guard_gate.py`. ۳۰ operation برای هر شش نقش باز است.
+- **گیت‌های QA همین تغییر:** `test_routes_access_matrix.py` + `test_routes_artifact.py` → **3 passed**؛ `route_guard_gate.py` → `137 routes | 128 guarded | 9 documented public` pass؛ full backend → **955 passed / 2 skipped**, coverage **82.62%**؛ `ruff check .` و `ruff format --check .` (۳۲۲ فایل) موفق؛ `npx vitest run tests/apiCoverage.test.ts` → **4 passed**.
+- **محدودیت صریح:** این ماتریس «مجوز سطح-route» است. کنترل مالکیت سطری داخل service، رفتار runtime، خطاها، رقابت و کیفیت داده را اثبات نمی‌کند.
+
+| Prefix | عملیات | عمومی | نقش‌های مجاز طبق policy |
+|---|---:|---:|---|
+| `admin` | 13 | 0 | admin, coach, manager, reception, super_admin |
+| `ai` | 3 | 0 | admin, coach, manager, member, super_admin |
+| `assessments` | 7 | 0 | admin, coach, manager, member, super_admin |
+| `auth` | 8 | 4 | admin, manager, member, super_admin |
+| `axis-assessments` | 4 | 0 | admin, coach, manager, member, super_admin |
+| `chat` | 5 | 0 | admin, coach, manager, member, super_admin |
+| `classes` | 4 | 0 | admin, coach, manager, member, reception, super_admin |
+| `face` | 10 | 0 | admin, coach, manager, member, reception, super_admin |
+| `health` | 1 | 1 | — |
+| `library` | 2 | 0 | admin, coach, manager, member, super_admin |
+| `members` | 13 | 0 | admin, coach, manager, member, reception, super_admin |
+| `metrics` | 1 | 1 | — |
+| `notifications` | 4 | 0 | admin, coach, manager, member, reception, super_admin |
+| `nutrition` | 8 | 0 | admin, coach, manager, member, super_admin |
+| `payments` | 17 | 1 | admin, manager, member, reception, super_admin |
+| `population` | 3 | 0 | admin, coach, manager, member, reception, super_admin |
+| `programs` | 10 | 0 | admin, coach, manager, member, reception, super_admin |
+| `reports` | 1 | 0 | admin, coach, super_admin (manager به‌عمد DENY) |
+| `root` | 1 | 1 | — |
+| `shop` | 21 | 0 | admin, coach, manager, member, reception, super_admin |
+| `updates` | 1 | 1 | — |
+
+#### بررسی مالکیت: ۸۲ عمل قابل‌دسترس برای `member`
+
+پیمایش static روی هندلرها و تا عمق ۲ فراخوانی خدمت (جست‌وجوی `ensure_member_scope`/`get_own_member`/`ensure_record_scope`/`user_id == user.id`) برای ۵۸ operation شاهد مالکیت نشان داد و ۲۴ operation بدون شاهد ماند. هر ۲۴ مورد دستی بازبینی و دسته‌بندی شد:
+
+| دسته | نمونه | نتیجه |
+|---|---|---|
+| نشست/توکن (بدون دادهٔ عضو دیگر) | `auth/refresh`, `auth/logout`, `auth/logout-all` | رد و ابطال با خود توکن — نیازی به scope ندارد |
+| کاتالوگ/قرارداد مشترک | `library/exercises*`, `nutrition/foods`, `shop/categories`, `shop/products*`, `shop/prices`, `shop/gateways`, `population/paths`, `face/privacy-notice`, `population/gate-check`, `population/intake/next`, `ai/suggest-weight` | دادهٔ عضو ندارد؛ stateless یا خواندنیِ عمومی |
+| scope در service ولی نه با helper مالکیت | `shop/change-requests` (فیلتر `requested_by == user.id`)، `face/deep-status` (وضعیت قفل سراسری) | scope حاضر است؛ شناسایی static الگوی متفاوت داشت |
+| **شکاف واقعی** | `payments/{payment_id}/start`، `members/memberships/{membership_id}/invoice` | **تأیید و رفع شد** (زیر) |
+
+**F1 — هر عضو می‌توانست پرداخت عضو دیگر را در درگاه آغاز کند.** policy برای `member` مسیر `POST /payments/*/start` را باز می‌کند و کامنت policy می‌گوید «کنترل کدام تراکنش در service است»، اما هندلر کاربر را نمی‌گرفت و `service.start_payment` فقط `pending`/`wallet`/`already_started` را می‌سنجید. با شناسهٔ تراکنشِ عضو دیگر، عضو مهاجم `gateway_authority` و `callback_token` می‌ساخت و چون شروع دوباره `already_started` می‌دهد، صاحب واقعی از پرداخت خودش باز می‌ماند (شناسه‌ها عددی و قابل پیمایش‌اند). **رفع:** هندلر `user: CurrentUser` می‌گیرد و service با `ensure_record_scope` مالکیت را می‌سنجد؛ کادر (reception/manager/admin) بدون تغییر مجاز می‌ماند.
+
+**F2 — هر عضو می‌توانست صورتحساب اشتراک عضو دیگر را بخواند.** `GET /members/memberships/{membership_id}/invoice` برای `member` باز بود (policy `/members/*` GET) ولی پارامتر `user` را نادیده می‌گرفت و خروجی شامل `member_id`، `price_rial`، بازهٔ اشتراک و `gender` بود. **رفع:** `membership_invoice(..., user=...)` با `ensure_member_scope` روی `membership.member_id`؛ صاحب اشتراک و کادر همچنان ۲۰۰ می‌گیرند.
+
+- **شاهد قرمز/سبز:** `tests/integration/test_qf00_ownership_gaps.py` پیش از رفع **۲ failed** (۲۰۰ به‌جای ۴۰۳ در هر دو مسیر) و پس از رفع **5 passed**؛ همراه با `test_q6_gateway.py` و `test_sandbox_bank.py` مجموعاً **44 passed**. مسیر پرداخت/درگاه و سناریوهای موجود reception دست‌نخورده سبزند.
+- **آنچه این دو رفع ثابت نمی‌کند:** گردش کارت‌به‌کارت/فیش/تأیید انسانی، idempotency کامل مالی، رقابت هم‌زمان، و پوشش همهٔ نقش‌ها هنوز QF-05..09 است. رفع این دو مورد، QF-00 را نمی‌بندد و QA مستقل همچنان `BLOCKED` است.
 
 ## ۶. ماتریس آغازین QF-00 و گیت‌های حل‌نشده
 
@@ -118,11 +170,11 @@ REA در این برش برای پیمایش/قرارداد واقعاً است�
 | معیار Q0–Q10 | وضعیت آغازین | شاهد/ادامه |
 |---|---|---|
 | Q0 baseline/provenance | `PASS (baseline)` | SHA/branch/dirty، dependency و مجوز اختصاصی ثبت شد؛ پس از مستندات، baseline diff جدید باید بازبینی شود. |
-| Q1 forge/reproduction | `PARTIAL` | تست تازگی operation manifest ابتدا fail شد و پس از پیاده‌سازی pass؛ baseline suite و API contract هم اجرا شدند. regression inventory UI/action کامل هنوز وجود ندارد. |
-| Q2 تمام action/outputها و نقش‌ها | `UNKNOWN / IN PROGRESS` | ۱۲ صفحهٔ Studio، ۱۴ route عضو، ۱۳۷ operation، ۷۲ tag متنی `<button`/`<Button` در Studio و ۸۲ callback متنی Flutter نامزد بررسی‌اند. artifact اکنون ۱۳۷ method/path را نگه می‌دارد؛ اما شمارش‌ها تمام gesture/menu/keyboard/export/side effect را نمی‌پوشانند و هر اقدام باید به نقش/مالکیت و UI/API/DB/test نگاشت شود. |
-| Q3 مسیر UI→API→DB | `PARTIAL` | CI baseline `live-contract` و `e2e-api` سبز؛ `apiCoverage` پس از تغییر 4 passed؛ همهٔ domainها/نقش‌ها/خطا/retry/قطع شبکه با هم پوشش داده نشده‌اند. |
-| Q4 قرارداد/سازگاری | `PARTIAL` | OpenAPI و manifest مسیر+operation و freshness آن‌ها تست می‌شوند؛ schema/auth، مصرف‌کنندگان هر operation و authorization مؤثر تطبیق کامل نشده‌اند. |
-| Q5 امنیت/حریم | `BLOCKED (independent review)` | CI secret-scan روی baseline سبز؛ هیچ subagent/reviewer مستقل در این میزبان نداریم و اسکن history همان SHA به تغییرات آینده تعمیم ندارد. |
+| Q1 forge/reproduction | `PARTIAL` | سه چرخهٔ red→green واقعی ثبت شد: manifest operation، ماتریس دسترسی artifact، و دو شکاف مالکیت (F1/F2). regression inventory UI/action کامل هنوز وجود ندارد. |
+| Q2 تمام action/outputها و نقش‌ها | `PARTIAL (route-level mechanized)` | ۱۲۸ operation با گیت guard و نقش‌های مؤثر در `api/routes.json` ثبت و تست می‌شوند؛ ۹ مسیر عمومی مستند. اما سطح **interaction** (دکمه/منو/gesture/export/side effect در Studio و Flutter) هنوز به role/UI/API/DB/test نگاشت نشده و شمارش lexical جای آن را نمی‌گیرد. |
+| Q3 مسیر UI→API→DB | `PARTIAL` | CI baseline `live-contract` و `e2e-api` سبز؛ `apiCoverage` 4 passed؛ مالکیت ۸۲ operation قابل‌دسترس `member` به‌صورت static بازبینی و دو شکاف آن رفع شد. پوشش UI→DB برای همهٔ نقش‌ها/خطا/retry/قطع شبکه همچنان باز است. |
+| Q4 قرارداد/سازگاری | `PARTIAL` | OpenAPI، manifest مسیر+operation و ماتریس guard/role اکنون هر سه تست تازگی دارند؛ schema/response، مصرف‌کنندهٔ هر operation و ABAC/مالکیتِ باقی‌ماندهٔ نقش‌ها تطبیق کامل نشده‌اند. |
+| Q5 امنیت/حریم | `BLOCKED (independent review)` | دو یافتهٔ مالکیتی با تست red→green رفع شد و CI secret-scan سبز است؛ اما بازبینی مستقل/نفوذی انجام نشده و اسکن history به تغییرات آینده تعمیم ندارد. |
 | Q6 بار/کرش | `N/A برای inventory صرف؛ آتی UNKNOWN` | در این snapshot هیچ بار یا failure injection اجرا نشد؛ baseline پیکربندی/ظرفیت تولید را نمی‌سنجد. |
 | Q7 حذف/refactor | `PASS (no product files changed)` | در inventory هیچ کد یا فایل قبلی حذف/بازنویسی نشد. |
 | Q8 اجرا/build | `PARTIAL` | Backend/Studio محلی و client CI اجرا شدند؛ Android دستگاه/release و همهٔ محیط‌های داده هدف آزموده نشدند. |
@@ -134,4 +186,4 @@ REA در این برش برای پیمایش/قرارداد واقعاً است�
 - مانع اصلی ادامهٔ توالی: نبود میزبان واقعی ECC-subagent/QA مستقل؛ `rea doctor` unhealthy برای provider/native analysis؛ Flutter/Android/device محلی غایب. روی loopهای نیازمند آن‌ها `BLOCKED/UNKNOWN` می‌مانند، نه PASS.
 - برای QF-00 می‌توان کار مستقل inventory و mapping code/tests را با ابزارهای محلی ادامه داد؛ گزارش این نوبت **snapshot اولیه** است، نه closeout نهایی. inventory دقیق هر action/role/API/DB/output، تست منفی مستقیم authorization، و gapهای API-to-client ادامهٔ لازم‌اند.
 - هیچ dependency محصولی، schema، behavior، DB محلی، branch دیگر، main، release، deployment، payment یا production تغییر نکرده است. ابزارهای محلی جدید در مسیرهای ignored باقی می‌مانند.
-- نزدیک‌ترین اقدام بعدی: تکمیل ماتریس actionها با routeهای Studio/Flutter و مراجع API/test، بررسی مستقیم policy/ownership برای دامنه‌های اصلی و update کردن همین گزارش با status؛ سپس reviewer مستقل در صورت فعال‌شدن capability میزبان. پس از checkpoint تأییدشده، QF-01 فقط وقتی QF-00 و گیت‌هایش بسته‌اند.
+- نزدیک‌ترین اقدام بعدی: نگاشت سطح **interaction** — هر دکمه/فرم/menu در صفحات Studio و مسیرهای Flutter با action، نقش، فراخوانی API، جدول DB و تست مربوط — روی همین ماتریس route-level سوار شود؛ هر action بدون API/test به‌عنوان gap ثبت و در صورت امکان با تست red→green بسته شود. سپس دستهٔ کادر (coach/reception) و admin در همان قالب بازبینی شود (این برش عمدتاً `member` را پوشش داد). reviewer مستقل فقط با capability میزبان ممکن است؛ تا آن زمان Q5 `BLOCKED` می‌ماند و QF-01 آغاز نمی‌شود.

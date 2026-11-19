@@ -43,7 +43,11 @@ def test_routes_artifact_is_fresh() -> None:
     assert isinstance(stored_operations, list), (
         "api/routes.json باید عملیات method/path را هم نگه دارد — export_routes.py را اجرا کنید"
     )
-    assert stored_operations == expected_operations, (
+    declaration_fields = ("method", "path", "operationId", "tags")
+    stored_declarations = [
+        {field: item.get(field) for field in declaration_fields} for item in stored_operations
+    ]
+    assert stored_declarations == expected_operations, (
         "عملیات API در api/routes.json کهنه یا به‌ترتیب ناپایدارند — export_routes.py را اجرا کنید"
     )
     operation_keys = [(item["method"], item["path"]) for item in stored_operations]

@@ -48,8 +48,11 @@ def create_payment(payload: PaymentCreate, db: DbSession, user: CurrentUser):
     response_model=PaymentStartOut,
     summary="آغاز پرداخت درگاه (authority + redirect) — Q6",
 )
-def start_payment(payment_id: int, payload: PaymentStartIn, db: DbSession):
-    return service.start_payment(db, payment_id, payload.callback_url)
+def start_payment(payment_id: int, payload: PaymentStartIn, db: DbSession, user: CurrentUser):
+    # QF-00 — policy این مسیر را برای `member` باز می‌کند؛ پس مالکیت تراکنش
+    # باید همین‌جا به service داده شود. پیش‌تر هیچ‌کس مالکیت را نمی‌سنجید و
+    # هر عضو می‌توانست با ID تراکنش دیگری نشست درگاه بسازد.
+    return service.start_payment(db, payment_id, payload.callback_url, user=user)
 
 
 @router.post(
