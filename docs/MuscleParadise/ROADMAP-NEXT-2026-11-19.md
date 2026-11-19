@@ -24,7 +24,7 @@
 | کلاینت | ۲۸ فایل تست · `flutter analyze` و `flutter test` در CI پین‌شده |
 | API | ۱۲۱ مسیر / ۱۳۷ operation با رکورد guard و roles در `mp-app/backend/api/routes.json` |
 | CI | ۸ job: secret-scan، docs، backend، studio، client-flutter، client-pinned، live-contract، e2e-api |
-| کنترل دست‌ساز UI | صفر در `src/` استودیو (بودجهٔ ratchet خالی) |
+| کنترل دست‌ساز UI | صفر برای select/checkbox/radio/dialog؛ ورودی خام فقط در بدهی ثبت‌شدهٔ ۱۲ فایل |
 
 ## ۳. مسیر یک میکرو‌لوپ: هر ایستگاه را چه چیزی حمل می‌کند
 
@@ -75,10 +75,15 @@ Flutter وارد نمی‌شود تا دسترسی برگردد یا mirror تص
 هر فاز یک یا چند میکرو‌لوپ است؛ هر لوپ همان چرخهٔ چهارایستگاهی بالا را طی می‌کند و
 بدون CI سبز روی همان SHA بسته نمی‌شود.
 
-### فاز ۰ — بستن باقی‌ماندهٔ Q11 (۱ لوپ)
-- ۱۹ `<input>` خام در `mp-app/studio/src/pages/Shop.tsx` → `Form` + `Input` + `InputNumber` antd.
-- تست قرمز اول در `mp-app/studio/tests/shopPage.test.tsx`؛ بودجهٔ `tests/uiControlBudget.json` خالی می‌ماند.
-- پذیرش: صفر ورودی خام، shopPage سبز، build بدون هشدار.
+### فاز ۰ — بستن باقی‌ماندهٔ Q11 ✅ انجام شد (۲۰۲۶-۱۱-۱۹)
+- [x] چهارده `<input>` خام در `mp-app/studio/src/pages/Shop.tsx` → `Input` و `InputNumber` با `stringMode`.
+- [x] گیت Q11 دو الگوی تازه گرفت: ورودی خام و textarea خام؛ تست اول قرمز شد.
+- [x] بدهی دوازده فایل دیگر در `tests/uiControlBudget.json` ثبت شد؛ فایل تازه سهمیه ندارد.
+- [x] `required` مرورگر با گارد فارسی در handler جایگزین شد؛ پیام خطا در توست نمایش داده می‌شود.
+- شاهد: `vitest` ۲۳۴ قبول / ۹ رد‌شده، `tsc -b` پاک، `vite build` بدون هشدار، صفر ورودی خام در Shop.
+
+نکتهٔ اجرایی: `InputNumber` بدون `required` است؛ پس اعتبارسنجی خالی‌بودن به handler منتقل شد
+و آن گارد در همان فایل تست می‌شود، نه در CSS یا قواعد نامرئی.
 
 ### فاز ۱ — بستن گیت QF-00: نقشهٔ سطح تعامل (۱–۲ لوپ)
 - برای هر صفحهٔ استودیو (۱۲ صفحه) و هر مسیر کلاینت: فهرست دکمه/فرم/منو با role، فراخوانی API از `api/routes.json`، جدول DB، تست موجود.

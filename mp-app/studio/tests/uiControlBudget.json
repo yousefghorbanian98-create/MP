@@ -1,1 +1,39 @@
-{}
+{
+  "src/components/AdaptiveNutritionPanel.tsx": {
+    "input": 1
+  },
+  "src/components/AutoregPanel.tsx": {
+    "input": 4
+  },
+  "src/components/ExerciseLibrary.tsx": {
+    "input": 1
+  },
+  "src/components/FoodLibrary.tsx": {
+    "input": 1
+  },
+  "src/components/PaymentPanel.tsx": {
+    "input": 3
+  },
+  "src/components/PhoneChangeDialog.tsx": {
+    "input": 2
+  },
+  "src/components/SegmentalPanel.tsx": {
+    "input": 1
+  },
+  "src/components/TopBar.tsx": {
+    "input": 1
+  },
+  "src/pages/Chat.tsx": {
+    "input": 1,
+    "textarea": 1
+  },
+  "src/pages/Finance.tsx": {
+    "input": 2
+  },
+  "src/pages/Login.tsx": {
+    "input": 2
+  },
+  "src/pages/Nutrition.tsx": {
+    "input": 2
+  }
+}
