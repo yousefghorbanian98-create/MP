@@ -249,3 +249,8 @@ Muscle Paradise نرم‌افزار اختصاصی است. مشاهدهٔ عمو
 </details>
 
 <p align="center"><sub>Designed for stronger training, clearer coaching, and calmer gym operations. 🟢</sub></p>
+
+
+## 🧩 ارزش‌های در حال بررسی برای عضویت و تمرین
+
+[برنامهٔ برش‌های ارزش‌ها و نقش‌ها](docs/MuscleParadise/PLAN-OSS-VALUE-MICROLOOPS-2026-11-18.md) · [گزارش REA و RepoWise](docs/MuscleParadise/REPORT-OSS-VALUE-DEEP-DIVE-2026-11-18.md) · [نقشهٔ هدف جریان‌ها](docs/MuscleParadise/architecture/oss-value-flows.md). این موارد **برنامه‌ریزی‌شده و آزمایش‌نشده‌اند**؛ هیچ کد، داده یا دارایی تازه‌ای از نامزدها وارد محصول نشده است.
