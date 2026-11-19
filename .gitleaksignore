@@ -15,3 +15,6 @@ f5b687a18e8c6183ae521673762315e12962bad4:mp-app/backend/tests/regression/test_ap
 # rule, or global allowlist is implied. Recheck before any policy/history rewrite.
 c6f29449e8a55e0ed1204847357313ca0dd7a9cb:mp-app/client/android/keystore/keystore.properties:generic-api-key:2
 c6f29449e8a55e0ed1204847357313ca0dd7a9cb:mp-app/client/android/keystore/keystore.properties:generic-api-key:4
+
+# Generated REA evidence/fingerprint metadata (not a credential); exact CI fingerprint.
+6f236a87c5bd67a8dd498507db4dd75a16fd1f00:docs/MuscleParadise/REPORT-QF-00-BASELINE-2026-11-19.md:generic-api-key:81
