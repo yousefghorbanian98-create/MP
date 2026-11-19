@@ -2,6 +2,15 @@
 
 > این فایل **خلاصهٔ جاری برای ادامهٔ کار** است، نه آرشیو گفتگو و نه منبع نهایی وضعیت محصول. پیش از فشرده‌سازی context یا پایان هر کار معنادار، همین snapshot را جایگزین/به‌روز کن؛ تاریخچه را با انباشت transcript طولانی نکن.
 
+## snapshot جاری — نشست ۲۰۲۶-۱۱-۱۹
+
+- **شاخه/SHA آغاز:** `arena/a72fbc61-mp` / `28eea71776793098c05c6d3100ab69bc543c98ba`؛ workspace در شروع clean و SHA برابر `origin/main` بود. remote branch مختص این نشست هنوز ایجاد نشده بود. PRهای #3/#4/#5 در GitHub ادغام شده‌اند؛ PR4 payment lookup/QR gate و PR5 README architecture SVG در source حاضرند.
+- **CI baseline همان SHA:** [run 44541693998](https://github.com/yousefghorbanian98-create/MP/actions/runs/44541693998) سبز، ۸ job شامل backend, studio, client, client-pinned/Android debug, docs, live-contract, e2e-api و secret-scan.
+- **آزمون محلی baseline:** Backend **948 passed / 2 skipped**, coverage **82.95%**؛ Studio **225 passed / 9 skipped** و build موفق؛ Ruff/format موفق. Bandit محلی ۴ هشدار heuristic کم‌اهمیت داد و exit 1؛ `npm audit` چهار advisory (۳ moderate/۱ high؛ fix پیشنهادی major) دارد و خودکار اصلاح نشد. Flutter/Dart/Java/Android SDK/device در PATH نیستند؛ CI همان SHA Flutter و Android debug را سنجیده است.
+- **ابزار:** REA `6.9.0` واقعاً با Node portable `24.22.3` اجرا شد: OpenAPI محلی ۱۳۷ operation و تحلیل static نُه فایل Studio؛ تحلیل جزئی است. `rea doctor` unhealthy است (engine/provider و skill identity). ECC pinned SHA `d2ef2680594f9a17526a6e1a2e18b3d242c5d17b` آماده است، ولی این میزبان subagent/child واقعی ندارد؛ QA مستقل انجام نشده. RepoWise برای inventory اولیه لازم نبود و نصب نشد؛ کد به مدل بیرونی ارسال نشد.
+- **برش جاری:** QF-00 آغاز شده؛ علاوه بر inventory API/UI/DB و تفاوت هدف/واقعیت پرداخت، `mp-app/backend/scripts/export_routes.py` و `api/routes.json` به inventory ۱۳۷ operation ارتقا یافتند. تست freshness ابتدا fail و پس از تغییر pass شد؛ full Backend **948/2 skipped**, Ruff/format و Studio API-coverage **4 passed** سبزند. جزئیات/حدود در [گزارش baseline QF-00](REPORT-QF-00-BASELINE-2026-11-19.md). وضعیت همچنان `IN PROGRESS / GATE BLOCKED`: فهرست تمام interactionها و نگاشت action→role→UI/API/DB/test کامل نیست؛ QA مستقل و checkpoint/CI هم‌شاخه هنوز بسته نشده‌اند. QF-01 شروع نشده است.
+- **اقدام بعدی دقیق:** از گزارش QF-00 mapping هر action/role/output را به منبع، route و test کامل کن؛ بررسی مستقیم permission/ownership و exceptionها را ثبت کن؛ پس از به‌روزرسانی گزارش و handoff، diff/secret-scan را بازبینی، commit و push را فقط روی `arena/a72fbc61-mp` انجام بده و CI همان SHA را بررسی کن. بدون حل گیت QF-00، QF-01 شروع نشود.
+
 ## System Atlas — snapshot جدید
 
 - برای README یک نمودار معماری SVG اختصاصی و قابل‌ویرایش و [گراف متنی همراه و شواهد](architecture/system-atlas.md) اضافه شد. این نقشه مفهومی است؛ مسیرهای ناقص/مشروط و نیازمند بررسی با خط‌چین نشان داده شده‌اند و اثبات E2E یا release نیستند.

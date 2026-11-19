@@ -4,6 +4,16 @@
 
 **راهنمای سریع:** ابتدا [پیش‌نیازها و وضعیت جدید انتقال](BUILDER-START-AND-REPOWISE.md) و [هندآف کوتاه جاری](SESSION_HANDOFF.md) را بخوان؛ سپس محدودهٔ محصول در §۳، چرخهٔ اجرا در §۷ و متن آمادهٔ نشست تازه در §۱۰ را استفاده کن. جزئیات SHA، اختلاف شاخه، CI، نصب و RepoWise در بخش‌های زیر **snapshot تاریخی** هستند و نباید به‌جای وضعیت جدید یا بررسی Git/CI همان نشست استفاده شوند. اختلاف شاخهٔ گزارش‌شدهٔ §۱ در checkpoint بعدی بدون force حل شد، اما تغییرات خصوصی و raw همچنان منتقل نشده‌اند؛ مستندات بررسی‌شده در شاخهٔ انتقال ثبت می‌شوند، نه الزاماً `main`. [راهنمای ایجنت](../../AGENTS.md) مکمل این سند است.
 
+## Snapshot جاری نشست ۲۰۲۶-۱۱-۱۹ — آغاز QF-00
+
+> این قسمت وضعیت فعلی همین نشست را ثبت می‌کند و بر snapshotهای تاریخی پایین‌تر مقدم است.
+
+- شاخهٔ مجاز `arena/a72fbc61-mp` از SHA `28eea71776793098c05c6d3100ab69bc543c98ba` آغاز شد؛ workspace در ابتدای نشست clean بود و همان SHA با `origin/main` برابر بود. PRهای ۳، ۴ و ۵ در GitHub ادغام‌شده‌اند؛ checkout شامل اصلاح lookup پرداخت و گیت QR از PR ۴ و SVG/نقشهٔ README از PR ۵ است.
+- CI همان SHA در [run 44541693998](https://github.com/yousefghorbanian98-create/MP/actions/runs/44541693998) با هر ۸ job موفق بود. آزمون محلی baseline: Backend 948 passed/2 skipped، coverage 82.95%; Studio 225 passed/9 skipped + build؛ Ruff و format سبز. Bandit محلی exit 1 با چهار heuristic کم‌اهمیت؛ npm audit چهار advisory (۳ moderate/۱ high) دارد. Flutter/Dart/Java/Android SDK محلی و دستگاه غایب‌اند؛ Flutter و Android debug compile روی CI همان SHA سبزند.
+- REA 6.9.0 با Node portable 24.22.3 نصب و واقعاً برای OpenAPI محلی (137 operation) و ۹ فایل منتخب Studio اجرا شد؛ تحلیل Studio partial است. `rea doctor` unhealthy (engine/provider/skill identity) است. ECC روی pin `d2ef2680594f9a17526a6e1a2e18b3d242c5d17b` checkout شد؛ Agent Mode امکان اجرای واقعی child-agent ندارد، پس QA مستقل انجام نشده. RepoWise لازم نبود و اجرا نشد؛ هیچ مدل خارجی دریافت‌کنندهٔ کد نبود.
+- [گزارش QF-00](REPORT-QF-00-BASELINE-2026-11-19.md) وضعیت کد، قرارداد، ابزار، آزمون، پرداخت و گیت‌های Q0–Q10 را با شاهد و محدودیت‌ها نگه می‌دارد. QF-00 `IN PROGRESS / GATE BLOCKED` است: علاوه بر inventory اولیه، `mp-app/backend/scripts/export_routes.py` و `api/routes.json` اکنون ۱۳۷ method/path را ثبت می‌کنند و تست freshness برای آن red→green شد؛ full backend و Studio API-coverage هم سبز شدند. تمام interactionها و مجوز/مالکیت هنوز نگاشت نشده‌اند، QA مستقل و checkpoint/CI روی commit جدید باز است. QF-01 آغاز نشده.
+- اقدام بعدی دقیق: تکمیل mapping هر action/role/output به مسیر UI/API/DB/test و بررسی مجوز مستقیم/مالکیت از source؛ سپس بازبینی تغییرات این نشست، scan حساسیت، commit/push فقط به `arena/a72fbc61-mp` و بررسی CI همان SHA. اگر میزبان همچنان subagent مستقل ندهد، gate استقلال صریحاً BLOCKED می‌ماند.
+
 ## ۱. هشدار حیاتی پیش از شروع نشست جدید
 
 این سند و برخی اسناد مرتبط در زمان تهیه **تغییر محلی و/یا untracked** هستند؛ موجود بودن آن‌ها در workspace به معنی موجود بودنشان در GitHub یا clone جدید نیست. فایل‌های ignored، home و ابزارهای نصب‌شده نیز بین sandboxها تضمین بقا ندارند. قبل از بستن نشست فعلی، نسخهٔ پشتیبان امن یا checkpoint تأییدشده از تغییرات لازم داشته باش؛ secret، فایل امضا، تنظیمات محلی حساس، دادهٔ واقعی و cache ابزار را همراه اسناد عمومی منتشر نکن. قابلیت‌های محیط Arena برای حفظ workspace/انتقال بین نشست‌ها را بررسی کن؛ رفتار رابط و نام دکمه‌ها ممکن است تغییر کند و در این سند تضمین نشده است.
