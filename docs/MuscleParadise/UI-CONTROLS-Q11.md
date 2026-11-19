@@ -98,3 +98,10 @@ npm run build                                                      # بدون ه
 
 اثبات جلالی: `۲۰۲۶-۱۱-۱۹` در فیلد به‌صورت `۱۴۰۵/۰۸/۲۸` دیده می‌شود و رفت‌وبرگشت مقدار
 بدون جابه‌جایی روز است (`mp-app/studio/tests/jalaliDate.test.tsx`).
+
+CI: commit `781219a` + اصلاح `19fd9e6`، اجرای `44600653345` — **۸ از ۸** سبز
+(studio, backend, client-flutter, client pinned SDK, e2e-api, live-contract, secret-scan, docs).
+
+دو باگ واقعی که همین کار آشکار کرد و در `19fd9e6` بسته شد: `fa(undefined)` در
+`lib/useApi.ts` (عددِ نبوده «—» می‌شود، نه کرش/صفر جعلی) و فرض «همیشه آرایه» در
+`FoodLibrary.tsx`.
