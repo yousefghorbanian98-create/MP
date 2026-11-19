@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   createPayment,
   startPayment,
@@ -39,8 +39,12 @@ export function PaymentPanel() {
   const [error, setError] = useState<string | null>(null);
   const [receipt, setReceipt] = useState<Receipt | null>(null);
   const [busy, setBusy] = useState(false);
+  const busyRef = useRef(false);
 
   async function call<T>(fn: () => Promise<T>): Promise<T | null> {
+    // Guard synchronously too: two clicks can arrive before React renders `busy`.
+    if (busyRef.current) return null;
+    busyRef.current = true;
     setBusy(true);
     setError(null);
     try {
@@ -49,9 +53,16 @@ export function PaymentPanel() {
       setError(e instanceof Error ? e.message : "خطای ناشناخته");
       return null;
     } finally {
+      busyRef.current = false;
       setBusy(false);
     }
   }
+
+  const clearSelection = () => {
+    setTx(null);
+    setStarted(null);
+    setReceipt(null);
+  };
 
   const create = () =>
     call(async () => {
@@ -99,6 +110,8 @@ export function PaymentPanel() {
 
   const lookup = () =>
     call(async () => {
+      // An unsuccessful lookup must never leave a previously selected refund target.
+      clearSelection();
       const id = Number(lookupId);
       if (!Number.isSafeInteger(id) || id <= 0) throw new Error("شناسهٔ پرداخت نامعتبر است");
       const payment = (await listPayments()).find((p) => p.id === id);
@@ -118,9 +131,7 @@ export function PaymentPanel() {
     });
 
   const reset = () => {
-    setTx(null);
-    setStarted(null);
-    setReceipt(null);
+    clearSelection();
     setError(null);
   };
 
@@ -175,7 +186,11 @@ export function PaymentPanel() {
 
       <div className="flex items-end gap-2 text-xs">
         <label>شناسهٔ پرداخت موجود
-          <input value={lookupId} onChange={(e) => setLookupId(e.target.value)} inputMode="numeric"
+          <input value={lookupId} onChange={(e) => {
+            setLookupId(e.target.value);
+            clearSelection();
+            setError(null);
+          }} inputMode="numeric" disabled={busy}
             className="focus-ring mt-1 block w-28 rounded-lg bg-surface/70 px-3 py-2 text-sm" />
         </label>
         <button onClick={() => void lookup()} disabled={busy} className="btn-primary px-4 py-2">
@@ -266,7 +281,7 @@ export function PaymentPanel() {
             </div>
           )}
 
-          <button onClick={reset} className="text-ink-dim underline">
+          <button onClick={reset} disabled={busy} className="text-ink-dim underline">
             پاک کردن
           </button>
         </div>
