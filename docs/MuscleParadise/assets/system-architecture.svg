@@ -1,0 +1,148 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1040" viewBox="0 0 1440 1040" role="img" aria-labelledby="title desc">
+  <title id="title">Muscle Paradise — system architecture</title>
+  <desc id="desc">A conceptual architecture map: member app, staff studio and an incomplete kiosk connect to a versioned FastAPI modular monolith. Domain groups cover access, coaching, nutrition, check-in, commerce and shared services. The backend uses data storage and cache; scheduled jobs and external integrations depend on configuration or verification. Arrows are not evidence of end-to-end operation.</desc>
+  <defs>
+    <linearGradient id="canvas" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#111d25"/><stop offset="0.55" stop-color="#0a1017"/><stop offset="1" stop-color="#091a17"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#5cf0ad"/><stop offset="1" stop-color="#00b86a"/></linearGradient>
+    <radialGradient id="glow" cx="65%" cy="20%" r="70%"><stop stop-color="#00b86a" stop-opacity=".12"/><stop offset="1" stop-color="#00b86a" stop-opacity="0"/></radialGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#9bb5bf" stroke-opacity=".035"/></pattern>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#78cda9"/></marker>
+    <marker id="arrow-muted" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#879c9d"/></marker>
+  </defs>
+  <rect width="1440" height="1040" rx="30" fill="url(#canvas)"/>
+  <rect width="1440" height="1040" rx="30" fill="url(#grid)"/>
+  <rect width="1440" height="1040" rx="30" fill="url(#glow)"/>
+  <rect x="1" y="1" width="1438" height="1038" rx="29" fill="none" stroke="#34463f"/>
+
+  <g font-family="Inter, 'Segoe UI', Arial, sans-serif">
+    <!-- Editorial header -->
+    <rect x="54" y="52" width="36" height="4" rx="2" fill="url(#accent)"/>
+    <text x="104" y="57" fill="#73e9b3" font-size="14" font-weight="700" letter-spacing="3">MUSCLE PARADISE / SYSTEM ATLAS</text>
+    <text x="54" y="112" fill="#f4f9f7" font-size="43" font-weight="700" letter-spacing="-1">One platform. Connected experiences.</text>
+    <text x="55" y="148" fill="#9bb0ae" font-size="20">A conceptual map of the product, its domain boundaries and supporting services.</text>
+    <rect x="1190" y="45" width="196" height="40" rx="20" fill="#133028" stroke="#29624a"/>
+    <circle cx="1212" cy="65" r="4" fill="#67e9a9"/>
+    <text x="1225" y="70" fill="#bcf2d4" font-size="13" font-weight="700" letter-spacing="1.4">ARCHITECTURE</text>
+    <path d="M54 183H1386" stroke="#2a3c3a"/>
+
+    <!-- Lane labels -->
+    <text x="54" y="228" fill="#70e0a9" font-size="14" font-weight="700" letter-spacing="2">01 / EXPERIENCES</text>
+    <text x="402" y="228" fill="#70e0a9" font-size="14" font-weight="700" letter-spacing="2">02 / MODULAR CORE</text>
+    <text x="1096" y="228" fill="#e5cc7d" font-size="14" font-weight="700" letter-spacing="2">03 / SUPPORTING SERVICES</text>
+
+    <!-- Lines are deliberately behind cards; they describe conceptual use, not verified E2E paths. -->
+    <g fill="none" stroke="#78cda9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M344 326H370V338H402" marker-end="url(#arrow)"/>
+      <path d="M344 478H370V338"/>
+      <path d="M344 630H370V478" stroke="#879c9d" stroke-dasharray="6 7"/>
+      <path d="M1040 338H1068V326H1096" marker-end="url(#arrow)"/>
+      <path d="M1068 338V462H1096" marker-end="url(#arrow)"/>
+      <path d="M1068 462V598H1096" stroke="#879c9d" stroke-dasharray="6 7" marker-end="url(#arrow-muted)"/>
+      <path d="M1068 598V734H1096" stroke="#879c9d" stroke-dasharray="6 7" marker-end="url(#arrow-muted)"/>
+      <path d="M720 402V434" marker-end="url(#arrow)"/>
+    </g>
+    <circle cx="370" cy="338" r="4" fill="#78cda9"/><circle cx="370" cy="478" r="4" fill="#78cda9"/>
+    <circle cx="1068" cy="338" r="4" fill="#78cda9"/><circle cx="1068" cy="462" r="4" fill="#78cda9"/>
+
+    <!-- Experience cards -->
+    <g>
+      <rect x="54" y="268" width="290" height="116" rx="18" fill="#11241f" stroke="#31594b"/>
+      <rect x="72" y="288" width="42" height="42" rx="12" fill="#183e30"/>
+      <rect x="86" y="296" width="14" height="25" rx="3" fill="none" stroke="#79e8b3" stroke-width="2"/><path d="M91 317H95" stroke="#79e8b3" stroke-width="2" stroke-linecap="round"/>
+      <text x="127" y="307" fill="#f0faf5" font-size="20" font-weight="700">Member app</text>
+      <text x="127" y="331" fill="#a4bdb3" font-size="15">Flutter · Riverpod</text>
+      <text x="73" y="364" fill="#89a49a" font-size="15">Training  /  progress  /  membership</text>
+
+      <rect x="54" y="420" width="290" height="116" rx="18" fill="#12232a" stroke="#36535d"/>
+      <rect x="72" y="440" width="42" height="42" rx="12" fill="#1d3b44"/>
+      <rect x="82" y="450" width="22" height="16" rx="2" fill="none" stroke="#9bcfdb" stroke-width="2"/><path d="M93 467V472M87 473H99" stroke="#9bcfdb" stroke-width="2" stroke-linecap="round"/>
+      <text x="127" y="459" fill="#f0f8fa" font-size="20" font-weight="700">MP Studio</text>
+      <text x="127" y="483" fill="#a6bec5" font-size="15">React · Vite · Electron</text>
+      <text x="73" y="516" fill="#8fa9ad" font-size="15">Coaches  /  staff  /  operations</text>
+
+      <rect x="54" y="572" width="290" height="116" rx="18" fill="#1a2225" stroke="#61726e" stroke-dasharray="7 6"/>
+      <rect x="72" y="592" width="42" height="42" rx="12" fill="#2c3938"/>
+      <path d="M83 602H103V623H83Z M88 607H98M88 612H98M90 618H96" fill="none" stroke="#becbc3" stroke-width="2" stroke-linecap="round"/>
+      <text x="127" y="611" fill="#e6eeea" font-size="20" font-weight="700">Gym kiosk</text>
+      <text x="127" y="635" fill="#a6b5ae" font-size="15">Shared client mode</text>
+      <text x="73" y="668" fill="#a3b3ab" font-size="15">Check-in  /  E2E incomplete</text>
+    </g>
+
+    <!-- FastAPI boundary -->
+    <rect x="402" y="268" width="638" height="134" rx="20" fill="#13352a" stroke="#3b8768" stroke-width="1.5"/>
+    <rect x="424" y="291" width="48" height="48" rx="13" fill="#205c42"/>
+    <path d="M435 306L445 315L435 324M450 324H461" fill="none" stroke="#8af6be" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="489" y="311" fill="#f2fff7" font-size="24" font-weight="700">MP API</text>
+    <text x="489" y="337" fill="#b0d8c0" font-size="16">FastAPI  ·  REST / JSON  ·  /api/v1</text>
+    <rect x="867" y="290" width="148" height="30" rx="15" fill="#204a37" stroke="#427858"/>
+    <text x="941" y="310" text-anchor="middle" fill="#baf0ce" font-size="12" font-weight="700" letter-spacing="1">MODULAR MONOLITH</text>
+    <path d="M424 356H1017" stroke="#34644d"/>
+    <text x="425" y="381" fill="#a8c8b6" font-size="15">Versioned routes  /  authentication  /  domain services</text>
+
+    <!-- Backend domain cards -->
+    <rect x="402" y="434" width="638" height="398" rx="20" fill="#101d21" stroke="#344c49"/>
+    <text x="425" y="472" fill="#e6f4ee" font-size="17" font-weight="700">Domain modules</text>
+    <text x="1016" y="472" text-anchor="end" fill="#8ba8a0" font-size="13" letter-spacing="1">BACKEND / PYTHON</text>
+    <path d="M425 488H1016" stroke="#2b4140"/>
+    <g>
+      <rect x="424" y="507" width="286" height="88" rx="12" fill="#172b28" stroke="#29493e"/>
+      <circle cx="445" cy="531" r="4" fill="#6be1a7"/><text x="458" y="536" fill="#ebf7f0" font-size="17" font-weight="700">Access &amp; membership</text>
+      <text x="445" y="566" fill="#9eb5aa" font-size="14">auth · membership</text>
+      <rect x="732" y="507" width="286" height="88" rx="12" fill="#172b28" stroke="#29493e"/>
+      <circle cx="753" cy="531" r="4" fill="#6be1a7"/><text x="766" y="536" fill="#ebf7f0" font-size="17" font-weight="700">Coaching &amp; assessment</text>
+      <text x="753" y="566" fill="#9eb5aa" font-size="14">assessment · programs</text>
+      <rect x="424" y="609" width="286" height="88" rx="12" fill="#172b28" stroke="#29493e"/>
+      <circle cx="445" cy="633" r="4" fill="#6be1a7"/><text x="458" y="638" fill="#ebf7f0" font-size="17" font-weight="700">Nutrition &amp; library</text>
+      <text x="445" y="668" fill="#9eb5aa" font-size="14">nutrition · content · exercises</text>
+      <rect x="732" y="609" width="286" height="88" rx="12" fill="#172b28" stroke="#29493e"/>
+      <circle cx="753" cy="633" r="4" fill="#6be1a7"/><text x="766" y="638" fill="#ebf7f0" font-size="17" font-weight="700">Attendance &amp; check-in</text>
+      <text x="753" y="668" fill="#9eb5aa" font-size="14">face_id · classes</text>
+      <rect x="424" y="711" width="286" height="88" rx="12" fill="#172b28" stroke="#29493e"/>
+      <circle cx="445" cy="735" r="4" fill="#e9ce75"/><text x="458" y="740" fill="#ebf7f0" font-size="17" font-weight="700">Commerce</text>
+      <text x="445" y="770" fill="#9eb5aa" font-size="14">payments · shop</text>
+      <rect x="732" y="711" width="286" height="88" rx="12" fill="#172b28" stroke="#29493e"/>
+      <circle cx="753" cy="735" r="4" fill="#e9ce75"/><text x="766" y="740" fill="#ebf7f0" font-size="17" font-weight="700">Platform services</text>
+      <text x="753" y="770" fill="#9eb5aa" font-size="14">ai_engine · notification · admin</text>
+    </g>
+
+    <!-- Supporting services -->
+    <g>
+      <rect x="1096" y="268" width="290" height="116" rx="18" fill="#24251c" stroke="#625b3a"/>
+      <rect x="1115" y="288" width="42" height="42" rx="12" fill="#46412a"/>
+      <ellipse cx="1136" cy="302" rx="11" ry="4" fill="none" stroke="#ead48a" stroke-width="2"/><path d="M1125 302V317C1125 322 1147 322 1147 317V302M1125 310C1125 315 1147 315 1147 310" fill="none" stroke="#ead48a" stroke-width="2"/>
+      <text x="1170" y="307" fill="#faf6e6" font-size="20" font-weight="700">Data</text>
+      <text x="1170" y="331" fill="#d2c79e" font-size="15">SQLAlchemy · Alembic</text>
+      <text x="1116" y="364" fill="#bdaf83" font-size="15">SQLite default  /  migrations</text>
+      <rect x="1096" y="404" width="290" height="116" rx="18" fill="#20231e" stroke="#565c42"/>
+      <rect x="1115" y="424" width="42" height="42" rx="12" fill="#3b432e"/>
+      <path d="M1127 437H1145V453H1127Z M1131 441H1141M1131 447H1141" fill="none" stroke="#d6e5a5" stroke-width="2" stroke-linecap="round"/>
+      <text x="1170" y="443" fill="#f4f7ec" font-size="20" font-weight="700">Cache</text>
+      <text x="1170" y="467" fill="#c1cdb0" font-size="15">Valkey / Redis protocol</text>
+      <text x="1116" y="500" fill="#adb99c" font-size="15">In-memory fallback</text>
+      <rect x="1096" y="540" width="290" height="116" rx="18" fill="#202420" stroke="#6e7966" stroke-dasharray="7 6"/>
+      <rect x="1115" y="560" width="42" height="42" rx="12" fill="#384039"/>
+      <circle cx="1136" cy="581" r="10" fill="none" stroke="#c9d9bc" stroke-width="2"/><path d="M1136 574V581L1141 584" fill="none" stroke="#c9d9bc" stroke-width="2" stroke-linecap="round"/>
+      <text x="1170" y="579" fill="#f1f5ed" font-size="20" font-weight="700">Scheduled jobs</text>
+      <text x="1170" y="603" fill="#bfcbba" font-size="15">APScheduler definitions</text>
+      <text x="1116" y="636" fill="#abb9a8" font-size="15">Runtime startup to verify</text>
+      <rect x="1096" y="676" width="290" height="116" rx="18" fill="#202420" stroke="#6e7966" stroke-dasharray="7 6"/>
+      <rect x="1115" y="696" width="42" height="42" rx="12" fill="#384039"/>
+      <path d="M1129 712L1125 717L1129 722M1143 712L1147 717L1143 722M1139 707L1133 727" fill="none" stroke="#c9d9bc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="1170" y="715" fill="#f1f5ed" font-size="20" font-weight="700">Integrations</text>
+      <text x="1170" y="739" fill="#bfcbba" font-size="15">Payment · optional AI</text>
+      <text x="1116" y="772" fill="#abb9a8" font-size="15">Configuration / verification varies</text>
+    </g>
+
+    <!-- Legend and status guardrail -->
+    <path d="M54 878H1386" stroke="#2a3c3a"/>
+    <text x="54" y="916" fill="#daede2" font-size="15" font-weight="700" letter-spacing="1">HOW TO READ</text>
+    <path d="M220 911H266" stroke="#78cda9" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="280" y="916" fill="#b2c6bc" font-size="15">Conceptual connection</text>
+    <path d="M522 911H568" stroke="#879c9d" stroke-width="2" stroke-dasharray="6 6" marker-end="url(#arrow-muted)"/>
+    <text x="582" y="916" fill="#b2c6bc" font-size="15">Incomplete / conditional / to verify</text>
+    <text x="54" y="968" fill="#93a9a2" font-size="16">A system map, not proof of end-to-end operation or production readiness.</text>
+    <text x="1386" y="998" text-anchor="end" fill="#5e7770" font-size="12" font-weight="700" letter-spacing="2">MP  /  ARCHITECTURE</text>
+  </g>
+</svg>

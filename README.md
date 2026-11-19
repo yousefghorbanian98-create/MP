@@ -84,46 +84,23 @@ flowchart LR
 <a id="architecture"></a>
 ## 🏗️ معماری در یک نگاه
 
-بک‌اند به‌صورت **مونولیت ماژولار** سازمان‌دهی شده است؛ کلاینت‌ها با REST/JSON نسخه‌دار با آن صحبت می‌کنند. SQLite مسیر پیش‌فرض فعلی است؛ PostgreSQL، بکاپ قابل بازیابی و سرویس اعلان از اهداف بررسی‌نشدهٔ استقرارند. نمودار کلی زیر ساختار و اجزای موجود را نمایش می‌دهد، نه اثبات اتصال یا عملکرد همهٔ پیکان‌ها؛ [نقشهٔ هدف و وضعیت جریان‌ها](docs/MuscleParadise/architecture/cloud-finance-access.md) جزئیات را تفکیک می‌کند.
+بک‌اند به‌صورت **مونولیت ماژولار** سازمان‌دهی شده است؛ کلاینت‌ها با REST/JSON نسخه‌دار با آن صحبت می‌کنند. SQLite مسیر پیش‌فرض فعلی است؛ PostgreSQL، بکاپ قابل بازیابی و سرویس اعلان از اهداف بررسی‌نشدهٔ استقرارند. این نقشه نمای مفهومی ساختار و ارتباط‌هاست، نه اثبات عملکرد همهٔ مسیرها یا آمادگی انتشار؛ [نقشهٔ هدف و وضعیت جریان‌ها](docs/MuscleParadise/architecture/cloud-finance-access.md) جزئیات را تفکیک می‌کند.
 
-```mermaid
-flowchart LR
-    subgraph Clients[تجربه‌های کاربری]
-        MEMBER[اپ عضو<br/>Flutter]
-        STUDIO[MP Studio<br/>React · Vite · Electron]
-        KIOSK[حالت کیوسک<br/>در حال تکمیل]
-    end
+<div align="center">
+  <a href="docs/MuscleParadise/assets/system-architecture.svg"><img src="docs/MuscleParadise/assets/system-architecture.svg" alt="نقشهٔ معماری Muscle Paradise: اپ عضو، Studio و کیوسک در کنار API و ماژول‌های دامنه، پایگاه داده، کش، کارهای زمان‌بندی‌شده و اتصال‌های بیرونی" width="100%"></a>
+</div>
 
-    subgraph Core[هستهٔ پلتفرم]
-        API[FastAPI<br/>REST · /api/v1]
-        DOMAIN[ماژول‌های دامنه<br/>عضویت · ارزیابی · برنامه · تغذیه · فروشگاه]
-        RULES[موتور قواعد<br/>نتیجهٔ قابل پیگیری]
-        DB[(SQLAlchemy<br/>SQLite · Alembic)]
-        CACHE[(Valkey)]
-        JOBS[APScheduler<br/>کارهای زمان‌بندی‌شده]
-    end
+<p align="center"><sub>نمای مفهومی معماری · خطوط نقطه‌چین: ناقص، وابسته به تنظیمات یا نیازمند بررسی · برای تصویر با اندازهٔ اصلی روی آن بزنید</sub></p>
 
-    MEMBER --> API
-    STUDIO --> API
-    KIOSK -. مسیر مشترک .-> API
-    API --> DOMAIN
-    DOMAIN --> RULES
-    API --> DB
-    API --> CACHE
-    API -. شروع و تک‌اجرایی نیازمند اثبات .-> JOBS
-    RULES -. توضیح متنی اختیاری .-> LLM[Ollama محلی]
-    API -. مسیر پرداخت موجود و هدف متفاوت‌اند .-> PAY[پرداخت و کیف پول]
-    PAY -. روش انتشار اول: کارت‌به‌کارت و تأیید انسانی .-> BANK[تطبیق مستقل بانکی — هدف]
+| لایه | نقش در سیستم |
+|---|---|
+| **تجربه‌ها** | اپ عضو، Studio برای کادر باشگاه و مسیر کیوسک که اتصال انتها‌به‌انتهای آن هنوز کامل نشده است. |
+| **هسته** | API نسخه‌دار و ماژول‌های دسترسی، عضویت، برنامه، تغذیه، چک‌این، فروش و خدمات پلتفرم. |
+| **داده و خدمات** | SQLite پیش‌فرض و لایهٔ کش؛ وضعیت راه‌اندازی jobها و اتصال‌های بیرونی باید جداگانه تأیید شود. |
 
-    classDef client fill:#102a22,stroke:#00b86a,color:#f2fff8,stroke-width:2px
-    classDef api fill:#14222b,stroke:#78a9bd,color:#f3fbff,stroke-width:2px
-    classDef data fill:#2a2615,stroke:#d8b84d,color:#fff9df,stroke-width:2px
-    classDef planned fill:#252a30,stroke:#87939b,color:#edf1f3,stroke-dasharray:5 5
-    class MEMBER,STUDIO client
-    class KIOSK planned
-    class API,DOMAIN,RULES,JOBS api
-    class DB,CACHE data
-```
+**هدف پرداخت انتشار اول:** کارت‌به‌کارت با فیش و تطبیق مستقل انسانی با بانک است؛ مسیر کامل آن هنوز اثبات نشده و با مسیر پرداخت موجود یکسان نیست. [جزئیات جریان و وضعیت](docs/MuscleParadise/architecture/cloud-finance-access.md).
+
+[گراف متنی، راهنمای نمودار و مسیرهای کد](docs/MuscleParadise/architecture/system-atlas.md) · [معماری C4](docs/MuscleParadise/architecture/c4.md) · [نقشهٔ ماژول‌ها](docs/MuscleParadise/architecture/module-map.md)
 
 <a id="previews"></a>
 ## ✨ پیش‌نمایش رابط کاربری
