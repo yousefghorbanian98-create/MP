@@ -24,7 +24,9 @@ export function FoodLibrary() {
     setError(null);
     browseFoods(query, 100, undefined, ctrl.signal)
       .then((d) => {
-        if (alive) setRows(d);
+        // پاسخ سرور/استاب ممکن است شکل دیگری داشته باشد؛ آرایهٔ نامعتبر نباید
+        // کل صفحه را با «rows is not iterable» بترکاند.
+        if (alive) setRows(Array.isArray(d) ? d : []);
       })
       .catch((e: unknown) => {
         if (e instanceof DOMException && e.name === "AbortError") return;

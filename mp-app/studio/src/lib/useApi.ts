@@ -63,5 +63,13 @@ export function useApi<T>(
   return { data, loading, error, needsSession, reload };
 }
 
-/** فرمت اعداد فارسی — یک‌جا، تا هر صفحه جداگانه تکرارش نکند. */
-export const fa = (n: number): string => n.toLocaleString("fa-IR");
+/**
+ * فرمت اعداد فارسی — یک‌جا، تا هر صفحه جداگانه تکرارش نکند.
+ *
+ * `null`/`undefined` به «—» تبدیل می‌شود، نه به کرش و نه به صفر. دلیل: در
+ * پاسخ ناقص یا هنوز نیامده، «۰ ریال» یک عدد جعلی است؛ «—» صادقانه می‌گوید
+ * داده نداریم. این باگ در تست a11y دیده شد: صفحهٔ مالی قبل از رسیدن KPI
+ * با `n.toLocaleString` می‌ترکید (Unhandled error در Vitest).
+ */
+export const fa = (n: number | null | undefined): string =>
+  typeof n === "number" && Number.isFinite(n) ? n.toLocaleString("fa-IR") : "—";
