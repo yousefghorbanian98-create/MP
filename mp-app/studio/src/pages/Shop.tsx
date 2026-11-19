@@ -46,7 +46,11 @@ import {
 } from "../lib/api";
 
 import { roleFromToken } from "../lib/roleNav";
-import { Modal, Select } from "antd";
+
+/** InputNumber با stringMode مقدار رشته‌ای می‌دهد؛ stateها رشته‌ای می‌مانند. */
+const asText = (value: string | number | null | undefined): string =>
+  value === null || value === undefined ? "" : String(value);
+import { Input, InputNumber, Modal, Select } from "antd";
 
 const rial = (n: number) => `${fa(n)} ریال`;
 
@@ -177,10 +181,11 @@ export function Shop() {
       {!loading && tab === "store" && (
         <section className="space-y-4">
           <div className="flex flex-wrap gap-2">
-            <input
+            <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="جست‌وجوی محصول…"
+              aria-label="جست‌وجوی محصول"
               className="focus-ring w-56 rounded-xl bg-surface/70 px-3 py-2 text-sm"
             />
             <button
@@ -562,6 +567,10 @@ function OwnerConsole({
   const [cardNumber, setCardNumber] = useState("");
   const [cardHolder, setCardHolder] = useState("");
 
+  const need = (value: string, label: string) => {
+    if (!value.trim()) throw new Error(`${label} را پر کنید`);
+  };
+
   const run = async (fn: () => Promise<void>, msg: string) => {
     try {
       await fn();
@@ -580,6 +589,9 @@ function OwnerConsole({
           e.preventDefault();
           void run(async () => {
             if (!categoryId) throw new Error("ابتدا یک دسته بسازید");
+            need(title, "نام محصول");
+            need(sku, "SKU");
+            need(price, "قیمت");
             await createProduct({
               title,
               sku,
@@ -596,13 +608,13 @@ function OwnerConsole({
         }}
       >
         <h3 className="text-sm font-bold">محصول جدید (فقط مالک)</h3>
-        <input required value={title} onChange={(e) => setTitle(e.target.value)} placeholder="نام محصول" className="focus-ring w-full rounded-xl bg-surface/70 px-3 py-2 text-sm" />
-        <input required value={sku} onChange={(e) => setSku(e.target.value)} placeholder="SKU (یکتا)" className="focus-ring w-full rounded-xl bg-surface/70 px-3 py-2 text-sm" />
+        <Input required value={title} onChange={(e) => setTitle(e.target.value)} placeholder="نام محصول" aria-label="نام محصول" className="focus-ring w-full rounded-xl bg-surface/70 px-3 py-2 text-sm" />
+        <Input required value={sku} onChange={(e) => setSku(e.target.value)} placeholder="SKU (یکتا)" aria-label="SKU (یکتا)" className="focus-ring w-full rounded-xl bg-surface/70 px-3 py-2 text-sm" />
         <div className="grid grid-cols-2 gap-2">
-          <input required value={price} onChange={(e) => setPrice(e.target.value)} inputMode="numeric" placeholder="قیمت (ریال)" className="focus-ring rounded-xl bg-surface/70 px-3 py-2 text-sm" />
-          <input value={stock} onChange={(e) => setStock(e.target.value)} inputMode="numeric" placeholder="موجودی" className="focus-ring rounded-xl bg-surface/70 px-3 py-2 text-sm" />
+          <InputNumber stringMode value={price} onChange={(v) => setPrice(asText(v))} placeholder="قیمت (ریال)" aria-label="قیمت (ریال)" className="focus-ring rounded-xl bg-surface/70 px-3 py-2 text-sm" />
+          <InputNumber stringMode value={stock} onChange={(v) => setStock(asText(v))} placeholder="موجودی" aria-label="موجودی" className="focus-ring rounded-xl bg-surface/70 px-3 py-2 text-sm" />
         </div>
-        <input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="آدرس تصویر (مثلاً /static/shop/whey.jpg)" className="focus-ring w-full rounded-xl bg-surface/70 px-3 py-2 text-sm" />
+        <Input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="آدرس تصویر (مثلاً /static/shop/whey.jpg)" aria-label="آدرس تصویر (مثلاً /static/shop/whey.jpg)" className="focus-ring w-full rounded-xl bg-surface/70 px-3 py-2 text-sm" />
         {imageUrl && <img src={imageUrl} alt="پیش‌نمایش" className="h-28 w-full rounded-xl object-cover" />}
         <Select
           aria-label="دستهٔ محصول"
@@ -624,6 +636,9 @@ function OwnerConsole({
         onSubmit={(e) => {
           e.preventDefault();
           void run(async () => {
+            need(priceCode, "کد");
+            need(priceTitle, "عنوان");
+            need(priceValue, "مبلغ");
             await savePrice({
               category: priceCategory,
               code: priceCode,
@@ -649,10 +664,10 @@ function OwnerConsole({
           onChange={(value) => setPriceCategory(value as PriceRow["category"])}
         />
         <div className="grid grid-cols-2 gap-2">
-          <input required value={priceCode} onChange={(e) => setPriceCode(e.target.value)} placeholder="کد (gold-3m)" className="focus-ring rounded-xl bg-surface/70 px-3 py-2 text-sm" />
-          <input required value={priceValue} onChange={(e) => setPriceValue(e.target.value)} inputMode="numeric" placeholder="مبلغ (ریال)" className="focus-ring rounded-xl bg-surface/70 px-3 py-2 text-sm" />
+          <Input required value={priceCode} onChange={(e) => setPriceCode(e.target.value)} placeholder="کد (gold-3m)" aria-label="کد (gold-3m)" className="focus-ring rounded-xl bg-surface/70 px-3 py-2 text-sm" />
+          <InputNumber stringMode value={priceValue} onChange={(v) => setPriceValue(asText(v))} placeholder="مبلغ (ریال)" aria-label="مبلغ (ریال)" className="focus-ring rounded-xl bg-surface/70 px-3 py-2 text-sm" />
         </div>
-        <input required value={priceTitle} onChange={(e) => setPriceTitle(e.target.value)} placeholder="عنوان" className="focus-ring w-full rounded-xl bg-surface/70 px-3 py-2 text-sm" />
+        <Input required value={priceTitle} onChange={(e) => setPriceTitle(e.target.value)} placeholder="عنوان قیمت" aria-label="عنوان قیمت" className="focus-ring w-full rounded-xl bg-surface/70 px-3 py-2 text-sm" />
         <button type="submit" className="focus-ring w-full rounded-xl bg-primary px-3 py-2 text-sm font-medium text-white">
           ثبت / به‌روزرسانی قیمت
         </button>
@@ -694,9 +709,9 @@ function OwnerConsole({
             value={cardKind}
             onChange={(value) => setCardKind(value as ShopGateway["kind"])}
           />
-          <input required value={cardTitle} onChange={(e) => setCardTitle(e.target.value)} placeholder="عنوان" className="focus-ring rounded-xl bg-surface/70 px-3 py-2 text-sm" />
-          <input value={cardNumber} onChange={(e) => setCardNumber(e.target.value)} inputMode="numeric" placeholder="شمارهٔ کارت (۱۶ رقم)" className="focus-ring rounded-xl bg-surface/70 px-3 py-2 text-sm" />
-          <input value={cardHolder} onChange={(e) => setCardHolder(e.target.value)} placeholder="نام صاحب کارت" className="focus-ring rounded-xl bg-surface/70 px-3 py-2 text-sm" />
+          <Input required value={cardTitle} onChange={(e) => setCardTitle(e.target.value)} placeholder="عنوان کارت" aria-label="عنوان کارت" className="focus-ring rounded-xl bg-surface/70 px-3 py-2 text-sm" />
+          <InputNumber stringMode value={cardNumber} onChange={(v) => setCardNumber(asText(v))} placeholder="شمارهٔ کارت (۱۶ رقم)" aria-label="شمارهٔ کارت (۱۶ رقم)" className="focus-ring rounded-xl bg-surface/70 px-3 py-2 text-sm" />
+          <Input value={cardHolder} onChange={(e) => setCardHolder(e.target.value)} placeholder="نام صاحب کارت" aria-label="نام صاحب کارت" className="focus-ring rounded-xl bg-surface/70 px-3 py-2 text-sm" />
         </div>
         <button type="submit" className="focus-ring rounded-xl bg-primary px-4 py-2 text-sm font-medium text-white">
           ثبت درگاه
@@ -774,9 +789,9 @@ function AdminRequestForm({
             onChange={(value) => setProductId(Number(value))}
           />
         ) : (
-          <input value={note} onChange={(e) => setNote(e.target.value)} placeholder="کد/عنوان" className="focus-ring rounded-xl bg-surface/70 px-3 py-2 text-sm" />
+          <Input value={note} onChange={(e) => setNote(e.target.value)} placeholder="کد/عنوان" aria-label="کد/عنوان" className="focus-ring rounded-xl bg-surface/70 px-3 py-2 text-sm" />
         )}
-        <input required value={newPrice} onChange={(e) => setNewPrice(e.target.value)} inputMode="numeric" placeholder="قیمت پیشنهادی (ریال)" className="focus-ring rounded-xl bg-surface/70 px-3 py-2 text-sm" />
+        <InputNumber stringMode value={newPrice} onChange={(v) => setNewPrice(asText(v))} placeholder="قیمت پیشنهادی (ریال)" aria-label="قیمت پیشنهادی (ریال)" className="focus-ring rounded-xl bg-surface/70 px-3 py-2 text-sm" />
         <button type="submit" className="focus-ring rounded-xl bg-accent/20 px-3 py-2 text-sm text-accent">
           ارسال برای تأیید
         </button>

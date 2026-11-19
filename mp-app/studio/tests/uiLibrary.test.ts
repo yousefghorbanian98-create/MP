@@ -15,9 +15,9 @@ import { describe, expect, it } from "vitest";
  *   ۳. بودجهٔ کنترل‌های دست‌ساز «ratchet» است: عدد هر فایل فقط می‌تواند
  *      کم شود. فایل تازه با کنترل خام، تست را قرمز می‌کند.
  *
- * چرا ratchet و نه صفر مطلق: صفحهٔ فروشگاه Studio هنوز کنترل خام دارد؛
- * پاک کردن یک‌شبهٔ آن با تست‌های موجود ریسک بالایی دارد. بودجهٔ عددی
- * اجازهٔ بدهی فنی موجود را می‌دهد ولی جلوی رشد آن را می‌گیرد.
+ * چرا ratchet و نه صفر مطلق: صفحهٔ فروشگاه خام‌زدایی شد (فاز ۰ نقشه)،
+ * ولی دوازده فایل دیگر هنوز ورودی خام دارند. بودجهٔ عددی بدهی موجود را
+ * ثبت می‌کند و فقط کاهش را مجاز می‌داند؛ فایل تازه سهمیه ندارد.
  */
 
 const ROOT = resolve(__dirname, "..");
@@ -71,6 +71,9 @@ const HANDMADE: { key: string; pattern: RegExp; label: string }[] = [
   { key: "checkbox", pattern: /type=["']checkbox["']/g, label: "checkbox خام" },
   { key: "radio", pattern: /type=["']radio["']/g, label: "radio خام" },
   { key: "dialog", pattern: /role=["']dialog["']/g, label: "dialog دست‌ساز" },
+  // متن و عدد هم کنترل‌اند: Input/InputNumber کتابخانه باید جای تگ خام بنشیند.
+  { key: "input", pattern: /<input\b/g, label: "input خام" },
+  { key: "textarea", pattern: /<textarea\b/g, label: "textarea خام" },
 ];
 
 function countHandmade(): Record<string, Record<string, number>> {
