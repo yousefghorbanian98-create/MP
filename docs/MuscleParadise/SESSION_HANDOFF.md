@@ -4,6 +4,10 @@
 
 ## Snapshot فعلی
 
+- **کار آخر:** برای README یک نمودار معماری SVG اختصاصی و قابل‌ویرایش و [گراف متنی همراه و شواهد](architecture/system-atlas.md) اضافه شد. این نقشه مفهومی است؛ مسیرهای ناقص/مشروط و نیازمند بررسی با خط‌چین نشان داده شده‌اند و اثبات E2E یا release نیستند.
+- **مبنای این کار:** شاخهٔ `arena/89881eb8-mp` از commit `5482930587ce18e14f136d78296542a2de5af091` شروع شده است. برای ادغام با کارهای جدیدتر، تفاوت این پایه با شاخهٔ مقصد را جداگانه بررسی کنید؛ از روی این snapshot، حضور تغییرات نشست‌های دیگر را فرض نکنید.
+- **فایل‌های این کار:** `README.md`، `docs/MuscleParadise/assets/system-architecture.svg`، `docs/MuscleParadise/architecture/system-atlas.md`، `docs/MuscleParadise/architecture/README.md` و `scripts/docs_gate.py`. تصویر، SVG دست‌ساخته و مستقل است، نه خروجی D2؛ Mermaid همراه برای review نگهداری می‌شود.
+
 - **هدف پایدار کاربر:** توسعهٔ محصول با کمک AI، بدون بازخوانی بی‌هدف کل مخزن؛ معماری، تصمیم‌ها و قدم بعدی باید در فایل‌های Git-tracked قابل انتقال باشند.
 - **کار این handoff:** راه‌اندازی ورودی ایجنت‌ها و نقشهٔ مستندات؛ مستندات C4، نقشهٔ ماژول‌ها و پنج ADR موجود را کشف و به آن‌ها پیوند بده، نه اینکه دوباره از حافظه بازنویسی شوند.
 - **وضعیت این کار:** ساختار مرجع در `AGENTS.md` و `docs/README.md` اضافه شده؛ فهرست‌های معماری/ADR و همین handoff تکمیل شده‌اند. `AGENTS.md` اکنون صریحاً D-033 و مرز اجرای واقعی ECC/REA را می‌گوید. این کار تغییری در منطق runtime محصول ایجاد نمی‌کند.
@@ -19,6 +23,9 @@
 - حافظهٔ پایدار و قابل انتقال: این فایل برای اشارهٔ کوتاه، [AGENTS.md](../../AGENTS.md) برای پروتکل ایجنت، و مستندات محصول/معماری لینک‌شده از [docs hub](../README.md) هستند. Repowise فقط شتاب‌دهندهٔ اختیاری است.
 
 ## نتیجه و شواهد آخرین کار
+
+- **شاهد System Atlas:** `python3 scripts/docs_gate.py` برای ۱۱ Markdown، ۱۳۲ پیوند محلی و ۴ بلوک Mermaid موفق بود؛ Mermaid 11.12.2 بلوک‌های README و گراف جدید را parse کرد. SVG با resvg محلی در اندازهٔ اصلی و عرض ۷۲۰px render و بصری بررسی شد؛ XML، title/description و نبود reference خارجی نیز بررسی شدند. محیط GitHub مرورگری و CI برای این تغییر اجرا نشده‌اند. تعداد پیوندهای gate ممکن است با ویرایش بعدی تفاوت کند.
+- **قدم بعدی System Atlas:** بازبینی تصویر در GitHub و در موبایل، و هنگام تغییر معماری به‌روزرسانی هم‌زمان SVG، گراف Mermaid و وضعیت ادعاها. این کار از شاخهٔ پایهٔ تاریخی انجام شده؛ پیش از هر ادغام، اختلاف با مقصد و تعارض‌های احتمالی باید بازبینی شود.
 
 - **کارهای نشست:** ورودی مشترک ایجنت‌ها و نقشهٔ معماری/تصمیم‌ها/حافظهٔ نشست ساخته شد؛ سپس `DX-REP-01` به P3 TODO افزوده شد تا تکمیل Repowise در زمان مناسب برنامه‌ریزی شود. C4 و ADRهای موجود دوباره‌نویسی نشدند.
 - **مسیرهای تغییرکرده:** `AGENTS.md`, `README.md`, `docs/README.md`, `docs/MuscleParadise/SESSION_HANDOFF.md`, `docs/MuscleParadise/TODO-2026-11-16.md`, `docs/MuscleParadise/architecture/README.md`, `docs/MuscleParadise/adr/README.md`, `docs/MuscleParadise/adr/TEMPLATE.md`, `docs/MuscleParadise/assets/knowledge-atlas.svg`, `scripts/docs_gate.py`, `.github/workflows/ci.yml`.

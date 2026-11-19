@@ -34,6 +34,7 @@ CORE_MARKDOWN_FILES = (
     Path("docs/README.md"),
     Path("docs/MuscleParadise/SESSION_HANDOFF.md"),
     Path("docs/MuscleParadise/architecture/README.md"),
+    Path("docs/MuscleParadise/architecture/system-atlas.md"),
     Path("docs/MuscleParadise/adr/README.md"),
     Path("docs/MuscleParadise/adr/TEMPLATE.md"),
     # M107: دستور کار اجرای بیرون از sandbox هم تحت گیت لینک می‌آید؛ مسیرهای
@@ -44,7 +45,11 @@ CORE_MARKDOWN_FILES = (
     Path("docs/MuscleParadise/OWNER-DECISIONS.md"),
 )
 MARKDOWN_FILES = (*CORE_MARKDOWN_FILES, *_module_docs())
-REQUIRED_FILES = (*MARKDOWN_FILES, Path("docs/MuscleParadise/assets/knowledge-atlas.svg"))
+SVG_FILES = (
+    Path("docs/MuscleParadise/assets/knowledge-atlas.svg"),
+    Path("docs/MuscleParadise/assets/system-architecture.svg"),
+)
+REQUIRED_FILES = (*MARKDOWN_FILES, *SVG_FILES)
 MARKDOWN_LINK = re.compile(r"!?\[[^\]]*\]\(([^)]+)\)")
 HTML_REFERENCE = re.compile(r"\b(?:href|src)=[\"']([^\"']+)[\"']", re.IGNORECASE)
 FENCE = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
@@ -175,12 +180,13 @@ def main() -> int:
         if not re.search(rf"\]\({re.escape(required_target)}(?:#[^)]+)?\)", readme):
             errors.append(f"README.md: missing documentation entry: {required_target}")
 
-    svg_path = ROOT / "docs/MuscleParadise/assets/knowledge-atlas.svg"
-    if svg_path.is_file():
-        try:
-            ET.parse(svg_path)
-        except ET.ParseError as exc:
-            errors.append(f"docs/MuscleParadise/assets/knowledge-atlas.svg: invalid XML: {exc}")
+    for relative in SVG_FILES:
+        svg_path = ROOT / relative
+        if svg_path.is_file():
+            try:
+                ET.parse(svg_path)
+            except ET.ParseError as exc:
+                errors.append(f"{relative}: invalid XML: {exc}")
 
     fail(errors)
     print(
