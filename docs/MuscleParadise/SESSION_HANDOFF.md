@@ -2,7 +2,13 @@
 
 > این فایل **خلاصهٔ جاری برای ادامهٔ کار** است، نه آرشیو گفتگو و نه منبع نهایی وضعیت محصول. پیش از فشرده‌سازی context یا پایان هر کار معنادار، همین snapshot را جایگزین/به‌روز کن؛ تاریخچه را با انباشت transcript طولانی نکن.
 
-## انتقال و پیش‌نیازهای سازنده — آخرین snapshot
+## بازبینی PR و گراف — آخرین snapshot
+
+- [بازبینی PR شمارهٔ ۳](REPORT-PR-3-REVIEW-2026-11-18.md) روی `da73f2e81bd9e70b9ed395407481fe133a4ca731` در برابر `main`: یافتهٔ P2 در جستجوی پرداخت به‌صورت ایزوله با یک تست شکست‌خورده بازتولید شد؛ پس از lookup ناموفق دکمهٔ بازگشت پرداخت قبلی می‌ماند. workflow دستی فرمت QR نیز قبل از تست push می‌کند. PR باید تا رسیدگی به یافته‌ها draft بماند؛ هیچ کد محصولی در این بازبینی اصلاح نشد.
+- [نمودار جریان‌های بازبینی](architecture/pr-review-flows-2026-11-18.md)، [گراف تازهٔ RepoWise](architecture/repowise-pr-review-2026-11-18.dsl) و [scope آن](architecture/repowise-pr-review-scope-2026-11-18.txt) ثبت شده‌اند. RepoWise روی ۵۷۶ blob انتخابی از commit بازبینی‌شده، با scan پاک و بدون مدل/هوک اجرا شد؛ index پس از ساخت گزارش یا commit بعدی دوباره refresh نشده است.
+- CI قبلی [run 44511373788](https://github.com/yousefghorbanian98-create/MP/actions/runs/44511373788) برای همان `da73f2e...` هشت job موفق داشت؛ تست کشف R1 بخشی از آن CI نبود. در نشست بعدی status PR و CI همان HEAD را دوباره بخوان، R1/R2 را رسیدگی و سپس بازبینی کن. ادغام و انتشار محصول را یکی نگیر.
+
+## انتقال و پیش‌نیازهای سازنده — snapshot قبلی
 
 - ابتدا [پیش‌نیازها، نصب و محدودهٔ RepoWise](BUILDER-START-AND-REPOWISE.md)، سپس [هندآف تفصیلی](HANDOFF-PROJECT-2026-11-18.md)، [QF](PLAN-FINN-ECC-MICROLOOPS-QA.md)، [TODO](TODO-CLOUD-FINANCE-ACCESS.md) و [نقش‌ها](PROPOSAL-SUBAGENTS-AND-CHECKPOINTS.md) را بخوانید. وضعیت‌های پایین تاریخی‌اند و با `git status`، SHA و CI نشست تازه بررسی می‌شوند.
 - شاخهٔ انتقال `arena/b0e55b62-mp`؛ CI آخرین SHA ثبت‌شده `dc572a7c2fbb7ab094297cfec4bd56accca6dc1b` در [run 44507836824](https://github.com/yousefghorbanian98-create/MP/actions/runs/44507836824) هر هشت job موفق؛ نتیجه را به SHA بعدی تعمیم ندهید. QF-00 و QA مستقل همچنان `BLOCKED/NOT RUN`؛ OVها اجرا نشده‌اند و release مجاز/اثبات‌شده نیست.

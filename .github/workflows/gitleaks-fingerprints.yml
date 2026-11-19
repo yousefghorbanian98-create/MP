@@ -62,4 +62,3 @@ jobs:
               print(message)
               print(f'::notice title=Gitleaks fingerprint::{message}')
           PYCODE
-

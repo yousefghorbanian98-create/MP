@@ -11,6 +11,8 @@
 | **C4 — Component** | [c4.md](c4.md) | مسئولیت ماژول‌های FastAPI و ارتباط‌های دامنه |
 | **Code / Module** | [c4.md](c4.md) · [module-map.md](module-map.md) | الگوی درونی هر ماژول، وابستگی‌ها و جریان‌های مهم؛ هر دو snapshot اولیه |
 | **هدف ابری، مالی و دسترسی** | [cloud-finance-access.md](cloud-finance-access.md) | وضعیت موجود در برابر هدف، پرداخت انسانی و QA هر میکرولوپ؛ نه تأیید پیاده‌سازی |
+| **جریان‌های بازبینی PR** | [pr-review-flows-2026-11-18.md](pr-review-flows-2026-11-18.md) | بازگشت وجه، QR و checkpoint؛ یافته‌ها و مرز هر شاهد |
+| **RepoWise snapshot بازبینی** | [گراف DSL](repowise-pr-review-2026-11-18.dsl) · [فهرست ورودی](repowise-pr-review-scope-2026-11-18.txt) | snapshot انتخابی از commit بازبینی‌شده؛ نه index کامل یا اثبات runtime |
 
 ### چهار سطح C4 در این مخزن
 
