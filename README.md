@@ -24,6 +24,7 @@
   <a href="#vision">چشم‌انداز</a> ·
   <a href="#experiences">تجربه‌ها</a> ·
   <a href="#architecture">معماری</a> ·
+  <a href="#build">لایه‌ها و مراحل</a> ·
   <a href="#previews">پیش‌نمایش‌ها</a> ·
   <a href="#quality">کیفیت و وضعیت</a> ·
   <a href="#quickstart">شروع توسعه</a> ·
@@ -102,6 +103,66 @@ flowchart LR
 
 [گراف متنی، راهنمای نمودار و مسیرهای کد](docs/MuscleParadise/architecture/system-atlas.md) · [معماری C4](docs/MuscleParadise/architecture/c4.md) · [نقشهٔ ماژول‌ها](docs/MuscleParadise/architecture/module-map.md)
 
+<a id="build"></a>
+## 🧱 لایه‌های ساخت و مراحل تولید
+
+دیاگرام‌های این بخش از مدل واقعی همین مخزن کشیده شده‌اند، نه از توصیف. نسخهٔ کامل با چهار دیاگرام،
+منبع هر عدد و فرمان بازتولید: [لایه‌ها و مراحل تولید](docs/MuscleParadise/ARCHITECTURE-LAYERS-AND-STAGES.md).
+
+```mermaid
+flowchart TB
+    subgraph ENTRY["ورودی‌ها"]
+        U1["عضو — اپ موبایل / کیوسک / PWA"]
+        U2["مربی و پذیرش — Studio"]
+        U3["مالک — مرورگر از بیرون باشگاه"]
+    end
+    subgraph CLIENT["کلاینت عضو — Flutter"]
+        C1["۴۴ فایل Dart · ۲۸ فایل تست"]
+    end
+    subgraph STUDIO["Studio — React + TypeScript"]
+        S1["۹۵ فایل · ۴۴۸ نماد"]
+        S2["کنترل‌ها از antd 5 — بدون کنترل دست‌ساز"]
+    end
+    subgraph BACKEND["بک‌اند — FastAPI"]
+        B1["۳۲۷ فایل · ۲۵۱۰ نماد"]
+        B2["۱۲۱ مسیر · ۱۳۷ operation"]
+        B3["۹۵۵ تست · پوشش ۸۲.۶٪"]
+    end
+    subgraph DATA["داده و خدمات"]
+        D1["SQLite امروز · PostgreSQL در نقشه"]
+        D2["رسانهٔ تمرین"]
+        D3["Valkey — کش و محدودیت نرخ"]
+    end
+    U1 --> C1
+    U2 --> S1
+    U3 --> S1
+    C1 --> B1
+    S1 --> B1
+    B1 --> D1
+    B1 --> D2
+    B1 --> D3
+```
+
+مسیر تولید هر میکرو‌لوپ چهار ایستگاه دارد و هر ایستگاه گیت خودش را دارد:
+
+```mermaid
+flowchart LR
+    A["Forge — طراحی برش<br/>فایل دقیق + دامنهٔ اثبات"] --> B["Inspect — بازرسی<br/>routes.json · گارد مسیرها · grep"]
+    B --> C{"گپ بی‌پوشش؟"}
+    C -- بله --> A
+    C -- خیر --> D["Normalize — سخت‌سازی<br/>pytest · ruff · vitest · tsc · flutter · گیت مستندات"]
+    D --> E{"گیت‌ها سبز؟"}
+    E -- خیر --> D
+    E -- بله --> F["Next — checkpoint<br/>commit انتخابی · CI هشت از هشت"]
+```
+
+| ایستگاه | خروجی | گیت |
+|---|---|---|
+| **Forge** | برش کوچک با فایل‌های دقیق | دامنهٔ اثبات نوشته شده باشد |
+| **Inspect** | فهرست گپ‌ها | هر گپ به API و تست وصل شود |
+| **Normalize** | کد و سند اصلاح‌شده | pytest · ruff · vitest · tsc · flutter analyze · گیت مستندات و دیاگرام |
+| **Next** | commit و ثبت تصمیم | CI همان SHA هشت از هشت سبز |
+
 <a id="previews"></a>
 ## ✨ پیش‌نمایش رابط کاربری
 
@@ -130,12 +191,26 @@ flowchart LR
 | **Client** | Flutter tests و گیت‌های Android در GitHub Actions |
 | **داده و حریم خصوصی** | رضایت برای دادهٔ زیستی، حداقل‌سازی داده و راهنمای نگهداری |
 | **انتشار** | فقط پس از سبزشدن گیت‌های مرتبط و بازبینی امضای release |
+| **سینتکس دیاگرام** | هر بلوک Mermaid با پارسر رسمی در CI پارس می‌شود؛ ۲۳ دیاگرام |
+| **بهداشت مخزن** | گیت CI نمی‌گذارد ایندکس ابزار یا hook ایجنت وارد Git شود |
+
+سنجه‌های همین حالا، از خروجی واقعی CI و گزارش پوشش:
+
+| سنجه | مقدار |
+|---|---|
+| تست بک‌اند | ۹۵۵ قبول · ۲ رد‌شده |
+| پوشش خطوط بک‌اند | ۸۲.۶٪ روی ۱۹۴ فایل |
+| تست Studio | ۲۳۴ قبول · ۹ رد‌شده |
+| قرارداد API | ۱۲۱ مسیر · ۱۳۷ operation |
+| jobهای CI | ۸ |
+| نقشهٔ تست‌به‌کد | ۱۵۲۳ تست · ۷۸۶۳ رکورد |
+| بلوک دیاگرام | ۲۳ بلوک در ۱۱ سند |
 
 برای وضعیت دقیق، [هندآف کامل](docs/MuscleParadise/HANDOFF-PROJECT-2026-11-18.md)، [TODO ابری و مالی](docs/MuscleParadise/TODO-CLOUD-FINANCE-ACCESS.md)، [صف قبلی و شواهد](docs/MuscleParadise/TODO-2026-11-16.md) و [سیاست نگهداری داده](docs/MuscleParadise/DATA-RETENTION.md) را ببینید. عکس پیشرفت بدن خارج از محدودهٔ محصول است؛ تصویر فیش و کالا موضوع جداگانه‌اند.
 
 هر میکرولوپ یک واحد QA اختصاصی دارد: بررسی اتصال واقعی UI/API/DB، دکمه‌ها و خروجی‌های محدوده، امنیت، رگرسیون، خطا و بار؛ وضعیت اجرا‌نشده `UNKNOWN` است نه PASS. [جزئیات ۳۳ میکرولوپ](docs/MuscleParadise/PLAN-FINN-ECC-MICROLOOPS-QA.md).
 
-CI روی commit `dc572a7c2fbb7ab094297cfec4bd56accca6dc1b` در [run 44507836824](https://github.com/yousefghorbanian98-create/MP/actions/runs/44507836824) هر هشت job را موفق گزارش کرد؛ این نتیجه فقط برای همان commit است، نه الزاماً تغییرات بعدی یا نسخهٔ release امضاشده. برای هر نسخه، run همان commit بررسی شود.
+CI روی commit `0392b00` در [run 44624443191](https://github.com/yousefghorbanian98-create/MP/actions/runs/44624443191) هر هشت job را موفق گزارش کرد؛ این نتیجه فقط برای همان commit است، نه الزاماً تغییرات بعدی یا نسخهٔ release امضاشده. برای هر نسخه، run همان commit بررسی شود.
 
 <a id="stack"></a>
 ## 🧰 فناوری‌ها
@@ -213,6 +288,8 @@ flutter run --dart-define=MP_API=http://10.0.2.2:8000/api/v1
 |---|---|
 | شروع ایجنت AI و انتقال نشست | [راهنمای ایجنت](AGENTS.md) · [نقشهٔ مستندات](docs/README.md) · [handoff جاری](docs/MuscleParadise/SESSION_HANDOFF.md) · [هندآف تفصیلی و راهنمای نشست تازه](docs/MuscleParadise/HANDOFF-PROJECT-2026-11-18.md) |
 | نقشهٔ تاریخی محصول | [MASTER MAP](docs/MuscleParadise/MASTER_MAP.md) |
+| لایه‌های ساخت و مراحل تولید | [لایه‌ها و مراحل](docs/MuscleParadise/ARCHITECTURE-LAYERS-AND-STAGES.md) · [نقشهٔ کارهای بعدی](docs/MuscleParadise/ROADMAP-NEXT-2026-11-19.md) |
+| ابزارها و آنچه واقعاً اجرا شد | [بررسی ابزار ایجنت](docs/MuscleParadise/AGENT-TOOLING-REVIEWS.md) |
 | معماری و هدف ابری/مالی | [C4](docs/MuscleParadise/architecture/c4.md) · [جریان‌های هدف](docs/MuscleParadise/architecture/cloud-finance-access.md) |
 | نیازمندی‌ها و user storyها | [PRD](docs/MuscleParadise/PRD.md) · [تصمیم‌های اخیر مالک](docs/MuscleParadise/TODO-CLOUD-FINANCE-ACCESS.md) |
 | برنامهٔ ساخت و کارهای باز | [QF-00 تا QF-32 و QA تکرارشونده](docs/MuscleParadise/PLAN-FINN-ECC-MICROLOOPS-QA.md) · [TODO قبلی](docs/MuscleParadise/TODO-2026-11-16.md) |
