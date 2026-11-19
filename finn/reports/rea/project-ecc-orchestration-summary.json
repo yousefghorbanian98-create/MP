@@ -1,0 +1,267 @@
+{
+  "description": "REA metadata extracted from local curated mirror; no full evidence, code contents, private data or credentials included",
+  "rea_version": "6.9.0",
+  "project_head": "5482930587ce18e14f136d78296542a2de5af091",
+  "workspace_dirty": true,
+  "ecc_head": "d2ef2680594f9a17526a6e1a2e18b3d242c5d17b",
+  "project_mirror_extension_counts": {
+    ".cjs": 2,
+    ".css": 2,
+    ".dart": 73,
+    ".html": 1,
+    ".js": 11,
+    ".json": 22,
+    ".kt": 2,
+    ".kts": 3,
+    ".md": 832,
+    ".mjs": 9,
+    ".properties": 2,
+    ".py": 397,
+    ".sh": 22,
+    ".sql": 1,
+    ".toml": 3,
+    ".ts": 19,
+    ".tsx": 61,
+    ".txt": 6,
+    ".xml": 10,
+    ".yaml": 8,
+    ".yml": 11,
+    "[no-extension]": 3
+  },
+  "inventories": {
+    "project": {
+      "authority": "historical-reference",
+      "manifest": {
+        "schema": "HistoricalSourceManifest",
+        "authority": "historical-reference",
+        "manifest_id": "hsm_7b526b794caa9cddb95f7dd2712855ccae80ace203bedabf3018b9f4fea2b7bf",
+        "graph_sha256": "c6a6e0830d0b4501ec116abc102f354b49449f584e0ab4f7e8bfc4471d875d47",
+        "root_sha256": "54e43a6c7db39d3b91415f0f6cdada3550095cef6ec8886d54816b478fd62f66",
+        "inventory_state": "partial",
+        "entry_count": 2036,
+        "relationship_count": 344
+      },
+      "inventory_state": "partial",
+      "languages": [
+        "CSS",
+        "HTML",
+        "JSON",
+        "JavaScript",
+        "Kotlin",
+        "Markdown",
+        "Python",
+        "Shell",
+        "TOML",
+        "TSX",
+        "Text",
+        "TypeScript",
+        "XML",
+        "YAML"
+      ],
+      "counts": {
+        "entries": 2036,
+        "files": 1500,
+        "directories": 536,
+        "symlinks": 0,
+        "unknown": 0,
+        "relationships": 344,
+        "parse_failures": 0,
+        "exclusions": 0
+      },
+      "file_content_states": {
+        "hashed": 1500,
+        "redacted-secret": 0,
+        "excluded": 0,
+        "unreadable": 0,
+        "unknown": 0
+      },
+      "directory_tree_states": {
+        "enumerated": 536,
+        "partial": 0,
+        "excluded": 0,
+        "unreadable": 0,
+        "unknown": 0
+      },
+      "limitations": [
+        "Module context is unknown in .claude/skills/council-multi-model/scripts/review-with-codex.js; the requested dependency was retained without a proven loader base.",
+        "Module context is unknown in .claude/skills/frontend-design-direction/scripts/check-evidence.js; the requested dependency was retained without a proven loader base.",
+        "Module context is unknown in .claude/skills/master-agreement-generator/scripts/build-agreement.js; the requested dependency was retained without a proven loader base.",
+        "Module context is unknown in .claude/skills/story-lifecycle/scripts/ledger.js; the requested dependency was retained without a proven loader base.",
+        "Module context is unknown in .claude/skills/terminal-opener/scripts/open-terminal.js; the requested dependency was retained without a proven loader base.",
+        "Path identity is revalidated around operations; Node lacks portable descriptor-relative openat traversal, so a syscall-boundary pathname race remains."
+      ],
+      "scope": "curated textual mirror; not entire repo; see report for exclusions"
+    },
+    "ecc": {
+      "authority": "historical-reference",
+      "manifest": {
+        "schema": "HistoricalSourceManifest",
+        "authority": "historical-reference",
+        "manifest_id": "hsm_2ac4c1ba7b21f5569fde551be3aac82ccc7e3c54ecb325eff92fa8e095364403",
+        "graph_sha256": "903f7c3168c66d022d452d4379ad6aee43ed7d540dc1fa5c51377bf91d28ae94",
+        "root_sha256": "63a36240e089d3d5b2070219d724736e2778fe1b97df699c41a977712709ea8e",
+        "inventory_state": "partial",
+        "entry_count": 3604,
+        "relationship_count": 1275
+      },
+      "inventory_state": "partial",
+      "languages": [
+        "JSON",
+        "JavaScript",
+        "Markdown",
+        "Shell",
+        "TOML",
+        "TypeScript",
+        "YAML"
+      ],
+      "counts": {
+        "entries": 3604,
+        "files": 2570,
+        "directories": 1034,
+        "symlinks": 0,
+        "unknown": 0,
+        "relationships": 1275,
+        "parse_failures": 0,
+        "exclusions": 0
+      },
+      "file_content_states": {
+        "hashed": 2570,
+        "redacted-secret": 0,
+        "excluded": 0,
+        "unreadable": 0,
+        "unknown": 0
+      },
+      "directory_tree_states": {
+        "enumerated": 1034,
+        "partial": 0,
+        "excluded": 0,
+        "unreadable": 0,
+        "unknown": 0
+      },
+      "limitations": [
+        "A CommonJS module target in scripts/ci/validate-hooks.js could not be determined statically.",
+        "A CommonJS module target in scripts/codex/merge-mcp-config.js could not be determined statically.",
+        "A CommonJS module target in scripts/dashboard-web.js could not be determined statically.",
+        "A CommonJS module target in scripts/dev/gateguard-eval.js could not be determined statically.",
+        "A CommonJS module target in scripts/hooks/run-with-flags.js could not be determined statically.",
+        "Path identity is revalidated around operations; Node lacks portable descriptor-relative openat traversal, so a syscall-boundary pathname race remains."
+      ],
+      "scope": "curated textual mirror; not entire repo; see report for exclusions"
+    }
+  },
+  "selected_javascript_analyses": {
+    "ecc_cli": {
+      "view_evidence_id": "ev_82d04742440e293398dd9376a3d0c7cb700d71cfd525b340b1fd00968b6992b8",
+      "parent_evidence_id": "ev_e53f258eac2192cbf7fc9162a183e0f0df037692f25a89fdcd079ca67846323b",
+      "view_coverage": {
+        "status": "complete-within-view",
+        "examined": 406,
+        "total": 406,
+        "next_offset": null,
+        "exhausted": true
+      },
+      "selected_files": [
+        "scripts/ecc.js",
+        "scripts/setup.js",
+        "scripts/consult.js"
+      ],
+      "unselected_files": 395,
+      "statistics": {
+        "relevant_files": 398,
+        "nested_asar_containers": 0,
+        "text_bytes_read": 37745,
+        "invalid_utf8_files": 0,
+        "parsed_javascript_files": 3,
+        "skipped_javascript_files": 0,
+        "visited_ast_nodes": 4631,
+        "findings": 37,
+        "modules": 0,
+        "parse_failures": 0
+      },
+      "application_status": "partial",
+      "semantic_status": "partial",
+      "unknowns": [
+        "395 application graph unknowns remain in the parent Evidence.",
+        "6325 semantic graph unknowns remain in the parent Evidence.",
+        "Boundary extraction covers unshadowed JSON/global coercions plus parse and validation method candidates.",
+        "Caller-selected source analysis leaves 395 inventoried files outside analysis scope. Inventory identity covers the complete artifact; relationships through unselected sources remain unknown.",
+        "Child-process extraction covers asynchronous node:child_process creation, literal argv/env/stdio options, exit/error listeners, and kill signals.",
+        "CommonJS and ESM binding relationships were recovered from inert syntax and resolved only within the inventoried artifact container.",
+        "Configuration extraction covers process.env, process.argv, node:fs reads, and direct logical defaults.",
+        "Event extraction covers EventEmitter-style literal registrations, removals, and dispatch candidates; dynamic names remain unknown.",
+        "Function fingerprints are static candidates; equal digests can remain ambiguous and do not prove behavioral equivalence.",
+        "Graph coverage is incomplete; unavailable facts remain explicit and must not be read as absence.",
+        "JavaScript and HTML were parsed as inert text; bundle bootstrap code was never executed.",
+        "Local data flow does not claim control-flow-sensitive reaching definitions or arbitrary dynamic property resolution.",
+        "Promise ownership covers explicit unshadowed Promise construction, static factories, aggregation, chaining, and await syntax only.",
+        "Request extraction covers fetch, WebSocket, node:http/node:https construction, direct option fields, and exact local response consumers.",
+        "Resource extraction covers built-in filesystem/network acquisition and exact local close/destroy/end handles.",
+        "Static imports, entrypoints, workers, endpoints, and storage relationships do not prove runtime execution.",
+        "Static paths and relationships may remain unresolved when expressions are dynamic or obfuscated.",
+        "The semantic graph contains static syntax observations and conservative relationship candidates; it does not claim runtime execution.",
+        "Timer extraction covers global or node:timers scheduling and exact local-handle cancellation.",
+        "Webpack/Rspack factories were recovered from AST literals; REA did not invoke push handlers or bundle bootstrap code.",
+        "graph.coverage.status is partial",
+        "semantic_graph.coverage.status is partial"
+      ],
+      "limitation_count": 18
+    },
+    "studio_ui": {
+      "view_evidence_id": "ev_0dfd8edf782483885c3c64e9b59d04333479eff95dceacd613250839569db648",
+      "parent_evidence_id": "ev_92190373afc578b6469dbcd62136bec8373baa7cdf3b41e4aa5420c3f96ed34e",
+      "view_coverage": {
+        "status": "complete-within-view",
+        "examined": 130,
+        "total": 130,
+        "next_offset": null,
+        "exhausted": true
+      },
+      "selected_files": [
+        "src/lib/api.ts",
+        "src/components/RoleManager.tsx",
+        "src/components/PaymentPanel.tsx"
+      ],
+      "unselected_files": 86,
+      "statistics": {
+        "relevant_files": 89,
+        "nested_asar_containers": 0,
+        "text_bytes_read": 53030,
+        "invalid_utf8_files": 0,
+        "parsed_javascript_files": 3,
+        "skipped_javascript_files": 0,
+        "visited_ast_nodes": 7635,
+        "findings": 196,
+        "modules": 0,
+        "parse_failures": 0
+      },
+      "application_status": "partial",
+      "semantic_status": "partial",
+      "unknowns": [
+        "2393 semantic graph unknowns remain in the parent Evidence.",
+        "86 application graph unknowns remain in the parent Evidence.",
+        "Boundary extraction covers unshadowed JSON/global coercions plus parse and validation method candidates.",
+        "Caller-selected source analysis leaves 86 inventoried files outside analysis scope. Inventory identity covers the complete artifact; relationships through unselected sources remain unknown.",
+        "Child-process extraction covers asynchronous node:child_process creation, literal argv/env/stdio options, exit/error listeners, and kill signals.",
+        "CommonJS and ESM binding relationships were recovered from inert syntax and resolved only within the inventoried artifact container.",
+        "Configuration extraction covers process.env, process.argv, node:fs reads, and direct logical defaults.",
+        "Event extraction covers EventEmitter-style literal registrations, removals, and dispatch candidates; dynamic names remain unknown.",
+        "Function fingerprints are static candidates; equal digests can remain ambiguous and do not prove behavioral equivalence.",
+        "Graph coverage is incomplete; unavailable facts remain explicit and must not be read as absence.",
+        "JavaScript and HTML were parsed as inert text; bundle bootstrap code was never executed.",
+        "Local data flow does not claim control-flow-sensitive reaching definitions or arbitrary dynamic property resolution.",
+        "Promise ownership covers explicit unshadowed Promise construction, static factories, aggregation, chaining, and await syntax only.",
+        "Request extraction covers fetch, WebSocket, node:http/node:https construction, direct option fields, and exact local response consumers.",
+        "Resource extraction covers built-in filesystem/network acquisition and exact local close/destroy/end handles.",
+        "Static imports, entrypoints, workers, endpoints, and storage relationships do not prove runtime execution.",
+        "Static paths and relationships may remain unresolved when expressions are dynamic or obfuscated.",
+        "The semantic graph contains static syntax observations and conservative relationship candidates; it does not claim runtime execution.",
+        "Timer extraction covers global or node:timers scheduling and exact local-handle cancellation.",
+        "Webpack/Rspack factories were recovered from AST literals; REA did not invoke push handlers or bundle bootstrap code.",
+        "graph.coverage.status is partial",
+        "semantic_graph.coverage.status is partial"
+      ],
+      "limitation_count": 18
+    }
+  },
+  "raw_evidence_persisted": false
+}

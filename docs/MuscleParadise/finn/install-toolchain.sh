@@ -190,8 +190,10 @@ install_rea() {
     [ ! -L "$skill_dst" ] || die "مسیر REA skill symlink است و دست‌نخورده ماند: $skill_dst"
     if [ -e "$skill_dst" ]; then
       [ -d "$skill_dst" ] || die "مسیر skill موجود اما پوشه نیست؛ دست‌نخورده ماند: $skill_dst"
-      diff -qr "$skill_src" "$skill_dst" >/dev/null || die "skill محلی با نسخهٔ پین‌شده فرق دارد؛ برای حفظ محتوا overwrite نشد: $skill_dst"
-      log "skill از قبل نصب و با نسخهٔ پین‌شده یکسان است ($(find "$skill_dst" -type f | wc -l) فایل)"
+      bash "$ROOT/docs/MuscleParadise/finn/check-rea-skill.sh" \
+        "$skill_src" "$skill_dst" "$rea_home/node_modules/${REA_PKG}/LICENSE" \
+        || die "skill محلی با نسخهٔ پین‌شده فرق دارد؛ برای حفظ محتوا overwrite نشد: $skill_dst"
+      log "skill از قبل نصب و با نسخهٔ پین‌شده سازگار است (مجوز محلی معتبر حفظ می‌شود؛ $(find "$skill_dst" -type f | wc -l) فایل)"
     else
       cp -R "$skill_src" "$skill_dst"
       log "skill نصب شد: .claude/skills/reverse-engineer-anything ($(find "$skill_dst" -type f | wc -l) فایل)"

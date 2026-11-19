@@ -1,0 +1,31 @@
+{
+  "description": "Isolated synthetic ECC planner smoke test. Auth and private project excluded. Metadata only, no raw prompts or outputs.",
+  "host": "claude-code 2.1.328 npm cached CLI",
+  "ecc_commit": "d2ef2680594f9a17526a6e1a2e18b3d242c5d17b",
+  "agent_source": "ECC agents/planner.md (body imported via --agents with tools=[]; custom alias ecc-planner-smoke, not plugin invocation)",
+  "agent_source_sha256": "63aba865206bac9cb5887542fb01b97656e7701faff98e091aa77057ba9860bc",
+  "scope": "synthetic 2+2; temporary working dir and HOME; env allowlisted without credentials; bare, restricted, strict-mcp, plan; output suppressed",
+  "budget_cap_usd": 0.01,
+  "credential_status": "none supplied to subprocess; no authenticated API call evidenced",
+  "exit_code": 1,
+  "result_is_error": true,
+  "result_subtype": "success",
+  "init_tools": [],
+  "init_agents": [
+    "claude",
+    "ecc-planner-smoke",
+    "Explore",
+    "general-purpose",
+    "Plan",
+    "statusline-setup"
+  ],
+  "assistant_block_metadata": [
+    {
+      "type": "text",
+      "name": null
+    }
+  ],
+  "parent_child_message_observed": false,
+  "result_auth_issue": true,
+  "outcome": "BLOCKED: no successful Agent tool invocation or child output observed"
+}

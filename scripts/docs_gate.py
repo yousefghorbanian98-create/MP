@@ -33,7 +33,9 @@ CORE_MARKDOWN_FILES = (
     Path("README.md"),
     Path("docs/README.md"),
     Path("docs/MuscleParadise/SESSION_HANDOFF.md"),
+    Path("docs/MuscleParadise/HANDOFF-PROJECT-2026-11-18.md"),
     Path("docs/MuscleParadise/architecture/README.md"),
+    Path("docs/MuscleParadise/architecture/cloud-finance-access.md"),
     Path("docs/MuscleParadise/adr/README.md"),
     Path("docs/MuscleParadise/adr/TEMPLATE.md"),
     # M107: دستور کار اجرای بیرون از sandbox هم تحت گیت لینک می‌آید؛ مسیرهای

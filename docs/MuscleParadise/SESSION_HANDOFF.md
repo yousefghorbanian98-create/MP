@@ -2,6 +2,63 @@
 
 > این فایل **خلاصهٔ جاری برای ادامهٔ کار** است، نه آرشیو گفتگو و نه منبع نهایی وضعیت محصول. پیش از فشرده‌سازی context یا پایان هر کار معنادار، همین snapshot را جایگزین/به‌روز کن؛ تاریخچه را با انباشت transcript طولانی نکن.
 
+## انتقال و پیش‌نیازهای سازنده — آخرین snapshot
+
+- ابتدا [پیش‌نیازها، نصب و محدودهٔ RepoWise](BUILDER-START-AND-REPOWISE.md)، سپس [هندآف تفصیلی](HANDOFF-PROJECT-2026-11-18.md)، [QF](PLAN-FINN-ECC-MICROLOOPS-QA.md)، [TODO](TODO-CLOUD-FINANCE-ACCESS.md) و [نقش‌ها](PROPOSAL-SUBAGENTS-AND-CHECKPOINTS.md) را بخوانید. وضعیت‌های پایین تاریخی‌اند و با `git status`، SHA و CI نشست تازه بررسی می‌شوند.
+- شاخهٔ انتقال `arena/b0e55b62-mp`؛ CI آخرین SHA ثبت‌شده `dc572a7c2fbb7ab094297cfec4bd56accca6dc1b` در [run 44507836824](https://github.com/yousefghorbanian98-create/MP/actions/runs/44507836824) هر هشت job موفق؛ نتیجه را به SHA بعدی تعمیم ندهید. QF-00 و QA مستقل همچنان `BLOCKED/NOT RUN`؛ OVها اجرا نشده‌اند و release مجاز/اثبات‌شده نیست.
+- RepoWise روی mirror انتخابی ۵۶۴ فایلی و بدون مدل، hook و editor اجرا شد؛ [محدوده](architecture/repowise-transfer-scope-2026-11-18.txt) و [گراف](architecture/repowise-transfer-2026-11-18.dsl) را ببینید. گراف کل repo یا index زنده نیست. raw M113 و تنظیمات محلی محرمانه منتشر نشده‌اند؛ خلاصهٔ پالایش‌شده جای متن خام را نمی‌گیرد. تست policy مستقل ۵۴ passed با یک هشدار تنظیمات بود، نه پذیرش گردش مالی.
+- شاخهٔ پیش‌فرض GitHub `main` است؛ نمایش پیش‌فرض صفحهٔ اصلی تا بررسی و ادغام جداگانهٔ تغییرات در `main` به‌روز نمی‌شود. commit/push این انتقال فقط در شاخهٔ مجاز نشست انجام می‌شود و از روی این متن وضعیت فعلی PR را فرض نکنید.
+
+## به‌روزرسانی تاریخی ۲۰۲۶-۱۱-۱۸ — checkpoint محدود کلید قدیمی
+
+- SHA شاخهٔ `arena/b0e55b62-mp` روی GitHub و محلی `4571908c1fdc8dca6a2ba700f8f99f3b52329ab0` شد. پیش از merge غیرمخرب، ۲۵ مسیر remote دقیقاً و استثنای تأییدشدهٔ `.gitleaksignore` عمداً متفاوت بودند؛ merge با راهبرد `ours` تنها پس از اثبات این تطابق انجام شد. ۷۸ فایل dirty/untracked با هش قبل و بعد بررسی شدند و هیچ‌کدام تغییر نکردند. Git pull/reset/force-push یا overwrite فایل‌های محلی انجام نشد. این checkpoint فقط استثنای کلید و آثار لازم آن را منتشر کرد؛ اسناد، شواهد و کدهای محلی باقی‌مانده هنوز checkpoint نشده‌اند.
+- CI run `44497749287` روی همان SHA پایان یافت و هر هشت job آن، از جمله secret-scan، تست استثنای دقیق، دو job Flutter/Android، backend، studio، live-contract، docs و e2e-api، موفق شدند. این موفقیت فقط برای همان SHA است، نه تغییرات محلی باقیمانده یا APK release امضاشده. Flutter/Dart محلی اجرا نشد. fingerprint کلید جدید و Actions secrets هنوز تأیید نشده‌اند. QF-00 آغاز نشده است.
+- بازبینی تکمیلی هشدارهای M113: هر ۱۳۷ `operation_key` با تابع SHA-256 بر روی مسیر و method خود در REA تطبیق داده شد؛ هش علامت‌خوردهٔ Markdown نیز با SHA-256 فایل OpenAPI همان fixture برابر بود. این بررسی فقط دربارهٔ آن هشدارهاست، نه کل محتوای شواهد. فایل‌های اصلی به سبب تصمیم‌نگرفتن دربارهٔ انتشار امن هنوز محلی و دست‌نخورده‌اند؛ هیچ allowlist جدید برای آن‌ها اعمال نشده است.
+
+## به‌روزرسانی جاری ۲۰۲۶-۱۱-۱۸ — بررسی کلید قدیمی Android
+
+- [گزارش بررسی کلید قدیمی و استثنای محدود](REPORT-OLD-ANDROID-KEY-REVIEW-2026-11-18.md): keystore قدیمی و properties از commit تاریخی بدون احراز هویت قابل دریافت‌اند؛ بررسی metadata تأیید کرد PKCS12 با رمز همان فایل باز می‌شود، اما سوءاستفاده اثبات نشده است. مالک کنارگذاشتن کلید و استثنای دقیق دو یافته را پذیرفت؛ همان دو fingerprint در `.gitleaksignore` محلی افزوده شدند، بدون allowlist سراسری. regression واقعی Gitleaks با fixture ساختگی مثبت/منفی موفق شد و گام آن به workflow محلی اضافه شد؛ اسکن شاخهٔ remote و پنج tag با policy محلی صفر یافته داشت. GitHub و history تغییر نکرده‌اند؛ CI SHA جدید و اثرانگشت کلید جدید هنوز تأیید نشده‌اند. دسترسی Actions همچنان 403 است.
+
+## به‌روزرسانی جاری ۲۰۲۶-۱۱-۱۸ — آماده‌سازی و مانع شروع
+
+- [گزارش آماده‌سازی پیش از loop](REPORT-PRELOOP-READINESS-2026-11-18.md): نقش‌بندی برای آماده‌سازی پذیرفته و ECC انتخاب فعلی است؛ QF-00 و توسعه آغاز نشده‌اند. REA روی OpenAPI ساختگی موفق و doctor کلی ناموفق بود؛ ECC consult واقعی ولی زیراجنت، مدل/host و QA مستقل اثبات نشده‌اند. اصلاح غیرمخرب مقایسهٔ مجوز REA با تست‌های ساختگی انجام شد. checkpoint، تاریخچهٔ حساس، همگام‌سازی امن و یافته‌های اسکن نیازمند رسیدگی‌اند؛ هیچ commit یا push انجام نشد. آثار این نشست هنوز فقط در worktree هستند.
+
+## به‌روزرسانی افزودهٔ ۲۰۲۶-۱۱-۱۸ — تقسیم وظایف و checkpoint هر loop
+
+- [نقش‌ها و وظایف همهٔ ۳۳ میکرولوپ](PROPOSAL-SUBAGENTS-AND-CHECKPOINTS.md) برای آماده‌سازی با اختیار مالک پذیرفته شده‌اند؛ هیچ زیراجنت واقعی یا ساخت محصول در این گام اجرا نشده. ECC انتخاب فعلی نقش‌هاست؛ جایگزین بدون آزمایش واقعی تصویب نشده است.
+- مالک خواست پایان **هر** میکرولوپ مستند شود و آثار لازم در GitHub ذخیره شوند؛ بند ۲.۱ [برنامهٔ QF](PLAN-FINN-ECC-MICROLOOPS-QA.md) checkpoint انتخابی، review، scan، commit/push فقط شاخهٔ فعلی، تأیید SHA و ثبت CI را الزام می‌کند. بدون checkpoint امن، شروع توسعهٔ حلقهٔ بعدی مسدود است. repo عمومی است؛ secret، دادهٔ شخصی، binary/cache و هر محتوای ناامن را نباید منتشر کرد.
+- مانع شروع امن: HEAD محلی `5482930`، سر شاخهٔ GitHub `8e72de9` (۸ commit جلوتر) و آثار محلی dirty/untracked؛ ابتدا انتقال آثار و همگام‌سازی بدون pull/reset/force-push و بدون تغییر branch باید بررسی و حل شود. هیچ commit/push/merge در این گام انجام نشده؛ اسناد جدید فعلاً محلی‌اند. پیش از هر دستور شروع توسعه، میزبان/مدل واقعی، QA مستقل و checkpoint امن باید احراز شوند.
+
+## به‌روزرسانی افزودهٔ ۲۰۲۶-۱۱-۱۸ — سنجش گزینه‌های رایگان ECC
+
+- [گزارش ارزیابی](REPORT-FREE-ECC-ALTERNATIVES-2026-11-18.md) و [metadata سنجش](../../finn/reports/rea/free-ecc-alternatives-smoke-metadata.json): Superpowers v7.0.2 و Agency Agents pinned و OpenCode 1.19.6 موقتاً خارج پروژه آزمایش شدند. ۵ تست upstream از Superpowers و ۳ تست Agency موفق؛ با provider اسکریپت‌شدهٔ loopback، OpenCode واقعاً skill بارگذاری کرد و برای `API Tester` یک child session جدا ساخت و خروجی ساختگی گرفت. پاسخ‌های provider از پیش برنامه‌ریزی‌شده بودند، نه AI؛ کیفیت، خودمختاری، اجرای TDD و مقایسهٔ واقعی با ECC آزموده نشدند.
+- Superpowers در دستورهای upstream، حذف کد پیش از تست، ایجاد branch/worktree و بعضی عملیات Git را مطرح می‌کند؛ محدودیت‌های کاربر و branch مقدم‌اند و این اقدامات خودکار مجاز نیستند. هیچ نصب یا جایگزینی در پروژه انجام نشد؛ REA در این ارزیابی اجرا نشد. گام بعدی مقایسهٔ A/B با مدل مجاز و fixture ساختگی در sandbox امن است؛ هیچ secret و کد پروژه ارسال نشود.
+
+## به‌روزرسانی افزودهٔ ۲۰۲۶-۱۱-۱۸ — صفحهٔ مخزن و انتقال نشست
+
+- [هندآف تفصیلی پروژه و راهنمای نشست جدید](HANDOFF-PROJECT-2026-11-18.md) و [نقشهٔ هدف ابری/مالی/دسترسی](architecture/cloud-finance-access.md) به همراه به‌روزرسانی README، docs hub، C4 و module map آماده شدند؛ این‌ها هدف را از رفتار اثبات‌شده جدا می‌کنند. `AGENTS.md` و `scripts/docs_gate.py` به مسیرهای جدید اشاره می‌کنند.
+- در snapshot این کار، HEAD محلی `5482930` و سر شاخهٔ فعلی در GitHub `8e72de9` و ۸ commit جلوتر بود. fetch غیرمخرب و `git read-tree -n -m -u` فقط برای سنجش انجام شد؛ dry-run به علت تغییرات محلی ledger شکست. pull/reset/merge/push انجام نشد. اسناد جدید فعلاً در workspace هستند و برای clone تازه قابل اتکا نیستند؛ شرح راه امن و وضعیت دقیق در هندآف تفصیلی است.
+- CI `44391354746` روی `8e72de9`: backend، studio، docs، live-contract، e2e-api و دو client job موفق؛ secret-scan شکست و run کلی ناموفق. `44391379581` برای Android release شکست. هیچ وضعیت CI را به فایل‌های محلی جدید تعمیم نده.
+- اعتبارسنجی مستندات در این workspace: `python3 scripts/docs_gate.py` موفق، ۱۲ Markdown و ۱۷۹ لینک؛ `git diff --check` موفق؛ ۱۰ دیاگرام با parser واقعی Mermaid 11.12.2 در محیط موقت parse شدند. رندر واقعی GitHub و CI برای این نسخه اجرا نشده‌اند.
+- Repowise binary و index در این sandbox غایب‌اند؛ wheel نسخهٔ 0.61.0 فقط موقتاً برای بررسی دانلود شد. `init --yes` می‌تواند hook/editor setup انجام دهد؛ هیچ نصب، init، refresh، اتصال MCP یا model call انجام نشد. محدودیت و گزینه‌های کم‌اثر برای بررسی بعدی در هندآف تفصیلی ثبت است.
+
+## به‌روزرسانی افزودهٔ ۲۰۲۶-۱۱-۱۸ — تلاش واقعی و ایزولهٔ ECC
+
+- [گزارش smoke test زیراجنت](REPORT-ECC-SUBAGENT-SMOKE.md): Claude Code نسخهٔ 2.1.328 در cwd/HOME موقت، بدون credential یا کد MP، نقش planner برگرفته از ECC را از `--agents` شناخت. بدون `--bare` با `--tools Task` ابزار `Task` نیز در init شناسایی شد؛ با این حال خطای احراز هویت exit 1 و `is_error:true` برگشت و هیچ tool-call یا child output رخ نداد. شواهد metadata در `finn/reports/rea/ecc-{isolated,task-only}-smoke-metadata.json`. این استفاده از پلاگین یا اجرای واقعی زیراجنت نیست.
+- قدم بعدی اگر مالک بخواهد: میزبان پشتیبانی‌شده با ورود امن خارج از چت، یا ابزار delegation میزبان Arena؛ سپس تکرار smoke ساختگی با بودجه و مجوز روشن و ثبت parent/child. ارسال کد MP به سرویس مدل بدون اجازهٔ جدا ممنوع.
+
+## به‌روزرسانی افزودهٔ ۲۰۲۶-۱۱-۱۸ — بررسی REA و مسیر زیراجنت ECC
+
+- [گزارش REA/ECC](REPORT-REA-ECC-SUBAGENTS.md): REA واقعاً mirror پالایش‌شدهٔ ۱۵۰۰ فایل پروژه و ۲۵۷۰ فایل checkout ECC را inventory کرد (`partial`)؛ بررسی static سه فایل JS/TS در هر کدام نیز `partial` بود. [شاهد metadata پالایش‌شده](../../finn/reports/rea/project-ecc-orchestration-summary.json)؛ کل پروژه خط‌به‌خط یا امنیتی audit نشده است.
+- CLI موقت Claude Code شواهد محلی را نشان داد: plugin `ecc@ecc` نسخهٔ 2.2.3، `enabled:true` و `projectEnabled:false`؛ auth همان CLI `loggedIn:false` و agent-session list برای cwd صفر است. این نتایج دربارهٔ نشست‌های قبلی یا کل حساب کاربر ادعا ندارند. ابزار delegation در رابط فعلی دیده نمی‌شود، هیچ مدل بیرونی یا زیراجنت فراخوانی نشده و هیچ credential خواسته نشده است.
+- قدم بعدی در صورت ادامهٔ این موضوع: بررسی شاهد غیرمحرمانهٔ نشست قبلی، یا در میزبان واقعاً پشتیبانی‌شده پس از تأیید provider/هزینه و بدون ارسال کد، smoke test با parent/child tool-call. برای ارسال کد/داده به مدل بیرونی مجوز صریح جدا لازم است. هیچ نصب خودکار، bypass-permissions یا global allowlist انجام نشود.
+
+## به‌روزرسانی افزودهٔ ۲۰۲۶-۱۱-۱۸ — طرح micro-loop و QA
+
+- شاخهٔ فعال `arena/b0e55b62-mp` است؛ دستورهای شاخه/`reset` در متن تاریخی پایین برای این نشست مجاز نیستند. کاربر تنظیم چرخه‌های جداگانهٔ FINN/ECC با QA تکرارشونده در هر برش و ادامهٔ بدون نظارت روتین خواست؛ خروجی [طرح QF-00 تا QF-32](PLAN-FINN-ECC-MICROLOOPS-QA.md) است، نه اجرای توسعه. [تحقیق منشأ OSS](OSS-DEEP-RESEARCH-2026-11-18.md) و [TODO محصول](TODO-CLOUD-FINANCE-ACCESS.md) دامنه و نامزدها را مشخص می‌کنند؛ صف قدیمی و آثار قبلی حفظ شده‌اند.
+- ECC `consult` واقعاً اجرا و پیشنهاد heuristic داد، اما هیچ subagent مستقل اجرا نشد؛ REA 6.9.0 برای skill سالم و environment کلی ناسالم گزارش شد. Flutter/Dart/Docker در PATH موجود نیستند؛ CI/دستگاه و همهٔ QAهای ساخت `NOT RUN` هستند. محصول، dependency، داده، deployment یا release تغییر نکرد.
+- قدم بعدی: پس از دستور شروع توسعه با حفظ قید گزارش پیش از ساخت، از QF-00 و baseline غیرمخرب شروع و هر برش را همراه QA اختصاصی‌اش تمام کن؛ موانع واقعی را مستند و برش‌های مستقل را بدون سؤال روتین ادامه بده. push، استقرار، خرید، دادهٔ واقعی، انتشار و عملیات مخرب نیازمند مجوز جدا هستند.
+
 ## Snapshot فعلی
 
 - **هدف پایدار کاربر:** توسعهٔ محصول با کمک AI، بدون بازخوانی بی‌هدف کل مخزن؛ معماری، تصمیم‌ها و قدم بعدی باید در فایل‌های Git-tracked قابل انتقال باشند.
@@ -46,3 +103,18 @@
 - **شاهد:** فرمان تست/CI و نتیجهٔ دقیق؛ موارد اجرا‌نشده را جدا بنویس.
 - **محدودیت/مانع:** فقط مانع واقعی، بدون secret یا دادهٔ شخصی.
 - **قدم بعدی دقیق:** اولین فایل/بخش/فرمان امنی که نشست بعد باید سراغش برود.
+
+
+## افزودهٔ آخر: ارزش‌های نامزد، REA و RepoWise
+
+- کاربر درخواست تطبیق و ورود ارزش‌ها، TODO/میکرولوپ، صفحهٔ GitHub و دیاگرام را داده است. [برنامهٔ OV](PLAN-OSS-VALUE-MICROLOOPS-2026-11-18.md)، [گزارش](REPORT-OSS-VALUE-DEEP-DIVE-2026-11-18.md) و [نقشه](architecture/oss-value-flows.md) در این نوبت ساخته شدند؛ TODO و QF و ماتریس نقش با append به‌روز شدند. `OV-01..11` و همهٔ QFها همچنان `NOT RUN` هستند.
+- REA 6.9.0 inventory انتخابی و تحلیل ایستای JS را واقعاً انجام داد، نه تحلیل معنایی خط‌به‌خط همهٔ پروژه‌ها. RepoWise 0.61.0 واقعاً روی mirror گزینشی ۵۲۹ فایل و تاریخچهٔ مصنوعی، بدون مدل/شبکه و بدون hook اجرا شد؛ ۵۱۷ فایل index شد، **index ریشهٔ پروژه refresh نشد**. دادهٔ موقت تضمین بقا ندارد؛ output خام بدون review منتشر نشود.
+- کد/asset خارجی وارد و loop محصول اجرا نشده؛ QA مستقل ECC و Flutter/device همچنان اثبات‌نشده‌اند. نبود مجوز داده و محدودیت API RepDB مانع است. گام بعد: بررسی و ثبت شواهد هر برش در سند OV با حفظ QF و checkpoint و بدون کاهش گیت‌ها.
+- فقط افزودهٔ README نسبت به HEAD قبلی و سه سند جدید OV، گزارش و دیاگرام با index ایزوله پس از scan و بررسی لینک commit/push شدند: `be9e40e77f31f3b277fa1ce1d34b899d510acf81`، روی همین شاخه؛ remote و HEAD برابرند. [CI run 44505113345](https://github.com/yousefghorbanian98-create/MP/actions/runs/44505113345) برای همان SHA هشت job موفق دارد، شامل Flutter و Android debug؛ نه release/device و نه تغییرات محلی. فایل‌های قدیمی dirty/untracked از جمله TODO و برنامهٔ اصلی QF و همین handoff stage یا منتشر نشدند؛ تغییرات append محلی آن‌ها و محتوای قبلی حفظ شده‌اند. README شاخهٔ GitHub با README محلیِ دارای تغییرهای قدیمی یکسان نیست؛ شاخهٔ اصلی/صفحهٔ پیش‌فرض تغییر نکرد.
+
+
+## افزودهٔ آخر: آزمایش واقعی میزبان ECC و QA ساختگی
+
+- کاربر اجرای آزمایشی خواست. [گزارش](REPORT-ECC-QA-TRIAL-2026-11-18.md) و [fixture ساختگی](../../finn/fixtures/ecc-qa-smoke/README.md) در commit `dc572a7c2fbb7ab094297cfec4bd56accca6dc1b` روی شاخهٔ فعلی push شدند؛ HEAD و remote برابر و ۴۶ تغییر قبلی همچنان محلی‌اند. CI همان SHA در [run 44507836824](https://github.com/yousefghorbanian98-create/MP/actions/runs/44507836824) هر هشت job موفق است؛ این موفقیت اثبات گیت ECC، QA مستقل، release یا محتوای dirty نیست.
+- `Task` و دو نقش موقت در میزبان Claude Code شناخته شدند اما به‌علت احراز هویت exit 1 و بدون tool-use/child؛ هیچ زیراجنت یا QA مستقل اجرا نشد. REA contract ساختگی با دو operation و ECC consult اجرا شدند؛ harness ساختگی کد ناامن را با سه شکست شناسایی و نسخهٔ مقایسه‌ای را با چهار تست گذراند. هیچ کدام QF یا اعتبارسنج پرداخت واقعی نیستند. `rea doctor` کلی unhealthy بود.
+- قدم بعد: پیدا کردن میزبان مجاز دارای مدل و شبکه، یا delegation واقعی Arena؛ ثبت parent و هر دو child و QA مستقل با محتوای ساختگی، بدون درخواست credential در چت و بدون ارسال کد MP به سرویس بیرونی پیش از مجوز. تا آن زمان QF-00 و loopهای محصول `NOT RUN/BLOCKED` بمانند.

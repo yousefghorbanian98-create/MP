@@ -1,0 +1,273 @@
+{
+  "schema": "HistoricalSourceSummary",
+  "authority": "historical-reference",
+  "root_alias": "$REFERENCE_ROOT",
+  "manifest": {
+    "schema": "HistoricalSourceManifest",
+    "authority": "historical-reference",
+    "manifest_id": "hsm_4c85d9b92a296afe4d361243970451b700eab9c377d0acf8b4fcb5d4d6bbd6b8",
+    "graph_sha256": "8a17b9dacbd02039cf12b5f593e2f3cb500a9cae73e93e4b6bd0e0ec2ac356c0",
+    "root_sha256": "3bd61c5f4dd6dbca3f8219380de757c8f10feaa20736e5e86265ae5cd563d83b",
+    "inventory_state": "partial",
+    "entry_count": 42,
+    "relationship_count": 0
+  },
+  "inventory_state": "partial",
+  "provenance": {
+    "importer": "rea-agents",
+    "importer_version": "6.9.0",
+    "caller": "rea-cli"
+  },
+  "vcs": {
+    "kind": "git",
+    "head": "f210eef512177b236e1a76a400e598e355b3378e",
+    "dirty": null
+  },
+  "languages": [
+    "Markdown",
+    "Python",
+    "TOML",
+    "YAML"
+  ],
+  "manifests": [
+    "MANIFEST.in",
+    "Makefile",
+    "pyproject.toml"
+  ],
+  "counts": {
+    "entries": 42,
+    "files": 33,
+    "directories": 9,
+    "symlinks": 0,
+    "unknown": 0,
+    "relationships": 0,
+    "parse_failures": 0,
+    "exclusions": 1
+  },
+  "file_content_states": {
+    "hashed": 33,
+    "redacted-secret": 0,
+    "excluded": 0,
+    "unreadable": 0,
+    "unknown": 0
+  },
+  "directory_tree_states": {
+    "enumerated": 9,
+    "partial": 0,
+    "excluded": 0,
+    "unreadable": 0,
+    "unknown": 0
+  },
+  "file_sizes": {
+    "known_bytes": "405863",
+    "unknown_file_count": 0
+  },
+  "exclusions": [
+    {
+      "path": ".git",
+      "entry_kind": "directory",
+      "reason": "default-ignored",
+      "pattern": ".git/"
+    }
+  ],
+  "limitations": [
+    "Path identity is revalidated around operations; Node lacks portable descriptor-relative openat traversal, so a syscall-boundary pathname race remains."
+  ],
+  "outline": {
+    "depth": 1,
+    "entries": [
+      {
+        "path": ".agents",
+        "classifications": [
+          "unknown"
+        ],
+        "limitations": [],
+        "kind": "directory",
+        "tree_state": "enumerated"
+      },
+      {
+        "path": ".editorconfig",
+        "kind": "file",
+        "language": null,
+        "size": 671,
+        "content_state": "hashed",
+        "classifications": [
+          "config"
+        ],
+        "limitations": []
+      },
+      {
+        "path": ".flake8",
+        "kind": "file",
+        "language": null,
+        "size": 672,
+        "content_state": "hashed",
+        "classifications": [
+          "unknown"
+        ],
+        "limitations": []
+      },
+      {
+        "path": ".gitattributes",
+        "kind": "file",
+        "language": null,
+        "size": 975,
+        "content_state": "hashed",
+        "classifications": [
+          "config"
+        ],
+        "limitations": []
+      },
+      {
+        "path": ".github",
+        "classifications": [
+          "config"
+        ],
+        "limitations": [],
+        "kind": "directory",
+        "tree_state": "enumerated"
+      },
+      {
+        "path": ".gitignore",
+        "kind": "file",
+        "language": null,
+        "size": 1484,
+        "content_state": "hashed",
+        "classifications": [
+          "config"
+        ],
+        "limitations": []
+      },
+      {
+        "path": ".pre-commit-config.yaml",
+        "kind": "file",
+        "language": "YAML",
+        "size": 1993,
+        "content_state": "hashed",
+        "classifications": [
+          "config"
+        ],
+        "limitations": []
+      },
+      {
+        "path": "AGENTS.md",
+        "kind": "file",
+        "language": "Markdown",
+        "size": 10187,
+        "content_state": "hashed",
+        "classifications": [
+          "documentation"
+        ],
+        "limitations": []
+      },
+      {
+        "path": "CHANGELOG.md",
+        "kind": "file",
+        "language": "Markdown",
+        "size": 10853,
+        "content_state": "hashed",
+        "classifications": [
+          "documentation"
+        ],
+        "limitations": []
+      },
+      {
+        "path": "CLAUDE.md",
+        "kind": "file",
+        "language": "Markdown",
+        "size": 11,
+        "content_state": "hashed",
+        "classifications": [
+          "documentation"
+        ],
+        "limitations": []
+      },
+      {
+        "path": "LICENSE",
+        "kind": "file",
+        "language": null,
+        "size": 1070,
+        "content_state": "hashed",
+        "classifications": [
+          "documentation"
+        ],
+        "limitations": []
+      },
+      {
+        "path": "MANIFEST.in",
+        "kind": "file",
+        "language": null,
+        "size": 26,
+        "content_state": "hashed",
+        "classifications": [
+          "manifest"
+        ],
+        "limitations": []
+      },
+      {
+        "path": "Makefile",
+        "kind": "file",
+        "language": null,
+        "size": 1430,
+        "content_state": "hashed",
+        "classifications": [
+          "manifest"
+        ],
+        "limitations": []
+      },
+      {
+        "path": "README.md",
+        "kind": "file",
+        "language": "Markdown",
+        "size": 7066,
+        "content_state": "hashed",
+        "classifications": [
+          "documentation"
+        ],
+        "limitations": []
+      },
+      {
+        "path": "persiantools",
+        "classifications": [
+          "unknown"
+        ],
+        "limitations": [],
+        "kind": "directory",
+        "tree_state": "enumerated"
+      },
+      {
+        "path": "pyproject.toml",
+        "kind": "file",
+        "language": "TOML",
+        "size": 3275,
+        "content_state": "hashed",
+        "classifications": [
+          "manifest"
+        ],
+        "limitations": []
+      },
+      {
+        "path": "tests",
+        "classifications": [
+          "source",
+          "test"
+        ],
+        "limitations": [],
+        "kind": "directory",
+        "tree_state": "enumerated"
+      },
+      {
+        "path": "uv.lock",
+        "kind": "file",
+        "language": null,
+        "size": 123205,
+        "content_state": "hashed",
+        "classifications": [
+          "generated"
+        ],
+        "limitations": []
+      }
+    ],
+    "omitted_entry_count": 24
+  }
+}

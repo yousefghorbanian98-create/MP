@@ -1,5 +1,7 @@
 # FINN State — وضعیت جاری لوپ
 
+> هشدار انتقال ۲۰۲۶-۱۱-۱۸: بخش‌های زیر snapshot تاریخی‌اند. وضعیت و نصب جاری را از `docs/MuscleParadise/SESSION_HANDOFF.md` و `docs/MuscleParadise/BUILDER-START-AND-REPOWISE.md` و با بررسی Git و CI همان SHA بگیرید. QF و QA مستقل هنوز اجرا نشده‌اند؛ policy پرداخت صرفاً جدا و بدون اتصال است.
+
 ## Snapshot جاری — M84 تا M87 و CI follow-up (2026-11-16)
 
 - شاخهٔ فعال `arena/4f336f66-mp` روی origin در `b58d0536290b9ad80158c8c67159f6833eaab563` (`b58d053`) است. CI `44247416109` همین commit را آزمود. Worktree اکنون helper را به یک annotation تجمیعی برای همهٔ تست‌های fail تغییر می‌دهد تا محدودیت تعداد annotationهای GitHub چهار نام را حذف نکند؛ این patch هنوز push نشده. Untracked evidence/reports انتخابی stage نشده و دست‌نخورده مانده است.
@@ -267,3 +269,10 @@ backend ۳۵۱ · ruff پاک · bandit ۰H/۰M · tsc ۰ · vitest ۳۰ · semg
   امضای release اجراشدنی نیست. کلید تاریخی همچنان افشاشده و دو یافته در گیت فعال‌اند.
 - L4 هنوز پیاده‌سازی نشده؛ L6 و release همچنان باز هستند؛ تا شاهد CI جدید و build release،
   تغییرات M112 صرفاً در حد کد و تست سیاست‌اند.
+
+## به‌روزرسانی M113 (۲۰۲۶-۱۱-۱۸)
+
+- طرح و شواهد: `docs/MuscleParadise/PLAN-MANUAL-TRANSFER.md` و `finn/reports/rea/m113-review.md`؛ تحلیل JS در REA ناقص، MCP/بازبینی مستقل ECC در دسترس نبود.
+- M113-1: policy مستقل و ۵۴ تست محلی؛ **به API، فایل، پرداخت یا ledger متصل نیست**. M113-2 تا M113-12 انجام نشده‌اند و کارت‌به‌کارت آمادهٔ استفاده نیست.
+- شواهد محلی workspace: کل backend **943 passed / 2 skipped**؛ Studio **220 passed / 9 skipped**؛ docs gate موفق. هیچ گیت CI تازه، تست دستگاه یا refresh واقعی Repowise برای این کار اجرا نشده است.
+- انتشار: remote همین شاخه در بررسی `ls-remote` روی `8e72de9` بود اما HEAD محلی `5482930` است و workspace شامل تغییرات پیشین است؛ بدون pull/reset/force push هیچ تغییری روی GitHub در این نوبت منتشر نشده. ادامه با حفظ این تغییرات و حل امن اختلاف تاریخچه ضروری است.
