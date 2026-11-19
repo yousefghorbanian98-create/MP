@@ -52,6 +52,18 @@ def client(tmp_path, monkeypatch):
     reset_engine()
 
 
+@pytest.fixture(autouse=True)
+def _money_engine_enabled(monkeypatch):
+    """M59 موتور پول را می‌سنجد، نه حالت پیش‌فرض فروشگاه.
+
+    از فاز ۲ (تصمیم مالک ۲۰۲۶-۱۱-۱۹) خرید درون‌برنامه‌ای بسته است؛
+    `test_phase2_shop_display.py` همان حالت پیش‌فرض را قفل می‌کند. اینجا پرچم
+    روشن می‌شود تا قاعده‌های پول — قفل قیمت، کم‌شدن موجودی، مالکیت سفارش —
+    بی‌پوشش نمانند و برای فاز ۶ سالم بمانند.
+    """
+    monkeypatch.setattr(settings, "shop_online_purchase_enabled", True)
+
+
 def _user(role: str) -> dict:
     """کاربر با نقش دلخواه + توکن؛ عضو هم پروندهٔ Member دارد."""
     from app.security.jwt import create_access_token

@@ -119,6 +119,7 @@
   "/api/v1/shop/prices",
   "/api/v1/shop/products",
   "/api/v1/shop/products/{product_id}",
+  "/api/v1/shop/status",
   "/api/v1/updates/manifest",
   "/health"
  ],
@@ -2462,6 +2463,25 @@
     "permission"
    ],
    "roles": [
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ]
+  },
+  {
+   "method": "GET",
+   "path": "/api/v1/shop/status",
+   "operationId": "status_api_v1_shop_status_get",
+   "tags": [
+    "shop"
+   ],
+   "guards": [
+    "permission"
+   ],
+   "roles": [
+    "member",
+    "coach",
     "reception",
     "manager",
     "admin",

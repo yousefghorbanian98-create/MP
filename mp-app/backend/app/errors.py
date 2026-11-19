@@ -40,8 +40,8 @@ class UnauthorizedError(ApiError):
 
 
 class ConflictError(ApiError):
-    def __init__(self, message: str = "تداخل"):
-        super().__init__(message, status.HTTP_409_CONFLICT, "conflict")
+    def __init__(self, message: str = "تداخل", code: str = "conflict"):
+        super().__init__(message, status.HTTP_409_CONFLICT, code)
 
 
 def _payload(code: str, message: str, details: list | None = None) -> dict:

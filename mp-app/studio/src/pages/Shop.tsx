@@ -29,6 +29,8 @@ import {
   fetchShopCategories,
   fetchShopOrders,
   fetchShopProducts,
+  fetchShopStatus,
+  type ShopStatus,
   removeCartItem,
   reviewChangeRequest,
   savePrice,
@@ -78,6 +80,8 @@ export function Shop() {
   const [pendingApproval, setPendingApproval] = useState<ChangeRequest | null>(null);
   // رسید باز (R5) — چاپ سفارش برای تحویل
   const [receipt, setReceipt] = useState<OrderReceipt | null>(null);
+  // پیش‌فرض بسته است: تا پاسخ سرور نرسیده، دکمهٔ خرید نمایش داده نمی‌شود.
+  const [shopStatus, setShopStatus] = useState<ShopStatus | null>(null);
 
   const reload = useCallback(async () => {
     setLoading(true);
@@ -89,8 +93,9 @@ export function Shop() {
       fetchGateways(),
       fetchPrices(),
       isAdmin ? fetchChangeRequests() : Promise.resolve([] as ChangeRequest[]),
+      fetchShopStatus(),
     ]);
-    const [p, c, k, o, g, pr, rq] = results;
+    const [p, c, k, o, g, pr, rq, st] = results;
     if (p.status === "fulfilled") setProducts(p.value);
     if (c.status === "fulfilled") setCategories(c.value);
     if (k.status === "fulfilled") setCart(k.value);
@@ -98,6 +103,7 @@ export function Shop() {
     if (g.status === "fulfilled") setGateways(g.value);
     if (pr.status === "fulfilled") setPrices(pr.value);
     if (rq.status === "fulfilled") setRequests(rq.value);
+    if (st.status === "fulfilled") setShopStatus(st.value);
     const failed = results.find((r) => r.status === "rejected");
     if (failed && failed.status === "rejected") {
       const msg = failed.reason instanceof Error ? failed.reason.message : "دریافت داده ناموفق";
@@ -130,9 +136,10 @@ export function Shop() {
     }
   };
 
+  const purchaseOpen = shopStatus?.online_purchase === true;
   const tabs: { id: Tab; label: string; show: boolean }[] = [
     { id: "store", label: "فروشگاه", show: true },
-    { id: "cart", label: `سبد${cart?.count ? ` (${fa(cart.count)})` : ""}`, show: true },
+    { id: "cart", label: `سبد${cart?.count ? ` (${fa(cart.count)})` : ""}`, show: purchaseOpen },
     { id: "orders", label: "سفارش‌ها", show: true },
     { id: "manage", label: "مدیریت کاتالوگ", show: isOwner },
     { id: "requests", label: "درخواست‌ها", show: isAdmin },
@@ -175,6 +182,19 @@ export function Shop() {
             ))}
         </div>
       </header>
+
+      {shopStatus && !purchaseOpen && (
+        <div className="glass-card space-y-1 p-4 text-sm" role="status">
+          <p className="font-bold">خرید درون‌برنامه‌ای بسته است</p>
+          <p className="text-ink-dim">
+            خرید به‌صورت حضوری در باشگاه انجام می‌شود؛ کاتالوگ و قیمت فقط برای مشاهده است.
+          </p>
+          <p className="text-xs text-ink-dim">
+            ساعت کاری: {shopStatus.opens_at} تا {shopStatus.closes_at}
+            {shopStatus.is_open ? " · الان باز است" : " · الان بسته است"}
+          </p>
+        </div>
+      )}
 
       {loading && <SkeletonCards count={3} />}
 
@@ -247,6 +267,10 @@ export function Shop() {
                         <span className="text-xs text-ink-dim line-through">{rial(p.compare_at_rial)}</span>
                       )}
                     </div>
+                    {!purchaseOpen && (
+                      <p className="text-xs text-ink-dim">خرید حضوری — بدون سفارش درون‌برنامه‌ای</p>
+                    )}
+                    {purchaseOpen && (
                     <button
                       type="button"
                       onClick={() =>
@@ -261,6 +285,7 @@ export function Shop() {
                     >
                       {p.stock_qty === 0 ? "ناموجود" : "افزودن به سبد"}
                     </button>
+                    )}
                   </div>
                 </motion.article>
               ))}

@@ -18,7 +18,9 @@ import { ToastViewport, useToastStore } from "../src/components/Feedback";
 
 type Call = { url: string; method: string; body: unknown };
 
-function stub(role: string) {
+function stub(role: string, opts: { purchaseOpen?: boolean } = {}) {
+  // پیش‌فرض تست‌های قدیمی: موتور پول باز است. تست فاز ۲ صریحاً می‌بندد.
+  const purchaseOpen = opts.purchaseOpen ?? true;
   const calls: Call[] = [];
   const token = `h.${btoa(JSON.stringify({ role }))}.s`;
   vi.stubGlobal("localStorage", {
@@ -68,6 +70,18 @@ function stub(role: string) {
       const method = (init?.method ?? "GET").toUpperCase();
       calls.push({ url, method, body: init?.body ? JSON.parse(String(init.body)) : null });
       const json = (b: unknown) => new Response(JSON.stringify(b), { status: 200 });
+      if (url.includes("/shop/status"))
+        return json({
+          mode: "in_person",
+          is_open: true,
+          reason: "open",
+          opens_at: "07:00",
+          closes_at: "23:00",
+          timezone: "Asia/Tehran",
+          closed_weekdays: [],
+          online_purchase: purchaseOpen,
+          checked_at: "2026-11-19T10:00:00Z",
+        });
       if (url.includes("/shop/products") && method === "GET") return json(products);
       if (url.includes("/shop/categories")) return json([{ id: 1, slug: "supplements", title: "مکمل", kind: "supplement", sort_order: 0, is_active: true }]);
       if (url.includes("/shop/cart") && method === "GET") return json(cart);
@@ -230,5 +244,21 @@ describe("صفحهٔ فروشگاه — سطوح دسترسی و جریان خر
     // جمع از سرور می‌آید، نه محاسبهٔ سمت کلاینت
     expect(within(dialog).getAllByText(/۲٬۵۰۰٬۰۰۰/).length).toBeGreaterThan(0);
     expect(calls.some((c) => c.url.includes("/shop/orders/91/receipt"))).toBe(true);
+  });
+
+  it("فروشگاه نمایش‌محور: با پاسخ بستهٔ سرور، سبد و دکمهٔ خرید پنهان می‌شوند", async () => {
+    stub("member", { purchaseOpen: false });
+    render(<Shop />);
+    expect(await screen.findByText("خرید درون‌برنامه‌ای بسته است")).toBeTruthy();
+    expect(screen.getByText(/خرید حضوری — بدون سفارش درون‌برنامه‌ای/)).toBeTruthy();
+    expect(screen.queryByRole("button", { name: /سبد/ })).toBeNull();
+    expect(screen.queryByRole("button", { name: "افزودن به سبد" })).toBeNull();
+  });
+
+  it("فروشگاه نمایش‌محور: با پاسخ باز سرور، دکمهٔ خرید برمی‌گردد", async () => {
+    stub("member", { purchaseOpen: true });
+    render(<Shop />);
+    expect(await screen.findByRole("button", { name: "افزودن به سبد" })).toBeTruthy();
+    expect(screen.queryByText("خرید درون‌برنامه‌ای بسته است")).toBeNull();
   });
 });

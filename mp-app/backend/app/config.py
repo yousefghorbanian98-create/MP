@@ -55,6 +55,16 @@ class Settings(BaseSettings):
     # سقف باید قابل تنظیم باشد (پیک فروش/حراج) بدون تغییر کد.
     shop_write_rate_limit: str = "30/minute"
     shop_checkout_rate_limit: str = "10/minute"
+    # فاز ۲ (تصمیم مالک ۲۰۲۶-۱۱-۱۹): فروشگاه نمایش‌محور است. خرید درون‌برنامه‌ای
+    # بسته است و خرید حضوری انجام می‌شود. این پرچم فقط برای تست موتور پول روشن
+    # می‌شود؛ در production خاموش می‌ماند و مسیر سبد/تسویه ۴۰۹ می‌دهد.
+    shop_online_purchase_enabled: bool = False
+    # ساعت کاری باشگاه: منبع حقیقت پاسخ سرور است، نه ساعت دستگاه عضو.
+    shop_timezone: str = "Asia/Tehran"
+    shop_open_hour: int = 7
+    shop_close_hour: int = 23
+    # روزهای تعطیل هفتگی با کاما؛ ۰=دوشنبه … ۶=یکشنبه. خالی = بدون تعطیلی.
+    shop_closed_weekdays: str = ""
     valkey_url: str = "redis://localhost:6379/0"
     # allowlist مبدأهای CORS — با کاما جدا شود (env: MP_CORS_ORIGINS)
     # در production باید صریح تنظیم شود؛ خالی = هیچ مبدأ مرورگری (fail-closed)
@@ -68,6 +78,35 @@ class Settings(BaseSettings):
     def _supported_sms_provider(cls, value: str) -> str:
         if value not in {"dev", "webmagfa", "kavenegar"}:
             raise ValueError("MP_SMS_PROVIDER باید dev، webmagfa یا kavenegar باشد")
+        return value
+
+    @field_validator("shop_timezone")
+    @classmethod
+    def _valid_timezone(cls, value: str) -> str:
+        from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
+
+        try:
+            ZoneInfo(value)
+        except (ZoneInfoNotFoundError, ValueError) as exc:  # pragma: no cover - تنظیم غلط
+            raise ValueError(f"MP_SHOP_TIMEZONE نامعتبر است: {value}") from exc
+        return value
+
+    @field_validator("shop_open_hour", "shop_close_hour")
+    @classmethod
+    def _valid_hour(cls, value: int) -> int:
+        if not 0 <= value <= 23:
+            raise ValueError("ساعت کاری باید بین ۰ و ۲۳ باشد")
+        return value
+
+    @field_validator("shop_closed_weekdays")
+    @classmethod
+    def _valid_weekdays(cls, value: str) -> str:
+        for chunk in value.split(","):
+            text = chunk.strip()
+            if not text:
+                continue
+            if not text.isdigit() or not 0 <= int(text) <= 6:
+                raise ValueError("MP_SHOP_CLOSED_WEEKDAYS فقط عدد ۰ تا ۶ می‌پذیرد")
         return value
 
     @field_validator("payment_gateway")
