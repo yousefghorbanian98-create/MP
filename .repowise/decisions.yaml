@@ -19,6 +19,22 @@ decisions:
   accepted_by: arena_agent
   evidence:
   - mp-app/client/lib/features/shop/shop_page.dart
+- id: 7fe8df48c8ca401e2d34ddb35c8c61b7
+  title: گیت سینتکس دیاگرام با پارسر رسمی Mermaid و بدون مرورگر
+  decision: mermaid@11 + jsdom در Node، هر دو MIT، اجرا در job docs؛ گیت با ۲۳ دیاگرام سبز و حالت شکسته
+    قرمز آزموده شد
+  reason: گیت مستندات فقط اعلان دیاگرام را می‌سنجید؛ بلوک شکسته رد نمی‌شد. بدون Chrome و بدون سرویس بیرونی
+    هم پارس واقعی ممکن است.
+  scope:
+  - docs
+  - tools/mermaid-check
+  currency: active
+  source: agent
+  accepted_at: '2026-11-19T22:00:41.918212'
+  base_token: c8570a3859ed88e0
+  accepted_by: yousefghorbanian98-create
+  evidence:
+  - 4c332eb
 - id: c876c16652c41be219ff4276d7b7bdfe
   title: ایندکس کد ابزار محلی، هرگز در Git
   decision: ایندکس در .repowise/ می‌ماند، gitignore است، تلمتری خاموش، و فقط decisions.yaml ردیابی می‌شود.
