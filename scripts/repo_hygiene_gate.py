@@ -23,6 +23,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 INDEX_DIR = ".repowise"
+# تنها فایلی از ایندکس که عمداً ردیابی می‌شود: مانیفست تصمیم‌ها.
+ALLOWED_TRACKED = {".repowise/decisions.yaml"}
 AGENT_TOOL_MARKERS = ("repowise", "Repowise")
 
 
@@ -38,17 +40,23 @@ def check_index_ignored(problems: list[str]) -> None:
     if not gitignore.is_file():
         problems.append("‏.gitignore وجود ندارد؛ ایندکس ابزار می‌تواند وارد Git شود")
         return
-    patterns = {
-        line.strip().rstrip("/")
-        for line in gitignore.read_text(encoding="utf-8").splitlines()
+    pattern_list = [
+        line.strip() for line in gitignore.read_text(encoding="utf-8").splitlines()
         if line.strip() and not line.strip().startswith("#")
-    }
-    if INDEX_DIR not in patterns:
+    ]
+    # `!` یعنی استثنا و `/` ابتدای مسیر؛ برای مقایسه هر دو حذف می‌شوند.
+    patterns = {line.lstrip("!").lstrip("/").rstrip("/") for line in pattern_list}
+    if not ({INDEX_DIR, f"{INDEX_DIR}/*"} & patterns):
         problems.append(f"‏{INDEX_DIR}/ در .gitignore نیست")
-    tracked = _git("ls-files", INDEX_DIR)
-    if tracked:
-        first = tracked.splitlines()[0]
-        problems.append(f"فایل ایندکس داخل Git ردیابی می‌شود: {first}")
+    if ".repowise/decisions.yaml" not in patterns:
+        problems.append("مانیفست تصمیم‌ها از ignore مستثنا نشده است")
+    tracked = [line for line in _git("ls-files", INDEX_DIR).splitlines() if line.strip()]
+    unexpected = [line for line in tracked if line not in ALLOWED_TRACKED]
+    if unexpected:
+        problems.append(f"فایل ایندکس داخل Git ردیابی می‌شود: {unexpected[0]}")
+    missing = sorted(ALLOWED_TRACKED - set(tracked))
+    if missing:
+        problems.append(f"مانیفست تصمیم‌ها ردیابی نمی‌شود: {missing[0]}")
 
 
 def check_no_agent_folder(problems: list[str]) -> None:

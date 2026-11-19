@@ -164,25 +164,30 @@ python3 scripts/repo_hygiene_gate.py     # ایندکس gitignore، بدون .cl
 `@mermaid-js/mermaid-cli` (MIT) یا Structurizr CLI رندر کنید؛ در محیط ساخت فعلی
 Chrome و Docker نیست، پس خروجی تصویری ساخته نشد.
 
-## ۷. خروجی‌های واقعی که همین حالا در دسترس‌اند (هنوز استفاده نشده)
+## ۷. خروجی‌های واقعی ابزار: یافته‌ها و آنچه استفاده شد
 
-این سه مورد خروجی `repowise next` روی همان ایندکس است، نه حدس:
+این چهار مورد خروجی `repowise next` روی همان ایندکس است، نه حدس:
 
 | یافته | عدد | چرا مهم است |
 |---|---|---|
 | `validate_production_configuration` | CCN ۴۶ · ۱۰۲ خط · واردشده در ۶۷ فایل | پیچیده‌ترین تابع مخزن؛ هر تغییر config ریسک بالا دارد |
 | `pages/Shop.tsx` | CCN ۶۴ · ۴۵۱ خط | همان صفحه‌ای که فاز ۰ و ۲ به آن دست می‌زنند |
 | `components/PaymentPanel.tsx` | CCN ۳۴ · ۲۱۴ خط | قلب فاز ۳ و ۶ (حذف درگاه و پول) |
-| پوشش تست | ناشناخته | بدون گزارش coverage، repowise «تست‌شده/تست‌نشده» را نمی‌داند |
+| پوشش تست | ۸۲.۶٪ · ۱۹۴ فایل | گزارش XML وارد شد؛ نقشهٔ تست‌به‌کد با ۷۸۶۳ رکورد ساخته شد |
+
+این‌ها هم اجرا شدند و نتیجه‌شان ثبت است:
+
+| فرمان | نتیجهٔ واقعی | کجا ثبت شد |
+|---|---|---|
+| `repowise impacted-tests` | نُه تست با پوشش واقعی برای یک تغییر کوچک؛ `:all` به‌همراه دلیل وقتی تغییر پوشش ندارد | [AGENT-TOOLING-REVIEWS §۹.۲](AGENT-TOOLING-REVIEWS.md) |
+| `repowise dead-code` | ۳۳ یافته؛ دو مورد ۱۰۰٪ حذف شد | [AGENT-TOOLING-REVIEWS §۹.۳](AGENT-TOOLING-REVIEWS.md) |
+| `repowise doc-drift` | ۱۵ یافته در ۱۰ سند؛ همه الگو یا مدرک بیرونی | [AGENT-TOOLING-REVIEWS §۹.۴](AGENT-TOOLING-REVIEWS.md) |
+| گیت سینتکس Mermaid | ۲۳ دیاگرام پارس شد؛ حالت شکسته هم آزموده شد | [AGENT-TOOLING-REVIEWS §۹.۱](AGENT-TOOLING-REVIEWS.md) |
+| `repowise decision` | چهار تصمیم ثبت شد؛ سه‌تا accepted | `.repowise/decisions.yaml` در همین مخزن |
 
 دستورهای دیگری که نصب شده ولی هنوز در هیچ لوپی به کار نرفته‌اند:
 
 | دستور | کاری که می‌کند | جای استفاده |
 |---|---|---|
-| `repowise doc-drift` | مستنداتی که کد از آن‌ها جلو زده را پیدا می‌کند | پیش از هر checkpoint |
-| `repowise dead-code` | کد مرده (۳۳ یافته در همین ایندکس) | فاز ۸، پاک‌سازی |
-| `repowise impacted-tests` | فقط تست‌هایی که تغییر به آن‌ها می‌خورد | کوتاه‌کردن زمان لوپ |
-| `repowise coverage` | ingest گزارش پوشش و گیت روی آن | QF-29 |
-| `repowise decision` | ثبت تصمیم معماری به‌صورت قابل‌پرسش | کنار `OWNER-DECISIONS.md` |
 | `repowise distill` | فشرده‌سازی خروجی پرحجم دستورها | همان انضباط توکن |
 | `repowise export --format json --full` | مدل کامل با تصمیم‌ها و git | داشبورد/گزارش |

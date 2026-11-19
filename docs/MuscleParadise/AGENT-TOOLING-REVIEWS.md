@@ -122,15 +122,92 @@
 | خواسته | انتخاب | وضعیت | شاهد |
 |---|---|---|---|
 | repo wise | `repowise 0.61.0` | **نصب و اجرا شد** | مدل ۵۸۳ خطی `architecture/repowise-model-2026-11-19.dsl`؛ ۳۲۷ فایل/۲۵۱۰ نماد بک‌اند، ۹۵/۴۴۸ استودیو |
-| diagram | Mermaid + مدل repowise | **اجرا شد** | چهار دیاگرام در [ARCHITECTURE-LAYERS-AND-STAGES](ARCHITECTURE-LAYERS-AND-STAGES.md)؛ گیت مستندات ۱۳ بلوک را می‌سنجد |
+| diagram | Mermaid + مدل repowise | **اجرا شد** | چهار دیاگرام در [ARCHITECTURE-LAYERS-AND-STAGES](ARCHITECTURE-LAYERS-AND-STAGES.md)؛ گیت مستندات ۱۳ بلوک را می‌سنجد؛ از نوبت دوم گیت سینتکس واقعی هم هست (بند ۹.۱) |
 | agent memory | repowise `decision` + اسناد Git | **جزئی** | ذخیره‌گاه تصمیم محلی/آفلاین؛ حافظهٔ رسمی همچنان Git + Markdown |
 | agent memory (جایگزین‌ها) | `tigerless-labs/agent-memory` (MIT) | **BLOCKED** | `requires-python >=3.12`؛ محیط ساخت ۳.۱۱.۲ است |
 | agent memory (جایگزین‌ها) | `basic-memory` | **رد** | AGPL + نیاز به ۳.۱۲ |
 | agent memory (جایگزین‌ها) | `understory` | **رد** | AGPL + `python <3.11` |
 | رسم دیاگرام تصویری | `@mermaid-js/mermaid-cli` (MIT) | **BLOCKED** | Chrome در محیط ساخت نیست؛ رندر روی GitHub انجام می‌شود |
+| اعتبارسنجی سینتکس دیاگرام | `mermaid 11` + `jsdom` (MIT) | **نصب و اجرا شد** | `tools/mermaid-check/check.mjs`؛ ۲۳ دیاگرام پارس شد؛ در CI سبز/قرمز دارد (بند ۹.۱) |
 
 **هزینهٔ پنهانی که باید بدانید:** نصب repowise به‌طور پیش‌فرض `.claude/`،
 `.github/copilot-instructions.md`، `.vscode/mcp.json` و یک `post-commit` hook می‌سازد و
 تلمتری‌اش روشن است. همه حذف/خاموش شد و `scripts/repo_hygiene_gate.py` (که در CI هم اجرا
 می‌شود) جلوی بازگشت خاموش آن‌ها را می‌گیرد.
+
+## ۹. سه خروجی تازه از همان ابزار (۲۰۲۶-۱۱-۱۹، نوبت دوم)
+
+### ۹.۱ گیت واقعی سینتکس دیاگرام
+
+پیش از این نوبت، تنها سنجهٔ دیاگرام این بود که بلوک با اعلان شناخته‌شده شروع شود.
+سینتکس شکسته از آن گیت رد می‌شد. حالا پارسر رسمی Mermaid بدون مرورگر اجرا می‌شود.
+
+- فایل گیت: `tools/mermaid-check/check.mjs`
+- فرمان محلی: `cd tools/mermaid-check && npm ci && node check.mjs`
+- مجوز هر دو وابستگی: MIT
+- شبکه در زمان اجرای گیت: لازم نیست (وابستگی‌ها از پیش نصب می‌شوند)
+- تلمتری: ندارد
+- جای اجرا در CI: job `docs`، بعد از `scripts/docs_gate.py`
+
+شاهد سبز: ۲۳ دیاگرام در ۱۱ فایل Markdown با موفقیت پارس شدند.
+
+شاهد قرمز: یک بلوک شکسته موقت به `docs/README.md` افزوده شد.
+گیت با کد خروج ۱ و پیام `docs/README.md:108: Parse error on line 3` شکست.
+بلوک حذف شد و گیت دوباره سبز شد.
+
+### ۹.۲ نقشهٔ تست‌به‌کد و انتخاب تست
+
+گزارش پوشش بی‌زمینهٔ تست بی‌فایده بود. با اجرای دوبارهٔ تست‌ها و زمینهٔ تست ساخته شد:
+
+| سنجه | مقدار |
+|---|---|
+| تست‌های ثبت‌شده | ۱۵۲۳ |
+| فایل‌های کد در نقشه | ۱۳۴ |
+| رکورد تست‌به‌فایل | ۷۸۶۳ |
+| پوشش خطوط | ۸۲.۶٪ روی ۱۹۴ فایل |
+
+فرمان ingest: `repowise coverage add mp-app/backend/.coverage`
+
+اثبات انتخاب واقعی: یک خط اجراشده در `mp-app/backend/app/security/hierarchy.py` موقتاً تغییر کرد.
+`repowise impacted-tests --staged` نُه شناسهٔ تست با پوشش واقعی برگرداند، از جمله:
+
+- `tests/integration/test_m59_shop.py::test_role_hierarchy_one_way`
+- `tests/integration/test_admin_pass.py::test_grant_and_revoke_admin_pass_with_audit`
+
+با `--format args --runner pytest` همان فهرست به‌صورت آرگومان قابل اجرا بیرون آمد.
+تغییر موقت برگشت داده شد و هیچ اثری در مخزن نماند.
+
+رفتار محافظه‌کارانه هم دیده شد: وقتی فایل غیرکد یا تغییر بدون پوشش در مجموعه بود،
+ابزار `:all` داد و دلیل را نوشت. این همان چیزی است که برای گیت امن است.
+
+### ۹.۳ پاک‌سازی کد مرده
+
+`repowise dead-code` سی‌وسه یافته داد. فقط دو مورد اطمینان ۱۰۰٪ داشتند و حذف شدند:
+
+| نماد | فایل | خط | وضعیت |
+|---|---|---|---|
+| `is_staff` | `mp-app/backend/app/security/hierarchy.py` | ۴۷ | حذف شد |
+| `AxisCoverage` | `mp-app/backend/modules/reporting/axes.py` | ۵۹ | حذف شد؛ import بی‌استفادهٔ `dataclass`/`field` هم رفت |
+
+شاهد: `ruff check` روی دو فایل سبز؛ `pytest -k "axes or hierarchy or rbac or security"` با ۸۶ قبول و ۱ رد‌شده سبز.
+
+هشدار دربارهٔ بقیهٔ ۳۱ یافته: `modules/shop/service.py` و `modules/classes/service.py` در خروجی
+«unreachable» دیده شدند، ولی router با `from modules.shop import service` واردشان می‌کند.
+این‌ها یافتهٔ کاذب‌اند و نباید حذف شوند.
+
+### ۹.۴ دسته‌بندی ۱۵ یافتهٔ doc-drift
+
+`repowise doc-drift` پانزده یافته داد؛ همه «no-candidate» بودند. یعنی هدفی برای جایگزینی پیدا نشد.
+سه دستهٔ روشن در آن‌ها هست و هیچ‌کدام را نمی‌توان با فایل موجود جایگزین کرد:
+
+| سند | هدف گزارش‌شده | دسته | حکم |
+|---|---|---|---|
+| `16_LAYER_PRODUCTION_PLAN.md` | `docs/MuscleParadise/adr/NNNN-title.md` | الگوی نام‌گذاری، نه مسیر واقعی | پذیرفته |
+| `LOOP-PLAN-M22-M31.md` | `finn/reports/Mxx-code-review.md` | الگوی نام‌گذاری | پذیرفته |
+| `LOOP-PLAN-M100-M106.md` | `finn/reports/m106-brand-identity.md` | گزارش آیندهٔ اجرانشده | پذیرفته |
+| `HANDOFF-ANALYSIS-2026-11-14.md` | `finn/reports/faceid-evidence/faceid-proof.json` | مدرک بیرونی، در این مخزن نیست | پذیرفته |
+| `REPORT-FREE-ECC-ALTERNATIVES-2026-11-18.md` | سه اسکریپت آزمایشی آرشیو بیرونی | دارایی مخزن دیگر | پذیرفته |
+
+خط مبنا: **۱۵ یافته / ۱۰ سند**. هر عدد بزرگ‌تر در اجرای بعدی یعنی رانش تازه، نه این خط مبنا.
+اصلاح این‌ها یعنی حذف یا بازنویسی مسیرهای تاریخی؛ انجام نشد و توصیه هم نمی‌شود.
 

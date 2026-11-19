@@ -5,8 +5,6 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-
 # ۱۳ محور — دقیقاً مطابق CURRENT-SPEC بستهٔ fitness-handoff
 AXES_13: list[dict[str, str]] = [
     {"id": "axis-01", "name_fa": "تعادل و پایداری"},
@@ -53,20 +51,6 @@ AXIS_STATUSES = (
     "out_of_current_scope",
     "needs_review_referral",
 )
-
-
-@dataclass
-class AxisCoverage:
-    """ماتریس پوشش — بار هر حرکت فقط یک‌بار (بدون جمع دوبارهٔ برچسب‌های چندگانه)."""
-
-    load_credited_to: str = ""  # محور اصلی‌ای که بار حرکت به آن می‌رسد
-    axes: set[str] = field(default_factory=set)
-
-    def add_movement(self, primary_axis: str, supporting_axes: list[str]) -> None:
-        self.axes.add(primary_axis)
-        self.axes.update(supporting_axes)
-        # قاعدهٔ ضدجمع دوباره: بار فقط به محور اصلی
-        self.load_credited_to = primary_axis if not self.load_credited_to else self.load_credited_to
 
 
 def axes_for_domains(domain_scores: dict[int, float]) -> dict[str, dict]:

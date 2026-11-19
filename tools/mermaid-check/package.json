@@ -1,0 +1,14 @@
+{
+  "name": "mp-mermaid-check",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Syntax gate for Mermaid diagrams in tracked Markdown (MIT-only tooling, no browser)",
+  "type": "module",
+  "scripts": {
+    "check": "node check.mjs"
+  },
+  "devDependencies": {
+    "jsdom": "^25.0.1",
+    "mermaid": "^11.4.1"
+  }
+}
