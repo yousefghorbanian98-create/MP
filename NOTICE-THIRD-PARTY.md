@@ -52,8 +52,8 @@
 ## ابزارهای ایجنت توسعه
 | جزء | مجوز | منشأ/ردیابی |
 |---|---|---|
-| ECC agent/configuration files | MIT | فایل‌های `.claude/` از `affaan-m/ECC`، کامیت `d2ef2680594f9a17526a6e1a2e18b3d242c5d17b`; متن مجوز در `.claude/LICENSE-ECC` |
-| REA skill | MIT | کپی محلی در `.claude/skills/reverse-engineer-anything/`; متن upstream license در `.claude/skills/reverse-engineer-anything/LICENSE-REA` (کامیت مجوز: `bb5278c7e2d5b0a423a63858c8b3c9682232e2d2`; نسخهٔ دقیق منبع محتوای محلی ثبت نشده) |
+| — (حذف شد) | MIT | ECC (`affaan-m/ECC`، کامیت `d2ef2680…`) در ۲۰۲۶-۱۱-۱۹ از مخزن حذف شد؛ هیچ فایل ECC در این پروژه توزیع نمی‌شود و attribution آن لازم نیست. سابقه در گزارش‌های تاریخی است. |
+| REA skill | MIT | کپی محلی در `tools/rea-skill/reverse-engineer-anything/`; متن upstream license در `tools/rea-skill/reverse-engineer-anything/LICENSE-REA` (کامیت مجوز: `bb5278c7e2d5b0a423a63858c8b3c9682232e2d2`; نسخهٔ دقیق منبع محتوای محلی ثبت نشده) |
 
 ## مدل‌های هوش مصنوعی
 هیچ مدل وزن‌داری در مخزن موجود نیست (سیاست `model_lock` — D-008). پیش از استقرار، مجوز هر مدل جداگانه تأمین و در همین فایل اضافه می‌شود.

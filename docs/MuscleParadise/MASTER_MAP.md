@@ -1,5 +1,8 @@
 # 🗺️ نقشهٔ کلی پروژهٔ Muscle Paradise — سند جامع اجرا (Master Map)
 
+> **ECC حذف شد (۲۰۲۶-۱۱-۱۹).** هر دستور نصب ECC، مسیر `.claude/...` یا فراخوانی `ecc:*` در این سند **تاریخی** است و اجرا نمی‌شود. نقش‌ها/چک‌لیست‌ها فایل متنی‌اند و runtime یا API مدل لازم ندارند.
+
+
 > نسخه: ۱.۰ | تاریخ: ۲۰۲۶-۱۱-۱۴ | وضعیت: **تاریخی/آرشیوی**
 > این نقشه snapshot قدیمی صف است؛ وضعیت و دامنهٔ جاری فقط از `TODO-2026-11-16.md` و نقشه‌های جاری خوانده شود. سند حاضر هیچ loopی را فعال یا `READY` نمی‌کند.
 > طبق D-033، هر loopی که در صف جاری `READY` است بدون نظارت روتین پیش می‌رود؛ موانع واقعی فقط loop وابسته را `BLOCKED`/`UNKNOWN` می‌کنند. دستورهای push/branch این نقشه منسوخ‌اند؛ push/release/deploy، پرداخت واقعی و تغییر DB تولید مجاز نیست.
@@ -87,7 +90,8 @@ MP/
 ├── finn/
 │   └── FINAL_REPORT.md              # فقط در M17 — با شواهد واقعی
 ├── .finn/state/                      # LEDGER.md, STATE.md, DECISIONS.md, REGRESSIONS.md
-├── .claude/agents/                   # ۹ ایجنت ECC
+├── tools/rea-skill/                  # skill بازبینی REA (از .claude منتقل شد)
+├── (حذف‌شده) .claude/                # دارایی‌های ECC — ۲۰۲۶-۱۱-۱۹ پاک شد
 └── .github/workflows/ci.yml          # lint→test→scan→build
 ```
 

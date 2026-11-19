@@ -1,4 +1,7 @@
 # FINN Loop — پروتکل چرخهٔ ساخت «Muscle Paradise»
+> **ECC حذف شد (۲۰۲۶-۱۱-۱۹).** هر دستور نصب ECC، مسیر `.claude/...` یا فراخوانی `ecc:*` در این سند **تاریخی** است و اجرا نمی‌شود. نقش‌ها/چک‌لیست‌ها فایل متنی‌اند و runtime یا API مدل لازم ندارند.
+
+
 
 > نسخهٔ تاریخی M00–M17: ۱.۰ | تاریخ: ۲۰۲۶-۱۱-۱۴
 > ورودی: `16_LAYER_PRODUCTION_PLAN.md` (طرح تولید ۱۶ لایهٔ Muscle Paradise)
@@ -63,7 +66,7 @@
 | ابزار | منبع رسمی | نقش در لوپ | نصب |
 |---|---|---|---|
 | **ECC** | `github.com/affaan-m/ECC` (MIT) | هارنس ایجنت: ۷۱ ایجنت، ۳۱۴ اسکیل، ۹۸ فرمان، ۲۳ بستهٔ قوانین، هوک‌ها | `.finn/ecc` (پین‌شده) + `.claude/` |
-| **REA** | `github.com/morluto/rea` (MIT) — پکیج `rea-agents` | بازبینی: کشف گپ/باگ/رفتار رقبا با شاهد (Evidence)، تحلیل APK/Flutter/JS/SQLite/وب | `~/toolchain/rea` + skill در `.claude/skills/reverse-engineer-anything` |
+| **REA** | `github.com/morluto/rea` (MIT) — پکیج `rea-agents` | بازبینی: کشف گپ/باگ/رفتار رقبا با شاهد (Evidence)، تحلیل APK/Flutter/JS/SQLite/وب | `~/toolchain/rea` + skill در `tools/rea-skill/reverse-engineer-anything` |
 
 > **تصحیح مهم:** نصب قبلی از فورک `WorldFlowAI/everything-claude-code` (کامیت `432485ba`، ۲۰۲۶-۰۱-۲۳) انجام شده بود که
 > فقط ۹ ایجنت و ۱۱ اسکیل داشت و ۱۰ ماه از بالادست عقب بود. از این پس منبع رسمی `affaan-m/ECC` است.
