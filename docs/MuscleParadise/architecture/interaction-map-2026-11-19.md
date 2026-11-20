@@ -16,10 +16,10 @@ python3 scripts/interaction_map.py --check
 
 | سنجه | مقدار |
 |---|---|
-| مسیر قرارداد API | 138 |
+| مسیر قرارداد API | 140 |
 | صفحهٔ استودیو | 12 |
 | ویژگی کلاینت | 18 |
-| endpoint یکتای استفاده‌شده | 80 |
+| endpoint یکتای استفاده‌شده | 81 |
 | سطح بی‌تست | 7 |
 
 ## گپ‌های قرارداد
@@ -178,6 +178,7 @@ python3 scripts/interaction_map.py --check
 | GET | `/api/v1/admin/users` | permission | manager, admin, super_admin | بله |
 | DELETE | `/api/v1/admin/users/*/role` | permission | manager, admin, super_admin | بله |
 | POST | `/api/v1/admin/users/*/role` | permission | manager, admin, super_admin | بله |
+| GET | `/api/v1/auth/sessions` | authenticated | member, manager, admin, super_admin | بله |
 
 تست: `mp-app/studio/tests/settingsRole.test.tsx`
 
@@ -254,12 +255,12 @@ python3 scripts/interaction_map.py --check
 
 | نقش | تعداد endpoint | نمونهٔ سطح‌ها |
 |---|---|---|
-| admin | 91 | Analytics، Assessment، Chat، CheckIn، Dashboard، Finance |
+| admin | 92 | Analytics، Assessment، Chat، CheckIn، Dashboard، Finance |
 | coach | 65 | Assessment، Chat، CheckIn، Dashboard، Members، Nutrition |
-| manager | 91 | Analytics، Assessment، Chat، CheckIn، Dashboard، Finance |
-| member | 66 | Assessment، Chat، Finance، Members، Nutrition، Programs |
+| manager | 92 | Analytics، Assessment، Chat، CheckIn، Dashboard، Finance |
+| member | 67 | Assessment، Chat، Finance، Members، Nutrition، Programs |
 | reception | 37 | Assessment، CheckIn، Dashboard، Finance، Members، Programs |
-| super_admin | 91 | Analytics، Assessment، Chat، CheckIn، Dashboard، Finance |
+| super_admin | 92 | Analytics، Assessment، Chat، CheckIn، Dashboard، Finance |
 
 ## محدودیت صریح
 

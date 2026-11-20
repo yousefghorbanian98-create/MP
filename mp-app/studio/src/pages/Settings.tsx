@@ -10,6 +10,7 @@
 import { motion } from "framer-motion";
 import { useMotionPreset } from "../lib/motion";
 import { useCallback, useEffect, useState } from "react";
+import { DeviceSessions } from "../components/DeviceSessions";
 import { RoleManager } from "../components/RoleManager";
 import { AuthError, fetchFlags, fetchHealth, putFlag, type FeatureFlagRow, type HealthInfo } from "../lib/api";
 
@@ -158,6 +159,8 @@ export function Settings() {
           <p className="mt-3 text-xs text-ink-dim">سرور پاسخ نداد — مقدار حدسی نمایش داده نمی‌شود.</p>
         )}
       </div>
+
+      <DeviceSessions />
 
       <RoleManager />
     </motion.div>

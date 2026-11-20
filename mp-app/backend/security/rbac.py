@@ -35,6 +35,8 @@ POLICIES: list[tuple[str, str, str]] = [
     ("member", "/api/v1/auth/logout", "POST"),
     ("member", "/api/v1/auth/logout-all", "POST"),
     ("member", "/api/v1/auth/refresh", "POST"),
+    ("member", "/api/v1/auth/sessions", "GET"),
+    ("member", "/api/v1/auth/sessions/*", "DELETE"),
     ("member", "/api/v1/members/*", "GET"),
     ("member", "/api/v1/members/me", "PUT"),
     ("member", "/api/v1/face/consent", "POST"),

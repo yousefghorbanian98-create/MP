@@ -1355,3 +1355,27 @@ export const reviewChangeRequest = (
   token = getToken(),
 ) =>
   sendJson<ChangeRequest>("POST", `/shop/change-requests/${requestId}/review`, { approve, note }, token);
+
+// ── فاز ۴ (QF-01) — دستگاه‌های فعال؛ سرور فقط شناسهٔ عمومی نشست می‌دهد ──
+
+export interface DeviceSession {
+  id: number;
+  device_info: string;
+  created_at: string;
+  expires_at: string;
+  current: boolean;
+}
+
+export function fetchSessions(token = getToken(), signal?: AbortSignal) {
+  return getJson<DeviceSession[]>("/auth/sessions", token, signal);
+}
+
+/** ابطال یک نشست/دستگاه. نشست کاربر دیگر از دید سرور ۴۰۴ است. */
+export function revokeSession(sessionId: number, token = getToken()) {
+  return sendJson<{ status: string; session_id: number }>(
+    "DELETE",
+    `/auth/sessions/${sessionId}`,
+    undefined,
+    token,
+  );
+}

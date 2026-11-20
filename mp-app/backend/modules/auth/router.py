@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Request
+from typing import Annotated
+
+from fastapi import APIRouter, Header, Request
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 
@@ -108,6 +110,25 @@ def refresh(payload: RefreshRequest, request: Request, db: DbSession):
 @router.post("/logout", response_model=MessageResponse, summary="خروج از نشست فعلی")
 def logout(payload: LogoutRequest, db: DbSession):
     return service.logout(db, payload.refresh_token)
+
+
+@router.get("/sessions", summary="نشست‌های فعال من (دستگاه‌ها)")
+def sessions(
+    user: AuthenticatedUser,
+    db: DbSession,
+    authorization: Annotated[str | None, Header()] = None,
+):
+    from app.security.jwt import decode_access_token
+
+    sid: str | None = None
+    if authorization and authorization.lower().startswith("bearer "):
+        sid = decode_access_token(authorization.split(" ", 1)[1].strip()).get("sid")
+    return service.list_sessions(db, user_id=user.id, current_sid=sid)
+
+
+@router.delete("/sessions/{session_id}", summary="ابطال یک نشست/دستگاه")
+def revoke_session(session_id: int, user: AuthenticatedUser, db: DbSession):
+    return service.revoke_session(db, user_id=user.id, session_id=session_id)
 
 
 @router.post(

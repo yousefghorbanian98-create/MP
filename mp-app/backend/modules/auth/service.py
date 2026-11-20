@@ -130,6 +130,49 @@ def refresh_session(db: Session, refresh_token: str) -> dict:
     return {"access_token": access, "refresh_token": new_refresh, "token_type": "bearer"}
 
 
+def list_sessions(db: Session, *, user_id: int, current_sid: str | None) -> list[dict]:
+    """نشست‌های فعال کاربر — بدون افشای هش یا شناسهٔ داخلی توکن.
+
+    `current` از `sid` همان توکنی می‌آید که درخواست را فرستاده؛ مقایسه فقط
+    سمت سرور انجام می‌شود و به کلاینت برنمی‌گردد.
+    """
+    now = datetime.now(UTC)
+    rows = list(
+        db.scalars(
+            select(RefreshToken)
+            .where(
+                RefreshToken.user_id == user_id,
+                RefreshToken.revoked_at.is_(None),
+            )
+            .order_by(RefreshToken.id.desc())
+        )
+    )
+    out: list[dict] = []
+    for row in rows:
+        if _aware(row.expires_at) <= now:
+            continue
+        out.append(
+            {
+                "id": row.id,
+                "device_info": row.device_info or "",
+                "created_at": _aware(row.created_at).isoformat(),
+                "expires_at": _aware(row.expires_at).isoformat(),
+                "current": bool(current_sid) and row.token_hash == current_sid,
+            }
+        )
+    return out
+
+
+def revoke_session(db: Session, *, user_id: int, session_id: int) -> dict:
+    """ابطال یک نشست مشخص؛ نشست کاربر دیگر ۴۰۴ می‌دهد تا وجودش لو نرود."""
+    row = db.get(RefreshToken, session_id)
+    if row is None or row.user_id != user_id or row.revoked_at is not None:
+        raise NotFoundError("نشست یافت نشد")
+    row.revoked_at = datetime.now(UTC)
+    db.commit()
+    return {"status": "revoked", "session_id": session_id}
+
+
 def logout(db: Session, refresh_token: str) -> dict:
     token_hash = hash_token(refresh_token)
     row = db.scalar(select(RefreshToken).where(RefreshToken.token_hash == token_hash))

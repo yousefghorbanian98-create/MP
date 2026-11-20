@@ -808,6 +808,7 @@
       "kind": "studio-page",
       "file": "mp-app/studio/src/pages/Settings.tsx",
       "components": [
+        "mp-app/studio/src/components/DeviceSessions.tsx",
         "mp-app/studio/src/components/RoleManager.tsx"
       ],
       "controls": {
@@ -897,6 +898,21 @@
             "permission"
           ],
           "roles": [
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "fetchSessions",
+          "method": "GET",
+          "path": "/api/v1/auth/sessions",
+          "in_contract": true,
+          "guards": [
+            "authenticated"
+          ],
+          "roles": [
+            "member",
             "manager",
             "admin",
             "super_admin"
@@ -1975,5 +1991,5 @@
       "tests": []
     }
   ],
-  "contract_paths": 138
+  "contract_paths": 140
 }

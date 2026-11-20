@@ -61,6 +61,7 @@ function stubApi() {
       if (path === "/api/v1/admin/checkins") return response({ items: [], rule_version: "test" });
       if (path === "/api/v1/admin/users" || path === "/api/v1/admin/audit") return response([]);
       if (path === "/api/v1/admin/flags") return response([]);
+      if (path === "/api/v1/auth/sessions") return response([]);
       if (path === "/api/v1/classes" || path === "/api/v1/chat/conversations") return response([]);
       if (path === "/health") return response({ status: "ok", service: "test", version: "0.1.0" });
       return response({ items: [], data: [], risk_rows: [] });
