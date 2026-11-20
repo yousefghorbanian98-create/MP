@@ -414,6 +414,7 @@
       "kind": "studio-page",
       "file": "mp-app/studio/src/pages/Finance.tsx",
       "components": [
+        "mp-app/studio/src/components/CouponPanel.tsx",
         "mp-app/studio/src/components/LedgerPanel.tsx",
         "mp-app/studio/src/components/PaymentPanel.tsx",
         "mp-app/studio/src/components/PeriodReportPanel.tsx",
@@ -421,9 +422,9 @@
       ],
       "controls": {
         "buttons": 10,
-        "inputs": 2,
+        "inputs": 6,
         "numbers": 1,
-        "selects": 1,
+        "selects": 2,
         "modals": 2
       },
       "endpoints": [
@@ -556,6 +557,39 @@
           "function": "verifyPayment",
           "method": "POST",
           "path": "/api/v1/payments/*/verify",
+          "in_contract": true,
+          "guards": [
+            "grant:finance.write",
+            "permission"
+          ],
+          "roles": [
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "listCoupons",
+          "method": "GET",
+          "path": "/api/v1/payments/coupons",
+          "in_contract": true,
+          "guards": [
+            "grant:finance.write",
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "createCoupon",
+          "method": "POST",
+          "path": "/api/v1/payments/coupons",
           "in_contract": true,
           "guards": [
             "grant:finance.write",
@@ -2186,5 +2220,5 @@
       "tests": []
     }
   ],
-  "contract_paths": 161
+  "contract_paths": 163
 }

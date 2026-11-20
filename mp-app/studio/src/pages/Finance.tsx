@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { PaymentPanel } from "../components/PaymentPanel";
+import { CouponPanel } from "../components/CouponPanel";
 import { LedgerPanel } from "../components/LedgerPanel";
 import { ReceiptQueue } from "../components/ReceiptQueue";
 import { PeriodReportPanel } from "../components/PeriodReportPanel";
@@ -128,6 +129,8 @@ export function Finance() {
       </div>
 
       <PaymentPanel />
+
+      <CouponPanel />
 
       <ReceiptQueue />
 
