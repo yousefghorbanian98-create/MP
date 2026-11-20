@@ -80,6 +80,12 @@ def verify_otp(db: Session, phone: str, code: str) -> dict:
         user = User(phone=phone, full_name="", role="member")
         db.add(user)
         db.flush()
+    # فاز ۴: حساب غیرفعال نباید حتی نشست بگیرد. پیش از این، توکن صادر می‌شد و
+    # فقط درخواست بعدی ۴۰۱ می‌گرفت — یعنی ورودِ موفق به حساب بسته‌شده.
+    # کد مصرف‌شده ثبت می‌شود تا با همان کد دوباره تلاش نشود.
+    if not user.is_active:  # nosemgrep: ستون SQLAlchemy است نه فراخوانی تابع
+        db.commit()
+        raise UnauthorizedError("کاربر فعال نیست")
     refresh, refresh_hash, expires = create_refresh_token()
     access = create_access_token(
         user.id, user.role, session_id=refresh_hash, auth_version=user.auth_version
