@@ -233,3 +233,10 @@
 - استودیو: `ReceiptQueue` در صفحهٔ مالی؛ تأیید/رد با antd، بدون خوش‌بینی؛ خطای سرور نمایش داده می‌شود.
 - شاهد: بک‌اند **۹۹۹ قبول / ۲ رد‌شده**، استودیو **۲۴۸ قبول / ۹ رد‌شده**، `tsc -b` و build پاک، `ruff` پاک، قرارداد **۱۲۹ مسیر / ۱۴۷ عملیات**، سناریوها در `docs/MuscleParadise/evals/phase6-money-scenarios.md`.
 - `BLOCKED`: انتقال واقعی پول بانکی/تأیید کارت‌به‌کارت با شاهد انسانی؛ آپلود از کلاینت Flutter (toolchain محلی نیست).
+
+## افزودهٔ آخر: فاز ۷ (گیت مالکیت) و فاز ۸ (outbox)
+
+- فاز ۷: `test_phase7_member_scope_sweep.py` — ۱۷ مسیر GET با `{member_id}` از قرارداد زنده خوانده و با توکن عضو دیگر آزموده می‌شود؛ ۱۹ قبول. دو تست متا جلوی «سبزیِ توخالی» را می‌گیرد.
+- فاز ۸: outbox تراکنشی `modules/outbox/service.py` + `jobs/outbox_relay.py` + migration `e3f4a5b6c7d8`؛ رویداد پول در همان commit، claim انحصاری، retry/backoff، dead-letter، dedup. پنج تست.
+- شاهد: بک‌اند **۱۰۲۳ قبول / ۲ رد‌شده**، `ruff` پاک، قرارداد بدون تغییر مسیر (**۱۲۹ مسیر / ۱۴۷ عملیات**).
+- `BLOCKED`: push/SMS واقعی، PostgreSQL در استقرار، امضای release، دستگاه اندروید، Flutter toolchain.

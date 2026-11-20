@@ -169,6 +169,7 @@ def approve_payment(db: Session, *, actor: User, payment_id: int) -> dict:
     from modules.admin.service import audit
     from modules.membership.service import create_membership_from_plan
     from modules.notification.service import send
+    from modules.outbox.service import enqueue
 
     payment = db.get(Payment, payment_id)
     if payment is None:
@@ -205,6 +206,18 @@ def approve_payment(db: Session, *, actor: User, payment_id: int) -> dict:
         kind="payment",
         commit=False,
     )
+    enqueue(
+        db,
+        "payment.approved",
+        {
+            "payment_id": payment.id,
+            "member_id": payment.member_id,
+            "amount_rial": payment.amount_rial,
+            "membership_id": membership_id,
+        },
+        dedup_key=f"payment-approved-{payment.id}",
+        commit=False,
+    )
     audit(
         db,
         actor.id,
@@ -226,6 +239,7 @@ def approve_payment(db: Session, *, actor: User, payment_id: int) -> dict:
 def reject_receipt(db: Session, *, actor: User, payment_id: int, reason: str) -> dict:
     from modules.admin.service import audit
     from modules.notification.service import send
+    from modules.outbox.service import enqueue
 
     if not reason.strip():
         raise ApiError("دلیل رد فیش لازم است", code="reason_required")
@@ -253,6 +267,13 @@ def reject_receipt(db: Session, *, actor: User, payment_id: int, reason: str) ->
         "فیش شما رد شد",
         f"دلیل: {reason.strip()[:200]} — می‌توانید فیش درست را دوباره بفرستید.",
         kind="payment",
+        commit=False,
+    )
+    enqueue(
+        db,
+        "payment.rejected",
+        {"payment_id": payment.id, "member_id": payment.member_id, "review_id": receipt.review_id},
+        dedup_key=f"payment-rejected-{receipt.review_id}",
         commit=False,
     )
     audit(
