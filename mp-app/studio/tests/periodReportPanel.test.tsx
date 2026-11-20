@@ -49,15 +49,6 @@ beforeEach(() => {
   urls = [];
   auth = [];
   localStorage.setItem("mp_token", "tok-123");
-  // recharts' ResponsiveContainer needs ResizeObserver, which jsdom lacks.
-  vi.stubGlobal(
-    "ResizeObserver",
-    class {
-      observe() {}
-      unobserve() {}
-      disconnect() {}
-    },
-  );
   window.matchMedia ??= ((q: string) => ({
     matches: false,
     media: q,
