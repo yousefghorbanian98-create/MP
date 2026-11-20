@@ -136,7 +136,8 @@ describe("مجوز شخصی ادمین", () => {
     expect(calls.some((c) => c.path === "/api/v1/admin/permissions?user_id=5")).toBe(true);
     // مالک در گزینه‌های هدف نیست (مجوز برای او معنا ندارد) — فقط ادمین.
     expect(screen.queryByText("مالک — super_admin")).toBeNull();
-  });
+    // antd Select/Modal در jsdom کند است؛ ۵ ثانیهٔ پیش‌فرض در CI کافی نیست.
+  }, 20000);
 
   it("اعطای مجوز را با کلید، مدت و شناسهٔ کاربر می‌فرستد و بعد از آن از سرور بازخوانی می‌کند", async () => {
     const state = { grants: [] as unknown[] };
@@ -175,7 +176,7 @@ describe("مجوز شخصی ادمین", () => {
       expect(calls.filter((c) => c.path === "/api/v1/admin/permissions?user_id=5").length).toBeGreaterThanOrEqual(2),
     );
     expect(await screen.findByText("فعال")).toBeTruthy();
-  });
+  }, 20000);
 
   it("سلب مجوز را با DELETE می‌فرستد و وضعیت تازه را از سرور می‌گیرد", async () => {
     const state = { grants: [grant()] as unknown[] };
@@ -190,7 +191,7 @@ describe("مجوز شخصی ادمین", () => {
     );
     expect(await screen.findByText("سلب‌شده")).toBeTruthy();
     expect(screen.queryByRole("button", { name: "سلب" })).toBeNull();
-  });
+  }, 20000);
 
   it("برای غیرمالک هیچ درخواستی نمی‌فرستد و بخش را نشان نمی‌دهد", async () => {
     localStorage.setItem("mp_token", tokenFor("admin"));
