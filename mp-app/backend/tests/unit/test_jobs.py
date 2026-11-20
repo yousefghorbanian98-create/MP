@@ -79,4 +79,9 @@ def test_scheduler_builds_with_jobs(session):
 
     sched = build_scheduler(lambda: session)
     ids = {j.id for j in sched.get_jobs()}
-    assert ids == {"expire_memberships", "renewal_reminders", "reassessment_reminders"}
+    assert ids == {
+        "expire_memberships",
+        "renewal_reminders",
+        "reassessment_reminders",
+        "daily_finance_report",
+    }

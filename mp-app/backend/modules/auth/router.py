@@ -6,7 +6,6 @@ from typing import Annotated
 
 from fastapi import APIRouter, Header, Request
 from slowapi import Limiter
-from slowapi.util import get_remote_address
 
 from app.config import settings
 from app.deps import AuthenticatedUser, DbSession
@@ -25,8 +24,22 @@ from modules.auth.schemas import (
     TokenPair,
 )
 
+
+def _rate_limit_key(request) -> str:  # noqa: ANN001
+    """کلید محدودیت = IP محاسبه‌شده با پروکسی معتمد (QF-26).
+
+    پیش‌فرضِ `get_remote_address` هدر XFF را نادیده می‌گرفت؛ پشت nginx یعنی همهٔ
+    کاربران یک سبد می‌شدند. حالا فقط اگر peer در `MP_TRUSTED_PROXIES` باشد
+    زنجیره خوانده می‌شود، پس هدر جعلی سهمیهٔ تازه نمی‌سازد.
+    """
+    from app.config import settings as _settings
+    from app.security.proxy import parse_trusted, rate_limit_key
+
+    return rate_limit_key(request, parse_trusted(_settings.trusted_proxies))
+
+
 limiter = Limiter(
-    key_func=get_remote_address,
+    key_func=_rate_limit_key,
     default_limits=[],
     # Production shares limits across all Uvicorn workers through Valkey. Local
     # dev/tests stay deterministic and do not require a running cache service.

@@ -241,3 +241,26 @@
 - QF-21 inbox: `modules/outbox/inbox.py` + `inbox_messages` (migration `f4a5b6c7d8e9`)؛ تحویل تکراری ← `duplicate`، خطای handler ← rollback پیام، رقابت ← کلید یکتا. relay نمونه از inbox رد می‌شود.
 - شاهد: بک‌اند **۱۰۲۷ قبول / ۲ رد‌شده**، `ruff` پاک، قرارداد بدون تغییر مسیر (**۱۲۹ مسیر / ۱۴۷ عملیات**).
 - `BLOCKED`: push/SMS واقعی، PostgreSQL در استقرار، امضای release، دستگاه اندروید، Flutter toolchain.
+
+## افزودهٔ آخر: فاز ۶ لوپ ۲–۳ (دفتر پول QF-05، هزینهٔ خارجی QF-06)
+
+- **دفتر پول (`QF-05`):** `ledger_entries` (migration `a5b6c7d8e9f0`) با مبلغ **علامت‌دار**، `kind` در charge/pay/refund/reversal، کلید idempotency با ایندکس یکتای جزئی، `reverses_entry_id`/`reversed_by_entry_id`؛ `wallet_charge`/`wallet_pay` در همان commit ردیف می‌نویسند. `GET /payments/ledger/{member_id}` (با `ensure_member_scope`) و `POST /payments/ledger/{entry_id}/reverse` (دلیل ۳–۲۰۰ نویسه، `finance.write`، audit `ledger_reversal`، ۴۰۰ برای معکوس تکراری). `reconcile()` مجموع دفتر را با موجودی کیف‌پول می‌سنجد.
+- **هزینهٔ خارجی (`QF-06`):** `expenses` + `expense_revisions` (migration `b6c7d8e9f0a1`)؛ هشت دستهٔ ثابت، مبلغ ≥ ۱۰۰۰ ریال، حذف **نرم**، هر اصلاح/حذف دلیل اجباری دارد و قبل/بعد را در تاریخچه نگه می‌دارد. `GET /expenses?from=&to=` جمع بازه و تفکیک دسته را برمی‌گرداند؛ نوشتن `finance.write` و خواندن `finance.read` **جدا** هستند.
+- **استودیو:** `LedgerPanel` در صفحهٔ مالی (موجودی/تطبیق/معکوس‌سازی با دلیل؛ بدون درخواست در mount) و صفحهٔ تازهٔ «هزینه‌ها» با کنترل‌های antd و تقویم جلالی + مدال دلیل.
+- **شاهد:** بک‌اند **۱۰۴۶ قبول / ۲ رد‌شده**، استودیو **۲۶۲ قبول / ۹ رد‌شده**، `ruff` و `tsc -b`/build پاک، قرارداد بازتولید‌شده **۱۳۳ مسیر / ۱۵۳ عملیات**، نقشهٔ تعامل ۳۱ سطح / رانش صفر، migration drift صفر. تست‌ها: `test_phase6b_ledger.py` (۹)، `test_phase6c_expenses.py` (۹)، `tests/ledgerPanel.test.tsx` (۶)، `tests/expensesPage.test.tsx` (۸).
+- **باقی‌مانده:** فایل فیش خصوصی هزینه و گزارش سود/زیان دوره‌ای (QF-10)؛ انتقال واقعی پول بانکی همچنان `BLOCKED`.
+
+## افزودهٔ آخر: فاز ۸ لوپ ۳–۶ (گزارش زمان‌بندی‌شده، پروکسی معتمد، worker/متریک، نگهداری)
+
+- **QF-23:** `report_runs` + `modules/reports/schedule.py`؛ idempotency روی `(job_key, run_date)` با سبد روزِ `Asia/Tehran`، اعداد فقط با `finance.read`، ممیزی بدون مبلغ، cron ۰۰:۱۰ تهران. ۷ تست.
+- **QF-26:** `app/security/proxy.py` — `X-Forwarded-For` فقط از peer معتمد، پیمایش راست‌به‌چپ، fail-closed؛ کلید rate-limit همان IP است. `MP_TRUSTED_PROXIES` در DEPLOYMENT. ۶ تست.
+- **QF-27:** `worker_heartbeats` + `modules/outbox/health.py`؛ heartbeat در هر دور relay، gaugeهای صف در `/metrics`، `/health/ready` با `MP_REQUIRE_WORKER`. ۶ تست + جدول هشدار در OPS-RUNBOOK.
+- **QF-28:** `modules/privacy/retention.py`؛ پیش‌نمایش/اجرای حذف دادهٔ منقضی فقط `super_admin`، ممیزی `retention_run` بدون دادهٔ شخصی، پول/دفتر/هزینه دست‌نخورده. ۵ تست + بخش کدشده در DATA-RETENTION.
+- **شاهد:** بک‌اند **۱۰۶۹+ قبول / ۲ رد‌شده** (پس از رفع دو خطای شمارش در همین نشست: `oldest_pending_age` منفی و مسیر `/metrics`)، `ruff` پاک، قرارداد **۱۳۸ مسیر / ۱۵۸ عملیات**، نقشهٔ تعامل ۳۱ سطح / رانش صفر، drift صفر.
+- **`BLOCKED`:** هشدار واقعی Prometheus/Alertmanager، Valkey برای rate-limit توزیع‌شده، تأیید حقوقی مدت‌های نگهداری، push/ایمیل گزارش، PostgreSQL/backup، امضا و دستگاه.
+
+## افزودهٔ آخر: QF-32 — جاروی انتشار
+
+- `tests/integration/test_phase8_release_sweep.py` یک جریان پول end-to-end را در یک نسخه می‌سنجد: مجوز ← شارژ ← پرداخت نقدی و `verify` ← هزینه ← گزارش روزانه (`net = دریافت − هزینه`) ← تطبیق دفتر ← نگهداری (صفر حذف) ← معکوس‌سازی (موجودی صفر، گزارش snapshot ثابت).
+- **شاهد نهایی این شاخه:** بک‌اند **۱۰۷۱ قبول / ۲ رد‌شده**، استودیو **۲۶۲ قبول / ۹ رد‌شده**، `ruff`/`tsc -b`/build پاک، قرارداد **۱۵۸ مسیر / ۱۵۸ عملیات**، نقشهٔ تعامل ۳۱ سطح/رانش صفر، `deploy_gate` ۱۲/۰/۰، migration drift صفر، CI شاخه ۸/۸ سبز (commit `2e6685e`).
+- **گیت انتشار باز می‌ماند:** امضا/دستگاه/بانک واقعی/PostgreSQL+pgBackRest/ابر/تأیید مالک `BLOCKED`.

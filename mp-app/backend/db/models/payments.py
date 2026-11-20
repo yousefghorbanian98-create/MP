@@ -116,3 +116,49 @@ class WalletTransaction(TimestampMixin, BranchMixin, Base):
     amount_rial: Mapped[int] = mapped_column(Integer, nullable=False)  # مثبت: شارژ، منفی: برداشت
     kind: Mapped[str] = mapped_column(String(20), nullable=False)  # credit | debit
     description: Mapped[str] = mapped_column(String(200), default="", nullable=False)
+
+
+class LedgerEntry(Base):
+    """رویداد دفتر پول عضو — فقط-افزودنی، با مبلغ علامت‌دار (QF-05).
+
+    `amount_rial` مثبت = ورود پول به کیف‌پول، منفی = خروج. حذف ردیف در API
+    وجود ندارد؛ اصلاح فقط با ردیف جبرانی (`reverses_entry_id`) انجام می‌شود و
+    ردیف اصلی `reversed_by_entry_id` می‌گیرد تا دو بار معکوس نشود.
+    """
+
+    __tablename__ = "ledger_entries"
+    __table_args__ = (
+        Index("ix_ledger_entries_member_id", "member_id"),
+        Index(
+            "uq_ledger_entries_idempotency",
+            "idempotency_key",
+            unique=True,
+            sqlite_where=text("idempotency_key IS NOT NULL"),
+            postgresql_where=text("idempotency_key IS NOT NULL"),
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    member_id: Mapped[int] = mapped_column(
+        ForeignKey("members.id", ondelete="CASCADE"), nullable=False
+    )
+    amount_rial: Mapped[int] = mapped_column(Integer, nullable=False)
+    kind: Mapped[str] = mapped_column(
+        String(20), nullable=False
+    )  # charge | pay | refund | reversal
+    source_type: Mapped[str] = mapped_column(String(20), nullable=False)  # wallet | payment
+    source_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    idempotency_key: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    reverses_entry_id: Mapped[int | None] = mapped_column(
+        ForeignKey("ledger_entries.id", ondelete="SET NULL"), nullable=True
+    )
+    reversed_by_entry_id: Mapped[int | None] = mapped_column(
+        ForeignKey("ledger_entries.id", ondelete="SET NULL"), nullable=True
+    )
+    created_by_user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
+    note: Mapped[str] = mapped_column(String(200), default="", nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP")
+    )

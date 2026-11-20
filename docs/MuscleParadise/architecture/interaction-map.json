@@ -331,19 +331,68 @@
       ]
     },
     {
+      "surface": "Expenses",
+      "kind": "studio-page",
+      "file": "mp-app/studio/src/pages/Expenses.tsx",
+      "components": [],
+      "controls": {
+        "buttons": 0,
+        "inputs": 4,
+        "numbers": 2,
+        "selects": 1,
+        "modals": 2
+      },
+      "endpoints": [
+        {
+          "function": "fetchExpenses",
+          "method": "GET",
+          "path": "/api/v1/expenses",
+          "in_contract": true,
+          "guards": [
+            "grant:finance.read",
+            "permission"
+          ],
+          "roles": [
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "createExpense",
+          "method": "POST",
+          "path": "/api/v1/expenses",
+          "in_contract": true,
+          "guards": [
+            "grant:finance.write",
+            "permission"
+          ],
+          "roles": [
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        }
+      ],
+      "tests": [
+        "mp-app/studio/tests/expensesPage.test.tsx"
+      ]
+    },
+    {
       "surface": "Finance",
       "kind": "studio-page",
       "file": "mp-app/studio/src/pages/Finance.tsx",
       "components": [
+        "mp-app/studio/src/components/LedgerPanel.tsx",
         "mp-app/studio/src/components/PaymentPanel.tsx",
         "mp-app/studio/src/components/ReceiptQueue.tsx"
       ],
       "controls": {
         "buttons": 10,
-        "inputs": 1,
-        "numbers": 0,
+        "inputs": 2,
+        "numbers": 1,
         "selects": 1,
-        "modals": 1
+        "modals": 2
       },
       "endpoints": [
         {
@@ -495,6 +544,22 @@
             "permission"
           ],
           "roles": [
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "fetchMemberLedger",
+          "method": "GET",
+          "path": "/api/v1/payments/ledger/*",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "reception",
             "manager",
             "admin",
             "super_admin"
@@ -2074,5 +2139,5 @@
       "tests": []
     }
   ],
-  "contract_paths": 147
+  "contract_paths": 158
 }

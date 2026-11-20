@@ -185,6 +185,127 @@ export function fetchFinanceSummary(token = getToken(), signal?: AbortSignal) {
   return getJson<FinanceSummary>("/payments/finance/summary", token, signal);
 }
 
+// ── دفتر پول عضو (QF-05) ──
+// دفتر رویداد فقط-افزودنی است؛ اصلاح فقط با «ردیف جبرانی» و دلیل. سرور مجوز
+// `finance.write` را الزام می‌کند، پس UI هیچ ردیفی را خوش‌بینانه تغییر نمی‌دهد.
+
+export interface LedgerRow {
+  id: number;
+  member_id: number;
+  amount_rial: number;
+  kind: "charge" | "pay" | "refund" | "reversal";
+  source_type: string;
+  source_id: number | null;
+  reverses_entry_id: number | null;
+  reversed_by_entry_id: number | null;
+  note: string;
+  created_at: string | null;
+}
+
+export interface LedgerReconcile {
+  wallet_balance_rial: number;
+  ledger_balance_rial: number;
+  matches: boolean;
+  difference_rial: number;
+}
+
+export interface MemberLedger {
+  member_id: number;
+  balance_rial: number;
+  reconcile: LedgerReconcile;
+  entries: LedgerRow[];
+}
+
+export function fetchMemberLedger(memberId: number, token = getToken(), signal?: AbortSignal) {
+  return getJson<MemberLedger>(`/payments/ledger/${memberId}`, token, signal);
+}
+
+export function reverseLedgerEntry(entryId: number, reason: string, token = getToken()) {
+  return sendJson<{ original_entry_id: number; reversal_entry: LedgerRow }>(
+    "POST",
+    `/payments/ledger/${entryId}/reverse`,
+    { reason },
+    token,
+  );
+}
+
+// ── هزینهٔ باشگاه (QF-06) ──
+// مبلغ ریال صحیح، دستهٔ محدود و تاریخ هزینه؛ هر اصلاح در سرور دلیل اجباری دارد.
+// این توابع فقط پوستهٔ API‌اند: تصمیم دسترسی (finance.read/finance.write) در سرور است.
+
+export const EXPENSE_CATEGORIES = [
+  { key: "rent", label: "اجاره" },
+  { key: "salary", label: "حقوق" },
+  { key: "equipment", label: "تجهیزات" },
+  { key: "utilities", label: "آب/برق/گاز" },
+  { key: "maintenance", label: "تعمیر و نگهداری" },
+  { key: "marketing", label: "تبلیغات" },
+  { key: "tax", label: "مالیات و عوارض" },
+  { key: "other", label: "سایر" },
+] as const;
+
+export type ExpenseCategory = (typeof EXPENSE_CATEGORIES)[number]["key"];
+
+export interface ExpenseRow {
+  id: number;
+  amount_rial: number;
+  category: string;
+  spent_on: string;
+  payee: string;
+  note: string;
+  created_at: string | null;
+  deleted_at: string | null;
+}
+
+export interface ExpenseCategoryTotal {
+  category: string;
+  label: string;
+  total_rial: number;
+  count: number;
+}
+
+export interface ExpensePeriod {
+  from_date: string;
+  to_date: string;
+  count: number;
+  total_rial: number;
+  by_category: ExpenseCategoryTotal[];
+  items: ExpenseRow[];
+}
+
+export interface ExpenseInput {
+  amount_rial: number;
+  category: ExpenseCategory;
+  spent_on: string;
+  payee?: string;
+  note?: string;
+}
+
+export function fetchExpenses(
+  from: string,
+  to: string,
+  token = getToken(),
+  signal?: AbortSignal,
+) {
+  return getJson<ExpensePeriod>(`/expenses?from=${from}&to=${to}`, token, signal);
+}
+
+export function createExpense(input: ExpenseInput, token = getToken()) {
+  return postJson<ExpenseRow>("/expenses", input, token);
+}
+
+export function updateExpense(
+  id: number,
+  input: { amount_rial?: number; note?: string; reason: string },
+  token = getToken(),
+) {
+  return sendJson<ExpenseRow>("PATCH", `/expenses/${id}`, input, token);
+}
+
+export function deleteExpense(id: number, reason: string, token = getToken()) {
+  return sendJson<ExpenseRow>("DELETE", `/expenses/${id}`, { reason }, token);
+}
+
 export interface CommissionResult {
   coach_id: number;
   coach_name: string;

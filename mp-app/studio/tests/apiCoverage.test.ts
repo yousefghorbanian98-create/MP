@@ -42,6 +42,34 @@ interface Exception {
 
 const ROUTE_EXCEPTIONS: Record<string, Exception> = {
   // این مسیر در Flutter «پیشرفت» مصرف می‌شود، بیرون از Studio.
+  // QF-23: گزارش زمان‌بندی‌شده backend has no Studio screen yet; the owner reads
+  // numbers from the finance panel. The gate stays honest instead of inventing UI.
+  "/api/v1/finance/reports/schedule": {
+    why: "وضعیت اجرای گزارش روزانه؛ UI آن در QF-10/32 ساخته می‌شود",
+    evidence: null,
+    external: "TODO: نمایش برنامه/اجرای گزارش در صفحهٔ تحلیل‌ها",
+  },
+  "/api/v1/finance/reports/schedule/{job_key}/run": {
+    why: "اجرای دستی گزارش — فعلاً از CLI/scheduler و با finance.write",
+    evidence: null,
+    external: "TODO: دکمهٔ اجرای دستی برای مالک در UI",
+  },
+  "/api/v1/finance/reports/daily/{run_date}": {
+    why: "خواندن گزارش یک روز؛ مصرف‌کنندهٔ واقعی هنوز صفحهٔ گزارش نیست",
+    evidence: null,
+    external: "TODO: صفحهٔ گزارش روزانه با نمودار در QF-10",
+  },
+  // QF-28: نگهداری داده یک ابزار عملیاتی مالک است؛ عمداً در UI عمومی نیست.
+  "/api/v1/admin/retention": {
+    why: "پیش‌نمایش حذف دادهٔ منقضی — فقط super_admin، ابزار عملیاتی",
+    evidence: null,
+    external: "TODO: صفحهٔ حریم/نگهداری با تأیید دومرحله‌ای برای مالک",
+  },
+  "/api/v1/admin/retention/run": {
+    why: "اجرای حذف دادهٔ منقضی — از CLI/runbook، نه دکمهٔ روزمره",
+    evidence: null,
+    external: "TODO: اجرای زمان‌بندی‌شده با ممیزی + UI مالک",
+  },
   "/api/v1/assessments/member/{member_id}": {
     why: "اپ Flutter از همین مسیر در «پیشرفت» می‌خواند",
     evidence: "/assessments/member/",

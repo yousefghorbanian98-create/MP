@@ -12,6 +12,8 @@
   "/api/v1/admin/permissions",
   "/api/v1/admin/permissions/known",
   "/api/v1/admin/permissions/{grant_id}",
+  "/api/v1/admin/retention",
+  "/api/v1/admin/retention/run",
   "/api/v1/admin/users",
   "/api/v1/admin/users/{user_id}/role",
   "/api/v1/ai/nutrition/generate",
@@ -44,6 +46,8 @@
   "/api/v1/classes",
   "/api/v1/classes/book",
   "/api/v1/classes/cancel",
+  "/api/v1/expenses",
+  "/api/v1/expenses/{expense_id}",
   "/api/v1/face/checkin",
   "/api/v1/face/checkin-qr",
   "/api/v1/face/checkins/{checkin_id}/exit",
@@ -54,6 +58,9 @@
   "/api/v1/face/enroll/{member_id}",
   "/api/v1/face/privacy-notice",
   "/api/v1/face/qr-token",
+  "/api/v1/finance/reports/daily/{run_date}",
+  "/api/v1/finance/reports/schedule",
+  "/api/v1/finance/reports/schedule/{job_key}/run",
   "/api/v1/health/ready",
   "/api/v1/library/exercises",
   "/api/v1/library/exercises/{exercise_id}",
@@ -85,6 +92,8 @@
   "/api/v1/payments/finance/export.csv",
   "/api/v1/payments/finance/summary",
   "/api/v1/payments/invoice/{member_id}",
+  "/api/v1/payments/ledger/{entry_id}/reverse",
+  "/api/v1/payments/ledger/{member_id}",
   "/api/v1/payments/wallet/charge",
   "/api/v1/payments/wallet/pay",
   "/api/v1/payments/wallet/{member_id}",
@@ -350,6 +359,38 @@
     "permission"
    ],
    "roles": [
+    "super_admin"
+   ]
+  },
+  {
+   "method": "GET",
+   "path": "/api/v1/admin/retention",
+   "operationId": "preview_api_v1_admin_retention_get",
+   "tags": [
+    "privacy"
+   ],
+   "guards": [
+    "permission"
+   ],
+   "roles": [
+    "manager",
+    "admin",
+    "super_admin"
+   ]
+  },
+  {
+   "method": "POST",
+   "path": "/api/v1/admin/retention/run",
+   "operationId": "run_api_v1_admin_retention_run_post",
+   "tags": [
+    "privacy"
+   ],
+   "guards": [
+    "permission"
+   ],
+   "roles": [
+    "manager",
+    "admin",
     "super_admin"
    ]
   },
@@ -951,6 +992,74 @@
    ]
   },
   {
+   "method": "GET",
+   "path": "/api/v1/expenses",
+   "operationId": "list_expenses_api_v1_expenses_get",
+   "tags": [
+    "expenses"
+   ],
+   "guards": [
+    "grant:finance.read",
+    "permission"
+   ],
+   "roles": [
+    "manager",
+    "admin",
+    "super_admin"
+   ]
+  },
+  {
+   "method": "POST",
+   "path": "/api/v1/expenses",
+   "operationId": "create_expense_api_v1_expenses_post",
+   "tags": [
+    "expenses"
+   ],
+   "guards": [
+    "grant:finance.write",
+    "permission"
+   ],
+   "roles": [
+    "manager",
+    "admin",
+    "super_admin"
+   ]
+  },
+  {
+   "method": "DELETE",
+   "path": "/api/v1/expenses/{expense_id}",
+   "operationId": "delete_expense_api_v1_expenses__expense_id__delete",
+   "tags": [
+    "expenses"
+   ],
+   "guards": [
+    "grant:finance.write",
+    "permission"
+   ],
+   "roles": [
+    "manager",
+    "admin",
+    "super_admin"
+   ]
+  },
+  {
+   "method": "PATCH",
+   "path": "/api/v1/expenses/{expense_id}",
+   "operationId": "update_expense_api_v1_expenses__expense_id__patch",
+   "tags": [
+    "expenses"
+   ],
+   "guards": [
+    "grant:finance.write",
+    "permission"
+   ],
+   "roles": [
+    "manager",
+    "admin",
+    "super_admin"
+   ]
+  },
+  {
    "method": "POST",
    "path": "/api/v1/face/checkin",
    "operationId": "check_in_api_v1_face_checkin_post",
@@ -1131,6 +1240,57 @@
    "roles": [
     "member",
     "coach",
+    "manager",
+    "admin",
+    "super_admin"
+   ]
+  },
+  {
+   "method": "GET",
+   "path": "/api/v1/finance/reports/daily/{run_date}",
+   "operationId": "daily_api_v1_finance_reports_daily__run_date__get",
+   "tags": [
+    "reports"
+   ],
+   "guards": [
+    "grant:finance.read",
+    "permission"
+   ],
+   "roles": [
+    "manager",
+    "admin",
+    "super_admin"
+   ]
+  },
+  {
+   "method": "GET",
+   "path": "/api/v1/finance/reports/schedule",
+   "operationId": "schedule_status_api_v1_finance_reports_schedule_get",
+   "tags": [
+    "reports"
+   ],
+   "guards": [
+    "grant:finance.read",
+    "permission"
+   ],
+   "roles": [
+    "manager",
+    "admin",
+    "super_admin"
+   ]
+  },
+  {
+   "method": "POST",
+   "path": "/api/v1/finance/reports/schedule/{job_key}/run",
+   "operationId": "run_job_api_v1_finance_reports_schedule__job_key__run_post",
+   "tags": [
+    "reports"
+   ],
+   "guards": [
+    "grant:finance.write",
+    "permission"
+   ],
+   "roles": [
     "manager",
     "admin",
     "super_admin"
@@ -1737,6 +1897,42 @@
    "method": "GET",
    "path": "/api/v1/payments/invoice/{member_id}",
    "operationId": "invoice_api_v1_payments_invoice__member_id__get",
+   "tags": [
+    "payments"
+   ],
+   "guards": [
+    "permission"
+   ],
+   "roles": [
+    "member",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ]
+  },
+  {
+   "method": "POST",
+   "path": "/api/v1/payments/ledger/{entry_id}/reverse",
+   "operationId": "ledger_reverse_api_v1_payments_ledger__entry_id__reverse_post",
+   "tags": [
+    "payments"
+   ],
+   "guards": [
+    "grant:finance.write",
+    "permission"
+   ],
+   "roles": [
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ]
+  },
+  {
+   "method": "GET",
+   "path": "/api/v1/payments/ledger/{member_id}",
+   "operationId": "ledger_list_api_v1_payments_ledger__member_id__get",
    "tags": [
     "payments"
    ],

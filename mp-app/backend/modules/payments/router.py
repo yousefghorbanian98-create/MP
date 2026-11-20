@@ -17,6 +17,7 @@ from modules.auth.router import limiter
 from modules.payments import service
 from modules.payments.schemas import (
     GatewayCallbackIn,
+    LedgerReverseIn,
     PaymentCreate,
     PaymentOut,
     PaymentStartIn,
@@ -160,8 +161,15 @@ def list_payments(
     summary="شارژ کیف‌پول",
     dependencies=[Depends(require_grant("finance.write"))],
 )
-def wallet_charge(payload: WalletCharge, db: DbSession):
-    return service.wallet_charge(db, payload.member_id, payload.amount_rial, payload.description)
+def wallet_charge(payload: WalletCharge, db: DbSession, user: CurrentUser):
+    return service.wallet_charge(
+        db,
+        payload.member_id,
+        payload.amount_rial,
+        payload.description,
+        idempotency_key=payload.idempotency_key,
+        actor=user,
+    )
 
 
 @router.post("/wallet/pay", response_model=PaymentOut, summary="پرداخت از کیف‌پول (M16)")
@@ -180,6 +188,36 @@ def invoice(member_id: int, db: DbSession, user: CurrentUser):
     from modules.payments.invoice import build_invoice
 
     return build_invoice(db, member_id, user=user)
+
+
+@router.get("/ledger/{member_id}", summary="دفتر پول عضو با موجودی و تطبیق (QF-05)")
+def ledger_list(member_id: int, db: DbSession, user: CurrentUser):
+    from app.security.ownership import ensure_member_scope
+    from modules.payments import ledger as ledger_service
+
+    ensure_member_scope(db, user, member_id)
+    ledger_service.ensure_member(db, member_id)
+    return {
+        "member_id": member_id,
+        "balance_rial": ledger_service.balance(db, member_id),
+        "reconcile": ledger_service.reconcile(db, member_id),
+        "entries": [ledger_service.serialize(row) for row in ledger_service.entries(db, member_id)],
+    }
+
+
+@router.post(
+    "/ledger/{entry_id}/reverse",
+    summary="معکوس‌سازی رویداد دفتر با دلیل (QF-05)",
+    dependencies=[Depends(require_grant("finance.write"))],
+)
+def ledger_reverse(entry_id: int, payload: LedgerReverseIn, db: DbSession, user: CurrentUser):
+    from modules.payments import ledger as ledger_service
+
+    result = ledger_service.reverse(db, entry_id=entry_id, actor=user, reason=payload.reason)
+    return {
+        "original_entry_id": result["original_entry_id"],
+        "reversal_entry": ledger_service.serialize(result["reversal_entry"]),
+    }
 
 
 @router.get("/{payment_id}/receipt", summary="رسید پرداخت (US-303 — M16)")

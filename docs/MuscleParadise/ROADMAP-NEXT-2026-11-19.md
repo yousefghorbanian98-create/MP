@@ -155,7 +155,7 @@ Flutter وارد نمی‌شود تا دسترسی برگردد یا mirror تص
 - [x] هفت تست تازه `test_phase5_admin_permissions.py` (قرمز اول: مدل/endpoint نبود) + چهار تست استودیو `tests/adminPermissions.test.tsx` با `fetch` واقعیِ stub‌شده.
 - [x] بدهی همان لوپ: هشت فایل تست، fixture کپی‌شدهٔ `auth` را به `tests/integration/_actors.py` منتقل کردند تا مجوز صریح باشد، نه فرضی.
 
-### فاز ۶ — پول: QF-05 → QF-07 → QF-08 → QF-09 (۳–۴ لوپ، هر لوپ با گیت بند ۲.۲) — لوپ اول ✅ (۲۰۲۶-۱۱-۱۹)
+### فاز ۶ — پول: QF-05 → QF-07 → QF-08 → QF-09 (۳–۴ لوپ، هر لوپ با گیت بند ۲.۲) — لوپ ۱–۳ ✅ (۲۰۲۶-۱۱-۱۹)
 - QF-05: حساب پول و رویداد (ledger)، idempotency.
 - QF-07: آپلود فیش — endpoint تازه، `python-multipart` موجود، `Pillow` در runtime، محدودیت حجم/نوع، فایل خصوصی.
 - QF-08: درخواست کارت‌به‌کارت با `202` + `review_id` و وضعیت `in_review`؛ snapshot قیمت، TTL، مالکیت.
@@ -170,6 +170,24 @@ Flutter وارد نمی‌شود تا دسترسی برگردد یا mirror تص
 - [x] سناریوهای زنده: `docs/MuscleParadise/evals/phase6-money-scenarios.md` (۱۳ سناریو، هر کدام یک تست).
 - [x] مهاجرت‌ها: `c1d2e3f4a5b6` و `d2e3f4a5b6c7` (batch mode برای SQLite)، drift صفر و برگشت‌پذیر.
 - `BLOCKED` ماند: انتقال واقعی پول بانکی و تأیید کارت‌به‌کارت با شاهد انسانی.
+
+**اجرا‌شده (لوپ دوم — QF-05 اصلی: دفتر پول):**
+- [x] مدل `LedgerEntry` (`ledger_entries`، migration `a5b6c7d8e9f0`): مبلغ **علامت‌دار** ریال، `kind` در {charge,pay,refund,reversal}، `source_type/source_id`، کلید idempotency با **ایندکس یکتای جزئی** (sqlite/postgres)، `reverses_entry_id` و `reversed_by_entry_id`، `created_by_user_id`.
+- [x] `modules/payments/ledger.py`: `record()` (تکرار کلید = همان ردیف؛ کلید با مبلغ متفاوت = ۴۰۹ `idempotency_conflict`)، `entries()`، `balance()`، `reconcile()` (`{wallet_balance_rial, ledger_balance_rial, matches, difference_rial}`)، `reverse()`.
+- [x] `wallet_charge` و `wallet_pay` هر دو در **همان commit** ردیف دفتر می‌نویسند؛ کلید idempotency از روت تا سرویس منتقل می‌شود.
+- [x] مسیرها: `GET /payments/ledger/{member_id}` (با `ensure_member_scope` — عضو فقط دفتر خودش) و `POST /payments/ledger/{entry_id}/reverse` (`finance.write`، دلیل ۳–۲۰۰ نویسه، audit با `action=ledger_reversal`، ۴۰۰ برای `already_reversed`/`cannot_reverse_reversal`).
+- [x] ۹ تست `tests/integration/test_phase6b_ledger.py` (قرمز اول: مدل/سرویس نبود): علامت مبلغ، تطبیق دفتر با کیف‌پول، عدم شارژ دوباره با کلید تکراری، ۴۰۹ روی اختلاف، ردیف جبرانی، منع معکوس دوبار، ۴۰۳ بدون مجوز، ایزوله‌بودن عضو، و ردیف ممیزی.
+- [x] استودیو: `LedgerPanel` در صفحهٔ مالی — موجودی/تطبیق/ردیف‌ها، معکوس‌سازی فقط با دلیل، ردیف معکوس‌شده دکمهٔ فعال ندارد؛ ۶ تست `tests/ledgerPanel.test.tsx`. پنل هنگام mount هیچ درخواستی نمی‌فرستد (صفحهٔ مالی شلوغ نمی‌شود).
+
+**اجرا‌شده (لوپ سوم — QF-06: هزینهٔ خارجی):**
+- [x] مدل `Expense` + `ExpenseRevision` (migration `b6c7d8e9f0a1`): مبلغ ریال ≥ ۱۰۰۰، هشت دستهٔ ثابت (اجاره/حقوق/تجهیزات/آب‌برق/تعمیر/تبلیغات/مالیات/سایر)، `spent_on`، طرف‌حساب، توضیح، **حذف نرم** (`deleted_at`).
+- [x] `modules/expenses/service.py`: `create`، `update` (دلیل اجباری + ردیف `expense_revisions` با قبل/بعد JSON)، `soft_delete` (دلیل + ممیزی)، `period()` (جمع بازه + تفکیک دسته + ریز ردیف‌ها، `invalid_period` روی بازهٔ برعکس).
+- [x] مسیرها: `POST /expenses` و `PATCH/DELETE /expenses/{id}` با `finance.write`، `GET /expenses?from=&to=` با `finance.read` — **دو اختیار جدا**؛ role بدون مجوز شخصی ۴۰۳ `permission_required` می‌گیرد.
+- [x] ۹ تست `tests/integration/test_phase6c_expenses.py` (قرمز اول: جدول/مسیر نبود): جدا‌بودن read/write، جمع همان دوره (اجاره + حقوق)، رد مبلغ ۰/منفی/زیر آستانه، رد دستهٔ ناشناخته، دلیل اجباری + تاریخچهٔ اصلاح، حذف نرم (جمع صفر، تاریخچه و ممیزی می‌مانند)، audit با actor، بازهٔ معکوس و ۴۰۴.
+- [x] استودیو: صفحهٔ «هزینه‌ها» (`src/pages/Expenses.tsx`) با کنترل‌های antd و تقویم جلالی (Q11، بودجهٔ کنترل دست‌ساز = ۰)، مدال دلیل برای اصلاح/حذف؛ ۸ تست `tests/expensesPage.test.tsx`. ناوبری: `expenses` فقط برای super_admin/admin/manager (`roleNav` + گیت fail-closed).
+
+**شاهد این دو لوپ:** بک‌اند **۱۰۴۶ قبول / ۲ رد‌شده**، استودیو **۲۶۲ قبول / ۹ رد‌شده**، `ruff` و `tsc -b`/build پاک، قرارداد **۱۳۳ مسیر / ۱۵۳ عملیات** (بازتولید‌شده)، نقشهٔ تعامل ۳۱ سطح با رانش صفر، migration drift صفر.
+- **باقی‌ماندهٔ صریح:** فایل فیش خصوصی برای هزینهٔ خارجی و گزارش سود/زیان دوره‌ای با بازگشت‌ها (QF-10) در لوپ‌های بعد؛ انتقال واقعی پول بانکی همچنان `BLOCKED`.
 
 ### فاز ۷ — قابلیت‌های عضو: QF-13/14/15/16/17/18 (هر کدام ۱–۲ لوپ) — جاروی مالکیت ✅
 - حساب و عضویت، حضور QR، تمرین/کلاس، تغذیه، ارزیابی، چت.
@@ -191,6 +209,19 @@ Flutter وارد نمی‌شود تا دسترسی برگردد یا mirror تص
 - [x] پنج تست `test_phase8_outbox.py` (قرمز اول: جدول/سرویس نبود).
 - [x] QF-21 inbox: `inbox_messages` + `consume_once` — تحویل تکراری فقط یک‌بار اثر می‌گذارد، خطای handler کل پیام را rollback می‌کند، رقابت دو مصرف‌کننده با کلید یکتا حل می‌شود؛ relay نمونه از همین لایه رد می‌شود. چهار تست `test_phase8_inbox.py`.
 - **باقی‌مانده و صریح `BLOCKED`:** اتصال واقعی push/SMS (بدون سرویس بیرونی)، PostgreSQL در استقرار (compose فعلی SQLite دارد)، امضای release و دستگاه اندروید (بدون شاهد انسانی)، آزمایش ابری/گیت انتشار.
+
+**اجرا‌شده (لوپ چهارم تا هفتم — QF-23/26/27/28):**
+- [x] **QF-23 گزارش زمان‌بندی‌شده:** `report_runs` (migration `c7d8e9f0a1b2`) با کلید یکتای `(job_key, run_date)`؛ سبد روز از `Asia/Tehran` ساخته می‌شود (مرز ۰۰:۰۰ تهران، نه UTC)؛ `run_daily_finance` idempotent در برابر اجرای دوباره/ری‌استارت/دو worker؛ اعداد فقط با `finance.read` از `GET /finance/reports/daily/{date}` و ممیزی فقط «آماده است» (بدون مبلغ). cron ۰۰:۱۰ تهران در `jobs/scheduler.py`. ۷ تست `test_phase8_reports.py`.
+- [x] **QF-26 شبکه و افشای IP:** `app/security/proxy.py` — `X-Forwarded-For` فقط اگر peer در `MP_TRUSTED_PROXIES` باشد، پیمایش راست‌به‌چپ و fail-closed به peer؛ کلید rate-limit از همان IP محاسبه می‌شود تا هدر جعلی سهمیهٔ تازه نسازد. ۶ تست `test_phase8_network.py`. (secretهای production از قبل fail-closed بودند.)
+- [x] **QF-27 worker و مشاهده‌پذیری:** `worker_heartbeats` (migration `d8e9f0a1b2c3`) + `modules/outbox/health.py`؛ relay در هر دور heartbeat و متریک‌های `mp_outbox_pending/sending/dead_letters/oldest_pending_seconds/worker_stale` را از DB می‌نویسد؛ `/health/ready` صف را نشان می‌دهد و با `MP_REQUIRE_WORKER=true` بدون heartbeat تازه ۵۰۳ می‌دهد؛ `/metrics` فقط عدد (بدون payload/خطا). ۶ تست `test_phase8_worker.py` + جدول هشدار در `OPS-RUNBOOK`.
+- [x] **QF-28 حریم و نگهداری:** `modules/privacy/retention.py` — سیاست‌های صریح (روز + دلیل) برای audit/inbox/اعلان خوانده‌شده/report_runs، پیش‌نمایش بدون حذف، اجرای فقط `super_admin` با ممیزی `retention_run` بدون دادهٔ شخصی؛ پول/دفتر/هزینه/فیش دست‌نخورده. ۵ تست `test_phase8_privacy.py`؛ سیاست در `DATA-RETENTION.md`.
+- **`BLOCKED` در همین لوپ‌ها:** هشدار واقعی Alertmanager/Prometheus (سرور پایش بیرونی نیست)، توزیع rate-limit با Valkey، تأیید حقوقی مدت‌های نگهداری، push/ایمیل گزارش به مالک.
+
+**اجرا‌شده (لوپ هشتم — QF-32، جاروی انتشار و گیت):**
+- [x] `tests/integration/test_phase8_release_sweep.py`: یک جریان کامل در **یک نسخه** — مدیر بدون مجوز ۴۰۳ ← اعطای `finance.write/read` توسط مالک ← شارژ کیف‌پول ← پرداخت نقدی از مسیر واقعی و تأیید (`verify`) ← هزینهٔ همان روز ← گزارش روزانه با `net = دریافت − هزینه` ← تطبیق دفتر/کیف‌پول ← پیش‌نمایش/اجرای نگهداری روی دادهٔ تازه (صفر حذف) ← معکوس‌سازی دفتر (موجودی صفر، تطبیق هنوز منطبق، گزارش snapshot دست‌نخورده).
+- [x] قرارداد بازتولید شد (**۱۵۸ مسیر / ۱۵۸ عملیات** با guard برای ۱۴۹ و ۹ عمومی مستند)؛ نقشهٔ تعامل ۳۱ سطح، رانش صفر، سطح بی‌تست ۷ (بدون افزایش).
+- [x] `deploy_gate.py`: ۱۲ بررسی، ۰ هشدار، ۰ مشکل؛ `ruff`/`tsc -b`/build/docs-hygiene/bandit پاک.
+- **گیت انتشار همچنان بسته است:** پذیرش نهایی مالک، امضای release، دستگاه اندروید، PostgreSQL+backup، آزمایش ابری و انتقال واقعی بانک — همه `BLOCKED`/`UNKNOWN`؛ هیچ‌کدام با این جارو «PASS» ادعا نمی‌شود.
 
 ## ۶. چیزهایی که در این نقشه عمداً نیست
 

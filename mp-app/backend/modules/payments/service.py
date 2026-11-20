@@ -9,7 +9,7 @@ from sqlalchemy import case, func, select
 from sqlalchemy.orm import Session, aliased
 
 from app.config import settings
-from app.errors import ApiError, NotFoundError
+from app.errors import ApiError, ConflictError, NotFoundError
 from db.models import Member, Payment, WalletTransaction
 
 
@@ -328,16 +328,54 @@ def list_payments(
 
 
 def wallet_charge(
-    db: Session, member_id: int, amount_rial: int, description: str = ""
+    db: Session,
+    member_id: int,
+    amount_rial: int,
+    description: str = "",
+    *,
+    idempotency_key: str | None = None,
+    actor=None,
 ) -> WalletTransaction:
+    """شارژ دستی کیف‌پول + ثبت رویداد دفتر در همان تراکنش (QF-05)."""
+    from modules.payments.ledger import record as record_ledger
+
     if amount_rial <= 0:
         raise ApiError("مبلغ شارژ باید مثبت باشد")
     if db.get(Member, member_id) is None:
         raise NotFoundError("عضو یافت نشد")
+    if idempotency_key:
+        from sqlalchemy import select as _select
+
+        from db.models import LedgerEntry as _LedgerEntry
+
+        existing = db.scalar(
+            _select(_LedgerEntry).where(_LedgerEntry.idempotency_key == idempotency_key)
+        )
+        if existing is not None:
+            if existing.amount_rial != amount_rial:
+                raise ConflictError(
+                    "همین کلید idempotency قبلاً با مبلغ دیگری ثبت شده است",
+                    code="idempotency_conflict",
+                )
+            prior = db.get(WalletTransaction, existing.source_id or 0)
+            if prior is not None:
+                return prior
     tx = WalletTransaction(
         member_id=member_id, amount_rial=amount_rial, kind="credit", description=description
     )
     db.add(tx)
+    db.flush()
+    record_ledger(
+        db,
+        member_id=member_id,
+        amount_rial=amount_rial,
+        kind="charge",
+        source_type="wallet",
+        source_id=tx.id,
+        idempotency_key=idempotency_key or f"wallet-charge-{tx.id}",
+        created_by_user_id=getattr(actor, "id", None),
+        note=description,
+    )
     db.commit()
     db.refresh(tx)
     return tx
@@ -438,6 +476,20 @@ def wallet_pay(
         branch_id=1,
     )
     db.add(payment)
+    db.flush()
+    from modules.payments.ledger import record as record_ledger
+
+    record_ledger(
+        db,
+        member_id=member_id,
+        amount_rial=-amount_rial,
+        kind="pay",
+        source_type="wallet",
+        source_id=payment.id,
+        idempotency_key=f"wallet-pay-{payment.id}",
+        created_by_user_id=getattr(user, "id", None),
+        note=description or "پرداخت از کیف‌پول",
+    )
     db.commit()
     db.refresh(payment)
     from modules.admin.service import audit

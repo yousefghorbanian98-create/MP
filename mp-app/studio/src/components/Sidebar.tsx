@@ -12,6 +12,7 @@ const items: { id: PageId; label: string; icon: string }[] = [
   { id: "chat", label: "چت", icon: "✉" },
   { id: "checkin", label: "حضور", icon: "◎" },
   { id: "finance", label: "مالی", icon: "◈" },
+  { id: "expenses", label: "هزینه‌ها", icon: "▾" },
   { id: "analytics", label: "تحلیل‌ها", icon: "◆" },
   { id: "shop", label: "فروشگاه", icon: "▣" },
   { id: "settings", label: "تنظیمات", icon: "⚙" },
@@ -21,7 +22,7 @@ const items: { id: PageId; label: string; icon: string }[] = [
  * صفحه‌هایی که بدون نقش شناخته‌شده نمایش داده نمی‌شوند (fail-closed):
  * دادهٔ مالی و پیکربندی نباید با یک توکن ناشناخته حتی در منو ظاهر شوند.
  */
-const NEEDS_ROLE = new Set<PageId>(["finance", "settings"]);
+const NEEDS_ROLE = new Set<PageId>(["finance", "expenses", "settings"]);
 
 /**
  * نوار کناری با نشانگر متحرک و hover نرم.

@@ -15,6 +15,7 @@ import time
 
 from app.logging import get_logger
 from db.base import get_session_factory
+from modules.outbox import health as outbox_health
 from modules.outbox.inbox import consume_once
 from modules.outbox.service import reclaim_stale, relay_once
 
@@ -43,8 +44,11 @@ def run_once() -> dict:
             reclaimed = reclaim_stale(db)
             db.commit()
             result = relay_once(db, handler=handle)
-            db.commit()
             result["reclaimed"] = reclaimed
+            # QF-27: heartbeat حتی وقتی صف خالی است، «زنده‌ام» را می‌گوید.
+            outbox_health.heartbeat(db, worker_key="outbox", result=result)
+            outbox_health.refresh_metrics(db)
+            db.commit()
             return result
         finally:
             _current_session.set(None)

@@ -94,6 +94,12 @@ class WalletCharge(BaseModel):
     member_id: Id
     amount_rial: int = Field(..., gt=0)
     description: str = Field("", max_length=200)
+    # QF-05: تکرار درخواست شارژ از سوی اپ، موجودی را دو بار زیاد نمی‌کند.
+    idempotency_key: str | None = Field(None, min_length=8, max_length=80)
+
+
+class LedgerReverseIn(BaseModel):
+    reason: str = Field(..., min_length=3, max_length=200)
 
 
 class WalletTxOut(BaseModel):

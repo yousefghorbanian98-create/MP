@@ -29,11 +29,12 @@ from db.models.content import (
     ProgressionStep,
 )
 from db.models.face_id import BiometricConsent, CheckIn, FaceTemplate
+from db.models.finance import Expense, ExpenseRevision, ReportRun
 from db.models.membership import Member, Membership
 from db.models.notification import Notification
 from db.models.nutrition import BodyWeightLog, FoodLog, MealItem, NutritionPlan
 from db.models.outbox import InboxMessage, OutboxDeadLetter, OutboxEvent
-from db.models.payments import Payment, PaymentReceipt, WalletTransaction
+from db.models.payments import LedgerEntry, Payment, PaymentReceipt, WalletTransaction
 from db.models.programs import ProgramExercise, ProgramWeek, SetFeedback, WorkoutProgram
 from db.models.segment import LimbMeasurement
 from db.models.shop import (
@@ -47,6 +48,7 @@ from db.models.shop import (
     ProductCategory,
     ProductVariant,
 )
+from db.models.worker import WorkerHeartbeat
 
 __all__ = [
     "AdminPermission",
@@ -79,6 +81,11 @@ __all__ = [
     "NormEntry",
     "Notification",
     "InboxMessage",
+    "Expense",
+    "ReportRun",
+    "WorkerHeartbeat",
+    "ExpenseRevision",
+    "LedgerEntry",
     "OutboxDeadLetter",
     "OutboxEvent",
     "NutritionPlan",
