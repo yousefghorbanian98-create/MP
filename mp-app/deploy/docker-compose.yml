@@ -22,8 +22,8 @@ services:
       MP_SMS_USERNAME: ${MP_SMS_USERNAME:-}
       MP_SMS_PASSWORD: ${MP_SMS_PASSWORD:-}
       MP_SMS_ORIGINATOR: ${MP_SMS_ORIGINATOR:-}
-      MP_PAYMENT_GATEWAY: ${MP_PAYMENT_GATEWAY:?set zarinpal}
-      MP_ZARINPAL_MERCHANT_ID: ${MP_ZARINPAL_MERCHANT_ID:?set the live merchant ID}
+      # درگاه اینترنتی حذف شد؛ پرداخت حضوری و کارت‌به‌کارت با رسید.
+      MP_PAYMENT_GATEWAY: ${MP_PAYMENT_GATEWAY:?set manual}
       MP_PAYMENT_SANDBOX: ${MP_PAYMENT_SANDBOX:-false}
       PROMETHEUS_MULTIPROC_DIR: /tmp/prometheus-multiproc
     volumes:

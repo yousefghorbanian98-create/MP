@@ -78,7 +78,7 @@ def _member() -> tuple[dict[str, str], int]:
 def _payment(client, headers, member_id: int) -> dict:
     r = client.post(
         "/api/v1/payments",
-        json={"member_id": member_id, "amount_rial": 150_000, "method": "zarinpal"},
+        json={"member_id": member_id, "amount_rial": 150_000, "method": "card_to_card"},
         headers=headers,
     )
     assert r.status_code == 200, r.text

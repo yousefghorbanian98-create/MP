@@ -42,14 +42,18 @@ def client(tmp_path, monkeypatch):
 def auth():
     """ساخت کاربر با نقش دلخواه و برگرداندن header احراز هویت."""
 
-    def _auth(role: str = "manager") -> dict:
+    def _auth(role: str = "manager", grants: list[str] | None = None) -> dict:
+        """کاربر با نقش دلخواه؛ `grants` مجوزهای شخصیِ فعال آن کاربر است (QF-03)."""
         from app.security.jwt import create_access_token
-        from db.models import User
+        from db.models import AdminPermission, User
 
         n = next(_counter)
         with get_session_factory()() as s:
             u = User(phone=f"09{n:09d}", full_name=f"{role}-{n}", role=role)
             s.add(u)
+            s.commit()
+            for permission in grants or []:
+                s.add(AdminPermission(user_id=u.id, permission=permission, note="fixture"))
             s.commit()
             token = create_access_token(u.id, u.role)
             return {"Authorization": f"Bearer {token}"}

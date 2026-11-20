@@ -26,8 +26,7 @@ def valid_production_settings(**overrides) -> Settings:
         "sms_originator": "1000000000",
         "valkey_url": "redis://valkey:6379/0",
         "cors_origins": "https://studio.example.test",
-        "payment_gateway": "zarinpal",
-        "zarinpal_merchant_id": "merchant-test-id",
+        "payment_gateway": "manual",
         "payment_sandbox": False,
     }
     values.update(overrides)
@@ -61,8 +60,8 @@ def test_complete_production_settings_are_accepted() -> None:
         ({"cors_origins": "*"}, "MP_CORS_ORIGINS"),
         ({"cors_origins": "https://user:password@studio.example.test"}, "MP_CORS_ORIGINS"),
         ({"payment_gateway": "mock"}, "MP_PAYMENT_GATEWAY"),
+        ({"payment_gateway": "sandbox"}, "MP_PAYMENT_GATEWAY"),
         ({"payment_sandbox": True}, "MP_PAYMENT_SANDBOX"),
-        ({"zarinpal_merchant_id": ""}, "MP_ZARINPAL_MERCHANT_ID"),
     ],
 )
 def test_insecure_production_settings_fail_closed(override: dict, expected: str) -> None:
@@ -116,7 +115,6 @@ def test_production_compose_is_fail_closed_and_valkey_backed(compose_path: Path)
         "MP_CORS_ORIGINS",
         "MP_SMS_PROVIDER",
         "MP_PAYMENT_GATEWAY",
-        "MP_ZARINPAL_MERCHANT_ID",
     ):
         assert ":?" in environment[required], f"{compose_path}: {required} must be required"
     assert environment["MP_VALKEY_URL"] == "redis://valkey:6379/0"

@@ -11,7 +11,13 @@ from db.models.assessment import (
     JacksonPollockMeasurement,
     NormEntry,
 )
-from db.models.auth import OtpCode, PhoneChangeChallenge, RefreshToken, User
+from db.models.auth import (
+    AdminPermission,
+    OtpCode,
+    PhoneChangeChallenge,
+    RefreshToken,
+    User,
+)
 from db.models.chat import Conversation, Message
 from db.models.classes import ClassBooking, GymClass
 from db.models.content import (
@@ -26,7 +32,8 @@ from db.models.face_id import BiometricConsent, CheckIn, FaceTemplate
 from db.models.membership import Member, Membership
 from db.models.notification import Notification
 from db.models.nutrition import BodyWeightLog, FoodLog, MealItem, NutritionPlan
-from db.models.payments import Payment, WalletTransaction
+from db.models.outbox import InboxMessage, OutboxDeadLetter, OutboxEvent
+from db.models.payments import Payment, PaymentReceipt, WalletTransaction
 from db.models.programs import ProgramExercise, ProgramWeek, SetFeedback, WorkoutProgram
 from db.models.segment import LimbMeasurement
 from db.models.shop import (
@@ -42,6 +49,7 @@ from db.models.shop import (
 )
 
 __all__ = [
+    "AdminPermission",
     "Assessment14Domain",
     "AuditLog",
     "AxisAssessment",
@@ -70,10 +78,14 @@ __all__ = [
     "Membership",
     "NormEntry",
     "Notification",
+    "InboxMessage",
+    "OutboxDeadLetter",
+    "OutboxEvent",
     "NutritionPlan",
     "Offer",
     "OtpCode",
     "Payment",
+    "PaymentReceipt",
     "PhoneChangeChallenge",
     "ProgramExercise",
     "ProgramWeek",

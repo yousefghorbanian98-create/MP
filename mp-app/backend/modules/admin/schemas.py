@@ -32,3 +32,24 @@ class FeatureFlagOut(BaseModel):
     description: str
 
     model_config = {"from_attributes": True}
+
+
+class PermissionGrantIn(BaseModel):
+    user_id: int = Field(..., ge=1)
+    permission: str = Field(..., min_length=3, max_length=40)
+    expires_in_hours: int | None = Field(None, ge=1, le=24 * 365)
+    note: str = Field("", max_length=200)
+
+
+class PermissionGrantOut(BaseModel):
+    id: int
+    user_id: int
+    permission: str
+    note: str
+    granted_by: int | None
+    granted_at: str | None
+    expires_at: str | None
+    revoked_at: str | None
+    revoked_by: int | None
+    active: bool
+    status: str

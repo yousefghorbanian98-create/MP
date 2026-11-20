@@ -10,6 +10,8 @@ from fastapi.testclient import TestClient
 
 from app.config import settings
 
+from ._actors import create_actor
+
 _counter = itertools.count(700001)
 
 
@@ -47,17 +49,10 @@ def seeded_norms(client):
 
 @pytest.fixture()
 def auth():
-    def _auth(role: str = "coach") -> dict:
-        from app.security.jwt import create_access_token
-        from db.base import get_session_factory
-        from db.models import User
+    """هدر کاربر تازه؛ `grants` مجوزهای شخصی فاز ۵ را هم می‌سازد."""
 
-        n = next(_counter)
-        with get_session_factory()() as s:
-            u = User(phone=f"09{n:09d}", full_name=f"{role}-{n}", role=role)
-            s.add(u)
-            s.commit()
-            return {"Authorization": f"Bearer {create_access_token(u.id, u.role)}"}
+    def _auth(role: str = "coach", grants: list[str] | None = None) -> dict:
+        return create_actor(role, grants)
 
     return _auth
 

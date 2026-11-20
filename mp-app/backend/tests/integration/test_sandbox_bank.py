@@ -318,7 +318,7 @@ def member_id(client):
 def _paid_payment(client, bank, h, member_id, amount=250_000):
     p = client.post(
         "/api/v1/payments",
-        json={"member_id": member_id, "amount_rial": amount, "method": "zarinpal"},
+        json={"member_id": member_id, "amount_rial": amount, "method": "card_to_card"},
         headers=h,
     ).json()
     start = client.post(f"/api/v1/payments/{p['id']}/start", json={}, headers=h).json()
@@ -351,7 +351,7 @@ def test_callback_without_bank_payment_cannot_settle(client, bank, reception, me
     h = reception
     p = client.post(
         "/api/v1/payments",
-        json={"member_id": member_id, "amount_rial": 300_000, "method": "zarinpal"},
+        json={"member_id": member_id, "amount_rial": 300_000, "method": "card_to_card"},
         headers=h,
     ).json()
     start = client.post(f"/api/v1/payments/{p['id']}/start", json={}, headers=h).json()
@@ -370,7 +370,7 @@ def test_cancelled_at_bank_then_failed_locally(client, bank, reception, member_i
     h = reception
     p = client.post(
         "/api/v1/payments",
-        json={"member_id": member_id, "amount_rial": 120_000, "method": "zarinpal"},
+        json={"member_id": member_id, "amount_rial": 120_000, "method": "card_to_card"},
         headers=h,
     ).json()
     start = client.post(f"/api/v1/payments/{p['id']}/start", json={}, headers=h).json()
@@ -446,7 +446,7 @@ def test_wallet_and_pending_payments_are_not_refundable(client, bank, reception,
 
     p = client.post(
         "/api/v1/payments",
-        json={"member_id": member_id, "amount_rial": 50_000, "method": "zarinpal"},
+        json={"member_id": member_id, "amount_rial": 50_000, "method": "card_to_card"},
         headers=h,
     ).json()
     r2 = client.post(f"/api/v1/payments/{p['id']}/refund", headers=h)
@@ -463,7 +463,7 @@ def test_mock_gateway_has_no_refund_path(client, monkeypatch, reception, member_
     h = reception
     p = client.post(
         "/api/v1/payments",
-        json={"member_id": member_id, "amount_rial": 40_000, "method": "zarinpal"},
+        json={"member_id": member_id, "amount_rial": 40_000, "method": "card_to_card"},
         headers=h,
     ).json()
     with get_session_factory()() as s:
@@ -491,7 +491,7 @@ def _browser(client, bank, h, member_id, outcome="success", amount=180_000):
     try:
         pay = client.post(
             "/api/v1/payments",
-            json={"member_id": member_id, "amount_rial": amount, "method": "zarinpal"},
+            json={"member_id": member_id, "amount_rial": amount, "method": "card_to_card"},
             headers=h,
         ).json()
         start = client.post(f"/api/v1/payments/{pay['id']}/start", json={}, headers=h).json()

@@ -494,7 +494,7 @@ export function fetchMemberVolume(
   );
 }
 
-// ── Q6 — درگاه پرداخت (start / callback) ──
+// ── Q6 — پرداخت حضوری (فاز ۳: درگاه اینترنتی حذف شد) ──
 
 export interface PaymentRow {
   id: number;
@@ -507,14 +507,6 @@ export interface PaymentRow {
   gateway_authority?: string;
   description: string;
   paid_at: string | null;
-}
-
-export interface PaymentStart {
-  payment_id: number;
-  authority: string;
-  redirect_url: string;
-  amount_rial: number;
-  callback_token: string;
 }
 
 export function createPayment(
@@ -551,25 +543,8 @@ export function failPayment(paymentId: number, token = getToken()) {
   return postJson<PaymentRow>(`/payments/${paymentId}/fail`, {}, token);
 }
 
-export function startPayment(paymentId: number, callbackUrl = "", token = getToken()) {
-  return postJson<PaymentStart>(
-    `/payments/${paymentId}/start`,
-    { callback_url: callbackUrl },
-    token,
-  );
-}
-
-export function confirmGatewayCallback(
-  paymentId: number,
-  authority: string,
-  callbackToken: string,
-  token = getToken(),
-) {
-  return postJson<PaymentRow>(
-    `/payments/${paymentId}/callback`,
-    { authority, callback_token: callbackToken },
-    token,
-  );
+export function verifyPayment(paymentId: number, referenceId: string, token = getToken()) {
+  return postJson<PaymentRow>(`/payments/${paymentId}/verify`, { reference_id: referenceId }, token);
 }
 
 // ── autoreg-1.0 — وزنهٔ پیشنهادی ست بعدی (POST /ai/suggest-weight) ──
@@ -1380,3 +1355,49 @@ export const reviewChangeRequest = (
   token = getToken(),
 ) =>
   sendJson<ChangeRequest>("POST", `/shop/change-requests/${requestId}/review`, { approve, note }, token);
+
+// ── فاز ۴ (QF-01) — دستگاه‌های فعال؛ سرور فقط شناسهٔ عمومی نشست می‌دهد ──
+
+export interface DeviceSession {
+  id: number;
+  device_info: string;
+  created_at: string;
+  expires_at: string;
+  current: boolean;
+}
+
+export function fetchSessions(token = getToken(), signal?: AbortSignal) {
+  return getJson<DeviceSession[]>("/auth/sessions", token, signal);
+}
+
+/** ابطال یک نشست/دستگاه. نشست کاربر دیگر از دید سرور ۴۰۴ است. */
+export function revokeSession(sessionId: number, token = getToken()) {
+  return sendJson<{ status: string; session_id: number }>(
+    "DELETE",
+    `/auth/sessions/${sessionId}`,
+    undefined,
+    token,
+  );
+}
+
+// ── فاز ۶ (QF-08/QF-09) — صف بازبینی فیش کارت‌به‌کارت ──
+
+export function fetchReviewQueue(token = getToken(), signal?: AbortSignal) {
+  return getJson<PaymentRow[]>("/payments?status=in_review", token, signal);
+}
+
+export function approveReceipt(paymentId: number, token = getToken()) {
+  return postJson<{ id: number; status: string; membership_id: number | null }>(
+    `/payments/${paymentId}/approve`,
+    {},
+    token,
+  );
+}
+
+export function rejectReceipt(paymentId: number, reason: string, token = getToken()) {
+  return postJson<{ payment_id: number; status: string; review_id: string }>(
+    `/payments/${paymentId}/reject`,
+    { reason },
+    token,
+  );
+}

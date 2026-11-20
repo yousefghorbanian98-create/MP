@@ -80,6 +80,12 @@ def verify_otp(db: Session, phone: str, code: str) -> dict:
         user = User(phone=phone, full_name="", role="member")
         db.add(user)
         db.flush()
+    # فاز ۴: حساب غیرفعال نباید حتی نشست بگیرد. پیش از این، توکن صادر می‌شد و
+    # فقط درخواست بعدی ۴۰۱ می‌گرفت — یعنی ورودِ موفق به حساب بسته‌شده.
+    # کد مصرف‌شده ثبت می‌شود تا با همان کد دوباره تلاش نشود.
+    if not user.is_active:  # nosemgrep: ستون SQLAlchemy است نه فراخوانی تابع
+        db.commit()
+        raise UnauthorizedError("کاربر فعال نیست")
     refresh, refresh_hash, expires = create_refresh_token()
     access = create_access_token(
         user.id, user.role, session_id=refresh_hash, auth_version=user.auth_version
@@ -122,6 +128,49 @@ def refresh_session(db: Session, refresh_token: str) -> dict:
     db.add(RefreshToken(user_id=user.id, token_hash=new_hash, expires_at=expires))
     db.commit()
     return {"access_token": access, "refresh_token": new_refresh, "token_type": "bearer"}
+
+
+def list_sessions(db: Session, *, user_id: int, current_sid: str | None) -> list[dict]:
+    """نشست‌های فعال کاربر — بدون افشای هش یا شناسهٔ داخلی توکن.
+
+    `current` از `sid` همان توکنی می‌آید که درخواست را فرستاده؛ مقایسه فقط
+    سمت سرور انجام می‌شود و به کلاینت برنمی‌گردد.
+    """
+    now = datetime.now(UTC)
+    rows = list(
+        db.scalars(
+            select(RefreshToken)
+            .where(
+                RefreshToken.user_id == user_id,
+                RefreshToken.revoked_at.is_(None),
+            )
+            .order_by(RefreshToken.id.desc())
+        )
+    )
+    out: list[dict] = []
+    for row in rows:
+        if _aware(row.expires_at) <= now:
+            continue
+        out.append(
+            {
+                "id": row.id,
+                "device_info": row.device_info or "",
+                "created_at": _aware(row.created_at).isoformat(),
+                "expires_at": _aware(row.expires_at).isoformat(),
+                "current": bool(current_sid) and row.token_hash == current_sid,
+            }
+        )
+    return out
+
+
+def revoke_session(db: Session, *, user_id: int, session_id: int) -> dict:
+    """ابطال یک نشست مشخص؛ نشست کاربر دیگر ۴۰۴ می‌دهد تا وجودش لو نرود."""
+    row = db.get(RefreshToken, session_id)
+    if row is None or row.user_id != user_id or row.revoked_at is not None:
+        raise NotFoundError("نشست یافت نشد")
+    row.revoked_at = datetime.now(UTC)
+    db.commit()
+    return {"status": "revoked", "session_id": session_id}
 
 
 def logout(db: Session, refresh_token: str) -> dict:

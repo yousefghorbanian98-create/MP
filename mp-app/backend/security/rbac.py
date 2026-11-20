@@ -35,6 +35,8 @@ POLICIES: list[tuple[str, str, str]] = [
     ("member", "/api/v1/auth/logout", "POST"),
     ("member", "/api/v1/auth/logout-all", "POST"),
     ("member", "/api/v1/auth/refresh", "POST"),
+    ("member", "/api/v1/auth/sessions", "GET"),
+    ("member", "/api/v1/auth/sessions/*", "DELETE"),
     ("member", "/api/v1/members/*", "GET"),
     ("member", "/api/v1/members/me", "PUT"),
     ("member", "/api/v1/face/consent", "POST"),
@@ -68,6 +70,8 @@ POLICIES: list[tuple[str, str, str]] = [
     # Q6 — آغاز پرداخت و callback درگاه: عضو باید تراکنش خودش را آغاز کند.
     # کنترل «کدام تراکنش» در service (وضعیت/authority) است.
     ("member", "/api/v1/payments", "POST"),
+    # QF-07: آپلود فیش فقط برای عضوِ صاحب همان پرداخت (مالکیت در service).
+    ("member", "/api/v1/payments/*/receipt", "POST"),
     ("member", "/api/v1/payments/*/start", "POST"),
     ("member", "/api/v1/payments/*/callback", "POST"),
     ("member", "/api/v1/nutrition/*", "GET"),
@@ -193,6 +197,11 @@ ROLE_INHERITANCE: list[tuple[str, str]] = [
 # - بازبینی ارزیابی فقط manager/admin (coach نباید تأیید/رد کند)
 DENIES: list[tuple[str, str, str]] = [
     ("manager", "/api/v1/reports/*", "*"),
+    # QF-03: مجوز شخصی فقط با مالک سیستم؛ ادمین/مدیر حتی برای دیدن آن مجاز نیست.
+    ("admin", "/api/v1/admin/permissions", "*"),
+    ("admin", "/api/v1/admin/permissions/*", "*"),
+    ("manager", "/api/v1/admin/permissions", "*"),
+    ("manager", "/api/v1/admin/permissions/*", "*"),
     ("coach", "/api/v1/axis-assessments/:id/review", "POST"),
     # ── M59 — یافتهٔ زندهٔ ۲۰۲۶-۱۱-۱۵ ──
     # `("member", "/api/v1/payments/*", "GET")` باعث می‌شد عضو عادی

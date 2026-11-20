@@ -30,15 +30,19 @@ def client(tmp_path):
 
 
 def _staff(client: TestClient, role: str = "manager") -> dict:
+    """کارمند تست با مجوز مالی فعال (فاز ۵: پول برای admin/manager پیش‌فرض بسته است)."""
     from app.security.jwt import create_access_token
     from db.base import get_session_factory
-    from db.models import User
+    from db.models import AdminPermission, User
 
     n = next(_staff.counter)
     with get_session_factory()() as s:
         u = User(phone=f"09{n:09d}", full_name=f"{role}-{n}", role=role)
         s.add(u)
         s.commit()
+        if role in {"admin", "manager"}:
+            s.add(AdminPermission(user_id=u.id, permission="finance.write", note="test fixture"))
+            s.commit()
         token = create_access_token(u.id, u.role)
     return {"Authorization": f"Bearer {token}"}
 

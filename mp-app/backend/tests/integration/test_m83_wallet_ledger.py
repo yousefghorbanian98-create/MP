@@ -44,7 +44,7 @@ def test_wallet_ledger_paginates_real_credits_and_debits_in_database_order(
     from db.base import get_session_factory
     from db.models import WalletTransaction
 
-    staff = auth("manager")
+    staff = auth("manager", grants=["finance.write"])
     member_id, member_headers = _create_member(client, staff, "09127770001")
     credit_one = _charge(client, staff, member_id, 100_000)
     payment = client.post(
@@ -101,7 +101,7 @@ def test_wallet_ledger_paginates_real_credits_and_debits_in_database_order(
 def test_wallet_ledger_is_member_scoped_and_staff_can_audit_each_account(
     client: TestClient, auth
 ) -> None:
-    staff = auth("manager")
+    staff = auth("manager", grants=["finance.write"])
     member_a, headers_a = _create_member(client, staff, "09127770002")
     member_b, _ = _create_member(client, staff, "09127770003")
     member_empty, _ = _create_member(client, staff, "09127770004")

@@ -4,41 +4,33 @@ import userEvent from "@testing-library/user-event";
 import { PaymentPanel } from "../src/components/PaymentPanel";
 
 /**
- * Q6 — پنل پرداخت.
+ * Q6 — پنل پرداخت حضوری (بازنویسی فاز ۳).
  *
- * باگ «کد بی‌مصرف»: کل اداپتور درگاه (Mock + زرین‌پال + HMAC) بدون هیچ
- * مصرف‌کننده‌ای در مخزن بود. این تست‌ها جریان واقعی سه‌مرحله‌ای را
- * می‌سنجند: ساخت → start (authority) → callback با امضا.
+ * درگاه اینترنتی حذف شد؛ جریان واقعی حالا این است:
+ * ساخت تراکنش (نقدی/کارت‌خوان) → تأیید دریافت در پذیرش → رسید از سرور.
+ * تست قبلی مسیر start/callback را می‌سنجید؛ آن مسیر دیگر وجود ندارد و
+ * تست به‌جای حذف، به همان قاعده‌های مالی بازنویسی شد.
  */
 
 const created = {
   id: 7,
   member_id: 41,
   amount_rial: 500000,
-  method: "zarinpal",
+  method: "cash",
   status: "pending",
   reference_id: "",
   description: "",
   paid_at: null,
 };
 
-const started = {
-  payment_id: 7,
-  authority: "MOCK-abc123def456",
-  redirect_url: "mock://gateway/pay/MOCK-abc123def456",
-  amount_rial: 500000,
-  callback_token: "a".repeat(32),
-};
-
-const paid = { ...created, status: "paid", reference_id: "MOCKREF-abc123def456" };
+const paid = { ...created, status: "paid", reference_id: "manual-7" };
 
 function router(seen: string[]) {
   return vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
     const url = String(input);
     seen.push(`${init?.method ?? "GET"} ${url}`);
     if (url.endsWith("/payments")) return new Response(JSON.stringify(created), { status: 200 });
-    if (url.endsWith("/start")) return new Response(JSON.stringify(started), { status: 200 });
-    if (url.endsWith("/callback")) return new Response(JSON.stringify(paid), { status: 200 });
+    if (url.endsWith("/verify")) return new Response(JSON.stringify(paid), { status: 200 });
     return new Response("{}", { status: 200 });
   });
 }
@@ -50,7 +42,7 @@ afterEach(() => {
 });
 
 describe("PaymentPanel (Q6)", () => {
-  it("جریان کامل: ساخت → start → callback با authority و امضا", async () => {
+  it("جریان کامل حضوری: ساخت → تأیید دریافت در پذیرش", async () => {
     localStorage.setItem("mp_token", "t");
     const seen: string[] = [];
     vi.stubGlobal("fetch", router(seen));
@@ -63,24 +55,17 @@ describe("PaymentPanel (Q6)", () => {
     await waitFor(() => expect(screen.getByText(/تراکنش #7/)).toBeTruthy());
     expect(screen.getByText("۵۰۰٬۰۰۰")).toBeTruthy();
 
-    await user.click(screen.getByRole("button", { name: "آغاز پرداخت در درگاه" }));
-    await waitFor(() => expect(screen.getByText(/MOCK-abc123def456/)).toBeTruthy());
-    const link = screen.getByRole("link", { name: /رفتن به صفحهٔ درگاه/ });
-    expect(link.getAttribute("href")).toBe("mock://gateway/pay/MOCK-abc123def456");
-
-    await user.click(screen.getByRole("button", { name: /تأیید/ }));
-    await waitFor(() => expect(screen.getByText(/وضعیت:/)).toBeTruthy());
-    expect(screen.getByText("paid")).toBeTruthy();
-    expect(screen.getByText(/MOCKREF-abc123def456/)).toBeTruthy();
+    await user.click(screen.getByRole("button", { name: "تأیید دریافت نقدی/کارت‌خوان" }));
+    await waitFor(() => expect(screen.getByText("paid")).toBeTruthy());
+    expect(screen.getByText(/manual-7/)).toBeTruthy();
 
     expect(seen).toEqual([
       "POST /api/v1/payments",
-      "POST /api/v1/payments/7/start",
-      "POST /api/v1/payments/7/callback",
+      "POST /api/v1/payments/7/verify",
     ]);
   });
 
-  it("تأیید بدون start رد می‌شود — دکمهٔ تشریفاتی نیست", async () => {
+  it("هیچ گزینه یا دکمهٔ درگاه اینترنتی در پنل نیست", async () => {
     localStorage.setItem("mp_token", "t");
     vi.stubGlobal("fetch", router([]));
     const user = userEvent.setup();
@@ -90,8 +75,10 @@ describe("PaymentPanel (Q6)", () => {
     await user.click(screen.getByRole("button", { name: "ساخت تراکنش" }));
     await waitFor(() => expect(screen.getByText(/تراکنش #7/)).toBeTruthy());
 
-    // دکمهٔ تأیید اصلاً رندر نمی‌شود تا start انجام شود
-    expect(screen.queryByRole("button", { name: /بازگشت از درگاه/ })).toBeNull();
+    // فاز ۳: مسیر درگاه حذف شده؛ نه دکمهٔ start، نه لینک هدایت، نه callback.
+    expect(screen.queryByRole("button", { name: /آغاز پرداخت در درگاه/ })).toBeNull();
+    expect(screen.queryByRole("link", { name: /صفحهٔ درگاه/ })).toBeNull();
+    expect(screen.queryByText(/پرداخت از درگاه/)).toBeNull();
   });
 
   it("مبلغ کمتر از حد مجاز قبل از ارسال رد می‌شود", async () => {
@@ -114,17 +101,16 @@ describe("PaymentPanel (Q6)", () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it("خطای درگاه (امضای نامعتبر) به کاربر نشان داده می‌شود", async () => {
+  it("خطای تأیید دستی به کاربر نشان داده می‌شود و وضعیت pending می‌ماند", async () => {
     localStorage.setItem("mp_token", "t");
     vi.stubGlobal(
       "fetch",
       vi.fn(async (input: RequestInfo | URL) => {
         const url = String(input);
         if (url.endsWith("/payments")) return new Response(JSON.stringify(created), { status: 200 });
-        if (url.endsWith("/start")) return new Response(JSON.stringify(started), { status: 200 });
         return new Response(
           JSON.stringify({
-            error: { code: "bad_signature", message: "امضای callback نامعتبر است", details: [] },
+            error: { code: "forbidden", message: "تأیید دستی مجاز نیست", details: [] },
           }),
           { status: 400 },
         );
@@ -134,11 +120,10 @@ describe("PaymentPanel (Q6)", () => {
     render(<PaymentPanel />);
     await user.type(screen.getByLabelText("شناسهٔ عضو"), "41");
     await user.click(screen.getByRole("button", { name: "ساخت تراکنش" }));
-    await user.click(await screen.findByRole("button", { name: "آغاز پرداخت در درگاه" }));
-    await user.click(await screen.findByRole("button", { name: /تأیید/ }));
+    await user.click(await screen.findByRole("button", { name: "تأیید دریافت نقدی/کارت‌خوان" }));
 
     await waitFor(() =>
-      expect(screen.getByRole("alert").textContent).toContain("امضای callback نامعتبر است"),
+      expect(screen.getByRole("alert").textContent).toContain("تأیید دستی مجاز نیست"),
     );
     // وضعیت تراکنش عوض نشده
     expect(screen.getByText("pending")).toBeTruthy();
@@ -180,8 +165,7 @@ describe("PaymentPanel — شکست و رسید", () => {
       vi.fn(async (input: RequestInfo | URL) => {
         const url = String(input);
         if (url.endsWith("/payments")) return new Response(JSON.stringify(created), { status: 200 });
-        if (url.endsWith("/start")) return new Response(JSON.stringify(started), { status: 200 });
-        if (url.endsWith("/callback")) return new Response(JSON.stringify(paid), { status: 200 });
+        if (url.endsWith("/verify")) return new Response(JSON.stringify(paid), { status: 200 });
         if (url.endsWith("/receipt")) return new Response(JSON.stringify(receipt), { status: 200 });
         return new Response("{}", { status: 200 });
       }),
@@ -190,8 +174,7 @@ describe("PaymentPanel — شکست و رسید", () => {
     render(<PaymentPanel />);
     await user.type(screen.getByLabelText("شناسهٔ عضو"), "41");
     await user.click(screen.getByRole("button", { name: "ساخت تراکنش" }));
-    await user.click(await screen.findByRole("button", { name: "آغاز پرداخت در درگاه" }));
-    await user.click(await screen.findByRole("button", { name: /تأیید/ }));
+    await user.click(await screen.findByRole("button", { name: "تأیید دریافت نقدی/کارت‌خوان" }));
     await user.click(await screen.findByRole("button", { name: "نمایش رسید" }));
     await waitFor(() => expect(screen.getByText(/رسید پرداخت #7/)).toBeTruthy());
   });

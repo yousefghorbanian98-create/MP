@@ -82,10 +82,15 @@ const ROUTE_EXCEPTIONS: Record<string, Exception> = {
     external: "صفحهٔ پرداختِ بانک (devtools/sandbox_bank.py و درگاه واقعی) کاربر را به همین مسیر برمی‌گرداند",
     fileEvidence: "mp-app/backend/modules/payments/router.py",
   },
-  "/api/v1/payments/{payment_id}/verify": {
-    why: "تأیید دستی نقدی/کارت‌خوان برای پذیرش است؛ Studio/mobile action تسویه ندارد",
+  "/api/v1/payments/{payment_id}/start": {
+    why: "فاز ۳: درگاه اینترنتی حذف شد؛ این مسیر فقط برای هارنس صندباکس محلی می‌ماند و در حالت manual با ۴۰۹ بسته است",
     evidence: null,
-    external: "TODO: workflow ثبت مرجع پرداخت در پذیرش؛ بدون اتصال به پرداخت واقعی",
+    external: "TODO: هارنس آزمایش محلی (devtools/sandbox_bank.py)؛ در production خاموش است",
+  },
+  "/api/v1/payments/{payment_id}/callback": {
+    why: "همان مرز start: callback فقط برای صندباکس محلی معنا دارد و در حالت manual هرگز باز نمی‌شود",
+    evidence: null,
+    external: "TODO: هارنس آزمایش محلی (devtools/sandbox_bank.py)؛ در production خاموش است",
   },
   // ابزارهای عملیاتی، نه کاربر نهایی
   "/api/v1/metrics": {

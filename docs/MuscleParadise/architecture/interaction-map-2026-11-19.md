@@ -16,10 +16,10 @@ python3 scripts/interaction_map.py --check
 
 | سنجه | مقدار |
 |---|---|
-| مسیر قرارداد API | 138 |
+| مسیر قرارداد API | 147 |
 | صفحهٔ استودیو | 12 |
 | ویژگی کلاینت | 18 |
-| endpoint یکتای استفاده‌شده | 81 |
+| endpoint یکتای استفاده‌شده | 87 |
 | سطح بی‌تست | 7 |
 
 ## گپ‌های قرارداد
@@ -100,17 +100,18 @@ python3 scripts/interaction_map.py --check
 
 ### Finance
 
-دکمه 11 · ورودی 0 · عدد 0 · انتخاب 1 · دیالوگ 0
+دکمه 10 · ورودی 1 · عدد 0 · انتخاب 1 · دیالوگ 1
 
 | متد | مسیر | guard | نقش‌ها | در قرارداد |
 |---|---|---|---|---|
 | GET | `/api/v1/payments` | permission | member, reception, manager, admin, super_admin | بله |
 | POST | `/api/v1/payments` | permission | member, reception, manager, admin, super_admin | بله |
-| POST | `/api/v1/payments/*/callback` | permission | member, reception, manager, admin, super_admin | بله |
+| POST | `/api/v1/payments/*/approve` | grant:finance.write, permission | reception, manager, admin, super_admin | بله |
 | POST | `/api/v1/payments/*/fail` | permission | reception, manager, admin, super_admin | بله |
 | GET | `/api/v1/payments/*/receipt` | permission | member, reception, manager, admin, super_admin | بله |
 | POST | `/api/v1/payments/*/refund` | permission | reception, manager, admin, super_admin | بله |
-| POST | `/api/v1/payments/*/start` | permission | member, reception, manager, admin, super_admin | بله |
+| POST | `/api/v1/payments/*/reject` | grant:finance.write, permission | reception, manager, admin, super_admin | بله |
+| POST | `/api/v1/payments/*/verify` | grant:finance.write, permission | reception, manager, admin, super_admin | بله |
 | POST | `/api/v1/payments/finance/commission` | permission | manager, admin, super_admin | بله |
 | GET | `/api/v1/payments/finance/summary` | permission | manager, admin, super_admin | بله |
 
@@ -169,16 +170,21 @@ python3 scripts/interaction_map.py --check
 
 ### Settings
 
-دکمه 2 · ورودی 0 · عدد 0 · انتخاب 1 · دیالوگ 0
+دکمه 2 · ورودی 0 · عدد 0 · انتخاب 4 · دیالوگ 0
 
 | متد | مسیر | guard | نقش‌ها | در قرارداد |
 |---|---|---|---|---|
 | GET | `/api/v1/admin/audit` | permission | manager, admin, super_admin | بله |
 | GET | `/api/v1/admin/flags` | permission | manager, admin, super_admin | بله |
 | PUT | `/api/v1/admin/flags` | permission | manager, admin, super_admin | بله |
+| GET | `/api/v1/admin/permissions` | permission | super_admin | بله |
+| POST | `/api/v1/admin/permissions` | permission | super_admin | بله |
+| DELETE | `/api/v1/admin/permissions/*` | permission | super_admin | بله |
+| GET | `/api/v1/admin/permissions/known` | permission | super_admin | بله |
 | GET | `/api/v1/admin/users` | permission | manager, admin, super_admin | بله |
 | DELETE | `/api/v1/admin/users/*/role` | permission | manager, admin, super_admin | بله |
 | POST | `/api/v1/admin/users/*/role` | permission | manager, admin, super_admin | بله |
+| GET | `/api/v1/auth/sessions` | authenticated | member, manager, admin, super_admin | بله |
 
 تست: `mp-app/studio/tests/settingsRole.test.tsx`
 
@@ -255,12 +261,12 @@ python3 scripts/interaction_map.py --check
 
 | نقش | تعداد endpoint | نمونهٔ سطح‌ها |
 |---|---|---|
-| admin | 92 | Analytics، Assessment، Chat، CheckIn، Dashboard، Finance |
+| admin | 94 | Analytics، Assessment، Chat، CheckIn، Dashboard، Finance |
 | coach | 65 | Assessment، Chat، CheckIn، Dashboard، Members، Nutrition |
-| manager | 92 | Analytics، Assessment، Chat، CheckIn، Dashboard، Finance |
-| member | 68 | Assessment، Chat، Finance، Members، Nutrition، Programs |
-| reception | 38 | Assessment، CheckIn، Dashboard، Finance، Members، Programs |
-| super_admin | 92 | Analytics، Assessment، Chat، CheckIn، Dashboard، Finance |
+| manager | 94 | Analytics، Assessment، Chat، CheckIn، Dashboard، Finance |
+| member | 67 | Assessment، Chat، Finance، Members، Nutrition، Programs |
+| reception | 39 | Assessment، CheckIn، Dashboard، Finance، Members، Programs |
+| super_admin | 98 | Analytics، Assessment، Chat، CheckIn، Dashboard، Finance |
 
 ## محدودیت صریح
 

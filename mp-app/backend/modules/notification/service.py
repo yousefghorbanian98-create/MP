@@ -12,14 +12,24 @@ from db.models import Member, Notification
 
 
 def send(
-    db: Session, member_id: int, title: str, body: str = "", kind: str = "general"
+    db: Session,
+    member_id: int,
+    title: str,
+    body: str = "",
+    kind: str = "general",
+    *,
+    commit: bool = True,
 ) -> Notification:
+    """اعلان عضو؛ `commit=False` برای ماندن در همان تراکنشِ عملیات مالی."""
     if db.get(Member, member_id) is None:
         raise NotFoundError("عضو یافت نشد")
     n = Notification(member_id=member_id, title=title, body=body, kind=kind)
     db.add(n)
-    db.commit()
-    db.refresh(n)
+    if commit:
+        db.commit()
+        db.refresh(n)
+    else:
+        db.flush()
     return n
 
 

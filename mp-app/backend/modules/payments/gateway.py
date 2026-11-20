@@ -1,4 +1,8 @@
-"""adapter درگاه پرداخت (M16) — الگوی Gateway + Zarinpal (سند اجرا) + Mock.
+"""adapter پرداخت (M16، بازنویسی فاز ۳) — بانک صندباکس محلی + Mock.
+
+درگاه اینترنتی (زرین‌پال/آیدی‌پی) از ۲۰۲۶-۱۱-۱۹ حذف شد: روش پرداخت محصول
+نقدی، کارت‌خوان و کارت‌به‌کارت با رسید است. آداپتر صندباکس فقط به‌عنوان
+ابزار آزمایش محلی می‌ماند و در production قابل انتخاب نیست.
 
 G8-مالی: مبلغ/وضعیت فقط از DB و پاسخ امضاشدهٔ درگاه — هرگز از ورودی کاربر پس از آغاز تراکنش.
 """
@@ -233,63 +237,6 @@ class MockGateway:
         )
 
 
-class ZarinpalAdapter:
-    """درگاه زرین‌پال — REST (سند اجرا؛ در production با تنظیمات واقعی اجرا می‌شود)."""
-
-    BASE = "https://api.zarinpal.com/pg/v4"
-
-    def __init__(self, merchant_id: str, sandbox: bool = True):
-        self.merchant_id = merchant_id
-        self.sandbox = sandbox
-        if sandbox:
-            self.BASE = "https://sandbox.zarinpal.com/pg/v4"
-        self.start_pay_base = (
-            "https://sandbox.zarinpal.com/pg/StartPay"
-            if sandbox
-            else "https://www.zarinpal.com/pg/StartPay"
-        )
-
-    def start(self, amount_rial: int, description: str, callback_url: str) -> GatewayStartResult:
-        import httpx
-
-        resp = httpx.post(
-            f"{self.BASE}/payment/request.json",
-            json={
-                "merchant_id": self.merchant_id,
-                "amount": amount_rial,  # ریال
-                "description": description,
-                "callback_url": callback_url,
-            },
-            timeout=10,
-        )
-        data = resp.json().get("data", {})
-        authority = data.get("authority")
-        if not authority:
-            raise PaymentGatewayError("آغاز پرداخت ناموفق بود", code="start_failed")
-        return GatewayStartResult(
-            authority=authority,
-            redirect_url=f"{self.start_pay_base}/{authority}",
-        )
-
-    def verify(self, authority: str, amount_rial: int) -> GatewayVerifyResult:
-        import httpx
-
-        resp = httpx.post(
-            f"{self.BASE}/payment/verify.json",
-            json={"merchant_id": self.merchant_id, "amount": amount_rial, "authority": authority},
-            timeout=10,
-        )
-        data = resp.json().get("data", {})
-        code = data.get("code")
-        if code not in (100, 101):  # 100=OK, 101=قبلاً تأیید شده
-            raise PaymentGatewayError("تأیید درگاه ناموفق بود", code=f"verify_{code}")
-        return GatewayVerifyResult(
-            ok=True,
-            reference_id=str(data.get("ref_id", "")),
-            card_pan=str(data.get("card_pan", "")),
-        )
-
-
 def signed_token(payment_id: int, amount_rial: int) -> str:
     """امضای HMAC برای callback — جلوگیری از جعل مبلغ (G8-مالی)."""
     msg = f"{payment_id}:{amount_rial}".encode()
@@ -321,10 +268,11 @@ def get_gateway() -> GatewayAdapter:
                 "نشانی بانک صندباکس تنظیم نشده (MP_SANDBOX_BANK_URL)", code="gateway_not_configured"
             )
         return SandboxBankAdapter(settings.sandbox_bank_url, settings.sandbox_bank_merchant_id)
-    if settings.payment_gateway == "zarinpal":
-        if not settings.zarinpal_merchant_id:
-            raise PaymentGatewayError(
-                "شناسهٔ پذیرندهٔ زرین‌پال تنظیم نشده است", code="gateway_not_configured"
-            )
-        return ZarinpalAdapter(settings.zarinpal_merchant_id, sandbox=settings.payment_sandbox)
-    raise PaymentGatewayError("درگاه پرداخت پشتیبانی نمی‌شود", code="gateway_not_configured")
+    if settings.payment_gateway == "manual":
+        # تصمیم مالک ۲۰۲۶-۱۱-۱۹: درگاه اینترنتی حذف شد. این خط مرز است: هیچ
+        # مسیری نباید بی‌صدا به درگاه آنلاین برگردد.
+        raise PaymentGatewayError(
+            "درگاه پرداخت اینترنتی حذف شده است؛ پرداخت حضوری و کارت‌به‌کارت با رسید",
+            code="online_gateway_removed",
+        )
+    raise PaymentGatewayError("حالت پرداخت پشتیبانی نمی‌شود", code="gateway_not_configured")

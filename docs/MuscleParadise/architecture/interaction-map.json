@@ -335,18 +335,19 @@
       "kind": "studio-page",
       "file": "mp-app/studio/src/pages/Finance.tsx",
       "components": [
-        "mp-app/studio/src/components/PaymentPanel.tsx"
+        "mp-app/studio/src/components/PaymentPanel.tsx",
+        "mp-app/studio/src/components/ReceiptQueue.tsx"
       ],
       "controls": {
-        "buttons": 11,
-        "inputs": 0,
+        "buttons": 10,
+        "inputs": 1,
         "numbers": 0,
         "selects": 1,
-        "modals": 0
+        "modals": 1
       },
       "endpoints": [
         {
-          "function": "listPayments",
+          "function": "fetchReviewQueue",
           "method": "GET",
           "path": "/api/v1/payments",
           "in_contract": true,
@@ -378,15 +379,15 @@
           ]
         },
         {
-          "function": "confirmGatewayCallback",
+          "function": "approveReceipt",
           "method": "POST",
-          "path": "/api/v1/payments/*/callback",
+          "path": "/api/v1/payments/*/approve",
           "in_contract": true,
           "guards": [
+            "grant:finance.write",
             "permission"
           ],
           "roles": [
-            "member",
             "reception",
             "manager",
             "admin",
@@ -440,15 +441,31 @@
           ]
         },
         {
-          "function": "startPayment",
+          "function": "rejectReceipt",
           "method": "POST",
-          "path": "/api/v1/payments/*/start",
+          "path": "/api/v1/payments/*/reject",
           "in_contract": true,
           "guards": [
+            "grant:finance.write",
             "permission"
           ],
           "roles": [
-            "member",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "verifyPayment",
+          "method": "POST",
+          "path": "/api/v1/payments/*/verify",
+          "in_contract": true,
+          "guards": [
+            "grant:finance.write",
+            "permission"
+          ],
+          "roles": [
             "reception",
             "manager",
             "admin",
@@ -825,13 +842,15 @@
       "kind": "studio-page",
       "file": "mp-app/studio/src/pages/Settings.tsx",
       "components": [
+        "mp-app/studio/src/components/AdminPermissions.tsx",
+        "mp-app/studio/src/components/DeviceSessions.tsx",
         "mp-app/studio/src/components/RoleManager.tsx"
       ],
       "controls": {
         "buttons": 2,
         "inputs": 0,
         "numbers": 0,
-        "selects": 1,
+        "selects": 4,
         "modals": 0
       },
       "endpoints": [
@@ -878,6 +897,54 @@
           ]
         },
         {
+          "function": "fetchPermissionGrants",
+          "method": "GET",
+          "path": "/api/v1/admin/permissions",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "super_admin"
+          ]
+        },
+        {
+          "function": "grantPermission",
+          "method": "POST",
+          "path": "/api/v1/admin/permissions",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "super_admin"
+          ]
+        },
+        {
+          "function": "revokePermission",
+          "method": "DELETE",
+          "path": "/api/v1/admin/permissions/*",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "super_admin"
+          ]
+        },
+        {
+          "function": "fetchPermissionKeys",
+          "method": "GET",
+          "path": "/api/v1/admin/permissions/known",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "super_admin"
+          ]
+        },
+        {
           "function": "fetchUsers",
           "method": "GET",
           "path": "/api/v1/admin/users",
@@ -914,6 +981,21 @@
             "permission"
           ],
           "roles": [
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "fetchSessions",
+          "method": "GET",
+          "path": "/api/v1/auth/sessions",
+          "in_contract": true,
+          "guards": [
+            "authenticated"
+          ],
+          "roles": [
+            "member",
             "manager",
             "admin",
             "super_admin"
@@ -1992,5 +2074,5 @@
       "tests": []
     }
   ],
-  "contract_paths": 138
+  "contract_paths": 147
 }

@@ -28,8 +28,8 @@ class Settings(BaseSettings):
     # نشانی بیرونیِ خودِ سرویس — بانکِ واقعی کاربر را به `callback` همین نشانی برمی‌
     # گرداند؛ در production باید MP_PUBLIC_BASE_URL=https://domain باشد.
     public_base_url: str = "http://127.0.0.1:8000"
-    payment_gateway: str = "mock"  # mock | sandbox | zarinpal
-    zarinpal_merchant_id: str = ""
+    # manual = بدون درگاه اینترنتی (پیش‌فرض محصول). mock/sandbox فقط ابزار آزمون.
+    payment_gateway: str = "manual"  # manual | mock | sandbox
     payment_sandbox: bool = True
     # M110 — بانک صندباکس محلی (devtools/sandbox_bank.py); هیچ اعتبار واقعی نمی‌خواهد
     sandbox_bank_url: str = "http://127.0.0.1:8088"
@@ -53,6 +53,10 @@ class Settings(BaseSettings):
     login_rate_limit: str = "10/minute"
     # M60 — فروشگاه. چرا اینجا و نه hardcode: مسیر خرید مسیر پول است؛
     # سقف باید قابل تنظیم باشد (پیک فروش/حراج) بدون تغییر کد.
+    # QF-07 — فیش کارت‌به‌کارت: مسیر خصوصی، سقف حجم و TTL بازبینی.
+    receipts_dir: str = "var/receipts"
+    receipt_max_bytes: int = 5 * 1024 * 1024
+    receipt_review_ttl_hours: int = 48
     shop_write_rate_limit: str = "30/minute"
     shop_checkout_rate_limit: str = "10/minute"
     # فاز ۲ (تصمیم مالک ۲۰۲۶-۱۱-۱۹): فروشگاه نمایش‌محور است. خرید درون‌برنامه‌ای
@@ -112,8 +116,8 @@ class Settings(BaseSettings):
     @field_validator("payment_gateway")
     @classmethod
     def _supported_payment_gateway(cls, value: str) -> str:
-        if value not in {"mock", "sandbox", "zarinpal"}:
-            raise ValueError("MP_PAYMENT_GATEWAY باید mock، sandbox یا zarinpal باشد")
+        if value not in {"manual", "mock", "sandbox"}:
+            raise ValueError("MP_PAYMENT_GATEWAY باید manual، mock یا sandbox باشد")
         return value
 
     @model_validator(mode="after")
@@ -220,18 +224,15 @@ class Settings(BaseSettings):
                     break
 
         if self.payment_gateway == "mock":
-            problems.append(
-                "درگاه mock در production مجاز نیست؛ MP_PAYMENT_GATEWAY=zarinpal لازم است"
-            )
+            problems.append("MP_PAYMENT_GATEWAY=mock در production مجاز نیست؛ پرداخت حضوری است")
         if self.payment_gateway == "sandbox":
             # بانک صندباکس یک سرویس محلی است؛ اگر کسی آن را به production ببرد، یعنی
             # «تراکنش موفق» را خودمان برای خودمان تأیید می‌کنیم.
             problems.append("بانک صندباکس (MP_PAYMENT_GATEWAY=sandbox) در production مجاز نیست")
-        if self.payment_gateway == "zarinpal":
-            if not self.zarinpal_merchant_id:
-                problems.append("MP_ZARINPAL_MERCHANT_ID در production الزامی است")
-            if self.payment_sandbox:
-                problems.append("MP_PAYMENT_SANDBOX در production باید false باشد")
+        if self.payment_gateway == "manual" and self.payment_sandbox:
+            problems.append(
+                "MP_PAYMENT_SANDBOX بدون درگاه آنلاین معنا ندارد؛ MP_PAYMENT_SANDBOX=false بگذارید"
+            )
 
         if problems:
             raise ValueError("تنظیمات production نامعتبر: " + "؛ ".join(problems))

@@ -162,6 +162,8 @@ def create_membership(
     plan_name: str,
     duration_days: int,
     price_rial: int,
+    *,
+    commit: bool = True,
 ) -> Membership:
     member = get_member(db, member_id)
     now = datetime.now(UTC)
@@ -185,8 +187,11 @@ def create_membership(
         branch_id=member.branch_id,
     )
     db.add(ms)
-    db.commit()
-    db.refresh(ms)
+    if commit:
+        db.commit()
+        db.refresh(ms)
+    else:
+        db.flush()
     return ms
 
 
@@ -200,7 +205,9 @@ def _aware(dt: datetime) -> datetime:
     return dt if dt.tzinfo else dt.replace(tzinfo=UTC)
 
 
-def create_membership_from_plan(db: Session, member_id: int, plan_key: str) -> dict:
+def create_membership_from_plan(
+    db: Session, member_id: int, plan_key: str, *, commit: bool = True
+) -> dict:
     """خرید/تمدید از روی پلن جنسیت‌محور (M41-c2) — مدت/قیمت از motor + reason."""
     from engine.gender_plans import resolve_plan
 
@@ -220,6 +227,7 @@ def create_membership_from_plan(db: Session, member_id: int, plan_key: str) -> d
         plan_name=resolution["plan_name"],
         duration_days=resolution["duration_days"],
         price_rial=resolution["price_rial"],
+        commit=commit,
     )
     return {"membership": ms, "invoice": {**resolution, "membership_id": ms.id}}
 

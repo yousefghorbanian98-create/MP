@@ -93,3 +93,32 @@ class RefreshToken(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
+
+
+class AdminPermission(Base):
+    """مجوز شخصی ادمین (QF-03).
+
+    ردیف حذف نمی‌شود؛ ابطال با `revoked_at` و انقضا با `expires_at` ثبت می‌شود
+    تا ممیزی کامل بماند. اثر مجوز **فقط سمت سرور** محاسبه می‌شود
+    (`app.security.grants.is_granted`)، نه از روی توکن یا UI.
+    """
+
+    __tablename__ = "admin_permissions"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    permission: Mapped[str] = mapped_column(String(40), nullable=False, index=True)
+    granted_by: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
+    note: Mapped[str] = mapped_column(String(200), default="", nullable=False)
+    expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    revoked_by: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )

@@ -9,6 +9,9 @@
   "/api/v1/admin/flags/{key}",
   "/api/v1/admin/kpis",
   "/api/v1/admin/members-summary",
+  "/api/v1/admin/permissions",
+  "/api/v1/admin/permissions/known",
+  "/api/v1/admin/permissions/{grant_id}",
   "/api/v1/admin/users",
   "/api/v1/admin/users/{user_id}/role",
   "/api/v1/ai/nutrition/generate",
@@ -29,6 +32,8 @@
   "/api/v1/auth/phone-change/request",
   "/api/v1/auth/phone-change/verify-old",
   "/api/v1/auth/refresh",
+  "/api/v1/auth/sessions",
+  "/api/v1/auth/sessions/{session_id}",
   "/api/v1/axis-assessments",
   "/api/v1/axis-assessments/member/{member_id}",
   "/api/v1/axis-assessments/{assessment_id}/matrix",
@@ -84,11 +89,13 @@
   "/api/v1/payments/wallet/pay",
   "/api/v1/payments/wallet/{member_id}",
   "/api/v1/payments/wallet/{member_id}/transactions",
+  "/api/v1/payments/{payment_id}/approve",
   "/api/v1/payments/{payment_id}/callback",
   "/api/v1/payments/{payment_id}/fail",
   "/api/v1/payments/{payment_id}/gateway-return",
   "/api/v1/payments/{payment_id}/receipt",
   "/api/v1/payments/{payment_id}/refund",
+  "/api/v1/payments/{payment_id}/reject",
   "/api/v1/payments/{payment_id}/start",
   "/api/v1/payments/{payment_id}/verify",
   "/api/v1/population/gate-check",
@@ -287,6 +294,62 @@
     "reception",
     "manager",
     "admin",
+    "super_admin"
+   ]
+  },
+  {
+   "method": "GET",
+   "path": "/api/v1/admin/permissions",
+   "operationId": "permissions_list_api_v1_admin_permissions_get",
+   "tags": [
+    "admin"
+   ],
+   "guards": [
+    "permission"
+   ],
+   "roles": [
+    "super_admin"
+   ]
+  },
+  {
+   "method": "POST",
+   "path": "/api/v1/admin/permissions",
+   "operationId": "permissions_grant_api_v1_admin_permissions_post",
+   "tags": [
+    "admin"
+   ],
+   "guards": [
+    "permission"
+   ],
+   "roles": [
+    "super_admin"
+   ]
+  },
+  {
+   "method": "GET",
+   "path": "/api/v1/admin/permissions/known",
+   "operationId": "permissions_known_api_v1_admin_permissions_known_get",
+   "tags": [
+    "admin"
+   ],
+   "guards": [
+    "permission"
+   ],
+   "roles": [
+    "super_admin"
+   ]
+  },
+  {
+   "method": "DELETE",
+   "path": "/api/v1/admin/permissions/{grant_id}",
+   "operationId": "permissions_revoke_api_v1_admin_permissions__grant_id__delete",
+   "tags": [
+    "admin"
+   ],
+   "guards": [
+    "permission"
+   ],
+   "roles": [
     "super_admin"
    ]
   },
@@ -620,6 +683,40 @@
    ],
    "guards": [],
    "roles": []
+  },
+  {
+   "method": "GET",
+   "path": "/api/v1/auth/sessions",
+   "operationId": "sessions_api_v1_auth_sessions_get",
+   "tags": [
+    "auth"
+   ],
+   "guards": [
+    "authenticated"
+   ],
+   "roles": [
+    "member",
+    "manager",
+    "admin",
+    "super_admin"
+   ]
+  },
+  {
+   "method": "DELETE",
+   "path": "/api/v1/auth/sessions/{session_id}",
+   "operationId": "revoke_session_api_v1_auth_sessions__session_id__delete",
+   "tags": [
+    "auth"
+   ],
+   "guards": [
+    "authenticated"
+   ],
+   "roles": [
+    "member",
+    "manager",
+    "admin",
+    "super_admin"
+   ]
   },
   {
    "method": "POST",
@@ -1662,6 +1759,7 @@
     "payments"
    ],
    "guards": [
+    "grant:finance.write",
     "permission"
    ],
    "roles": [
@@ -1719,6 +1817,24 @@
    ],
    "roles": [
     "member",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ]
+  },
+  {
+   "method": "POST",
+   "path": "/api/v1/payments/{payment_id}/approve",
+   "operationId": "approve_receipt_api_v1_payments__payment_id__approve_post",
+   "tags": [
+    "payments"
+   ],
+   "guards": [
+    "grant:finance.write",
+    "permission"
+   ],
+   "roles": [
     "reception",
     "manager",
     "admin",
@@ -1790,12 +1906,48 @@
   },
   {
    "method": "POST",
+   "path": "/api/v1/payments/{payment_id}/receipt",
+   "operationId": "upload_receipt_api_v1_payments__payment_id__receipt_post",
+   "tags": [
+    "payments"
+   ],
+   "guards": [
+    "permission"
+   ],
+   "roles": [
+    "member",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ]
+  },
+  {
+   "method": "POST",
    "path": "/api/v1/payments/{payment_id}/refund",
    "operationId": "refund_payment_endpoint_api_v1_payments__payment_id__refund_post",
    "tags": [
     "payments"
    ],
    "guards": [
+    "permission"
+   ],
+   "roles": [
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ]
+  },
+  {
+   "method": "POST",
+   "path": "/api/v1/payments/{payment_id}/reject",
+   "operationId": "reject_receipt_api_v1_payments__payment_id__reject_post",
+   "tags": [
+    "payments"
+   ],
+   "guards": [
+    "grant:finance.write",
     "permission"
    ],
    "roles": [
@@ -1831,6 +1983,7 @@
     "payments"
    ],
    "guards": [
+    "grant:finance.write",
     "permission"
    ],
    "roles": [
@@ -2082,6 +2235,7 @@
     "reports"
    ],
    "guards": [
+    "grant:reports.confidential",
     "permission"
    ],
    "roles": [

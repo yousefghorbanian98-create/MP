@@ -1,13 +1,11 @@
 import { useRef, useState } from "react";
 import {
   createPayment,
-  startPayment,
-  confirmGatewayCallback,
+  verifyPayment,
   failPayment,
   fetchReceipt,
   listPayments,
   refundPayment,
-  type PaymentStart,
   type PaymentRow,
   type Receipt,
 } from "../lib/api";
@@ -34,9 +32,9 @@ export function PaymentPanel() {
   const [memberId, setMemberId] = useState("");
   const [lookupId, setLookupId] = useState("");
   const [amount, setAmount] = useState("500000");
-  const [method, setMethod] = useState<"zarinpal" | "cash" | "card">("zarinpal");
+  // فاز ۳: فقط پرداخت حضوری؛ هیچ گزینهٔ درگاه اینترنتی نمی‌ماند.
+  const [method, setMethod] = useState<"cash" | "card">("cash");
   const [tx, setTx] = useState<PaymentRow | null>(null);
-  const [started, setStarted] = useState<PaymentStart | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [receipt, setReceipt] = useState<Receipt | null>(null);
   const [busy, setBusy] = useState(false);
@@ -61,7 +59,6 @@ export function PaymentPanel() {
 
   const clearSelection = () => {
     setTx(null);
-    setStarted(null);
     setReceipt(null);
   };
 
@@ -73,26 +70,14 @@ export function PaymentPanel() {
       if (!Number.isInteger(amt) || amt < 1000) throw new Error("مبلغ حداقل ۱۰۰۰ ریال است");
       const created = await createPayment({ member_id: mid, amount_rial: amt, method });
       setTx(created);
-      setStarted(null);
     });
 
-  const start = () =>
+  const confirmManual = () =>
     call(async () => {
       if (!tx) throw new Error("اول تراکنش را بسازید");
-      const s = await startPayment(tx.id, `${window.location.origin}/finance`);
-      setStarted(s);
-    });
-
-  const confirm = () =>
-    call(async () => {
-      if (!tx || !started) throw new Error("اول پرداخت را در درگاه آغاز کنید");
-      const paid = await confirmGatewayCallback(
-        tx.id,
-        started.authority,
-        started.callback_token,
-      );
+      // پذیرش نقدی/کارت‌خوان: مرجع پیگیری دستی ثبت می‌شود، نه ادعای درگاه.
+      const paid = await verifyPayment(tx.id, `manual-${tx.id}`);
       setTx(paid);
-      setStarted(null);
     });
 
   const markFailed = () =>
@@ -100,7 +85,6 @@ export function PaymentPanel() {
       if (!tx) throw new Error("تراکنشی نیست");
       const failed = await failPayment(tx.id);
       setTx(failed);
-      setStarted(null);
     });
 
   const loadReceipt = () =>
@@ -118,7 +102,6 @@ export function PaymentPanel() {
       const payment = (await listPayments()).find((p) => p.id === id);
       if (!payment) throw new Error("پرداخت یافت نشد");
       setTx(payment);
-      setStarted(null);
       setReceipt(null);
     });
 
@@ -139,9 +122,9 @@ export function PaymentPanel() {
   return (
     <section className="glass-card space-y-4 p-5">
       <div>
-        <h2 className="text-sm font-bold">پرداخت از درگاه</h2>
+        <h2 className="text-sm font-bold">پرداخت حضوری</h2>
         <p className="text-xs text-ink-dim">
-          آغاز در درگاه ← بازگشت با authority ← تأیید با امضای مبلغ (HMAC)
+          پرداخت اینترنتی حذف شده است؛ نقدی یا کارت‌خوان در پذیرش ثبت و تأیید می‌شود.
         </p>
       </div>
 
@@ -170,7 +153,6 @@ export function PaymentPanel() {
             aria-label="روش پرداخت"
             className="mt-1 block w-44"
             options={[
-              { value: "zarinpal", label: "درگاه" },
               { value: "cash", label: "نقدی (پذیرش)" },
               { value: "card", label: "کارت‌خوان" },
             ]}
@@ -215,39 +197,17 @@ export function PaymentPanel() {
           </p>
           {tx.reference_id && <p className="text-ink-dim">کد پیگیری: {tx.reference_id}</p>}
 
-          {tx.status === "pending" && !started && (
+          {tx.status === "pending" && (
             <button
-              onClick={() => void start()}
+              onClick={() => void confirmManual()}
               disabled={busy}
-              className="rounded-lg bg-primary px-4 py-2 text-xs text-white disabled:opacity-50"
+              className="rounded-lg bg-emerald-600 px-4 py-2 text-xs text-white disabled:opacity-50"
             >
-              آغاز پرداخت در درگاه
+              تأیید دریافت نقدی/کارت‌خوان
             </button>
           )}
 
-          {started && (
-            <div className="space-y-2 rounded-lg border border-primary/30 p-3">
-              <p className="text-ink-dim">
-                authority: <span dir="ltr">{started.authority}</span>
-              </p>
-              <p className="text-ink-dim">مبلغ قفل‌شده با امضا — تغییر آن در callback رد می‌شود.</p>
-              <a
-                href={started.redirect_url}
-                className="inline-block rounded-lg border border-primary/40 px-3 py-1.5 text-primary-light"
-              >
-                رفتن به صفحهٔ درگاه
-              </a>
-              <button
-                onClick={() => void confirm()}
-                disabled={busy}
-                className="ml-2 rounded-lg bg-emerald-600 px-4 py-2 text-white disabled:opacity-50"
-              >
-                بازگشت از درگاه و تأیید
-              </button>
-            </div>
-          )}
-
-          {tx.status === "pending" && !started && (
+          {tx.status === "pending" && (
             <button
               onClick={() => void markFailed()}
               disabled={busy}

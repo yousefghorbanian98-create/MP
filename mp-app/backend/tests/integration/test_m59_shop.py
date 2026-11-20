@@ -580,8 +580,9 @@ def test_admin_cannot_demote_super_admin(client: TestClient) -> None:
     assert r.status_code == 403
 
 
-def test_admin_can_promote_member_to_coach(client: TestClient) -> None:
-    admin = _user("admin")
+def test_owner_can_promote_member_to_coach(client: TestClient) -> None:
+    """QF-02: از فاز ۵ حتی admin هم نقش نمی‌دهد؛ فقط مالک سیستم."""
+    admin = _user("super_admin")
     victim = _user("member")
     r = client.post(
         f"/api/v1/admin/users/{victim['id']}/role",

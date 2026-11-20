@@ -109,7 +109,7 @@ Flutter وارد نمی‌شود تا دسترسی برگردد یا mirror تص
 - [x] تست قرمز اول: ۸ تست تازهٔ بک‌اند و ۲ تست استودیو؛ هر دو حالت باز و بسته قفل شد.
 - [ ] کلاینت Flutter: در این محیط `flutter` نصب نیست؛ تغییر Dart نوشته نشد و ادعای تست هم نمی‌کنیم.
 
-### فاز ۳ — حذف درگاه پرداخت اینترنتی (۱–۲ لوپ، گیت بند ۲.۲)
+### فاز ۳ — حذف درگاه پرداخت اینترنتی ✅ انجام شد (۲۰۲۶-۱۱-۱۹، گیت بند ۲.۲)
 - `mp-app/backend/modules/payments/gateway.py`: حذف `ZarinpalAdapter` و انتخابگر درگاه.
 - `mp-app/backend/app/config.py`: حذف `payment_gateway=zarinpal` و merchant id؛ فقط `cash`/`card`/`card_to_card`.
 - `mp-app/backend/modules/payments/schemas.py` و `db/models/payments.py`: محدودکردن `method` مجاز.
@@ -118,30 +118,79 @@ Flutter وارد نمی‌شود تا دسترسی برگردد یا mirror تص
 - دادهٔ تاریخی پرداخت‌های `zarinpal` حفظ و فقط قابل خواندن می‌شود.
 - نقطهٔ تصمیم در همان لوپ: تکلیف `wallet` و حالت `sandbox` برای تست.
 
-### فاز ۴ — هویت و جلسه، QF-01 (۱–۲ لوپ)
+**اجرا‌شده و تصمیم‌ها:**
+- [x] `ZarinpalAdapter` و شاخهٔ انتخاب آن کامل حذف شدند؛ تست‌های وابسته بازنویسی شدند، نه حذف.
+- [x] `payment_gateway` سه حالت دارد: `manual` (پیش‌فرض)، `mock` و `sandbox`؛ هر دو حالت آزمونی در production رد می‌شوند.
+- [x] `payment_method` مجاز: `cash`، `card`، `card_to_card`، `wallet`. درگاه اینترنتی ۴۲۲ می‌گیرد.
+- [x] درگاه فروشگاه فقط `card_to_card` و `cash`.
+- [x] مسیر `start` در حالت manual با ۴۰۹ و کد `online_gateway_removed` بسته است؛ callback هم بدون آن معنا ندارد.
+- [x] دادهٔ تاریخی پرداخت `zarinpal` خواندنی ماند (تست اختصاصی).
+- [x] استودیو: گزینهٔ درگاه و جریان authority حذف شد؛ جای آن «تأیید دریافت نقدی/کارت‌خوان».
+- **تصمیم `wallet`:** می‌ماند، ولی پرداخت کیف‌پول با تأیید دستی «پرداخت‌شده» نمی‌شود؛ تراکنش داخلی خودش را دارد.
+- **تصمیم `sandbox`:** فقط ابزار آزمون محلی؛ در production قابل انتخاب نیست و `start` در حالت manual بسته است.
+
+### فاز ۴ — هویت و جلسه، QF-01 (۱–۲ لوپ) — نیمهٔ اول ✅
 - ورود/خروج/OTP/revocation در `modules/auth`، کلاینت و استودیو؛ خطای شبکه و بازیابی.
 - پذیرش: مسیر کامل با تست integration و contract، بدون mock در مرز واقعی.
 
-### فاز ۵ — نقش و مجوز: QF-02 → QF-03 → QF-04 (۲–۳ لوپ)
+**اجرا‌شده (نیمهٔ اول):**
+- [x] باگ واقعی بسته شد: `verify_otp` برای حساب غیرفعال هم توکن صادر می‌کرد؛ حالا ۴۰۱ می‌دهد و کد را مصرف‌شده ثبت می‌کند.
+- [x] شش تست تازه: یک تست باگ (قرمز اول) و پنج تست رگرسیون برای مرگ access token با logout، مرگ همهٔ نشست‌ها با logout-all، یک‌بارمصرفی rotation، refresh حساب غیرفعال و توکن دست‌کاری‌شده.
+- [x] نشست استودیو از قبل کامل بود (۱۳ تست: refresh تک‌باره، هم‌زمانی چند تب، ۴۰۳ در برابر ۴۰۱، خروج محلی و راه دور).
+- [x] مدیریت دستگاه‌ها (نیمهٔ دوم): `GET /auth/sessions` فهرست نشست‌های فعال خودِ کاربر با `id`/`device_info`/`created_at`/`expires_at`/`current` و بدون افشای هش توکن؛ `DELETE /auth/sessions/{id}` ابطال یک دستگاه، برای نشست کاربر دیگر ۴۰۴.
+- [x] پنج تست تازه `test_phase4b_device_sessions.py` (فهرست فقط خودم، علامت `current`، مرگ access توکن دستگاه ابطال‌شده، ۴۰۴ برای کاربر دیگر، عدم نمایش منقضی) + پنل «دستگاه‌های فعال» در `Settings` با ۴ تست استودیو (`tests/deviceSessions.test.tsx`).
+- [ ] باقی‌مانده: نشست کلاینت Flutter (بدون toolchain محلی ادعا نمی‌شود — `BLOCKED`).
+
+### فاز ۵ — نقش و مجوز: QF-02 → QF-03 → QF-04 (۲–۳ لوپ) ✅ انجام شد (۲۰۲۶-۱۱-۱۹)
 - Casbin و `security/hierarchy.py`؛ فقط سوپرادمین اعطا/سلب می‌کند.
 - مجوز شخصی ادمین با مدت و وضعیت مؤثر.
-- پنل `mp-app/studio/src/components/RoleManager.tsx`: ماتریس توانایی با `Switch`/`Checkbox` antd؛ هر کلید یک مجوز سرورمحور، نه فقط ظاهر.
+- پنل `mp-app/studio/src/components/RoleManager.tsx` + `AdminPermissions.tsx`: ماتریس کلید با `Select`/`Table` antd؛ هر کلید یک مجوز سرورمحور، نه فقط ظاهر.
 - پذیرش: ادمین بی‌مجوز ۴۰۳ می‌گیرد حتی اگر UI را دستکاری کند.
 
-### فاز ۶ — پول: QF-05 → QF-07 → QF-08 → QF-09 (۳–۴ لوپ، هر لوپ با گیت بند ۲.۲)
+**اجرا‌شده:**
+- [x] QF-02: اعطا/سلب نقش **فقط** `super_admin` (پیش‌تر `admin` هم می‌توانست)؛ نقش خود، نقش نامعتبر و ساخت `super_admin` از API هنوز بسته است؛ هر تغییر در audit.
+- [x] QF-03: جدول `admin_permissions` (migration `c1d2e3f4a5b6`) با انقضا/ابطال و `granted_by`؛ سلب ردیف را حذف نمی‌کند. `app/security/grants.py` تصمیم را سمت سرور می‌گیرد: مالک همیشه مجاز، `admin`/`manager` فقط با مجوزه فعال، بقیهٔ نقش‌ها همان RBAC خودشان.
+- [x] مسیرهای تازه: `GET/POST/DELETE /admin/permissions` و `GET /admin/permissions/known` — برای ادمین/مدیر ۴۰۳ (DENY صریح در casbin).
+- [x] درِ پول بسته شد: `POST /payments/{id}/verify` و `POST /payments/wallet/charge` کلید `finance.write` می‌خواهند؛ `GET /reports/confidential/{id}` کلید `reports.confidential` — یکی دیگری را باز نمی‌کند.
+- [x] هفت تست تازه `test_phase5_admin_permissions.py` (قرمز اول: مدل/endpoint نبود) + چهار تست استودیو `tests/adminPermissions.test.tsx` با `fetch` واقعیِ stub‌شده.
+- [x] بدهی همان لوپ: هشت فایل تست، fixture کپی‌شدهٔ `auth` را به `tests/integration/_actors.py` منتقل کردند تا مجوز صریح باشد، نه فرضی.
+
+### فاز ۶ — پول: QF-05 → QF-07 → QF-08 → QF-09 (۳–۴ لوپ، هر لوپ با گیت بند ۲.۲) — لوپ اول ✅ (۲۰۲۶-۱۱-۱۹)
 - QF-05: حساب پول و رویداد (ledger)، idempotency.
 - QF-07: آپلود فیش — endpoint تازه، `python-multipart` موجود، `Pillow` در runtime، محدودیت حجم/نوع، فایل خصوصی.
 - QF-08: درخواست کارت‌به‌کارت با `202` + `review_id` و وضعیت `in_review`؛ snapshot قیمت، TTL، مالکیت.
 - QF-09: تأیید اتمیک (پرداخت + فعال‌سازی اشتراک + اعلان + audit)؛ ادمین پرداخت خودش را تأیید نکند.
 - پذیرش هر لوپ: ۱۰–۲۰ سناریوی واقعی در `docs/MuscleParadise/evals/` + تأیید مالک.
 
-### فاز ۷ — قابلیت‌های عضو: QF-13/14/15/16/17/18 (هر کدام ۱–۲ لوپ)
+**اجرا‌شده (لوپ اول):**
+- [x] QF-07/08: `POST /payments/{id}/receipt` — آپلود multipart با اعتبارسنجی **محتوا** (Pillow، نه هدر کلاینت)، سقف ۵ مگابایت، مسیر خصوصی `var/receipts` با نام تصادفی و `0600`، ردیف `payment_receipts` با `review_id` و TTL ۴۸ ساعت؛ پاسخ ۲۰۲ و وضعیت `in_review`.
+- [x] QF-09: `POST /payments/{id}/approve` و `/reject` — تأیید اتمیک (پرداخت + رسید + اشتراک از `plan_key` + اعلان + audit در یک commit)، منع تأیید پرداختِ ساختهٔ خودِ تأییدکننده، رد با دلیل اجباری.
+- [x] QF-05 (بخشی): `idempotency_key` روی پرداخت + ایندکس یگانهٔ جزئی `(member_id, idempotency_key)`؛ ارسال دوبارهٔ درخواست پرداخت دوم نمی‌سازد. **باقی‌مانده:** دفتر رویداد کامل با معکوس‌سازی (QF-05 اصلی) در لوپ بعد.
+- [x] استودیو: `ReceiptQueue` در صفحهٔ مالی — صف `in_review`، تأیید/رد سرورمحور، خطای ۴۰۳ نمایش داده می‌شود.
+- [x] سناریوهای زنده: `docs/MuscleParadise/evals/phase6-money-scenarios.md` (۱۳ سناریو، هر کدام یک تست).
+- [x] مهاجرت‌ها: `c1d2e3f4a5b6` و `d2e3f4a5b6c7` (batch mode برای SQLite)، drift صفر و برگشت‌پذیر.
+- `BLOCKED` ماند: انتقال واقعی پول بانکی و تأیید کارت‌به‌کارت با شاهد انسانی.
+
+### فاز ۷ — قابلیت‌های عضو: QF-13/14/15/16/17/18 (هر کدام ۱–۲ لوپ) — جاروی مالکیت ✅
 - حساب و عضویت، حضور QR، تمرین/کلاس، تغذیه، ارزیابی، چت.
 - محدودیت‌ها: QR دستگاه واقعی و امضا `BLOCKED/UNKNOWN` می‌ماند؛ کتابخانهٔ تازهٔ کلاینت نداریم.
 
-### فاز ۸ — زیرساخت و انتشار: QF-20..QF-32 (۴–۶ لوپ)
+**اجرا‌شده (گیت مالکیت، نه ادعای «همه‌چیز تست شد»):**
+- [x] `tests/integration/test_phase7_member_scope_sweep.py`: فهرست مسیرهای GET با `{member_id}` از **قرارداد زنده** (`api/routes.json`) خوانده می‌شود؛ با توکن عضو دیگر صدا زده می‌شود و ۲۰۰ فقط وقتی پذیرفته است که دادهٔ عضو هدف در بدنه نباشد. ۱۷ مسیر + ۲ تستِ ضدِ سبزیِ توخالی (ابزار تشخیص باید نمونهٔ آلوده را بگیرد؛ عضو باید دادهٔ خودش را ۲۰۰ بگیرد) → **۱۹ قبول**.
+- [x] قابلیت‌های عضو پیش‌تر پوشش داشتند و همان تست‌ها سبز ماندند: `test_m61_face_member_gate`، `test_m65_qr_security`، `test_m80_member_checkin_history`، `test_m49_adaptive_nutrition`، `test_m51_chat`، `test_axis_assessment_api`، `test_m74_class_cancel`.
+- `BLOCKED` ماند: QR روی دستگاه اندروید واقعی، اجرای `flutter test`/`flutter analyze` (toolchain محلی نصب نیست).
+
+### فاز ۸ — زیرساخت و انتشار: QF-20..QF-32 (۴–۶ لوپ) — لوپ اول ✅ (outbox)
 - outbox/inbox، push، گزارش زمان‌بندی‌شده، PostgreSQL، backup/restore، امنیت سابقه، worker، حریم، CI پین‌شده، Android و امضا، آزمایش ابری، گیت انتشار.
 - فاز ۸ فقط وقتی شروع می‌شود که فازهای ۲ تا ۶ مسیر پول و مجوز را بسته باشند.
+
+**اجرا‌شده (لوپ اول — QF-20):**
+- [x] outbox تراکنشی: جدول‌های `outbox_events` و `outbox_dead_letters` (migration `e3f4a5b6c7d8`)؛ رویداد `payment.approved`/`payment.rejected` **در همان commit** پرداخت ساخته می‌شود و در صورت ۴۰۳/خطا هیچ رویدادی نمی‌ماند.
+- [x] claim انحصاری، `reclaim_stale` برای worker رهاشده، retry با backoff (۳۰/۱۲۰/۶۰۰/۱۸۰۰ ثانیه) و dead-letter پس از ۵ تلاش؛ `dedup_key` یگانه برای idempotency.
+- [x] اجرا: `python -m jobs.outbox_relay [--loop N]`.
+- [x] پنج تست `test_phase8_outbox.py` (قرمز اول: جدول/سرویس نبود).
+- [x] QF-21 inbox: `inbox_messages` + `consume_once` — تحویل تکراری فقط یک‌بار اثر می‌گذارد، خطای handler کل پیام را rollback می‌کند، رقابت دو مصرف‌کننده با کلید یکتا حل می‌شود؛ relay نمونه از همین لایه رد می‌شود. چهار تست `test_phase8_inbox.py`.
+- **باقی‌مانده و صریح `BLOCKED`:** اتصال واقعی push/SMS (بدون سرویس بیرونی)، PostgreSQL در استقرار (compose فعلی SQLite دارد)، امضای release و دستگاه اندروید (بدون شاهد انسانی)، آزمایش ابری/گیت انتشار.
 
 ## ۶. چیزهایی که در این نقشه عمداً نیست
 

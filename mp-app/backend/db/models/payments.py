@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from sqlalchemy import DateTime, ForeignKey, Index, Integer, String, text
+from sqlalchemy import DateTime, ForeignKey, Index, Integer, String, Text, text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from db.base import Base, BranchMixin, TimestampMixin
@@ -21,6 +21,15 @@ class Payment(TimestampMixin, BranchMixin, Base):
             unique=True,
             sqlite_where=text("gateway_authority IS NOT NULL"),
             postgresql_where=text("gateway_authority IS NOT NULL"),
+        ),
+        # QF-05 — idempotency: هر (عضو، کلید) تنها یک پرداخت.
+        Index(
+            "uq_payments_member_idempotency",
+            "member_id",
+            "idempotency_key",
+            unique=True,
+            sqlite_where=text("idempotency_key IS NOT NULL"),
+            postgresql_where=text("idempotency_key IS NOT NULL"),
         ),
     )
 
@@ -48,6 +57,51 @@ class Payment(TimestampMixin, BranchMixin, Base):
     gateway_authority: Mapped[str | None] = mapped_column(String(80), default=None, nullable=True)
     description: Mapped[str] = mapped_column(String(200), default="", nullable=False)
     paid_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    # QF-09: تأییدکننده نباید پرداختی را که خودش ساخته تأیید کند.
+    created_by_user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
+    # QF-09: پلنی که با تأیید همین پرداخت فعال می‌شود (در همان تراکنش).
+    plan_key: Mapped[str | None] = mapped_column(String(40), nullable=True)
+    # QF-05: کلید idempotency ارسال دوبارهٔ درخواست توسط اپ را بی‌اثر می‌کند.
+    idempotency_key: Mapped[str | None] = mapped_column(String(64), nullable=True)
+
+
+class PaymentReceipt(Base):
+    """فیش کارت‌به‌کارت — فایل خصوصی + صف بازبینی با TTL (QF-07/QF-08).
+
+    فایل هرگز در مسیر عمومی سرو نمی‌شود؛ فقط `stored_path` در DB است و مسیر
+    با نام تصادفی ساخته می‌شود. ردیف با رد/تأیید حذف نمی‌شود (ممیزی).
+    """
+
+    __tablename__ = "payment_receipts"
+    __table_args__ = (
+        Index("ix_payment_receipts_payment_id", "payment_id"),
+        Index("uq_payment_receipts_review_id", "review_id", unique=True),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    payment_id: Mapped[int] = mapped_column(
+        ForeignKey("payments.id", ondelete="CASCADE"), nullable=False
+    )
+    review_id: Mapped[str] = mapped_column(String(64), nullable=False)
+    stored_path: Mapped[str] = mapped_column(String(300), nullable=False)
+    mime: Mapped[str] = mapped_column(String(40), nullable=False)
+    size_bytes: Mapped[int] = mapped_column(Integer, nullable=False)
+    sha256: Mapped[str] = mapped_column(String(64), nullable=False)
+    uploaded_by_user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
+    status: Mapped[str] = mapped_column(String(20), nullable=False, default="in_review")
+    reject_reason: Mapped[str] = mapped_column(Text, default="", nullable=False)
+    reviewed_by_user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
+    reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP")
+    )
 
 
 class WalletTransaction(TimestampMixin, BranchMixin, Base):
