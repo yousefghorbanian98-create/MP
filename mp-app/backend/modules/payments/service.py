@@ -292,6 +292,9 @@ def refund_payment(db: Session, payment_id: int) -> Payment:
 
     payment.status = "refunded"
     payment.refund_reference = result.reference_id or None
+    # QF-10: زمان بازگشت برای سبد دوره. اگر بانک بگوید «قبلاً برگشت خورده»،
+    # زمان واقعی را نمی‌دانیم؛ `datetime.now` نزدیک‌ترین شاهد است، نه ادعای دقیق.
+    payment.refunded_at = datetime.now(UTC)
     db.commit()
     db.refresh(payment)
     from modules.admin.service import audit

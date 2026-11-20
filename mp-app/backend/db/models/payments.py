@@ -52,6 +52,10 @@ class Payment(TimestampMixin, BranchMixin, Base):
     )  # انتساب مربی (کمیسیون M27)
     reference_id: Mapped[str] = mapped_column(String(80), default="", nullable=False)
     refund_reference: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    # QF-10: «کِی برگشت» جدا از «کِی پرداخت شد». گزارش دوره‌ای بازگشت را در سبد
+    # روزِ خودش می‌آورد؛ بدون این ستون، بازگشت به تاریخ پرداخت اصلی چسبانده
+    # می‌شد و سودِ دو دوره هر دو غلط می‌شد.
+    refunded_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     # شناسهٔ تراکنش درگاه (زرین‌پال: authority) — بدون آن، verify نمی‌تواند
     # ثابت کند همین تراکنش را تأیید می‌کند و مبلغ از callback جعلی می‌آمد.
     gateway_authority: Mapped[str | None] = mapped_column(String(80), default=None, nullable=True)
