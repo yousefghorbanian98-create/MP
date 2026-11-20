@@ -116,7 +116,12 @@ beforeEach(() => {
   stubApi();
 });
 
-describe("a11y — rule-based audit across every page (Q5)", () => {
+/**
+ * هر مورد این بخش کل اپ احراز‌هویت‌شده را رندر می‌کند (۱٫۵ تا ۲٫۷ ثانیه محلی).
+ * روی runner شلوغ CI، رندر اول صفحهٔ مالی از سقف پیش‌فرض ۵ ثانیه می‌گذشت (timeout).
+ * این سقف فقط زمان رندر را بالا می‌برد؛ ممیزی و تعداد موارد بررسی‌شده تغییر نکرده‌اند.
+ */
+describe("a11y — rule-based audit across every page (Q5)", { timeout: 30_000 }, () => {
   const pages = [
     "dashboard",
     "members",

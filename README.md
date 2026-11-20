@@ -227,13 +227,15 @@ CI روی commit `0392b00` در [run 44624443191](https://github.com/yousefghorb
   <img alt="Docker" src="https://img.shields.io/badge/Docker-Deployment-2496ED?style=flat-square&logo=docker&logoColor=white">
 </p>
 
-### 🔎 آخرین اعتبارسنجی (۲۰۲۶-۱۱-۲۰)
+### 🔎 آخرین اعتبارسنجی (snapshot از `main` در `e5c8891`)
 
 | بخش | نتیجهٔ اندازه‌گیری‌شده | محدودیت |
 |---|---|---|
-| **بار** | ۲۰۰ کاربر همزمان، ۹۰ ثانیه، ۹٬۶۵۴ درخواست، **۰ خطا**، ~۱۶۹ درخواست بر ثانیه، p95 ≈ ۴۳۰ms | SQLite و یک worker روی sandbox؛ عدد production نیست |
-| **استودیو (مرورگر)** | ورود با فرم واقعی و ۱۲ صفحه از منوی کناری؛ بدون خطای کنسول یا پاسخ ۴xx/۵xx | تست همهٔ دکمه‌ها و فرم‌ها هنوز کامل نشده |
-| **معماری و بهداشت کد** | مدل C4 و ۶۷۰ یافتهٔ سلامت کد؛ گزارش در [docs/architecture/repowise](docs/architecture/repowise/README.md) | یافته‌ها شواهد بررسی‌اند، نه خطای اثبات‌شده |
+| **تست خودکار** | backend: ۱٬۰۹۵ پاس، پوشش ۹۴٫۲٪؛ studio: ۲۸۲ پاس؛ تایپ بدون خطا | Flutter محلی اجرا نشد (شبکه) |
+| **بار** | ۲۰۰ کاربر همزمان، ۱۰٬۸۴۷ و ۱۰٬۶۶۴ درخواست، **۰ خطا**، ~۱۸۰ درخواست بر ثانیه، p95 ≈ ۲۱۰ms، p99 ≈ ۳۳۰ms ([نمودار](qa-report/graphs/load-latency-200users.png)) | SQLite و یک worker روی sandbox؛ عدد production نیست. یک بار استخر اتصال پر شد و ریشه‌یابی نشده است |
+| **استودیو (مرورگر)** | ۱۱ صفحه؛ بدون خطای کنسول، ۴xx/۵xx یا استثنا؛ عنوان صفحات اصلاح شد ([اسکرین‌شات‌ها](qa-report/screenshots/)) | ۴۵ دکمه کلیک شد؛ دکمه‌های مالی و مخرب با تست‌های یکپارچه پوشش داده شده‌اند |
+| **معماری و بهداشت کد** | بهداشت ۹٫۲۶/۱۰؛ ۶۷۰ یافته؛ ۳۵ کد مرده؛ ۲۵ رانش مستندات؛ گزارش در [docs/architecture/repowise](docs/architecture/repowise/findings-main-e5c8891.md) | یافته‌ها شواهد بررسی‌اند، نه خطای اثبات‌شده |
+| **راهنمای Flutter** | در [docs/MuscleParadise/guides/flutter-codespace.md](docs/MuscleParadise/guides/flutter-codespace.md) | اجرای واقعی در Codespace انجام نشده است |
 | **اپ Flutter** | بیلد وب در CI موفق بود (`mp-web`) | اجرای دستی روی مرورگر و دستگاه ثبت نشده است |
 | **APK امضاشده** | — | **BLOCKED**: secretهای `MP_ANDROID_*` تنظیم نشده‌اند |
 
