@@ -65,6 +65,10 @@ class Settings(BaseSettings):
     shop_online_purchase_enabled: bool = False
     # ساعت کاری باشگاه: منبع حقیقت پاسخ سرور است، نه ساعت دستگاه عضو.
     shop_timezone: str = "Asia/Tehran"
+    # QF-26: فهرست IP پروکسی‌های معتمد (ویرگول‌جدا). خالی = هیچ هدر XFF پذیرفته نمی‌شود.
+    trusted_proxies: str = ""
+    # QF-27: اگر true، readiness بدون heartbeat تازهٔ worker ⇒ ۵۰۳ (استقرار با worker).
+    require_worker: bool = False
     shop_open_hour: int = 7
     shop_close_hour: int = 23
     # روزهای تعطیل هفتگی با کاما؛ ۰=دوشنبه … ۶=یکشنبه. خالی = بدون تعطیلی.

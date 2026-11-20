@@ -12,6 +12,8 @@
   "/api/v1/admin/permissions",
   "/api/v1/admin/permissions/known",
   "/api/v1/admin/permissions/{grant_id}",
+  "/api/v1/admin/retention",
+  "/api/v1/admin/retention/run",
   "/api/v1/admin/users",
   "/api/v1/admin/users/{user_id}/role",
   "/api/v1/ai/nutrition/generate",
@@ -56,6 +58,9 @@
   "/api/v1/face/enroll/{member_id}",
   "/api/v1/face/privacy-notice",
   "/api/v1/face/qr-token",
+  "/api/v1/finance/reports/daily/{run_date}",
+  "/api/v1/finance/reports/schedule",
+  "/api/v1/finance/reports/schedule/{job_key}/run",
   "/api/v1/health/ready",
   "/api/v1/library/exercises",
   "/api/v1/library/exercises/{exercise_id}",
@@ -354,6 +359,38 @@
     "permission"
    ],
    "roles": [
+    "super_admin"
+   ]
+  },
+  {
+   "method": "GET",
+   "path": "/api/v1/admin/retention",
+   "operationId": "preview_api_v1_admin_retention_get",
+   "tags": [
+    "privacy"
+   ],
+   "guards": [
+    "permission"
+   ],
+   "roles": [
+    "manager",
+    "admin",
+    "super_admin"
+   ]
+  },
+  {
+   "method": "POST",
+   "path": "/api/v1/admin/retention/run",
+   "operationId": "run_api_v1_admin_retention_run_post",
+   "tags": [
+    "privacy"
+   ],
+   "guards": [
+    "permission"
+   ],
+   "roles": [
+    "manager",
+    "admin",
     "super_admin"
    ]
   },
@@ -1203,6 +1240,57 @@
    "roles": [
     "member",
     "coach",
+    "manager",
+    "admin",
+    "super_admin"
+   ]
+  },
+  {
+   "method": "GET",
+   "path": "/api/v1/finance/reports/daily/{run_date}",
+   "operationId": "daily_api_v1_finance_reports_daily__run_date__get",
+   "tags": [
+    "reports"
+   ],
+   "guards": [
+    "grant:finance.read",
+    "permission"
+   ],
+   "roles": [
+    "manager",
+    "admin",
+    "super_admin"
+   ]
+  },
+  {
+   "method": "GET",
+   "path": "/api/v1/finance/reports/schedule",
+   "operationId": "schedule_status_api_v1_finance_reports_schedule_get",
+   "tags": [
+    "reports"
+   ],
+   "guards": [
+    "grant:finance.read",
+    "permission"
+   ],
+   "roles": [
+    "manager",
+    "admin",
+    "super_admin"
+   ]
+  },
+  {
+   "method": "POST",
+   "path": "/api/v1/finance/reports/schedule/{job_key}/run",
+   "operationId": "run_job_api_v1_finance_reports_schedule__job_key__run_post",
+   "tags": [
+    "reports"
+   ],
+   "guards": [
+    "grant:finance.write",
+    "permission"
+   ],
+   "roles": [
     "manager",
     "admin",
     "super_admin"

@@ -210,6 +210,13 @@ Flutter وارد نمی‌شود تا دسترسی برگردد یا mirror تص
 - [x] QF-21 inbox: `inbox_messages` + `consume_once` — تحویل تکراری فقط یک‌بار اثر می‌گذارد، خطای handler کل پیام را rollback می‌کند، رقابت دو مصرف‌کننده با کلید یکتا حل می‌شود؛ relay نمونه از همین لایه رد می‌شود. چهار تست `test_phase8_inbox.py`.
 - **باقی‌مانده و صریح `BLOCKED`:** اتصال واقعی push/SMS (بدون سرویس بیرونی)، PostgreSQL در استقرار (compose فعلی SQLite دارد)، امضای release و دستگاه اندروید (بدون شاهد انسانی)، آزمایش ابری/گیت انتشار.
 
+**اجرا‌شده (لوپ چهارم تا هفتم — QF-23/26/27/28):**
+- [x] **QF-23 گزارش زمان‌بندی‌شده:** `report_runs` (migration `c7d8e9f0a1b2`) با کلید یکتای `(job_key, run_date)`؛ سبد روز از `Asia/Tehran` ساخته می‌شود (مرز ۰۰:۰۰ تهران، نه UTC)؛ `run_daily_finance` idempotent در برابر اجرای دوباره/ری‌استارت/دو worker؛ اعداد فقط با `finance.read` از `GET /finance/reports/daily/{date}` و ممیزی فقط «آماده است» (بدون مبلغ). cron ۰۰:۱۰ تهران در `jobs/scheduler.py`. ۷ تست `test_phase8_reports.py`.
+- [x] **QF-26 شبکه و افشای IP:** `app/security/proxy.py` — `X-Forwarded-For` فقط اگر peer در `MP_TRUSTED_PROXIES` باشد، پیمایش راست‌به‌چپ و fail-closed به peer؛ کلید rate-limit از همان IP محاسبه می‌شود تا هدر جعلی سهمیهٔ تازه نسازد. ۶ تست `test_phase8_network.py`. (secretهای production از قبل fail-closed بودند.)
+- [x] **QF-27 worker و مشاهده‌پذیری:** `worker_heartbeats` (migration `d8e9f0a1b2c3`) + `modules/outbox/health.py`؛ relay در هر دور heartbeat و متریک‌های `mp_outbox_pending/sending/dead_letters/oldest_pending_seconds/worker_stale` را از DB می‌نویسد؛ `/health/ready` صف را نشان می‌دهد و با `MP_REQUIRE_WORKER=true` بدون heartbeat تازه ۵۰۳ می‌دهد؛ `/metrics` فقط عدد (بدون payload/خطا). ۶ تست `test_phase8_worker.py` + جدول هشدار در `OPS-RUNBOOK`.
+- [x] **QF-28 حریم و نگهداری:** `modules/privacy/retention.py` — سیاست‌های صریح (روز + دلیل) برای audit/inbox/اعلان خوانده‌شده/report_runs، پیش‌نمایش بدون حذف، اجرای فقط `super_admin` با ممیزی `retention_run` بدون دادهٔ شخصی؛ پول/دفتر/هزینه/فیش دست‌نخورده. ۵ تست `test_phase8_privacy.py`؛ سیاست در `DATA-RETENTION.md`.
+- **`BLOCKED` در همین لوپ‌ها:** هشدار واقعی Alertmanager/Prometheus (سرور پایش بیرونی نیست)، توزیع rate-limit با Valkey، تأیید حقوقی مدت‌های نگهداری، push/ایمیل گزارش به مالک.
+
 ## ۶. چیزهایی که در این نقشه عمداً نیست
 
 | مورد | دلیل |

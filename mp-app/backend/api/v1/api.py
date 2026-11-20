@@ -22,8 +22,10 @@ from modules.nutrition.router import router as nutrition_router
 from modules.payments.router import payments_return_router
 from modules.payments.router import router as payments_router
 from modules.population.router import router as population_router
+from modules.privacy.router import router as privacy_router
 from modules.programs.router import router as programs_router
 from modules.reporting.router import router as reporting_router
+from modules.reports.router import router as reports_router
 from modules.shop.router import router as shop_router
 from modules.updates.router import router as updates_router
 
@@ -34,6 +36,8 @@ api_router.include_router(library_router)
 api_router.include_router(members_router)
 api_router.include_router(payments_router)
 api_router.include_router(expenses_router)
+api_router.include_router(reports_router)
+api_router.include_router(privacy_router)
 # بازگشت مرورگر از بانک — عمداً بیرونِ require_permission (توضیح در router.py)
 api_router.include_router(payments_return_router)
 api_router.include_router(assessment_router)

@@ -108,3 +108,17 @@ MP_DATABASE_URL=sqlite:////tmp/mp-drill/mp.db python -m alembic check     # با
 بازگشت وجه: `POST /api/v1/payments/{id}/refund` — فقط پرداختِ درگاهیِ تأییدشده؛ وضعیت
 `refunded` می‌شود (از `total_paid_rial` کم می‌شود، در `total_refunded_rial` ثبت)؛ تکرارش
 `already_refunded` است. مرجعِ بازگشت فعلاً فقط در audit است تا ستون مخصوص خودش (M111) ساخته شود.
+
+## ۷) صف، worker و هشدارها (QF-27)
+
+| متریک | معنا | پیشنهاد هشدار |
+|---|---|---|
+| `mp_outbox_pending` | رویدادهای در انتظار ارسال | > ۱۰۰ برای ۱۵ دقیقه |
+| `mp_outbox_oldest_pending_seconds` | سن قدیمی‌ترین رویداد در انتظار | > ۹۰۰ ثانیه |
+| `mp_outbox_dead_letters` | رد ارسال‌شده‌ها | > ۰ (بررسی انسانی) |
+| `mp_outbox_worker_stale` | ۱ = heartbeat قدیمی‌تر از ۳۰۰ ثانیه | = ۱ برای ۱۰ دقیقه |
+
+- heartbeat هر دور `python -m jobs.outbox_relay` نوشته می‌شود؛ **صف خالی با worker مرده یکی نیست**.
+- `MP_REQUIRE_WORKER=true` در استقرار worker: readiness بدون heartbeat تازه ۵۰۳ می‌دهد.
+- `/api/v1/metrics` (بدون احراز هویت) فقط عدد می‌دهد: هیچ payload، متن خطا یا شناسهٔ مالی در آن نیست.
+- قاعدهٔ Alertmanager در این مخزن اجرا نمی‌شود (سرور پایش بیرونی نیست) — `BLOCKED` برای اثبات هشدار واقعی.

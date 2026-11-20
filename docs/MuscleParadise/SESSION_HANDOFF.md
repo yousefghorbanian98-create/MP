@@ -249,3 +249,12 @@
 - **استودیو:** `LedgerPanel` در صفحهٔ مالی (موجودی/تطبیق/معکوس‌سازی با دلیل؛ بدون درخواست در mount) و صفحهٔ تازهٔ «هزینه‌ها» با کنترل‌های antd و تقویم جلالی + مدال دلیل.
 - **شاهد:** بک‌اند **۱۰۴۶ قبول / ۲ رد‌شده**، استودیو **۲۶۲ قبول / ۹ رد‌شده**، `ruff` و `tsc -b`/build پاک، قرارداد بازتولید‌شده **۱۳۳ مسیر / ۱۵۳ عملیات**، نقشهٔ تعامل ۳۱ سطح / رانش صفر، migration drift صفر. تست‌ها: `test_phase6b_ledger.py` (۹)، `test_phase6c_expenses.py` (۹)، `tests/ledgerPanel.test.tsx` (۶)، `tests/expensesPage.test.tsx` (۸).
 - **باقی‌مانده:** فایل فیش خصوصی هزینه و گزارش سود/زیان دوره‌ای (QF-10)؛ انتقال واقعی پول بانکی همچنان `BLOCKED`.
+
+## افزودهٔ آخر: فاز ۸ لوپ ۳–۶ (گزارش زمان‌بندی‌شده، پروکسی معتمد، worker/متریک، نگهداری)
+
+- **QF-23:** `report_runs` + `modules/reports/schedule.py`؛ idempotency روی `(job_key, run_date)` با سبد روزِ `Asia/Tehran`، اعداد فقط با `finance.read`، ممیزی بدون مبلغ، cron ۰۰:۱۰ تهران. ۷ تست.
+- **QF-26:** `app/security/proxy.py` — `X-Forwarded-For` فقط از peer معتمد، پیمایش راست‌به‌چپ، fail-closed؛ کلید rate-limit همان IP است. `MP_TRUSTED_PROXIES` در DEPLOYMENT. ۶ تست.
+- **QF-27:** `worker_heartbeats` + `modules/outbox/health.py`؛ heartbeat در هر دور relay، gaugeهای صف در `/metrics`، `/health/ready` با `MP_REQUIRE_WORKER`. ۶ تست + جدول هشدار در OPS-RUNBOOK.
+- **QF-28:** `modules/privacy/retention.py`؛ پیش‌نمایش/اجرای حذف دادهٔ منقضی فقط `super_admin`، ممیزی `retention_run` بدون دادهٔ شخصی، پول/دفتر/هزینه دست‌نخورده. ۵ تست + بخش کدشده در DATA-RETENTION.
+- **شاهد:** بک‌اند **۱۰۶۹+ قبول / ۲ رد‌شده** (پس از رفع دو خطای شمارش در همین نشست: `oldest_pending_age` منفی و مسیر `/metrics`)، `ruff` پاک، قرارداد **۱۳۸ مسیر / ۱۵۸ عملیات**، نقشهٔ تعامل ۳۱ سطح / رانش صفر، drift صفر.
+- **`BLOCKED`:** هشدار واقعی Prometheus/Alertmanager، Valkey برای rate-limit توزیع‌شده، تأیید حقوقی مدت‌های نگهداری، push/ایمیل گزارش، PostgreSQL/backup، امضا و دستگاه.

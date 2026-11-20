@@ -14,7 +14,7 @@ import time
 from collections import defaultdict
 from collections.abc import Mapping
 
-from prometheus_client import CollectorRegistry, Counter, Histogram, generate_latest
+from prometheus_client import CollectorRegistry, Counter, Gauge, Histogram, generate_latest
 
 _DEFAULT_BUCKETS = (0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1.0, 2.0, 2.5, 5.0, 10.0)
 _SLO_SAMPLE_LIMIT = 5000
@@ -27,12 +27,35 @@ class Metrics:
         self._registry = CollectorRegistry()
         self._counters: dict[tuple[str, tuple[str, ...]], Counter] = {}
         self._histograms: dict[tuple[str, tuple[str, ...]], Histogram] = {}
+        self._gauges: dict[tuple[str, tuple[str, ...]], Gauge] = {}
         self._slo_values: dict[str, list[float]] = defaultdict(list)
         self._lock = threading.RLock()
 
     @staticmethod
     def _labels(labels: Mapping[str, str]) -> dict[str, str]:
         return {name: str(value) for name, value in labels.items()}
+
+    def set_gauge(self, name: str, value: float, **labels: str) -> None:
+        """Set an absolute value on a (dynamically created) gauge.
+
+        Gauges report state, not events: queue depth, oldest age, worker
+        staleness. Scratch values are recomputed from the database on demand.
+        """
+        label_values = self._labels(labels)
+        label_names = tuple(sorted(label_values))
+        key = (name, label_names)
+        with self._lock:
+            metric = self._gauges.get(key)
+            if metric is None:
+                metric = Gauge(
+                    name,
+                    f"Muscle Paradise gauge: {name}",
+                    labelnames=label_names,
+                    registry=self._registry,
+                )
+                self._gauges[key] = metric
+        child = metric.labels(**label_values) if label_names else metric
+        child.set(value)
 
     def inc(self, name: str, value: float = 1.0, **labels: str) -> None:
         label_values = self._labels(labels)

@@ -27,3 +27,19 @@
 - رمزگذاری در حالت سکون: disk-level (LUKS/BitLocker سرور محلی) + رمزنگاری FaceTemplate (کلید `MP_BIOMETRIC_KEY`).
 - انتقال: HTTPS داخلی (M28)؛ هیچ egress بیرونی (E11).
 - بکاپ/بازیابی: `scripts/backup.py` (M23-c2) — drill بازیابی در M30.
+
+## اجرای کدشده (QF-28)
+
+جدول بالا سند مهندسی است؛ بخش فنی/پاک‌شدنی آن حالا **کد** هم دارد:
+`modules/privacy/retention.py` با سیاست‌های صریح (روز + دلیل):
+
+| داده | مدت در کد | چرا |
+|---|---|---|
+| `audit_logs` | ۳۶۵ روز | پیگیری تخلف/اختلاف تا یک سال |
+| `inbox_messages` | ۹۰ روز | بعد از افق retry فقط حجم است |
+| اعلان‌های **خوانده‌شده** | ۱۸۰ روز | اعلان نخوانده دست‌نخورده می‌ماند |
+| `report_runs` | ۷۳۰ روز | مقایسهٔ سالانهٔ گزارش مالی |
+
+- دستور: `GET /api/v1/admin/retention` (پیش‌نمایش، بدون حذف) و `POST /api/v1/admin/retention/run` — **فقط `super_admin`**؛ هر اجرا با `retention_run` ممیزی می‌شود و هیچ دادهٔ شخصی در آن نیست.
+- **دست‌نزن:** `payments`, `ledger_entries`, `expenses`, `expense_revisions`, `outbox_dead_letters` — نگهداری مالی/عملیاتی طبق جدول بالا و تأیید حسابدار (`BLOCKED` تا تأیید حقوقی/مالی).
+- تست: `mp-app/backend/tests/integration/test_phase8_privacy.py` (۵ تست).

@@ -127,6 +127,19 @@ def build_scheduler(session_factory) -> BackgroundScheduler:  # noqa: F821
     scheduler.add_job(
         _with_session(send_renewal_reminders), "cron", hour=8, minute=0, id="renewal_reminders"
     )
+    # QF-23: گزارش مالی روزانه — idempotent per Tehran day؛ اجرای دوباره
+    # (ری‌استارت یا worker دوم) ردیف تازه نمی‌سازد.
+    from modules.reports.schedule import TEHRAN, run_daily_finance
+
+    scheduler.add_job(
+        _with_session(run_daily_finance),
+        "cron",
+        hour=0,
+        minute=10,
+        timezone=TEHRAN,
+        id="daily_finance_report",
+        replace_existing=True,
+    )
     scheduler.add_job(
         _with_session(send_reassessment_reminders),
         "cron",

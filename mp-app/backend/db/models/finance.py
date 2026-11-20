@@ -14,7 +14,7 @@ from __future__ import annotations
 
 from datetime import date, datetime
 
-from sqlalchemy import Date, DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy import Date, DateTime, ForeignKey, Integer, String, Text, UniqueConstraint, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from db.base import Base, TimestampMixin
@@ -66,3 +66,26 @@ class ExpenseRevision(Base):
         ForeignKey("users.id", ondelete="SET NULL"), nullable=True
     )
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+
+class ReportRun(Base):
+    """اجرای گزارش زمان‌بندی‌شده — کلید یکتا مانع گزارش تکراری در یک روز است (QF-23).
+
+    عددها این‌جا می‌مانند تا اعلان/ممیزی فقط «آماده است» بگوید و مبلغ‌ها فقط از
+    endpoint با `finance.read` خوانده شوند.
+    """
+
+    __tablename__ = "report_runs"
+    __table_args__ = (UniqueConstraint("job_key", "run_date", name="uq_report_runs_job_day"),)
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    job_key: Mapped[str] = mapped_column(String(40), nullable=False, index=True)
+    run_date: Mapped[date] = mapped_column(Date, nullable=False, index=True)
+    payments_total_rial: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
+    expenses_total_rial: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
+    net_rial: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
+    payments_count: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
+    expenses_count: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
