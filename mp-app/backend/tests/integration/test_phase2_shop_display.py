@@ -111,7 +111,9 @@ def test_status_reports_in_person_mode(client: TestClient) -> None:
 def test_status_closed_outside_hours() -> None:
     from modules.shop import service
 
-    assert service.store_status(now=datetime(2026, 11, 19, 3, 30, tzinfo=TEHRAN))["is_open"] is False
+    assert (
+        service.store_status(now=datetime(2026, 11, 19, 3, 30, tzinfo=TEHRAN))["is_open"] is False
+    )
     body = service.store_status(now=datetime(2026, 11, 19, 3, 30, tzinfo=TEHRAN))
     assert body["reason"] == "outside_hours"
     inside = service.store_status(now=datetime(2026, 11, 19, 10, 0, tzinfo=TEHRAN))

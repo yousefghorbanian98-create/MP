@@ -63,13 +63,14 @@ def store_status(*, now: datetime | None = None) -> dict:
     opens_at = time(hour=settings.shop_open_hour)
     closes_at = time(hour=settings.shop_close_hour)
     closed_days = {
-        int(chunk.strip())
-        for chunk in settings.shop_closed_weekdays.split(",")
-        if chunk.strip()
+        int(chunk.strip()) for chunk in settings.shop_closed_weekdays.split(",") if chunk.strip()
     }
     if moment.weekday() in closed_days:
         reason = "weekly_holiday"
-    elif opens_at <= moment.time() < closes_at and settings.shop_open_hour != settings.shop_close_hour:
+    elif (
+        opens_at <= moment.time() < closes_at
+        and settings.shop_open_hour != settings.shop_close_hour
+    ):
         reason = "open"
     else:
         reason = "outside_hours"
@@ -97,6 +98,8 @@ def assert_online_purchase_open() -> None:
             "خرید درون‌برنامه‌ای بسته است؛ خرید حضوری در ساعات کاری باشگاه انجام می‌شود",
             code=ONLINE_PURCHASE_CLOSED,
         )
+
+
 STATUS_FLOW = {"pending", "paid", "failed", "cancelled", "delivered"}
 
 
