@@ -61,3 +61,25 @@ jobs:
           path: mp-app/client/build/web
           retention-days: 14
           if-no-files-found: error
+
+      - name: Collect web build diagnostics on failure
+        if: failure()
+        run: |
+          mkdir -p /tmp/web-diag
+          cp /tmp/step-web-build.txt /tmp/web-diag/ 2>/dev/null || echo "no build log" > /tmp/web-diag/none.txt
+          # خطاهای کامپایلر به‌صورت annotation (قابل خواندن از API) هم منتشر می‌شوند.
+          grep -E "Error|error|\.dart:[0-9]+" /tmp/step-web-build.txt 2>/dev/null | head -40 | while IFS= read -r line; do
+            echo "::error::${line}"
+          done
+          tail -n 25 /tmp/step-web-build.txt 2>/dev/null | while IFS= read -r line; do
+            echo "::warning::${line}"
+          done
+
+      - name: Upload web build diagnostics on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mp-web-diagnostics
+          path: /tmp/web-diag
+          retention-days: 3
+          if-no-files-found: warn
