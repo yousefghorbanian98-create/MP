@@ -5,7 +5,6 @@
 library;
 
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:crypto/crypto.dart';
 import 'package:http/http.dart' as http;
@@ -66,7 +65,7 @@ class UpdateService {
       ),
     );
     if (resp.statusCode != 200) {
-      throw HttpException('خطای بررسی نسخه: ${resp.statusCode}');
+      throw UpdateException('خطای بررسی نسخه: ${resp.statusCode}');
     }
     return UpdateManifest.fromJson(
       jsonDecode(resp.body) as Map<String, dynamic>,
@@ -74,10 +73,14 @@ class UpdateService {
   }
 
   /// دانلود patch با تأیید یکپارچگی sha256 — در صورت شکست، full جایگزین می‌شود.
-  Future<File> downloadVerified(
+  ///
+  /// `save` فایل را در محل مخصوص هر پلتفرم ذخیره می‌کند؛ این کلاس به `dart:io`
+  /// وابسته نیست تا build وب (Flutter Web) کامپایل شود.
+  /// برمی‌گرداند: نام فایلی که ذخیره شد.
+  Future<String> downloadVerified(
     String url,
     String expectedSha256,
-    Directory dir,
+    Future<void> Function(String fileName, List<int> bytes) save,
   ) async {
     final resp = await http.get(Uri.parse('$baseUrl$url'));
     final bytes = resp.bodyBytes;
@@ -85,10 +88,19 @@ class UpdateService {
     if (digest != expectedSha256) {
       throw const FormatException('هش فایل ناسازگار — دانلود مجدد لازم است');
     }
-    final file = File('${dir.path}/${url.split('/').last}');
-    await file.writeAsBytes(bytes);
-    return file;
+    final fileName = url.split('/').last;
+    await save(fileName, bytes);
+    return fileName;
   }
+}
+
+/// خطای بررسی/دانلود بروزرسانی (جایگزین `HttpException` از dart:io).
+class UpdateException implements Exception {
+  const UpdateException(this.message);
+  final String message;
+
+  @override
+  String toString() => message;
 }
 
 /// مقایسهٔ نسخه — همگام با backend (قطعی).
