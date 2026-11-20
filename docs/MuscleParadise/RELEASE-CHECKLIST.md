@@ -31,6 +31,12 @@
 - [ ] `ApiClient` فقط loopback/RFC1918 را با HTTP می‌پذیرد (تست‌های `api_client_test.dart` سبز)
 - [ ] گزارش تأیید در `finn/reports/rea/<date>-REA-GAP-CLOSURE.md` نوشته شد
 
+## الف-۳) وضعیت شاخه‌ها در زمان ارائه
+- [ ] `git ls-remote --heads origin` فقط `main` را نشان می‌دهد (به‌جز شاخهٔ فعالِ همان لحظه، اگر نشستی در جریان است).
+- [ ] هر شاخهٔ مرج‌شده از `origin` حذف شده است؛ برای محتوای مرجع فقط تگ `archive/*` مانده.
+- [ ] `main` آخرین merge را با CI سبز روی همان SHA دارد و worktree محلی تمیز است.
+- [ ] روی GitHub گزینهٔ «Automatically delete head branches» روشن است (فقط مالک می‌تواند).
+
 ## ب) انطباق
 - [x] E07: هیچ معادلهٔ بدون منبع اجرا نمی‌شود (`equations.py` — قفل فعال)
 - [x] E10: نگهداری/حذف مستند (DATA-RETENTION.md)
