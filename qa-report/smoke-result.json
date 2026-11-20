@@ -1,0 +1,84 @@
+{
+ "results": [
+  {
+   "key": "dashboard",
+   "clicked": true,
+   "h1": "داشبورد",
+   "overflow": false,
+   "alert": null
+  },
+  {
+   "key": "members",
+   "clicked": true,
+   "h1": "مدیریت اعضا",
+   "overflow": false,
+   "alert": null
+  },
+  {
+   "key": "programs",
+   "clicked": true,
+   "h1": "برنامه‌های تمرین",
+   "overflow": false,
+   "alert": null
+  },
+  {
+   "key": "nutrition",
+   "clicked": true,
+   "h1": "تغذیه",
+   "overflow": false,
+   "alert": null
+  },
+  {
+   "key": "assessment",
+   "clicked": true,
+   "h1": "ارزیابی",
+   "overflow": false,
+   "alert": null
+  },
+  {
+   "key": "chat",
+   "clicked": true,
+   "h1": "چت",
+   "overflow": false,
+   "alert": null
+  },
+  {
+   "key": "checkin",
+   "clicked": true,
+   "h1": "حضور و چک‌این",
+   "overflow": false,
+   "alert": null
+  },
+  {
+   "key": "finance",
+   "clicked": true,
+   "h1": "مالی و پرداخت",
+   "overflow": false,
+   "alert": null
+  },
+  {
+   "key": "expenses",
+   "clicked": true,
+   "h1": "هزینه‌ها",
+   "overflow": false,
+   "alert": null
+  },
+  {
+   "key": "analytics",
+   "clicked": true,
+   "h1": "تحلیل‌ها",
+   "overflow": false,
+   "alert": null
+  },
+  {
+   "key": "shop",
+   "clicked": true,
+   "h1": "فروشگاه",
+   "overflow": false,
+   "alert": null
+  }
+ ],
+ "consoleErr": [],
+ "bad": [],
+ "pageErr": []
+}

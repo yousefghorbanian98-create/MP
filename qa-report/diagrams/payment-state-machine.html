@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>ماشین حالت پرداخت · Muscle Paradise</title>
+<style>
+  @font-face { font-family: 'Vazirmatn'; src: url('../../mp-app/client/assets/fonts/Vazirmatn-Regular.ttf') format('truetype'); font-weight: 400; }
+  @font-face { font-family: 'Vazirmatn'; src: url('../../mp-app/client/assets/fonts/Vazirmatn-Bold.ttf') format('truetype'); font-weight: 700; }
+  body { margin: 0; background: #0B0F14; color: #E6EDF3; font-family: 'Vazirmatn', system-ui, sans-serif; display: flex; flex-direction: column; align-items: center; padding: 2rem 1rem; }
+  h1 { font-size: 1.2rem; margin: 0 0 0.25rem; }
+  p.sub { margin: 0 0 1rem; color: #8B98A5; font-size: 0.9rem; }
+  svg { width: 100%; max-width: 900px; height: auto; }
+  .node { fill: #131A22; stroke: #2A3440; stroke-width: 1.5; }
+  .focal { fill: #0E2A1E; stroke: #00B86A; stroke-width: 2; }
+  .end { fill: #1A1A1A; stroke: #5C6B7A; stroke-width: 1.5; stroke-dasharray: 4 3; }
+  .label { fill: #E6EDF3; font-size: 15px; font-weight: 700; text-anchor: middle; }
+  .small { fill: #8B98A5; font-size: 12px; text-anchor: middle; }
+  .edge { stroke: #5C6B7A; stroke-width: 1.5; fill: none; }
+  .edge-focal { stroke: #00B86A; stroke-width: 2; fill: none; }
+  .edge-text { fill: #C9D1D9; font-size: 12px; text-anchor: middle; }
+  .note { fill: #8B98A5; font-size: 12px; }
+</style>
+</head>
+<body>
+<h1>ماشین حالت پرداخت</h1>
+<p class="sub">منبع: mp-app/backend/modules/payments/service.py و receipts.py</p>
+<svg viewBox="0 0 900 420" role="img" aria-labelledby="t d">
+  <title id="t">ماشین حالت پرداخت</title>
+  <desc id="d">پرداخت از pending شروع می‌شود و به paid، failed یا in_review می‌رود. از in_review با تأیید ادمین به paid و با رد رسید به failed می‌رسد. paid می‌تواند به refunded برود.</desc>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5C6B7A"/></marker>
+    <marker id="arrg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#00B86A"/></marker>
+  </defs>
+
+  <!-- pending -> in_review -->
+  <path class="edge" marker-end="url(#arr)" d="M200,186 L330,100"/>
+  <text class="edge-text" x="250" y="132" transform="rotate(-30 250 132)">ارسال رسید</text>
+
+  <!-- pending -> paid (focal path) -->
+  <path class="edge-focal" marker-end="url(#arrg)" d="M200,192 L620,192"/>
+  <text class="edge-text" x="410" y="184">تأیید درگاه</text>
+
+  <!-- in_review -> paid -->
+  <path class="edge" marker-end="url(#arr)" d="M490,100 L620,186"/>
+  <text class="edge-text" x="570" y="128" transform="rotate(30 570 128)">تأیید ادمین</text>
+
+  <!-- pending -> failed -->
+  <path class="edge" marker-end="url(#arr)" d="M200,224 L330,318"/>
+  <text class="edge-text" x="245" y="290" transform="rotate(35 245 290)">خطای پرداخت</text>
+
+  <!-- in_review -> failed -->
+  <path class="edge" marker-end="url(#arr)" d="M470,124 L470,300"/>
+  <text class="edge-text" x="478" y="250" text-anchor="start">رد رسید</text>
+
+  <!-- paid -> refunded -->
+  <path class="edge" marker-end="url(#arr)" d="M700,224 L700,300"/>
+  <text class="edge-text" x="712" y="266" text-anchor="start">بازپرداخت</text>
+
+  <!-- nodes -->
+  <rect class="node" x="40" y="160" width="160" height="64" rx="10"/>
+  <text class="label" x="120" y="190">pending</text>
+  <text class="small" x="120" y="210">در انتظار پرداخت</text>
+
+  <rect class="node" x="330" y="60" width="160" height="64" rx="10"/>
+  <text class="label" x="410" y="90">in_review</text>
+  <text class="small" x="410" y="110">رسید در انتظار بررسی</text>
+
+  <rect class="focal" x="620" y="160" width="160" height="64" rx="10"/>
+  <text class="label" x="700" y="190">paid</text>
+  <text class="small" x="700" y="210">پرداخت تأییدشده</text>
+
+  <rect class="end" x="330" y="300" width="160" height="64" rx="10"/>
+  <text class="label" x="410" y="330">failed</text>
+  <text class="small" x="410" y="350">پایانی</text>
+
+  <rect class="end" x="620" y="300" width="160" height="64" rx="10"/>
+  <text class="label" x="700" y="330">refunded</text>
+  <text class="small" x="700" y="350">پایانی</text>
+
+  <text class="note" x="40" y="410">خط توپُر سبز: مسیر موفق. نقطه‌چین: حالت پایانی.</text>
+</svg>
+</body>
+</html>
