@@ -16,6 +16,8 @@ from app.security.grants import require_grant
 from modules.auth.router import limiter
 from modules.payments import service
 from modules.payments.schemas import (
+    CouponCreate,
+    CouponOut,
     GatewayCallbackIn,
     LedgerReverseIn,
     PaymentCreate,
@@ -47,6 +49,35 @@ def create_payment(payload: PaymentCreate, db: DbSession, user: CurrentUser):
         user=user,
         plan_key=payload.plan_key,
         idempotency_key=payload.idempotency_key,
+        coupon_code=payload.coupon_code,
+    )
+
+
+@router.get(
+    "/coupons",
+    response_model=list[CouponOut],
+    summary="فهرست کدهای تخفیف (G2)",
+    dependencies=[Depends(require_grant("finance.write"))],
+)
+def list_coupons(db: DbSession):
+    return service.list_coupons(db)
+
+
+@router.post(
+    "/coupons",
+    response_model=CouponOut,
+    status_code=201,
+    summary="ساخت کد تخفیف درصدی یا مبلغ ثابت (G2)",
+    dependencies=[Depends(require_grant("finance.write"))],
+)
+def create_coupon(payload: CouponCreate, db: DbSession):
+    return service.create_coupon(
+        db,
+        code=payload.code,
+        kind=payload.kind,
+        value=payload.value,
+        expires_at=payload.expires_at,
+        max_uses=payload.max_uses,
     )
 
 

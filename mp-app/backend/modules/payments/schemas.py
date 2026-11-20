@@ -20,6 +20,8 @@ class PaymentCreate(BaseModel):
     plan_key: str | None = Field(None, max_length=40)
     # QF-05: ارسال دوبارهٔ درخواست با همان کلید، پرداخت دوم نمی‌سازد.
     idempotency_key: str | None = Field(None, min_length=8, max_length=64)
+    # G2: کد کوپن اختیاری؛ مبلغ تخفیف فقط روی سرور محاسبه می‌شود.
+    coupon_code: str | None = Field(None, min_length=3, max_length=32)
 
 
 class PaymentVerify(BaseModel):
@@ -81,6 +83,8 @@ class PaymentOut(BaseModel):
     gateway_authority: str = ""
     description: str
     paid_at: datetime | None
+    discount_rial: int = 0
+    coupon_id: int | None = None
 
     @field_validator("gateway_authority", mode="before")
     @classmethod
@@ -123,3 +127,24 @@ class WalletLedgerOut(BaseModel):
 class WalletBalanceOut(BaseModel):
     member_id: int
     balance_rial: int
+
+
+class CouponCreate(BaseModel):
+    code: str = Field(..., min_length=3, max_length=32, pattern=r"^[A-Za-z0-9_-]+$")
+    kind: str = Field(..., pattern="^(percent|fixed)$")
+    value: int = Field(..., ge=1, le=10_000_000_000)
+    expires_at: datetime | None = None
+    max_uses: int | None = Field(None, ge=1, le=1_000_000)
+
+
+class CouponOut(BaseModel):
+    id: int
+    code: str
+    kind: str
+    value: int
+    expires_at: datetime | None
+    max_uses: int | None
+    used_count: int
+    is_active: bool
+
+    model_config = {"from_attributes": True}

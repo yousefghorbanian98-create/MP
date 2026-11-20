@@ -10,7 +10,7 @@ import {
   type Receipt,
 } from "../lib/api";
 import { fa } from "../lib/useApi";
-import { Select } from "antd";
+import { Input, Select } from "antd";
 
 /**
  * Q6 — درگاه پرداخت (پذیرش).
@@ -34,6 +34,7 @@ export function PaymentPanel() {
   const [amount, setAmount] = useState("500000");
   // فاز ۳: فقط پرداخت حضوری؛ هیچ گزینهٔ درگاه اینترنتی نمی‌ماند.
   const [method, setMethod] = useState<"cash" | "card">("cash");
+  const [coupon, setCoupon] = useState("");
   const [tx, setTx] = useState<PaymentRow | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [receipt, setReceipt] = useState<Receipt | null>(null);
@@ -68,7 +69,13 @@ export function PaymentPanel() {
       const amt = Number(amount);
       if (!Number.isInteger(mid) || mid <= 0) throw new Error("شناسهٔ عضو باید عدد صحیح مثبت باشد");
       if (!Number.isInteger(amt) || amt < 1000) throw new Error("مبلغ حداقل ۱۰۰۰ ریال است");
-      const created = await createPayment({ member_id: mid, amount_rial: amt, method });
+      const code = coupon.trim();
+      const created = await createPayment({
+        member_id: mid,
+        amount_rial: amt,
+        method,
+        ...(code ? { coupon_code: code } : {}),
+      });
       setTx(created);
     });
 
@@ -145,6 +152,14 @@ export function PaymentPanel() {
             onChange={(e) => setAmount(e.target.value)}
             inputMode="numeric"
             className="focus-ring mt-1 block w-36 rounded-lg bg-surface/70 px-3 py-2 text-sm"
+          />
+        </label>
+        <label className="text-ink-dim">
+          کد تخفیف (اختیاری)
+          <Input
+            value={coupon}
+            onChange={(e) => setCoupon(e.target.value)}
+            className="mt-1 block w-36"
           />
         </label>
         <div className="text-ink-dim">

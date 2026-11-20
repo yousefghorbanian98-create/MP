@@ -34,7 +34,7 @@ from db.models.membership import Member, Membership
 from db.models.notification import Notification
 from db.models.nutrition import BodyWeightLog, FoodLog, MealItem, NutritionPlan
 from db.models.outbox import InboxMessage, OutboxDeadLetter, OutboxEvent
-from db.models.payments import LedgerEntry, Payment, PaymentReceipt, WalletTransaction
+from db.models.payments import Coupon, LedgerEntry, Payment, PaymentReceipt, WalletTransaction
 from db.models.programs import ProgramExercise, ProgramWeek, SetFeedback, WorkoutProgram
 from db.models.segment import LimbMeasurement
 from db.models.shop import (
@@ -92,6 +92,7 @@ __all__ = [
     "NutritionPlan",
     "Offer",
     "OtpCode",
+    "Coupon",
     "Payment",
     "PaymentReceipt",
     "PhoneChangeChallenge",

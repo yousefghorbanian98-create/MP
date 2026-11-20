@@ -692,10 +692,44 @@ export interface PaymentRow {
 }
 
 export function createPayment(
-  body: { member_id: number; amount_rial: number; method: string; description?: string },
+  body: {
+    member_id: number;
+    amount_rial: number;
+    method: string;
+    description?: string;
+    coupon_code?: string;
+  },
   token = getToken(),
 ) {
   return postJson<PaymentRow>("/payments", body, token);
+}
+
+/** G2 — کد تخفیف: درصدی یا مبلغ ثابت، با انقضا و سقف استفاده. */
+export interface CouponRow {
+  id: number;
+  code: string;
+  kind: "percent" | "fixed";
+  value: number;
+  expires_at: string | null;
+  max_uses: number | null;
+  used_count: number;
+  is_active: boolean;
+}
+
+export interface CouponInput {
+  code: string;
+  kind: "percent" | "fixed";
+  value: number;
+  expires_at?: string | null;
+  max_uses?: number | null;
+}
+
+export function listCoupons(token = getToken()) {
+  return getJson<CouponRow[]>("/payments/coupons", token);
+}
+
+export function createCoupon(input: CouponInput, token = getToken()) {
+  return postJson<CouponRow>("/payments/coupons", input, token);
 }
 
 export interface Receipt {

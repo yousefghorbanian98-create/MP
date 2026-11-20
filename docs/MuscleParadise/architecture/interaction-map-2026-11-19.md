@@ -16,10 +16,10 @@ python3 scripts/interaction_map.py --check
 
 | سنجه | مقدار |
 |---|---|
-| مسیر قرارداد API | 161 |
+| مسیر قرارداد API | 163 |
 | صفحهٔ استودیو | 13 |
 | ویژگی کلاینت | 18 |
-| endpoint یکتای استفاده‌شده | 93 |
+| endpoint یکتای استفاده‌شده | 95 |
 | سطح بی‌تست | 7 |
 
 ## گپ‌های قرارداد
@@ -113,7 +113,7 @@ python3 scripts/interaction_map.py --check
 
 ### Finance
 
-دکمه 10 · ورودی 2 · عدد 1 · انتخاب 1 · دیالوگ 2
+دکمه 10 · ورودی 6 · عدد 1 · انتخاب 2 · دیالوگ 2
 
 | متد | مسیر | guard | نقش‌ها | در قرارداد |
 |---|---|---|---|---|
@@ -126,6 +126,8 @@ python3 scripts/interaction_map.py --check
 | POST | `/api/v1/payments/*/refund` | permission | reception, manager, admin, super_admin | بله |
 | POST | `/api/v1/payments/*/reject` | grant:finance.write, permission | reception, manager, admin, super_admin | بله |
 | POST | `/api/v1/payments/*/verify` | grant:finance.write, permission | reception, manager, admin, super_admin | بله |
+| GET | `/api/v1/payments/coupons` | grant:finance.write, permission | member, reception, manager, admin, super_admin | بله |
+| POST | `/api/v1/payments/coupons` | grant:finance.write, permission | reception, manager, admin, super_admin | بله |
 | POST | `/api/v1/payments/finance/commission` | permission | manager, admin, super_admin | بله |
 | GET | `/api/v1/payments/finance/summary` | permission | manager, admin, super_admin | بله |
 | GET | `/api/v1/payments/ledger/*` | permission | member, reception, manager, admin, super_admin | بله |
@@ -276,12 +278,12 @@ python3 scripts/interaction_map.py --check
 
 | نقش | تعداد endpoint | نمونهٔ سطح‌ها |
 |---|---|---|
-| admin | 100 | Analytics، Assessment، Chat، CheckIn، Dashboard، Expenses |
+| admin | 102 | Analytics، Assessment، Chat، CheckIn، Dashboard، Expenses |
 | coach | 65 | Assessment، Chat، CheckIn، Dashboard، Members، Nutrition |
-| manager | 100 | Analytics، Assessment، Chat، CheckIn، Dashboard، Expenses |
-| member | 68 | Assessment، Chat، Finance، Members، Nutrition، Programs |
-| reception | 40 | Assessment، CheckIn، Dashboard، Finance، Members، Programs |
-| super_admin | 104 | Analytics، Assessment، Chat، CheckIn، Dashboard، Expenses |
+| manager | 102 | Analytics، Assessment، Chat، CheckIn، Dashboard، Expenses |
+| member | 69 | Assessment، Chat، Finance، Members، Nutrition، Programs |
+| reception | 42 | Assessment، CheckIn، Dashboard، Finance، Members، Programs |
+| super_admin | 106 | Analytics، Assessment، Chat، CheckIn، Dashboard، Expenses |
 
 ## محدودیت صریح
 

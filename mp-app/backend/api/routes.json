@@ -90,6 +90,7 @@
   "/api/v1/nutrition/plans/{plan_id}/approve",
   "/api/v1/nutrition/weight-logs",
   "/api/v1/payments",
+  "/api/v1/payments/coupons",
   "/api/v1/payments/finance/commission",
   "/api/v1/payments/finance/export.csv",
   "/api/v1/payments/finance/summary",
@@ -1892,6 +1893,43 @@
    ],
    "roles": [
     "member",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ]
+  },
+  {
+   "method": "GET",
+   "path": "/api/v1/payments/coupons",
+   "operationId": "list_coupons_api_v1_payments_coupons_get",
+   "tags": [
+    "payments"
+   ],
+   "guards": [
+    "grant:finance.write",
+    "permission"
+   ],
+   "roles": [
+    "member",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ]
+  },
+  {
+   "method": "POST",
+   "path": "/api/v1/payments/coupons",
+   "operationId": "create_coupon_api_v1_payments_coupons_post",
+   "tags": [
+    "payments"
+   ],
+   "guards": [
+    "grant:finance.write",
+    "permission"
+   ],
+   "roles": [
     "reception",
     "manager",
     "admin",
