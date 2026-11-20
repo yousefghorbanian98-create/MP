@@ -5,6 +5,7 @@ import { Sidebar } from "./components/Sidebar";
 import { TopBar } from "./components/TopBar";
 import { CheckIn } from "./pages/CheckIn";
 import { Finance } from "./pages/Finance";
+import { Expenses } from "./pages/Expenses";
 import { Analytics } from "./pages/Analytics";
 import { Dashboard } from "./pages/Dashboard";
 import { Members } from "./pages/Members";
@@ -28,6 +29,7 @@ const pages = {
   chat: Chat,
   checkin: CheckIn,
   finance: Finance,
+  expenses: Expenses,
   analytics: Analytics,
   settings: Settings,
   shop: Shop,

@@ -13,6 +13,7 @@ from modules.auth.router import router as auth_router
 from modules.axis_assessment.router import router as axis_assessment_router
 from modules.classes.router import router as classes_router
 from modules.exercises.router import router as library_router
+from modules.expenses.router import router as expenses_router
 from modules.face_id.router import router as face_router
 from modules.membership.router import router as members_router
 from modules.notification.chat_router import router as chat_router
@@ -32,6 +33,7 @@ api_router.include_router(classes_router)
 api_router.include_router(library_router)
 api_router.include_router(members_router)
 api_router.include_router(payments_router)
+api_router.include_router(expenses_router)
 # بازگشت مرورگر از بانک — عمداً بیرونِ require_permission (توضیح در router.py)
 api_router.include_router(payments_return_router)
 api_router.include_router(assessment_router)

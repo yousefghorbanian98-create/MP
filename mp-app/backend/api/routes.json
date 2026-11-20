@@ -44,6 +44,8 @@
   "/api/v1/classes",
   "/api/v1/classes/book",
   "/api/v1/classes/cancel",
+  "/api/v1/expenses",
+  "/api/v1/expenses/{expense_id}",
   "/api/v1/face/checkin",
   "/api/v1/face/checkin-qr",
   "/api/v1/face/checkins/{checkin_id}/exit",
@@ -85,6 +87,8 @@
   "/api/v1/payments/finance/export.csv",
   "/api/v1/payments/finance/summary",
   "/api/v1/payments/invoice/{member_id}",
+  "/api/v1/payments/ledger/{entry_id}/reverse",
+  "/api/v1/payments/ledger/{member_id}",
   "/api/v1/payments/wallet/charge",
   "/api/v1/payments/wallet/pay",
   "/api/v1/payments/wallet/{member_id}",
@@ -951,6 +955,74 @@
    ]
   },
   {
+   "method": "GET",
+   "path": "/api/v1/expenses",
+   "operationId": "list_expenses_api_v1_expenses_get",
+   "tags": [
+    "expenses"
+   ],
+   "guards": [
+    "grant:finance.read",
+    "permission"
+   ],
+   "roles": [
+    "manager",
+    "admin",
+    "super_admin"
+   ]
+  },
+  {
+   "method": "POST",
+   "path": "/api/v1/expenses",
+   "operationId": "create_expense_api_v1_expenses_post",
+   "tags": [
+    "expenses"
+   ],
+   "guards": [
+    "grant:finance.write",
+    "permission"
+   ],
+   "roles": [
+    "manager",
+    "admin",
+    "super_admin"
+   ]
+  },
+  {
+   "method": "DELETE",
+   "path": "/api/v1/expenses/{expense_id}",
+   "operationId": "delete_expense_api_v1_expenses__expense_id__delete",
+   "tags": [
+    "expenses"
+   ],
+   "guards": [
+    "grant:finance.write",
+    "permission"
+   ],
+   "roles": [
+    "manager",
+    "admin",
+    "super_admin"
+   ]
+  },
+  {
+   "method": "PATCH",
+   "path": "/api/v1/expenses/{expense_id}",
+   "operationId": "update_expense_api_v1_expenses__expense_id__patch",
+   "tags": [
+    "expenses"
+   ],
+   "guards": [
+    "grant:finance.write",
+    "permission"
+   ],
+   "roles": [
+    "manager",
+    "admin",
+    "super_admin"
+   ]
+  },
+  {
    "method": "POST",
    "path": "/api/v1/face/checkin",
    "operationId": "check_in_api_v1_face_checkin_post",
@@ -1737,6 +1809,42 @@
    "method": "GET",
    "path": "/api/v1/payments/invoice/{member_id}",
    "operationId": "invoice_api_v1_payments_invoice__member_id__get",
+   "tags": [
+    "payments"
+   ],
+   "guards": [
+    "permission"
+   ],
+   "roles": [
+    "member",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ]
+  },
+  {
+   "method": "POST",
+   "path": "/api/v1/payments/ledger/{entry_id}/reverse",
+   "operationId": "ledger_reverse_api_v1_payments_ledger__entry_id__reverse_post",
+   "tags": [
+    "payments"
+   ],
+   "guards": [
+    "grant:finance.write",
+    "permission"
+   ],
+   "roles": [
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ]
+  },
+  {
+   "method": "GET",
+   "path": "/api/v1/payments/ledger/{member_id}",
+   "operationId": "ledger_list_api_v1_payments_ledger__member_id__get",
    "tags": [
     "payments"
    ],

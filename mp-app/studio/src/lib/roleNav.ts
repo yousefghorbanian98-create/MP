@@ -51,6 +51,11 @@ export const PAGE_RULES: Record<string, NavRule> = {
     roles: ["super_admin", "admin", "manager"],
     why: "درآمد باشگاه و CSV همهٔ پرداخت‌ها — reception/coach/member رد می‌شوند (rbac DENIES)",
   },
+  // QF-06: هزینه‌های باشگاه — دادهٔ مالی خالص؛ همان قاعدهٔ «مالی» برای reception/coach/member.
+  expenses: {
+    roles: ["super_admin", "admin", "manager"],
+    why: "هزینه‌ها سود/زیان باشگاه را می‌سازند؛ reception/coach/member رد می‌شوند (finance.read سرور)",
+  },
   analytics: {
     roles: ["super_admin", "admin", "manager", "coach"],
     why: "تحلیل عملکرد؛ پذیرش داده‌ای برای تحلیل ندارد",

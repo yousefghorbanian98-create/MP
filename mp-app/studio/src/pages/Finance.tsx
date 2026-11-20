@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { PaymentPanel } from "../components/PaymentPanel";
+import { LedgerPanel } from "../components/LedgerPanel";
 import { ReceiptQueue } from "../components/ReceiptQueue";
 import { useEffect, useState } from "react";
 import {
@@ -128,6 +129,8 @@ export function Finance() {
       <PaymentPanel />
 
       <ReceiptQueue />
+
+      <LedgerPanel />
 
       <div className="glass-card space-y-4 p-5">
         <h2 className="text-sm font-bold">کمیسیون مربی</h2>

@@ -241,3 +241,11 @@
 - QF-21 inbox: `modules/outbox/inbox.py` + `inbox_messages` (migration `f4a5b6c7d8e9`)؛ تحویل تکراری ← `duplicate`، خطای handler ← rollback پیام، رقابت ← کلید یکتا. relay نمونه از inbox رد می‌شود.
 - شاهد: بک‌اند **۱۰۲۷ قبول / ۲ رد‌شده**، `ruff` پاک، قرارداد بدون تغییر مسیر (**۱۲۹ مسیر / ۱۴۷ عملیات**).
 - `BLOCKED`: push/SMS واقعی، PostgreSQL در استقرار، امضای release، دستگاه اندروید، Flutter toolchain.
+
+## افزودهٔ آخر: فاز ۶ لوپ ۲–۳ (دفتر پول QF-05، هزینهٔ خارجی QF-06)
+
+- **دفتر پول (`QF-05`):** `ledger_entries` (migration `a5b6c7d8e9f0`) با مبلغ **علامت‌دار**، `kind` در charge/pay/refund/reversal، کلید idempotency با ایندکس یکتای جزئی، `reverses_entry_id`/`reversed_by_entry_id`؛ `wallet_charge`/`wallet_pay` در همان commit ردیف می‌نویسند. `GET /payments/ledger/{member_id}` (با `ensure_member_scope`) و `POST /payments/ledger/{entry_id}/reverse` (دلیل ۳–۲۰۰ نویسه، `finance.write`، audit `ledger_reversal`، ۴۰۰ برای معکوس تکراری). `reconcile()` مجموع دفتر را با موجودی کیف‌پول می‌سنجد.
+- **هزینهٔ خارجی (`QF-06`):** `expenses` + `expense_revisions` (migration `b6c7d8e9f0a1`)؛ هشت دستهٔ ثابت، مبلغ ≥ ۱۰۰۰ ریال، حذف **نرم**، هر اصلاح/حذف دلیل اجباری دارد و قبل/بعد را در تاریخچه نگه می‌دارد. `GET /expenses?from=&to=` جمع بازه و تفکیک دسته را برمی‌گرداند؛ نوشتن `finance.write` و خواندن `finance.read` **جدا** هستند.
+- **استودیو:** `LedgerPanel` در صفحهٔ مالی (موجودی/تطبیق/معکوس‌سازی با دلیل؛ بدون درخواست در mount) و صفحهٔ تازهٔ «هزینه‌ها» با کنترل‌های antd و تقویم جلالی + مدال دلیل.
+- **شاهد:** بک‌اند **۱۰۴۶ قبول / ۲ رد‌شده**، استودیو **۲۶۲ قبول / ۹ رد‌شده**، `ruff` و `tsc -b`/build پاک، قرارداد بازتولید‌شده **۱۳۳ مسیر / ۱۵۳ عملیات**، نقشهٔ تعامل ۳۱ سطح / رانش صفر، migration drift صفر. تست‌ها: `test_phase6b_ledger.py` (۹)، `test_phase6c_expenses.py` (۹)، `tests/ledgerPanel.test.tsx` (۶)، `tests/expensesPage.test.tsx` (۸).
+- **باقی‌مانده:** فایل فیش خصوصی هزینه و گزارش سود/زیان دوره‌ای (QF-10)؛ انتقال واقعی پول بانکی همچنان `BLOCKED`.

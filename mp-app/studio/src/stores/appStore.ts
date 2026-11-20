@@ -16,6 +16,7 @@ export type PageId =
   | "chat"
   | "checkin"
   | "finance"
+  | "expenses"
   | "analytics"
   | "settings"
   | "shop";
