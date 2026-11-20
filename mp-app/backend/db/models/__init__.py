@@ -29,7 +29,7 @@ from db.models.content import (
     ProgressionStep,
 )
 from db.models.face_id import BiometricConsent, CheckIn, FaceTemplate
-from db.models.finance import Expense, ExpenseRevision, ReportRun
+from db.models.finance import Expense, ExpenseReceipt, ExpenseRevision, ReportRun
 from db.models.membership import Member, Membership
 from db.models.notification import Notification
 from db.models.nutrition import BodyWeightLog, FoodLog, MealItem, NutritionPlan
@@ -85,6 +85,7 @@ __all__ = [
     "ReportRun",
     "WorkerHeartbeat",
     "ExpenseRevision",
+    "ExpenseReceipt",
     "LedgerEntry",
     "OutboxDeadLetter",
     "OutboxEvent",

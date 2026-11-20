@@ -339,6 +339,34 @@ export function deleteExpense(id: number, reason: string, token = getToken()) {
   return sendJson<ExpenseRow>("DELETE", `/expenses/${id}`, { reason }, token);
 }
 
+/** آپلود فیش خصوصی هزینه (QF-06) — نیاز به `finance.write`؛ یک فایل برای هر هزینه. */
+export async function uploadExpenseReceipt(
+  expenseId: number,
+  file: File,
+  token = getToken(),
+): Promise<{ expense_id: number; mime: string; size_bytes: number }> {
+  const form = new FormData();
+  form.append("file", file);
+  const resp = await sessionFetch(`${API_BASE}/expenses/${expenseId}/receipt`, {
+    method: "POST",
+    headers: authHeaders(token),
+    body: form,
+  });
+  if (resp.status === 401 || resp.status === 403) await throwAuthOrForbidden(resp);
+  if (!resp.ok) throw new ApiError("آپلود فیش انجام نشد — نوع یا حجم فایل را بررسی کنید", resp.status);
+  return (await resp.json()) as { expense_id: number; mime: string; size_bytes: number };
+}
+
+/** خواندن فیش خصوصی هزینه (QF-06) — نیاز به `finance.read`؛ پاسخ فایل خام است. */
+export async function fetchExpenseReceiptBlob(expenseId: number, token = getToken()): Promise<Blob> {
+  const resp = await sessionFetch(`${API_BASE}/expenses/${expenseId}/receipt`, {
+    headers: authHeaders(token),
+  });
+  if (resp.status === 401 || resp.status === 403) await throwAuthOrForbidden(resp);
+  if (!resp.ok) throw new ApiError("این هزینه فیش ندارد یا فایل در دسترس نیست", resp.status);
+  return resp.blob();
+}
+
 export interface CommissionResult {
   coach_id: number;
   coach_name: string;

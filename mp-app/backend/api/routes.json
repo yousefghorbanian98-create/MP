@@ -48,6 +48,7 @@
   "/api/v1/classes/cancel",
   "/api/v1/expenses",
   "/api/v1/expenses/{expense_id}",
+  "/api/v1/expenses/{expense_id}/receipt",
   "/api/v1/face/checkin",
   "/api/v1/face/checkin-qr",
   "/api/v1/face/checkins/{checkin_id}/exit",
@@ -1047,6 +1048,40 @@
    "method": "PATCH",
    "path": "/api/v1/expenses/{expense_id}",
    "operationId": "update_expense_api_v1_expenses__expense_id__patch",
+   "tags": [
+    "expenses"
+   ],
+   "guards": [
+    "grant:finance.write",
+    "permission"
+   ],
+   "roles": [
+    "manager",
+    "admin",
+    "super_admin"
+   ]
+  },
+  {
+   "method": "GET",
+   "path": "/api/v1/expenses/{expense_id}/receipt",
+   "operationId": "read_expense_receipt_api_v1_expenses__expense_id__receipt_get",
+   "tags": [
+    "expenses"
+   ],
+   "guards": [
+    "grant:finance.read",
+    "permission"
+   ],
+   "roles": [
+    "manager",
+    "admin",
+    "super_admin"
+   ]
+  },
+  {
+   "method": "POST",
+   "path": "/api/v1/expenses/{expense_id}/receipt",
+   "operationId": "upload_expense_receipt_api_v1_expenses__expense_id__receipt_post",
    "tags": [
     "expenses"
    ],

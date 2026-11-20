@@ -6,11 +6,14 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, Query
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, File, Query, UploadFile
+from fastapi.responses import FileResponse
 
 from app.deps import CurrentUser, DbSession, require_permission
 from app.security.grants import require_grant
-from modules.expenses import service
+from modules.expenses import receipts, service
 from modules.expenses.schemas import (
     ExpenseCreate,
     ExpenseDelete,
@@ -77,3 +80,35 @@ def update_expense(expense_id: int, payload: ExpenseUpdate, db: DbSession, user:
 )
 def delete_expense(expense_id: int, payload: ExpenseDelete, db: DbSession, user: CurrentUser):
     return service.serialize(service.soft_delete(db, expense_id, reason=payload.reason, actor=user))
+
+
+@router.post(
+    "/{expense_id}/receipt",
+    status_code=201,
+    summary="آپلود فیش خصوصی هزینه (QF-06) — یک فایل برای هر هزینه",
+    dependencies=[Depends(require_grant("finance.write"))],
+)
+async def upload_expense_receipt(
+    expense_id: int,
+    db: DbSession,
+    user: CurrentUser,
+    file: Annotated[UploadFile, File(description="تصویر فیش (JPEG/PNG/WebP)")],
+):
+    data = await file.read()
+    return receipts.upload(
+        db,
+        actor=user,
+        expense_id=expense_id,
+        data=data,
+        declared_type=(file.content_type or "").split(";")[0].strip(),
+    )
+
+
+@router.get(
+    "/{expense_id}/receipt",
+    summary="خواندن فیش خصوصی هزینه (QF-06) — فقط با finance.read",
+    dependencies=[Depends(require_grant("finance.read"))],
+)
+def read_expense_receipt(expense_id: int, db: DbSession, user: CurrentUser):
+    path, mime = receipts.read(db, expense_id)
+    return FileResponse(path, media_type=mime, headers={"Cache-Control": "no-store"})

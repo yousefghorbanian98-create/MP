@@ -1,14 +1,16 @@
-import { Alert, Button, Empty, Input, InputNumber, Modal, Select, Spin, Table, Tag } from "antd";
+import { Alert, Button, Empty, Input, InputNumber, Modal, Select, Spin, Table, Tag, Upload } from "antd";
 import { useCallback, useEffect, useState } from "react";
 import {
   EXPENSE_CATEGORIES,
   createExpense,
   deleteExpense,
+  fetchExpenseReceiptBlob,
   fetchExpenses,
   updateExpense,
   type ExpenseCategory,
   type ExpensePeriod,
   type ExpenseRow,
+  uploadExpenseReceipt,
 } from "../lib/api";
 import { JalaliDateField, isoFromLocal } from "../components/ui/JalaliDateField";
 import { canSeePage, parseRole } from "../lib/roleNav";
@@ -80,6 +82,28 @@ export function Expenses() {
     // یک‌بار در باز شدن صفحه؛ تغییر بازه با دکمهٔ «نمایش دوره» انجام می‌شود.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  async function uploadReceipt(id: number, file: File) {
+    setError("");
+    try {
+      await uploadExpenseReceipt(id, file);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "خطای ناشناخته");
+    }
+  }
+
+  async function openReceipt(id: number) {
+    setError("");
+    try {
+      const blob = await fetchExpenseReceiptBlob(id);
+      const url = URL.createObjectURL(blob);
+      window.open(url, "_blank", "noopener");
+      // فایل خصوصی است؛ آدرس موقت پس از باز شدن پاک می‌شود.
+      setTimeout(() => URL.revokeObjectURL(url), 60_000);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "خطای ناشناخته");
+    }
+  }
 
   async function submit() {
     if (amount === null || !Number.isFinite(amount) || amount < 1000) {
@@ -296,6 +320,19 @@ export function Expenses() {
                       }}
                     >
                       اصلاح
+                    </Button>
+                    <Upload
+                      accept="image/jpeg,image/png,image/webp"
+                      showUploadList={false}
+                      beforeUpload={(file) => {
+                        void uploadReceipt(row.id, file);
+                        return false;
+                      }}
+                    >
+                      <Button size="small">فیش</Button>
+                    </Upload>
+                    <Button size="small" onClick={() => void openReceipt(row.id)}>
+                      مشاهدهٔ فیش
                     </Button>
                     <Button size="small" danger onClick={() => setRemoving(row)}>
                       حذف
