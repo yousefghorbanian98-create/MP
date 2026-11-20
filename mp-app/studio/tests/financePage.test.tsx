@@ -12,8 +12,39 @@ import { Finance } from "../src/pages/Finance";
 
 type Call = { url: string; method: string; auth: string | null; body: unknown };
 
+/**
+ * صفحهٔ مالی از QF-10 هم گزارش دوره‌ای را هنگام mount می‌گیرد. این مسیر در هر
+ * stub باید پاسخ داشته باشد؛ وگرنه fetch ساختگی خطا می‌دهد و شمارش درخواست‌ها
+ * به ترتیب زمان‌بندی (که در CI کندتر است) وابسته می‌شود.
+ */
+const periodRoute = {
+  match: /GET .*\/finance\/reports\/period/,
+  body: {
+    kind: "month",
+    label: "1405/08",
+    timezone: "Asia/Tehran",
+    start: "2026-10-23",
+    end_exclusive: "2026-11-22",
+    start_jalali: "1405/08/01",
+    received_rial: 0,
+    received_count: 0,
+    refunds_rial: 0,
+    refunds_count: 0,
+    net_income_rial: 0,
+    expenses_rial: 0,
+    expenses_count: 0,
+    profit_rial: 0,
+    undated_refunds_count: 0,
+    complete: true,
+  },
+};
+
+const summaryCalls = (calls: Call[]) =>
+  calls.filter((c) => /\/payments\/finance\/summary/.test(c.url)).length;
+
 function stub(routes: { match: RegExp; body: unknown; status?: number }[]) {
   const calls: Call[] = [];
+  const all = [...routes, periodRoute];
   vi.stubGlobal(
     "fetch",
     vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
@@ -26,7 +57,7 @@ function stub(routes: { match: RegExp; body: unknown; status?: number }[]) {
         auth: headers.Authorization ?? headers.authorization ?? null,
         body: init?.body ? JSON.parse(String(init.body)) : null,
       });
-      const hit = routes.find((r) => r.match.test(`${method} ${url}`));
+      const hit = all.find((r) => r.match.test(`${method} ${url}`));
       if (!hit) throw new Error(`unexpected ${method} ${url}`);
       if (hit.body instanceof Blob) return new Response(hit.body, { status: hit.status ?? 200 });
       return new Response(JSON.stringify(hit.body), { status: hit.status ?? 200 });
@@ -72,12 +103,13 @@ describe("Finance (M52-c1)", () => {
   it("reloads the summary when the button is pressed", async () => {
     const calls = stub([{ match: /GET .*\/payments\/finance\/summary/, body: summary }]);
     render(<Finance />);
-    await waitFor(() => expect(calls.length).toBeGreaterThan(0));
+    await waitFor(() => expect(summaryCalls(calls)).toBeGreaterThan(0));
 
-    const before = calls.length;
+    const before = summaryCalls(calls);
     fireEvent.click(screen.getByRole("button", { name: "خلاصهٔ مالی" }));
-    await waitFor(() => expect(calls.length).toBe(before + 1));
-    expect(calls.at(-1)?.auth).toBe("Bearer tok-123");
+    await waitFor(() => expect(summaryCalls(calls)).toBe(before + 1));
+    const last = calls.filter((c) => /\/payments\/finance\/summary/.test(c.url)).at(-1);
+    expect(last?.auth).toBe("Bearer tok-123");
   });
 
   it("computes commission with the token and shows the result", async () => {
@@ -153,8 +185,8 @@ describe("Finance (M52-c1)", () => {
     ]);
     render(<Finance />);
 
-    await waitFor(() => expect(calls.length).toBeGreaterThan(0));
-    expect(calls[0].auth).toBeNull();
+    await waitFor(() => expect(summaryCalls(calls)).toBeGreaterThan(0));
+    expect(calls.find((c) => /summary/.test(c.url))?.auth).toBeNull();
     await waitFor(() => expect(screen.getByText(/با کد یک‌بارمصرف دوباره وارد شوید/)).toBeTruthy());
   });
 });

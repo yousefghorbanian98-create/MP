@@ -372,9 +372,40 @@
             "admin",
             "super_admin"
           ]
+        },
+        {
+          "function": "fetchExpenseReceiptBlob",
+          "method": "GET",
+          "path": "/api/v1/expenses/*/receipt",
+          "in_contract": true,
+          "guards": [
+            "grant:finance.read",
+            "permission"
+          ],
+          "roles": [
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "uploadExpenseReceipt",
+          "method": "POST",
+          "path": "/api/v1/expenses/*/receipt",
+          "in_contract": true,
+          "guards": [
+            "grant:finance.write",
+            "permission"
+          ],
+          "roles": [
+            "manager",
+            "admin",
+            "super_admin"
+          ]
         }
       ],
       "tests": [
+        "mp-app/studio/tests/expenseReceipt.test.tsx",
         "mp-app/studio/tests/expensesPage.test.tsx"
       ]
     },
