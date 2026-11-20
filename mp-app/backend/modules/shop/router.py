@@ -71,12 +71,13 @@ class CartUpdate(BaseModel):
 
 
 class CheckoutIn(BaseModel):
-    method: str = Field("wallet", pattern="^(wallet|zarinpal|card|cash)$")
+    method: str = Field("wallet", pattern="^(wallet|card|cash|card_to_card)$")
     note: str = Field("", max_length=200)
 
 
 class GatewayIn(BaseModel):
-    kind: str = Field(..., pattern="^(zarinpal|idpay|card_to_card|cash)$")
+    # درگاه اینترنتی حذف شده؛ فقط کارت‌به‌کارت و نقدی.
+    kind: str = Field(..., pattern="^(card_to_card|cash)$")
     title: str = Field(..., min_length=2, max_length=80)
     is_enabled: bool = False
     card_number: str = Field("", max_length=30)

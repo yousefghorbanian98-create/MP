@@ -75,7 +75,7 @@ def member_id(client):
 def _payment(client, h, mid, amount=250_000):
     r = client.post(
         "/api/v1/payments",
-        json={"member_id": mid, "amount_rial": amount, "method": "zarinpal"},
+        json={"member_id": mid, "amount_rial": amount, "method": "card_to_card"},
         headers=h,
     )
     assert r.status_code == 200, r.text
@@ -150,28 +150,21 @@ def test_callback_before_start_is_rejected(client, reception, member_id):
     assert r.json()["error"]["code"] == "not_started"
 
 
-def test_zarinpal_live_and_sandbox_redirect_bases_match_the_adapter(monkeypatch):
-    from modules.payments.gateway import ZarinpalAdapter
+def test_online_gateway_is_gone_and_manual_mode_refuses(monkeypatch):
+    """فاز ۳: آداپتر درگاه اینترنتی حذف شد و حالت پیش‌فرض آن را رد می‌کند.
 
-    class FakeResponse:
-        def json(self):
-            return {"data": {"authority": "AUTHORITY-1"}}
-
-    monkeypatch.setattr("httpx.post", lambda *args, **kwargs: FakeResponse())
-    live = ZarinpalAdapter("merchant", sandbox=False).start(1000, "test", "https://cb.test")
-    sandbox = ZarinpalAdapter("merchant", sandbox=True).start(1000, "test", "https://cb.test")
-    assert live.redirect_url == "https://www.zarinpal.com/pg/StartPay/AUTHORITY-1"
-    assert sandbox.redirect_url == "https://sandbox.zarinpal.com/pg/StartPay/AUTHORITY-1"
-
-
-def test_gateway_configuration_never_falls_back_to_mock(monkeypatch):
+    جای تست قبلی که انتظار داشت آدرس زرین‌پال ساخته شود، حالا انتظار داریم
+    آن کلاس وجود نداشته باشد و مسیر بازگشتِ خاموش نداشته باشیم.
+    """
+    import modules.payments.gateway as gateway_module
     from modules.payments.gateway import PaymentGatewayError, get_gateway
 
-    monkeypatch.setattr(settings, "payment_gateway", "zarinpal")
-    monkeypatch.setattr(settings, "zarinpal_merchant_id", "")
+    assert not hasattr(gateway_module, "ZarinpalAdapter")
+
+    monkeypatch.setattr(settings, "payment_gateway", "manual")
     with pytest.raises(PaymentGatewayError) as exc:
         get_gateway()
-    assert exc.value.code == "gateway_not_configured"
+    assert exc.value.code == "online_gateway_removed"
 
     monkeypatch.setattr(settings, "payment_gateway", "unsupported")
     with pytest.raises(PaymentGatewayError) as exc:
@@ -191,7 +184,7 @@ def test_nonempty_gateway_authority_is_unique_but_legacy_nulls_are_allowed(clien
                 Payment(
                     member_id=member_id,
                     amount_rial=1000,
-                    method="zarinpal",
+                    method="card_to_card",
                     gateway_authority="AUTHORITY-UNIQUE-1",
                     branch_id=1,
                 ),
@@ -216,7 +209,7 @@ def test_nonempty_gateway_authority_is_unique_but_legacy_nulls_are_allowed(clien
             Payment(
                 member_id=member_id,
                 amount_rial=1000,
-                method="zarinpal",
+                method="card_to_card",
                 gateway_authority="AUTHORITY-UNIQUE-1",
                 branch_id=1,
             )
@@ -261,7 +254,7 @@ def test_member_can_start_own_payment(client, member_id):
     h = {"Authorization": f"Bearer {tok}"}
     r = client.post(
         "/api/v1/payments",
-        json={"member_id": member_id, "amount_rial": 50_000, "method": "zarinpal"},
+        json={"member_id": member_id, "amount_rial": 50_000, "method": "card_to_card"},
         headers=h,
     )
     assert r.status_code == 200, r.text
@@ -297,7 +290,7 @@ def test_member_cannot_create_payment_for_another_member(client, member_id):
     h = {"Authorization": f"Bearer {tok}"}
     r = client.post(
         "/api/v1/payments",
-        json={"member_id": victim_id, "amount_rial": 10_000, "method": "zarinpal"},
+        json={"member_id": victim_id, "amount_rial": 10_000, "method": "card_to_card"},
         headers=h,
     )
     assert r.status_code in (403, 404), r.text
@@ -345,7 +338,7 @@ def test_manual_verify_cannot_pay_a_gateway_transaction(client, reception, membe
     h, _ = reception
     r0 = client.post(
         "/api/v1/payments",
-        json={"member_id": member_id, "amount_rial": 900_000, "method": "zarinpal"},
+        json={"member_id": member_id, "amount_rial": 900_000, "method": "card_to_card"},
         headers=h,
     )
     p = r0.json()

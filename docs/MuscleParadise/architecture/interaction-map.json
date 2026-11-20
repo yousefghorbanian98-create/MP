@@ -338,7 +338,7 @@
         "mp-app/studio/src/components/PaymentPanel.tsx"
       ],
       "controls": {
-        "buttons": 11,
+        "buttons": 10,
         "inputs": 0,
         "numbers": 0,
         "selects": 1,
@@ -365,22 +365,6 @@
           "function": "createPayment",
           "method": "POST",
           "path": "/api/v1/payments",
-          "in_contract": true,
-          "guards": [
-            "permission"
-          ],
-          "roles": [
-            "member",
-            "reception",
-            "manager",
-            "admin",
-            "super_admin"
-          ]
-        },
-        {
-          "function": "confirmGatewayCallback",
-          "method": "POST",
-          "path": "/api/v1/payments/*/callback",
           "in_contract": true,
           "guards": [
             "permission"
@@ -440,15 +424,14 @@
           ]
         },
         {
-          "function": "startPayment",
+          "function": "verifyPayment",
           "method": "POST",
-          "path": "/api/v1/payments/*/start",
+          "path": "/api/v1/payments/*/verify",
           "in_contract": true,
           "guards": [
             "permission"
           ],
           "roles": [
-            "member",
             "reception",
             "manager",
             "admin",

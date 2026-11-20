@@ -17,7 +17,7 @@ def create_payment(
     db: Session,
     member_id: int,
     amount_rial: int,
-    method: str = "zarinpal",
+    method: str = "cash",
     description: str = "",
     user=None,
 ) -> Payment:
@@ -56,8 +56,9 @@ def verify_payment(
     if payment.status != "pending":
         raise ApiError("این پرداخت قبلاً پردازش شده است", code="already_processed")
     # `manual` یعنی «انسان در پذیرش دیده است» — فقط برای نقدی/کارت‌خوان.
-    # برای درگاه، حتی با manual هم باید پاسخ امضاشده وجود داشته باشد.
-    if payment.method in ("zarinpal", "wallet") and (not manual or not payment.gateway_authority):
+    # کیف‌پول و کارت‌به‌کارت با تأیید دستی «پرداخت‌شده» نمی‌شوند: کیف‌پول تراکنش
+    # داخلی خودش را دارد و کارت‌به‌کارت تا QF-08/09 مسیر تأیید رسید ندارد.
+    if payment.method not in ("cash", "card") and (not manual or not payment.gateway_authority):
         raise ApiError(
             "پرداخت درگاهی فقط از callback امضاشدهٔ درگاه تأیید می‌شود",
             code="gateway_verification_required",
@@ -112,11 +113,13 @@ def start_payment(db: Session, payment_id: int, callback_url: str = "", user=Non
             f"{payment.id}/gateway-return?token={token}"
         )
 
-    gw = get_gateway()
     try:
+        gw = get_gateway()
         started = gw.start(payment.amount_rial, payment.description or "", callback_url)
     except PaymentGatewayError as exc:
-        raise ApiError(str(exc), code=exc.code) from exc
+        # حذف درگاه یعنی «این مسیر دیگر باز نیست»، نه خطای سرور: ۴۰۹ روشن‌تر است.
+        status_code = 409 if exc.code == "online_gateway_removed" else 400
+        raise ApiError(str(exc), status_code=status_code, code=exc.code) from exc
 
     payment.gateway_authority = started.authority
     db.commit()

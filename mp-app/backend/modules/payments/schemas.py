@@ -13,7 +13,8 @@ from app.ids import Id
 class PaymentCreate(BaseModel):
     member_id: Id
     amount_rial: int = Field(..., ge=1000, description="مبلغ به ریال")
-    method: str = Field("zarinpal", pattern="^(zarinpal|cash|card|wallet)$")
+    # درگاه اینترنتی حذف شد؛ فقط روش‌های حضوری و کیف‌پول داخلی.
+    method: str = Field("cash", pattern="^(cash|card|card_to_card|wallet)$")
     description: str = Field("", max_length=200)
 
 

@@ -494,7 +494,7 @@ export function fetchMemberVolume(
   );
 }
 
-// ── Q6 — درگاه پرداخت (start / callback) ──
+// ── Q6 — پرداخت حضوری (فاز ۳: درگاه اینترنتی حذف شد) ──
 
 export interface PaymentRow {
   id: number;
@@ -507,14 +507,6 @@ export interface PaymentRow {
   gateway_authority?: string;
   description: string;
   paid_at: string | null;
-}
-
-export interface PaymentStart {
-  payment_id: number;
-  authority: string;
-  redirect_url: string;
-  amount_rial: number;
-  callback_token: string;
 }
 
 export function createPayment(
@@ -551,25 +543,8 @@ export function failPayment(paymentId: number, token = getToken()) {
   return postJson<PaymentRow>(`/payments/${paymentId}/fail`, {}, token);
 }
 
-export function startPayment(paymentId: number, callbackUrl = "", token = getToken()) {
-  return postJson<PaymentStart>(
-    `/payments/${paymentId}/start`,
-    { callback_url: callbackUrl },
-    token,
-  );
-}
-
-export function confirmGatewayCallback(
-  paymentId: number,
-  authority: string,
-  callbackToken: string,
-  token = getToken(),
-) {
-  return postJson<PaymentRow>(
-    `/payments/${paymentId}/callback`,
-    { authority, callback_token: callbackToken },
-    token,
-  );
+export function verifyPayment(paymentId: number, referenceId: string, token = getToken()) {
+  return postJson<PaymentRow>(`/payments/${paymentId}/verify`, { reference_id: referenceId }, token);
 }
 
 // ── autoreg-1.0 — وزنهٔ پیشنهادی ست بعدی (POST /ai/suggest-weight) ──
