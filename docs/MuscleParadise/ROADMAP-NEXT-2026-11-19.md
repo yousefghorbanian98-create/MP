@@ -189,6 +189,7 @@ Flutter وارد نمی‌شود تا دسترسی برگردد یا mirror تص
 - [x] claim انحصاری، `reclaim_stale` برای worker رهاشده، retry با backoff (۳۰/۱۲۰/۶۰۰/۱۸۰۰ ثانیه) و dead-letter پس از ۵ تلاش؛ `dedup_key` یگانه برای idempotency.
 - [x] اجرا: `python -m jobs.outbox_relay [--loop N]`.
 - [x] پنج تست `test_phase8_outbox.py` (قرمز اول: جدول/سرویس نبود).
+- [x] QF-21 inbox: `inbox_messages` + `consume_once` — تحویل تکراری فقط یک‌بار اثر می‌گذارد، خطای handler کل پیام را rollback می‌کند، رقابت دو مصرف‌کننده با کلید یکتا حل می‌شود؛ relay نمونه از همین لایه رد می‌شود. چهار تست `test_phase8_inbox.py`.
 - **باقی‌مانده و صریح `BLOCKED`:** اتصال واقعی push/SMS (بدون سرویس بیرونی)، PostgreSQL در استقرار (compose فعلی SQLite دارد)، امضای release و دستگاه اندروید (بدون شاهد انسانی)، آزمایش ابری/گیت انتشار.
 
 ## ۶. چیزهایی که در این نقشه عمداً نیست

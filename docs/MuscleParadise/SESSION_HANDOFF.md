@@ -238,5 +238,6 @@
 
 - فاز ۷: `test_phase7_member_scope_sweep.py` — ۱۷ مسیر GET با `{member_id}` از قرارداد زنده خوانده و با توکن عضو دیگر آزموده می‌شود؛ ۱۹ قبول. دو تست متا جلوی «سبزیِ توخالی» را می‌گیرد.
 - فاز ۸: outbox تراکنشی `modules/outbox/service.py` + `jobs/outbox_relay.py` + migration `e3f4a5b6c7d8`؛ رویداد پول در همان commit، claim انحصاری، retry/backoff، dead-letter، dedup. پنج تست.
-- شاهد: بک‌اند **۱۰۲۳ قبول / ۲ رد‌شده**، `ruff` پاک، قرارداد بدون تغییر مسیر (**۱۲۹ مسیر / ۱۴۷ عملیات**).
+- QF-21 inbox: `modules/outbox/inbox.py` + `inbox_messages` (migration `f4a5b6c7d8e9`)؛ تحویل تکراری ← `duplicate`، خطای handler ← rollback پیام، رقابت ← کلید یکتا. relay نمونه از inbox رد می‌شود.
+- شاهد: بک‌اند **۱۰۲۷ قبول / ۲ رد‌شده**، `ruff` پاک، قرارداد بدون تغییر مسیر (**۱۲۹ مسیر / ۱۴۷ عملیات**).
 - `BLOCKED`: push/SMS واقعی، PostgreSQL در استقرار، امضای release، دستگاه اندروید، Flutter toolchain.

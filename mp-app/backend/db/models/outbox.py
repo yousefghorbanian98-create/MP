@@ -60,3 +60,21 @@ class OutboxDeadLetter(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP")
     )
+
+
+class InboxMessage(Base):
+    """پیام مصرف‌شده — کلید `(topic, dedup_key)` یکتا، اثر handler یک‌بار.
+
+    ردیف در همان تراکنشِ اثر ساخته می‌شود؛ اگر handler خطا بدهد، هم اثر و هم
+    ردیف rollback می‌شوند و retry بعدی مجاز است.
+    """
+
+    __tablename__ = "inbox_messages"
+    __table_args__ = (Index("uq_inbox_messages_topic_key", "topic", "dedup_key", unique=True),)
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    topic: Mapped[str] = mapped_column(String(60), nullable=False)
+    dedup_key: Mapped[str] = mapped_column(String(120), nullable=False)
+    processed_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP")
+    )
