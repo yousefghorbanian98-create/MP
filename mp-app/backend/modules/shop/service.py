@@ -14,7 +14,8 @@
 from __future__ import annotations
 
 import json
-from datetime import UTC, datetime
+from datetime import UTC, datetime, time
+from zoneinfo import ZoneInfo
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -36,6 +37,69 @@ from db.models import (
 )
 
 MAX_QTY_PER_ITEM = 20
+ONLINE_PURCHASE_CLOSED = "shop_online_closed"
+
+
+# ── وضعیت فروشگاه (فاز ۲) ──
+
+
+def _shop_settings():
+    """تنظیم‌ها هر بار خوانده می‌شوند تا تست بتواند monkeypatch کند."""
+    from app.config import settings
+
+    return settings
+
+
+def store_status(*, now: datetime | None = None) -> dict:
+    """وضعیت فروشگاه از دید سرور — منبع حقیقت برای کلاینت.
+
+    سه علت ممکن است: باز، خارج از ساعت کاری، تعطیلی هفتگی. وقتی خرید
+    درون‌برنامه‌ای خاموش است، `online_purchase` همیشه False است و کلاینت
+    نباید دکمهٔ خرید را نشان دهد — حتی اگر ساعت کاری باز باشد.
+    """
+    settings = _shop_settings()
+    zone = ZoneInfo(settings.shop_timezone)
+    moment = (now or datetime.now(UTC)).astimezone(zone)
+    opens_at = time(hour=settings.shop_open_hour)
+    closes_at = time(hour=settings.shop_close_hour)
+    closed_days = {
+        int(chunk.strip()) for chunk in settings.shop_closed_weekdays.split(",") if chunk.strip()
+    }
+    if moment.weekday() in closed_days:
+        reason = "weekly_holiday"
+    elif (
+        opens_at <= moment.time() < closes_at
+        and settings.shop_open_hour != settings.shop_close_hour
+    ):
+        reason = "open"
+    else:
+        reason = "outside_hours"
+    return {
+        "mode": "in_person",
+        "is_open": reason == "open",
+        "reason": reason,
+        "opens_at": f"{opens_at.hour:02d}:{opens_at.minute:02d}",
+        "closes_at": f"{closes_at.hour:02d}:{closes_at.minute:02d}",
+        "timezone": settings.shop_timezone,
+        "closed_weekdays": sorted(closed_days),
+        "online_purchase": bool(settings.shop_online_purchase_enabled),
+        "checked_at": moment.isoformat(),
+    }
+
+
+def assert_online_purchase_open() -> None:
+    """fail-closed: خرید درون‌برنامه‌ای بسته است، مگر صریح روشن شود.
+
+    چرا این تابع و نه شرط در هر endpoint: سه مسیر نوشتن سبد و تسویه دارند؛
+    اگر شرط تکرار شود، یک مسیر جا می‌ماند و همان یکی دروازهٔ دور زدن می‌شود.
+    """
+    if not _shop_settings().shop_online_purchase_enabled:
+        raise ConflictError(
+            "خرید درون‌برنامه‌ای بسته است؛ خرید حضوری در ساعات کاری باشگاه انجام می‌شود",
+            code=ONLINE_PURCHASE_CLOSED,
+        )
+
+
 STATUS_FLOW = {"pending", "paid", "failed", "cancelled", "delivered"}
 
 

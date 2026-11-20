@@ -115,6 +115,12 @@ class OrderStatusIn(BaseModel):
 
 
 # ── کاتالوگ ──
+@router.get("/status", summary="وضعیت فروشگاه (باز/بسته + علت + حالت خرید)")
+def status(user: CurrentUser):
+    """منبع حقیقت باز/بسته بودن؛ کلاینت نباید ساعت دستگاه را جای آن بگذارد."""
+    return service.store_status()
+
+
 @router.get("/categories", summary="دسته‌های فروشگاه")
 def categories(db: DbSession, user: CurrentUser, include_inactive: bool = False):
     from app.security.hierarchy import rank_of
@@ -161,9 +167,11 @@ def cart(db: DbSession, user: CurrentUser):
     return service.get_cart(db, user=user)
 
 
-@router.post("/cart", summary="افزودن به سبد")
+@router.post("/cart", summary="افزودن به سبد (بسته در فروشگاه نمایش‌محور)")
 @limiter.limit(settings.shop_write_rate_limit)
 def cart_add(request: Request, payload: CartAdd, db: DbSession, user: CurrentUser):
+    # فاز ۲ — fail-closed قبل از هر نوشتن: اول بسته بودن، بعد بقیهٔ قواعد.
+    service.assert_online_purchase_open()
     # M60 — چرا سقف: بدون آن، حلقهٔ سبد/تسویه همهٔ موجودی را رزرو می‌کند
     # (نوعی DoS روی موجودی). `request` اول است چون slowapi امضای آن را
     # از decorated function می‌خواند.
@@ -176,23 +184,26 @@ def cart_add(request: Request, payload: CartAdd, db: DbSession, user: CurrentUse
     )
 
 
-@router.patch("/cart/{item_id}", summary="تغییر تعداد قلم سبد")
+@router.patch("/cart/{item_id}", summary="تغییر تعداد قلم سبد (بسته)")
 @limiter.limit(settings.shop_write_rate_limit)
 def cart_update(
     request: Request, item_id: int, payload: CartUpdate, db: DbSession, user: CurrentUser
 ):
+    service.assert_online_purchase_open()
     return service.update_cart_item(db, user=user, item_id=item_id, qty=payload.qty)
 
 
-@router.delete("/cart/{item_id}", summary="حذف قلم سبد")
+@router.delete("/cart/{item_id}", summary="حذف قلم سبد (بسته)")
 @limiter.limit(settings.shop_write_rate_limit)
 def cart_remove(request: Request, item_id: int, db: DbSession, user: CurrentUser):
+    service.assert_online_purchase_open()
     return service.remove_cart_item(db, user=user, item_id=item_id)
 
 
-@router.post("/checkout", summary="تسویهٔ سبد ← سفارش (کیف‌پول یا درگاه)")
+@router.post("/checkout", summary="تسویهٔ سبد ← سفارش (بسته: خرید حضوری است)")
 @limiter.limit(settings.shop_checkout_rate_limit)
 def checkout(request: Request, payload: CheckoutIn, db: DbSession, user: CurrentUser):
+    service.assert_online_purchase_open()
     # M60 — سقف سخت‌گیرانه‌تر: هر تسویه یک تراکنش پول است.
     order = service.checkout(db, user=user, method=payload.method, note=payload.note)
     return {

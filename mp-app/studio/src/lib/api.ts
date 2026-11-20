@@ -1206,6 +1206,22 @@ export interface ChangeRequest {
   created_at: string;
 }
 
+/** وضعیت فروشگاه از دید سرور (فاز ۲) — منبع حقیقت باز/بسته بودن. */
+export interface ShopStatus {
+  mode: "in_person";
+  is_open: boolean;
+  reason: "open" | "outside_hours" | "weekly_holiday";
+  opens_at: string;
+  closes_at: string;
+  timezone: string;
+  closed_weekdays: number[];
+  online_purchase: boolean;
+  checked_at: string;
+}
+
+export const fetchShopStatus = (token = getToken(), signal?: AbortSignal) =>
+  getJson<ShopStatus>("/shop/status", token, signal);
+
 export const fetchShopProducts = (
   params: { category?: string; kind?: string; search?: string } = {},
   token = getToken(),
