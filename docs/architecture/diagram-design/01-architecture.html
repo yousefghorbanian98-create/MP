@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>معماری سیستم — وضعیت فعلی · Muscle Paradise</title>
+<style>
+  @font-face { font-family: 'Vazirmatn'; src: url('../../../mp-app/client/assets/fonts/Vazirmatn-Regular.ttf') format('truetype'); font-weight: 400; }
+  @font-face { font-family: 'Vazirmatn'; src: url('../../../mp-app/client/assets/fonts/Vazirmatn-Bold.ttf') format('truetype'); font-weight: 700; }
+  body { margin:0; background:#0B0F14; color:#E6EDF3; font-family:'Vazirmatn',system-ui,sans-serif; display:flex; flex-direction:column; align-items:center; padding:24px 16px; }
+  h1 { font-size:1.15rem; margin:0 0 4px; }
+  p.sub { margin:0 0 12px; color:#8B98A5; font-size:.88rem; }
+  svg { width:100%; max-width:1000px; height:auto; }
+  .node { fill:#131A22; stroke:#2A3440; stroke-width:1.5; }
+  .focal { fill:#0E2A1E; stroke:#00B86A; stroke-width:2; }
+  .end { fill:#151515; stroke:#5C6B7A; stroke-width:1.5; stroke-dasharray:5 4; }
+  .label { fill:#E6EDF3; font-size:15px; font-weight:700; text-anchor:middle; }
+  .small { fill:#8B98A5; font-size:12px; text-anchor:middle; }
+  .edge { stroke:#5C6B7A; stroke-width:1.5; fill:none; }
+  .edge-focal { stroke:#00B86A; stroke-width:2; fill:none; }
+  .edge-text { fill:#C9D1D9; font-size:12px; text-anchor:middle; }
+  .note { fill:#8B98A5; font-size:12px; }
+  .band { fill:none; stroke:#2A3440; stroke-width:1; stroke-dasharray:2 4; }
+  .band-label { fill:#8B98A5; font-size:12px; font-weight:700; direction:ltr; }
+  .note { direction:ltr; }
+</style>
+</head>
+<body>
+<h1>معماری سیستم — وضعیت فعلی</h1>
+<p class="sub">نمای کلی از نرم‌افزار؛ هر گره یک بخش کد واقعی است.</p>
+<svg viewBox="0 0 1000 600" role="img" aria-labelledby="t-architecture d-architecture">
+  <title id="t-architecture">معماری سیستم — وضعیت فعلی</title>
+  <desc id="d-architecture">ورودی‌ها (اپ عضو، Studio، کیوسک ناقص) به API نسخه‌دار متصل‌اند؛ API به پنج ماژول دامنه و SQLite پیش‌فرض وصل است؛ PostgreSQL فقط در نقشه است.</desc>
+  <defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5C6B7A"/></marker><marker id="arrg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#00B86A"/></marker></defs>
+<rect class="band" x="30" y="40" width="940" height="110" rx="12"/>
+<text class="band-label" x="50" y="60">ورودی‌ها</text>
+<rect class="node" x="70" y="80" width="240" height="56" rx="10"/><text class="label" x="190.0" y="104.0">اپ عضو — Flutter</text><text class="small" x="190.0" y="122.0">Android · Web (CI)</text>
+<rect class="node" x="380" y="80" width="240" height="56" rx="10"/><text class="label" x="500.0" y="104.0">MP Studio — React</text><text class="small" x="500.0" y="122.0">مربی · پذیرش · مدیر</text>
+<rect class="end" x="690" y="80" width="240" height="56" rx="10"/><text class="label" x="810.0" y="104.0">کیوسک / چک‌این</text><text class="small" x="810.0" y="122.0">مسیر ناقص — تکمیل نشده</text>
+<rect class="band" x="30" y="200" width="940" height="100" rx="12"/>
+<text class="band-label" x="50" y="220">هسته</text>
+<rect class="focal" x="260" y="230" width="480" height="56" rx="10"/><text class="label" x="500.0" y="254.0">API نسخه‌دار — FastAPI /api/v1</text><text class="small" x="500.0" y="272.0">۱۴۱ مسیر · ۱۶۳ عملیات · احراز هویت و مجوزها</text>
+<rect class="band" x="30" y="330" width="940" height="110" rx="12"/>
+<text class="band-label" x="50" y="350">ماژول‌های دامنه</text>
+<rect class="node" x="60" y="366" width="165" height="56" rx="10"/><text class="label" x="142.5" y="390.0">احراز هویت</text><text class="small" x="142.5" y="408.0">OTP · نشست · تغییر شماره</text>
+<rect class="node" x="243" y="366" width="165" height="56" rx="10"/><text class="label" x="325.5" y="390.0">پرداخت و کوپن</text><text class="small" x="325.5" y="408.0">کیف‌پول · رسید · تخفیف</text>
+<rect class="node" x="426" y="366" width="165" height="56" rx="10"/><text class="label" x="508.5" y="390.0">عضویت و برنامه</text><text class="small" x="508.5" y="408.0">اعضا · برنامه · چک‌این</text>
+<rect class="node" x="609" y="366" width="165" height="56" rx="10"/><text class="label" x="691.5" y="390.0">تغذیه و ارزیابی</text><text class="small" x="691.5" y="408.0">غذا · اندازه‌گیری</text>
+<rect class="node" x="792" y="366" width="165" height="56" rx="10"/><text class="label" x="874.5" y="390.0">فروشگاه</text><text class="small" x="874.5" y="408.0">سفارش · قیمت · درخواست تغییر</text>
+<rect class="band" x="30" y="470" width="940" height="110" rx="12"/>
+<text class="band-label" x="50" y="490">داده و خدمات</text>
+<rect class="node" x="200" y="500" width="240" height="56" rx="10"/><text class="label" x="320.0" y="524.0">SQLite</text><text class="small" x="320.0" y="542.0">مسیر پیش‌فرض فعلی</text>
+<rect class="end" x="540" y="500" width="240" height="56" rx="10"/><text class="label" x="660.0" y="524.0">PostgreSQL</text><text class="small" x="660.0" y="542.0">در نقشه — تأیید نشده</text>
+<path class="edge" marker-end="url(#arr)" d="M190,136 L190,170 L400,170 L400,230"/>
+<path class="edge" marker-end="url(#arr)" d="M500,136 L500,230"/><text class="edge-text" x="560" y="190">REST/JSON</text>
+<path class="edge" stroke-dasharray="6 5" marker-end="url(#arr)" d="M810,136 L810,170 L640,170 L640,230"/>
+<path class="edge-focal" marker-end="url(#arrg)" d="M500,286 L500,310"/>
+<path class="edge" marker-end="url(#arr)" d="M500,310 L142,310 L142,366"/>
+<path class="edge" marker-end="url(#arr)" d="M500,310 L325,310 L325,366"/>
+<path class="edge" marker-end="url(#arr)" d="M500,310 L508,366"/>
+<path class="edge" marker-end="url(#arr)" d="M500,310 L691,310 L691,366"/>
+<path class="edge" marker-end="url(#arr)" d="M500,310 L874,310 L874,366"/>
+<path class="edge" marker-end="url(#arr)" d="M330,422 L330,500"/><text class="edge-text" x="395" y="470">SQLAlchemy</text>
+<path class="edge" stroke-dasharray="6 5" marker-end="url(#arr)" d="M660,422 L660,500"/>
+<text class="note" x="40" y="590">خط نقطه‌چین و گرهٔ خاکستری: ناقص یا فقط در نقشه. منبع: mp-app/backend/api/routes.json و modules/</text>
+</svg>
+</body>
+</html>

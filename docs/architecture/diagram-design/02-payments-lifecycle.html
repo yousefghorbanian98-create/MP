@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>پرداخت، کوپن و رسید — وضعیت فعلی · Muscle Paradise</title>
+<style>
+  @font-face { font-family: 'Vazirmatn'; src: url('../../../mp-app/client/assets/fonts/Vazirmatn-Regular.ttf') format('truetype'); font-weight: 400; }
+  @font-face { font-family: 'Vazirmatn'; src: url('../../../mp-app/client/assets/fonts/Vazirmatn-Bold.ttf') format('truetype'); font-weight: 700; }
+  body { margin:0; background:#0B0F14; color:#E6EDF3; font-family:'Vazirmatn',system-ui,sans-serif; display:flex; flex-direction:column; align-items:center; padding:24px 16px; }
+  h1 { font-size:1.15rem; margin:0 0 4px; }
+  p.sub { margin:0 0 12px; color:#8B98A5; font-size:.88rem; }
+  svg { width:100%; max-width:1000px; height:auto; }
+  .node { fill:#131A22; stroke:#2A3440; stroke-width:1.5; }
+  .focal { fill:#0E2A1E; stroke:#00B86A; stroke-width:2; }
+  .end { fill:#151515; stroke:#5C6B7A; stroke-width:1.5; stroke-dasharray:5 4; }
+  .label { fill:#E6EDF3; font-size:15px; font-weight:700; text-anchor:middle; }
+  .small { fill:#8B98A5; font-size:12px; text-anchor:middle; }
+  .edge { stroke:#5C6B7A; stroke-width:1.5; fill:none; }
+  .edge-focal { stroke:#00B86A; stroke-width:2; fill:none; }
+  .edge-text { fill:#C9D1D9; font-size:12px; text-anchor:middle; }
+  .note { fill:#8B98A5; font-size:12px; }
+  .band { fill:none; stroke:#2A3440; stroke-width:1; stroke-dasharray:2 4; }
+  .band-label { fill:#8B98A5; font-size:12px; font-weight:700; direction:ltr; }
+  .note { direction:ltr; }
+</style>
+</head>
+<body>
+<h1>پرداخت، کوپن و رسید — وضعیت فعلی</h1>
+<p class="sub">انتقال‌های هر حالت از کد استخراج شده‌اند؛ رنگ سبز: مسیر موفق.</p>
+<svg viewBox="0 0 1000 600" role="img" aria-labelledby="t-payments d-payments">
+  <title id="t-payments">پرداخت، کوپن و رسید — وضعیت فعلی</title>
+  <desc id="d-payments">کوپن قبل از ایجاد پرداخت اعمال می‌شود؛ پرداخت از pending به paid یا failed می‌رود؛ رسید کارت‌به‌کارت وضعیت in_review می‌سازد؛ paid به refunded می‌رود.</desc>
+  <defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5C6B7A"/></marker><marker id="arrg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#00B86A"/></marker></defs>
+<rect class="node" x="40" y="260" width="170" height="64" rx="10"/><text class="label" x="125.0" y="288.0">کوپن</text><text class="small" x="125.0" y="306.0">درصدی یا مبلغ ثابت · انقضا · سقف</text>
+<rect class="node" x="270" y="260" width="170" height="64" rx="10"/><text class="label" x="355.0" y="288.0">pending</text><text class="small" x="355.0" y="306.0">در انتظار پرداخت</text>
+<rect class="node" x="500" y="80" width="170" height="64" rx="10"/><text class="label" x="585.0" y="108.0">in_review</text><text class="small" x="585.0" y="126.0">رسید در انتظار بررسی</text>
+<rect class="focal" x="740" y="260" width="170" height="64" rx="10"/><text class="label" x="825.0" y="288.0">paid</text><text class="small" x="825.0" y="306.0">پرداخت تأییدشده</text>
+<rect class="end" x="500" y="440" width="170" height="64" rx="10"/><text class="label" x="585.0" y="468.0">failed</text><text class="small" x="585.0" y="486.0">پایانی</text>
+<rect class="end" x="740" y="440" width="170" height="64" rx="10"/><text class="label" x="825.0" y="468.0">refunded</text><text class="small" x="825.0" y="486.0">پایانی</text>
+<path class="edge" marker-end="url(#arr)" d="M210,292 L270,292"/><text class="edge-text" x="240" y="248">اعمال تخفیف روی سرور</text>
+<path class="edge" marker-end="url(#arr)" d="M355,260 L355,110 L500,110"/><text class="edge-text" x="395" y="180">ارسال رسید</text>
+<path class="edge-focal" marker-end="url(#arrg)" d="M440,292 L740,292"/><text class="edge-text" x="590" y="276">تأیید درگاه</text>
+<path class="edge" marker-end="url(#arr)" d="M585,144 L585,180 L800,180 L800,260"/><text class="edge-text" x="700" y="200">تأیید ادمین</text>
+<path class="edge" marker-end="url(#arr)" d="M355,324 L355,472 L500,472"/><text class="edge-text" x="420" y="410">خطای پرداخت</text>
+<path class="edge" marker-end="url(#arr)" d="M585,144 L600,144 L600,440"/><text class="edge-text" x="625" y="362">رد رسید</text>
+<path class="edge" marker-end="url(#arr)" d="M825,324 L825,440"/><text class="edge-text" x="860" y="385">بازپرداخت</text>
+<text class="note" x="40" y="580">تخفیف فقط در سرور و روی مبلغ واقعی محاسبه می‌شود (payments/service.py: _apply_coupon). حداقل مبلغ پس از تخفیف ۱٬۰۰۰ ریال است.</text>
+</svg>
+</body>
+</html>
