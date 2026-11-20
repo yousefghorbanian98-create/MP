@@ -61,3 +61,19 @@ jobs:
           path: mp-app/client/build/web
           retention-days: 14
           if-no-files-found: error
+
+      - name: Collect web build diagnostics on failure
+        if: failure()
+        run: |
+          mkdir -p /tmp/web-diag
+          cp /tmp/step-web-build.txt /tmp/web-diag/ 2>/dev/null || echo "no build log" > /tmp/web-diag/none.txt
+          (cd mp-app/client && flutter --version && flutter pub deps --style=compact) > /tmp/web-diag/env.txt 2>&1 || true
+
+      - name: Upload web build diagnostics on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mp-web-diagnostics
+          path: /tmp/web-diag
+          retention-days: 3
+          if-no-files-found: warn
