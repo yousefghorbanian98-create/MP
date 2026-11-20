@@ -89,3 +89,26 @@ class ReportRun(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
+
+
+class ExpenseReceipt(Base):
+    """فیش خصوصی یک هزینه (QF-06) — حداکثر یک فایل برای هر هزینه.
+
+    فایل با نام تصادفی بیرون از مسیر استاتیک ذخیره می‌شود؛ فقط از endpoint با
+    `finance.read` خوانده می‌شود. حذف هزینه (نرم) فایل را پاک نمی‌کند تا ممیزی بماند.
+    """
+
+    __tablename__ = "expense_receipts"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    expense_id: Mapped[int] = mapped_column(
+        ForeignKey("expenses.id", ondelete="CASCADE"), nullable=False, unique=True
+    )
+    stored_path: Mapped[str] = mapped_column(String(300), nullable=False)
+    mime: Mapped[str] = mapped_column(String(30), nullable=False)
+    size_bytes: Mapped[int] = mapped_column(Integer, nullable=False)
+    sha256: Mapped[str] = mapped_column(String(64), nullable=False)
+    uploaded_by_user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
