@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { PaymentPanel } from "../components/PaymentPanel";
 import { LedgerPanel } from "../components/LedgerPanel";
 import { ReceiptQueue } from "../components/ReceiptQueue";
+import { PeriodReportPanel } from "../components/PeriodReportPanel";
 import { useEffect, useState } from "react";
 import {
   fetchCommission,
@@ -131,6 +132,11 @@ export function Finance() {
       <ReceiptQueue />
 
       <LedgerPanel />
+
+      <div className="glass-card space-y-4 p-5">
+        <h2 className="text-sm font-bold">سود و زیان دوره‌ای (QF-10)</h2>
+        <PeriodReportPanel />
+      </div>
 
       <div className="glass-card space-y-4 p-5">
         <h2 className="text-sm font-bold">کمیسیون مربی</h2>

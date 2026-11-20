@@ -16,5 +16,6 @@ export default defineConfig({
     globals: true,
     include: ["tests/**/*.test.{ts,tsx}"],
     css: false,
+    setupFiles: ["tests/vitest.setup.ts"],
   },
 });

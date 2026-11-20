@@ -7,7 +7,7 @@
 
 from __future__ import annotations
 
-from datetime import date
+from datetime import UTC, date
 
 from fastapi import APIRouter, Depends
 
@@ -52,3 +52,28 @@ def daily(run_date: str, db: DbSession, user: CurrentUser):
     except ValueError as exc:
         raise ApiError("تاریخ باید به شکل YYYY-MM-DD باشد", code="invalid_date") from exc
     return schedule.daily_report(db, day)
+
+
+@router.get(
+    "/period",
+    summary="گزارش سود/زیان دوره‌ای با بازگشت‌ها — هفته/ماه/سال جلالی تهران (QF-10)",
+    dependencies=[Depends(require_grant("finance.read"))],
+)
+def period(
+    db: DbSession,
+    user: CurrentUser,
+    kind: str = "month",
+    anchor: str | None = None,
+):
+    from datetime import datetime as _dt
+
+    from modules.reports import period as period_mod
+
+    if anchor is None:
+        day = schedule.tehran_date(_dt.now(UTC))
+    else:
+        try:
+            day = date.fromisoformat(anchor)
+        except ValueError as exc:
+            raise ApiError("تاریخ باید به شکل YYYY-MM-DD باشد", code="invalid_date") from exc
+    return period_mod.period_report(db, kind, day)

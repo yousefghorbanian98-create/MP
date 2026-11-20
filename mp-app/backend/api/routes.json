@@ -59,6 +59,7 @@
   "/api/v1/face/privacy-notice",
   "/api/v1/face/qr-token",
   "/api/v1/finance/reports/daily/{run_date}",
+  "/api/v1/finance/reports/period",
   "/api/v1/finance/reports/schedule",
   "/api/v1/finance/reports/schedule/{job_key}/run",
   "/api/v1/health/ready",
@@ -1249,6 +1250,23 @@
    "method": "GET",
    "path": "/api/v1/finance/reports/daily/{run_date}",
    "operationId": "daily_api_v1_finance_reports_daily__run_date__get",
+   "tags": [
+    "reports"
+   ],
+   "guards": [
+    "grant:finance.read",
+    "permission"
+   ],
+   "roles": [
+    "manager",
+    "admin",
+    "super_admin"
+   ]
+  },
+  {
+   "method": "GET",
+   "path": "/api/v1/finance/reports/period",
+   "operationId": "period_api_v1_finance_reports_period_get",
    "tags": [
     "reports"
    ],

@@ -185,6 +185,39 @@ export function fetchFinanceSummary(token = getToken(), signal?: AbortSignal) {
   return getJson<FinanceSummary>("/payments/finance/summary", token, signal);
 }
 
+/** گزارش سود/زیان دوره‌ای (QF-10) — بازگشت‌ها در سبد روزِ خودشان. */
+export interface PeriodReport {
+  kind: "week" | "month" | "year";
+  label: string;
+  timezone: string;
+  start: string;
+  end_exclusive: string;
+  start_jalali: string;
+  received_rial: number;
+  received_count: number;
+  refunds_rial: number;
+  refunds_count: number;
+  net_income_rial: number;
+  expenses_rial: number;
+  expenses_count: number;
+  profit_rial: number;
+  undated_refunds_count: number;
+  complete: boolean;
+}
+
+export function fetchPeriodReport(
+  kind: PeriodReport["kind"],
+  anchor: string,
+  token = getToken(),
+  signal?: AbortSignal,
+) {
+  return getJson<PeriodReport>(
+    `/finance/reports/period?kind=${kind}&anchor=${encodeURIComponent(anchor)}`,
+    token,
+    signal,
+  );
+}
+
 // ── دفتر پول عضو (QF-05) ──
 // دفتر رویداد فقط-افزودنی است؛ اصلاح فقط با «ردیف جبرانی» و دلیل. سرور مجوز
 // `finance.write` را الزام می‌کند، پس UI هیچ ردیفی را خوش‌بینانه تغییر نمی‌دهد.

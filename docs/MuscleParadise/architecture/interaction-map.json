@@ -385,6 +385,7 @@
       "components": [
         "mp-app/studio/src/components/LedgerPanel.tsx",
         "mp-app/studio/src/components/PaymentPanel.tsx",
+        "mp-app/studio/src/components/PeriodReportPanel.tsx",
         "mp-app/studio/src/components/ReceiptQueue.tsx"
       ],
       "controls": {
@@ -395,6 +396,21 @@
         "modals": 2
       },
       "endpoints": [
+        {
+          "function": "fetchPeriodReport",
+          "method": "GET",
+          "path": "/api/v1/finance/reports/period",
+          "in_contract": true,
+          "guards": [
+            "grant:finance.read",
+            "permission"
+          ],
+          "roles": [
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
         {
           "function": "fetchReviewQueue",
           "method": "GET",
@@ -2139,5 +2155,5 @@
       "tests": []
     }
   ],
-  "contract_paths": 158
+  "contract_paths": 159
 }
