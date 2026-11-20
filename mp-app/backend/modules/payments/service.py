@@ -5,12 +5,12 @@ from __future__ import annotations
 import secrets
 from datetime import UTC, datetime
 
-from sqlalchemy import case, func, select
+from sqlalchemy import case, func, select, update
 from sqlalchemy.orm import Session, aliased
 
 from app.config import settings
 from app.errors import ApiError, ConflictError, NotFoundError
-from db.models import Member, Payment, WalletTransaction
+from db.models import Coupon, Member, Payment, WalletTransaction
 
 
 def create_payment(
@@ -23,6 +23,7 @@ def create_payment(
     *,
     plan_key: str | None = None,
     idempotency_key: str | None = None,
+    coupon_code: str | None = None,
 ) -> Payment:
     from sqlalchemy import select
 
@@ -43,6 +44,13 @@ def create_payment(
         )
         if existing is not None:
             return existing
+    # G2: کوپن فقط همین‌جا (روی سرور) اعمال می‌شود؛ مبلغ تخفیف از اپ نمی‌آید.
+    coupon_id = None
+    discount_rial = 0
+    if coupon_code:
+        coupon, discount_rial = _apply_coupon(db, coupon_code, amount_rial)
+        coupon_id = coupon.id
+        amount_rial = amount_rial - discount_rial
     payment = Payment(
         member_id=member_id,
         amount_rial=amount_rial,
@@ -52,11 +60,95 @@ def create_payment(
         plan_key=plan_key,
         idempotency_key=idempotency_key,
         created_by_user_id=getattr(user, "id", None),
+        coupon_id=coupon_id,
+        discount_rial=discount_rial,
     )
     db.add(payment)
     db.commit()
     db.refresh(payment)
     return payment
+
+
+MIN_PAYMENT_RIAL = 1000
+
+
+def normalize_coupon_code(code: str) -> str:
+    return code.strip().upper()
+
+
+def _apply_coupon(db: Session, code: str, amount_rial: int) -> tuple[Coupon, int]:
+    """کوپن را اعتبارسنجی و سقف استفاده را اتمیک افزایش می‌دهد.
+
+    برمی‌گرداند: (کوپن، مبلغ تخفیف به ریال). اگر خطا رخ دهد، پرداختی ساخته
+    نمی‌شود و caller باید تراکنش را rollback کند (FastAPI با exception
+    تراکنش را رها می‌کند).
+    """
+    coupon = db.scalar(select(Coupon).where(Coupon.code == normalize_coupon_code(code)))
+    if coupon is None or not coupon.is_active:
+        raise ApiError("کد تخفیف معتبر نیست", code="coupon_invalid")
+    if coupon.expires_at is not None:
+        expires = coupon.expires_at
+        if expires.tzinfo is None:
+            expires = expires.replace(tzinfo=UTC)
+        if expires <= datetime.now(UTC):
+            raise ApiError("کد تخفیف منقضی شده است", code="coupon_expired")
+    if coupon.kind == "percent":
+        discount = amount_rial * coupon.value // 100
+    else:
+        discount = min(coupon.value, amount_rial)
+    if amount_rial - discount < MIN_PAYMENT_RIAL:
+        raise ApiError("مبلغ پس از تخفیف کمتر از حداقل پرداخت است", code="coupon_amount_too_low")
+    # سقف استفاده: UPDATE شرطی تا دو درخواست همزمان از سقف رد نشوند.
+    result = db.execute(
+        update(Coupon)
+        .where(
+            Coupon.id == coupon.id,
+            Coupon.is_active.is_(True),
+            (Coupon.max_uses.is_(None)) | (Coupon.used_count < Coupon.max_uses),
+        )
+        .values(used_count=Coupon.used_count + 1)
+    )
+    if result.rowcount != 1:
+        raise ApiError("ظرفیت استفاده از این کد تخفیف تمام شده است", code="coupon_exhausted")
+    db.refresh(coupon)
+    return coupon, discount
+
+
+def create_coupon(
+    db: Session,
+    *,
+    code: str,
+    kind: str,
+    value: int,
+    expires_at: datetime | None,
+    max_uses: int | None,
+) -> Coupon:
+    if kind not in ("percent", "fixed"):
+        raise ApiError("نوع تخفیف نامعتبر است", code="coupon_kind_invalid")
+    if kind == "percent" and not 1 <= value <= 100:
+        raise ApiError("درصد تخفیف باید بین ۱ و ۱۰۰ باشد", code="coupon_value_invalid")
+    if kind == "fixed" and value < MIN_PAYMENT_RIAL:
+        raise ApiError("مبلغ تخفیف ثابت کمتر از حداقل است", code="coupon_value_invalid")
+    normalized = normalize_coupon_code(code)
+    if db.scalar(select(Coupon.id).where(Coupon.code == normalized)) is not None:
+        raise ConflictError("این کد تخفیف قبلاً ثبت شده است")
+    coupon = Coupon(
+        code=normalized,
+        kind=kind,
+        value=value,
+        expires_at=expires_at,
+        max_uses=max_uses,
+        used_count=0,
+        is_active=True,
+    )
+    db.add(coupon)
+    db.commit()
+    db.refresh(coupon)
+    return coupon
+
+
+def list_coupons(db: Session) -> list[Coupon]:
+    return list(db.scalars(select(Coupon).order_by(Coupon.id.desc())).all())
 
 
 def verify_payment(

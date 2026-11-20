@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from sqlalchemy import DateTime, ForeignKey, Index, Integer, String, Text, text
+from sqlalchemy import Boolean, DateTime, ForeignKey, Index, Integer, String, Text, text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from db.base import Base, BranchMixin, TimestampMixin
@@ -69,6 +69,13 @@ class Payment(TimestampMixin, BranchMixin, Base):
     plan_key: Mapped[str | None] = mapped_column(String(40), nullable=True)
     # QF-05: کلید idempotency ارسال دوبارهٔ درخواست توسط اپ را بی‌اثر می‌کند.
     idempotency_key: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    # G2: کوپن اعمال‌شده و مبلغ تخفیف (amount_rial = مبلغ خالص پس از تخفیف)
+    coupon_id: Mapped[int | None] = mapped_column(
+        ForeignKey("coupons.id", ondelete="SET NULL"), index=True, nullable=True
+    )
+    discount_rial: Mapped[int] = mapped_column(
+        Integer, default=0, server_default=text("0"), nullable=False
+    )
 
 
 class PaymentReceipt(Base):
@@ -165,4 +172,29 @@ class LedgerEntry(Base):
     note: Mapped[str] = mapped_column(String(200), default="", nullable=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP")
+    )
+
+
+class Coupon(TimestampMixin, Base):
+    """کوپن تخفیف — درصدی یا مبلغ ثابت، با تاریخ انقضا و سقف استفاده.
+
+    G2: تخفیف فقط روی سرور و روی مبلغ پرداخت اعمال می‌شود؛ اپ نمی‌تواند
+    مبلغ تخفیف را خودش تعیین کند.
+    """
+
+    __tablename__ = "coupons"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    code: Mapped[str] = mapped_column(String(32), unique=True, nullable=False)
+    # `percent` (۱..۱۰۰) یا `fixed` (ریال)
+    kind: Mapped[str] = mapped_column(String(10), nullable=False)
+    value: Mapped[int] = mapped_column(Integer, nullable=False)
+    expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    # None یعنی بی‌سقف
+    max_uses: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    used_count: Mapped[int] = mapped_column(
+        Integer, default=0, server_default=text("0"), nullable=False
+    )
+    is_active: Mapped[bool] = mapped_column(
+        Boolean, default=True, server_default=text("1"), nullable=False
     )
