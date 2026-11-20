@@ -30,8 +30,8 @@ class NotFoundError(ApiError):
 
 
 class ForbiddenError(ApiError):
-    def __init__(self, message: str = "دسترسی غیرمجاز"):
-        super().__init__(message, status.HTTP_403_FORBIDDEN, "forbidden")
+    def __init__(self, message: str = "دسترسی غیرمجاز", code: str | None = None):
+        super().__init__(message, status.HTTP_403_FORBIDDEN, code or "forbidden")
 
 
 class UnauthorizedError(ApiError):

@@ -10,6 +10,8 @@ from fastapi.testclient import TestClient
 from app.main import create_app
 from db.base import get_session_factory, init_db, reset_engine
 
+from ._actors import create_actor
+
 _counter = itertools.count(500001)
 
 
@@ -33,16 +35,10 @@ def client(tmp_path, monkeypatch):
 
 @pytest.fixture()
 def auth():
-    def _auth(role: str = "manager") -> dict:
-        from app.security.jwt import create_access_token
-        from db.models import User
+    """هدر کاربر تازه؛ `grants` مجوزهای شخصی فاز ۵ را هم می‌سازد."""
 
-        n = next(_counter)
-        with get_session_factory()() as s:
-            u = User(phone=f"09{n:09d}", full_name=f"{role}-{n}", role=role)
-            s.add(u)
-            s.commit()
-            return {"Authorization": f"Bearer {create_access_token(u.id, u.role)}"}
+    def _auth(role: str = "manager", grants: list[str] | None = None) -> dict:
+        return create_actor(role, grants)
 
     return _auth
 
@@ -56,7 +52,7 @@ def _member(client, h, phone):
 
 
 def test_booking_capacity_waitlist_promotion(client, auth):
-    h = auth("manager")
+    h = auth("manager", grants=["finance.write"])
     cls = client.post("/api/v1/classes", json={"name": "یوگا", "capacity": 2}, headers=h).json()
     members = [_member(client, h, f"0912000{i:04d}") for i in range(3)]
     b1 = client.post(
@@ -94,7 +90,7 @@ def test_booking_capacity_waitlist_promotion(client, auth):
 
 
 def test_finance_summary_csv_commission(client, auth):
-    h = auth("manager")
+    h = auth("manager", grants=["finance.write"])
     m = _member(client, h, "09129990001")
     auth("coach")  # ایجاد کاربر مربی برای انتساب کمیسیون
     # پرداخت با انتساب مربی
@@ -115,7 +111,6 @@ def test_finance_summary_csv_commission(client, auth):
     assert "amount_rial" in csv_text and "1000000" in csv_text
     # کمیسیون (بدون انتساب ← صفر)
     coach_user_id = None
-    from db.base import get_session_factory
     from db.models import Payment, User
 
     with get_session_factory()() as s:

@@ -11,7 +11,13 @@ from db.models.assessment import (
     JacksonPollockMeasurement,
     NormEntry,
 )
-from db.models.auth import OtpCode, PhoneChangeChallenge, RefreshToken, User
+from db.models.auth import (
+    AdminPermission,
+    OtpCode,
+    PhoneChangeChallenge,
+    RefreshToken,
+    User,
+)
 from db.models.chat import Conversation, Message
 from db.models.classes import ClassBooking, GymClass
 from db.models.content import (
@@ -42,6 +48,7 @@ from db.models.shop import (
 )
 
 __all__ = [
+    "AdminPermission",
     "Assessment14Domain",
     "AuditLog",
     "AxisAssessment",

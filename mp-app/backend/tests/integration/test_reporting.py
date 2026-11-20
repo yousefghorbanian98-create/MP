@@ -8,8 +8,10 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.main import create_app
-from db.base import get_session_factory, init_db, reset_engine
+from db.base import init_db, reset_engine
 from modules.reporting.axes import AXES_13, DOMAIN14_TO_AXES, axes_for_domains
+
+from ._actors import create_actor
 
 _counter = itertools.count(900001)
 
@@ -35,17 +37,10 @@ def client(tmp_path, monkeypatch):
 
 @pytest.fixture()
 def auth():
-    def _auth(role: str = "coach") -> dict:
-        from app.security.jwt import create_access_token
-        from db.models import User
+    """هدر کاربر تازه؛ `grants` مجوزهای شخصی فاز ۵ را هم می‌سازد."""
 
-        n = next(_counter)
-        with get_session_factory()() as s:
-            u = User(phone=f"09{n:09d}", full_name=f"{role}-{n}", role=role)
-            s.add(u)
-            s.commit()
-            token = create_access_token(u.id, u.role)
-            return {"Authorization": f"Bearer {token}"}
+    def _auth(role: str = "coach", grants: list[str] | None = None) -> dict:
+        return create_actor(role, grants)
 
     return _auth
 

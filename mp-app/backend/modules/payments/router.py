@@ -11,6 +11,7 @@ from pydantic import BaseModel, Field
 from app.deps import CurrentUser, DbSession, require_permission
 from app.errors import ApiError
 from app.ids import MAX_SAFE_ID, Id
+from app.security.grants import require_grant
 from modules.auth.router import limiter
 from modules.payments import service
 from modules.payments.schemas import (
@@ -70,6 +71,7 @@ def gateway_callback(payment_id: int, payload: GatewayCallbackIn, db: DbSession)
     "/{payment_id}/verify",
     response_model=PaymentOut,
     summary="تأیید دستی پرداخت نقدی/کارت‌خوان (پذیرش)",
+    dependencies=[Depends(require_grant("finance.write"))],
 )
 def verify_payment(payment_id: int, payload: PaymentVerify, db: DbSession):
     # manual=True فقط برای نقدی و کارت‌خوان؛ پرداخت درگاهی مسیر امضاشده دارد.
@@ -100,7 +102,12 @@ def list_payments(
     return service.list_payments(db, member_id=member_id, status=status, user=user)
 
 
-@router.post("/wallet/charge", response_model=WalletTxOut, summary="شارژ کیف‌پول")
+@router.post(
+    "/wallet/charge",
+    response_model=WalletTxOut,
+    summary="شارژ کیف‌پول",
+    dependencies=[Depends(require_grant("finance.write"))],
+)
 def wallet_charge(payload: WalletCharge, db: DbSession):
     return service.wallet_charge(db, payload.member_id, payload.amount_rial, payload.description)
 

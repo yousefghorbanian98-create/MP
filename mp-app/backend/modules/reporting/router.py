@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, Query
 from fastapi.responses import HTMLResponse
 
 from app.deps import CurrentUser, DbSession, require_permission
+from app.security.grants import require_grant
 from modules.reporting.service import build_confidential_report, render_html
 
 router = APIRouter(
@@ -13,7 +14,11 @@ router = APIRouter(
 )
 
 
-@router.get("/confidential/{member_id}", summary="گزارش محرمانهٔ ۸بخشی (JSON یا HTML)")
+@router.get(
+    "/confidential/{member_id}",
+    summary="گزارش محرمانهٔ ۸بخشی (JSON یا HTML)",
+    dependencies=[Depends(require_grant("reports.confidential"))],
+)
 def confidential_report(
     member_id: int,
     db: DbSession,

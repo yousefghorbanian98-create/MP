@@ -429,6 +429,7 @@
           "path": "/api/v1/payments/*/verify",
           "in_contract": true,
           "guards": [
+            "grant:finance.write",
             "permission"
           ],
           "roles": [
@@ -808,6 +809,7 @@
       "kind": "studio-page",
       "file": "mp-app/studio/src/pages/Settings.tsx",
       "components": [
+        "mp-app/studio/src/components/AdminPermissions.tsx",
         "mp-app/studio/src/components/DeviceSessions.tsx",
         "mp-app/studio/src/components/RoleManager.tsx"
       ],
@@ -815,7 +817,7 @@
         "buttons": 2,
         "inputs": 0,
         "numbers": 0,
-        "selects": 1,
+        "selects": 4,
         "modals": 0
       },
       "endpoints": [
@@ -858,6 +860,54 @@
           "roles": [
             "manager",
             "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "fetchPermissionGrants",
+          "method": "GET",
+          "path": "/api/v1/admin/permissions",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "super_admin"
+          ]
+        },
+        {
+          "function": "grantPermission",
+          "method": "POST",
+          "path": "/api/v1/admin/permissions",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "super_admin"
+          ]
+        },
+        {
+          "function": "revokePermission",
+          "method": "DELETE",
+          "path": "/api/v1/admin/permissions/*",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "super_admin"
+          ]
+        },
+        {
+          "function": "fetchPermissionKeys",
+          "method": "GET",
+          "path": "/api/v1/admin/permissions/known",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
             "super_admin"
           ]
         },
@@ -1991,5 +2041,5 @@
       "tests": []
     }
   ],
-  "contract_paths": 140
+  "contract_paths": 144
 }

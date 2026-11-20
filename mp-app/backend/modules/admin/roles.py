@@ -46,8 +46,10 @@ def set_role(db: Session, *, actor: User, user_id: int, role: str) -> dict:
     admin       ← هر نقشی پایین‌تر از خودش (member/reception/coach/manager)
     بقیه        ← هیچ‌کس
     """
-    if actor.role not in ("super_admin", "admin"):
-        raise ForbiddenError("فقط مالک سیستم (super_admin) یا ادمین می‌تواند نقش بدهد")
+    # QF-02: اعطا/سلب نقش فقط با مالک سیستم است. پیش‌تر `admin` هم می‌توانست
+    # نقش بدهد؛ آن مسیر ارتقای سطح بود (admin → admin دیگر) و بسته شد.
+    if actor.role != "super_admin":
+        raise ForbiddenError("فقط مالک سیستم (super_admin) می‌تواند نقش بدهد")
     if actor.id == user_id:
         raise ApiError("تغییر نقش خودتان مجاز نیست — قفل‌شدن احتمالی", code="self_role_change")
     if role not in ASSIGNABLE_ROLES:

@@ -216,3 +216,11 @@
 - تست‌ها: `test_phase4b_device_sessions.py` (۵ تست، قرمز اول چون endpoint نبود) + `tests/deviceSessions.test.tsx` (۴ تست با `fetch` واقعیِ stub‌شده تا مسیر URL دیده شود).
 - استودیو: بخش «دستگاه‌های فعال» در صفحهٔ تنظیمات؛ نشست جاری برچسب «این دستگاه» و بدون دکمهٔ ابطال؛ ابطال فقط پس از پاسخ سرور و با بازخوانی فهرست.
 - شاهد: بک‌اند ۹۸۰ قبول / ۲ رد‌شده (۹۷۸ + ۲ مسیر‌آرتیفکت پس از بازتولید `api/routes.json`)، استودیو ۲۴۰ قبول / ۹ رد‌شده، `tsc -b` و `npm run build` پاک، `ruff check`/`ruff format --check` پاک، قرارداد ۱۲۴ مسیر / ۱۴۰ عملیات.
+
+## افزودهٔ آخر: فاز ۵ — نقش و مجوز شخصی (QF-02/03/04)
+
+- QF-02: `POST|DELETE /admin/users/{id}/role` فقط با `super_admin`. پیش‌تر `admin` هم می‌توانست نقش بدهد؛ آن مسیر ارتقای سطح بود.
+- QF-03: `admin_permissions` + `app/security/grants.py`. کلیدهای شناخته‌شده: `finance.write`، `finance.read`، `reports.confidential`، `roles.manage`، `flags.write`. کلید ناشناخته ۴۰۰ `unknown_permission`، هدف مالک ۴۰۰ `owner_needs_no_permission`، نبود ردیف = ۴۰۳ `permission_required`.
+- پول برای `admin`/`manager` پیش‌فرض بسته است؛ `reception`/`coach`/`member` دست‌نخورده‌اند (RBAC خودشان). مالک همیشه مجاز است.
+- استودیو: `AdminPermissions.tsx` در تنظیمات — انتخاب کاربر/کلید/مدت، جدول وضعیت مؤثر (فعال/منقضی/سلب‌شده)، سلب با تأیید؛ برای غیرمالک هیچ درخواستی نمی‌فرستد و رندر نمی‌شود.
+- شاهد: بک‌اند **۹۸۷ قبول / ۲ رد‌شده**، استودیو **۲۴۴ قبول / ۹ رد‌شده**، `tsc -b` و build پاک، `ruff` پاک، قرارداد **۱۲۷ مسیر / ۱۴۴ عملیات**، migration drift سبز.

@@ -141,11 +141,19 @@ Flutter وارد نمی‌شود تا دسترسی برگردد یا mirror تص
 - [x] پنج تست تازه `test_phase4b_device_sessions.py` (فهرست فقط خودم، علامت `current`، مرگ access توکن دستگاه ابطال‌شده، ۴۰۴ برای کاربر دیگر، عدم نمایش منقضی) + پنل «دستگاه‌های فعال» در `Settings` با ۴ تست استودیو (`tests/deviceSessions.test.tsx`).
 - [ ] باقی‌مانده: نشست کلاینت Flutter (بدون toolchain محلی ادعا نمی‌شود — `BLOCKED`).
 
-### فاز ۵ — نقش و مجوز: QF-02 → QF-03 → QF-04 (۲–۳ لوپ)
+### فاز ۵ — نقش و مجوز: QF-02 → QF-03 → QF-04 (۲–۳ لوپ) ✅ انجام شد (۲۰۲۶-۱۱-۱۹)
 - Casbin و `security/hierarchy.py`؛ فقط سوپرادمین اعطا/سلب می‌کند.
 - مجوز شخصی ادمین با مدت و وضعیت مؤثر.
-- پنل `mp-app/studio/src/components/RoleManager.tsx`: ماتریس توانایی با `Switch`/`Checkbox` antd؛ هر کلید یک مجوز سرورمحور، نه فقط ظاهر.
+- پنل `mp-app/studio/src/components/RoleManager.tsx` + `AdminPermissions.tsx`: ماتریس کلید با `Select`/`Table` antd؛ هر کلید یک مجوز سرورمحور، نه فقط ظاهر.
 - پذیرش: ادمین بی‌مجوز ۴۰۳ می‌گیرد حتی اگر UI را دستکاری کند.
+
+**اجرا‌شده:**
+- [x] QF-02: اعطا/سلب نقش **فقط** `super_admin` (پیش‌تر `admin` هم می‌توانست)؛ نقش خود، نقش نامعتبر و ساخت `super_admin` از API هنوز بسته است؛ هر تغییر در audit.
+- [x] QF-03: جدول `admin_permissions` (migration `c1d2e3f4a5b6`) با انقضا/ابطال و `granted_by`؛ سلب ردیف را حذف نمی‌کند. `app/security/grants.py` تصمیم را سمت سرور می‌گیرد: مالک همیشه مجاز، `admin`/`manager` فقط با مجوزه فعال، بقیهٔ نقش‌ها همان RBAC خودشان.
+- [x] مسیرهای تازه: `GET/POST/DELETE /admin/permissions` و `GET /admin/permissions/known` — برای ادمین/مدیر ۴۰۳ (DENY صریح در casbin).
+- [x] درِ پول بسته شد: `POST /payments/{id}/verify` و `POST /payments/wallet/charge` کلید `finance.write` می‌خواهند؛ `GET /reports/confidential/{id}` کلید `reports.confidential` — یکی دیگری را باز نمی‌کند.
+- [x] هفت تست تازه `test_phase5_admin_permissions.py` (قرمز اول: مدل/endpoint نبود) + چهار تست استودیو `tests/adminPermissions.test.tsx` با `fetch` واقعیِ stub‌شده.
+- [x] بدهی همان لوپ: هشت فایل تست، fixture کپی‌شدهٔ `auth` را به `tests/integration/_actors.py` منتقل کردند تا مجوز صریح باشد، نه فرضی.
 
 ### فاز ۶ — پول: QF-05 → QF-07 → QF-08 → QF-09 (۳–۴ لوپ، هر لوپ با گیت بند ۲.۲)
 - QF-05: حساب پول و رویداد (ledger)، idempotency.

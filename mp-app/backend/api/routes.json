@@ -9,6 +9,9 @@
   "/api/v1/admin/flags/{key}",
   "/api/v1/admin/kpis",
   "/api/v1/admin/members-summary",
+  "/api/v1/admin/permissions",
+  "/api/v1/admin/permissions/known",
+  "/api/v1/admin/permissions/{grant_id}",
   "/api/v1/admin/users",
   "/api/v1/admin/users/{user_id}/role",
   "/api/v1/ai/nutrition/generate",
@@ -289,6 +292,62 @@
     "reception",
     "manager",
     "admin",
+    "super_admin"
+   ]
+  },
+  {
+   "method": "GET",
+   "path": "/api/v1/admin/permissions",
+   "operationId": "permissions_list_api_v1_admin_permissions_get",
+   "tags": [
+    "admin"
+   ],
+   "guards": [
+    "permission"
+   ],
+   "roles": [
+    "super_admin"
+   ]
+  },
+  {
+   "method": "POST",
+   "path": "/api/v1/admin/permissions",
+   "operationId": "permissions_grant_api_v1_admin_permissions_post",
+   "tags": [
+    "admin"
+   ],
+   "guards": [
+    "permission"
+   ],
+   "roles": [
+    "super_admin"
+   ]
+  },
+  {
+   "method": "GET",
+   "path": "/api/v1/admin/permissions/known",
+   "operationId": "permissions_known_api_v1_admin_permissions_known_get",
+   "tags": [
+    "admin"
+   ],
+   "guards": [
+    "permission"
+   ],
+   "roles": [
+    "super_admin"
+   ]
+  },
+  {
+   "method": "DELETE",
+   "path": "/api/v1/admin/permissions/{grant_id}",
+   "operationId": "permissions_revoke_api_v1_admin_permissions__grant_id__delete",
+   "tags": [
+    "admin"
+   ],
+   "guards": [
+    "permission"
+   ],
+   "roles": [
     "super_admin"
    ]
   },
@@ -1698,6 +1757,7 @@
     "payments"
    ],
    "guards": [
+    "grant:finance.write",
     "permission"
    ],
    "roles": [
@@ -1867,6 +1927,7 @@
     "payments"
    ],
    "guards": [
+    "grant:finance.write",
     "permission"
    ],
    "roles": [
@@ -2118,6 +2179,7 @@
     "reports"
    ],
    "guards": [
+    "grant:reports.confidential",
     "permission"
    ],
    "roles": [

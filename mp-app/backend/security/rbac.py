@@ -195,6 +195,11 @@ ROLE_INHERITANCE: list[tuple[str, str]] = [
 # - بازبینی ارزیابی فقط manager/admin (coach نباید تأیید/رد کند)
 DENIES: list[tuple[str, str, str]] = [
     ("manager", "/api/v1/reports/*", "*"),
+    # QF-03: مجوز شخصی فقط با مالک سیستم؛ ادمین/مدیر حتی برای دیدن آن مجاز نیست.
+    ("admin", "/api/v1/admin/permissions", "*"),
+    ("admin", "/api/v1/admin/permissions/*", "*"),
+    ("manager", "/api/v1/admin/permissions", "*"),
+    ("manager", "/api/v1/admin/permissions/*", "*"),
     ("coach", "/api/v1/axis-assessments/:id/review", "POST"),
     # ── M59 — یافتهٔ زندهٔ ۲۰۲۶-۱۱-۱۵ ──
     # `("member", "/api/v1/payments/*", "GET")` باعث می‌شد عضو عادی

@@ -10,6 +10,7 @@
 import { motion } from "framer-motion";
 import { useMotionPreset } from "../lib/motion";
 import { useCallback, useEffect, useState } from "react";
+import { AdminPermissions } from "../components/AdminPermissions";
 import { DeviceSessions } from "../components/DeviceSessions";
 import { RoleManager } from "../components/RoleManager";
 import { AuthError, fetchFlags, fetchHealth, putFlag, type FeatureFlagRow, type HealthInfo } from "../lib/api";
@@ -163,6 +164,8 @@ export function Settings() {
       <DeviceSessions />
 
       <RoleManager />
+
+      <AdminPermissions />
     </motion.div>
   );
 }

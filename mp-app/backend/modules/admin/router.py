@@ -104,8 +104,52 @@ def members_summary(
 # ── M43: admin pass — اعطا/ابطال نقش [finn] ──
 
 
+class PermissionGrantIn(BaseModel):
+    user_id: int = Field(..., ge=1)
+    permission: str = Field(..., min_length=3, max_length=40)
+    expires_in_hours: int | None = Field(None, ge=1, le=24 * 365)
+    note: str = Field("", max_length=200)
+
+
 class RoleIn(BaseModel):
     role: str = Field(..., min_length=2, max_length=20)
+
+
+@router.get("/permissions", summary="مجوزهای شخصی یک کاربر (QF-03) — فقط مالک")
+def permissions_list(user_id: int, db: DbSession, user: CurrentUser):
+    from modules.admin.permissions import list_grants
+
+    return list_grants(db, actor=user, user_id=user_id)
+
+
+@router.get("/permissions/known", summary="کلیدهای مجوز شناخته‌شده (QF-04)")
+def permissions_known(user: CurrentUser):
+    from modules.admin.permissions import list_known_permissions
+
+    if user.role != "super_admin":
+        raise ForbiddenError("فقط مالک سیستم (super_admin)")
+    return list_known_permissions()
+
+
+@router.post("/permissions", summary="اعطای مجوز شخصی با مدت (QF-03) — فقط مالک")
+def permissions_grant(payload: PermissionGrantIn, db: DbSession, user: CurrentUser):
+    from modules.admin.permissions import grant
+
+    return grant(
+        db,
+        actor=user,
+        user_id=payload.user_id,
+        permission=payload.permission,
+        expires_in_hours=payload.expires_in_hours,
+        note=payload.note,
+    )
+
+
+@router.delete("/permissions/{grant_id}", summary="سلب مجوز شخصی (QF-03) — فقط مالک")
+def permissions_revoke(grant_id: int, db: DbSession, user: CurrentUser):
+    from modules.admin.permissions import revoke
+
+    return revoke(db, actor=user, grant_id=grant_id)
 
 
 @router.get("/users", summary="فهرست کاربران و نقش‌ها (M43-c1)")
