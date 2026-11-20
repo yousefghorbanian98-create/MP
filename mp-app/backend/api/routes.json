@@ -89,11 +89,13 @@
   "/api/v1/payments/wallet/pay",
   "/api/v1/payments/wallet/{member_id}",
   "/api/v1/payments/wallet/{member_id}/transactions",
+  "/api/v1/payments/{payment_id}/approve",
   "/api/v1/payments/{payment_id}/callback",
   "/api/v1/payments/{payment_id}/fail",
   "/api/v1/payments/{payment_id}/gateway-return",
   "/api/v1/payments/{payment_id}/receipt",
   "/api/v1/payments/{payment_id}/refund",
+  "/api/v1/payments/{payment_id}/reject",
   "/api/v1/payments/{payment_id}/start",
   "/api/v1/payments/{payment_id}/verify",
   "/api/v1/population/gate-check",
@@ -1823,6 +1825,24 @@
   },
   {
    "method": "POST",
+   "path": "/api/v1/payments/{payment_id}/approve",
+   "operationId": "approve_receipt_api_v1_payments__payment_id__approve_post",
+   "tags": [
+    "payments"
+   ],
+   "guards": [
+    "grant:finance.write",
+    "permission"
+   ],
+   "roles": [
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ]
+  },
+  {
+   "method": "POST",
    "path": "/api/v1/payments/{payment_id}/callback",
    "operationId": "gateway_callback_api_v1_payments__payment_id__callback_post",
    "tags": [
@@ -1886,12 +1906,48 @@
   },
   {
    "method": "POST",
+   "path": "/api/v1/payments/{payment_id}/receipt",
+   "operationId": "upload_receipt_api_v1_payments__payment_id__receipt_post",
+   "tags": [
+    "payments"
+   ],
+   "guards": [
+    "permission"
+   ],
+   "roles": [
+    "member",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ]
+  },
+  {
+   "method": "POST",
    "path": "/api/v1/payments/{payment_id}/refund",
    "operationId": "refund_payment_endpoint_api_v1_payments__payment_id__refund_post",
    "tags": [
     "payments"
    ],
    "guards": [
+    "permission"
+   ],
+   "roles": [
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ]
+  },
+  {
+   "method": "POST",
+   "path": "/api/v1/payments/{payment_id}/reject",
+   "operationId": "reject_receipt_api_v1_payments__payment_id__reject_post",
+   "tags": [
+    "payments"
+   ],
+   "guards": [
+    "grant:finance.write",
     "permission"
    ],
    "roles": [

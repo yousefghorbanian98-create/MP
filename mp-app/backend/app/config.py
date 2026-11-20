@@ -53,6 +53,10 @@ class Settings(BaseSettings):
     login_rate_limit: str = "10/minute"
     # M60 — فروشگاه. چرا اینجا و نه hardcode: مسیر خرید مسیر پول است؛
     # سقف باید قابل تنظیم باشد (پیک فروش/حراج) بدون تغییر کد.
+    # QF-07 — فیش کارت‌به‌کارت: مسیر خصوصی، سقف حجم و TTL بازبینی.
+    receipts_dir: str = "var/receipts"
+    receipt_max_bytes: int = 5 * 1024 * 1024
+    receipt_review_ttl_hours: int = 48
     shop_write_rate_limit: str = "30/minute"
     shop_checkout_rate_limit: str = "10/minute"
     # فاز ۲ (تصمیم مالک ۲۰۲۶-۱۱-۱۹): فروشگاه نمایش‌محور است. خرید درون‌برنامه‌ای

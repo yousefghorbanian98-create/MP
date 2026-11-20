@@ -70,6 +70,8 @@ POLICIES: list[tuple[str, str, str]] = [
     # Q6 — آغاز پرداخت و callback درگاه: عضو باید تراکنش خودش را آغاز کند.
     # کنترل «کدام تراکنش» در service (وضعیت/authority) است.
     ("member", "/api/v1/payments", "POST"),
+    # QF-07: آپلود فیش فقط برای عضوِ صاحب همان پرداخت (مالکیت در service).
+    ("member", "/api/v1/payments/*/receipt", "POST"),
     ("member", "/api/v1/payments/*/start", "POST"),
     ("member", "/api/v1/payments/*/callback", "POST"),
     ("member", "/api/v1/nutrition/*", "GET"),

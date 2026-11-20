@@ -1379,3 +1379,25 @@ export function revokeSession(sessionId: number, token = getToken()) {
     token,
   );
 }
+
+// ── فاز ۶ (QF-08/QF-09) — صف بازبینی فیش کارت‌به‌کارت ──
+
+export function fetchReviewQueue(token = getToken(), signal?: AbortSignal) {
+  return getJson<PaymentRow[]>("/payments?status=in_review", token, signal);
+}
+
+export function approveReceipt(paymentId: number, token = getToken()) {
+  return postJson<{ id: number; status: string; membership_id: number | null }>(
+    `/payments/${paymentId}/approve`,
+    {},
+    token,
+  );
+}
+
+export function rejectReceipt(paymentId: number, reason: string, token = getToken()) {
+  return postJson<{ payment_id: number; status: string; review_id: string }>(
+    `/payments/${paymentId}/reject`,
+    { reason },
+    token,
+  );
+}

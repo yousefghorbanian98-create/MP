@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 import html as _html
+from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query, Request
+from fastapi import APIRouter, Depends, File, Query, Request, UploadFile
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field
 
@@ -21,6 +22,8 @@ from modules.payments.schemas import (
     PaymentStartIn,
     PaymentStartOut,
     PaymentVerify,
+    ReceiptOut,
+    ReceiptReject,
     WalletBalanceOut,
     WalletCharge,
     WalletLedgerOut,
@@ -41,6 +44,8 @@ def create_payment(payload: PaymentCreate, db: DbSession, user: CurrentUser):
         payload.method,
         payload.description,
         user=user,
+        plan_key=payload.plan_key,
+        idempotency_key=payload.idempotency_key,
     )
 
 
@@ -78,6 +83,53 @@ def verify_payment(payment_id: int, payload: PaymentVerify, db: DbSession):
     return service.verify_payment(db, payment_id, payload.reference_id, manual=True)
 
 
+@router.post(
+    "/{payment_id}/receipt",
+    response_model=ReceiptOut,
+    status_code=202,
+    summary="آپلود فیش کارت‌به‌کارت و ورود به صف بازبینی (QF-07/08)",
+)
+async def upload_receipt(
+    payment_id: int,
+    user: CurrentUser,
+    db: DbSession,
+    file: Annotated[UploadFile, File(description="تصویر فیش (JPEG/PNG/WebP)")],
+):
+    from modules.payments.receipts import submit_receipt
+
+    data = await file.read()
+    # سقف سخت پیش از خواندن کل فایل در حافظه هم اعمال می‌شود.
+    return submit_receipt(
+        db,
+        user=user,
+        payment_id=payment_id,
+        data=data,
+        declared_type=(file.content_type or "").split(";")[0].strip(),
+    )
+
+
+@router.post(
+    "/{payment_id}/approve",
+    summary="تأیید فیش و ثبت پرداخت + اشتراک در یک تراکنش (QF-09)",
+    dependencies=[Depends(require_grant("finance.write"))],
+)
+def approve_receipt(payment_id: int, db: DbSession, user: CurrentUser):
+    from modules.payments.receipts import approve_payment
+
+    return approve_payment(db, actor=user, payment_id=payment_id)
+
+
+@router.post(
+    "/{payment_id}/reject",
+    summary="رد فیش با دلیل و بازگشت پرداخت به failed (QF-09)",
+    dependencies=[Depends(require_grant("finance.write"))],
+)
+def reject_receipt(payment_id: int, payload: ReceiptReject, db: DbSession, user: CurrentUser):
+    from modules.payments.receipts import reject_receipt as _reject
+
+    return _reject(db, actor=user, payment_id=payment_id, reason=payload.reason)
+
+
 @router.post("/{payment_id}/fail", response_model=PaymentOut, summary="ناموفق‌شدن پرداخت")
 def fail_payment(payment_id: int, db: DbSession):
     return service.fail_payment(db, payment_id)
@@ -97,7 +149,7 @@ def list_payments(
     user: CurrentUser,
     db: DbSession,
     member_id: int | None = Query(None, ge=1, le=MAX_SAFE_ID),
-    status: str | None = Query(None, pattern="^(pending|paid|failed|refunded)$"),
+    status: str | None = Query(None, pattern="^(pending|in_review|paid|failed|refunded)$"),
 ):
     return service.list_payments(db, member_id=member_id, status=status, user=user)
 

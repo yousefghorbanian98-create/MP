@@ -335,18 +335,19 @@
       "kind": "studio-page",
       "file": "mp-app/studio/src/pages/Finance.tsx",
       "components": [
-        "mp-app/studio/src/components/PaymentPanel.tsx"
+        "mp-app/studio/src/components/PaymentPanel.tsx",
+        "mp-app/studio/src/components/ReceiptQueue.tsx"
       ],
       "controls": {
         "buttons": 10,
-        "inputs": 0,
+        "inputs": 1,
         "numbers": 0,
         "selects": 1,
-        "modals": 0
+        "modals": 1
       },
       "endpoints": [
         {
-          "function": "listPayments",
+          "function": "fetchReviewQueue",
           "method": "GET",
           "path": "/api/v1/payments",
           "in_contract": true,
@@ -371,6 +372,22 @@
           ],
           "roles": [
             "member",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "approveReceipt",
+          "method": "POST",
+          "path": "/api/v1/payments/*/approve",
+          "in_contract": true,
+          "guards": [
+            "grant:finance.write",
+            "permission"
+          ],
+          "roles": [
             "reception",
             "manager",
             "admin",
@@ -414,6 +431,22 @@
           "path": "/api/v1/payments/*/refund",
           "in_contract": true,
           "guards": [
+            "permission"
+          ],
+          "roles": [
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "rejectReceipt",
+          "method": "POST",
+          "path": "/api/v1/payments/*/reject",
+          "in_contract": true,
+          "guards": [
+            "grant:finance.write",
             "permission"
           ],
           "roles": [
@@ -2041,5 +2074,5 @@
       "tests": []
     }
   ],
-  "contract_paths": 144
+  "contract_paths": 147
 }

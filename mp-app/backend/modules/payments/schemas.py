@@ -16,10 +16,39 @@ class PaymentCreate(BaseModel):
     # درگاه اینترنتی حذف شد؛ فقط روش‌های حضوری و کیف‌پول داخلی.
     method: str = Field("cash", pattern="^(cash|card|card_to_card|wallet)$")
     description: str = Field("", max_length=200)
+    # QF-09: پلنی که با تأیید همین پرداخت فعال می‌شود.
+    plan_key: str | None = Field(None, max_length=40)
+    # QF-05: ارسال دوبارهٔ درخواست با همان کلید، پرداخت دوم نمی‌سازد.
+    idempotency_key: str | None = Field(None, min_length=8, max_length=64)
 
 
 class PaymentVerify(BaseModel):
     reference_id: str = Field("", max_length=80)
+
+
+class ReceiptReject(BaseModel):
+    reason: str = Field(..., min_length=3, max_length=500)
+
+
+class ReceiptOut(BaseModel):
+    receipt_id: int
+    review_id: str
+    payment_id: int
+    status: str
+    expires_at: str
+    size_bytes: int
+    mime: str
+
+
+class ApprovalOut(BaseModel):
+    id: int
+    member_id: int
+    amount_rial: int
+    method: str
+    status: str
+    reference_id: str
+    membership_id: int | None = None
+    paid_at: str | None = None
 
 
 class PaymentStartIn(BaseModel):

@@ -20,7 +20,12 @@ def create_payment(
     method: str = "cash",
     description: str = "",
     user=None,
+    *,
+    plan_key: str | None = None,
+    idempotency_key: str | None = None,
 ) -> Payment:
+    from sqlalchemy import select
+
     from app.security.ownership import ensure_member_scope
 
     # G8/D-005 — عضو فقط برای خودش؛ کادر برای هر عضو. بدون این، هر عضوی
@@ -28,12 +33,25 @@ def create_payment(
     ensure_member_scope(db, user, member_id)
     if db.get(Member, member_id) is None:
         raise NotFoundError("عضو یافت نشد")
+    if idempotency_key:
+        # QF-05: شبکه/اپ ممکن است همان درخواست را دوباره بفرستد؛ نتیجه یکی است.
+        existing = db.scalar(
+            select(Payment).where(
+                Payment.member_id == member_id,
+                Payment.idempotency_key == idempotency_key,
+            )
+        )
+        if existing is not None:
+            return existing
     payment = Payment(
         member_id=member_id,
         amount_rial=amount_rial,
         method=method,
         description=description,
         branch_id=1,
+        plan_key=plan_key,
+        idempotency_key=idempotency_key,
+        created_by_user_id=getattr(user, "id", None),
     )
     db.add(payment)
     db.commit()
