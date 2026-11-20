@@ -144,7 +144,9 @@ class WalletLedgerController extends StateNotifier<WalletLedgerState> {
     }
 
     final rows = <Map<String, dynamic>>[];
-    var priorId = 0x7fffffffffffffff;
+    // سقف شناسه: 2^53-1 (بزرگ‌ترین عدد صحیح دقیق در JavaScript)؛
+    // dart2js لیترال 0x7fffffffffffffff را نمی‌پذیرد و build وب شکست می‌خورد.
+    var priorId = 9007199254740991;
     for (final raw in rawRows) {
       if (raw is! Map)
         throw const FormatException('رکورد دفتر کیف‌پول نامعتبر است');
