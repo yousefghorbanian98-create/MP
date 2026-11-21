@@ -1,0 +1,5 @@
+cells=872 elapsed=74.6s relogins=0 tokens_live=True
+status: {'422': 759, '404': 80, '400': 20, '200': 7, '403': 6}
+finding_counts: {'server_errors_5xx': 0, 'leaked_stacktrace': 0, 'unexpected_2xx_on_bad_id': 0, 'bad_error_envelope': 0, 'revoked_token_cells': 0, 'id_guard_rejections': 338, 'fastapi_default_detail': 0}
+canary_after: [{"role": "admin", "path": "/api/v1/members/me", "status": 200, "body_head": "{\"id\":1,\"user_id\":5,\"full_name\":\"کاربر مصنوعی admin\",\"phone\":\"09120000904\",\"role\":\"admin\",\"goal\":\"\",\"gender\":\"unknown\",\"height_cm\":null,\"constraints\":\"[]\"}", "token_is_live": true}, {"role": "
+wrote /tmp/run/audit-31/contract-invalid-authed.json

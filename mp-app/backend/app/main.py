@@ -6,7 +6,7 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 from time import perf_counter
 
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -15,6 +15,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.config import settings
 from app.errors import ApiError, api_error_handler, http_error_handler, validation_error_handler
+from app.id_floor import check_path_id_floor
 
 
 @asynccontextmanager
@@ -90,6 +91,8 @@ def create_app() -> FastAPI:
             "قاعدهٔ G8: اعداد بار/ست/تکرار فقط از موتور قواعد می‌آیند."
         ),
         version="1.0.0",
+        # WP 3.1 / F‑25: کف شناسه برای همهٔ مسیرها (پس از مسیریابی، قبل از هندلر).
+        dependencies=[Depends(check_path_id_floor)],
         openapi_tags=[
             {"name": "health", "description": "سلامت سیستم"},
             {"name": "auth", "description": "احراز هویت OTP و نشست"},

@@ -328,3 +328,18 @@ WP: 0.4 · F: F‑07 · شاهد: `evidence/after/wp04/` · تصمیم: AD‑11 
 - **کل:** `pytest -q --no-cov` ⇒ `1257 passed, 2 skipped, rc=0` (`/home/user/recovery4/wp32/pytest.log`).
 - **شواهد:** `docs/MuscleParadise/audit/evidence/after/wp32/` (summary.json و لاگ‌ها). JSON کامل سلول‌ها (~۴۹۰KB) خارج از مخزن: `/tmp/run/audit-before` و `/tmp/run/audit-final`.
 - **نحوهٔ برگرداندن:** `git revert` همان commit.
+
+## WP 3.1 · F‑25 · کف شناسه — DONE
+
+- **ریشه:** `id_guard._too_big` با `isdigit()` مقادیر منفی را نمی‌دید و `0` فقط از سقف رد نمی‌شد.
+- **قرمز:** `tests/integration/test_wp31_id_floor.py` (از `app.openapi()`، چون FastAPI 0.141 مسیرها را در `_IncludedRouter` نگه می‌دارد) ⇒ ۲۴۸ از ۲۴۸ سلول ناموفق (۴۰۱ بدون `invalid_id`).
+- **سبز:** `app/id_floor.py::check_path_id_floor` به‌عنوان dependency سراسری (`FastAPI(dependencies=…)`). فقط پارامترهای `*_id` (در OpenAPI همه integer) با regex `[+-]?[0-9]+\Z` سنجیده می‌شوند؛ `v < 1` یا `v > MAX_SAFE_ID` ⇒ ۴۲۲ `invalid_id`. بدون `lstrip` روی رشتهٔ اصلی. ⇒ `5 passed`.
+- **گیت کیت (probe زنده، ۸۷۲ سلول):**
+  - پایه (822e483): `unexpected_2xx_on_bad_id = 48`، `id_guard_rejections = 70`.
+  - بعد: `unexpected_2xx_on_bad_id = 0`، `id_guard_rejections = 338` = ۴×۶۷ + ۷۰ (۶۷ = ۵۷ سلول admin + ۱۰ سلول member برای هر مقدار منفی؛ ۷۰ = مقدار سقف از middleware قبلی).
+  - `server_errors_5xx = 0`، `leaked_stacktrace = 0`، `fastapi_default_detail = 0`، `tokens_live_throughout = True`.
+- **بار (kit: `probe_load.py plain-dev 10 40`، اجرای پشت‌سرهم روی همان DB):** نسبت بعد/قبل — ۱۰ کارگر: rps ×۱٫۲۰، p50 ×۰٫۸۶، p95 ×۰٫۸۱؛ ۴۰ کارگر: rps ×۱٫۰۷، p50 ×۰٫۹۴، p95 ×۰٫۹۷. بدون 5xx و بدون timeout. یک اجرا برای هر مرحله؛ فقط «بدون رگرسیون» ادعا می‌شود.
+- **یادداشت probe بار:** دو مسیر فهرست کیت (`/api/v1/exercises`، `/api/v1/reports/financial/summary`) در هر دو ساخت ۴۰۴ می‌دهند؛ همان‌طور که هست ثبت شد.
+- **کل:** `pytest -q --no-cov` ⇒ `1262 passed, 2 skipped, rc=0` (`/home/user/recovery4/wp31/pytest.log`).
+- **شواهد:** `evidence/after/wp31/` (summary.json، لاگ‌های before/after)، `evidence/after/wp31-load-ratios.json`.
+- **نحوهٔ برگرداندن:** `git revert` همان commit.
