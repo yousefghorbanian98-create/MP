@@ -7,7 +7,7 @@
 
 ## ۱. خلاصهٔ تعداد فایل
 
-- کل فایل‌های ترک‌شده: **1164** (خطوط متنی: 161389)
+- کل فایل‌های ترک‌شده: **1164** (خطوط متنی: 161406)
 
 | ناحیه | تعداد فایل | خطوط متنی |
 |---|---|---|
@@ -20,7 +20,7 @@
 | زیرساخت و کانتینر | 15 | 582 |
 | سایر mp-app | 4 | 239 |
 | شواهد QA | 40 | 1626 |
-| مستندات | 179 | 20624 |
+| مستندات | 179 | 20641 |
 | گزارش‌های عامل | 141 | 8325 |
 
 ## ۲. عملیات API (از `app.openapi()`، مرجع اصلی)
@@ -355,25 +355,25 @@
 
 | فایل | jobs | `uses:` بدون SHA |
 |---|---|---|
-| `.github/workflows/apk.yml` | apk | 4 |
-| `.github/workflows/ci.yml` | secret-scan, docs, backend, studio, client-flutter, live-contract, e2e-api, client-pinned | 19 |
-| `.github/workflows/client-format-fix.yml` | gitleaks-fingerprints, format-qr, format-client | 5 |
-| `.github/workflows/container.yml` | build-push | 4 |
-| `.github/workflows/deploy.yml` | preflight, build-and-push, deploy, rollback | 5 |
-| `.github/workflows/gitleaks-fingerprints.yml` | gitleaks-fingerprints | 1 |
-| `.github/workflows/web.yml` | web | 4 |
+| `.github/workflows/apk.yml` | apk | 0 |
+| `.github/workflows/ci.yml` | secret-scan, docs, backend, studio, client-flutter, live-contract, e2e-api, client-pinned | 0 |
+| `.github/workflows/client-format-fix.yml` | gitleaks-fingerprints, format-qr, format-client | 0 |
+| `.github/workflows/container.yml` | build-push | 0 |
+| `.github/workflows/deploy.yml` | preflight, build-and-push, deploy, rollback | 0 |
+| `.github/workflows/gitleaks-fingerprints.yml` | gitleaks-fingerprints | 0 |
+| `.github/workflows/web.yml` | web | 0 |
 
 ## ۵. فهرست کامل فایل‌ها
 
 | ناحیه | مسیر | خطوط | اندازه (بایت) | بازبینی |
 |---|---|---|---|---|
-| CI/CD | `.github/workflows/apk.yml` | 180 | 7897 | NOT-REVIEWED |
-| CI/CD | `.github/workflows/ci.yml` | 566 | 28783 | NOT-REVIEWED |
-| CI/CD | `.github/workflows/client-format-fix.yml` | 446 | 23608 | NOT-REVIEWED |
-| CI/CD | `.github/workflows/container.yml` | 58 | 1992 | NOT-REVIEWED |
-| CI/CD | `.github/workflows/deploy.yml` | 150 | 5781 | NOT-REVIEWED |
-| CI/CD | `.github/workflows/gitleaks-fingerprints.yml` | 64 | 2909 | NOT-REVIEWED |
-| CI/CD | `.github/workflows/web.yml` | 85 | 2623 | NOT-REVIEWED |
+| CI/CD | `.github/workflows/apk.yml` | 180 | 8073 | NOT-REVIEWED |
+| CI/CD | `.github/workflows/ci.yml` | 566 | 29619 | NOT-REVIEWED |
+| CI/CD | `.github/workflows/client-format-fix.yml` | 446 | 23828 | NOT-REVIEWED |
+| CI/CD | `.github/workflows/container.yml` | 58 | 2168 | NOT-REVIEWED |
+| CI/CD | `.github/workflows/deploy.yml` | 150 | 6001 | NOT-REVIEWED |
+| CI/CD | `.github/workflows/gitleaks-fingerprints.yml` | 64 | 2953 | NOT-REVIEWED |
+| CI/CD | `.github/workflows/web.yml` | 85 | 2799 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/Dockerfile` | 11 | 412 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/README.md` | 3 | 130 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/electron/main.cjs` | 31 | 810 | NOT-REVIEWED |
@@ -1302,11 +1302,11 @@
 | مستندات | `docs/MuscleParadise/assets/knowledge-atlas.svg` | 77 | 5239 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/assets/readme-hero.svg` | 66 | 4533 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/assets/system-architecture.svg` | 148 | 13022 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/CHECKLIST.md` | 142 | 12101 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/EXECUTION-LOG.md` | 42 | 5242 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/INVENTORY.md` | 1529 | 142794 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/CHECKLIST.md` | 143 | 12690 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/EXECUTION-LOG.md` | 50 | 6243 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/INVENTORY.md` | 1533 | 143218 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/findings.json` | 511 | 14777 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/status.json` | 26 | 1423 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/status.json` | 30 | 1721 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/brand/concepts/M101-CONCEPTS.md` | 75 | 7809 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/brand/concepts/m101-a-geometric-mp.png` | — | 85273 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/brand/concepts/m101-a-geometric-mp.svg` | 87 | 6179 | NOT-REVIEWED |

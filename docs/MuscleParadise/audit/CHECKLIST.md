@@ -14,7 +14,7 @@
 | A2 | `/api/v1/metrics` کاملاً بدون احراز هویت و عمومی است | OPEN |  |
 | A3 | `MP_TRUSTED_PROXIES` پیش‌فرض خالی است و در production اعتبارسنجی نمی‌شود → همه‌ی کاربران یک سبد rate-limit | OPEN |  |
 | A4 | `mp.db` در ریشهٔ مخزن ترک‌شده است (دیتابیس واقعی در Git) | OPEN |  |
-| A5 | زنجیرهٔ تأمین آرتیفکت صفر گیت دارد | OPEN |  |
+| A5 | زنجیرهٔ تأمین آرتیفکت صفر گیت دارد | IN-PROGRESS | WP 0.8: همهٔ ۴۲ ارجاع uses: در ۷ workflow به SHA کامیت پین شد (هر خط با برچسب نسخه در کامنت). گیت‌های لایهٔ تأمین (SBOM/امضا/provenance) هنوز اضافه نشده‌اند. |
 | A6 | هیچ گزارش خطا/crash در زمان اجرا وجود ندارد | OPEN |  |
 | A7 | `Content-Security-Policy` هیچ‌جا تعریف نشده | OPEN |  |
 | A8 | بیلد release اندروید بدون shrink/obfuscation و بدون AAB | OPEN |  |
@@ -140,4 +140,5 @@
 | findings | OPEN | 21 |
 | findings | VERIFIED-IN-CODE | 3 |
 | non_issues | OPEN | 14 |
-| problems | OPEN | 58 |
+| problems | IN-PROGRESS | 1 |
+| problems | OPEN | 57 |
