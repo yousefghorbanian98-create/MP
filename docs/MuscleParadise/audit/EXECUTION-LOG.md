@@ -343,3 +343,28 @@ WP: 0.4 · F: F‑07 · شاهد: `evidence/after/wp04/` · تصمیم: AD‑11 
 - **کل:** `pytest -q --no-cov` ⇒ `1262 passed, 2 skipped, rc=0` (`/home/user/recovery4/wp31/pytest.log`).
 - **شواهد:** `evidence/after/wp31/` (summary.json، لاگ‌های before/after)، `evidence/after/wp31-load-ratios.json`.
 - **نحوهٔ برگرداندن:** `git revert` همان commit.
+
+## WP 0.6 · F‑24 · منسوخ‌ها و شمارش مسیرها — DONE
+
+- **قرمز:** `tests/regression/test_wp06_deprecations_and_counts.py` — `test_no_deprecated_422_constant` ⇒ ناموفق: `app/id_floor.py:33` (خودِ WP 3.1 این ثابت را وارد کرده بود).
+- **سبز:** `id_floor.py` از عدد `422` مستقیم استفاده می‌کند. دو آزمون شمارش (141 مسیر، 163 عملیات، و تطابق پیمایشگر `route_guard_gate._walk` با OpenAPI) از ابتدا سبز بودند.
+- **اسکریپت‌ها:** `scripts/route_guard_gate.py` و `export_routes.py` مسیرها را با پیمایش بازگشتی می‌خوانند (چون guardها روی شیء مسیر هستند)؛ تطابق آن‌ها با OpenAPI در آزمون قفل شده است (۱۶۳ = ۱۶۳، اختلاف ۰).
+- **هشدار asyncio:** `pyproject.toml` ⇒ `asyncio_default_fixture_loop_scope = "function"` (رفتار فعلی همین است).
+- **بار/import:** `create_app()` و `openapi()` بدون هشدار؛ لاگ‌های `load-plain-dev` و probe بدون کلمهٔ deprecat.
+- **باقی‌مانده:** هشدار httpx در `fastapi/testclient.py` (فقط تست)؛ حذفش نیازمند وابستگی `httpx2` است و تصمیم جداگانه می‌خواهد.
+- **کل:** `pytest -q --no-cov` ⇒ `1265 passed, 2 skipped, rc=0` (`/home/user/recovery4/wp06/pytest.log`).
+- **نحوهٔ برگرداندن:** `git revert` همان commit.
+
+## WP 0.7 · semgrep در CI (غیرمسدودکننده) — PARTIAL
+
+- **اجرای محلی:** `semgrep --config=.semgrep/mp-harness-rules.yml --exclude=… mp-app` ⇒ exit 0، ۵ یافته: `mp-money-division`×۲، `mp-dart-dynamic-cast`×۱، `mp-ts-float-money`×۱، `mp-ts-negative-sentinel-member-id`×۱؛ `mp-silent-except-pass`×۰ (`/home/user/recovery4/semgrep-mp-all.json`).
+- **CI:** مرحلهٔ «Semgrep (harness rules, non-blocking)» در job بک‌اند با `continue-on-error: true`. YAML اعتبارسنجی شد.
+- **باز:** گیت «صفر یافته» در پایان فاز ۴ و تبدیل به مسدودکننده در همان فاز.
+
+## WP 0.8 · پین SHA — DONE (گیت کیت)
+
+- `grep -rh "uses:" .github/workflows/` ⇒ ۴۳ خط؛ همه با SHA ۴۰‌کاراکتری؛ ۰ تگ‌محور.
+- اختلاف با عدد کیت (۴۲): کیت در زمان نگارش ۴۲ دیده؛ عدد فعلی ۴۳ است و همه پین‌اند.
+- `gh api repos/<repo>/commits/<sha>` برای ۷ SHA یکتا ⇒ همه یافت شد (checkout، setup-node، setup-python، upload-artifact، build-push-action، login-action، flutter-action).
+- **تغییر کد:** ندارد (از قبل برقرار بود).
+

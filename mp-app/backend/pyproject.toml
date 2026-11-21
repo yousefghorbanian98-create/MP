@@ -54,6 +54,7 @@ include = ["app*", "api*", "modules*", "db*", "security*", "jobs*", "cache*"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"  # WP 0.6: هشدار PytestDeprecationWarning (رفتار فعلی همین است)
 
 # پیکربندی ruff — مبنا: الحاقیهٔ A1.3 §۵ (sha256 6bafdba1…)
 [tool.ruff]

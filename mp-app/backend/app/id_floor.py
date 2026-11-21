@@ -12,13 +12,15 @@ from __future__ import annotations
 
 import re
 
-from fastapi import Request, status
+from fastapi import Request
 
 from app.deps import MAX_SAFE_ID
 from app.errors import ApiError
 
 _INT_RE = re.compile(r"[+-]?[0-9]+\Z", re.ASCII)
 _MSG = "شناسهٔ مسیر خارج از بازهٔ مجاز است."
+# ثابت `status.HTTP_422_UNPROCESSABLE_ENTITY` در FastAPI منسوخ است (WP 0.6)؛ عدد مستقیم.
+_UNPROCESSABLE = 422
 
 
 async def check_path_id_floor(request: Request) -> None:
@@ -29,6 +31,4 @@ async def check_path_id_floor(request: Request) -> None:
             continue  # غیرعددی: اعتبارسنجی نوع FastAPI تصمیم می‌گیرد
         value = int(raw)  # پس از تطبیق با regex؛ بدون lstrip
         if value < 1 or value > MAX_SAFE_ID:
-            raise ApiError(
-                _MSG, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, code="invalid_id"
-            )
+            raise ApiError(_MSG, status_code=_UNPROCESSABLE, code="invalid_id")
