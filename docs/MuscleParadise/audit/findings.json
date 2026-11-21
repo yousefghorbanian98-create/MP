@@ -426,6 +426,16 @@
    "id": "F-27",
    "title": "پیش‌نیازِ «پروندهٔ عضو» در سبد خرید با `404 not_found` بیان می‌شود؛ سفارش به‌نیابت ممکن نیست",
    "source": "FINAL-AUDIT"
+  },
+  {
+   "id": "F-28",
+   "title": "«امروز» سه برداشت متفاوت دارد: nutrition و axis_assessment از `date.today()` (ساعت UTC کانتینر) استفاده می‌کنند؛ shop از Asia/Tehran. هر شب ۰۰:۰۰–۰۳:۳۰ تهران روز اشتباه",
+   "source": "ADDENDUM-A1 (ruff 0.17.6، DTZ011)"
+  },
+  {
+   "id": "F-29",
+   "title": "شش خطای ارسال SMS با `log.error` بدون traceback ثبت می‌شوند (app/sms.py:66,69,72,99,102,105) — علت واقعی خطای فراهم‌کننده در لاگ نیست",
+   "source": "ADDENDUM-A1 (ruff 0.17.6، TRY400)"
   }
  ],
  "non_issues": [

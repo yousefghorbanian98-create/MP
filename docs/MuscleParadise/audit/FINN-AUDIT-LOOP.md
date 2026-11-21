@@ -39,6 +39,7 @@
 | 0.5 | F-10 | DONE | `bf1daa1` | eslint ۰/۰ (قبل: ۴۲ خطا + ۵ هشدار) |
 | 0.6 | F-24 | PARTIAL | `bf1daa1` | 422 اصلاح؛ هشدار httpx و asyncio باقی |
 | 0.7 | — | READY | — | semgrep روی PyPI نصب می‌شود (میزبان مجاز)؛ قاعدهٔ `harness/semgrep-mp.yml` در CI به‌صورت non-blocking |
+| 0.9 | الحاقیهٔ A1 | READY | — | ruff: بازسازی `ruff-recommended.toml` (در مخزن نیست)؛ ۷۲ RUF100 + ۴۷ fix امن (نه unsafe)؛ `ruff format --check`؛ گام الف (باگ‌یاب) blocking، گام ب non-blocking |
 | 0.8 | A5 | PARTIAL | `40c64f7` | ۴۲/۴۲ پین؛ گیت‌های SBOM/امضا باقی |
 | 1.1 | F-01 | PARTIAL | `ccf44ce` | e2e: قبل ۳۰×200، بعد ≥۲۷×429؛ متریک `key_source` باقی |
 | 1.2 | F-02 | PARTIAL | `ccf44ce` | BD-3؛ گیت زنده روی استقرار BLOCKED-ENV |
@@ -50,16 +51,18 @@
 | 2.3 | F-18 | READY | — | BD-4: یک ورکر + سقف مستند؛ `gateway.py` sync→async |
 | 2.4 | F-05 | READY | — | RBAC پیش‌کامپایل؛ قفل `_enforcer` |
 | 2.5 | F-17 | READY | — | ۴ `except: pass` ⇒ لاگ + شمارنده |
+| 2.6 | F-29 | READY | — | الحاقیهٔ A1: `log.exception` ×۶ در `app/sms.py`؛ allowlist scheme برای `urlopen` (S310)؛ شاهد لاگ قبل/بعد |
 | 3.1 | F-25 | READY | — | کف شناسه در `id_guard.py`؛ `PathId` در امضاها |
 | 3.2 | F-26 | READY | — | نگاشت `StarletteHTTPException` به پاکت پروژه |
 | 3.3 | F-14 | TODO | — | `gateway-return` با شناسهٔ نامعتبر ⇒ 404 (BD-5) |
 | 3.4 | F-27 | READY | — | BD-1: 409 `member_profile_required` |
 | 3.5 | F-09/F-25 | TODO | — | آزمون قراردادی سراسری در CI |
+| 3.6 | F-28 | READY | — | الحاقیهٔ A1: `today_in_shop_zone()` ×۳؛ `ENV TZ` در دو Dockerfile؛ تست مرزی نیمه‌شب (AD‑1) |
 | 4.1 | F-15 | TODO | — | شکستن `validate_production_configuration` (radon F(47)) |
 | 4.2 | F-11 | TODO | — | سه جهش واقعی؛ ≥۸۰٪ |
 | 4.3 | F-19 | READY | — | یک لایهٔ داده در استودیو؛ حذف `await import` در onClick |
 | 4.4 | F-20/F-23 | READY | — | BD-2: حذف `updateProduct` کلاینت |
-| 4.5 | F-21/F-22 | READY | — | الگوی session، `hypothesis` در pyproject، SQL f-string |
+| 4.5 | F-21/F-22 | READY | — | الگوی session، `hypothesis` در pyproject، SQL f-string. **اصلاح الحاقیه:** ruff `S608` آن را نمی‌گیرد؛ semgrep تنها گیت است؛ `# noqa: S608` فقط **پس از** رفع واقعی حذف شود |
 | 4.6 | F-16 | READY | — | قاعدهٔ `int` ریال؛ حذف sentinel منفی |
 | 4.7 | — | TODO | — | Semgrep blocking، بار پله‌ای، جهش، گیت نهایی |
 
@@ -75,3 +78,11 @@ BD-1 تا BD-5 در `DECISIONS.md` (بخش D-5) با دلیل و نحوهٔ بر
 ۲. اولین ردیف `READY` بالاترین اولویت (ترتیب بالا) را بردار؛ وابستگی‌ها را از بریف بخوان.
 ۳. با «قرمز» شروع کن؛ اصلاح؛ گیت هدف؛ کامیت؛ به‌روزرسانی این جدول و `status.json`.
 ۴. پایان هر فاز: گیت سلامت کامل.
+
+## الحاقیهٔ A1 (ruff و دو یافتهٔ تازه) — وضعیت در حلقه
+
+- منبع: الحاقیهٔ «A1» (ruff 0.17.6). ثبت خط پایه و اختلاف‌ها: `BASELINE.md` و `EXECUTION-LOG.md` (بخش الحاقیه).
+- افزوده‌ها: WP 0.9 (فاز ۰)، WP 2.6 (فاز ۲، F‑29)، WP 3.6 (فاز ۳، F‑28)؛ WP 4.5 اصلاح‌شده.
+- ترتیب: 0.9 پیش‌نیاز گیت عددی 2.6 و 3.6 است؛ 2.6 بعد از 2.1 (F‑03) انجام شود تا لاگ بی‌محتوا نماند.
+- تصمیم‌ها: AD‑1 (منطقهٔ «امروز») و AD‑2 (سیاست noqa) در `DECISIONS.md`.
+- **شرط WP 0.9:** `ruff-recommended.toml` در این مخزن نیست؛ باید از مشخصات الحاقیه بازسازی و اعداد ستون «بعد» آن با اندازه‌گیری تأیید شود (شمارش ۴۳۰/۵۲ ادعای الحاقیه قابل تأیید از فایل مرجع نیست).

@@ -7,7 +7,7 @@
 
 ## ۱. خلاصهٔ تعداد فایل
 
-- کل فایل‌های ترک‌شده: **1172** (خطوط متنی: 162367)
+- کل فایل‌های ترک‌شده: **1172** (خطوط متنی: 162252)
 
 | ناحیه | تعداد فایل | خطوط متنی |
 |---|---|---|
@@ -20,178 +20,10 @@
 | زیرساخت و کانتینر | 15 | 597 |
 | سایر mp-app | 4 | 239 |
 | شواهد QA | 40 | 1626 |
-| مستندات | 181 | 20887 |
+| مستندات | 181 | 20772 |
 | گزارش‌های عامل | 141 | 8325 |
 
-## ۲. عملیات API (از `app.openapi()`، مرجع اصلی)
-
-مسیرها: **141**؛ عملیات (روش×مسیر): **163**.
-
-| روش | مسیر |
-|---|---|
-| DELETE | `/api/v1/admin/permissions/{grant_id}` |
-| DELETE | `/api/v1/admin/users/{user_id}/role` |
-| DELETE | `/api/v1/auth/sessions/{session_id}` |
-| DELETE | `/api/v1/expenses/{expense_id}` |
-| DELETE | `/api/v1/face/enroll/{member_id}` |
-| DELETE | `/api/v1/shop/cart/{item_id}` |
-| GET | `/api/v1/admin/analytics/churn-risk` |
-| GET | `/api/v1/admin/analytics/leaderboards` |
-| GET | `/api/v1/admin/attendance` |
-| GET | `/api/v1/admin/audit` |
-| GET | `/api/v1/admin/checkins` |
-| GET | `/api/v1/admin/flags` |
-| GET | `/api/v1/admin/flags/{key}` |
-| GET | `/api/v1/admin/kpis` |
-| GET | `/api/v1/admin/members-summary` |
-| GET | `/api/v1/admin/permissions` |
-| GET | `/api/v1/admin/permissions/known` |
-| GET | `/api/v1/admin/retention` |
-| GET | `/api/v1/admin/users` |
-| GET | `/api/v1/assessments/jp7/member/{member_id}/trend` |
-| GET | `/api/v1/assessments/limb/member/{member_id}/report` |
-| GET | `/api/v1/assessments/member/{member_id}` |
-| GET | `/api/v1/assessments/{assessment_id}` |
-| GET | `/api/v1/auth/sessions` |
-| GET | `/api/v1/axis-assessments/member/{member_id}` |
-| GET | `/api/v1/axis-assessments/{assessment_id}/matrix` |
-| GET | `/api/v1/chat/conversations` |
-| GET | `/api/v1/chat/conversations/{conversation_id}/messages` |
-| GET | `/api/v1/classes` |
-| GET | `/api/v1/expenses` |
-| GET | `/api/v1/expenses/{expense_id}/receipt` |
-| GET | `/api/v1/face/deep-status` |
-| GET | `/api/v1/face/privacy-notice` |
-| GET | `/api/v1/face/qr-token` |
-| GET | `/api/v1/finance/reports/daily/{run_date}` |
-| GET | `/api/v1/finance/reports/period` |
-| GET | `/api/v1/finance/reports/schedule` |
-| GET | `/api/v1/health/ready` |
-| GET | `/api/v1/library/exercises` |
-| GET | `/api/v1/library/exercises/{exercise_id}` |
-| GET | `/api/v1/members` |
-| GET | `/api/v1/members/me` |
-| GET | `/api/v1/members/me/checkins` |
-| GET | `/api/v1/members/me/face-consent` |
-| GET | `/api/v1/members/memberships/plans` |
-| GET | `/api/v1/members/memberships/{membership_id}/invoice` |
-| GET | `/api/v1/members/{member_id}` |
-| GET | `/api/v1/members/{member_id}/memberships` |
-| GET | `/api/v1/metrics` |
-| GET | `/api/v1/notifications/member/{member_id}` |
-| GET | `/api/v1/notifications/reminders/member/{member_id}` |
-| GET | `/api/v1/nutrition/food-logs/member/{member_id}/daily` |
-| GET | `/api/v1/nutrition/foods` |
-| GET | `/api/v1/nutrition/member/{member_id}/adaptive` |
-| GET | `/api/v1/nutrition/plans/member/{member_id}` |
-| GET | `/api/v1/payments` |
-| GET | `/api/v1/payments/coupons` |
-| GET | `/api/v1/payments/finance/export.csv` |
-| GET | `/api/v1/payments/finance/summary` |
-| GET | `/api/v1/payments/invoice/{member_id}` |
-| GET | `/api/v1/payments/ledger/{member_id}` |
-| GET | `/api/v1/payments/wallet/{member_id}` |
-| GET | `/api/v1/payments/wallet/{member_id}/transactions` |
-| GET | `/api/v1/payments/{payment_id}/gateway-return` |
-| GET | `/api/v1/payments/{payment_id}/receipt` |
-| GET | `/api/v1/population/paths` |
-| GET | `/api/v1/programs` |
-| GET | `/api/v1/programs/member/{member_id}` |
-| GET | `/api/v1/programs/member/{member_id}/readiness` |
-| GET | `/api/v1/programs/member/{member_id}/volume` |
-| GET | `/api/v1/programs/{program_id}` |
-| GET | `/api/v1/reports/confidential/{member_id}` |
-| GET | `/api/v1/shop/cart` |
-| GET | `/api/v1/shop/categories` |
-| GET | `/api/v1/shop/change-requests` |
-| GET | `/api/v1/shop/gateways` |
-| GET | `/api/v1/shop/orders` |
-| GET | `/api/v1/shop/orders/{order_id}/receipt` |
-| GET | `/api/v1/shop/prices` |
-| GET | `/api/v1/shop/products` |
-| GET | `/api/v1/shop/products/{product_id}` |
-| GET | `/api/v1/shop/status` |
-| GET | `/api/v1/updates/manifest` |
-| GET | `/health` |
-| PATCH | `/api/v1/expenses/{expense_id}` |
-| PATCH | `/api/v1/members/{member_id}` |
-| PATCH | `/api/v1/shop/cart/{item_id}` |
-| PATCH | `/api/v1/shop/orders/{order_id}` |
-| PATCH | `/api/v1/shop/products/{product_id}` |
-| POST | `/api/v1/admin/permissions` |
-| POST | `/api/v1/admin/retention/run` |
-| POST | `/api/v1/admin/users/{user_id}/role` |
-| POST | `/api/v1/ai/nutrition/generate` |
-| POST | `/api/v1/ai/program/generate` |
-| POST | `/api/v1/ai/suggest-weight` |
-| POST | `/api/v1/assessments` |
-| POST | `/api/v1/assessments/jp7` |
-| POST | `/api/v1/assessments/limb` |
-| POST | `/api/v1/auth/logout` |
-| POST | `/api/v1/auth/logout-all` |
-| POST | `/api/v1/auth/otp/request` |
-| POST | `/api/v1/auth/otp/verify` |
-| POST | `/api/v1/auth/phone-change/confirm` |
-| POST | `/api/v1/auth/phone-change/request` |
-| POST | `/api/v1/auth/phone-change/verify-old` |
-| POST | `/api/v1/auth/refresh` |
-| POST | `/api/v1/axis-assessments` |
-| POST | `/api/v1/axis-assessments/{assessment_id}/review` |
-| POST | `/api/v1/chat/conversations` |
-| POST | `/api/v1/chat/conversations/{conversation_id}/messages` |
-| POST | `/api/v1/chat/conversations/{conversation_id}/read` |
-| POST | `/api/v1/classes` |
-| POST | `/api/v1/classes/book` |
-| POST | `/api/v1/classes/cancel` |
-| POST | `/api/v1/expenses` |
-| POST | `/api/v1/expenses/{expense_id}/receipt` |
-| POST | `/api/v1/face/checkin` |
-| POST | `/api/v1/face/checkin-qr` |
-| POST | `/api/v1/face/checkins/{checkin_id}/exit` |
-| POST | `/api/v1/face/consent` |
-| POST | `/api/v1/face/consent/revoke` |
-| POST | `/api/v1/face/enroll` |
-| POST | `/api/v1/finance/reports/schedule/{job_key}/run` |
-| POST | `/api/v1/members` |
-| POST | `/api/v1/members/memberships` |
-| POST | `/api/v1/members/memberships/from-plan` |
-| POST | `/api/v1/notifications` |
-| POST | `/api/v1/notifications/{notification_id}/read` |
-| POST | `/api/v1/nutrition/food-logs` |
-| POST | `/api/v1/nutrition/plans` |
-| POST | `/api/v1/nutrition/plans/{plan_id}/approve` |
-| POST | `/api/v1/nutrition/weight-logs` |
-| POST | `/api/v1/payments` |
-| POST | `/api/v1/payments/coupons` |
-| POST | `/api/v1/payments/finance/commission` |
-| POST | `/api/v1/payments/ledger/{entry_id}/reverse` |
-| POST | `/api/v1/payments/wallet/charge` |
-| POST | `/api/v1/payments/wallet/pay` |
-| POST | `/api/v1/payments/{payment_id}/approve` |
-| POST | `/api/v1/payments/{payment_id}/callback` |
-| POST | `/api/v1/payments/{payment_id}/fail` |
-| POST | `/api/v1/payments/{payment_id}/receipt` |
-| POST | `/api/v1/payments/{payment_id}/refund` |
-| POST | `/api/v1/payments/{payment_id}/reject` |
-| POST | `/api/v1/payments/{payment_id}/start` |
-| POST | `/api/v1/payments/{payment_id}/verify` |
-| POST | `/api/v1/population/gate-check` |
-| POST | `/api/v1/population/intake/next` |
-| POST | `/api/v1/programs/from-engine` |
-| POST | `/api/v1/programs/set-feedback` |
-| POST | `/api/v1/programs/sync/set-feedback` |
-| POST | `/api/v1/programs/{program_id}/approve` |
-| POST | `/api/v1/programs/{program_id}/reject` |
-| POST | `/api/v1/shop/cart` |
-| POST | `/api/v1/shop/change-requests` |
-| POST | `/api/v1/shop/change-requests/{request_id}/review` |
-| POST | `/api/v1/shop/checkout` |
-| POST | `/api/v1/shop/gateways` |
-| POST | `/api/v1/shop/prices` |
-| POST | `/api/v1/shop/products` |
-| PUT | `/api/v1/admin/flags` |
-| PUT | `/api/v1/members/me` |
-| PUT | `/api/v1/shop/gateways/{gateway_id}` |
+## ۲. عملیات API (ایستا؛ `app.openapi()` در این اجرا در دسترس نبود)
 
 ### ۲-الف. دکوراتورهای `@router.*` (ایستا)
 
@@ -1307,13 +1139,13 @@
 | مستندات | `docs/MuscleParadise/assets/knowledge-atlas.svg` | 77 | 5239 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/assets/readme-hero.svg` | 66 | 4533 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/assets/system-architecture.svg` | 148 | 13022 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/CHECKLIST.md` | 145 | 14248 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/DECISIONS.md` | 86 | 9157 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/EXECUTION-LOG.md` | 114 | 16753 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/FINN-AUDIT-LOOP.md` | 77 | 7182 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/INVENTORY.md` | 1540 | 144014 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/findings.json` | 511 | 14777 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/status.json` | 38 | 3068 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/CHECKLIST.md` | 147 | 15031 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/DECISIONS.md` | 99 | 11055 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/EXECUTION-LOG.md` | 123 | 18690 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/FINN-AUDIT-LOOP.md` | 88 | 8906 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/INVENTORY.md` | 1372 | 136888 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/findings.json` | 521 | 15410 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/status.json` | 46 | 3454 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/brand/concepts/M101-CONCEPTS.md` | 75 | 7809 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/brand/concepts/m101-a-geometric-mp.png` | — | 85273 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/brand/concepts/m101-a-geometric-mp.svg` | 87 | 6179 | NOT-REVIEWED |

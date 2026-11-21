@@ -34,5 +34,13 @@
  "F-08": {
   "status": "FIXED-PARTIAL",
   "note": "WP 1.4 (BD-6): logout-all عدد auth_version را bump می‌کند؛ توکن بی‌sid پس از آن ۴۰۱ (قبل ۲۰۰). دو اسکریپت توکن با sid واقعی و بدون چاپ روی stdout. تست: tests/integration/test_wp14_logout_all.py. باقی‌مانده: قاعدهٔ Semgrep (WP 0.7)."
+ },
+ "F-28": {
+  "status": "OPEN",
+  "note": "الحاقیهٔ A1 — WP 3.6. اندازه‌گیری (662ff88): date.today() ×3 (DTZ011) در axis_assessment/service.py:31، nutrition/service.py:124،182."
+ },
+ "F-29": {
+  "status": "OPEN",
+  "note": "الحاقیهٔ A1 — WP 2.6. اندازه‌گیری (662ff88): TRY400 ×6 در app/sms.py؛ S310 ×3 در app/sms.py:52,61,94."
  }
 }

@@ -2,7 +2,7 @@
 """تولید فهرست کامل ممیزی (stdlib فقط).
 
 ورودی‌ها:
-  docs/MuscleParadise/audit/findings.json  — ۵۸ مشکل، ۲۷ یافته، موارد «مشکل نیست»، موانع محیطی
+  docs/MuscleParadise/audit/findings.json  — ۵۸ مشکل، ۲۹ یافته، موارد «مشکل نیست»، موانع محیطی
   docs/MuscleParadise/audit/status.json    — وضعیت هر مورد (OPEN / IN-PROGRESS / FIXED / DEFERRED / NOT-REPRODUCED)
 
 خروجی‌ها:
@@ -167,7 +167,7 @@ def build_checklist(data: dict, status: dict) -> str:
     ]
     sections = [
         ("problems", "الف) ۵۸ مشکل (بخش‌های A–D بریف)"),
-        ("findings", "ب) ۲۷ یافته (F-01 … F-27)"),
+        ("findings", "ب) ۲۹ یافته (F-01 … F-29)"),
         ("blocked", "ج) موانع محیطی (BLOCKED)"),
         ("non_issues", "د) مواردی که مشکل نیستند (دوباره بررسی نشوند)"),
     ]
