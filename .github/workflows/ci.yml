@@ -134,10 +134,21 @@ jobs:
         run: |
           cd mp-app/backend
           ruff check .
-      - name: Test (pytest + coverage ≥70%)
+      # WP 0.4 (F‑07): پوشش per-directory با آستانه‌های جدا برای هر پوشه
+      # (scripts/coverage_gate.py). کد خروج غیرصفر = شکست CI؛ هیچ آستانه‌ای کاهش نمی‌یابد.
+      - name: Test (pytest + per-directory coverage gate)
         run: |
           cd mp-app/backend
-          pytest --cov=. --cov-report=xml --cov-fail-under=70
+          bash scripts/coverage_run.sh
+      - name: Upload backend coverage XML
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4
+        with:
+          name: backend-coverage-xml
+          path: |
+            mp-app/backend/coverage.xml
+            mp-app/backend/coverage-by-dir.json
+          if-no-files-found: warn
       - name: Security scan (bandit + pip-audit)
         run: |
           pip install -U "setuptools>=84.1"   # رفع آسیب‌پذیری‌های PYSEC-2026-3447/GHSA-xmj3

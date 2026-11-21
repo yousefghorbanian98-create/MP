@@ -35,7 +35,7 @@
 | 0.1 | — | DONE | همین commit (WP 0.1) | `BASELINE.md §ز`: ۴۹ ردیف؛ ۴۰ `MEASURED-BY-YOU`، ۹ `DEFERRED(D‑n)` (D‑1…D‑4)؛ pytest `1191 passed/2 skipped/exit 0`؛ AD‑9 |
 | 0.2 | F-12 | BLOCKED | WP 0.2 commit (see EXECUTION-LOG) | ۱٬۱۴۱ سلول زنده: ارزیاب سه‌ارزشی ۰ ناهمخوانی؛ گیت باینری کیت قرمز (۵۹۲ drift؛ ۶۹ سلول شرطی) — نیازمند تصمیم مالک، AD‑10 |
 | 0.3 | F-13 | DONE | `b9e88e5` | pytest کامل ۱۰۹۷ passed |
-| 0.4 | F-07 | TODO | — | آستانهٔ هر دایرکتوری (`db` و `scripts` زیر آستانه) |
+| 0.4 | F-07 | DONE | (این کامیت، WP 0.4) | پوشش per-directory با همهٔ آستانه‌ها سبز: modules 92.33≥90، app 96.62≥92، api 93.69≥90، engine 97.24≥95، security 96.61≥95، db 98.97≥80، jobs 84.55≥80، cache 76.60≥75، scripts 65.85≥60؛ XML در CI artifact؛ ۱۲۴۶ passed/۲ skipped؛ AD‑11 |
 | 0.5 | F-10 | DONE | `bf1daa1` | eslint ۰/۰ (قبل: ۴۲ خطا + ۵ هشدار) |
 | 0.6 | F-24 | PARTIAL | `bf1daa1` | 422 اصلاح؛ هشدار httpx و asyncio باقی |
 | 0.7 | — | READY | — | semgrep روی PyPI نصب می‌شود (میزبان مجاز)؛ قاعدهٔ `harness/semgrep-mp.yml` در CI به‌صورت non-blocking |

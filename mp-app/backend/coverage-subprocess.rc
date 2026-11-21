@@ -1,0 +1,10 @@
+# WP 0.4 (F-07): coverage برای فرایندهای فرزند (مثلاً `alembic` در تست‌های migration).
+# بدون این فایل، کدهای اجراشده در subprocess در گزارش پوشش دیده نمی‌شوند
+# (db/migrations/versions/* صفر درصد می‌ماند). فعال‌سازی: COVERAGE_PROCESS_START=<این فایل>
+# و اجرای پدر با `coverage run --parallel-mode`. ر.ک. scripts/coverage_run.sh.
+[run]
+parallel = True
+source = .
+omit =
+    tests/*
+    */tests/*

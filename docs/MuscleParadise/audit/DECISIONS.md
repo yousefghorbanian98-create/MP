@@ -185,3 +185,30 @@
 **وضعیت.** WP 0.2 = **BLOCKED** با شاهد تا تصمیم مالک. سؤال بسته برای مالک: آیا گیت کیت باید حالت سه‌ارزشی (`always`/`may`/`never`) را بفهمد (تغییر کیت، نیاز تأیید) یا WP 0.2 با گیت سه‌ارزشی پذیرفته شود؟ تا آن زمان ادعای «۰ ناهمخوانی باینری» نمی‌شود.
 
 **نحوهٔ برگرداندن.** `git revert` همان commit WP 0.2 (تغییرات: `api/routes.json`، `scripts/export_routes.py`، `app/security/route_policy.py` (جدید)، دو تست، `evidence/after/wp02/`، سه سند). پس از revert، `routes.json` به نسخهٔ `roles`-only قبلی برمی‌گردد و `test_routes_effective_guards.py` حذف می‌شود.
+
+---
+
+## AD‑11 · اندازه‌گیری پوشش per-directory با پوشش فرایندهای فرزند و آستانه‌های بدون کاهش (WP 0.4، F‑07)
+
+**زمینه.** گیت قبلی فقط `--cov-fail-under=70` روی کل بک‌اند بود. اندازه‌گیری per-directory نشان داد `db` ۷۰٫۳۰٪ (آستانه ۸۰) و `scripts` ۴۸٫۳۲٪ (آستانه ۶۰) زیر آستانه‌اند.
+
+**علت `db`.** migrationها در تست‌ها با `subprocess` و `alembic` اجرا می‌شوند؛ coverage خط‌های فرایند فرزند را ثبت نمی‌کند، پس `db/migrations/versions/*` صفر دیده می‌شد (مثلاً `39f0cd2d8531` در گزارش ۵٪). این یک نقص اندازه‌گیری بود، نه نبود تست.
+
+**تصمیم.**
+1. فرایندهای فرزند پوشش داده شوند: فایل `mp-app/backend/coverage-subprocess.rc` (`parallel = True`) از طریق `COVERAGE_PROCESS_START` فعال می‌شود و پدر با `coverage run --parallel-mode` اجرا و با `coverage combine` ادغام می‌شود (`scripts/coverage_run.sh`). مسیر pytest-cov با همین تنظیم داده‌ای ثبت نکرد، پس کنار گذاشته شد.
+2. `scripts` با تست‌های واقعی بالا برده شد (بدون حذف فایل از اندازه‌گیری): `deploy_gate.py` (شاخه‌های خطای همهٔ بررسی‌ها روی درخت موقت، ۲۲ تست)، `import_food_catalog.py` (تجزیه، آتووتر، تکراری‌ها، کدهای خروج، ۱۳ تست)، `attach_exercise_media.py` (۶ تست)، و `coverage_gate.py` (۶ تست).
+3. آستانه‌های بریف بدون تغییر: `modules ≥90، app ≥92، api ≥90، engine ≥95، security ≥95، db ≥80، jobs ≥80، cache ≥75، scripts ≥60`. گیت (`scripts/coverage_gate.py`) هر دایرکتوری بدون داده یا زیر آستانه را شکست می‌داند.
+
+**گزینه‌های ردشده.**
+- اجرای in-process alembic (`command.upgrade` و `check`) به‌جای subprocess: سه تلاش ناموفق شد؛ خروجی `check` (پیام «No new upgrade operations detected») در بافر تست دیده نمی‌شد و ۴ تست drift/round‑trip/backup شکست خوردند. تغییر برگردانده شد.
+- حذف `db/migrations` یا `scripts/` از اندازه‌گیری یا کاهش آستانه: پذیرفته نشد؛ مالک گزینهٔ «افزایش پوشش» را انتخاب کرد.
+
+**یادداشت امنیتی/lint.** `scripts/coverage_gate.py` با `xml.etree.ElementTree` فایل `coverage.xml` همین پایپ‌لاین را می‌خواند؛ ورودی غیرقابل‌اعتماد نیست. برای S314 (ruff) و B314 (bandit، سطح Medium که `-ll` در CI مسدودکننده است) `noqa`/`nosec` با توضیح گذاشته شد. وابستگی `defusedxml` اضافه نشد.
+
+**شاهد.**
+- قرمز: `coverage_gate.py` روی XML قبل از اصلاح ⇒ exit 1 (db 70.30، scripts 48.32). جهش‌یافتهٔ گیت (`if False`) ⇒ ۳ تست گیت ناموفق.
+- سبز نهایی: `bash scripts/coverage_run.sh` از `mp-app/backend` ⇒ exit 0؛ `1246 passed، 2 skipped`؛ همهٔ آستانه‌ها برقرار (جدول در EXECUTION-LOG).
+- CI: `ruff check` بلوکینگ (`E,F,W,I,N,UP,B,SIM,DTZ,TRY400,S`) و `ruff format --check` روی فایل‌های تغییریافته exit 0؛ `bandit -r . -ll` exit 0 (۰ مورد).
+
+**نحوهٔ برگرداندن.** `git revert` همان commit WP 0.4. پس از برگشت، CI به گیت قبلی (`--cov-fail-under=70`) برمی‌گردد؛ `coverage-subprocess.rc`، `scripts/coverage_run.sh`، و `.gitignore` (الگوهای `.coverage.*`) هم حذف می‌شوند. تست‌های جدید بی‌ضرر و قابل نگه‌داشتن‌اند.
+

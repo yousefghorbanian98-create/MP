@@ -233,3 +233,36 @@ commit: (ثبت‌شده در پیام commit WP 0.2؛ شاخهٔ `arena/da474b6
 - **توقف‌ها:** `BLOCKED` (گیت قرمز بعد از ۳ تلاش) | سؤال بسته برای مالک: گیت کیت سه‌ارزشی بفهمد (تغییر کیت، نیاز تأیید) یا WP 0.2 با گیت سه‌ارزشی پذیرفته شود (AD‑10).
 - **نحوهٔ برگرداندن:** `git revert` همان commit. تغییرات در AD‑10 فهرست شده.
 - **ادامه:** بر اساس قانون (ریز‑حلقه: گیت قرمز رد نمی‌شود و توقف کل حلقه نیست)، حلقه به WP مستقل بعدی می‌رود (0.4 → 0.7 → فاز ۲). WP 0.2 `BLOCKED` باز می‌ماند.
+
+## WP 0.4 · F‑07 · پوشش per-directory با آستانه‌های بریف — DONE
+
+WP: 0.4 · F: F‑07 · شاهد: `evidence/after/wp04/` · تصمیم: AD‑11 · commit: (این کامیت؛ شاخهٔ `arena/da474b65-mp`)
+
+- **بازیابی محیط (پیش از کار):** محیط بازنشانی شده بود: `/home/user/audit-run` و venv و `/tmp` نبودند؛ شاخهٔ محلی روی `662ff88` بود با ۱۲۹ تغییر کاری نامرتبط. این تغییرات **حذف نشدند**: patch و tar در `/home/user/recovery3/` و `git stash` (`recovery3-pre-sync-wp04`) ذخیره شد. شاخه به `origin/arena/da474b65-mp` = `b6f347f` هم‌گام شد؛ WP 0.4 فقط دو فایل از stash بازآوری شد. venv تازه: `/home/user/wp04-venv` (`pip install -e ".[dev]"` exit 0).
+- **پیش‌سنجش (قبل از تغییر):** `coverage run` با `pytest-cov` روی کل بک‌اند: `1199 passed, 2 skipped`، exit 0؛ گیت per-directory ⇒ **exit 1**: `db` ۷۰٫۳۰٪ (آستانه ۸۰)، `scripts` ۴۸٫۳۲٪ (آستانه ۶۰).
+- **علت `db`:** migrationها در تست‌ها در subprocess اجرا می‌شوند؛ پوشش فرزند ثبت نمی‌شد (`39f0cd2d8531` = ۵٪). تلاش in-process با `alembic` API سه بار شکست خورد (خروجی `check` در بافر دیده نشد، ۴ تست drift/round‑trip/backup قرمز) ⇒ برگردانده شد.
+- **اصلاح ۱ (اندازه‌گیری):** `mp-app/backend/coverage-subprocess.rc` (`parallel = True`) + `COVERAGE_PROCESS_START` + `coverage run --parallel-mode` + `coverage combine` در `scripts/coverage_run.sh`. با همین، `db/migrations/versions/39f0cd2d8531` = ۱۰۰٪ و `db` = ۹۸٫۹۷٪.
+- **اصلاح ۲ (تست‌ها برای `scripts`):** `tests/integration/test_deploy_gate_branches.py` (۲۲ تست، شاخه‌های bad/warn/crash روی درخت موقت)، `test_import_food_catalog.py` (۱۳ تست)، `test_attach_exercise_media.py` (۶ تست). `scripts` از ۵۷٫۴۲٪ (با migrations) به **۶۵٫۸۵٪** رسید.
+- **گیت `scripts/coverage_gate.py` + تست:** `tests/integration/test_coverage_gate.py` (۶ تست سبز). **قرمز:** جهش‌یافتهٔ گیت (`if percent + 1e-9 < minimum:` ⇒ `if False:`) در یک کپی موقت ⇒ ۳ تست ناموفق (`test_evaluate_fails_below_threshold_and_on_missing_directory`، `test_low_directories_are_not_hidden_by_total[db]`، `[scripts]`)؛ نسخهٔ اصلی ⇒ ۶ پاس؛ گیت روی XML قبل از اصلاح ⇒ exit 1.
+- **CI:** `.github/workflows/ci.yml` مرحلهٔ تست به `bash scripts/coverage_run.sh` تغییر کرد (کد خروج غیرصفر = شکست) و `actions/upload-artifact` با نام `backend-coverage-xml` (`coverage.xml` + `coverage-by-dir.json`، `if: always()`). `.gitignore`: `.coverage.*`، `coverage-by-dir.json`.
+- **lint/security:** ruff (`E,F,W,I,N,UP,B,SIM,DTZ,TRY400,S`) و `ruff format --check` روی ۵ فایل جدید ⇒ exit 0؛ `ruff check` کامل ⇒ exit 0؛ `bandit -r . -ll` ⇒ exit 0، ۰ مورد (B314 در `coverage_gate.py` با `nosec` و توضیح؛ AD‑11).
+- **اجرای نهایی روی وضعیت کامیت‌شده:** `cd mp-app/backend && bash scripts/coverage_run.sh -q` ⇒ **RUN_RC=0**؛ `1246 passed, 2 skipped, 2 warnings in 480.95s`.
+
+| دایرکتوری | پوشش | خطوط | آستانه | وضعیت |
+|---|---|---|---|---|
+| modules | 92.33٪ | 4752/5147 | ≥90 | PASS |
+| app | 96.62٪ | 801/829 | ≥92 | PASS |
+| api | 93.69٪ | 104/111 | ≥90 | PASS |
+| engine | 97.24٪ | 1058/1088 | ≥95 | PASS |
+| security | 96.61٪ | 57/59 | ≥95 | PASS |
+| db | 98.97٪ | 1737/1755 | ≥80 | PASS |
+| jobs | 84.55٪ | 93/110 | ≥80 | PASS |
+| cache | 76.60٪ | 72/94 | ≥75 | PASS |
+| scripts | 65.85٪ | 883/1341 | ≥60 | PASS |
+| devtools | 91.73٪ | 122/133 | — | گزارش‌شده، بدون آستانه |
+| eval | 82.56٪ | 284/344 | — | گزارش‌شده، بدون آستانه |
+
+- **دامنهٔ هر عدد:** فرمان `bash scripts/coverage_run.sh` از `mp-app/backend`؛ `source="."`، `omit tests/*`؛ فرایندهای فرزند (alembic) شامل؛ دایرکتوری = اولین بخش مسیر در XML.
+- **نتیجه کلی:** TOTAL 90٪ (11011 خط، 1048 بدون پوشش) در کل بک‌اند.
+- **انحراف/یادداشت:** آستانه‌ها کاهش نیافتند. `coverage.xml` (۴۳۶KB) در git نیست؛ در CI artifact است. `scripts/coverage_gate.py` با `noqa S314 / nosec B314` (ورودی XML محلی).
+- **نحوهٔ برگرداندن:** `git revert` همان commit؛ AD‑11.
