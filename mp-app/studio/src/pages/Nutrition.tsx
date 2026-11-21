@@ -46,8 +46,12 @@ export function Nutrition() {
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
 
+  // WP 4.6 / F‑16: بدون عضو درخواست نفرست (قبلاً `?? -1` می‌فرستاد).
   const { data, loading, error, reload } = useApi(
-    (s) => fetchDailyNutrition(memberId ?? -1, date, undefined, s),
+    (s) =>
+      memberId === null
+        ? Promise.resolve(null)
+        : fetchDailyNutrition(memberId, date, undefined, s),
     [memberId, date],
   );
 

@@ -154,7 +154,8 @@ rules:
           - pattern: Number($X)
       - metavariable-regex:
           metavariable: $X
-          regex: (?i).*(rial|amount|price|balance|total|fee).*
+          # WP 4.6: شمارندهٔ غیرپولی (دقیقه، مراجعه، امتیاز، کالری) مستثنی است.
+          regex: (?i)^(?!.*(minute|visit|score|kcal)).*(rial|amount|price|balance|total|fee).*
 
   - id: mp-dart-print-in-lib
     languages: [dart]

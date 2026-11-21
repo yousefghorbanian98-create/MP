@@ -254,3 +254,11 @@
 - **دلیل:** کیت دو گزینه داده: (الف) مجوز و مسیر جدید، یا (ب) مستندسازی صریح. (ب) انتخاب شد چون فروشگاه درون‌برنامه‌ای فعلاً بسته است (تصمیم فاز ۲) و مسیر جدید پول را جابه‌جا می‌کند.
 - **تأثیر:** کاربری که پروندهٔ عضو ندارد، ۴۰۹ `member_profile_required` می‌گیرد؛ مدیر نمی‌تواند برای عضو دیگری سبد یا سفارش بسازد.
 - **نحوهٔ برگرداندن:** این تصمیم کدی ندارد؛ اگر مالک سفارش به‌نیابت بخواهد، مسیر و مجوز جدید لازم است (WP جدا).
+
+## AD‑18 · محدود کردن regex قاعدهٔ `mp-ts-float-money` (WP 4.6، F‑16)
+
+- **مشکل:** regex قبلی `(rial|amount|price|balance|total|fee)` هر نامی با «total» را می‌گرفت؛ `Number(row.total_minutes)` در `Analytics.tsx:106` یک شمارندهٔ دقیقه است و مبلغ پولی نیست (false positive).
+- **تصمیم:** regex به `^(?!.*(minute|visit|score|kcal)).*(rial|amount|price|balance|total|fee).*` محدود شد. کد `Analytics.tsx` تغییر نکرد.
+- **شواهد:** fixture `.semgrep/tests/mp-ts-float-money.ts` — ۵ مورد پولی ruleid (`total_paid_rial`, `total_amount`, `priceRial`, `balance`, `feeAmount`) و ۴ شمارنده ok (`total_minutes`, `visits`, `avg_axis_score`, `total_kcal`). مطابقت کامل.
+- **ریسک:** نام پولی که یکی از کلمات استثنا را هم داشته باشد (مثلاً `total_visit_rial`) دیده نمی‌شود. این را بررسی دستی در بازبینی کد پوشش می‌دهیم.
+- **برگشت:** `git revert <commit WP 4.6>` (regex قبلی را برمی‌گرداند؛ `Analytics.tsx:106` دوباره finding می‌شود).

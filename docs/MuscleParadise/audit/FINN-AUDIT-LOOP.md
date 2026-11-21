@@ -63,7 +63,7 @@
 | 4.3 | F-19 | READY | — | یک لایهٔ داده در استودیو؛ حذف `await import` در onClick |
 | 4.4 | F-20/F-23 | READY | — | BD-2: حذف `updateProduct` کلاینت |
 | 4.5 | F-21/F-22 | DONE | (این کامیت) | F-22 red: ۱ ناموفق (۴ خط) ⇒ green؛ semgrep قاعده repair شد (مرده بود، AD‑8)؛ S فعال و بلوکینگ؛ گیت after-wp45 PASS؛ pytest ۱۱۹۱/۲/۰ |
-| 4.6 | F-16 | READY | — | قاعدهٔ `int` ریال؛ حذف sentinel منفی |
+| 4.6 | F-16 | DONE | (این کامیت) | red: `tests/nutritionNoMemberSentinel.test.tsx` (درخواست `member_id=-1` بدون عضو)؛ اصلاح `Nutrition.tsx` ⇒ بدون عضو درخواست نمی‌رود؛ `mp-ts-float-money` روی `Analytics.tsx:106` (شمارندهٔ دقیقه) false positive ⇒ regex با lookahead محدود شد (AD‑18) و fixture `.semgrep/tests/mp-ts-float-money.ts` دقیقاً ۵/۵ مطابقت؛ `studio/src` ⇒ ۰ یافته؛ `tsc` rc=0؛ vitest ۲۹۹ passed، rc=0 |
 | 4.7 | — | TODO | — | Semgrep blocking، بار پله‌ای، جهش، گیت نهایی |
 
 **باقی‌مانده‌های `BLOCKED-ENV`** (کاربر باید مطلع شود، نه متوقف شود): Docker/Postgres/Valkey برای بار ۲۰۰ کاربر و `pgBackRest`؛ Prometheus/Alertmanager؛ دستگاه واقعی و اسکرین‌شات Flutter؛ امضای APK؛ آزمون ابری.

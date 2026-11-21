@@ -379,3 +379,12 @@ WP: 0.4 · F: F‑07 · شاهد: `evidence/after/wp04/` · تصمیم: AD‑11 
 - **ruff:** `check` ⇒ All checks passed؛ `format --check` ⇒ مرتب.
 - **سفارش به‌نیابت:** کد آن را ندارد؛ مستندسازی‌شده در AD‑17.
 - **Rollback:** `git revert <commit WP 3.4>`.
+
+## WP 4.6 · قاعدهٔ ریال و sentinel منفی — DONE
+
+- **Red (sentinel):** `studio/tests/nutritionNoMemberSentinel.test.tsx` ⇒ قبل از اصلاح: یک درخواست با `member_id=-1` (`expected [ Array(1) ] to deeply equal []`).
+- **Fix:** `pages/Nutrition.tsx` — وقتی `memberId === null` است، fetcher `Promise.resolve(null)` برمی‌گرداند و درخواست نمی‌رود. تست سبز.
+- **Float money:** `Analytics.tsx:106` (`Number(row.total_minutes)`) false positive بود؛ regex `total` هر نام حاوی آن را می‌گرفت. regex با lookahead برای `minute|visit|score|kcal` محدود شد (AD‑18). fixture `.semgrep/tests/mp-ts-float-money.ts`: ۵ ruleid و ۴ ok؛ مطابقت کامل `[3,5,7,9,11]`.
+- **گیت:** `semgrep --config=.semgrep/mp-harness-rules.yml mp-app/studio/src` ⇒ exit 0، ۰ یافته (`mp-ts-float-money` و `mp-ts-negative-sentinel-member-id`).
+- **استودیو:** `npx tsc --noEmit` ⇒ rc=0؛ `npx vitest run` ⇒ 46 فایل passed/1 skipped، ۲۹۹ تست passed/۹ skipped، rc=0 (`/home/user/recovery4/wp46-vitest.log`).
+- **Rollback:** `git revert <commit WP 4.6>`.
