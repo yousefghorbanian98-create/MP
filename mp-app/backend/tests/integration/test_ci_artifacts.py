@@ -184,7 +184,7 @@ def test_every_github_action_is_pinned_to_commit_sha():
     """
     import re
 
-    pattern = re.compile(r"^\s*-?\s*uses:\s*(\S+)", re.M)
+    pattern = re.compile(r"^\s*-?\s*uses:\s*(\S+)", re.MULTILINE)
     unpinned: list[str] = []
     for path in sorted((ROOT / ".github/workflows").glob("*.yml")):
         for ref in pattern.findall(path.read_text(encoding="utf-8")):

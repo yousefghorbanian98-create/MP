@@ -21,8 +21,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from db.base import get_session_factory  # noqa: E402
-from db.models.assessment import NormEntry  # noqa: E402
+from db.base import get_session_factory
+from db.models.assessment import NormEntry
 
 SOURCE_PUSHUP = "https://fitnessnorms.com/strength/push-ups/"
 SOURCE_REACH = "https://fitnessnorms.com/flexibility/sit-and-reach/"

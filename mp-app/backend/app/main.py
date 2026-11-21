@@ -27,7 +27,7 @@ async def lifespan(app: FastAPI):
     yield
 
 
-def _rate_limit_handler(request, exc):  # noqa: ANN001, ARG001
+def _rate_limit_handler(request, exc):  # noqa: ARG001
     """پاسخ ۴۲۹ یکنواخت — handler ماژول‌سطح (رفع یافتهٔ semgrep useless-inner-function)."""
     from app.errors import _payload_for_rate_limit
 
@@ -121,7 +121,7 @@ def create_app() -> FastAPI:
     from app.metrics import metrics
 
     @app.middleware("http")
-    async def record_http_metrics(request, call_next):  # noqa: ANN001
+    async def record_http_metrics(request, call_next):
         started_at = perf_counter()
         status_code = 500
         try:

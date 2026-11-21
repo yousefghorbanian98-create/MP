@@ -20,8 +20,8 @@ from sqlalchemy.orm import Session
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from db.base import get_session_factory  # noqa: E402
-from db.models.content import CatalogExercise, CatalogSource  # noqa: E402
+from db.base import get_session_factory
+from db.models.content import CatalogExercise, CatalogSource
 
 SOURCE_NAME = "free-exercise-db"
 SOURCE_URL = "https://github.com/yuhonas/free-exercise-db"

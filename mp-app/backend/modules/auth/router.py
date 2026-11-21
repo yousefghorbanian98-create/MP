@@ -25,7 +25,7 @@ from modules.auth.schemas import (
 )
 
 
-def _rate_limit_key(request) -> str:  # noqa: ANN001
+def _rate_limit_key(request) -> str:
     """کلید محدودیت = IP محاسبه‌شده با پروکسی معتمد (QF-26).
 
     پیش‌فرضِ `get_remote_address` هدر XFF را نادیده می‌گرفت؛ پشت nginx یعنی همهٔ

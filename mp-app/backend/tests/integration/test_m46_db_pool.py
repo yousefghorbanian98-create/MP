@@ -30,7 +30,8 @@ def fresh_engine(tmp_path, monkeypatch):
 
 def test_pool_capacity_covers_threadpool(fresh_engine) -> None:
     pool = fresh_engine.pool
-    capacity = pool.size() + pool._max_overflow  # noqa: SLF001 — عدد پیکربندی، نه رفتار
+    # عدد پیکربندی، نه رفتار (دسترسی به _max_overflow؛ SLF001 در tests بی‌اثر است)
+    capacity = pool.size() + pool._max_overflow
     assert capacity >= 40, (
         f"ظرفیت استخر {capacity} کمتر از ۴۰ ترد anyio است؛ زیر بار همان "
         "QueuePool limit ... reached رخ می‌دهد"

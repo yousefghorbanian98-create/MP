@@ -12,8 +12,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from engine.scoring import estimate_percentile, is_real_change  # noqa: E402
-from scripts.seed_norms import NORMS  # noqa: E402
+from engine.scoring import estimate_percentile, is_real_change
+from scripts.seed_norms import NORMS
 
 REPORTS = Path(__file__).resolve().parents[3] / "finn" / "reports" / "eval"
 

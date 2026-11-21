@@ -22,7 +22,7 @@ def test_jalali_roundtrip_known_dates() -> None:
 
 def test_format_jalali_display_only() -> None:
     s = format_jalali(date(2026, 3, 21))
-    assert "فروردین" in s and "۱۴۰۵" in s or "1405" in s
+    assert ("فروردین" in s and "۱۴۰۵" in s) or "1405" in s
 
 
 def test_backup_restore_roundtrip(tmp_path: Path) -> None:

@@ -14,8 +14,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 # WP 1.2 / F-02: تست‌ها بدون MP_ENVIRONMENT صریح اجازهٔ بالا آمدن دارند (فقط اینجا).
 os.environ.setdefault("MP_ALLOW_IMPLICIT_DEV", "true")
 
-from db import models  # noqa: E402,F401
-from db.base import Base  # noqa: E402
+from db import models  # noqa: F401
+from db.base import Base
 
 
 @pytest.fixture()

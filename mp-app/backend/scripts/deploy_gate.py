@@ -43,7 +43,7 @@ def check_ports(report: Report) -> None:
     compose_text = _read(MP / "infra" / "docker-compose.yml")
     compose = yaml.safe_load(compose_text) or {}
 
-    df_expose = re.findall(r"^EXPOSE\s+(\d+)", dockerfile, re.M)
+    df_expose = re.findall(r"^EXPOSE\s+(\d+)", dockerfile, re.MULTILINE)
     df_cmd_port = re.findall(r"--port[\"', ]+(\d+)", dockerfile)
     backend_upstreams = re.findall(r"reverse_proxy\s+backend:(\d+)", caddy)
     backend = compose.get("services", {}).get("backend", {})
@@ -77,7 +77,7 @@ def check_env_names(report: Report) -> None:
         return
     prefix = prefix_match.group(1).upper()
     body = config.split("model_config", 1)[1].split("class ", 1)[0]
-    fields = set(re.findall(r"^\s{4}([a-z_]+)\s*:", body, re.M))
+    fields = set(re.findall(r"^\s{4}([a-z_]+)\s*:", body, re.MULTILINE))
     if not fields:
         report.bad("No Settings fields found")
         return

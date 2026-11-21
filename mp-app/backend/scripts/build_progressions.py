@@ -18,9 +18,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from db.base import get_session_factory  # noqa: E402
-from db.models.content import CatalogExercise, ProgressionLadder, ProgressionStep  # noqa: E402
-from scripts.import_exercise_catalog import DEFAULT_DATA  # noqa: E402
+from db.base import get_session_factory
+from db.models.content import CatalogExercise, ProgressionLadder, ProgressionStep
+from scripts.import_exercise_catalog import DEFAULT_DATA
 
 
 @dataclass(frozen=True)

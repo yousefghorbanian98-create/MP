@@ -15,8 +15,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from db.base import get_session_factory  # noqa: E402
-from db.models.assessment import NormEntry  # noqa: E402
+from db.base import get_session_factory
+from db.models.assessment import NormEntry
 
 SOURCE = "MP criterion instrument v1 (M36) — روایی: candidate تا پایلوت M40"
 
