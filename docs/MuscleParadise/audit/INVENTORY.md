@@ -7,20 +7,20 @@
 
 ## ۱. خلاصهٔ تعداد فایل
 
-- کل فایل‌های ترک‌شده: **1178** (خطوط متنی: 162910)
+- کل فایل‌های ترک‌شده: **1182** (خطوط متنی: 163110)
 
 | ناحیه | تعداد فایل | خطوط متنی |
 |---|---|---|
 | CI/CD | 7 | 1556 |
-| استودیو (React) | 119 | 26196 |
+| استودیو (React) | 121 | 26291 |
 | اسکریپت و ابزار | 19 | 7347 |
 | اپ عضو (Flutter) | 114 | 19319 |
-| بک‌اند (FastAPI) | 526 | 75836 |
+| بک‌اند (FastAPI) | 528 | 75930 |
 | ریشه و تنظیمات | 10 | 831 |
 | زیرساخت و کانتینر | 15 | 597 |
 | سایر mp-app | 4 | 239 |
 | شواهد QA | 40 | 1626 |
-| مستندات | 183 | 21038 |
+| مستندات | 183 | 21049 |
 | گزارش‌های عامل | 141 | 8325 |
 
 ## ۲. عملیات API (ایستا؛ `app.openapi()` در این اجرا در دسترس نبود)
@@ -251,6 +251,7 @@
 | استودیو (React) | `mp-app/studio/src/components/ui/JalaliDateField.tsx` | 66 | 2923 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/src/lib/adminApi.ts` | 221 | 7838 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/src/lib/api.ts` | 1619 | 46679 | NOT-REVIEWED |
+| استودیو (React) | `mp-app/studio/src/lib/money.ts` | 43 | 1802 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/src/lib/motion.ts` | 126 | 5195 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/src/lib/roleNav.ts` | 133 | 6548 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/src/lib/session.ts` | 341 | 12162 | NOT-REVIEWED |
@@ -321,6 +322,7 @@
 | استودیو (React) | `mp-app/studio/tests/updateBanner.test.tsx` | 91 | 3039 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/tests/vitest.setup.ts` | 20 | 756 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/tests/volumePanel.test.tsx` | 148 | 4799 | NOT-REVIEWED |
+| استودیو (React) | `mp-app/studio/tests/wp15Money.test.ts` | 52 | 2269 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/tsconfig.json` | 20 | 510 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/vite.config.ts` | 56 | 2320 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/vitest.config.ts` | 21 | 841 | NOT-REVIEWED |
@@ -477,6 +479,7 @@
 | بک‌اند (FastAPI) | `mp-app/backend/app/logging.py` | 43 | 1393 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/app/main.py` | 190 | 7982 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/app/metrics.py` | 140 | 5359 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/app/money.py` | 15 | 522 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/app/security/grants.py` | 117 | 4844 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/app/security/headers.py` | 37 | 1452 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/app/security/hierarchy.py` | 61 | 3211 | NOT-REVIEWED |
@@ -869,6 +872,7 @@
 | بک‌اند (FastAPI) | `mp-app/backend/tests/regression/test_route_guard_gate.py` | 72 | 2983 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/regression/test_wp11_xff_trust.py` | 157 | 5609 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/regression/test_wp12_env_failsafe.py` | 132 | 5023 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/tests/regression/test_wp15_rial_strict.py` | 79 | 3107 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/regression/test_wp26_sms_logging.py` | 100 | 4171 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/regression/test_wp36_shop_today.py` | 57 | 2408 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/unit/__init__.py` | 0 | 0 | NOT-REVIEWED |
@@ -1143,12 +1147,12 @@
 | مستندات | `docs/MuscleParadise/assets/knowledge-atlas.svg` | 77 | 5239 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/assets/readme-hero.svg` | 66 | 4533 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/assets/system-architecture.svg` | 148 | 13022 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/BASELINE.md` | 72 | 6929 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/BASELINE.md` | 79 | 8111 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/CHECKLIST.md` | 147 | 16603 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/DECISIONS.md` | 131 | 17159 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/EXECUTION-LOG.md` | 192 | 27476 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/FINN-AUDIT-LOOP.md` | 88 | 8955 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/INVENTORY.md` | 1378 | 137488 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/INVENTORY.md` | 1382 | 137875 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/MICRO-LOOPS.md` | 83 | 6853 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/findings.json` | 521 | 15410 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/status.json` | 50 | 5147 | NOT-REVIEWED |
