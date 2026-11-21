@@ -190,3 +190,16 @@
 - **pytest کامل:** ۱۱۸۴ passed، ۲ skipped، exit 0 (۳۴۰ ثانیه).
 - **پیامد:** AD‑7.
 
+### WP 4.5 (F‑21، F‑22) — این کامیت
+- **red (F‑22):** `tests/regression/test_wp45_f22_migration_sql.py` روی کد قبل: ۱ ناموفق (فراخوانی `execute` با SQL ساخته‌شده در migration). آشکارساز روی الگوی `DROP INDEX` سبز بود (تست حفاظتی).
+- **کشف مهم — قاعدهٔ semgrep مرده بود:** `mp-raw-sql-string-format` در `.semgrep/project-rules.yml` هرگز روی هیچ فایلی یافته نمی‌داد: (۱) `**/migrations/*` مستثنا بود؛ (۲) الگوها فقط با `, ...` تطبیق می‌یافتند؛ (۳) `pattern-not-inside: def $F(...): ...` هر تابعی را می‌پوشاند. نمونهٔ دیباگ روی فایل نمونه: قبل ۰، بعد ۴ (خطوط مطابق). بعد از repair روی migration دقیقاً ۴ یافته (۶۷/۱۶۵/۱۶۹/۱۷۱) و روی کل backend ۰.
+- **green (F‑22):** `_drop_index_if_exists` با inspector و `op.drop_index`؛ ۴ `# noqa: S608` حذف؛ `S608` از ignore مربوط به `db/migrations/**` حذف شد.
+- **شاهد زنجیرهٔ migration:** `alembic upgrade head` ⇒ `downgrade f1a2b3c4d5e6` ⇒ `upgrade head` روی SQLite همه exit 0؛ ایندکس‌ها پس از برگشت دوباره ساخته شدند.
+- **F‑21:** `hypothesis>=6.100` در extras dev؛ پنج اسکریپت به `with` یکدست شدند (red ۵/۵ ⇒ green ۵/۵). `dast.py --help` exit 0.
+- **S family فعال و بلوکینگ:** ۳۷ یافتهٔ S (بیشترشان تست). تست‌ها: ignore با دلیل برای S603/S607/S105/S106. کد واقعی: `monitoring` (S110) و `dast` (S112) با لاگ debug در helper ⇒ `noqa: BLE001` حفظ شد (۲۰ noqa محفوظ). `build_exercise_gifs` assert ⇒ `RuntimeError`. دو S105 مستند با `noqa` (مقدار توسعه و `token_type`). CI blocking: `--select E,F,W,I,N,UP,B,SIM,DTZ,TRY400,S`.
+- **TRY به‌صورت کد دقیق:** خانوادهٔ `TRY` در خط فرمان `TRY003` را برمی‌گرداند که در pyproject ignore است؛ پس `TRY400` آمد.
+- **خطای کشف‌شده در WP 3.6:** کامیت `3ee7838` یک `I001` در `modules/axis_assessment/service.py` گذاشت که lint بلوکینگ CI را می‌شکست. با safe fix (`--select I001`) اصلاح شد؛ این را ثبت می‌کنم که WP 3.6 گیت lint کامل را اجرا نکرده بود.
+- **یادداشت:** `seed_criteria.py --help` exit 1 است، ولی این رفتار قبل از تغییر هم همین بود (اسکریپت آرگومان ندارد و روی DB خالی اجرا می‌شود).
+- **گیت:** `verify-addendum-gates.sh after-wp45` PASS (RUF100 = ۰، S608 = ۰، ۲۰ noqa = ۲۰، format = ۰، date.today = ۰).
+- **pytest کامل:** ۱۱۹۱ passed، ۲ skipped، exit 0 (۲۹۶ ثانیه). semgrep کل backend: ۰ یافته، ۰ خطا.
+

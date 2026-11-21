@@ -13,7 +13,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # RFC 7518 §3.2 — HMAC-SHA256 با کلید کوتاه‌تر از ۳۲ بایت، امنیت اعلام‌شده را ندارد.
 MIN_SECRET_BYTES = 32
-DEFAULT_DEV_SECRET = "dev-secret-change-in-production-x"
+DEFAULT_DEV_SECRET = "dev-secret-change-in-production-x"  # noqa: S105 — WP 4.5 (S): مقدار پیش‌فرض توسعه؛ در production رد می‌شود، رمز واقعی نیست
 
 
 class Settings(BaseSettings):

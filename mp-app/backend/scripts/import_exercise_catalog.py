@@ -142,15 +142,12 @@ def main() -> int:
         print(f"OK digest {digest}")
         return 0
 
-    session = get_session_factory()()
-    try:
+    with get_session_factory()() as session:
         result = import_catalog(session, args.data)
         print(
             f"catalog imported: source_id={result.source_id} "
             f"inserted={result.inserted} updated={result.updated} total={result.total}"
         )
-    finally:
-        session.close()
     return 0
 
 

@@ -46,5 +46,13 @@
   "F-29": {
     "status": "FIXED",
     "note": "الحاقیهٔ A1 — WP 2.6. قبل: ۶ شاخهٔ except در app/sms.py با log.error و بدون traceback (red: ۶ تست exc_info ناموفق). بعد: _log_provider_failure با traceback و متن استثنای پنهان (AD‑6)؛ ۱۴ تست regression/test_wp26_sms_logging.py سبز؛ test_sms ۶۱ سبز؛ pytest کامل ۱۱۴۶ passed، ۲ skipped، exit 0. S310 سه مورد با noqa دلیل‌دار؛ TRY400 در sms=0."
+  },
+  "F-21": {
+    "status": "FIXED",
+    "note": "WP 4.5. hypothesis در extras dev اعلام شد (pyproject)؛ `scripts/dast.py --help` exit 0. پنج اسکریپت با `with get_session_factory()() as session:` یکدست شدند؛ تست red: ۵ ناموفق ⇒ green: ۵ پاس (tests/regression/test_wp45_session_pattern.py). اعتراف: کد قبلی نشت نداشت (finally: close)؛ این یکدست‌سازی است. محدودیت: «تمیز» واقعی (محیط بدون hypothesis) دوباره نصب نشد؛ بررسی با extras dev انجام شد."
+  },
+  "F-22": {
+    "status": "FIXED",
+    "note": "WP 4.5 (AD-8). قبل: ۴ `op.execute(f\"DROP INDEX IF EXISTS ...\")` در c3f01ab129e2 (خطوط 67/165/169/171) و قاعدهٔ semgrep که این فایل را نمی‌گرفت (سه علت: استثنای migrations؛ الگوهای فقط با آرگومان دوم؛ pattern-not-inside خاموش‌کننده). red: تست AST ناموفق روی ۴ مورد؛ semgrep روی فایل ۰ یافته. بعد: `_drop_index_if_exists` با inspector + `op.drop_index`؛ ۴ noqa حذف؛ S608 از ignore مربوط به migrations حذف. شاهد: upgrade→downgrade f1a2b3c4d5e6→upgrade روی SQLite PASS؛ semgrep روی کل backend ۰ یافته؛ pytest ۱۱۹۱/۲/۰."
   }
 }

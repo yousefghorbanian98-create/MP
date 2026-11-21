@@ -672,12 +672,9 @@ def main() -> int:
     if args.dump_rules:
         print(json.dumps(dump_rules(), ensure_ascii=False, indent=2))
         return 0
-    session = get_session_factory()()
-    try:
+    with get_session_factory()() as session:
         stats = tag_all(session)
         print(json.dumps(stats, ensure_ascii=False))
-    finally:
-        session.close()
     return 0
 
 

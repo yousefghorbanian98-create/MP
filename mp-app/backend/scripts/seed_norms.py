@@ -273,12 +273,9 @@ def main() -> int:
     if args.count:
         print(len(NORMS))
         return 0
-    session = get_session_factory()()
-    try:
+    with get_session_factory()() as session:
         stats = seed(session)
         print(json.dumps(stats, ensure_ascii=False))
-    finally:
-        session.close()
     return 0
 
 

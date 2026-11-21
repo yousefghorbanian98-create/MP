@@ -43,7 +43,7 @@ class UserBrief(BaseModel):
 class TokenPair(BaseModel):
     access_token: str
     refresh_token: str
-    token_type: str = "bearer"
+    token_type: str = "bearer"  # noqa: S105 — WP 4.5 (S): نوع توکن استاندارد OAuth، نه رمز
     user: UserBrief | None = None
 
 

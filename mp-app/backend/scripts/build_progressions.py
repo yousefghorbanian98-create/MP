@@ -238,12 +238,9 @@ def main() -> int:
             f"OK {len(LADDERS)} ladders, {sum(len(ladder.steps) for ladder in LADDERS)} steps resolved"
         )
         return 0
-    session = get_session_factory()()
-    try:
+    with get_session_factory()() as session:
         stats = seed(session, resolved)
         print(json.dumps(stats, ensure_ascii=False))
-    finally:
-        session.close()
     return 0
 
 

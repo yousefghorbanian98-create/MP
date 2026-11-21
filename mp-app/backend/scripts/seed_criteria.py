@@ -104,11 +104,8 @@ def seed(session) -> dict:
 
 
 def main() -> int:
-    session = get_session_factory()()
-    try:
+    with get_session_factory()() as session:
         print(json.dumps(seed(session), ensure_ascii=False))
-    finally:
-        session.close()
     return 0
 
 

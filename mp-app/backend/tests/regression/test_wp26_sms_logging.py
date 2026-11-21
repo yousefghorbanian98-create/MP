@@ -18,8 +18,8 @@ import pytest
 from app import sms
 from app.config import settings
 
-SECRET_KEY = "SECRET-KEY-WP26-DO-NOT-LOG"  # noqa: S105 — مقدار تست، نه رمز واقعی؛ فقط برای بررسی نشت در لاگ
-SECRET_PASS = "SECRET-PASS-WP26-DO-NOT-LOG"  # noqa: S105 — مقدار تست، نه رمز واقعی؛ فقط برای بررسی نشت در لاگ
+SECRET_KEY = "SECRET-KEY-WP26-DO-NOT-LOG"  # مقدار تست، نه رمز واقعی؛ فقط برای بررسی نشت در لاگ
+SECRET_PASS = "SECRET-PASS-WP26-DO-NOT-LOG"  # مقدار تست، نه رمز واقعی؛ فقط برای بررسی نشت در لاگ
 HTTPS_URL = "https://sms.example.invalid/api"
 
 

@@ -39,6 +39,8 @@ dev = [
     "bandit>=1.7,<2",
     "pip-audit>=2.7",
     "faker>=24.0",
+    # F‑21 (WP 4.5): scripts/dast.py به hypothesis وابسته است؛ قبلاً فقط در محیط توسعه بود.
+    "hypothesis>=6.100",
     "pyyaml>=6.0",
     # فقط برای scripts/build_exercise_gifs.py (ساخت دارایی، نه اجرای API).
     # تست API به آن وابسته نیست: شمارش فریم GIF با پارس بایت‌ها انجام می‌شود.
@@ -114,9 +116,9 @@ ignore = [
 max-complexity = 10     # امروز ۱۵ تابع بالای این سقف‌اند؛ بدترین ۲۸
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**"          = ["S101", "SLF001", "ARG001", "ARG002", "FBT001", "S311", "PLR2004", "TD", "FIX"]
+"tests/**"          = ["S101", "SLF001", "ARG001", "ARG002", "FBT001", "S311", "PLR2004", "TD", "FIX", "S603", "S607", "S105", "S106"]  # WP 4.5 (S): اجرای دستور محلی مورد اعتماد و رشته‌های fixture در تست‌ها
 "scripts/**"        = ["T201", "S603", "S607", "S310", "FIX", "TD"]
-"db/migrations/**"  = ["ERA001", "E402", "S608"]   # S608 باید با تصمیمِ F‑22 حذف شود، نه ignore
+"db/migrations/**"  = ["ERA001", "E402"]   # F‑22 (WP 4.5): S608 از این لیست حذف شد؛ SQL ساخته‌شده از رشته در migration نیست
 "eval/**"           = ["T201", "S310", "S603"]
 "devtools/**"       = ["T201", "S310", "FAST002"]
 "tests/load/**"     = ["S311", "T201", "PLR2004"]

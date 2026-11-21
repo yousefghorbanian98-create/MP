@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hmac
+import logging
 
 from fastapi import APIRouter, Depends, Request, Response
 from fastapi.responses import JSONResponse
@@ -11,6 +12,12 @@ from prometheus_client import CONTENT_TYPE_LATEST
 from app.config import settings
 from app.errors import ForbiddenError, UnauthorizedError
 from app.metrics import metrics
+
+
+def _log_scrape_failure() -> None:
+    """WP 4.5 (S110): خطای scrape فقط در سطح debug و با traceback ثبت می‌شود."""
+    logging.getLogger(__name__).debug("refresh_metrics failed", exc_info=True)
+
 
 router = APIRouter(tags=["health"])
 
@@ -50,7 +57,8 @@ def prometheus_metrics() -> Response:
         with get_session_factory()() as db:
             refresh_metrics(db)
     except Exception:  # noqa: BLE001 - scrape نباید بشکند
-        pass
+        # WP 4.5 (S110): خطای به‌روزرسانی متریک بی‌صدا رد نمی‌شود؛ ثبت در سطح debug.
+        _log_scrape_failure()
     return Response(content=metrics.render(), media_type=CONTENT_TYPE_LATEST)
 
 

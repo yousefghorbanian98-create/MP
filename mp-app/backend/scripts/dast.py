@@ -37,9 +37,16 @@ from __future__ import annotations
 
 import argparse
 import json
+import logging
 import os
 import sys
 from pathlib import Path
+
+
+def _log_skip(where: str) -> None:
+    """WP 4.5 (S112): عملیات ردشده فقط در سطح debug با traceback ثبت می‌شود."""
+    logging.getLogger(__name__).debug("%s skipped", where, exc_info=True)
+
 
 os.environ.setdefault("MP_ENVIRONMENT", "development")  # WP 1.2: ابزار فقط‌خواندنی مسیر/OpenAPI
 
@@ -91,6 +98,7 @@ def run(max_examples: int, timeout: float, only: str | None) -> dict:
         try:
             operations.append(r.ok())
         except Exception:  # noqa: BLE001  — عملیات نامعتبر (schema ناقص) نادیده
+            _log_skip("operation")
             continue
     if only:
         operations = [o for o in operations if only in o.path]
@@ -185,6 +193,7 @@ def probe_public(operations) -> list[dict]:
             try:
                 case = op.as_strategy().example()
             except Exception:  # noqa: BLE001
+                _log_skip("example")
                 continue
             case.headers = {}
             case.cookies = {}
@@ -196,6 +205,7 @@ def probe_public(operations) -> list[dict]:
                     json=case.body if not isinstance(case.body, bytes) else None,
                 )
             except Exception:  # noqa: BLE001
+                _log_skip("request")
                 continue
             if 200 <= r.status_code < 300 and op.path not in expected_public:
                 out.append(

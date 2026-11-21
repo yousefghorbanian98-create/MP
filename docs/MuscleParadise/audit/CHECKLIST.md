@@ -93,8 +93,8 @@
 | F-18 | ناسازگاری ظرفیت‌ها: ۱۶۴ handler سنکرون، threadpool=40، pool=60، 4 worker | OPEN |  |
 | F-19 | ۳ لایهٔ جداگانهٔ دسترسی به داده در استودیو + `await import()` پویا در هندلر | OPEN |  |
 | F-20 | ۲ export مرده در `lib/api.ts` | OPEN |  |
-| F-21 | ۵ session بدون context manager در اسکریپت‌ها | OPEN |  |
-| F-22 | ۴ SQL با f‑string در یک migration | OPEN |  |
+| F-21 | ۵ session بدون context manager در اسکریپت‌ها | FIXED | WP 4.5. hypothesis در extras dev اعلام شد (pyproject)؛ `scripts/dast.py --help` exit 0. پنج اسکریپت با `with get_session_factory()() as session:` یکدست شدند؛ تست red: ۵ ناموفق ⇒ green: ۵ پاس (tests/regression/test_wp45_session_pattern.py). اعتراف: کد قبلی نشت نداشت (finally: close)؛ این یکدست‌سازی است. محدودیت: «تمیز» واقعی (محیط بدون hypothesis) دوباره نصب نشد؛ بررسی با extras dev انجام شد. |
+| F-22 | ۴ SQL با f‑string در یک migration | FIXED | WP 4.5 (AD-8). قبل: ۴ `op.execute(f"DROP INDEX IF EXISTS ...")` در c3f01ab129e2 (خطوط 67/165/169/171) و قاعدهٔ semgrep که این فایل را نمی‌گرفت (سه علت: استثنای migrations؛ الگوهای فقط با آرگومان دوم؛ pattern-not-inside خاموش‌کننده). red: تست AST ناموفق روی ۴ مورد؛ semgrep روی فایل ۰ یافته. بعد: `_drop_index_if_exists` با inspector + `op.drop_index`؛ ۴ noqa حذف؛ S608 از ignore مربوط به migrations حذف. شاهد: upgrade→downgrade f1a2b3c4d5e6→upgrade روی SQLite PASS؛ semgrep روی کل backend ۰ یافته؛ pytest ۱۱۹۱/۲/۰. |
 | F-23 | ۱۰ دکمه بدون `onClick` (موجودی، نه لزوماً نقص) | OPEN |  |
 | F-24 | هشدارهای انباشتهٔ runtime | IN-PROGRESS | WP 0.6: HTTP_422_UNPROCESSABLE_ENTITY → HTTP_422_UNPROCESSABLE_CONTENT در app/errors.py؛ هشدار Starlette دیگر در تست خطاها نیست. هشدارهای دیگر (httpx در TestClient، asyncio_default_fixture_loop_scope) باقی‌اند. |
 | F-25 | گارد شناسه **کف** ندارد: ۱۲ endpoint با `-1`/`0`/`-0`/INT64_MIN پاسخ **۲۰۰** می‌دهند | OPEN |  |
@@ -137,10 +137,10 @@
 | بخش | وضعیت | تعداد |
 |---|---|---|
 | blocked | OPEN | 5 |
-| findings | FIXED | 6 |
+| findings | FIXED | 8 |
 | findings | FIXED-PARTIAL | 3 |
 | findings | IN-PROGRESS | 1 |
-| findings | OPEN | 19 |
+| findings | OPEN | 17 |
 | non_issues | OPEN | 14 |
 | problems | FIXED | 1 |
 | problems | IN-PROGRESS | 1 |

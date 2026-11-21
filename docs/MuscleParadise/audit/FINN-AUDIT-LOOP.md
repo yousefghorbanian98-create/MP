@@ -62,7 +62,7 @@
 | 4.2 | F-11 | TODO | — | سه جهش واقعی؛ ≥۸۰٪ |
 | 4.3 | F-19 | READY | — | یک لایهٔ داده در استودیو؛ حذف `await import` در onClick |
 | 4.4 | F-20/F-23 | READY | — | BD-2: حذف `updateProduct` کلاینت |
-| 4.5 | F-21/F-22 | READY | — | الگوی session، `hypothesis` در pyproject، SQL f-string. **اصلاح الحاقیه:** ruff `S608` آن را نمی‌گیرد؛ semgrep تنها گیت است؛ `# noqa: S608` فقط **پس از** رفع واقعی حذف شود |
+| 4.5 | F-21/F-22 | DONE | (این کامیت) | F-22 red: ۱ ناموفق (۴ خط) ⇒ green؛ semgrep قاعده repair شد (مرده بود، AD‑8)؛ S فعال و بلوکینگ؛ گیت after-wp45 PASS؛ pytest ۱۱۹۱/۲/۰ |
 | 4.6 | F-16 | READY | — | قاعدهٔ `int` ریال؛ حذف sentinel منفی |
 | 4.7 | — | TODO | — | Semgrep blocking، بار پله‌ای، جهش، گیت نهایی |
 
