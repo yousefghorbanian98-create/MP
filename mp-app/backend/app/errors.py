@@ -83,12 +83,18 @@ _HTTP_MESSAGES: dict[int, str] = {
 }
 
 
+# متن پیش‌فرض Starlette/FastAPI (بی‌معنا برای کاربر)؛ اگر دیده شود، پیام پروژه جایگزین می‌شود.
+_STARLETTE_DEFAULT_DETAILS = {"Not Found", "Method Not Allowed"}
+
+
 async def http_error_handler(request: Request, exc: StarletteHTTPException) -> JSONResponse:
     code = _HTTP_CODES.get(exc.status_code, f"http_{exc.status_code}")
-    message = _HTTP_MESSAGES.get(
-        exc.status_code,
-        exc.detail if isinstance(exc.detail, str) else "خطای درخواست",
-    )
+    # پیام خاصِ خطای برنامه (مثلاً «authority نامعتبر») حفظ می‌شود؛ فقط متن پیش‌فرض کتابخانه جایگزین می‌شود.
+    app_detail = exc.detail if isinstance(exc.detail, str) else None
+    if app_detail is not None and app_detail not in _STARLETTE_DEFAULT_DETAILS:
+        message = app_detail
+    else:
+        message = _HTTP_MESSAGES.get(exc.status_code, "خطای درخواست")
     return JSONResponse(
         status_code=exc.status_code,
         content=_payload(code, message),

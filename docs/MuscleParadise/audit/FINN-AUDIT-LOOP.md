@@ -53,7 +53,7 @@
 | 2.5 | F-17 | DONE | `a9146c7` | کیت: semgrep `mp-silent-except-pass` = 0؛ نام شمارنده‌ها طبق کیت (`mp_metrics_scrape_errors_total`، `mp_dast_errors_total`)؛ `/health/ready` بازتاب می‌دهد؛ red 6 تست ⇒ green؛ pytest کامل `1254 passed, 2 skipped, rc=0`. یادداشت: گیت semgrep پیش از تغییر هم ۰ بود؛ تست‌های قرمز شکاف واقعی (نام/بازتاب) را ثبت می‌کنند |
 | 2.6 | F-29 | DONE | (این کامیت) | red: ۶ تست exc_info ناموفق ⇒ green: ۱۴ تست؛ pytest ۱۱۴۶/۲/۰؛ AD‑6 (متن استثنا پنهان) |
 | 3.1 | F-25 | READY (طراحی باز) | — | کف شناسه در `id_guard.py`؛ `PathId` در امضاها. نیاز به نگاشت نوع پارامترهای int از `app.routes` (routes.json نوع ندارد) تا رشتهٔ `0` در کدهای کوپن خراب نشود |
-| 3.2 | F-26 | PARTIAL | `8926fcd` | کد: پاکت خطای یکسان (red→green، pytest زیرمجموعه). گیت کیت `fastapi_default_detail == 0` هنوز اندازه‌گیری نشده (probe باید در نسخهٔ مخزن این فیلد را داشته باشد؛ پایهٔ کیت ۷۱ سلول)؛ ردیابی تأثیر: ۴ `HTTPException` در `backend/devtools/sandbox_bank.py` |
+| 3.2 | F-26 | DONE | (این کامیت) | گیت کیت: `fastapi_default_detail` ۷۰ ⇒ ۰ روی ۸۷۲ سلول (`evidence/after/wp32/summary.json`)؛ اصلاح: پیام خاص `HTTPException` برنامه حفظ شد (red: `test_wp32_detail_preserved.py`)؛ pytest کامل `1257 passed, 2 skipped, rc=0` |
 | 3.3 | F-14 | TODO | — | `gateway-return` با شناسهٔ نامعتبر ⇒ 404 (BD-5) |
 | 3.4 | F-27 | READY | — | BD-1: 409 `member_profile_required` |
 | 3.5 | F-09/F-25 | TODO | — | آزمون قراردادی سراسری در CI |

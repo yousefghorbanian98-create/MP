@@ -316,3 +316,15 @@ WP: 0.4 · F: F‑07 · شاهد: `evidence/after/wp04/` · تصمیم: AD‑11 
 ## وضعیت کلی
 
 - **ممیزی کامل نیست.** باقی‌مانده: WP 3.2 گیت زنده؛ WP 3.1 (F‑25)؛ WP 0.2 (BLOCKED، AD‑10 با کیت باید دوباره ارزیابی شود، ماتریس ۱۱۴۱ سلول)؛ WP 0.7 (کیت اکنون موجود است، باید دوباره ارزیابی شود)؛ WP 0.8؛ و صف READY/TODO.
+
+## WP 3.2 · گیت زنده — DONE
+
+- **probe:** نسخهٔ مخزن `probes/probe_invalid_authed.repo-copy.py` (فقط یک یافته اضافه: `fastapi_default_detail`؛ هش کیت `edd3c25c…`). کیت دست‌نخورده.
+- **پایه (قبل):** `0afd240` روی `:8011` ⇒ `fastapi_default_detail = 70` (همه ۴۰۴) از ۸۷۲ سلول.
+- **بعد:** `8926fcd` + اصلاح پیام ⇒ `fastapi_default_detail = 0` از ۸۷۲ سلول. وضعیت‌ها یکسان: ۴۲۲:۵۳۱، ۴۰۴:۲۲۰، ۲۰۰:۵۵، ۴۰۳:۳۴، ۴۰۰:۲۴، ۴۰۹:۸.
+- **یادداشت ۷۱ در کیت:** کیت ۷۱ (۷۰×۴۰۴ + ۱×۴۰۵) نوشته؛ این probe ۴۰۵ تولید نمی‌کند. ۴۰۵ جداگانه با curl: قبل `{"detail":…}`، بعد پاکت `method_not_allowed`.
+- **اصلاح حین اجرا:** `http_error_handler` پیام خاص برنامه (مثلاً `authority نامعتبر`) را با پیام عمومی جایگزین می‌کرد. red ⇒ green با `tests/regression/test_wp32_detail_preserved.py` (۱ ناموفق ⇒ ۳ سبز).
+- **سازگاری کلاینت:** studio `session.ts` ابتدا `error.message` سپس `detail`؛ Flutter `api_client.dart` هر دو را می‌پذیرد.
+- **کل:** `pytest -q --no-cov` ⇒ `1257 passed, 2 skipped, rc=0` (`/home/user/recovery4/wp32/pytest.log`).
+- **شواهد:** `docs/MuscleParadise/audit/evidence/after/wp32/` (summary.json و لاگ‌ها). JSON کامل سلول‌ها (~۴۹۰KB) خارج از مخزن: `/tmp/run/audit-before` و `/tmp/run/audit-final`.
+- **نحوهٔ برگرداندن:** `git revert` همان commit.
