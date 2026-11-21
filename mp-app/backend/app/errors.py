@@ -5,6 +5,7 @@ from __future__ import annotations
 from fastapi import Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 
 class ApiError(Exception):
@@ -71,4 +72,25 @@ async def validation_error_handler(request: Request, exc: RequestValidationError
     return JSONResponse(
         status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
         content=_payload("validation_error", "داده‌های ورودی معتبر نیستند", details),
+    )
+
+
+# WP 3.2 / F‑26: خطاهای HTTP خود Starlette (۴۰۴ مسیر، ۴۰۵ متد) هم پاکت پروژه را دارند.
+_HTTP_CODES: dict[int, str] = {404: "not_found", 405: "method_not_allowed"}
+_HTTP_MESSAGES: dict[int, str] = {
+    404: "منبع یافت نشد",
+    405: "متد درخواستی برای این مسیر مجاز نیست",
+}
+
+
+async def http_error_handler(request: Request, exc: StarletteHTTPException) -> JSONResponse:
+    code = _HTTP_CODES.get(exc.status_code, f"http_{exc.status_code}")
+    message = _HTTP_MESSAGES.get(
+        exc.status_code,
+        exc.detail if isinstance(exc.detail, str) else "خطای درخواست",
+    )
+    return JSONResponse(
+        status_code=exc.status_code,
+        content=_payload(code, message),
+        headers=exc.headers,
     )

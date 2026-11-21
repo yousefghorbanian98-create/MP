@@ -52,8 +52,8 @@
 | 2.4 | F-05 | READY | — | RBAC پیش‌کامپایل؛ قفل `_enforcer` |
 | 2.5 | F-17 | DONE | (این کامیت، WP 2.5) | وضعیت اولیه: ۴ مورد؛ سه مورد قبلاً در WP 4.5 لاگ‌دار شده بودند؛ باقی‌مانده: `jp7_trend` (continue بی‌صدا) و شمارندهٔ scrape. red: ۳ ناموفق (JP7، شمارنده، نگهبان AST) ⇒ green: ۴ تست؛ کل pytest ۱۲۵۰/۲/۰ |
 | 2.6 | F-29 | DONE | (این کامیت) | red: ۶ تست exc_info ناموفق ⇒ green: ۱۴ تست؛ pytest ۱۱۴۶/۲/۰؛ AD‑6 (متن استثنا پنهان) |
-| 3.1 | F-25 | READY | — | کف شناسه در `id_guard.py`؛ `PathId` در امضاها |
-| 3.2 | F-26 | READY | — | نگاشت `StarletteHTTPException` به پاکت پروژه |
+| 3.1 | F-25 | READY (طراحی باز) | — | کف شناسه در `id_guard.py`؛ `PathId` در امضاها. نیاز به نگاشت نوع پارامترهای int از `app.routes` (routes.json نوع ندارد) تا رشتهٔ `0` در کدهای کوپن خراب نشود |
+| 3.2 | F-26 | DONE | (این کامیت، WP 3.2) | red: ۲ ناموفق (۴۰۴ و ۴۰۵ با `{"detail"}`) ⇒ green: ۲ تست؛ کل pytest ۱۲۵۲/۲/۰ |
 | 3.3 | F-14 | TODO | — | `gateway-return` با شناسهٔ نامعتبر ⇒ 404 (BD-5) |
 | 3.4 | F-27 | READY | — | BD-1: 409 `member_profile_required` |
 | 3.5 | F-09/F-25 | TODO | — | آزمون قراردادی سراسری در CI |

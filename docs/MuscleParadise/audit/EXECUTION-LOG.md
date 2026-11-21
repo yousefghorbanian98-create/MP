@@ -281,3 +281,18 @@ WP: 0.4 · F: F‑07 · شاهد: `evidence/after/wp04/` · تصمیم: AD‑11 
 - **سبز:** `jp7_trend` ردیف خراب را با `_log.warning` و `metrics.inc("assessment_jp7_rows_skipped")` ثبت می‌کند؛ `_log_scrape_failure` شمارندهٔ `mp_metrics_scrape_failures` را هم افزایش می‌دهد. ⇒ `4 passed`.
 - **کل:** `pytest -q --no-cov` ⇒ `1250 passed, 2 skipped, exit 0` (`/home/user/wp04-cov/wp25/pytest.log`).
 - **نحوهٔ برگرداندن:** `git revert` همان commit.
+
+## WP 3.2 · F‑26 · یک شکل پاکت خطا — DONE
+
+- **یافته:** خطاهای HTTP خود Starlette (۴۰۴ مسیر ناموجود، ۴۰۵ متد نامجاز) با `{"detail": …}` برمی‌گشتند؛ بقیهٔ API `{"error": {code, message, details}}`. کلاینت‌ها (`studio/src/lib/session.ts`، `client/lib/core/api_client.dart`) `error.message` را اول می‌خوانند و `detail` را فقط پشتیبان دارند ⇒ تغییر سازگار است.
+- **قرمز:** `tests/integration/test_wp32_error_envelope.py` ⇒ `2 failed` (`{'detail': 'Not Found'}`، `{'detail': 'Method Not Allowed'}`).
+- **سبز:** `app/errors.py::http_error_handler` (کد: `not_found`/`method_not_allowed`/`http_<status>`؛ پیام فارسی برای ۴۰۴ و ۴۰۵؛ هدرهای خطا مثل `Allow` حفظ می‌شوند) و ثبت در `app/main.py`. ⇒ `2 passed`.
+- **کل:** `pytest -q --no-cov` ⇒ `1252 passed, 2 skipped, exit 0`.
+- **یادداشت:** پیام‌های ۴۰۴/۴۰۵ متن فارسی ثابت‌اند؛ اگر مالک متن دیگری بخواهد، فقط `_HTTP_MESSAGES` تغییر می‌کند.
+- **نحوهٔ برگرداندن:** `git revert` همان commit.
+
+## وضعیت باقی‌مانده پس از WP 3.2
+
+- WP 3.1 (F‑25): کف شناسه نیاز به نوع پارامترها دارد؛ middleware قبل از مسیریابی است. طراحی و تست جدا لازم است (احتمال شکستن کدهای رشته‌ای). باز.
+- WP 0.7: BLOCKED-ENV (کیت). WP 0.2: BLOCKED (AD‑10).
+- READY باقی‌مانده: 2.1، 2.2، 2.3، 2.4، 3.4، 4.3، 4.4، 4.6؛ TODO: 3.3، 3.5، 4.1، 4.2، 4.7؛ PARTIAL: 0.6، 0.8، 1.1، 1.2، 1.4.

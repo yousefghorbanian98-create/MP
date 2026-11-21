@@ -11,9 +11,10 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from slowapi.errors import RateLimitExceeded
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.config import settings
-from app.errors import ApiError, api_error_handler, validation_error_handler
+from app.errors import ApiError, api_error_handler, http_error_handler, validation_error_handler
 
 
 @asynccontextmanager
@@ -151,6 +152,7 @@ def create_app() -> FastAPI:
     app.add_middleware(CorrelationIdMiddleware, header_name="X-Request-ID")
 
     app.add_exception_handler(ApiError, api_error_handler)
+    app.add_exception_handler(StarletteHTTPException, http_error_handler)
     app.add_exception_handler(RequestValidationError, validation_error_handler)
 
     from modules.auth.router import limiter
