@@ -39,7 +39,7 @@
 | 0.5 | F-10 | DONE | `bf1daa1` | eslint ۰/۰ (قبل: ۴۲ خطا + ۵ هشدار) |
 | 0.6 | F-24 | PARTIAL | `bf1daa1` | 422 اصلاح؛ هشدار httpx و asyncio باقی |
 | 0.7 | — | READY | — | semgrep روی PyPI نصب می‌شود (میزبان مجاز)؛ قاعدهٔ `harness/semgrep-mp.yml` در CI به‌صورت non-blocking |
-| 0.9 | الحاقیهٔ A1 | DONE (گام ۱–۵) | — | پیکربندی `5d820a0`؛ ERA001 `e335653`؛ گیت `d4c0f3e`؛ رفع ایمن ۴۵ `37c6493`؛ CI+پین `07f096d`؛ 430→419 (base PASS)؛ pytest 1132/0 exit 0 |
+| 0.9 | الحاقیهٔ A1 | DONE (گام ۱–۵) | — | پیکربندی `5d820a0`؛ ERA001 `e335653`؛ گیت `d4c0f3e`؛ رفع ایمن ۴۵ `9868a11`؛ CI+پین `07f096d`؛ 430→419 (base PASS)؛ pytest 1132/0 exit 0 |
 | 0.8 | A5 | PARTIAL | `40c64f7` | ۴۲/۴۲ پین؛ گیت‌های SBOM/امضا باقی |
 | 1.1 | F-01 | PARTIAL | `ccf44ce` | e2e: قبل ۳۰×200، بعد ≥۲۷×429؛ متریک `key_source` باقی |
 | 1.2 | F-02 | PARTIAL | `ccf44ce` | BD-3؛ گیت زنده روی استقرار BLOCKED-ENV |

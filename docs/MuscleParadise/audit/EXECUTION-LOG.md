@@ -148,7 +148,7 @@
 - **اشتباه من، اصلاح‌شده:** اولین dry-run با `--select RUF100` ⇒ ۶۹ (نادرست؛ `--select` بقیه را خاموش می‌کند). با پیکربندی کامل و فیلتر `RUF100` ⇒ **۴۰** روی HEAD، که ۴ تا در migration و ۳۶ قابل حذف‌اند. dry-run‌ها فقط `--diff` بودند؛ `git status` بعدش تمیز ماند.
 - ترتیب اجرا: `ruff check --fix --exclude db/migrations/versions/c3f01ab129e2_*.py` ⇒ `45 fixed` (ایمن)؛ migration بدون تغییر؛ ۴ `noqa: S608` باقی.
 
-### گام ۴ — رفع‌های ایمن (`37c6493`)
+### گام ۴ — رفع‌های ایمن (`9868a11`)
 - شامل: ۳۶ RUF100 (ـ بدون noqa بلااثر)، RUF022 (ترتیب `__all__`)، FURB110 (`a if a else b → a or b`؛ معادل)، FURB167، RUF021.
 - کامنت دلیل‌دار `test_m46_db_pool.py:33` به‌صورت کامنت ساده حفظ شد.
 - **اشتباه کمکی (اصلاح‌شده، قبل از push):** `git add -A` ۱۴ PNG آزمایشی `var/receipts/` را هم staged کرد؛ commit بازنویسی شد؛ PNGهای untracked آزمایشی پاک شدند (۷۵ tracked دست‌نخورده).
