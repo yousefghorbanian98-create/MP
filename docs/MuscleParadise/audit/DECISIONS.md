@@ -122,3 +122,10 @@
 - **تصمیم:** helper `_log_provider_failure` با `exc_info=(type(exc), RuntimeError(پیام پنهان), exc.__traceback__)`: نوع استثنا و قاب‌های traceback ثبت می‌شوند، متن آن نه.
 - **گزینهٔ ردشده:** `log.exception` ساده (نشت کلید) و حذف traceback (خلاف هدف F‑29).
 - **نحوهٔ برگرداندن:** جایگزینی helper با `log.exception` فقط با تأیید مالک و پس از بررسی تست نشت.
+
+## AD-7 · نوع مبلغ `Rial` و کمیسیون دقیق (WP 1.5، F‑09)
+- **زمینه:** پنج فیلد درخواستیِ مبلغ (`PaymentCreate`، `WalletCharge`، `ExpenseCreate`، `ExpenseUpdate`، `MembershipCreate`) `int` ساده بودند؛ Pydantic حالت lax رشتهٔ «۱۰۰۰» و اعشار را می‌پذیرفت و سقف بالا نداشت. کمیسیون مربی `int(int(total)*rate)` با float بود (دقت از ۲^۵۳ بیرون می‌رود).
+- **تصمیم:** `app/money.py::Rial` = `StrictInt` با `le = 2**53-1`. روی مدل‌های پاسخ (`int`) دست نمی‌زنیم چون ورودی کاربر نیستند. کمیسیون `Decimal(str(rate))` و گرد به پایین. ضریب تخفیف درصدی کوپن (`amount*value//100`) از قبل عدد صحیح پایتون و دقیق است؛ آن را تغییر ندادیم.
+- **استودیو:** `lib/money.ts` با `parseRial` (فقط عدد صحیح ایمن، ارقام فارسی و جداکننده‌ها نرمال می‌شوند)، `parseRialOrThrow` برای فرم‌ها و `formatRial` برای نمایش. Number() روی مبالغ حذف شد؛ `Number(value)` در Shop شناسهٔ دسته است و تغییر نکرد.
+- **گزینهٔ ردشده:** `Decimal` در سراسر API (تغییر قرارداد JSON، خارج از WP). ساده‌تر و کافی: سقف ۲^۵۳−۱ و StrictInt.
+- **نحوهٔ برگرداندن:** حذف `Rial` از چهار schema و بازگرداندن `int`؛ نیاز به تأیید مالک ندارد.

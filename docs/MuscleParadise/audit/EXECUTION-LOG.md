@@ -180,3 +180,13 @@
 - **green:** ۵ تست؛ `after-wp36` PASS (`date.today()` = ۰، DTZ011 = ۰)؛ pytest کامل ۱۱۵۱ passed، ۲ skipped، exit 0.
 - **زمان‌بندی تست:** ساعت ۲۰۳۰‑۰۳‑۲۰ ۲۱:۰۰ UTC (= ۰۰:۳۰ تهران ۲۱ مارس). ساعت واقعی ماشین (۲۰۲۶‑۱۱‑۲۱) با نتیجه‌ها تداخل ندارد.
 - **پیامد:** `ENV TZ=Asia/Tehran` در `backend/Dockerfile` و `infra/Dockerfile.backend`؛ AD‑1 لایهٔ دوم.
+
+### WP 1.5 (F‑09) — این کامیت
+- **red:** `tests/regression/test_wp15_rial_strict.py` روی کد قبل: ۲۳ ناموفق / ۱۰ موفق (موفق‌ها مواردی‌اند که کد قبل همان ورودی را رد می‌کرد، مثل `True` و `'1e6'`، یا تست پذیرش). استودیو: `tests/wp15Money.test.ts` ناموفق با خطای import (`src/lib/money` نبود).
+- **تنظیم red:** نمونهٔ اولیه (۱۰^۱۸+۷ با نرخ ۰٫۱) در float و Decimal برابر درآمد؛ با نرخ ۰٫۳ اختلاف دیده شد؛ تست روی همان اصلاح شد.
+- **green:** ۳۳ تست بک‌اند؛ ۱۵ تست استودیو؛ vitest کامل ۲۹۸ passed، tsc و eslint صفر.
+- **گیت:** `verify-addendum-gates.sh after-wp15` PASS (پیش از این، تعداد فیلدها یک‌بار به‌ازای هر فایل شمرده می‌شد و BLOCKED-NUMERIC می‌داد؛ اصلاح به شمارش خط‌ها، ۵ از ۵).
+- **lint:** lint بلوکینگ CI (E,F,W,I,N,UP,B,SIM) و `ruff format --check` صفر. TC001/TC003 جدید در schemaها هم‌الگوی فایل‌های موجود است و در بخش غیربلوکینگ است.
+- **pytest کامل:** ۱۱۸۴ passed، ۲ skipped، exit 0 (۳۴۰ ثانیه).
+- **پیامد:** AD‑7.
+

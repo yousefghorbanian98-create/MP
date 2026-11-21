@@ -81,7 +81,7 @@
 | F-06 | `/api/v1/metrics` بدون احراز هویت | FIXED | WP 1.3: /api/v1/metrics با Bearer (MP_METRICS_TOKEN) محافظت شد: بدون هدر/توکن غلط ۴۰۱، بدون توکن تنظیم‌شده ۴۰۳؛ Caddy مسیر را ۴۰۴ می‌کند؛ Prometheus با credentials؛ Compose الزام متغیر دارد. تست: tests/integration/test_wp13_metrics_auth.py. |
 | F-07 | پوشش مستند ۹۴٫۲۸٪ در برابر واقعی ۸۳٫۷۳٪ | OPEN |  |
 | F-08 | `logout-all` توکن‌های بدون `sid` را باطل نمی‌کند | FIXED-PARTIAL | WP 1.4 (BD-6): logout-all عدد auth_version را bump می‌کند؛ توکن بی‌sid پس از آن ۴۰۱ (قبل ۲۰۰). دو اسکریپت توکن با sid واقعی و بدون چاپ روی stdout. تست: tests/integration/test_wp14_logout_all.py. باقی‌مانده: قاعدهٔ Semgrep (WP 0.7). |
-| F-09 | پول بزرگ: `2^53`، `2^53+1`، `10^18` پذیرفته می‌شوند + coercion رشته→عدد | OPEN |  |
+| F-09 | پول بزرگ: `2^53`، `2^53+1`، `10^18` پذیرفته می‌شوند + coercion رشته→عدد | FIXED | الحاقیهٔ A1 — WP 1.5 (AD‑7). قبل: ۵ فیلد درخواستیِ مبلغ `int` (۲^۵۳ و ۱۰^۱۸ و رشتهٔ «۱۰۰۰» پذیرفته می‌شد)؛ کمیسیون `int(int(total)*rate)` با float. red: ۲۳ تست ناموفق (app/money.py نبود، کمیسیون ۱۰^۱۸+۷ با نرخ ۰٫۳ = ۳۰۰۰۰۰۰۰۰۰۰۰۰۰۰۰۰۰ به‌جای ۳۰۰۰۰۰۰۰۰۰۰۰۰۰۰۰۰۰۲). بعد: `Rial` = StrictInt ≤ 2^53−1 روی ۵ فیلد درخواستی؛ کمیسیون Decimal + گرد به پایین؛ استودیو: parseRial/parseRialOrThrow/formatRial در lib/money.ts جای Number() روی ۷ محل. تست: tests/regression/test_wp15_rial_strict.py (۳۳) و studio/tests/wp15Money.test.ts؛ گیت after-wp15 PASS؛ pytest کامل ۱۱۸۴ passed، ۲ skipped، exit 0؛ vitest ۲۹۸ passed، tsc و eslint صفر. |
 | F-10 | ۳۱ خطای ESLint در استودیو (هیچ lint واقعی اجرا نمی‌شد) | FIXED | WP 0.5: eslint.config.mjs (flat) + اسکریپت lint = `eslint .` + گیت در CI. اندازه‌گیری قبل: ۴۲ خطا + ۵ هشدار (بریف: ۳۱ خطا؛ عدد دقیق با همین پیکربندی ۴۲ بود). بعد: ۰ خطا، ۰ هشدار. قاعدهٔ label-has-associated-control با controlComponents برای کنترل‌های antd تنظیم شد؛ autoFocus به فوکوس ref تبدیل شد. |
 | F-11 | امتیاز جهش ۵۷٫۸٪ در ماژول پولی؛ ۳ شکاف واقعی | OPEN |  |
 | F-12 | `routes.json` مجموعهٔ گاردهای واقعی را کم‌تر نشان می‌دهد ⇒ اوراکل نامعتبر | OPEN |  |
@@ -137,10 +137,10 @@
 | بخش | وضعیت | تعداد |
 |---|---|---|
 | blocked | OPEN | 5 |
-| findings | FIXED | 5 |
+| findings | FIXED | 6 |
 | findings | FIXED-PARTIAL | 3 |
 | findings | IN-PROGRESS | 1 |
-| findings | OPEN | 20 |
+| findings | OPEN | 19 |
 | non_issues | OPEN | 14 |
 | problems | FIXED | 1 |
 | problems | IN-PROGRESS | 1 |

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Button, Input, Select } from "antd";
 import { createCoupon, listCoupons, type CouponRow } from "../lib/api";
+import { parseRial } from "../lib/money";
 import { JalaliDateField } from "./ui/JalaliDateField";
 
 /**
@@ -46,7 +47,8 @@ export function CouponPanel() {
     setBusy(true);
     setError(null);
     try {
-      const n = Number(value);
+      const n = parseRial(value);
+      if (n === null || n < 1) throw new Error("مقدار تخفیف باید عدد صحیح مثبت باشد");
       const uses = maxUses.trim() ? Number(maxUses) : null;
       await createCoupon({
         code: code.trim(),

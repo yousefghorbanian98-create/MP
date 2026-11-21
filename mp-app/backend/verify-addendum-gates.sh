@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # verify-addendum-gates.sh — گیت‌های عددی الحاقیهٔ A1.3 (اجرای بی‌ناظر)
 #
-# کاربرد:    RUFF=/path/to/ruff ./verify-addendum-gates.sh [before|after-era|after-wp26|after-wp36|after-wp45]
+# کاربرد:    RUFF=/path/to/ruff ./verify-addendum-gates.sh [before|after-era|after-wp15|after-wp26|after-wp36|after-wp45]
 # محل اجرا:  mp-app/backend
 # نیازمندی:  ruff 0.17.x (با نسخهٔ دیگر اعداد فرق می‌کنند)
 # خروجی:     جدول + «PASS» یا «ACTION» و exit code (0 = همهٔ گیت‌های مطلق منطبق)
@@ -17,7 +17,7 @@ RUFF="${RUFF:-ruff}"
 CFG="${CFG:-}"
 
 case "$STAGE" in
-  before|after-era|after-wp26|after-wp36|after-wp45) ;;
+  before|after-era|after-wp15|after-wp26|after-wp36|after-wp45) ;;
   *) echo "FATAL: stage نامعتبر: $STAGE"; exit 2 ;;
 esac
 command -v "$RUFF" >/dev/null 2>&1 || { echo "FATAL: ruff پیدا نشد ⇒ RUFF=/path/to/ruff"; exit 2; }
@@ -61,10 +61,10 @@ case "$STAGE" in
   *)         row "کل یافته (ثبتی)" "-" "$ERR" info; row "قواعدِ متمایز (ثبتی)" "-" "$DIST" info ;;
 esac
 
-case "$STAGE" in before|after-era|after-wp26|after-wp36) EXP_S608=4 ;; *) EXP_S608=0 ;; esac
-case "$STAGE" in before|after-era) EXP_RUF=39 ;; after-wp26|after-wp36) EXP_RUF=4 ;; *) EXP_RUF=0 ;; esac
-case "$STAGE" in after-wp26|after-wp36|after-wp45) EXP_TRY=0 ;; *) EXP_TRY=6 ;; esac
-case "$STAGE" in after-wp36|after-wp45) EXP_DTZ=0 ;; *) EXP_DTZ=3 ;; esac
+case "$STAGE" in before|after-era|after-wp15|after-wp26|after-wp36) EXP_S608=4 ;; *) EXP_S608=0 ;; esac
+case "$STAGE" in before|after-era) EXP_RUF=39 ;; after-wp15|after-wp26|after-wp36) EXP_RUF=4 ;; *) EXP_RUF=0 ;; esac
+case "$STAGE" in after-wp15|after-wp26|after-wp36|after-wp45) EXP_TRY=0 ;; *) EXP_TRY=6 ;; esac
+case "$STAGE" in after-wp15|after-wp36|after-wp45) EXP_DTZ=0 ;; *) EXP_DTZ=3 ;; esac
 row "RUF100 (noqa بلااثر)" "$EXP_RUF" "$(rule_count RUF100)" gate
 row "TRY400" "$EXP_TRY" "$(rule_count TRY400)" gate
 row "DTZ011" "$EXP_DTZ" "$(rule_count DTZ011)" gate
@@ -94,7 +94,16 @@ row "۲۰ noqa ممنوع‌الحذف" "20" "$k" gate
 S608_N="$(grep -c '# noqa: S608' db/migrations/versions/c3f01ab129e2_*.py 2>/dev/null | head -1)"
 row "noqa: S608 در c3f01ab129e2" "$EXP_S608" "${S608_N:-0}" gate
 
-if [ "$STAGE" = after-wp36 ] || [ "$STAGE" = after-wp45 ]; then
+if [ "$STAGE" = after-wp15 ]; then
+  # F‑09: پنج فیلد درخواستیِ مبلغ (ExpenseCreate/Update، MembershipCreate، PaymentCreate، WalletCharge)
+  # باید Rial (StrictInt ≤ 2^53-1) باشند؛ مدل‌های پاسخ (int) مشمول نیستند.
+  RIALN="$(grep -cE '^[[:space:]]+(amount_rial|price_rial): (Rial|Rial \\| None)' modules/payments/schemas.py modules/expenses/schemas.py modules/membership/schemas.py 2>/dev/null | awk -F: '{s+=$NF} END{print s+0}')"
+  row "فیلد مبلغ درخواستی با نوع Rial (از ۵)" "5" "$RIALN" gate
+  FLT="$(grep -n 'int(int(total) \* rate)' modules/payments/finance.py 2>/dev/null | wc -l | tr -d ' ')"
+  row "کمیسیون float (int(int(total) * rate))" "0" "$FLT" gate
+fi
+
+if [ "$STAGE" = after-wp15 ] || [ "$STAGE" = after-wp36 ] || [ "$STAGE" = after-wp45 ]; then
   DT="$(grep -rn 'date\.today()' modules app engine jobs 2>/dev/null | wc -l | tr -d ' ')"
   row "date.today() در ۴ دایرکتوری" "0" "$DT" gate
   TZN="$(grep -rl 'TZ=' ../infra 2>/dev/null | wc -l | tr -d ' ')"
