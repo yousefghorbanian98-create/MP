@@ -165,6 +165,13 @@ jobs:
           /tmp/sgvenv/bin/pip install -q semgrep
           /tmp/sgvenv/bin/semgrep --config=.semgrep/project-rules.yml --error \
             --exclude=.venv --exclude=node_modules --exclude=__pycache__ mp-app
+      # WP 0.7 (کیت): قواعد harness با semgrep — در فاز ۰ غیرمسدودکننده (continue-on-error)،
+      # و از فاز ۴ مسدودکننده می‌شود. پایه: ۵ یافته روی mp-app (۰ silent-except-pass).
+      - name: Semgrep (harness rules, non-blocking)
+        continue-on-error: true
+        run: |
+          /tmp/sgvenv/bin/semgrep --config=.semgrep/mp-harness-rules.yml --error \
+            --exclude=.venv --exclude=node_modules --exclude=__pycache__ mp-app
 
       - name: Collect backend diagnostics (on failure)
         if: failure()
