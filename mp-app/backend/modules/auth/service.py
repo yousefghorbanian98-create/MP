@@ -194,6 +194,9 @@ def logout_all(db: Session, user_id: int) -> dict:
         .where(RefreshToken.user_id == user_id, RefreshToken.revoked_at.is_(None))
         .values(revoked_at=datetime.now(UTC))
     )
+    # WP 1.4 / F-08 (BD-6): access tokenهای بی‌sid و بی‌ver هم باید بمیرند؛
+    # bump نسخهٔ auth همهٔ توکن‌های قبلی را رد می‌کند (deps.get_current_user).
+    db.execute(update(User).where(User.id == user_id).values(auth_version=User.auth_version + 1))
     db.commit()
     from modules.admin.service import audit
 

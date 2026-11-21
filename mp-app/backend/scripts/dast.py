@@ -57,15 +57,25 @@ def build_schema():
 
 
 def _token(role: str) -> str:
-    from app.security.jwt import create_access_token
+    """توکن DAST با sid و ver واقعی؛ بدون چاپ روی stdout (WP 1.4 / F-08)."""
+    from app.security.jwt import create_access_token, create_refresh_token
     from db.base import get_session_factory
-    from db.models import User
+    from db.models import RefreshToken, User
 
     with get_session_factory()() as s:
         u = User(phone=f"09{abs(hash(role)) % 10**9:09d}", full_name=f"dast-{role}", role=role)
         s.add(u)
         s.commit()
-        return create_access_token(u.id, u.role)
+        _refresh, refresh_hash, expires = create_refresh_token()
+        s.add(
+            RefreshToken(
+                user_id=u.id, token_hash=refresh_hash, expires_at=expires, device_info="dast"
+            )
+        )
+        s.commit()
+        return create_access_token(
+            u.id, u.role, session_id=refresh_hash, auth_version=u.auth_version
+        )
 
 
 def run(max_examples: int, timeout: float, only: str | None) -> dict:

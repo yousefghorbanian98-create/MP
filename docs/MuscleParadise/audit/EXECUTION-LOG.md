@@ -101,3 +101,14 @@
 
 - `scripts/build_audit_inventory.py --check` پس از ایجاد فایل‌های جدید باید کامیت شده باشد: این گیت از `git ls-files` استفاده می‌کند، پس قبل از کامیت «کهنه» می‌دهد. `INVENTORY.md` پس از کامیت دوباره ساخته و بررسی شد.
 - مشکل میانی: اسکریپت فهرست بدون متغیر محیط، بخش OpenAPI (۱۶۳ عملیات) را حذف کرد؛ با `setdefault` در کد subprocess اصلاح شد. این مورد به‌عنوان تله ثبت شد.
+
+## WP 1.4 · F-08 · خروج از همه و توکن‌های بی‌sid (BD-6)
+
+- **بازتولید:** `tests/integration/test_wp14_logout_all.py` پیش از اصلاح ⇒ `assert 200 == 401` برای توکن بی‌sid/بی‌ver پس از `POST /auth/logout-all`؛ و `seed_s3c_m39.py` ⇒ `print(f"{token}|{member.id}")` در تست نشت‌توکن قرمز.
+- **ریشه:** `modules/auth/service.py::logout_all` فقط refreshها را revoke می‌کرد؛ `app/deps.py` برای tokenهای بی‌`sid` فقط نسخهٔ `ver` را می‌سنجید و `ver` قدیمی‌ها را هم کاربر فعال تلقی می‌کرد.
+- **تغییرات:** `modules/auth/service.py` (bump `auth_version`)؛ `scripts/dast.py` (`_token` با RefreshToken و sid واقعی)؛ `scripts/seed_s3c_m39.py` (توکن به فایل 0600 با `MP_SEED_TOKEN_FILE`، stdout فقط member_id)؛ `tests/regression/test_wp12_env_failsafe.py` (پاک‌سازی `MP_ENVIRONMENT` در تست‌های محیط).
+- **تست‌های اضافه:** `tests/integration/test_wp14_logout_all.py` — ۴ مورد (توکن بی‌sid ⇒ ۴۰۱، توکن OTP ⇒ ۴۰۱، ورود تازه پس از logout-all ⇒ ۲۰۰، نبود چاپ توکن در ابزارها).
+- **شاهد بعد از اصلاح:** `pytest tests/integration/test_wp14_logout_all.py` ⇒ ۴ passed (پس از اصلاح)؛ ماژول‌های auth/session/rbac ⇒ ۹۱ passed؛ **pytest کامل ⇒ 1132 passed، 2 skipped، خروجی صفر** (`/tmp/after-wp14-pytest.txt`).
+- **خطای میانی:** تست «شروع بدون محیط» در اجرای کامل شکست خورد چون متغیر `MP_ENVIRONMENT` از تست قبلی به فرایند نشت می‌کرد؛ تست اکنون متغیر را خودش پاک می‌کند. ثبت به‌عنوان تله: تست‌های پیکربندی باید محیط خودشان را کنترل کنند.
+- **گیت عددی:** توکن بی‌sid پس از logout-all = ۴۰۱ ⇒ PASS.
+- **باقی‌مانده:** قاعدهٔ Semgrep «`create_access_token(` بدون `session_id=` خارج از تست» به WP 0.7/4.7 منتقل شد. وضعیت F-08: **FIXED-PARTIAL**.

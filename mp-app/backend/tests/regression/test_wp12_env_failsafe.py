@@ -68,6 +68,8 @@ def test_dev_code_echo_is_double_gated_in_service_source() -> None:
 def test_implicit_environment_refuses_to_start(monkeypatch) -> None:
     import app.main as main_module
 
+    # محیط فرایند را خودمان پاک می‌کنیم: وجود MP_ENVIRONMENT از تست‌های دیگر نباید نتیجه را عوض کند.
+    monkeypatch.delenv("MP_ENVIRONMENT", raising=False)
     implicit = Settings(_env_file=None, allow_implicit_dev=False)
     assert "environment" not in implicit.model_fields_set
     monkeypatch.setattr(main_module, "settings", implicit)
@@ -78,6 +80,7 @@ def test_implicit_environment_refuses_to_start(monkeypatch) -> None:
 def test_explicit_environment_allows_startup(monkeypatch) -> None:
     import app.main as main_module
 
+    monkeypatch.delenv("MP_ENVIRONMENT", raising=False)
     explicit = Settings(_env_file=None, environment="development", allow_implicit_dev=False)
     assert "environment" in explicit.model_fields_set
     monkeypatch.setattr(main_module, "settings", explicit)
