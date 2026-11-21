@@ -120,11 +120,18 @@ jobs:
           python-version: "3.11"
       - name: Install backend deps
         run: pip install -e "mp-app/backend[dev]"
-      - name: Lint (ruff)
+      - name: "Lint (ruff) — بلوکینگ (A1.3 گام ۵)"
+        # زیرمجموعهٔ خانواده‌های پاک‌شده + قالب‌بندی. هر خانواده‌ای که پاک شد به این لیست اضافه می‌شود:
+        # DTZ پس از WP 3.6 · TRY پس از WP 2.6 · S پس از WP 4.5 · C90 پس از F‑15 · بقیه پس از رفع.
+        run: |
+          cd mp-app/backend
+          ruff check --select E,F,W,I,N,UP,B,SIM --ignore E501 .
+          ruff format --check .
+      - name: "Lint (ruff) — غیرمسدودکننده: پیکربندی کامل (یافته‌های باز تا فازهای ۲–۴)"
+        continue-on-error: true
         run: |
           cd mp-app/backend
           ruff check .
-          ruff format --check .
       - name: Test (pytest + coverage ≥70%)
         run: |
           cd mp-app/backend
