@@ -24,6 +24,11 @@ from db.models import OtpCode, PhoneChangeChallenge, RefreshToken, User
 _SALT_PREFIX = "mp-otp"
 
 
+def dev_otp_echo_enabled() -> bool:
+    """WP 1.2 / F-02: نشت کد OTP فقط با دو شرط؛ هر محیط دیگر fail-closed."""
+    return settings.environment == "development" and settings.allow_dev_otp_echo
+
+
 def _hash_otp(code: str, salt: str) -> str:
     return hashlib.sha256(f"{_SALT_PREFIX}:{salt}:{code}".encode()).hexdigest()
 
@@ -49,8 +54,8 @@ def request_otp(db: Session, phone: str) -> dict:
 
         raise ApiError("ارسال پیامک ناموفق بود؛ دوباره تلاش کنید", code="sms_failed")
     out = {"phone": phone, "expires_in": settings.otp_ttl_seconds}
-    if provider.name == "dev":
-        out["dev_code"] = code  # فقط در حالت توسعه
+    if provider.name == "dev" and dev_otp_echo_enabled():
+        out["dev_code"] = code  # WP 1.2: فقط development + MP_ALLOW_DEV_OTP_ECHO
     return out
 
 
@@ -189,6 +194,9 @@ def logout_all(db: Session, user_id: int) -> dict:
         .where(RefreshToken.user_id == user_id, RefreshToken.revoked_at.is_(None))
         .values(revoked_at=datetime.now(UTC))
     )
+    # WP 1.4 / F-08 (BD-6): access tokenهای بی‌sid و بی‌ver هم باید بمیرند؛
+    # bump نسخهٔ auth همهٔ توکن‌های قبلی را رد می‌کند (deps.get_current_user).
+    db.execute(update(User).where(User.id == user_id).values(auth_version=User.auth_version + 1))
     db.commit()
     from modules.admin.service import audit
 
@@ -257,7 +265,7 @@ def _deliver_phone_change_code(
         raise ApiError("ارسال پیامک ناموفق بود؛ فرایند را دوباره آغاز کنید", code="sms_failed")
 
     result = {"challenge_id": challenge.challenge_id, "expires_in": settings.otp_ttl_seconds}
-    if provider.name == "dev":
+    if provider.name == "dev" and dev_otp_echo_enabled():
         result["dev_code"] = code
     return result
 

@@ -30,6 +30,10 @@ from app.config import settings
 _counter = itertools.count(920001)
 
 
+# WP 1.2 / F-02: این ماژول کد OTP را از پاسخ dev می‌خواند ⇒ opt-in صریح.
+pytestmark = pytest.mark.usefixtures("dev_otp_echo")
+
+
 @pytest.fixture()
 def client(tmp_path, monkeypatch):
     from modules.auth.router import limiter

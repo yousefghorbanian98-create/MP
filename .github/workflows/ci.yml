@@ -15,7 +15,7 @@ jobs:
   secret-scan:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
         with:
           fetch-depth: 0
       # Use the MIT Gitleaks CLI, not gitleaks/gitleaks-action (its repository
@@ -95,13 +95,13 @@ jobs:
     name: Documentation links and handoff
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5
         with:
           python-version: "3.11"
       - name: Validate agent docs, diagrams, and local links
         run: python3 scripts/docs_gate.py
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020  # v4
         with:
           node-version: "22"
       - name: Interaction map gate (contract drift + stale map)
@@ -114,17 +114,26 @@ jobs:
   backend:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5
         with:
           python-version: "3.11"
       - name: Install backend deps
         run: pip install -e "mp-app/backend[dev]"
-      - name: Lint (ruff)
+      - name: "Lint (ruff) — بلوکینگ (A1.3 گام ۵)"
+        # زیرمجموعهٔ خانواده‌های پاک‌شده + قالب‌بندی. هر خانواده‌ای که پاک شد به این لیست اضافه می‌شود:
+        # DTZ پس از WP 3.6 · TRY400 پس از WP 2.6 · S پس از WP 4.5 · C90 پس از F‑15 · بقیه پس از رفع.
+        # TRY به‌صورت کد دقیق (TRY400) آمده: خانوادهٔ TRY در خط فرمان TRY003 را هم برمی‌گرداند،
+        # که در pyproject عمداً ignore است (پیام فارسی inline).
+        run: |
+          cd mp-app/backend
+          ruff check --select E,F,W,I,N,UP,B,SIM,DTZ,TRY400,S --ignore E501 .
+          ruff format --check .
+      - name: "Lint (ruff) — غیرمسدودکننده: پیکربندی کامل (یافته‌های باز تا فازهای ۲–۴)"
+        continue-on-error: true
         run: |
           cd mp-app/backend
           ruff check .
-          ruff format --check .
       - name: Test (pytest + coverage ≥70%)
         run: |
           cd mp-app/backend
@@ -159,7 +168,7 @@ jobs:
           printf 'run=%s job=backend\n' '${{ github.run_id }}' > /tmp/backend-ci/RUN.txt
       - name: Upload backend diagnostics (on failure)
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4
         with:
           name: backend-diagnostics-${{ github.run_id }}
           path: /tmp/backend-ci/
@@ -169,13 +178,16 @@ jobs:
   studio:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020  # v4
         with:
           node-version: "22"
       - name: Install
         working-directory: mp-app/studio
         run: npm ci || npm install
+      - name: Lint (ESLint 9 flat — WP 0.5 / F-10؛ ۰ خطا، ۰ هشدار)
+        working-directory: mp-app/studio
+        run: npm run lint
       - name: Unit tests (Vitest) — شامل گیت‌های WCAG و sync توکن‌ها
         working-directory: mp-app/studio
         run: npm test
@@ -192,8 +204,8 @@ jobs:
   client-flutter:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2  # v2
         with:
           channel: stable
       - name: flutter pub get
@@ -337,7 +349,7 @@ jobs:
           printf 'run=%s job=client-flutter\n' '${{ github.run_id }}' > /tmp/client-ci/RUN.txt
       - name: Upload client diagnostics (on failure)
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4
         with:
           name: client-diagnostics-${{ github.run_id }}
           path: /tmp/client-ci/
@@ -351,11 +363,11 @@ jobs:
   live-contract:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5
         with:
           python-version: "3.11"
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020  # v4
         with:
           node-version: "22"
       - name: Install backend
@@ -400,8 +412,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: [backend]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5
         with:
           python-version: "3.11"
       - name: Install
@@ -425,8 +437,8 @@ jobs:
     env:
       FLUTTER_ROOT: ${{ github.workspace }}/.flutter-pin-check
     steps:
-      - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2  # v2
         with:
           flutter-version: "3.50.0"   # باید با ARG FLUTTER_VERSION در .devcontainer/Dockerfile یکی بماند
           architecture: x64

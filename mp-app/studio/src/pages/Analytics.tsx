@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useMotionPreset } from "../lib/motion";
+import { formatRial } from "../lib/money";
 import { fetchChurnRisk, fetchLeaderboards, type ChurnRow, type Leaderboards } from "../lib/adminApi";
 
 const sections: { key: keyof Leaderboards; title: string; hint: string }[] = [
@@ -98,7 +99,7 @@ export function Analytics() {
                     <span className="text-xs text-ink-dim">
                       {sec.key === "top_athletes" && `میانگین ${Number(row.avg_axis_score).toLocaleString("fa-IR")}`}
                       {sec.key === "top_spenders" &&
-                        `${Number(row.total_paid_rial).toLocaleString("fa-IR")} ریال`}
+                        `${formatRial(row.total_paid_rial as number | string)} ریال`}
                       {sec.key === "most_visits" &&
                         `${Number(row.visits).toLocaleString("fa-IR")} مراجعه`}
                       {sec.key === "most_time" &&

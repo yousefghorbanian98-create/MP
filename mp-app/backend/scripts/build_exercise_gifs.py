@@ -105,8 +105,11 @@ def build_one(stem: str) -> tuple[Path, int, float] | None:
     buf.seek(0)
     # دوباره باز کن تا خروجی واقعاً یک GIF معتبر باشد، نه بایت‌های خوش‌بینانه
     check = Image.open(io.BytesIO(buf.getvalue()))
-    assert check.format == "GIF", check.format
-    assert getattr(check, "n_frames", 1) == len(labelled), (check.n_frames, len(labelled))
+    # WP 4.5 (S101): assert در حالت بهینه‌سازی حذف می‌شود؛ بررسی صریح با خطای واضح.
+    if check.format != "GIF":
+        raise RuntimeError(f"خروجی GIF معتبر نیست: {check.format}")
+    if getattr(check, "n_frames", 1) != len(labelled):
+        raise RuntimeError(f"تعداد فریم‌ها {check.n_frames} با {len(labelled)} برابر نیست")
     out.write_bytes(buf.getvalue())
     return out, len(labelled), len(buf.getvalue()) / 1024
 

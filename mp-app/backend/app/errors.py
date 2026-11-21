@@ -69,6 +69,6 @@ async def validation_error_handler(request: Request, exc: RequestValidationError
         for e in exc.errors()
     ]
     return JSONResponse(
-        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
         content=_payload("validation_error", "داده‌های ورودی معتبر نیستند", details),
     )

@@ -6,11 +6,6 @@ import { generateProgram, fetchAssessmentHistory, fetchAssessmentMatrix, fetchMe
 import { fa, useApi } from "../lib/useApi";
 import { useAppStore } from "../stores/appStore";
 
-const domains = [
-  "قلبی-عروقی", "عضلانی-اسکلتی", "کنترل وزن", "انعطاف‌پذیری", "قدرت", "استقامت",
-  "تعادل", "هماهنگی", "سرعت", "چابکی", "سلامت مفاصل", "الگوی خواب", "سطح استرس", "تغذیه",
-];
-
 /** اعضا + پنل جزئیات با ورود/خروج انیمیشنی (AnimatePresence). */
 const genderTabs = [
   { key: "all" as const, label: "همه" },

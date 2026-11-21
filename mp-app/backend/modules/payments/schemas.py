@@ -8,11 +8,12 @@ from typing import Literal
 from pydantic import BaseModel, Field, field_validator
 
 from app.ids import Id
+from app.money import Rial
 
 
 class PaymentCreate(BaseModel):
     member_id: Id
-    amount_rial: int = Field(..., ge=1000, description="مبلغ به ریال")
+    amount_rial: Rial = Field(..., ge=1000, description="مبلغ به ریال")
     # درگاه اینترنتی حذف شد؛ فقط روش‌های حضوری و کیف‌پول داخلی.
     method: str = Field("cash", pattern="^(cash|card|card_to_card|wallet)$")
     description: str = Field("", max_length=200)
@@ -96,7 +97,7 @@ class PaymentOut(BaseModel):
 
 class WalletCharge(BaseModel):
     member_id: Id
-    amount_rial: int = Field(..., gt=0)
+    amount_rial: Rial = Field(..., gt=0)
     description: str = Field("", max_length=200)
     # QF-05: تکرار درخواست شارژ از سوی اپ، موجودی را دو بار زیاد نمی‌کند.
     idempotency_key: str | None = Field(None, min_length=8, max_length=80)

@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import App from "../src/App";
@@ -174,10 +176,8 @@ describe("a11y — rule-based audit across every page (Q5)", { timeout: 30_000 }
 
   it("applies prefers-reduced-motion (M07)", () => {
     // حرکت باید محترم شمرده شود؛ بررسی وجود منطق، نه اجرای انیمیشن
-    const src = require("node:fs").readFileSync(
-      require("node:path").resolve(__dirname, "../src/App.tsx"),
-      "utf8",
-    ) as string;
+    // vitest از ریشهٔ استودیو اجرا می‌شود؛ URL در محیط jsdom بر روی http است، پس از cwd استفاده می‌کنیم.
+    const src = readFileSync(resolve(process.cwd(), "src/App.tsx"), "utf8");
     expect(src).toContain("useReducedMotion");
   });
 });

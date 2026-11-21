@@ -823,7 +823,6 @@
     "axis-assessment"
    ],
    "guards": [
-    "permission",
     "permission"
    ],
    "roles": [
@@ -1645,8 +1644,14 @@
    "tags": [
     "health"
    ],
-   "guards": [],
-   "roles": []
+   "guards": [
+    "metrics_token"
+   ],
+   "roles": [
+    "manager",
+    "admin",
+    "super_admin"
+   ]
   },
   {
    "method": "POST",

@@ -13,7 +13,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # RFC 7518 §3.2 — HMAC-SHA256 با کلید کوتاه‌تر از ۳۲ بایت، امنیت اعلام‌شده را ندارد.
 MIN_SECRET_BYTES = 32
-DEFAULT_DEV_SECRET = "dev-secret-change-in-production-x"
+DEFAULT_DEV_SECRET = "dev-secret-change-in-production-x"  # noqa: S105 — WP 4.5 (S): مقدار پیش‌فرض توسعه؛ در production رد می‌شود، رمز واقعی نیست
 
 
 class Settings(BaseSettings):
@@ -67,6 +67,15 @@ class Settings(BaseSettings):
     shop_timezone: str = "Asia/Tehran"
     # QF-26: فهرست IP پروکسی‌های معتمد (ویرگول‌جدا). خالی = هیچ هدر XFF پذیرفته نمی‌شود.
     trusted_proxies: str = ""
+    # WP 1.2 / F-02: کد OTP فقط در development و با این پرچم صریح در پاسخ می‌آید.
+    # پیش‌فرض false؛ در production هرگز true نشود (deploy_gate این را بررسی می‌کند).
+    allow_dev_otp_echo: bool = False
+    # WP 1.2 / F-02: اگر MP_ENVIRONMENT صریح نباشد، اپ بالا نمی‌آید مگر این
+    # متغیر (فقط برای تست‌های خودکار) true باشد.
+    allow_implicit_dev: bool = False
+    # WP 1.3 / F-06: توکن Bearer برای scrape پرومتئوس روی `/api/v1/metrics`.
+    # خالی = endpoint بسته است (۴۰۳)؛ بدون هدر یا با توکن غلط ۴۰۱.
+    metrics_token: str = ""
     # QF-27: اگر true، readiness بدون heartbeat تازهٔ worker ⇒ ۵۰۳ (استقرار با worker).
     require_worker: bool = False
     shop_open_hour: int = 7
@@ -164,6 +173,8 @@ class Settings(BaseSettings):
 
         if self.sms_provider == "dev":
             problems.append("MP_SMS_PROVIDER در production نباید dev باشد")
+        if self.allow_dev_otp_echo:
+            problems.append("MP_ALLOW_DEV_OTP_ECHO در production باید false باشد")
         elif self.sms_provider == "webmagfa":
             for name, value in (
                 ("MP_SMS_API_URL", self.sms_api_url),
@@ -193,6 +204,20 @@ class Settings(BaseSettings):
                 problems.append(
                     "MP_SMS_API_URL در production باید HTTPS معتبر و بدون credential باشد"
                 )
+
+        # WP 1.1 / F-01: بدون پروکسی معتمد، X-Forwarded-For نادیده گرفته می‌شود و
+        # همهٔ کاربران پشت Caddy یک سهمیهٔ نرخ می‌شوند؛ پس فهرست باید معتبر باشد.
+        trusted_entries = [item.strip() for item in self.trusted_proxies.split(",")]
+        trusted_entries = [item for item in trusted_entries if item]
+        if not trusted_entries:
+            problems.append("MP_TRUSTED_PROXIES در production الزامی است (IP یا CIDR پروکسی)")
+        else:
+            for entry in trusted_entries:
+                try:
+                    ipaddress.ip_network(entry, strict=False)
+                except ValueError:
+                    problems.append("MP_TRUSTED_PROXIES فقط IP یا CIDR معتبر می‌پذیرد")
+                    break
 
         valkey_url = urlsplit(self.valkey_url)
         valkey_host = (valkey_url.hostname or "").lower()

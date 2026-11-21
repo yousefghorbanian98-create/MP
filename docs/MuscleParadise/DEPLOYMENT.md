@@ -40,7 +40,9 @@ cp ../backend/.env.example .env
 | `MP_CORS_ORIGINS` | فهرست originهای واقعی HTTPS، با کاما جداشده؛ نه localhost و نه `*` |
 | `MP_SMS_PROVIDER` | `webmagfa` یا `kavenegar`، به‌همراه URL HTTPS و credentialهای همان provider؛ `dev` مجاز نیست |
 | `MP_PAYMENT_GATEWAY` | `zarinpal`، شناسهٔ پذیرندهٔ واقعی و `MP_PAYMENT_SANDBOX=false` |
-| `MP_TRUSTED_PROXIES` | IP پروکسی‌های معتمد (Caddy/nginx)، کاماجدا. خالی = `X-Forwarded-For` **هرگز** پذیرفته نمی‌شود؛ فقط پشت همان پروکسی پر شود (QF-26) |
+| `MP_TRUSTED_PROXIES` | **الزامی در production** — IP یا CIDR پروکسی Caddy/nginx، کاماجدا (مثلاً `172.18.0.0/16`). uvicorn فقط به همین فهرست `X-Forwarded-For` می‌دهد (`scripts/uvicorn_proxy_flags.sh`)؛ خالی یعنی هیچ هدری پذیرفته نمی‌شود (`--no-proxy-headers`). هرگز `*` ننویسید (WP 1.1 / F-01). |
+| `MP_ENVIRONMENT` | **صریح** لازم است؛ بدون آن اپ بالا نمی‌آید (WP 1.2 / F-02). مقدار: `production` یا `development`. |
+| `MP_ALLOW_DEV_OTP_ECHO` | پیش‌فرض `false`. فقط در `development` و با `true` کد OTP در پاسخ می‌آید؛ در production رد می‌شود. |
 | `MP_REQUIRE_WORKER` | `true` در استقراری که worker دارد؛ بدون heartbeat تازهٔ outbox، `/api/v1/health/ready` با ۵۰۳ پاسخ می‌دهد (QF-27) |
 
 در هر دو Compose، `MP_VALKEY_URL` داخل شبکه به سرویس Valkey اشاره می‌کند؛ backend نباید از `localhost` استفاده کند. دقت کنید secretها، API key پیامک، شناسهٔ پذیرنده و دامنه را در گزارش/چت/لاگ چاپ نکنید.
@@ -71,7 +73,7 @@ curl -fsS http://localhost:8080/api/v1/health/ready  # stack deploy، پشت TLS
 
 پیش از ورود دادهٔ واقعی:
 
-- [ ] health و readiness سبز باشند و `/api/v1/metrics` در Prometheus دیده شود.
+- [ ] health و readiness سبز باشند و `/api/v1/metrics` با توکن `MP_METRICS_TOKEN` در Prometheus دیده شود (بدون توکن ۴۰۱، و از مسیر عمومی ۴۰۴).
 - [ ] OTP با provider واقعی در sandbox/provider-approved test انجام شود؛ پاسخ OTP توسعه در production غیرفعال است.
 - [ ] درگاه زنده فقط پس از تأیید پذیرنده/کسب‌وکار؛ کد/Compose موفقیت درگاه واقعی را اثبات نمی‌کند.
 - [ ] عضویت/مالکیت، گردش کیف‌پول و دسترسی اعضا روی دادهٔ مصنوعی بازبینی شوند.

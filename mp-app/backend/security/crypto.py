@@ -37,7 +37,7 @@ class FaceEmbeddingCipher:
         if settings.biometric_key:
             try:
                 key = base64.b64decode(settings.biometric_key, validate=True)
-            except Exception as exc:  # noqa: BLE001
+            except Exception as exc:
                 raise BiometricCryptoError("MP_BIOMETRIC_KEY معتبر نیست (base64)") from exc
             return key
         # محیط dev: مشتق از secret_key.

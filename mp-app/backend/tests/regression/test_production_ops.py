@@ -28,6 +28,7 @@ def valid_production_settings(**overrides) -> Settings:
         "cors_origins": "https://studio.example.test",
         "payment_gateway": "manual",
         "payment_sandbox": False,
+        "trusted_proxies": "172.18.0.2",  # WP 1.1 / F-01: الزامی در production
     }
     values.update(overrides)
     return Settings(**values)

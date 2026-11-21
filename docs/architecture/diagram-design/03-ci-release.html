@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CI و انتشار — وضعیت فعلی · Muscle Paradise</title>
+<style>
+  @font-face { font-family: 'Vazirmatn'; src: url('../../../mp-app/client/assets/fonts/Vazirmatn-Regular.ttf') format('truetype'); font-weight: 400; }
+  @font-face { font-family: 'Vazirmatn'; src: url('../../../mp-app/client/assets/fonts/Vazirmatn-Bold.ttf') format('truetype'); font-weight: 700; }
+  body { margin:0; background:#0B0F14; color:#E6EDF3; font-family:'Vazirmatn',system-ui,sans-serif; display:flex; flex-direction:column; align-items:center; padding:24px 16px; }
+  h1 { font-size:1.15rem; margin:0 0 4px; }
+  p.sub { margin:0 0 12px; color:#8B98A5; font-size:.88rem; }
+  svg { width:100%; max-width:1000px; height:auto; }
+  .node { fill:#131A22; stroke:#2A3440; stroke-width:1.5; }
+  .focal { fill:#0E2A1E; stroke:#00B86A; stroke-width:2; }
+  .end { fill:#151515; stroke:#5C6B7A; stroke-width:1.5; stroke-dasharray:5 4; }
+  .label { fill:#E6EDF3; font-size:15px; font-weight:700; text-anchor:middle; }
+  .small { fill:#8B98A5; font-size:12px; text-anchor:middle; }
+  .edge { stroke:#5C6B7A; stroke-width:1.5; fill:none; }
+  .edge-focal { stroke:#00B86A; stroke-width:2; fill:none; }
+  .edge-text { fill:#C9D1D9; font-size:12px; text-anchor:middle; }
+  .note { fill:#8B98A5; font-size:12px; }
+  .band { fill:none; stroke:#2A3440; stroke-width:1; stroke-dasharray:2 4; }
+  .band-label { fill:#8B98A5; font-size:12px; font-weight:700; direction:ltr; }
+  .note { direction:ltr; }
+</style>
+</head>
+<body>
+<h1>CI و انتشار — وضعیت فعلی</h1>
+<p class="sub">از فایل‌های workflows/*.yml؛ triggerها همان‌اند که در فایل نوشته شده‌اند.</p>
+<svg viewBox="0 0 1000 600" role="img" aria-labelledby="t-ci d-ci">
+  <title id="t-ci">CI و انتشار — وضعیت فعلی</title>
+  <desc id="d-ci">ci.yml با push و PR اجرا می‌شود و هشت گیت دارد؛ web و apk دستی‌اند؛ container با tag و deploy دستی با امکان rollback اجرا می‌شود.</desc>
+  <defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5C6B7A"/></marker><marker id="arrg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#00B86A"/></marker></defs>
+<rect class="node" x="40" y="80" width="170" height="56" rx="10"/><text class="label" x="125.0" y="104.0">Push / PR</text><text class="small" x="125.0" y="122.0">main · arena/** · PR</text>
+<rect class="band" x="250" y="40" width="330" height="290" rx="12"/>
+<text class="band-label" x="270" y="60">ci.yml — خودکار</text>
+<rect class="node" x="270" y="74" width="290" height="26" rx="10"/><text class="label" x="415.0" y="92.0">secret-scan</text>
+<rect class="node" x="270" y="106" width="290" height="26" rx="10"/><text class="label" x="415.0" y="124.0">docs</text>
+<rect class="node" x="270" y="138" width="290" height="26" rx="10"/><text class="label" x="415.0" y="156.0">backend (pytest ≥70%)</text>
+<rect class="node" x="270" y="170" width="290" height="26" rx="10"/><text class="label" x="415.0" y="188.0">studio (vitest · tsc · build)</text>
+<rect class="node" x="270" y="202" width="290" height="26" rx="10"/><text class="label" x="415.0" y="220.0">client-flutter</text>
+<rect class="node" x="270" y="234" width="290" height="26" rx="10"/><text class="label" x="415.0" y="252.0">live-contract</text>
+<rect class="node" x="270" y="266" width="290" height="26" rx="10"/><text class="label" x="415.0" y="284.0">e2e-api</text>
+<rect class="node" x="270" y="298" width="290" height="26" rx="10"/><text class="label" x="415.0" y="316.0">client-pinned</text>
+<rect class="focal" x="640" y="80" width="170" height="56" rx="10"/><text class="label" x="725.0" y="104.0">همه سبز؟</text><text class="small" x="725.0" y="122.0">گیت merge</text>
+<path class="edge" marker-end="url(#arr)" d="M210,108 L250,108"/>
+<path class="edge-focal" marker-end="url(#arrg)" d="M580,180 L640,108"/>
+<rect class="band" x="40" y="370" width="920" height="200" rx="12"/>
+<text class="band-label" x="60" y="390">انتشار — دستی یا با tag (با اسرار مخزن)</text>
+<rect class="node" x="60" y="410" width="170" height="56" rx="10"/><text class="label" x="145.0" y="434.0">mp-web</text><text class="small" x="145.0" y="452.0">دستی · build web</text>
+<rect class="end" x="260" y="410" width="170" height="56" rx="10"/><text class="label" x="345.0" y="434.0">mp-apk</text><text class="small" x="345.0" y="452.0">دستی · APK امضاشده</text>
+<rect class="node" x="460" y="410" width="170" height="56" rx="10"/><text class="label" x="545.0" y="434.0">container</text><text class="small" x="545.0" y="452.0">tag v* · GHCR</text>
+<rect class="node" x="660" y="410" width="170" height="56" rx="10"/><text class="label" x="745.0" y="434.0">deploy</text><text class="small" x="745.0" y="452.0">preflight → build → deploy</text>
+<rect class="node" x="660" y="500" width="170" height="56" rx="10"/><text class="label" x="745.0" y="524.0">rollback</text><text class="small" x="745.0" y="542.0">به SHA یا tag قبلی</text>
+<path class="edge" stroke-dasharray="6 5" marker-end="url(#arr)" d="M745,466 L745,500"/>
+<path class="edge" marker-end="url(#arr)" d="M630,438 L660,438"/>
+<text class="note" x="60" y="585">APK امضاشده BLOCKED: اسرار MP_ANDROID_* در مخزن تنظیم نشده‌اند. gitleaks-fingerprints و client-format-fix دستی‌اند.</text>
+</svg>
+</body>
+</html>

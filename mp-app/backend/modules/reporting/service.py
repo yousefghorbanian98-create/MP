@@ -59,7 +59,7 @@ def build_confidential_report(db: Session, member_id: int) -> dict:
         "record_id": f"P-{member.id:04d}",
         "gender": member.gender or "unknown",
         "birth_date": _iso(member.birth_date) or "unknown",
-        "height_cm": member.height_cm if member.height_cm else "unknown",
+        "height_cm": member.height_cm or "unknown",
         "report_generated_at": datetime.now(UTC).isoformat(),
         "report_version": REPORT_VERSION,
     }

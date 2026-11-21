@@ -9,8 +9,8 @@ import {
   type PaymentRow,
   type Receipt,
 } from "../lib/api";
-import { fa } from "../lib/useApi";
 import { Input, Select } from "antd";
+import { parseRial } from "../lib/money";
 
 /**
  * Q6 — درگاه پرداخت (پذیرش).
@@ -66,9 +66,9 @@ export function PaymentPanel() {
   const create = () =>
     call(async () => {
       const mid = Number(memberId);
-      const amt = Number(amount);
+      const amt = parseRial(amount);
       if (!Number.isInteger(mid) || mid <= 0) throw new Error("شناسهٔ عضو باید عدد صحیح مثبت باشد");
-      if (!Number.isInteger(amt) || amt < 1000) throw new Error("مبلغ حداقل ۱۰۰۰ ریال است");
+      if (amt === null || amt < 1000) throw new Error("مبلغ حداقل ۱۰۰۰ ریال و عدد صحیح است");
       const code = coupon.trim();
       const created = await createPayment({
         member_id: mid,

@@ -7,6 +7,8 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
+from app.money import Rial
+
 Category = Literal[
     "rent",
     "salary",
@@ -20,7 +22,7 @@ Category = Literal[
 
 
 class ExpenseCreate(BaseModel):
-    amount_rial: int = Field(..., ge=1000, description="مبلغ به ریال (حداقل ۱٬۰۰۰)")
+    amount_rial: Rial = Field(..., ge=1000, description="مبلغ به ریال (حداقل ۱٬۰۰۰)")
     category: Category
     spent_on: date
     payee: str = Field("", max_length=120)
@@ -30,7 +32,7 @@ class ExpenseCreate(BaseModel):
 class ExpenseUpdate(BaseModel):
     """هر تغییر باید دلیل داشته باشد؛ فیلدهای ارسال‌نشده دست‌نخورده می‌مانند."""
 
-    amount_rial: int | None = Field(None, ge=1000)
+    amount_rial: Rial | None = Field(None, ge=1000)
     category: Category | None = None
     spent_on: date | None = None
     payee: str | None = Field(None, max_length=120)

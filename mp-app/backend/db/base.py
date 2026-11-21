@@ -112,7 +112,7 @@ def _apply_sqlite_pragmas(engine) -> None:
         return
 
     @event.listens_for(engine, "connect")
-    def _set_pragmas(dbapi_conn, _record):  # noqa: ANN001
+    def _set_pragmas(dbapi_conn, _record):
         cur = dbapi_conn.cursor()
         try:
             cur.execute("PRAGMA journal_mode=WAL")

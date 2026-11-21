@@ -24,8 +24,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from db.base import get_session_factory  # noqa: E402
-from db.models.content import Exercise  # noqa: E402
+from db.base import get_session_factory
+from db.models.content import Exercise
 
 STATIC_DIR = Path(__file__).resolve().parents[1] / "static" / "exercises"
 PUBLIC_PREFIX = "/static/exercises"

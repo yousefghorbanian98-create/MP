@@ -5,6 +5,7 @@ from __future__ import annotations
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.clock import today_in_shop_zone
 from app.errors import ApiError, NotFoundError
 from db.models import MealItem, Member, NutritionPlan
 
@@ -108,8 +109,6 @@ def log_food(
     user=None,
 ) -> dict:
     """ثبت یک یا چند وعدهٔ واقعی. ورودی ناقص رد می‌شود، نه حدس زده."""
-    from datetime import date
-
     from app.security.ownership import ensure_member_scope
     from db.models import FoodItem, FoodLog
 
@@ -121,7 +120,7 @@ def log_food(
         grams = entry.get("grams")
         food_id = entry.get("food_id")
         slot = entry.get("meal_slot") or "snack"
-        day = entry.get("logged_for_date") or date.today().isoformat()
+        day = entry.get("logged_for_date") or today_in_shop_zone().isoformat()  # F-28
 
         if food_id is None:
             rejected.append({"index": idx, "reason": "food_id لازم است"})
@@ -173,13 +172,11 @@ def daily_summary(db: Session, *, member_id: int, day: str | None = None, user=N
     اگر برنامه‌ای نباشد، `target` صفر می‌شود و `target_source="none"` —
     نه اینکه هدفی از هوا ساخته شود.
     """
-    from datetime import date
-
     from app.security.ownership import ensure_member_scope
     from db.models import FoodItem, FoodLog
 
     ensure_member_scope(db, user, member_id)
-    day = day or date.today().isoformat()
+    day = day or today_in_shop_zone().isoformat()  # F-28
 
     rows = list(
         db.scalars(

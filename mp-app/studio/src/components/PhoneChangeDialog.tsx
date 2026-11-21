@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Modal } from "antd";
 import {
   confirmPhoneChange,
@@ -33,6 +33,11 @@ export function PhoneChangeDialog({
   const [challengeId, setChallengeId] = useState<string | null>(null);
   const [devCode, setDevCode] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const codeInputRef = useRef<HTMLInputElement>(null);
+  // فوکوس هنگام ورود به مرحلهٔ کد (جایگزین autoFocus؛ فوکوس خودکار بدون اعلام ممنوع است)
+  useEffect(() => {
+    if (step !== "request") codeInputRef.current?.focus();
+  }, [step]);
   const [error, setError] = useState<string | null>(null);
 
   function restart(): void {
@@ -137,7 +142,7 @@ export function PhoneChangeDialog({
               <span>{step === "verify-current" ? "کد شمارهٔ فعلی" : "کد شمارهٔ جدید"}</span>
               <input
                 autoComplete="one-time-code"
-                autoFocus
+                ref={codeInputRef}
                 className="focus-ring w-full rounded-xl border border-primary/20 bg-surface/70 px-3 py-2 text-left"
                 dir="ltr"
                 inputMode="numeric"

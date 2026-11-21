@@ -2,7 +2,7 @@
 FROM python:3.11-slim
 
 WORKDIR /app
-ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 TZ=Asia/Tehran
 
 COPY mp-app/backend/pyproject.toml ./pyproject.toml
 COPY mp-app/backend/alembic.ini ./alembic.ini
@@ -26,4 +26,4 @@ ENV MP_DATABASE_URL=sqlite:////data/mp.db
 VOLUME ["/data", "/backups"]
 
 EXPOSE 8000
-CMD ["sh", "-c", "if [ -n \"${PROMETHEUS_MULTIPROC_DIR:-}\" ]; then mkdir -p \"$PROMETHEUS_MULTIPROC_DIR\" && rm -f \"$PROMETHEUS_MULTIPROC_DIR\"/*; fi && alembic upgrade head && exec uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers ${WEB_CONCURRENCY:-4} --proxy-headers --forwarded-allow-ips='*'"]
+CMD ["sh", "-c", "if [ -n \"${PROMETHEUS_MULTIPROC_DIR:-}\" ]; then mkdir -p \"$PROMETHEUS_MULTIPROC_DIR\" && rm -f \"$PROMETHEUS_MULTIPROC_DIR\"/*; fi && alembic upgrade head && exec uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers ${WEB_CONCURRENCY:-4} $(sh scripts/uvicorn_proxy_flags.sh)"]

@@ -20,8 +20,8 @@ from sqlalchemy.orm import Session
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from db.base import get_session_factory  # noqa: E402
-from db.models.content import CatalogExercise, CatalogSource  # noqa: E402
+from db.base import get_session_factory
+from db.models.content import CatalogExercise, CatalogSource
 
 SOURCE_NAME = "free-exercise-db"
 SOURCE_URL = "https://github.com/yuhonas/free-exercise-db"
@@ -142,15 +142,12 @@ def main() -> int:
         print(f"OK digest {digest}")
         return 0
 
-    session = get_session_factory()()
-    try:
+    with get_session_factory()() as session:
         result = import_catalog(session, args.data)
         print(
             f"catalog imported: source_id={result.source_id} "
             f"inserted={result.inserted} updated={result.updated} total={result.total}"
         )
-    finally:
-        session.close()
     return 0
 
 

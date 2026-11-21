@@ -11,9 +11,9 @@ from sqlalchemy import engine_from_config, pool
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
-from app.config import settings  # noqa: E402
-from db import models  # noqa: E402,F401
-from db.base import Base  # noqa: E402
+from app.config import settings
+from db import models  # noqa: F401
+from db.base import Base
 
 config = context.config
 config.set_main_option("sqlalchemy.url", settings.database_url)

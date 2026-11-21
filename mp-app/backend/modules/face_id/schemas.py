@@ -34,7 +34,7 @@ class FaceEnroll(BaseModel):
     def decode(cls, v: str) -> str:
         try:
             base64.b64decode(v, validate=True)
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             raise ValueError("base64 معتبر نیست") from exc
         return v
 

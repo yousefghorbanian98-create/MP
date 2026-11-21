@@ -2,7 +2,7 @@
 # ساخت از ریشهٔ مخزن: docker build -f mp-app/backend/Dockerfile -t mp-backend .
 FROM python:3.11-slim
 
-ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 TZ=Asia/Tehran
 
 WORKDIR /srv/mp
 COPY mp-app/backend/ ./backend/
@@ -24,4 +24,4 @@ EXPOSE 8000
 # The app is sync-only, so one process cannot use more than one core and the
 # other cores idle while requests queue on the pool. WEB_CONCURRENCY lets the
 # platform size this to the real CPU count; 4 is the measured floor.
-CMD ["sh", "-c", "if [ -n \"${PROMETHEUS_MULTIPROC_DIR:-}\" ]; then mkdir -p \"$PROMETHEUS_MULTIPROC_DIR\" && rm -f \"$PROMETHEUS_MULTIPROC_DIR\"/*; fi && alembic upgrade head && exec uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers ${WEB_CONCURRENCY:-4} --proxy-headers --forwarded-allow-ips='*'"]
+CMD ["sh", "-c", "if [ -n \"${PROMETHEUS_MULTIPROC_DIR:-}\" ]; then mkdir -p \"$PROMETHEUS_MULTIPROC_DIR\" && rm -f \"$PROMETHEUS_MULTIPROC_DIR\"/*; fi && alembic upgrade head && exec uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers ${WEB_CONCURRENCY:-4} $(sh scripts/uvicorn_proxy_flags.sh)"]
