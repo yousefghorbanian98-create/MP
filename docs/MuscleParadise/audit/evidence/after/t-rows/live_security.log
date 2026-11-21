@@ -1,0 +1,60 @@
+
+== T1/T2: سبد rate-limit، X-Forwarded-For، X-Real-IP ==
+    (۶۵s صبر برای تازه‌شدن پنجرهٔ ۱۰/دقیقه)
+    بدون هدر پراکسی: accepted=3 limited=11 first_429_at=4
+    با X-Forwarded-For تصادفی: accepted=14 limited=0 first_429_at=None
+    با X-Real-IP تصادفی: accepted=3 limited=11 first_429_at=4
+  [PASS] T1: 3 درخواست از ۱۴ پذیرفته شد، نخستین ۴۲۹ در درخواست شمارهٔ 4
+  [PASS] T2: X-Forwarded-For تصادفی نتیجه را عوض کرد ⇒ accepted=14 (در برابر 3 بدون هدر)
+
+== T3: حدس کد OTP (brute force) ==
+  [PASS] T3: 12 حدس اشتباه ⇒ هیچ‌کدام ۲۰۰ نشد
+  [PASS] T3b: کد واقعی پس از 12 حدس ناموفق ⇒ HTTP 429
+
+== T4: مقادیر پولی بزرگ/مرزی ==
+    2^53-1 (بیشترین عدد امن JSON)      sent=9007199254740991 → HTTP 200 echoed=9007199254740991
+    2^53                               sent=9007199254740992 → HTTP 422 echoed=None
+    2^53+1 (ناامن)                     sent=9007199254740993 → HTTP 422 echoed=None
+    10^18                              sent=1000000000000000000 → HTTP 422 echoed=None
+    منفی                               sent=-5000 → HTTP 422 echoed=None
+    صفر                                sent=0 → HTTP 422 echoed=None
+    اعشاری                             sent=1500.75 → HTTP 422 echoed=None
+    رشته                               sent=1500000 → HTTP 422 echoed=None
+  [PASS] T4: همهٔ مقادیر ناامن رد شدند
+  [PASS] T4b: منفی ⇒ HTTP 422, صفر ⇒ HTTP 422
+
+== T5: idempotency ==
+  [PASS] T5: HTTP 200/200 با id=4 و id=4 ⇒ یکسان
+
+== T6: مالکیت داده (عضو A روی دادهٔ عضو B) ==
+  [PASS] T6: 0 پاسخ ۲۰۰ از 16 درخواست بین‌عضوی
+
+== T7: CORS ==
+  [FAIL] T7: [{"origin": "https://evil.example.com", "status": 400, "allow_origin": null, "allow_creds": "true"}, {"origin": "http://127.0.0.1:5173", "status": 200
+
+== T8: نشت اطلاعات ==
+  [PASS] T8: HTTP 404 markers=[] body={"error":{"code":"not_found","message":"عضو یافت نشد","details":[]}}
+  [PASS] T8b: HTTP 403 بدون هیچ توکنی؛ 1 خط، 0 متریک از جمله نام مسیرها و وضعیت outbox
+
+== T9: بازپخش ==
+  [PASS] T9: بار اول HTTP 429، بار دوم HTTP 429
+
+== T10: هدرهای امنیتی روی پاسخ واقعی ==
+  [NOTE] T10: HTTP 200; حاضر: ['content-security-policy', 'x-frame-options', 'x-content-type-options', 'referrer-policy', 'permissions-policy', 'cross-origin-opener
+
+=== خلاصه ===
+  T1    PASS  هر IP یک سبد مستقل ۱۰/دقیقه دارد
+  T2    PASS  با MP_TRUSTED_PROXIES='' هدرهای پراکسی نادیده گرفته می‌شوند (پس همهٔ ک
+  T3    PASS  کد اشتباه نباید هرگز پذیرفته شود و پس از سقف تلاش، کد باطل شود
+  T3b   PASS  پس از N حدس ناموفق، کد واقعی باید قفل شده باشد (otp_max_attempts=5)
+  T4    PASS  مقادیر بزرگ‌تر از 2^53−1 باید رد شوند (422) چون JSON/دارت/TS آن‌ها را 
+  T4b   PASS  مبلغ منفی/صفر باید رد شود
+  T5    PASS  دو درخواست با کلید idempotency یکسان باید یک رکورد بسازند
+  T6    PASS  توکن یک عضو نباید دادهٔ عضو دیگر را بخواند (۴۰۳/۴۰۴ انتظار می‌رود)
+  T7    FAIL  Origin غیرمجاز نباید بازتاب داده شود (fail-closed)
+  T8    PASS  پاسخ خطا نباید جزئیات فنی/مسیر فایل نشت دهد
+  T8b   PASS  /api/v1/metrics باید پشت احراز هویت/شبکهٔ داخلی باشد
+  T9    PASS  کد OTP باید یک‌بارمصرف باشد
+  T10   NOTE  همهٔ هدرهای امنیتی روی پاسخ ۲۰۰ حاضر باشند
+
+→ evidence/live-security-verdicts.json

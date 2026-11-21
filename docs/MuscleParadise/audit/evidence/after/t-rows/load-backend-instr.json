@@ -1,0 +1,61 @@
+{
+ "tag": "backend-instr",
+ "rows": [
+  {
+   "tag": "backend-instr",
+   "workers": 40,
+   "step_seconds": 80.1,
+   "requests": 24196,
+   "rps": 302.0,
+   "status_counts": {
+    "200": 12515,
+    "404": 11681
+   },
+   "error_kinds": {},
+   "p50_ms": 143.5,
+   "p95_ms": 242.8,
+   "p99_ms": 284.7,
+   "max_ms": 522.8,
+   "client_timeouts": 0,
+   "server_errors_5xx": 0,
+   "max_pool_checkedout_observed": 30,
+   "pool_samples": 302,
+   "health_during_load": {
+    "probes": 129,
+    "failed_probes": 0,
+    "max_health_ms": 292.9
+   },
+   "recovery_seconds": 0.02
+  },
+  {
+   "tag": "backend-instr",
+   "workers": 80,
+   "step_seconds": 80.4,
+   "requests": 8741,
+   "rps": 108.8,
+   "status_counts": {
+    "200": 4703,
+    "404": 3958,
+    "None": 80
+   },
+   "error_kinds": {
+    "timeout": 80
+   },
+   "p50_ms": 337.2,
+   "p95_ms": 532.8,
+   "p99_ms": 17256.2,
+   "max_ms": 30576.8,
+   "client_timeouts": 80,
+   "server_errors_5xx": 0,
+   "max_pool_checkedout_observed": 58,
+   "pool_samples": 83,
+   "health_during_load": {
+    "probes": 54,
+    "failed_probes": 8,
+    "max_health_ms": 5094.5
+   },
+   "recovery_seconds": 0.02
+  }
+ ],
+ "updated_at": "16:51:52"
+}

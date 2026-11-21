@@ -1,0 +1,461 @@
+{
+ "module": "modules/payments/manual_transfer_policy.py",
+ "total": 45,
+ "line_mismatch": 0,
+ "killed": 26,
+ "survived": 19,
+ "score_pct": 57.8,
+ "agree_with_witness": 45,
+ "results": [
+  {
+   "id": 1,
+   "witness_line": 12,
+   "line": 15,
+   "mutant": "AWAITING_PROOF = \"XXawaiting_proofXX\"",
+   "pytest_rc": 0,
+   "killed": false,
+   "summary": "54 passed in 0.13s",
+   "witness_killed": false
+  },
+  {
+   "id": 2,
+   "witness_line": 12,
+   "line": 15,
+   "mutant": "AWAITING_PROOF = None",
+   "pytest_rc": 2,
+   "killed": true,
+   "summary": "1 error in 0.20s",
+   "witness_killed": true
+  },
+  {
+   "id": 3,
+   "witness_line": 13,
+   "line": 16,
+   "mutant": "PENDING_REVIEW = \"XXpending_reviewXX\"",
+   "pytest_rc": 0,
+   "killed": false,
+   "summary": "54 passed in 0.12s",
+   "witness_killed": false
+  },
+  {
+   "id": 4,
+   "witness_line": 13,
+   "line": 16,
+   "mutant": "PENDING_REVIEW = None",
+   "pytest_rc": 2,
+   "killed": true,
+   "summary": "1 error in 0.14s",
+   "witness_killed": true
+  },
+  {
+   "id": 5,
+   "witness_line": 14,
+   "line": 17,
+   "mutant": "REJECTED = \"XXrejectedXX\"",
+   "pytest_rc": 0,
+   "killed": false,
+   "summary": "54 passed in 0.12s",
+   "witness_killed": false
+  },
+  {
+   "id": 6,
+   "witness_line": 14,
+   "line": 17,
+   "mutant": "REJECTED = None",
+   "pytest_rc": 2,
+   "killed": true,
+   "summary": "1 error in 0.13s",
+   "witness_killed": true
+  },
+  {
+   "id": 7,
+   "witness_line": 15,
+   "line": 18,
+   "mutant": "APPROVED = \"XXapprovedXX\"",
+   "pytest_rc": 0,
+   "killed": false,
+   "summary": "54 passed in 0.12s",
+   "witness_killed": false
+  },
+  {
+   "id": 8,
+   "witness_line": 15,
+   "line": 18,
+   "mutant": "APPROVED = None",
+   "pytest_rc": 2,
+   "killed": true,
+   "summary": "1 error in 0.14s",
+   "witness_killed": true
+  },
+  {
+   "id": 9,
+   "witness_line": 16,
+   "line": 19,
+   "mutant": "EXPIRED = \"XXexpiredXX\"",
+   "pytest_rc": 0,
+   "killed": false,
+   "summary": "54 passed in 0.12s",
+   "witness_killed": false
+  },
+  {
+   "id": 10,
+   "witness_line": 16,
+   "line": 19,
+   "mutant": "EXPIRED = None",
+   "pytest_rc": 2,
+   "killed": true,
+   "summary": "1 error in 0.17s",
+   "witness_killed": true
+  },
+  {
+   "id": 11,
+   "witness_line": 17,
+   "line": 20,
+   "mutant": "CANCELLED = \"XXcancelledXX\"",
+   "pytest_rc": 0,
+   "killed": false,
+   "summary": "54 passed in 0.12s",
+   "witness_killed": false
+  },
+  {
+   "id": 12,
+   "witness_line": 17,
+   "line": 20,
+   "mutant": "CANCELLED = None",
+   "pytest_rc": 2,
+   "killed": true,
+   "summary": "1 error in 0.14s",
+   "witness_killed": true
+  },
+  {
+   "id": 13,
+   "witness_line": 21,
+   "line": 24,
+   "mutant": "SUBMIT = \"XXsubmitXX\"",
+   "pytest_rc": 0,
+   "killed": false,
+   "summary": "54 passed in 0.12s",
+   "witness_killed": false
+  },
+  {
+   "id": 14,
+   "witness_line": 21,
+   "line": 24,
+   "mutant": "SUBMIT = None",
+   "pytest_rc": 2,
+   "killed": true,
+   "summary": "1 error in 0.14s",
+   "witness_killed": true
+  },
+  {
+   "id": 15,
+   "witness_line": 22,
+   "line": 25,
+   "mutant": "APPROVE = \"XXapproveXX\"",
+   "pytest_rc": 0,
+   "killed": false,
+   "summary": "54 passed in 0.12s",
+   "witness_killed": false
+  },
+  {
+   "id": 16,
+   "witness_line": 22,
+   "line": 25,
+   "mutant": "APPROVE = None",
+   "pytest_rc": 2,
+   "killed": true,
+   "summary": "1 error in 0.14s",
+   "witness_killed": true
+  },
+  {
+   "id": 17,
+   "witness_line": 23,
+   "line": 26,
+   "mutant": "REJECT = \"XXrejectXX\"",
+   "pytest_rc": 0,
+   "killed": false,
+   "summary": "54 passed in 0.12s",
+   "witness_killed": false
+  },
+  {
+   "id": 18,
+   "witness_line": 23,
+   "line": 26,
+   "mutant": "REJECT = None",
+   "pytest_rc": 2,
+   "killed": true,
+   "summary": "1 error in 0.13s",
+   "witness_killed": true
+  },
+  {
+   "id": 19,
+   "witness_line": 24,
+   "line": 27,
+   "mutant": "EXPIRE = \"XXexpireXX\"",
+   "pytest_rc": 0,
+   "killed": false,
+   "summary": "54 passed in 0.12s",
+   "witness_killed": false
+  },
+  {
+   "id": 20,
+   "witness_line": 24,
+   "line": 27,
+   "mutant": "EXPIRE = None",
+   "pytest_rc": 2,
+   "killed": true,
+   "summary": "1 error in 0.13s",
+   "witness_killed": true
+  },
+  {
+   "id": 21,
+   "witness_line": 25,
+   "line": 28,
+   "mutant": "CANCEL = \"XXcancelXX\"",
+   "pytest_rc": 0,
+   "killed": false,
+   "summary": "54 passed in 0.12s",
+   "witness_killed": false
+  },
+  {
+   "id": 22,
+   "witness_line": 25,
+   "line": 28,
+   "mutant": "CANCEL = None",
+   "pytest_rc": 2,
+   "killed": true,
+   "summary": "1 error in 0.14s",
+   "witness_killed": true
+  },
+  {
+   "id": 23,
+   "witness_line": 34,
+   "line": 37,
+   "mutant": "isinstance(value, datetime) and value.tzinfo is  None and value.utcoffset() is not None",
+   "pytest_rc": 1,
+   "killed": true,
+   "summary": "6 failed, 48 passed in 0.15s",
+   "witness_killed": true
+  },
+  {
+   "id": 24,
+   "witness_line": 34,
+   "line": 37,
+   "mutant": "isinstance(value, datetime) and value.tzinfo is not None and value.utcoffset() is  None",
+   "pytest_rc": 1,
+   "killed": true,
+   "summary": "6 failed, 48 passed in 0.17s",
+   "witness_killed": true
+  },
+  {
+   "id": 25,
+   "witness_line": 34,
+   "line": 37,
+   "mutant": "isinstance(value, datetime) or value.tzinfo is not None and value.utcoffset() is not None",
+   "pytest_rc": 1,
+   "killed": true,
+   "summary": "3 failed, 51 passed in 0.14s",
+   "witness_killed": true
+  },
+  {
+   "id": 26,
+   "witness_line": 39,
+   "line": 42,
+   "mutant": "return type(value) is not int and value > 0",
+   "pytest_rc": 1,
+   "killed": true,
+   "summary": "2 failed, 52 passed in 0.14s",
+   "witness_killed": true
+  },
+  {
+   "id": 27,
+   "witness_line": 39,
+   "line": 42,
+   "mutant": "return type(value) is int and value >= 0",
+   "pytest_rc": 0,
+   "killed": false,
+   "summary": "54 passed in 0.15s",
+   "witness_killed": false
+  },
+  {
+   "id": 28,
+   "witness_line": 39,
+   "line": 42,
+   "mutant": "return type(value) is int and value > 1",
+   "pytest_rc": 1,
+   "killed": true,
+   "summary": "1 failed, 53 passed in 0.14s",
+   "witness_killed": true
+  },
+  {
+   "id": 29,
+   "witness_line": 39,
+   "line": 42,
+   "mutant": "return type(value) is int or value > 0",
+   "pytest_rc": 1,
+   "killed": true,
+   "summary": "1 failed, 53 passed in 0.13s",
+   "witness_killed": true
+  },
+  {
+   "id": 30,
+   "witness_line": 48,
+   "line": 51,
+   "mutant": "order_open: bool = False,",
+   "pytest_rc": 1,
+   "killed": true,
+   "summary": "6 failed, 48 passed in 0.15s",
+   "witness_killed": true
+  },
+  {
+   "id": 31,
+   "witness_line": 49,
+   "line": 52,
+   "mutant": "bank_verified: bool = True,",
+   "pytest_rc": 0,
+   "killed": false,
+   "summary": "54 passed in 0.13s",
+   "witness_killed": false
+  },
+  {
+   "id": 32,
+   "witness_line": 52,
+   "line": 55,
+   "mutant": "bank_reference: str = \"XXXX\",",
+   "pytest_rc": 0,
+   "killed": false,
+   "summary": "54 passed in 0.12s",
+   "witness_killed": false
+  },
+  {
+   "id": 33,
+   "witness_line": 53,
+   "line": 56,
+   "mutant": "rejection_reason: str = \"XXXX\",",
+   "pytest_rc": 0,
+   "killed": false,
+   "summary": "54 passed in 0.11s",
+   "witness_killed": false
+  },
+  {
+   "id": 34,
+   "witness_line": 62,
+   "line": 65,
+   "mutant": "if  isinstance(state, TransferState) or not isinstance(action, TransferAction):",
+   "pytest_rc": 1,
+   "killed": true,
+   "summary": "6 failed, 48 passed in 0.15s",
+   "witness_killed": true
+  },
+  {
+   "id": 35,
+   "witness_line": 62,
+   "line": 65,
+   "mutant": "if not isinstance(state, TransferState) or  isinstance(action, TransferAction):",
+   "pytest_rc": 1,
+   "killed": true,
+   "summary": "6 failed, 48 passed in 0.15s",
+   "witness_killed": true
+  },
+  {
+   "id": 36,
+   "witness_line": 62,
+   "line": 65,
+   "mutant": "if not isinstance(state, TransferState) and not isinstance(action, TransferAction):",
+   "pytest_rc": 0,
+   "killed": false,
+   "summary": "54 passed in 0.12s",
+   "witness_killed": false
+  },
+  {
+   "id": 37,
+   "witness_line": 63,
+   "line": 66,
+   "mutant": "raise TransferPolicyError(\"XXinvalid state or actionXX\")",
+   "pytest_rc": 0,
+   "killed": false,
+   "summary": "54 passed in 0.12s",
+   "witness_killed": false
+  },
+  {
+   "id": 38,
+   "witness_line": 64,
+   "line": 67,
+   "mutant": "if  _aware(now) or not _aware(deadline):",
+   "pytest_rc": 1,
+   "killed": true,
+   "summary": "9 failed, 45 passed in 0.16s",
+   "witness_killed": true
+  },
+  {
+   "id": 39,
+   "witness_line": 64,
+   "line": 67,
+   "mutant": "if not _aware(now) or  _aware(deadline):",
+   "pytest_rc": 1,
+   "killed": true,
+   "summary": "9 failed, 45 passed in 0.17s",
+   "witness_killed": true
+  },
+  {
+   "id": 40,
+   "witness_line": 64,
+   "line": 67,
+   "mutant": "if not _aware(now) and not _aware(deadline):",
+   "pytest_rc": 1,
+   "killed": true,
+   "summary": "3 failed, 51 passed in 0.14s",
+   "witness_killed": true
+  },
+  {
+   "id": 41,
+   "witness_line": 65,
+   "line": 68,
+   "mutant": "raise TransferPolicyError(\"XXtimestamps must be timezone-awareXX\")",
+   "pytest_rc": 0,
+   "killed": false,
+   "summary": "54 passed in 0.12s",
+   "witness_killed": false
+  },
+  {
+   "id": 42,
+   "witness_line": 66,
+   "line": 69,
+   "mutant": "if type(order_open) is  bool or type(bank_verified) is not bool:",
+   "pytest_rc": 1,
+   "killed": true,
+   "summary": "6 failed, 48 passed in 0.15s",
+   "witness_killed": true
+  },
+  {
+   "id": 43,
+   "witness_line": 66,
+   "line": 69,
+   "mutant": "if type(order_open) is not bool or type(bank_verified) is  bool:",
+   "pytest_rc": 1,
+   "killed": true,
+   "summary": "7 failed, 47 passed in 0.15s",
+   "witness_killed": true
+  },
+  {
+   "id": 44,
+   "witness_line": 66,
+   "line": 69,
+   "mutant": "if type(order_open) is not bool and type(bank_verified) is not bool:",
+   "pytest_rc": 1,
+   "killed": true,
+   "summary": "1 failed, 53 passed in 0.14s",
+   "witness_killed": true
+  },
+  {
+   "id": 45,
+   "witness_line": 67,
+   "line": 70,
+   "mutant": "raise TransferPolicyError(\"XXboolean inputs requiredXX\")",
+   "pytest_rc": 0,
+   "killed": false,
+   "summary": "54 passed in 0.12s",
+   "witness_killed": false
+  }
+ ]
+}

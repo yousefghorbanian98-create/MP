@@ -203,3 +203,11 @@
 - **گیت:** `verify-addendum-gates.sh after-wp45` PASS (RUF100 = ۰، S608 = ۰، ۲۰ noqa = ۲۰، format = ۰، date.today = ۰).
 - **pytest کامل:** ۱۱۹۱ passed، ۲ skipped، exit 0 (۲۹۶ ثانیه). semgrep کل backend: ۰ یافته، ۰ خطا.
 
+
+## WP 0.1 · ۴۹ ردیف خط پایه و شواهد زنده (HEAD `5188a0d`، base `662ff88`)
+- **بازیابی سند بازتولید:** `MP-REPLICATION-2026-11-21.md` از شاخهٔ کیت (`handoff/`) گرفته شد؛ sha256 `6a7a71ef…` تطبیق داده شد.
+- **پراب‌ها روی S3 (فرمان Dockerfile، ۲ ورکر، `MP_ALLOW_DEV_OTP_ECHO=true`):** `probe_contract seed/matrix/invalid` exit 0؛ `probe_invalid_authed` exit 0؛ `probe_live_security` exit 0؛ `probe_otp_limits all` exit 0؛ `probe_load plain-dev 10 40 60 80` exit 0؛ `probe_load backend-instr 40 80` exit 0؛ `bench_logging` exit 0؛ `repro_rbac_systemerror` exit 0؛ `scan_ui_wiring` exit 0.
+- **pytest کامل با پوشش:** `1191 passed، 2 skipped، exit 0` (`PYTEST_RC=0`)؛ پوشش ۸۴٪. `npm ci` در `mp-app/studio`: `NPM_RC=0`.
+- **اشتباه‌های اجرا و اصلاح:** (۱) probe ها مسیر `/tmp/run` می‌خواستند ⇒ symlink. (۲) `openapi-live.json` لازم بود ⇒ از `/openapi.json` گرفته شد (۱۴۱ مسیر). (۳) `probe_otp_limits bruteforce` mode ندارد و پاس بی‌خروجی بود ⇒ پراب جدید. (۴) اولین اجرای probe ها بدون `MP_ALLOW_DEV_OTP_ECHO` بود؛ کل اجرا دوباره انجام شد.
+- **ابزار تکمیلی:** `knip@5` (exit 1 = یافته، نه کرش)، `madge` exit 0، `jscpd` exit 0، `tsc` exit 0، `vitest` exit 0 (۲۹۸ پاس)، `eslint` exit 0 (۰/۰)، semgrep کیت روی base و HEAD (۱۹ ⇒ ۲)، `pathid` (۶۰/۶۰)، mutmut دستی (۲۶/۴۵).
+- **commit:** `mp-app/studio/dist` وجود نداشت؛ `/home/user/MP/share/` (فایل از پیش موجود، بی‌ارتباط) از commit حذف شد.

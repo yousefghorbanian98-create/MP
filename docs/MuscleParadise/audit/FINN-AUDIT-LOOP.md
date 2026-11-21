@@ -32,7 +32,7 @@
 
 | WP | یافته | وضعیت | کامیت | شاهد / باقی‌مانده |
 |---|---|---|---|---|
-| 0.1 | — | PARTIAL | `f0fe83b` | خط پایه در `EXECUTION-LOG`؛ `BASELINE.md` هنوز با ۴۹ ردیف ساخته نشده |
+| 0.1 | — | DONE | همین commit (WP 0.1) | `BASELINE.md §ز`: ۴۹ ردیف؛ ۴۰ `MEASURED-BY-YOU`، ۹ `DEFERRED(D‑n)` (D‑1…D‑4)؛ pytest `1191 passed/2 skipped/exit 0`؛ AD‑9 |
 | 0.2 | F-12 | TODO | — | ماتریس ۱۶۳×۷ و ۶۰۲ سلول مخالف؛ نیاز به `routes.json` کامل با گاردهای مؤثر |
 | 0.3 | F-13 | DONE | `b9e88e5` | pytest کامل ۱۰۹۷ passed |
 | 0.4 | F-07 | TODO | — | آستانهٔ هر دایرکتوری (`db` و `scripts` زیر آستانه) |

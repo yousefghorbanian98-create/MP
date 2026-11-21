@@ -1,0 +1,26 @@
+== principals (OTP login for 7 identities) ==
+  token[member] len=292 user_id=1
+  token[coach] len=293 user_id=252
+  token[reception] len=299 user_id=253
+  token[manager] len=296 user_id=254
+  token[admin] len=293 user_id=255
+  token[super_admin] len=301 user_id=256
+
+== pass 1: live seed through the API ==
+  [OK ] member.create          200    78.7ms 
+  [OK ] member.create2         200     6.6ms 
+  [OK ] membership.create      200    10.7ms 
+  [OK ] coupon.percent         201    10.7ms 
+  [OK ] coupon.fixed           201     5.7ms 
+  [OK ] payment.cash           200     8.3ms 
+  [OK ] payment.with_coupon    200     8.6ms 
+  [OK ] wallet.charge          200    83.5ms 
+  [OK ] expense.create         200    12.5ms 
+  [FAIL] shop.cart_add          422     5.7ms {'error': {'code': 'validation_error', 'message': 'داده\u200cهای ورودی معتبر نیستند', 'details': [{'loc': ['bo
+  [FAIL] shop.checkout          409     5.6ms {'error': {'code': 'shop_online_closed', 'message': 'خرید درون\u200cبرنامه\u200cای بسته است؛ خرید حضوری در ساع
+  [OK ] nutrition.weight       200     6.2ms 
+  [OK ] notification.create    200     7.4ms 
+  [OK ] chat.conversation      200     8.3ms 
+  [OK ] class.create           200     6.1ms 
+  [OK ] member.create3_for_shop 200     5.4ms 
+  captured ids: {"user_id": 1, "member_id": 1, "member_id2": 2, "membership_id": 1, "coupon_id": 1, "payment_id": 1, "payment_id2": 2, "expense_id": 1, "notification_id": 1, "conversation_id": 1, "class_id": 1, "member_id3": 3}

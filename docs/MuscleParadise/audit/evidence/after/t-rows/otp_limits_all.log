@@ -1,0 +1,21 @@
+
+== A) سقف حدس + یک‌بارمصرف بودن کد ==
+    … 65s صبر برای پنجرهٔ تازهٔ rate-limit
+    {"test": "A", "phone": "09138589669", "wrong_guesses": [401, 401, 401, 429], "real_code_after_4_wrong": 429, "real_code_replay": 429, "replay_body": "{\"error\":{\"code\":\"rate_limited\",\"message\":\"تعداد درخواست‌ها زیاد است؛ ک
+
+== B) قفل شدن کد پس از عبور از سقف تلاش ==
+    … 65s صبر برای پنجرهٔ تازهٔ rate-limit
+    {"test": "B", "wrong_guess_statuses": [401, 401, 401, 429], "real_code_after": 429, "real_body": "{\"error\":{\"code\":\"rate_limited\",\"message\":\"تعداد درخواست‌ها زیاد است؛ کمی بعد تلاش کنید\",\"details\":[]}}", "verdict": "PA
+
+== C) دورزدن سبد با X-Forwarded-For تصادفی (سرور جاری) ==
+    … 65s صبر برای پنجرهٔ تازهٔ rate-limit
+    {"test": "C", "label": "سرور جاری", "requests": 30, "accepted": 30, "limited": 0, "statuses": [200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200], "verdict": "FAIL", "note": "اگر تقریباً همه پذیرفته شوند ⇒ کلید سبد از هدر
+
+== D) baseline بدون هدر پراکسی (همان پنجرهٔ C ادامه ندارد) ==
+    … 65s صبر برای پنجرهٔ تازهٔ rate-limit
+    {"test": "D", "requests": 14, "accepted": 3, "statuses": [200, 200, 200, 429, 429, 429, 429, 429, 429, 429, 429, 429, 429, 429], "note": "سقف انتظار: ۱۰ در دقیقه (otp_rate_limit) + ۳ در ثانیه (burst)"}
+
+== E) چه IP‌ای در لاگ/متریک ثبت می‌شود؟ ==
+    {"test": "E", "metrics_lines": 0, "sample": [], "note": "متریک برچسب IP ندارد ⇒ نمی‌توان کلاینت متخلف را از متریک پیدا کرد"}
+
+→ /home/user/MP/docs/MuscleParadise/audit/evidence/after/otp-ratelimit-verdicts.json

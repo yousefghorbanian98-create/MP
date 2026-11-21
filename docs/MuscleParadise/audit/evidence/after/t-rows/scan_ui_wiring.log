@@ -1,0 +1,28 @@
+دکمه‌ها: 84 | با onClick: 74 | بدون onClick: 10 | onClick تهی: 0
+onClick بدون رسیدن به API: 41
+   - components/Feedback.tsx:98 → () => dismiss(t.id)}
+              aria-label="بستن پیام"
+  
+   - components/AdminPermissions.tsx:140 → () => void loadUsersAndKeys()
+   - components/AdminPermissions.tsx:197 → () => void submit()
+   - components/ExerciseLibrary.tsx:81 → () => setGroup(null)
+   - components/ExerciseLibrary.tsx:88 → () => setGroup(g === group ? null : g)
+   - components/ExerciseLibrary.tsx:109 → () => setOpen(isOpen ? null : r.exercise_id)}
+              
+   - components/FoodLibrary.tsx:76 → () => {
+            setCategory(null);
+            setQuery(
+   - components/FoodLibrary.tsx:105 → () => setCategory(category === cat ? null : cat)
+   - components/LedgerPanel.tsx:164 → () => {
+                        setReversing(row);
+         
+   - components/MemberTable.tsx:58 → reload
+   - components/PaymentPanel.tsx:262 → reset
+   - components/PhoneChangeDialog.tsx:161 → restart
+توابع API export شده: 79 | هرگز import نشده: 4
+   - fetchOrderReceipt
+   - getToken
+   - markOrderStatus
+   - updateProduct
+صفحه‌های بدون هیچ import از api.ts: 3 → ['pages/Analytics.tsx', 'pages/Assessment.tsx', 'pages/Login.tsx']
+→ evidence/studio-ui-wiring.json

@@ -1,0 +1,3 @@
+== S3 (MP_SHOP_ONLINE_PURCHASE_ENABLED default false)
+checkout admin(user1): 401 {"error":{"code":"unauthorized","message":"توکن نامعتبر یا منقضی است","details":[]}}
+checkout super_admin(user256): 409 {"error":{"code":"shop_online_closed","message":"خرید درون‌برنامه‌ای بسته است؛ خرید حضوری در ساعات کاری باشگ

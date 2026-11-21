@@ -1,0 +1,133 @@
+{
+  "duplicates": [
+    {
+      "firstFile": {
+        "end": 54,
+        "endLoc": {
+          "column": 6,
+          "line": 54,
+          "position": 2097
+        },
+        "name": "components/ExerciseLibrary.tsx",
+        "start": 41,
+        "startLoc": {
+          "column": 28,
+          "line": 41,
+          "position": 1736
+        }
+      },
+      "format": "tsx",
+      "fragment": "        if (alive) setRows(d);\n      })\n      .catch((e: unknown) => {\n        if (e instanceof DOMException && e.name === \"AbortError\") return;\n        if (alive) setError(e instanceof Error ? e.message : \"خطای ناشناخته\");\n      })\n      .finally(() => {\n        if (alive) setLoading(false);\n      });\n    return () => {\n      alive = false;\n      ctrl.abort();\n    };\n  }, [group, query]);",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 14,
+      "secondFile": {
+        "end": 42,
+        "endLoc": {
+          "column": 6,
+          "line": 42,
+          "position": 1706
+        },
+        "name": "components/FoodLibrary.tsx",
+        "start": 29,
+        "startLoc": {
+          "column": 52,
+          "line": 29,
+          "position": 1345
+        }
+      },
+      "tokens": 86
+    },
+    {
+      "firstFile": {
+        "end": 591,
+        "endLoc": {
+          "column": 72,
+          "line": 591,
+          "position": 18829
+        },
+        "name": "lib/api.ts",
+        "start": 583,
+        "startLoc": {
+          "column": 7,
+          "line": 583,
+          "position": 18497
+        }
+      },
+      "format": "typescript",
+      "fragment": "      }),\n    });\n  } catch {\n    throw new ApiError(\"اتصال به سرور برقرار نشد\", 0);\n  }\n  if (resp.status === 401 || resp.status === 403) await throwAuthOrForbidden(resp);\n  if (!resp.ok) {\n    const detail = await resp.json().catch(() => null);\n    throw new ApiError(detail?.error?.message ?? `خطای ${resp.status} در تولید برنامه`, resp.status);",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 9,
+      "secondFile": {
+        "end": 612,
+        "endLoc": {
+          "column": 72,
+          "line": 612,
+          "position": 19632
+        },
+        "name": "lib/api.ts",
+        "start": 604,
+        "startLoc": {
+          "column": 31,
+          "line": 604,
+          "position": 19300
+        }
+      },
+      "tokens": 78
+    }
+  ],
+  "statistics": {
+    "detectionDate": "2026-11-21T16:28:43.323Z",
+    "formats": {
+      "css": {
+        "clones": 0,
+        "duplicatedLines": 0,
+        "duplicatedTokens": 0,
+        "lines": 124,
+        "newClones": 0,
+        "newDuplicatedLines": 0,
+        "percentage": 0.0,
+        "percentageTokens": 0.0,
+        "sources": 1,
+        "tokens": 1363
+      },
+      "tsx": {
+        "clones": 1,
+        "duplicatedLines": 14,
+        "duplicatedTokens": 86,
+        "lines": 7495,
+        "newClones": 0,
+        "newDuplicatedLines": 0,
+        "percentage": 0.1867911941294196,
+        "percentageTokens": 0.18218023132652628,
+        "sources": 44,
+        "tokens": 47206
+      },
+      "typescript": {
+        "clones": 1,
+        "duplicatedLines": 9,
+        "duplicatedTokens": 78,
+        "lines": 2675,
+        "newClones": 0,
+        "newDuplicatedLines": 0,
+        "percentage": 0.3364485981308411,
+        "percentageTokens": 0.5483689538807649,
+        "sources": 9,
+        "tokens": 14224
+      }
+    },
+    "total": {
+      "clones": 2,
+      "duplicatedLines": 23,
+      "duplicatedTokens": 164,
+      "lines": 10294,
+      "newClones": 0,
+      "newDuplicatedLines": 0,
+      "percentage": 0.22343112492714204,
+      "percentageTokens": 0.26117560874619783,
+      "sources": 54,
+      "tokens": 62793
+    }
+  }
+}

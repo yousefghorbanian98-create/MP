@@ -1,0 +1,10 @@
+  depth= 10 ConsoleRenderer+rich (development)         mean=   66.75ms  bytes/err=    35961  lines/err=    253
+  depth= 10 JSONRenderer (production)                  mean=    0.03ms  bytes/err=      202  lines/err=      1
+  depth= 25 ConsoleRenderer+rich (development)         mean=  101.79ms  bytes/err=    63321  lines/err=    463
+  depth= 25 JSONRenderer (production)                  mean=    0.03ms  bytes/err=      202  lines/err=      1
+  depth= 40 ConsoleRenderer+rich (development)         mean=  144.55ms  bytes/err=    90681  lines/err=    673
+  depth= 40 JSONRenderer (production)                  mean=    0.03ms  bytes/err=      202  lines/err=      1
+  depth= 60 ConsoleRenderer+rich (development)         mean=  209.28ms  bytes/err=   127161  lines/err=    953
+  depth= 60 JSONRenderer (production)                  mean=    0.02ms  bytes/err=      202  lines/err=      1
+
+→ /home/user/MP/docs/MuscleParadise/audit/evidence/after/t-rows/logging-cost.json
