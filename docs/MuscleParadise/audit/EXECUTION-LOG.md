@@ -128,3 +128,41 @@
 - **تأیید مستقل روی base 662ff88:** ۱۰۴ قاعدهٔ متمایز؛ S105=۳ + S106=۱؛ `log.error` در ۶ محل داخل `except`؛ ERA001=۱۱.
 - **تصحیح:** RUF100 = ۳۹ ادعا تأیید نشد (`--select`=۷۲؛ `--extend-select` روی پیکربندی فعلی=۵۹)؛ عدد ۳۹ وابسته به ruff-recommended است.
 - **مانع WP 0.9 (مرحلهٔ ۱):** `ruff-recommended.toml` در مخزن نیست و متن آن در A1.1 §۲‑الف در پیام دریافتی وجود ندارد. تا دریافت آن هیچ پیکربندی ruff تغییر نکرد.
+
+## A1.3 · WP 0.9 (گام‌های ۱–۵) — رکورد اجرای بی‌ناظر
+
+- **برچسب:** addendum A1.3 · **نگاشت:** AD‑3 (مبنای گیت)، AD‑4 (CI)، AD‑5 (S608/کامنت). AD‑1≡D‑6، AD‑2≡D‑7 (قبلاً ثبت شد).
+- **پیش‌نیاز:** متن ruff-recommended در A1.3 §۵ دریافت شد؛ sha256 `6bafdba17d60db628197cf89aa4c65477025e0207bc3e1612612f2c2cdf72e5a` تطبیق داده شد (۴٬۹۷۳ بایت).
+
+### گام ۱ — پیکربندی (`5d820a0`)
+- فرمان: `pyproject.toml` بلوک `[tool.ruff]` با همان متن §۵ جایگزین شد (با سرآیندهای `[tool.ruff.lint]`)؛ `known-first-party` حفظ شد.
+- گیت: `RUFF=/tmp/venv/bin/ruff ./verify-addendum-gates.sh before` روی **662ff88** ⇒ `کل یافته 430 MATCH · قواعد 52 MATCH · RUF100 39 MATCH · TRY400 6 · DTZ011 3 · format 0 · ۲۰ noqa 20 · S608 4` ⇒ **PASS**.
+- روی HEAD (پیش از رفع): ۴۴۰ / ۴۰ RUF100 / ۱۲ از ۲۰ noqa (**جابه‌جایی خط**، نه حذف؛ شمارش به‌ازای فایل شد) ⇒ AD‑3.
+
+### گام ۲ — ERA001 به ignore (`e335653`)
+- فرمان: افزودن `"ERA001"` با دلیل فارسی به `ignore`.
+- گیت: `stage=after-era` روی **662ff88** ⇒ `419 MATCH · 51 MATCH · RUF100 39 · ۲۰ noqa 20 · S608 4` ⇒ **PASS**.
+- یادداشت: `ruff check --select ERA001` هنوز ۱۱ می‌دهد؛ این طبیعی است چون `--select` روی CLI ignore را دور می‌زند.
+
+### گام ۳ — ترتیب F‑22 و RUF100 (تصحیح روش)
+- **اشتباه من، اصلاح‌شده:** اولین dry-run با `--select RUF100` ⇒ ۶۹ (نادرست؛ `--select` بقیه را خاموش می‌کند). با پیکربندی کامل و فیلتر `RUF100` ⇒ **۴۰** روی HEAD، که ۴ تا در migration و ۳۶ قابل حذف‌اند. dry-run‌ها فقط `--diff` بودند؛ `git status` بعدش تمیز ماند.
+- ترتیب اجرا: `ruff check --fix --exclude db/migrations/versions/c3f01ab129e2_*.py` ⇒ `45 fixed` (ایمن)؛ migration بدون تغییر؛ ۴ `noqa: S608` باقی.
+
+### گام ۴ — رفع‌های ایمن (`37c6493`)
+- شامل: ۳۶ RUF100 (ـ بدون noqa بلااثر)، RUF022 (ترتیب `__all__`)، FURB110 (`a if a else b → a or b`؛ معادل)، FURB167، RUF021.
+- کامنت دلیل‌دار `test_m46_db_pool.py:33` به‌صورت کامنت ساده حفظ شد.
+- **اشتباه کمکی (اصلاح‌شده، قبل از push):** `git add -A` ۱۴ PNG آزمایشی `var/receipts/` را هم staged کرد؛ commit بازنویسی شد؛ PNGهای untracked آزمایشی پاک شدند (۷۵ tracked دست‌نخورده).
+- `ruff check .` ⇒ `384 errors` (شامل migration)؛ `ruff format --check .` ⇒ `385 files already formatted`.
+- pytest: `1132 passed, 2 skipped, 2 warnings in 308.04s` ⇒ **exit 0** (پایهٔ WP 1.4 همین بود).
+
+### گام ۵ — CI و پین ruff (`07f096d`)
+- `.github/workflows/ci.yml`: مرحلهٔ بلوکینگ `ruff check --select E,F,W,I,N,UP,B,SIM --ignore E501 .` + `ruff format --check .` (⇒ exit 0)؛ مرحلهٔ کامل `continue-on-error: true`.
+- `pyproject.toml`: `ruff>=0.3` ⇒ `ruff==0.17.6`.
+- YAML با PyYAML بارگذاری شد (`ok`) — پس از رفع خطای نام مرحله (`: ` در scalar بدون نقل‌قول).
+
+### تأیید نهایی
+- **انحراف از سند:** (۱) گیت مطلق روی base (AD‑3)؛ (۲) ۴۵ به‌جای ۴۷ رفع ایمن (AD‑5)؛ (۳) CI زیرمجموعهٔ بلوکینگ به‌جای «S بلوکینگ» (AD‑4، چون S هنوز ۴۰ یافته دارد)؛ (۴) `RUF100 = 0` پس از ۲.۶ به‌جای `0` در جدول: صفر فقط پس از WP 4.5 ممکن است (AD‑5).
+- **HARD-STOP برخورد‌شده:** هیچ. (`ruff --fix --unsafe-fixes` اجرا نشد؛ هیچ migration تغییر نکرد؛ هیچ ignore/per-file-ignore جز ERA001 اضافه نشد.)
+- **فایل `share/MP-BUILDER-HANDOFF-A1.3.md`:** در این مخزن وجود ندارد (`share/` نیست)؛ شناسهٔ `bce286e` روی `arena/2cde32d6-chat2db` است، نه شاخهٔ من؛ به آن شاخه سوئیچ نکردم.
+- **/tmp/venv:** دوباره ساخته شد (ruff 0.17.6، `pip install -e .[dev]`)؛ هر شاهد در مخزن ثبت شده است.
+- **باقی‌مانده:** WP 2.6 (F‑29)، WP 3.6 (F‑28)، WP 4.5 (F‑22)، گیت نهایی و گزارش ۲۹ یافته (§۳‑۷) — **NOT-STARTED**.
