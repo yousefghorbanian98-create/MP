@@ -273,3 +273,11 @@ WP: 0.4 · F: F‑07 · شاهد: `evidence/after/wp04/` · تصمیم: AD‑11 
 - **وضعیت:** WP 0.7 به قاعدهٔ کیت وابسته است؛ بدون آن نمی‌توان شاهد معتبر تولید کرد. ساخت قاعدهٔ جایگزین، شاهد کیت محسوب نمی‌شود.
 - **مورد نیاز از مالک:** بازگردانی کیت (`kit.zip` با sha256 مطابق) در `/home/user/audit-run/`، یا تأیید مسیر دیگر. پس از آن WP 0.7 از همین نقطه ادامه می‌یابد.
 - **صف باقی‌مانده (بدون تغییر):** WP 0.2 BLOCKED (AD‑10)؛ WP 0.6 و 0.8 PARTIAL؛ فازهای ۱ (PARTIAL/BLOCKED-ENV)، ۲، ۳، ۴ هنوز انجام نشده‌اند. **ممیزی کامل نیست.**
+
+## WP 2.5 · F‑17 · خطاهای بی‌صدا ⇒ لاگ + شمارنده — DONE
+
+- **بررسی:** AST روی کد تولید (`app, api, modules, engine, security, db, jobs, cache`): سه `except` از F‑17 قبلاً در WP 4.5 (S110) به `debug` با traceback تبدیل شده بودند (`api/v1/monitoring.py`). باقی‌مانده: `modules/assessment/service.py:180` (`except (TypeError, ValueError): continue`).
+- **قرمز (قبل از تغییر):** `tests/regression/test_wp25_silent_failures.py` ⇒ ۳ ناموفق: شمارندهٔ JP7 صفر، شمارندهٔ scrape صفر، نگهبان AST یک مورد (`service.py:180`). (یک بار خطای تست خودم — `render()` بایت برمی‌گرداند نه str — اصلاح شد؛ شکست‌های بعدی علت واقعی‌اند.)
+- **سبز:** `jp7_trend` ردیف خراب را با `_log.warning` و `metrics.inc("assessment_jp7_rows_skipped")` ثبت می‌کند؛ `_log_scrape_failure` شمارندهٔ `mp_metrics_scrape_failures` را هم افزایش می‌دهد. ⇒ `4 passed`.
+- **کل:** `pytest -q --no-cov` ⇒ `1250 passed, 2 skipped, exit 0` (`/home/user/wp04-cov/wp25/pytest.log`).
+- **نحوهٔ برگرداندن:** `git revert` همان commit.

@@ -17,6 +17,8 @@ from app.metrics import metrics
 def _log_scrape_failure() -> None:
     """WP 4.5 (S110): خطای scrape فقط در سطح debug و با traceback ثبت می‌شود."""
     logging.getLogger(__name__).debug("refresh_metrics failed", exc_info=True)
+    # WP 2.5 / F‑17: شمارندهٔ قابل‌هشدار؛ لاگ debug به‌تنهایی در پروداکشن دیده نمی‌شود.
+    metrics.inc("mp_metrics_scrape_failures")
 
 
 router = APIRouter(tags=["health"])

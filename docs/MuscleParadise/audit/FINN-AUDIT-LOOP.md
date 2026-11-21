@@ -50,7 +50,7 @@
 | 2.2 | F-04 | READY | — | گیج‌های pool؛ ۵۰۳ به‌جای ۵۰۰ |
 | 2.3 | F-18 | READY | — | BD-4: یک ورکر + سقف مستند؛ `gateway.py` sync→async |
 | 2.4 | F-05 | READY | — | RBAC پیش‌کامپایل؛ قفل `_enforcer` |
-| 2.5 | F-17 | READY | — | ۴ `except: pass` ⇒ لاگ + شمارنده |
+| 2.5 | F-17 | DONE | (این کامیت، WP 2.5) | وضعیت اولیه: ۴ مورد؛ سه مورد قبلاً در WP 4.5 لاگ‌دار شده بودند؛ باقی‌مانده: `jp7_trend` (continue بی‌صدا) و شمارندهٔ scrape. red: ۳ ناموفق (JP7، شمارنده، نگهبان AST) ⇒ green: ۴ تست؛ کل pytest ۱۲۵۰/۲/۰ |
 | 2.6 | F-29 | DONE | (این کامیت) | red: ۶ تست exc_info ناموفق ⇒ green: ۱۴ تست؛ pytest ۱۱۴۶/۲/۰؛ AD‑6 (متن استثنا پنهان) |
 | 3.1 | F-25 | READY | — | کف شناسه در `id_guard.py`؛ `PathId` در امضاها |
 | 3.2 | F-26 | READY | — | نگاشت `StarletteHTTPException` به پاکت پروژه |

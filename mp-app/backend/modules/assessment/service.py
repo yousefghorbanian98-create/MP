@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 import json
+import logging
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.errors import ApiError, NotFoundError
+from app.metrics import metrics
 from db.models import (
     Assessment14Domain,
     DomainScore,
@@ -17,6 +19,8 @@ from db.models import (
 )
 
 SKINFOLD_SITES = ["chest", "triceps", "subscapular", "suprailiac", "abdomen", "thigh", "calf"]
+
+_log = logging.getLogger(__name__)
 
 
 def create_assessment(
@@ -178,6 +182,9 @@ def jp7_trend(db: Session, *, member_id: int, user=None) -> dict:
         try:
             folds = json.loads(r.skinfolds_mm)
         except (TypeError, ValueError):
+            # WP 2.5 / F‑17: ردیف خراب حذف می‌شود، ولی بی‌صدا نیست — لاگ + شمارنده.
+            _log.warning("JP7 row %s skipped: unreadable skinfolds_mm", r.id)
+            metrics.inc("assessment_jp7_rows_skipped")
             continue
         total = sum(float(v) for v in folds.values())
         points.append(
