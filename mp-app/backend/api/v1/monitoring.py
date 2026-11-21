@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hmac
 import logging
+import threading
 
 from fastapi import APIRouter, Depends, Request, Response
 from fastapi.responses import JSONResponse
@@ -13,12 +14,25 @@ from app.config import settings
 from app.errors import ForbiddenError, UnauthorizedError
 from app.metrics import metrics
 
+_scrape_errors_lock = threading.Lock()
+_scrape_errors = 0
+
 
 def _log_scrape_failure() -> None:
-    """WP 4.5 (S110): خطای scrape فقط در سطح debug و با traceback ثبت می‌شود."""
-    logging.getLogger(__name__).debug("refresh_metrics failed", exc_info=True)
-    # WP 2.5 / F‑17: شمارندهٔ قابل‌هشدار؛ لاگ debug به‌تنهایی در پروداکشن دیده نمی‌شود.
-    metrics.inc("mp_metrics_scrape_failures")
+    """WP 2.5 / F‑17: خطای scrape ⇒ `logger.warning` با traceback + شمارنده.
+
+    شمارنده هم در `/metrics` (برای هشدار) و هم در `/health/ready` (برای عیب‌یابی سریع) دیده می‌شود.
+    """
+    global _scrape_errors
+    logging.getLogger(__name__).warning("refresh_metrics failed", exc_info=True)
+    metrics.inc("mp_metrics_scrape_errors_total")
+    with _scrape_errors_lock:
+        _scrape_errors += 1
+
+
+def scrape_error_count() -> int:
+    with _scrape_errors_lock:
+        return _scrape_errors
 
 
 router = APIRouter(tags=["health"])
@@ -83,6 +97,8 @@ def ready() -> Response:
         "database_ok": db_ok,
         "rate_limit_storage_ok": rate_limit_storage_ok,
         "checkin_slo_ok": metrics.checkin_slo_ok(),
+        # WP 2.5 / F‑17: بازتاب شمارندهٔ خطای scrape (کیت: «بازتاب در /health/ready»).
+        "metrics_scrape_errors": scrape_error_count(),
     }
 
     # QF-27: صف outbox و heartbeat worker — فقط وقتی DB سالم است معنا دارد.

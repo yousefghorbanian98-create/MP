@@ -51,21 +51,21 @@ def test_jp7_unreadable_row_is_logged_and_counted(monkeypatch, caplog) -> None:
     ]
     db = SimpleNamespace(scalars=lambda _stmt: SimpleNamespace(all=lambda: rows))
 
-    before = _counter_value("assessment_jp7_rows_skipped_total")
+    before = _counter_value("mp_assessment_jp7_rows_skipped_total")
     with caplog.at_level(logging.WARNING):
         result = service.jp7_trend(db, member_id=7, user=None)
 
     assert [p["id"] for p in result["measurements"]] == [1, 3]
-    assert _counter_value("assessment_jp7_rows_skipped_total") == before + 1
+    assert _counter_value("mp_assessment_jp7_rows_skipped_total") == before + 1
     assert any("JP7" in r.getMessage() and r.levelno == logging.WARNING for r in caplog.records)
 
 
 def test_scrape_failure_is_counted(monkeypatch) -> None:
     from api.v1 import monitoring
 
-    before = _counter_value("mp_metrics_scrape_failures_total")
+    before = _counter_value("mp_metrics_scrape_errors_total")
     monitoring._log_scrape_failure()
-    assert _counter_value("mp_metrics_scrape_failures_total") == before + 1
+    assert _counter_value("mp_metrics_scrape_errors_total") == before + 1
 
 
 def _is_silent(handler: ast.ExceptHandler) -> bool:
@@ -101,8 +101,8 @@ def test_no_silent_except_in_production_code() -> None:
     assert offenders == []
 
 
-@pytest.mark.parametrize("name", ["mp_metrics_scrape_failures_total"])
+@pytest.mark.parametrize("name", ["mp_metrics_scrape_errors_total"])
 def test_counter_names_are_exported(name: str) -> None:
     # شمارنده قبل از اولین افزایش هم باید در خروجی /metrics نمونه‌ای داشته باشد.
-    metrics.inc("mp_metrics_scrape_failures")
+    metrics.inc("mp_metrics_scrape_errors_total")
     assert name in metrics.render()

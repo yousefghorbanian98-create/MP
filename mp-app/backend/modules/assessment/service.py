@@ -184,7 +184,7 @@ def jp7_trend(db: Session, *, member_id: int, user=None) -> dict:
         except (TypeError, ValueError):
             # WP 2.5 / F‑17: ردیف خراب حذف می‌شود، ولی بی‌صدا نیست — لاگ + شمارنده.
             _log.warning("JP7 row %s skipped: unreadable skinfolds_mm", r.id)
-            metrics.inc("assessment_jp7_rows_skipped")
+            metrics.inc("mp_assessment_jp7_rows_skipped_total")
             continue
         total = sum(float(v) for v in folds.values())
         points.append(

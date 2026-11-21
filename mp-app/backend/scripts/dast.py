@@ -44,8 +44,11 @@ from pathlib import Path
 
 
 def _log_skip(where: str) -> None:
-    """WP 4.5 (S112): عملیات ردشده فقط در سطح debug با traceback ثبت می‌شود."""
+    """WP 2.5 / F‑17: عملیات ردشده ⇒ لاگ (debug، با traceback) + شمارندهٔ `mp_dast_errors_total`."""
+    from app.metrics import metrics
+
     logging.getLogger(__name__).debug("%s skipped", where, exc_info=True)
+    metrics.inc("mp_dast_errors_total", where=where)
 
 
 os.environ.setdefault("MP_ENVIRONMENT", "development")  # WP 1.2: ابزار فقط‌خواندنی مسیر/OpenAPI
