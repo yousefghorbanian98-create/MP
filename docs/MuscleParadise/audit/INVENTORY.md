@@ -7,20 +7,20 @@
 
 ## ۱. خلاصهٔ تعداد فایل
 
-- کل فایل‌های ترک‌شده: **1155** (خطوط متنی: 155676)
+- کل فایل‌های ترک‌شده: **1160** (خطوط متنی: 158180)
 
 | ناحیه | تعداد فایل | خطوط متنی |
 |---|---|---|
 | CI/CD | 7 | 1546 |
 | استودیو (React) | 118 | 23139 |
-| اسکریپت و ابزار | 18 | 7042 |
+| اسکریپت و ابزار | 19 | 7346 |
 | اپ عضو (Flutter) | 114 | 19319 |
-| بک‌اند (FastAPI) | 514 | 74653 |
+| بک‌اند (FastAPI) | 514 | 74649 |
 | ریشه و تنظیمات | 10 | 831 |
 | زیرساخت و کانتینر | 15 | 582 |
 | سایر mp-app | 4 | 239 |
 | شواهد QA | 40 | 1626 |
-| مستندات | 174 | 18374 |
+| مستندات | 178 | 20578 |
 | گزارش‌های عامل | 141 | 8325 |
 
 ## ۲. عملیات API (از `app.openapi()`، مرجع اصلی)
@@ -225,9 +225,9 @@
 | POST | `/auth/logout` | `mp-app/backend/modules/auth/router.py` | 123 |
 | GET | `/auth/sessions` | `mp-app/backend/modules/auth/router.py` | 128 |
 | DELETE | `/auth/sessions/{session_id}` | `mp-app/backend/modules/auth/router.py` | 142 |
-| POST | `/axis-assessments` | `mp-app/backend/modules/axis_assessment/router.py` | 21 |
-| GET | `/axis-assessments/member/{member_id}` | `mp-app/backend/modules/axis_assessment/router.py` | 39 |
-| POST | `/axis-assessments/{assessment_id}/review` | `mp-app/backend/modules/axis_assessment/router.py` | 44 |
+| POST | `/axis-assessments` | `mp-app/backend/modules/axis_assessment/router.py` | 18 |
+| GET | `/axis-assessments/member/{member_id}` | `mp-app/backend/modules/axis_assessment/router.py` | 36 |
+| POST | `/axis-assessments/{assessment_id}/review` | `mp-app/backend/modules/axis_assessment/router.py` | 41 |
 | POST | `/face/consent` | `mp-app/backend/modules/face_id/router.py` | 25 |
 | POST | `/face/consent/revoke` | `mp-app/backend/modules/face_id/router.py` | 30 |
 | POST | `/face/enroll` | `mp-app/backend/modules/face_id/router.py` | 35 |
@@ -492,6 +492,7 @@
 | استودیو (React) | `mp-app/studio/tsconfig.json` | 20 | 510 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/vite.config.ts` | 56 | 2320 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/vitest.config.ts` | 21 | 841 | NOT-REVIEWED |
+| اسکریپت و ابزار | `scripts/build_audit_inventory.py` | 304 | 13366 | NOT-REVIEWED |
 | اسکریپت و ابزار | `scripts/docs_gate.py` | 212 | 9320 | NOT-REVIEWED |
 | اسکریپت و ابزار | `scripts/interaction_map.py` | 405 | 18725 | NOT-REVIEWED |
 | اسکریپت و ابزار | `scripts/repo_hygiene_gate.py` | 104 | 4544 | NOT-REVIEWED |
@@ -629,7 +630,7 @@
 | بک‌اند (FastAPI) | `mp-app/backend/README.md` | 3 | 121 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/alembic.ini` | 149 | 5014 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/api/__init__.py` | 0 | 0 | NOT-REVIEWED |
-| بک‌اند (FastAPI) | `mp-app/backend/api/routes.json` | 2953 | 53916 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/api/routes.json` | 2952 | 53898 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/api/v1/__init__.py` | 0 | 0 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/api/v1/api.py` | 57 | 2795 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/api/v1/monitoring.py` | 72 | 2634 | NOT-REVIEWED |
@@ -774,7 +775,7 @@
 | بک‌اند (FastAPI) | `mp-app/backend/modules/auth/schemas.py` | 93 | 2399 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/modules/auth/service.py` | 418 | 16703 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/modules/axis_assessment/__init__.py` | 1 | 122 | NOT-REVIEWED |
-| بک‌اند (FastAPI) | `mp-app/backend/modules/axis_assessment/router.py` | 53 | 1915 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/modules/axis_assessment/router.py` | 50 | 1818 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/modules/axis_assessment/schemas.py` | 61 | 1241 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/modules/axis_assessment/service.py` | 279 | 10176 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/modules/classes/router.py` | 84 | 2772 | NOT-REVIEWED |
@@ -1298,6 +1299,10 @@
 | مستندات | `docs/MuscleParadise/assets/knowledge-atlas.svg` | 77 | 5239 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/assets/readme-hero.svg` | 66 | 4533 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/assets/system-architecture.svg` | 148 | 13022 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/CHECKLIST.md` | 142 | 12101 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/INVENTORY.md` | 1529 | 142794 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/findings.json` | 511 | 14777 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/status.json` | 22 | 817 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/brand/concepts/M101-CONCEPTS.md` | 75 | 7809 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/brand/concepts/m101-a-geometric-mp.png` | — | 85273 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/brand/concepts/m101-a-geometric-mp.svg` | 87 | 6179 | NOT-REVIEWED |

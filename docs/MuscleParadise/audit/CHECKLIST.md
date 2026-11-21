@@ -85,7 +85,7 @@
 | F-10 | ۳۱ خطای ESLint در استودیو (هیچ lint واقعی اجرا نمی‌شد) | VERIFIED-IN-CODE | اسکریپت lint وجود دارد؛ eslint.config در studio نیست؛ عدد ۳۱ هنوز اندازه‌گیری نشده |
 | F-11 | امتیاز جهش ۵۷٫۸٪ در ماژول پولی؛ ۳ شکاف واقعی | OPEN |  |
 | F-12 | `routes.json` مجموعهٔ گاردهای واقعی را کم‌تر نشان می‌دهد ⇒ اوراکل نامعتبر | OPEN |  |
-| F-13 | guard تکراری روی یک مسیر (دو بار casbin enforce) | VERIFIED-IN-CODE | axis_assessment/router.py: require_permission در سطح روتر و روی تابع |
+| F-13 | guard تکراری روی یک مسیر (دو بار casbin enforce) | FIXED | WP 0.3: گارد تکراری روی review حذف شد؛ شاهد: قبل ۲ بار enforce، بعد ۱ بار (tests/integration/test_wp03_axis_single_guard.py، tests/regression/test_no_duplicate_guard.py) |
 | F-14 | `gateway-return` با شناسهٔ نامعتبر → HTTP 200 | OPEN |  |
 | F-15 | ۵۵ هشدار پیچیدگی (lizard) و ۴۱ بلوک ≥C (radon)؛ بدترین درجهٔ radon **F** با CC ‏۴۷ و ۴۶ | OPEN |  |
 | F-16 | ۷ محل پولِ شناور در استودیو + ۱ sentinel منفی | OPEN |  |
@@ -135,7 +135,8 @@
 | بخش | وضعیت | تعداد |
 |---|---|---|
 | blocked | OPEN | 5 |
+| findings | FIXED | 1 |
 | findings | OPEN | 22 |
-| findings | VERIFIED-IN-CODE | 5 |
+| findings | VERIFIED-IN-CODE | 4 |
 | non_issues | OPEN | 14 |
 | problems | OPEN | 58 |

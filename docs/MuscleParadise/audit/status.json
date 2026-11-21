@@ -12,8 +12,8 @@
   "note": "api/v1/monitoring.py:14 بدون dependency"
  },
  "F-13": {
-  "status": "VERIFIED-IN-CODE",
-  "note": "axis_assessment/router.py: require_permission در سطح روتر و روی تابع"
+  "status": "FIXED",
+  "note": "WP 0.3: گارد تکراری روی review حذف شد؛ شاهد: قبل ۲ بار enforce، بعد ۱ بار (tests/integration/test_wp03_axis_single_guard.py، tests/regression/test_no_duplicate_guard.py)"
  },
  "F-10": {
   "status": "VERIFIED-IN-CODE",

@@ -823,7 +823,6 @@
     "axis-assessment"
    ],
    "guards": [
-    "permission",
     "permission"
    ],
    "roles": [
