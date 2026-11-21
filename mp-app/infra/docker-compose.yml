@@ -26,6 +26,8 @@ services:
       MP_PAYMENT_SANDBOX: ${MP_PAYMENT_SANDBOX:-false}
       PROMETHEUS_MULTIPROC_DIR: /tmp/prometheus-multiproc
       MP_METRICS_TOKEN: ${MP_METRICS_TOKEN:?MP_METRICS_TOKEN باید تنظیم شود}
+      # WP 1.1 / F-01: فقط IP/CIDR پروکسی Caddy به XFF اعتماد می‌کند.
+      MP_TRUSTED_PROXIES: ${MP_TRUSTED_PROXIES:?set the Caddy container IP or CIDR}
     volumes:
       - mp-data:/data
     tmpfs:

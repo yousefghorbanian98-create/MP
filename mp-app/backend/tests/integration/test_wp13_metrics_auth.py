@@ -15,10 +15,11 @@ from ._metrics import METRICS_AUTH, METRICS_TOKEN
 
 @pytest.fixture()
 def client(tmp_path, monkeypatch):
+    from fastapi.testclient import TestClient
+
     from app.main import create_app
     from cache.store import InMemoryCache, reset_cache
     from db.base import init_db, reset_engine
-    from fastapi.testclient import TestClient
     from modules.auth.router import limiter
 
     monkeypatch.setattr(settings, "database_url", f"sqlite:///{tmp_path}/metrics.db")

@@ -23,6 +23,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.config import settings
+
 from ._metrics import METRICS_AUTH
 
 _counter = itertools.count(880001)

@@ -60,6 +60,8 @@ def rate_limit_storage_healthy() -> bool:
 @router.post(
     "/otp/request",
     response_model=OtpRequestResponse,
+    # WP 1.2 / F-02: کلید dev_code فقط وقتی در پاسخ است که مقدار واقعی دارد.
+    response_model_exclude_none=True,
     summary="درخواست کد OTP",
 )
 @limiter.limit(settings.otp_burst_limit)
@@ -78,6 +80,7 @@ def otp_verify(payload: OtpVerify, request: Request, db: DbSession):
 @router.post(
     "/phone-change/request",
     response_model=PhoneChangeStepResponse,
+    response_model_exclude_none=True,
     summary="شروع تغییر شماره پس از نشست معتبر",
 )
 @limiter.limit(settings.otp_burst_limit)

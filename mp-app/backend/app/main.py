@@ -19,6 +19,7 @@ from app.errors import ApiError, api_error_handler, validation_error_handler
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # init_db فقط برای dev — production با alembic migration می‌سازد
+    _log_effective_configuration()
     if settings.environment == "development":
         from db.base import init_db
 
@@ -41,7 +42,39 @@ def health() -> dict:
     return {"status": "ok", "service": settings.app_name, "version": "1.0.0"}
 
 
+def _assert_explicit_environment() -> None:
+    """WP 1.2 / F-02: بدون MP_ENVIRONMENT صریح، اپ بالا نمی‌آید (fail-safe).
+
+    پیش‌فرض کلاس `development` است؛ اگر استقرار متغیر را فراموش کند، قبلاً اپ با
+    پیام‌رسان dev و نشت کد OTP بالا می‌آمد. تست‌های خودکار با
+    `MP_ALLOW_IMPLICIT_DEV=true` (در tests/conftest.py) اجازه دارند.
+    """
+    if "environment" in settings.model_fields_set or settings.allow_implicit_dev:
+        return
+    raise RuntimeError(
+        "MP_ENVIRONMENT باید صریح تنظیم شود (development یا production)؛ "
+        "پیش‌فرض ضمنی برای بالا آمدن مجاز نیست"
+    )
+
+
+def _log_effective_configuration() -> None:
+    """WP 1.2 / F-02: یک WARNING با محیط مؤثر و پیام‌رسان تا اشتباه دیده شود."""
+    from app.logging import get_logger
+
+    get_logger("startup").warning(
+        "effective_configuration",
+        environment=settings.environment,
+        sms_provider=settings.sms_provider,
+        dev_otp_echo=bool(settings.environment == "development" and settings.allow_dev_otp_echo),
+        rate_limit_storage="valkey" if settings.environment == "production" else "memory",
+        log_format="json" if settings.environment != "development" else "console",
+        init_db_on_startup=settings.environment == "development",
+        trusted_proxies_configured=bool(settings.trusted_proxies.strip()),
+    )
+
+
 def create_app() -> FastAPI:
+    _assert_explicit_environment()
     # M46-c3 — لاگ ساختاریافته را واقعاً روشن کن.
     # پیش از این `configure_logging` تعریف شده بود ولی هیچ‌جا صدا زده نمی‌شد،
     # پس `get_logger("jobs")` در scheduler به پیکربندی پیش‌فرض structlog می‌افتاد.

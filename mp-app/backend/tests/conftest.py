@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 
@@ -10,6 +11,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+# WP 1.2 / F-02: تست‌ها بدون MP_ENVIRONMENT صریح اجازهٔ بالا آمدن دارند (فقط اینجا).
+os.environ.setdefault("MP_ALLOW_IMPLICIT_DEV", "true")
 
 from db import models  # noqa: E402,F401
 from db.base import Base  # noqa: E402
@@ -57,3 +60,12 @@ def make_member(session, make_user):
         return m
 
     return _make
+
+
+@pytest.fixture()
+def dev_otp_echo(monkeypatch):
+    """WP 1.2 / F-02: فقط تست‌های جریان OTP که کد را از پاسخ می‌خوانند این را opt-in می‌کنند."""
+    from app.config import settings
+
+    monkeypatch.setattr(settings, "allow_dev_otp_echo", True)
+    yield

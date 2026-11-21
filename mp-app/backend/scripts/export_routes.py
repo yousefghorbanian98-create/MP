@@ -25,9 +25,12 @@ operationId و tagها نیز برای inventory/trace لازم‌اند. اجر
 from __future__ import annotations
 
 import json
+import os
 import re
 import sys
 from pathlib import Path
+
+os.environ.setdefault("MP_ENVIRONMENT", "development")  # WP 1.2: ابزار فقط‌خواندنی مسیر/OpenAPI
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 

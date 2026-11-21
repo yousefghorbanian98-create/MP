@@ -156,6 +156,26 @@ def check_required_secrets(report: Report) -> None:
         report.ok("deploy Compose marks required settings with :?")
 
 
+def otp_body_exposes_dev_code(body: dict) -> bool:
+    """WP 1.2 / F-02: پاسخ OTP نباید کد را داشته باشد (تست‌پذیر، بدون درخواست زنده)."""
+    return "dev_code" in body and body["dev_code"] not in (None, "")
+
+
+def check_otp_echo_guard(report: Report) -> None:
+    """کد OTP فقط در دو نقطهٔ guard‌شده و با شرط دوگانه نوشته شود."""
+    text = _read(MP / "backend" / "modules" / "auth" / "service.py")
+    guarded = text.count('if provider.name == "dev" and dev_otp_echo_enabled():')
+    if guarded != 2 or 'out["dev_code"]' not in text or 'result["dev_code"]' not in text:
+        report.bad(f"dev_code guard در service.py ناقص است (guard={guarded}, انتظار 2)")
+    else:
+        report.ok("dev_code فقط با environment=development و MP_ALLOW_DEV_OTP_ECHO نوشته می‌شود")
+    for compose in (MP / "infra" / "docker-compose.yml", MP / "deploy" / "docker-compose.yml"):
+        content = _read(compose)
+        if re.search(r"MP_ALLOW_DEV_OTP_ECHO:\s*['\"]?(true|1|yes)", content, re.IGNORECASE):
+            report.bad(f"{compose.name} پرچم MP_ALLOW_DEV_OTP_ECHO را روشن کرده است")
+    report.ok("Compose در هیچ استقراری MP_ALLOW_DEV_OTP_ECHO را روشن نمی‌کند")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Static deployment gate")
     parser.add_argument("--json", action="store_true")
@@ -168,6 +188,7 @@ def main() -> int:
         check_healthcheck,
         check_build_paths,
         check_required_secrets,
+        check_otp_echo_guard,
     ):
         try:
             check(report)
