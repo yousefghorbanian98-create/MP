@@ -60,7 +60,6 @@ describe("CouponPanel", () => {
     vi.stubGlobal(
       "fetch",
       vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
-        const url = String(input);
         if (init?.method === "POST") {
           return new Response(
             JSON.stringify({ error: { code: "conflict", message: "این کد تخفیف قبلاً ثبت شده است" } }),

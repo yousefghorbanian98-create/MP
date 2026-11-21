@@ -7,20 +7,20 @@
 
 ## ۱. خلاصهٔ تعداد فایل
 
-- کل فایل‌های ترک‌شده: **1160** (خطوط متنی: 158180)
+- کل فایل‌های ترک‌شده: **1164** (خطوط متنی: 161389)
 
 | ناحیه | تعداد فایل | خطوط متنی |
 |---|---|---|
-| CI/CD | 7 | 1546 |
-| استودیو (React) | 118 | 23139 |
+| CI/CD | 7 | 1549 |
+| استودیو (React) | 119 | 26191 |
 | اسکریپت و ابزار | 19 | 7346 |
 | اپ عضو (Flutter) | 114 | 19319 |
-| بک‌اند (FastAPI) | 514 | 74649 |
+| بک‌اند (FastAPI) | 516 | 74757 |
 | ریشه و تنظیمات | 10 | 831 |
 | زیرساخت و کانتینر | 15 | 582 |
 | سایر mp-app | 4 | 239 |
 | شواهد QA | 40 | 1626 |
-| مستندات | 178 | 20578 |
+| مستندات | 179 | 20624 |
 | گزارش‌های عامل | 141 | 8325 |
 
 ## ۲. عملیات API (از `app.openapi()`، مرجع اصلی)
@@ -312,7 +312,7 @@
 | `mp-app/studio/src/components/AdminPermissions.tsx` | 0 | 3 | 2 | 0 | 261 |
 | `mp-app/studio/src/components/AttendanceChart.tsx` | 0 | 0 | 0 | 0 | 71 |
 | `mp-app/studio/src/components/AutoregPanel.tsx` | 1 | 0 | 1 | 0 | 153 |
-| `mp-app/studio/src/components/CouponPanel.tsx` | 0 | 1 | 1 | 0 | 166 |
+| `mp-app/studio/src/components/CouponPanel.tsx` | 0 | 1 | 1 | 0 | 165 |
 | `mp-app/studio/src/components/DeviceSessions.tsx` | 0 | 2 | 1 | 0 | 129 |
 | `mp-app/studio/src/components/ExerciseLibrary.tsx` | 3 | 0 | 3 | 0 | 156 |
 | `mp-app/studio/src/components/Feedback.tsx` | 1 | 0 | 1 | 0 | 171 |
@@ -321,9 +321,9 @@
 | `mp-app/studio/src/components/KpiCard.tsx` | 0 | 0 | 0 | 0 | 50 |
 | `mp-app/studio/src/components/LedgerPanel.tsx` | 0 | 2 | 2 | 0 | 209 |
 | `mp-app/studio/src/components/MemberTable.tsx` | 1 | 0 | 2 | 0 | 111 |
-| `mp-app/studio/src/components/PaymentPanel.tsx` | 7 | 0 | 7 | 0 | 270 |
+| `mp-app/studio/src/components/PaymentPanel.tsx` | 7 | 0 | 7 | 0 | 269 |
 | `mp-app/studio/src/components/PeriodReportPanel.tsx` | 0 | 0 | 0 | 0 | 119 |
-| `mp-app/studio/src/components/PhoneChangeDialog.tsx` | 3 | 0 | 2 | 0 | 186 |
+| `mp-app/studio/src/components/PhoneChangeDialog.tsx` | 3 | 0 | 2 | 0 | 191 |
 | `mp-app/studio/src/components/ReadinessPanel.tsx` | 0 | 0 | 0 | 0 | 164 |
 | `mp-app/studio/src/components/ReceiptQueue.tsx` | 0 | 3 | 2 | 0 | 169 |
 | `mp-app/studio/src/components/RemindersPanel.tsx` | 1 | 0 | 1 | 0 | 142 |
@@ -345,7 +345,7 @@
 | `mp-app/studio/src/pages/Expenses.tsx` | 0 | 6 | 5 | 0 | 412 |
 | `mp-app/studio/src/pages/Finance.tsx` | 3 | 0 | 3 | 0 | 182 |
 | `mp-app/studio/src/pages/Login.tsx` | 3 | 0 | 3 | 0 | 145 |
-| `mp-app/studio/src/pages/Members.tsx` | 3 | 0 | 3 | 0 | 221 |
+| `mp-app/studio/src/pages/Members.tsx` | 3 | 0 | 3 | 0 | 216 |
 | `mp-app/studio/src/pages/Nutrition.tsx` | 3 | 0 | 3 | 0 | 319 |
 | `mp-app/studio/src/pages/Programs.tsx` | 4 | 0 | 4 | 0 | 243 |
 | `mp-app/studio/src/pages/Settings.tsx` | 1 | 0 | 1 | 0 | 172 |
@@ -368,7 +368,7 @@
 | ناحیه | مسیر | خطوط | اندازه (بایت) | بازبینی |
 |---|---|---|---|---|
 | CI/CD | `.github/workflows/apk.yml` | 180 | 7897 | NOT-REVIEWED |
-| CI/CD | `.github/workflows/ci.yml` | 563 | 28635 | NOT-REVIEWED |
+| CI/CD | `.github/workflows/ci.yml` | 566 | 28783 | NOT-REVIEWED |
 | CI/CD | `.github/workflows/client-format-fix.yml` | 446 | 23608 | NOT-REVIEWED |
 | CI/CD | `.github/workflows/container.yml` | 58 | 1992 | NOT-REVIEWED |
 | CI/CD | `.github/workflows/deploy.yml` | 150 | 5781 | NOT-REVIEWED |
@@ -378,22 +378,23 @@
 | استودیو (React) | `mp-app/studio/README.md` | 3 | 130 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/electron/main.cjs` | 31 | 810 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/electron/preload.cjs` | 6 | 225 | NOT-REVIEWED |
+| استودیو (React) | `mp-app/studio/eslint.config.mjs` | 47 | 1820 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/index.html` | 20 | 927 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/nginx.conf` | 26 | 808 | NOT-REVIEWED |
-| استودیو (React) | `mp-app/studio/package-lock.json` | 5533 | 192017 | NOT-REVIEWED |
-| استودیو (React) | `mp-app/studio/package.json` | 45 | 1213 | NOT-REVIEWED |
+| استودیو (React) | `mp-app/studio/package-lock.json` | 8535 | 297511 | NOT-REVIEWED |
+| استودیو (React) | `mp-app/studio/package.json` | 51 | 1397 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/postcss.config.js` | 6 | 81 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/public/icon-192.png` | — | 2771 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/public/icon-512.png` | — | 7938 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/public/manifest.webmanifest` | — | 692 | NOT-REVIEWED |
-| استودیو (React) | `mp-app/studio/public/sw.js` | 55 | 1805 | NOT-REVIEWED |
+| استودیو (React) | `mp-app/studio/public/sw.js` | 55 | 1800 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/src/App.tsx` | 90 | 3229 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/src/auth/AuthContext.tsx` | 104 | 3361 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/src/components/AdaptiveNutritionPanel.tsx` | 204 | 8126 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/src/components/AdminPermissions.tsx` | 260 | 9874 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/src/components/AttendanceChart.tsx` | 70 | 2215 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/src/components/AutoregPanel.tsx` | 152 | 5407 | NOT-REVIEWED |
-| استودیو (React) | `mp-app/studio/src/components/CouponPanel.tsx` | 165 | 5353 | NOT-REVIEWED |
+| استودیو (React) | `mp-app/studio/src/components/CouponPanel.tsx` | 164 | 5293 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/src/components/DeviceSessions.tsx` | 128 | 5279 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/src/components/ExerciseLibrary.tsx` | 155 | 6274 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/src/components/Feedback.tsx` | 170 | 6156 | NOT-REVIEWED |
@@ -402,9 +403,9 @@
 | استودیو (React) | `mp-app/studio/src/components/KpiCard.tsx` | 49 | 1657 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/src/components/LedgerPanel.tsx` | 208 | 7749 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/src/components/MemberTable.tsx` | 110 | 4908 | NOT-REVIEWED |
-| استودیو (React) | `mp-app/studio/src/components/PaymentPanel.tsx` | 269 | 10030 | NOT-REVIEWED |
+| استودیو (React) | `mp-app/studio/src/components/PaymentPanel.tsx` | 268 | 9994 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/src/components/PeriodReportPanel.tsx` | 118 | 4788 | NOT-REVIEWED |
-| استودیو (React) | `mp-app/studio/src/components/PhoneChangeDialog.tsx` | 185 | 7094 | NOT-REVIEWED |
+| استودیو (React) | `mp-app/studio/src/components/PhoneChangeDialog.tsx` | 190 | 7420 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/src/components/ReadinessPanel.tsx` | 163 | 6839 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/src/components/ReceiptQueue.tsx` | 168 | 5986 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/src/components/RemindersPanel.tsx` | 141 | 5186 | NOT-REVIEWED |
@@ -433,7 +434,7 @@
 | استودیو (React) | `mp-app/studio/src/pages/Expenses.tsx` | 411 | 15115 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/src/pages/Finance.tsx` | 181 | 8186 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/src/pages/Login.tsx` | 144 | 5839 | NOT-REVIEWED |
-| استودیو (React) | `mp-app/studio/src/pages/Members.tsx` | 220 | 9732 | NOT-REVIEWED |
+| استودیو (React) | `mp-app/studio/src/pages/Members.tsx` | 215 | 9433 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/src/pages/Nutrition.tsx` | 318 | 12593 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/src/pages/Programs.tsx` | 242 | 9910 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/src/pages/Settings.tsx` | 171 | 7125 | NOT-REVIEWED |
@@ -442,7 +443,7 @@
 | استودیو (React) | `mp-app/studio/src/styles/index.css` | 124 | 3680 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/src/vite-env.d.ts` | 4 | 193 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/tailwind.config.js` | 67 | 1884 | NOT-REVIEWED |
-| استودیو (React) | `mp-app/studio/tests/a11y.test.tsx` | 183 | 7504 | NOT-REVIEWED |
+| استودیو (React) | `mp-app/studio/tests/a11y.test.tsx` | 183 | 7679 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/tests/adaptivePanel.test.tsx` | 185 | 7321 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/tests/adminApi.test.ts` | 61 | 2733 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/tests/adminPermissions.test.tsx` | 206 | 8545 | NOT-REVIEWED |
@@ -453,7 +454,7 @@
 | استودیو (React) | `mp-app/studio/tests/autoregPanel.test.tsx` | 103 | 3805 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/tests/chatPage.test.tsx` | 206 | 8017 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/tests/components.test.tsx` | 29 | 1242 | NOT-REVIEWED |
-| استودیو (React) | `mp-app/studio/tests/couponPanel.test.tsx` | 80 | 2944 | NOT-REVIEWED |
+| استودیو (React) | `mp-app/studio/tests/couponPanel.test.tsx` | 79 | 2909 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/tests/dashboard.test.tsx` | 76 | 2885 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/tests/design-tokens.test.ts` | 63 | 2307 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/tests/deviceSessions.test.tsx` | 127 | 4908 | NOT-REVIEWED |
@@ -466,7 +467,7 @@
 | استودیو (React) | `mp-app/studio/tests/jp7Trend.test.tsx` | 175 | 6408 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/tests/ledgerPanel.test.tsx` | 198 | 7769 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/tests/liveContract.test.ts` | 201 | 7684 | NOT-REVIEWED |
-| استودیو (React) | `mp-app/studio/tests/motion.test.tsx` | 112 | 5487 | NOT-REVIEWED |
+| استودیو (React) | `mp-app/studio/tests/motion.test.tsx` | 112 | 5483 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/tests/nutritionPage.test.tsx` | 235 | 8993 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/tests/paymentPanel.test.tsx` | 312 | 15077 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/tests/periodReportPanel.test.tsx` | 95 | 3268 | NOT-REVIEWED |
@@ -637,7 +638,7 @@
 | بک‌اند (FastAPI) | `mp-app/backend/app/__init__.py` | 0 | 0 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/app/config.py` | 246 | 12117 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/app/deps.py` | 142 | 5833 | NOT-REVIEWED |
-| بک‌اند (FastAPI) | `mp-app/backend/app/errors.py` | 74 | 2495 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/app/errors.py` | 74 | 2496 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/app/id_guard.py` | 64 | 3134 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/app/ids.py` | 36 | 1760 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/app/jalali.py` | 94 | 2646 | NOT-REVIEWED |
@@ -1011,6 +1012,7 @@
 | بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_sms.py` | 104 | 3346 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_unhandled_errors.py` | 223 | 9731 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_updates.py` | 60 | 2094 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_wp03_axis_single_guard.py` | 58 | 2033 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/load/locustfile.py` | 65 | 2282 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/load/locustfile_full.py` | 208 | 7169 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/regression/__init__.py` | 0 | 0 | NOT-REVIEWED |
@@ -1022,6 +1024,7 @@
 | بک‌اند (FastAPI) | `mp-app/backend/tests/regression/test_deploy_gate.py` | 22 | 631 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/regression/test_manifest_gate.py` | 95 | 3652 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/regression/test_manual_transfer_policy.py` | 184 | 5770 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/tests/regression/test_no_duplicate_guard.py` | 50 | 1716 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/regression/test_production_ops.py` | 197 | 7590 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/regression/test_qr_format_workflow.py` | 120 | 5023 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/regression/test_rbac.py` | 68 | 3451 | NOT-REVIEWED |
@@ -1300,9 +1303,10 @@
 | مستندات | `docs/MuscleParadise/assets/readme-hero.svg` | 66 | 4533 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/assets/system-architecture.svg` | 148 | 13022 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/CHECKLIST.md` | 142 | 12101 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/EXECUTION-LOG.md` | 42 | 5242 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/INVENTORY.md` | 1529 | 142794 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/findings.json` | 511 | 14777 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/status.json` | 22 | 817 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/status.json` | 26 | 1423 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/brand/concepts/M101-CONCEPTS.md` | 75 | 7809 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/brand/concepts/m101-a-geometric-mp.png` | — | 85273 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/brand/concepts/m101-a-geometric-mp.svg` | 87 | 6179 | NOT-REVIEWED |

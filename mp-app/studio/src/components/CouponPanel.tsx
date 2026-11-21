@@ -38,7 +38,6 @@ export function CouponPanel() {
   useEffect(() => {
     void load();
     // فقط یک‌بار هنگام mount
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const submit = async () => {

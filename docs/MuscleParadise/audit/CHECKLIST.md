@@ -82,7 +82,7 @@
 | F-07 | پوشش مستند ۹۴٫۲۸٪ در برابر واقعی ۸۳٫۷۳٪ | OPEN |  |
 | F-08 | `logout-all` توکن‌های بدون `sid` را باطل نمی‌کند | OPEN |  |
 | F-09 | پول بزرگ: `2^53`، `2^53+1`، `10^18` پذیرفته می‌شوند + coercion رشته→عدد | OPEN |  |
-| F-10 | ۳۱ خطای ESLint در استودیو (هیچ lint واقعی اجرا نمی‌شد) | VERIFIED-IN-CODE | اسکریپت lint وجود دارد؛ eslint.config در studio نیست؛ عدد ۳۱ هنوز اندازه‌گیری نشده |
+| F-10 | ۳۱ خطای ESLint در استودیو (هیچ lint واقعی اجرا نمی‌شد) | FIXED | WP 0.5: eslint.config.mjs (flat) + اسکریپت lint = `eslint .` + گیت در CI. اندازه‌گیری قبل: ۴۲ خطا + ۵ هشدار (بریف: ۳۱ خطا؛ عدد دقیق با همین پیکربندی ۴۲ بود). بعد: ۰ خطا، ۰ هشدار. قاعدهٔ label-has-associated-control با controlComponents برای کنترل‌های antd تنظیم شد؛ autoFocus به فوکوس ref تبدیل شد. |
 | F-11 | امتیاز جهش ۵۷٫۸٪ در ماژول پولی؛ ۳ شکاف واقعی | OPEN |  |
 | F-12 | `routes.json` مجموعهٔ گاردهای واقعی را کم‌تر نشان می‌دهد ⇒ اوراکل نامعتبر | OPEN |  |
 | F-13 | guard تکراری روی یک مسیر (دو بار casbin enforce) | FIXED | WP 0.3: گارد تکراری روی review حذف شد؛ شاهد: قبل ۲ بار enforce، بعد ۱ بار (tests/integration/test_wp03_axis_single_guard.py، tests/regression/test_no_duplicate_guard.py) |
@@ -96,7 +96,7 @@
 | F-21 | ۵ session بدون context manager در اسکریپت‌ها | OPEN |  |
 | F-22 | ۴ SQL با f‑string در یک migration | OPEN |  |
 | F-23 | ۱۰ دکمه بدون `onClick` (موجودی، نه لزوماً نقص) | OPEN |  |
-| F-24 | هشدارهای انباشتهٔ runtime | OPEN |  |
+| F-24 | هشدارهای انباشتهٔ runtime | IN-PROGRESS | WP 0.6: HTTP_422_UNPROCESSABLE_ENTITY → HTTP_422_UNPROCESSABLE_CONTENT در app/errors.py؛ هشدار Starlette دیگر در تست خطاها نیست. هشدارهای دیگر (httpx در TestClient، asyncio_default_fixture_loop_scope) باقی‌اند. |
 | F-25 | گارد شناسه **کف** ندارد: ۱۲ endpoint با `-1`/`0`/`-0`/INT64_MIN پاسخ **۲۰۰** می‌دهند | OPEN |  |
 | F-26 | دو شکلِ متفاوت برای پاکت خطا: `{"error":…}` در برابر `{"detail":…}` | OPEN |  |
 | F-27 | پیش‌نیازِ «پروندهٔ عضو» در سبد خرید با `404 not_found` بیان می‌شود؛ سفارش به‌نیابت ممکن نیست | OPEN |  |
@@ -135,8 +135,9 @@
 | بخش | وضعیت | تعداد |
 |---|---|---|
 | blocked | OPEN | 5 |
-| findings | FIXED | 1 |
-| findings | OPEN | 22 |
-| findings | VERIFIED-IN-CODE | 4 |
+| findings | FIXED | 2 |
+| findings | IN-PROGRESS | 1 |
+| findings | OPEN | 21 |
+| findings | VERIFIED-IN-CODE | 3 |
 | non_issues | OPEN | 14 |
 | problems | OPEN | 58 |

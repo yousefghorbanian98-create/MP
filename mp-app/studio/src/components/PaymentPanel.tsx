@@ -9,7 +9,6 @@ import {
   type PaymentRow,
   type Receipt,
 } from "../lib/api";
-import { fa } from "../lib/useApi";
 import { Input, Select } from "antd";
 
 /**

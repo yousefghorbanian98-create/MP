@@ -176,6 +176,9 @@ jobs:
       - name: Install
         working-directory: mp-app/studio
         run: npm ci || npm install
+      - name: Lint (ESLint 9 flat — WP 0.5 / F-10؛ ۰ خطا، ۰ هشدار)
+        working-directory: mp-app/studio
+        run: npm run lint
       - name: Unit tests (Vitest) — شامل گیت‌های WCAG و sync توکن‌ها
         working-directory: mp-app/studio
         run: npm test

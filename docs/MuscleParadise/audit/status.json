@@ -16,7 +16,11 @@
   "note": "WP 0.3: گارد تکراری روی review حذف شد؛ شاهد: قبل ۲ بار enforce، بعد ۱ بار (tests/integration/test_wp03_axis_single_guard.py، tests/regression/test_no_duplicate_guard.py)"
  },
  "F-10": {
-  "status": "VERIFIED-IN-CODE",
-  "note": "اسکریپت lint وجود دارد؛ eslint.config در studio نیست؛ عدد ۳۱ هنوز اندازه‌گیری نشده"
+  "status": "FIXED",
+  "note": "WP 0.5: eslint.config.mjs (flat) + اسکریپت lint = `eslint .` + گیت در CI. اندازه‌گیری قبل: ۴۲ خطا + ۵ هشدار (بریف: ۳۱ خطا؛ عدد دقیق با همین پیکربندی ۴۲ بود). بعد: ۰ خطا، ۰ هشدار. قاعدهٔ label-has-associated-control با controlComponents برای کنترل‌های antd تنظیم شد؛ autoFocus به فوکوس ref تبدیل شد."
+ },
+ "F-24": {
+  "status": "IN-PROGRESS",
+  "note": "WP 0.6: HTTP_422_UNPROCESSABLE_ENTITY → HTTP_422_UNPROCESSABLE_CONTENT در app/errors.py؛ هشدار Starlette دیگر در تست خطاها نیست. هشدارهای دیگر (httpx در TestClient، asyncio_default_fixture_loop_scope) باقی‌اند."
  }
 }
