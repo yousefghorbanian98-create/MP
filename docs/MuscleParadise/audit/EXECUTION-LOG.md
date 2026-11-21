@@ -296,3 +296,23 @@ WP: 0.4 · F: F‑07 · شاهد: `evidence/after/wp04/` · تصمیم: AD‑11 
 - WP 3.1 (F‑25): کف شناسه نیاز به نوع پارامترها دارد؛ middleware قبل از مسیریابی است. طراحی و تست جدا لازم است (احتمال شکستن کدهای رشته‌ای). باز.
 - WP 0.7: BLOCKED-ENV (کیت). WP 0.2: BLOCKED (AD‑10).
 - READY باقی‌مانده: 2.1، 2.2، 2.3، 2.4، 3.4، 4.3، 4.4، 4.6؛ TODO: 3.3، 3.5، 4.1، 4.2، 4.7؛ PARTIAL: 0.6، 0.8، 1.1، 1.2، 1.4.
+
+## WP 2.5 · بازبینی پس از بازیابی کیت — DONE (`a9146c7`)
+
+- **کیت:** `harness/semgrep-mp.yml` (semgrep 1.186.0) روی `mp-app/backend` قبل و بعد: `mp-silent-except-pass` = **۰** در هر دو (`/home/user/recovery4/semgrep-before.json`، `semgrep-after.json`؛ rc=0). نتیجهٔ دیگر: `mp-money-division` ۲ مورد (قاعدهٔ دیگر، خارج از این WP).
+- **شکاف واقعی:** نام شمارنده‌ها طبق کیت نبود؛ `/health/ready` بازتاب نمی‌داد؛ `scripts/dast.py::_log_skip` فقط `debug` بود.
+- **قرمز:** `test_wp25_silent_failures.py` (۲ ناموفق)، `test_wp25_dast_skip_counter.py`، `test_wp25_scrape_errors_ready.py` (KeyError `metrics_scrape_errors`) ⇒ ۴ ناموفق.
+- **سبز:** `mp_assessment_jp7_rows_skipped_total`؛ `mp_metrics_scrape_errors_total` + `logger.warning` + فیلد `metrics_scrape_errors` در `/health/ready`؛ `mp_dast_errors_total{where}` در `_log_skip`. ⇒ ۶ passed.
+- **lint/format:** ruff (E,F,W,I,N,UP,B,SIM,DTZ,TRY400,S) exit 0؛ `ruff format --check` exit 0.
+- **کل:** `pytest -q --no-cov` (backend) ⇒ `1254 passed, 2 skipped, rc=0` (`/home/user/recovery4/wp25/pytest.log`).
+- **اصلاح ثبت:** پیام commit می‌گوید «was 0 before» برای گیت semgrep؛ دقیق‌تر: گیت semgrep از قبل ۰ بود و شکاف در نام/بازتاب بود. commit منتشرشده بازنویسی نشد (بدون force-push).
+- **نحوهٔ برگرداندن:** `git revert a9146c7`.
+
+## WP 3.2 · وضعیت PARTIAL
+
+- گیت کیت `fastapi_default_detail == 0` اندازه‌گیری نشده. probe کیت این فیلد را ندارد و کیت منجمد است؛ برای اندازه‌گیری لازم است یک نسخهٔ مخزن از probe با این یافته ساخته شود، backend زنده با seed اجرا شود و خروجی ۷۱ ⇒ ۰ ثبت شود. این کار انجام نشده.
+- **تأثیر:** چهار `raise HTTPException` در `backend/devtools/sandbox_bank.py` شکل بدنه‌شان تغییر کرده است (ثبت‌شده، بررسی نشده).
+
+## وضعیت کلی
+
+- **ممیزی کامل نیست.** باقی‌مانده: WP 3.2 گیت زنده؛ WP 3.1 (F‑25)؛ WP 0.2 (BLOCKED، AD‑10 با کیت باید دوباره ارزیابی شود، ماتریس ۱۱۴۱ سلول)؛ WP 0.7 (کیت اکنون موجود است، باید دوباره ارزیابی شود)؛ WP 0.8؛ و صف READY/TODO.

@@ -212,3 +212,10 @@
 
 **نحوهٔ برگرداندن.** `git revert` همان commit WP 0.4. پس از برگشت، CI به گیت قبلی (`--cov-fail-under=70`) برمی‌گردد؛ `coverage-subprocess.rc`، `scripts/coverage_run.sh`، و `.gitignore` (الگوهای `.coverage.*`) هم حذف می‌شوند. تست‌های جدید بی‌ضرر و قابل نگه‌داشتن‌اند.
 
+
+## AD‑12 · نام شمارنده‌ها و بازتاب در /health/ready (WP 2.5)
+
+- **تصمیم:** نام شمارنده‌ها دقیقاً طبق کیت: `mp_metrics_scrape_errors_total`، `mp_dast_errors_total`، `mp_assessment_jp7_rows_skipped_total`. خطای scrape در `/health/ready` به‌صورت `metrics_scrape_errors` (عدد) بازتاب می‌شود. هشدار از `debug` به `warning` ارتقا یافت.
+- **دلیل:** گیت کیت نام و بازتاب را الزام کرده؛ گیت semgrep به‌تنهایی شکاف را نشان نمی‌داد.
+- **تأثیر:** فیلد جدید در پاسخ `/health/ready` (افزودنی، بدون حذف). کلاینت‌ها که فیلدهای ناشناخته را نادیده می‌گیرند تأثیری ندارند.
+- **نحوهٔ برگرداندن:** `git revert a9146c7`.
