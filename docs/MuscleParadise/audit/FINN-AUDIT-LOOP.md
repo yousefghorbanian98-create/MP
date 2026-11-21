@@ -51,7 +51,7 @@
 | 2.3 | F-18 | READY | — | BD-4: یک ورکر + سقف مستند؛ `gateway.py` sync→async |
 | 2.4 | F-05 | READY | — | RBAC پیش‌کامپایل؛ قفل `_enforcer` |
 | 2.5 | F-17 | READY | — | ۴ `except: pass` ⇒ لاگ + شمارنده |
-| 2.6 | F-29 | READY | — | الحاقیهٔ A1: `log.exception` ×۶ در `app/sms.py`؛ allowlist scheme برای `urlopen` (S310)؛ شاهد لاگ قبل/بعد |
+| 2.6 | F-29 | DONE | (این کامیت) | red: ۶ تست exc_info ناموفق ⇒ green: ۱۴ تست؛ pytest ۱۱۴۶/۲/۰؛ AD‑6 (متن استثنا پنهان) |
 | 3.1 | F-25 | READY | — | کف شناسه در `id_guard.py`؛ `PathId` در امضاها |
 | 3.2 | F-26 | READY | — | نگاشت `StarletteHTTPException` به پاکت پروژه |
 | 3.3 | F-14 | TODO | — | `gateway-return` با شناسهٔ نامعتبر ⇒ 404 (BD-5) |

@@ -116,3 +116,9 @@
 - **تصمیم:** `--fix` با `--exclude db/migrations/versions/c3f01ab129e2_*.py`؛ آن کامنت دلیل به‌صورت کامنت ساده در `tests/integration/test_m46_db_pool.py:33` حفظ شد.
 - **پیامد:** گام «۴۷ رفع امن» روی HEAD به **۴۵** کاهش یافت (۴۹ ایمن − ۴ S608). A1.3 عدد ۴۷ را روی base گفته بود.
 - **نحوهٔ برگرداندن:** حذف `noqa: S608` پس از رفع F‑22 (WP 4.5)، نه پیش از آن.
+
+## AD-6 · لاگ خطای فراهم‌کنندهٔ SMS بدون متن استثنا (WP 2.6، F‑29)
+- **زمینه:** A1 می‌گوید `log.error` → `log.exception`. اما `log.exception` متن استثنا را در traceback می‌گذارد؛ متن `URLError` می‌تواند URL یا کلید API (Kavenegar کلید را در مسیر URL دارد) را داشته باشد. تست موجود `test_sms::test_provider_failure_logs_do_not_echo_credentials` این نشت را در اولین اجرا گرفت.
+- **تصمیم:** helper `_log_provider_failure` با `exc_info=(type(exc), RuntimeError(پیام پنهان), exc.__traceback__)`: نوع استثنا و قاب‌های traceback ثبت می‌شوند، متن آن نه.
+- **گزینهٔ ردشده:** `log.exception` ساده (نشت کلید) و حذف traceback (خلاف هدف F‑29).
+- **نحوهٔ برگرداندن:** جایگزینی helper با `log.exception` فقط با تأیید مالک و پس از بررسی تست نشت.

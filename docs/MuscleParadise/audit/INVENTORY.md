@@ -7,7 +7,7 @@
 
 ## ۱. خلاصهٔ تعداد فایل
 
-- کل فایل‌های ترک‌شده: **1174** (خطوط متنی: 162568)
+- کل فایل‌های ترک‌شده: **1174** (خطوط متنی: 162589)
 
 | ناحیه | تعداد فایل | خطوط متنی |
 |---|---|---|
@@ -15,12 +15,12 @@
 | استودیو (React) | 119 | 26191 |
 | اسکریپت و ابزار | 19 | 7347 |
 | اپ عضو (Flutter) | 114 | 19319 |
-| بک‌اند (FastAPI) | 523 | 75627 |
+| بک‌اند (FastAPI) | 523 | 75642 |
 | ریشه و تنظیمات | 10 | 831 |
 | زیرساخت و کانتینر | 15 | 597 |
 | سایر mp-app | 4 | 239 |
 | شواهد QA | 40 | 1626 |
-| مستندات | 182 | 20910 |
+| مستندات | 182 | 20916 |
 | گزارش‌های عامل | 141 | 8325 |
 
 ## ۲. عملیات API (ایستا؛ `app.openapi()` در این اجرا در دسترس نبود)
@@ -482,7 +482,7 @@
 | بک‌اند (FastAPI) | `mp-app/backend/app/security/jwt.py` | 103 | 3443 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/app/security/ownership.py` | 36 | 1514 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/app/security/proxy.py` | 65 | 2859 | NOT-REVIEWED |
-| بک‌اند (FastAPI) | `mp-app/backend/app/sms.py` | 130 | 4488 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/app/sms.py` | 145 | 5573 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/app/unhandled.py` | 100 | 5322 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/cache/__init__.py` | 0 | 0 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/cache/keys.py` | 21 | 661 | NOT-REVIEWED |
@@ -1142,12 +1142,12 @@
 | مستندات | `docs/MuscleParadise/assets/system-architecture.svg` | 148 | 13022 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/BASELINE.md` | 72 | 6929 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/CHECKLIST.md` | 147 | 15031 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/DECISIONS.md` | 118 | 14543 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/DECISIONS.md` | 124 | 15570 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/EXECUTION-LOG.md` | 168 | 24128 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/FINN-AUDIT-LOOP.md` | 88 | 8881 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/FINN-AUDIT-LOOP.md` | 88 | 8885 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/INVENTORY.md` | 1374 | 137078 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/findings.json` | 521 | 15410 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/status.json` | 46 | 3454 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/status.json` | 46 | 3773 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/brand/concepts/M101-CONCEPTS.md` | 75 | 7809 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/brand/concepts/m101-a-geometric-mp.png` | — | 85273 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/brand/concepts/m101-a-geometric-mp.svg` | 87 | 6179 | NOT-REVIEWED |

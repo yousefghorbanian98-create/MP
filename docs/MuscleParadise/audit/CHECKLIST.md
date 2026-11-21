@@ -101,7 +101,7 @@
 | F-26 | دو شکلِ متفاوت برای پاکت خطا: `{"error":…}` در برابر `{"detail":…}` | OPEN |  |
 | F-27 | پیش‌نیازِ «پروندهٔ عضو» در سبد خرید با `404 not_found` بیان می‌شود؛ سفارش به‌نیابت ممکن نیست | OPEN |  |
 | F-28 | «امروز» سه برداشت متفاوت دارد: nutrition و axis_assessment از `date.today()` (ساعت UTC کانتینر) استفاده می‌کنند؛ shop از Asia/Tehran. هر شب ۰۰:۰۰–۰۳:۳۰ تهران روز اشتباه | OPEN | الحاقیهٔ A1 — WP 3.6. اندازه‌گیری (662ff88): date.today() ×3 (DTZ011) در axis_assessment/service.py:31، nutrition/service.py:124،182. |
-| F-29 | شش خطای ارسال SMS با `log.error` بدون traceback ثبت می‌شوند (app/sms.py:66,69,72,99,102,105) — علت واقعی خطای فراهم‌کننده در لاگ نیست | OPEN | الحاقیهٔ A1 — WP 2.6. اندازه‌گیری (662ff88): TRY400 ×6 در app/sms.py؛ S310 ×3 در app/sms.py:52,61,94. |
+| F-29 | شش خطای ارسال SMS با `log.error` بدون traceback ثبت می‌شوند (app/sms.py:66,69,72,99,102,105) — علت واقعی خطای فراهم‌کننده در لاگ نیست | FIXED | الحاقیهٔ A1 — WP 2.6. قبل: ۶ شاخهٔ except در app/sms.py با log.error و بدون traceback (red: ۶ تست exc_info ناموفق). بعد: _log_provider_failure با traceback و متن استثنای پنهان (AD‑6)؛ ۱۴ تست regression/test_wp26_sms_logging.py سبز؛ test_sms ۶۱ سبز؛ pytest کامل ۱۱۴۶ passed، ۲ skipped، exit 0. S310 سه مورد با noqa دلیل‌دار؛ TRY400 در sms=0. |
 
 ## ج) موانع محیطی (BLOCKED)
 
@@ -137,10 +137,10 @@
 | بخش | وضعیت | تعداد |
 |---|---|---|
 | blocked | OPEN | 5 |
-| findings | FIXED | 3 |
+| findings | FIXED | 4 |
 | findings | FIXED-PARTIAL | 3 |
 | findings | IN-PROGRESS | 1 |
-| findings | OPEN | 22 |
+| findings | OPEN | 21 |
 | non_issues | OPEN | 14 |
 | problems | FIXED | 1 |
 | problems | IN-PROGRESS | 1 |
