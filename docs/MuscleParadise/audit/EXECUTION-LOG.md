@@ -368,3 +368,14 @@ WP: 0.4 · F: F‑07 · شاهد: `evidence/after/wp04/` · تصمیم: AD‑11 
 - `gh api repos/<repo>/commits/<sha>` برای ۷ SHA یکتا ⇒ همه یافت شد (checkout، setup-node، setup-python، upload-artifact، build-push-action، login-action، flutter-action).
 - **تغییر کد:** ندارد (از قبل برقرار بود).
 
+
+## WP 3.4 · پروفایل عضو لازم — DONE
+
+- **Red:** `tests/integration/test_wp34_member_profile_required.py` با پرچم خرید روشن (`monkeypatch` روی `shop_online_purchase_enabled`، مثل `test_m59_shop.py`). پیش از اصلاح: `assert 404 == 409` (بررسی پروفایل بعد از `shop_online_closed` نبود؛ با پرچم بسته ۴۰۹ هم نمی‌رسید).
+- **Fix:** `modules/shop/service.py::_own_member` ⇒ `ConflictError(..., code="member_profile_required")` (۴۰۹).
+- **Green:** `test_wp34`, `test_m59_shop`, `test_phase2_shop_display` ⇒ ۵۱ passed.
+- **گیت ایستا:** `scripts/deploy_gate.py::check_shop_purchase_guard` ⇒ `studio/src/pages/Shop.tsx` باید تب سبد و دکمهٔ خرید را با `purchaseOpen` شرط کند. دو تست در `test_deploy_gate_branches.py` (یکی روی مخزن واقعی، یکی قرمز با دکمهٔ بدون شرط). `deploy_gate.py` ⇒ ۱۵ بررسی، ۰ مشکل؛ `test_deploy_gate_branches` + `test_deploy_gate` ⇒ ۲۵ passed.
+- **کل بک‌اند:** `pytest -q --no-cov` ⇒ `1268 passed, 2 skipped`, rc=0 (`/home/user/recovery4/wp34/pytest.log`).
+- **ruff:** `check` ⇒ All checks passed؛ `format --check` ⇒ مرتب.
+- **سفارش به‌نیابت:** کد آن را ندارد؛ مستندسازی‌شده در AD‑17.
+- **Rollback:** `git revert <commit WP 3.4>`.

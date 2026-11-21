@@ -55,7 +55,7 @@
 | 3.1 | F-25 | DONE | (این کامیت) | گیت: `unexpected_2xx_on_bad_id` ۴۸ ⇒ ۰ (۸۷۲ سلول)؛ `id_guard_rejections` ۷۰ ⇒ ۳۳۸ (۴×۵۷ مسیر پارامتری برآورده)؛ بار `plain-dev 10 40` بدون رگرسیون (نسبت‌ها در `evidence/after/wp31-load-ratios.json`)؛ red: `test_wp31_id_floor.py` (۲۴۸/۲۴۸ ناموفق) ⇒ ۵ سبز؛ pytest کامل `1262 passed, 2 skipped, rc=0` |
 | 3.2 | F-26 | DONE | (این کامیت) | گیت کیت: `fastapi_default_detail` ۷۰ ⇒ ۰ روی ۸۷۲ سلول (`evidence/after/wp32/summary.json`)؛ اصلاح: پیام خاص `HTTPException` برنامه حفظ شد (red: `test_wp32_detail_preserved.py`)؛ pytest کامل `1257 passed, 2 skipped, rc=0` |
 | 3.3 | F-14 | TODO | — | `gateway-return` با شناسهٔ نامعتبر ⇒ 404 (BD-5) |
-| 3.4 | F-27 | READY | — | BD-1: 409 `member_profile_required` |
+| 3.4 | F-27 | DONE | (این کامیت) | red: `test_wp34_member_profile_required.py` (`shop_online_closed`→۴۰۴ به‌جای ۴۰۹)؛ اصلاح: `_own_member` ⇒ `ConflictError(code=member_profile_required)` ۴۰۹؛ گیت ایستا `check_shop_purchase_guard` در `deploy_gate.py` (۱۵ بررسی، ۰ مشکل)؛ pytest کامل `1268 passed, 2 skipped, rc=0`؛ سفارش به‌نیابت: AD‑17 |
 | 3.5 | F-09/F-25 | TODO | — | آزمون قراردادی سراسری در CI |
 | 3.6 | F-28 | DONE | (این کامیت) | red: ۳ تست (سن، اسکن، TZ) ناموفق روی کد قبل ⇒ green: ۵ تست؛ گیت after-wp36 PASS؛ pytest ۱۱۵۱/۲/۰؛ AD‑1 |
 | 4.1 | F-15 | TODO | — | شکستن `validate_production_configuration` (radon F(47)) |

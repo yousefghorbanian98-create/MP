@@ -176,6 +176,24 @@ def check_otp_echo_guard(report: Report) -> None:
     report.ok("Compose در هیچ استقراری MP_ALLOW_DEV_OTP_ECHO را روشن نمی‌کند")
 
 
+def check_shop_purchase_guard(report: Report) -> None:
+    """WP 3.4 / F‑27: وقتی خرید درون‌برنامه‌ای بسته است، دکمهٔ خرید و تب سبد نباید فعال باشند.
+
+    بررسی ایستا روی `studio/src/pages/Shop.tsx`: تب سبد با `purchaseOpen` مشروط است و
+    دکمهٔ افزودن به سبد زیر `{purchaseOpen && (…)}` است.
+    """
+    text = _read(MP / "studio" / "src" / "pages" / "Shop.tsx")
+    cart_gated = "show: purchaseOpen" in text
+    button_gated = text.count("{purchaseOpen && (") >= 1
+    if not (cart_gated and button_gated):
+        report.bad(
+            "Shop.tsx: تب سبد یا دکمهٔ خرید به purchaseOpen مشروط نیست "
+            f"(cart_gated={cart_gated}, button_gated={button_gated})"
+        )
+    else:
+        report.ok("خرید درون‌برنامه‌ای: تب سبد و دکمهٔ خرید پشت purchaseOpen هستند")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Static deployment gate")
     parser.add_argument("--json", action="store_true")
@@ -189,6 +207,7 @@ def main() -> int:
         check_build_paths,
         check_required_secrets,
         check_otp_echo_guard,
+        check_shop_purchase_guard,
     ):
         try:
             check(report)

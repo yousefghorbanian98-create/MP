@@ -294,7 +294,11 @@ def update_product(db: Session, *, actor: User, product_id: int, payload: dict) 
 def _own_member(db: Session, user: User) -> Member:
     m = db.scalar(select(Member).where(Member.user_id == user.id))
     if m is None:
-        raise NotFoundError("پروندهٔ عضو یافت نشد — ابتدا پروفایل را کامل کنید")
+        # WP 3.4 / F‑27: کاربر وجود دارد ولی پروندهٔ عضو ندارد ⇒ ۴۰۹ اختصاصی (نه ۴۰۴ مبهم).
+        raise ConflictError(
+            "پروندهٔ عضو یافت نشد — ابتدا پروفایل را کامل کنید",
+            code="member_profile_required",
+        )
     return m
 
 

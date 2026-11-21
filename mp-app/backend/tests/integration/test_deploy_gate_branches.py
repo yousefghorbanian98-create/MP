@@ -71,6 +71,14 @@ SERVICE_OK = (
 )
 
 
+SHOP_OK = (
+    "const purchaseOpen = shopStatus?.online_purchase === true;\n"
+    "{ id: 'cart', show: purchaseOpen },\n"
+    "{!purchaseOpen && (<p>خرید حضوری</p>)}\n"
+    "{purchaseOpen && (<button>افزودن</button>)}\n"
+)
+
+
 def _write_tree(root: Path, **overrides: str) -> Path:
     paths = {
         "df": "infra/Dockerfile.backend",
@@ -81,6 +89,7 @@ def _write_tree(root: Path, **overrides: str) -> Path:
         "main": "backend/app/main.py",
         "monitoring": "backend/api/v1/monitoring.py",
         "service": "backend/modules/auth/service.py",
+        "shop": "studio/src/pages/Shop.tsx",
     }
     contents = {
         "df": DOCKERFILE_OK,
@@ -91,6 +100,7 @@ def _write_tree(root: Path, **overrides: str) -> Path:
         "main": MAIN_OK,
         "monitoring": MONITORING_OK,
         "service": SERVICE_OK,
+        "shop": SHOP_OK,
     }
     contents.update(overrides)
     files = {paths[key]: text for key, text in contents.items()}
@@ -257,3 +267,26 @@ def test_main_text_output_and_exit_code(dg, tmp_path, monkeypatch, capsys) -> No
     assert dg.main() == 0
     text = capsys.readouterr().out
     assert "✓" in text and "0 problems" in text
+
+
+def test_shop_purchase_guard_passes_on_repo(dg) -> None:
+    """WP 3.4: در مخزن واقعی، دکمهٔ خرید و تب سبد پشت purchaseOpen هستند."""
+    report = dg.Report()
+    dg.check_shop_purchase_guard(report)
+    assert not report.problems, report.problems
+    assert report.checks
+
+
+def test_shop_purchase_guard_fails_when_button_is_ungated(dg, tmp_path, monkeypatch) -> None:
+    """WP 3.4 (قرمز): اگر دکمهٔ خرید بدون شرط رندر شود، بررسی باید شکست بخورد."""
+    tree = tmp_path / "mp-app" / "studio" / "src" / "pages"
+    tree.mkdir(parents=True)
+    (tree / "Shop.tsx").write_text(
+        "const purchaseOpen = x; const tabs = [{ id: 'cart', show: purchaseOpen }];\n"
+        "<button>افزودن</button>\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(dg, "MP", tmp_path / "mp-app")
+    report = dg.Report()
+    dg.check_shop_purchase_guard(report)
+    assert report.problems, "باید خطای دکمهٔ بدون شرط گزارش شود"
