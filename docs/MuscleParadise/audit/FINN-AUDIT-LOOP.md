@@ -38,7 +38,7 @@
 | 0.4 | F-07 | DONE | (این کامیت، WP 0.4) | پوشش per-directory با همهٔ آستانه‌ها سبز: modules 92.33≥90، app 96.62≥92، api 93.69≥90، engine 97.24≥95، security 96.61≥95، db 98.97≥80، jobs 84.55≥80، cache 76.60≥75، scripts 65.85≥60؛ XML در CI artifact؛ ۱۲۴۶ passed/۲ skipped؛ AD‑11 |
 | 0.5 | F-10 | DONE | `bf1daa1` | eslint ۰/۰ (قبل: ۴۲ خطا + ۵ هشدار) |
 | 0.6 | F-24 | PARTIAL | `bf1daa1` | 422 اصلاح؛ هشدار httpx و asyncio باقی |
-| 0.7 | — | READY | — | semgrep روی PyPI نصب می‌شود (میزبان مجاز)؛ قاعدهٔ `harness/semgrep-mp.yml` در CI به‌صورت non-blocking |
+| 0.7 | — | BLOCKED-ENV | — | کیت `/home/user/audit-run/harness/semgrep-mp.yml` پس از بازنشانی محیط نیست (ر.ک. EXECUTION-LOG، WP 0.4) | semgrep روی PyPI نصب می‌شود (میزبان مجاز)؛ قاعدهٔ `harness/semgrep-mp.yml` در CI به‌صورت non-blocking |
 | 0.9 | الحاقیهٔ A1 | DONE (گام ۱–۵) | — | پیکربندی `5d820a0`؛ ERA001 `e335653`؛ گیت `d4c0f3e`؛ رفع ایمن ۴۵ `9868a11`؛ CI+پین `07f096d`؛ 430→419 (base PASS)؛ pytest 1132/0 exit 0 |
 | 0.8 | A5 | PARTIAL | `40c64f7` | ۴۲/۴۲ پین؛ گیت‌های SBOM/امضا باقی |
 | 1.1 | F-01 | PARTIAL | `ccf44ce` | e2e: قبل ۳۰×200، بعد ≥۲۷×429؛ متریک `key_source` باقی |
