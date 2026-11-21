@@ -94,7 +94,8 @@ def collect_routes() -> list[tuple[str, str, str, int]]:
 def collect_openapi() -> list[tuple[str, str]] | None:
     """عملیات‌های واقعی از app.openapi() (اگر وابستگی‌های بک‌اند نصب باشد)."""
     code = (
-        "import json,sys;from app.main import app;s=app.openapi();"
+        "import json,os,sys;os.environ.setdefault('MP_ENVIRONMENT','development');"
+        "from app.main import app;s=app.openapi();"
         "print(json.dumps(sorted((m.upper(),p) for p,v in s['paths'].items()"
         " for m in v if m in ('get','post','put','patch','delete'))))"
     )

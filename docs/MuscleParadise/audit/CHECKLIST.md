@@ -73,8 +73,8 @@
 
 | شناسه | عنوان | وضعیت | یادداشت |
 |---|---|---|---|
-| F-01 | دورزدن rate‑limit با `X-Forwarded-For` (فرمان Dockerfile) | VERIFIED-IN-CODE | --forwarded-allow-ips='*' در mp-app/backend/Dockerfile:27 و mp-app/infra/Dockerfile.backend:29 |
-| F-02 | پیش‌فرض fail‑open محیط: `MP_ENVIRONMENT=development` + `MP_SMS_PROVIDER=dev` ⇒ `dev_code` در پاسخ | VERIFIED-IN-CODE | dev_code در modules/auth/service.py:53 و :261 |
+| F-01 | دورزدن rate‑limit با `X-Forwarded-For` (فرمان Dockerfile) | FIXED-PARTIAL | WP 1.1: uvicorn فقط به MP_TRUSTED_PROXIES اعتماد می‌کند (scripts/uvicorn_proxy_flags.sh)؛ production بدون فهرست معتبر بالا نمی‌آید. شاهد: e2e زنده ۳۰ درخواست با XFF جعلی ⇒ ≥۲۷×429 (قبل: ۳۰×200). تست: tests/regression/test_wp11_xff_trust.py. باقی‌مانده: متریک mp_rate_limit_key_source. |
+| F-02 | پیش‌فرض fail‑open محیط: `MP_ENVIRONMENT=development` + `MP_SMS_PROVIDER=dev` ⇒ `dev_code` در پاسخ | FIXED-PARTIAL | WP 1.2 (BD-3): MP_ENVIRONMENT صریح الزامی؛ dev_code فقط development+MP_ALLOW_DEV_OTP_ECHO؛ رد echo در production؛ WARNING شروع؛ گیت استاتیک deploy_gate. تست: tests/regression/test_wp12_env_failsafe.py. باقی‌مانده: گیت زنده روی استقرار BLOCKED. |
 | F-03 | قفل شدن سرور زیر بار؛ رندر `rich` روی event loop | OPEN |  |
 | F-04 | اشباع استخر اتصال؛ نبودِ هیچ متریک pool؛ ناسازگاری ظرفیت‌ها | OPEN |  |
 | F-05 | `SystemError` در `casbin enforce` زیر همزمانی (compile در هر درخواست) | OPEN |  |
@@ -136,9 +136,9 @@
 |---|---|---|
 | blocked | OPEN | 5 |
 | findings | FIXED | 3 |
+| findings | FIXED-PARTIAL | 2 |
 | findings | IN-PROGRESS | 1 |
 | findings | OPEN | 21 |
-| findings | VERIFIED-IN-CODE | 2 |
 | non_issues | OPEN | 14 |
 | problems | FIXED | 1 |
 | problems | IN-PROGRESS | 1 |

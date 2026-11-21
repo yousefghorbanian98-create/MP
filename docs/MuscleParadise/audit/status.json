@@ -1,11 +1,11 @@
 {
  "F-01": {
-  "status": "VERIFIED-IN-CODE",
-  "note": "--forwarded-allow-ips='*' در mp-app/backend/Dockerfile:27 و mp-app/infra/Dockerfile.backend:29"
+  "status": "FIXED-PARTIAL",
+  "note": "WP 1.1: uvicorn فقط به MP_TRUSTED_PROXIES اعتماد می‌کند (scripts/uvicorn_proxy_flags.sh)؛ production بدون فهرست معتبر بالا نمی‌آید. شاهد: e2e زنده ۳۰ درخواست با XFF جعلی ⇒ ≥۲۷×429 (قبل: ۳۰×200). تست: tests/regression/test_wp11_xff_trust.py. باقی‌مانده: متریک mp_rate_limit_key_source."
  },
  "F-02": {
-  "status": "VERIFIED-IN-CODE",
-  "note": "dev_code در modules/auth/service.py:53 و :261"
+  "status": "FIXED-PARTIAL",
+  "note": "WP 1.2 (BD-3): MP_ENVIRONMENT صریح الزامی؛ dev_code فقط development+MP_ALLOW_DEV_OTP_ECHO؛ رد echo در production؛ WARNING شروع؛ گیت استاتیک deploy_gate. تست: tests/regression/test_wp12_env_failsafe.py. باقی‌مانده: گیت زنده روی استقرار BLOCKED."
  },
  "F-06": {
   "status": "FIXED",

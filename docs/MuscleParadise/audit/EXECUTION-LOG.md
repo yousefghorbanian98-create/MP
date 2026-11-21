@@ -75,3 +75,29 @@
 - **باقی‌مانده:** اعتبارسنجی `MP_METRICS_TOKEN` در `validate_production_configuration` (در WP 4.1 با بقیهٔ کلیدها)؛ اجرای واقعی Prometheus با Compose (BLOCKED: Docker در این محیط نیست).
 
 - **pytest کامل پس از WP 1.3:** ۱۱۰۴ passed، ۲ skipped، ۲ warning، خروجی صفر (`/tmp/after-wp13-pytest.txt`).
+
+## WP 1.1 · F-01 · اعتماد به X-Forwarded-For فقط از پروکسی معتمد
+
+- **بازتولید:** `tests/regression/test_wp11_xff_trust.py` با uvicorn زنده و فلگ‌های قبلی (`--forwarded-allow-ips='*'`) ⇒ `[200 × 30]`؛ یعنی هر ۳۰ درخواست با XFF جعلی از peer نامعتمد پذیرفته می‌شد.
+- **ریشه:** `mp-app/backend/Dockerfile:27` و `mp-app/infra/Dockerfile.backend:29`: uvicorn همهٔ peerها را معتمد می‌کرد، پس `request.client` پیش از اپ از هدر جعلی پر می‌شد.
+- **تغییرات:** `scripts/uvicorn_proxy_flags.sh` (جدید، ۱۰ خط)؛ هر دو Dockerfile از آن استفاده می‌کنند؛ `app/config.py` (اعتبارسنجی `MP_TRUSTED_PROXIES` در production)؛ `infra/docker-compose.yml` (+۲)؛ `docs/MuscleParadise/DEPLOYMENT.md`؛ `tests/regression/test_production_ops.py` (فیکسچر production یک مقدار معتبر گرفت).
+- **تست‌های اضافه:** `test_wp11_xff_trust.py` — ۱۳ مورد (۵ اعتبارسنجی، ۲ Dockerfile، ۲ فلگ، ۱ compose، ۱ e2e زنده با ۳۰ درخواست).
+- **شاهد بعد از اصلاح:** `pytest tests/regression/test_wp11_xff_trust.py` ⇒ ۱۳ passed؛ همان e2e با فلگ قدیمی ⇒ ۱ failed (`[200×30]`)، پس تست واقعاً نقص را می‌گیرد.
+- **گیت عددی:** ≥۲۷ × 429 از ۳۰ ⇒ PASS (شاهد: ۲۷+ ۴۲۹).
+- **کنترل‌نشده / باقی‌مانده:** متریک `mp_rate_limit_key_source{peer|xff}` هنوز اضافه نشده (بخش بریف). وضعیت: **FIXED-PARTIAL**.
+
+## WP 1.2 · F-02 · محیط fail-safe و dev_code دوشرطی (BD-3)
+
+- **بازتولید:** پیش از اصلاح، `POST /api/v1/auth/otp/request` در محیط بدون `MP_ENVIRONMENT` پاسخ `dev_code` می‌داد (`modules/auth/service.py:53` و `:261` بدون شرط محیط جز `provider.name=="dev"`).
+- **ریشه:** `app/config.py` پیش‌فرض `environment="development"`؛ `MP_SMS_PROVIDER` پیش‌فرض `dev`؛ هیچ گیت شروع وجود نداشت.
+- **تغییرات:** `app/config.py` (`allow_dev_otp_echo`، `allow_implicit_dev`، رد echo در production)؛ `app/main.py` (`_assert_explicit_environment`، `_log_effective_configuration` با WARNING)؛ `modules/auth/service.py` (`dev_otp_echo_enabled`)؛ `modules/auth/router.py` (`response_model_exclude_none` برای دو مسیر OTP)؛ `scripts/deploy_gate.py` (`check_otp_echo_guard`، `otp_body_exposes_dev_code`)؛ `tests/conftest.py` (`MP_ALLOW_IMPLICIT_DEV` و فیکسچر `dev_otp_echo`)؛ پنج ماژول تست OTP با `pytestmark` opt-in؛ `test_sms.py` (بازنویسی تست قدیمی‌ای که پیش‌فرض را مجاز می‌دانست).
+- **ابزارهای اصلاح‌شده:** `scripts/route_guard_gate.py`، `scripts/export_routes.py`، `scripts/dast.py` و `scripts/build_audit_inventory.py` (`setdefault("MP_ENVIRONMENT","development")` برای ابزار فقط‌خواندنی).
+- **تست‌های اضافه:** `tests/regression/test_wp12_env_failsafe.py` — ۱۰ مورد (پاسخ بدون کد، پاسخ با پرچم، guard در منبع، شروع بدون محیط، شروع با محیط صریح، محیط از env، رد echo در production، پذیرش production بدون echo، گیت روی مخزن، تشخیص بدنه).
+- **شاهد بعد از اصلاح:** `deploy_gate.py` ⇒ ۱۴ بررسی، ۰ مشکل، خروجی صفر؛ `route_guard_gate.py` ⇒ خروجی صفر، ۱۶۳ مسیر، ۱۵۵ دارای guard؛ `pytest` کامل ⇒ **۱۱۲۸ passed، ۲ skipped، خروجی صفر** (`/tmp/after-wp11-12-pytest.txt`).
+- **یادداشت صادقانه:** تست‌های «شروع بدون محیط» همراه پیاده‌سازی نوشته شدند نه قبل از آن (قرمزِ اول فقط برای `dev_code` و شمارش منبع دیده شد). تأیید red برای این دو مورد انجام نشده؛ در WP بعدی با حذف موقت guard بازتولید می‌شود.
+- **گیت زنده (`curl` روی استقرار):** عمداً پیاده‌سازی نشد؛ هر درخواست OTP به شماره ناشناس SMS واقعی می‌فرستد. جایگزین: گیت استاتیک + `otp_body_exposes_dev_code` روی پاسخ‌های واقعی در استقرار (BLOCKED تا محیط استقرار). وضعیت: **FIXED-PARTIAL**.
+
+## نگهداری ابزارهای ممیزی (WP 1.1–1.2)
+
+- `scripts/build_audit_inventory.py --check` پس از ایجاد فایل‌های جدید باید کامیت شده باشد: این گیت از `git ls-files` استفاده می‌کند، پس قبل از کامیت «کهنه» می‌دهد. `INVENTORY.md` پس از کامیت دوباره ساخته و بررسی شد.
+- مشکل میانی: اسکریپت فهرست بدون متغیر محیط، بخش OpenAPI (۱۶۳ عملیات) را حذف کرد؛ با `setdefault` در کد subprocess اصلاح شد. این مورد به‌عنوان تله ثبت شد.
