@@ -2,7 +2,7 @@
 # ساخت از ریشهٔ مخزن: docker build -f mp-app/backend/Dockerfile -t mp-backend .
 FROM python:3.11-slim
 
-ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 TZ=Asia/Tehran
 
 WORKDIR /srv/mp
 COPY mp-app/backend/ ./backend/

@@ -2,7 +2,7 @@
 FROM python:3.11-slim
 
 WORKDIR /app
-ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 TZ=Asia/Tehran
 
 COPY mp-app/backend/pyproject.toml ./pyproject.toml
 COPY mp-app/backend/alembic.ini ./alembic.ini

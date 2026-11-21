@@ -166,3 +166,17 @@
 - **فایل `share/MP-BUILDER-HANDOFF-A1.3.md`:** در این مخزن وجود ندارد (`share/` نیست)؛ شناسهٔ `bce286e` روی `arena/2cde32d6-chat2db` است، نه شاخهٔ من؛ به آن شاخه سوئیچ نکردم.
 - **/tmp/venv:** دوباره ساخته شد (ruff 0.17.6، `pip install -e .[dev]`)؛ هر شاهد در مخزن ثبت شده است.
 - **باقی‌مانده:** WP 2.6 (F‑29)، WP 3.6 (F‑28)، WP 4.5 (F‑22)، گیت نهایی و گزارش ۲۹ یافته (§۳‑۷) — **NOT-STARTED**.
+
+## WP 2.6 و WP 3.6 — ریز‑حلقه‌ها (الحاقیهٔ A1)
+
+### WP 2.6 (F‑29) — کامیت `95b1a44`، شاخص `3cce4d5`
+- **red:** `tests/regression/test_wp26_sms_logging.py` روی کد قبل: ۶ تست exc_info ناموفق؛ ۸ تست دیگر (نشت کلید، رد https) از قبل سبز بودند ⇒ به‌عنوان گارد ثبت شد، نه اصلاح.
+- **انحراف:** `log.exception` مستقیم کلید Kavenegar را از متن استثنا نشت می‌داد (تست موجود `test_sms::credentials` گرفت) ⇒ helper `_log_provider_failure` و AD‑6.
+- **green:** ۱۴ تست جدید + ۶۱ تست sms/security؛ pytest کامل ۱۱۴۶ passed، ۲ skipped، exit 0؛ `after-wp26` PASS.
+- **یادداشت:** `build_audit_inventory.py` دو بار اجرا و سپس `--check`؛ نوشتن و خواندن ناهمگون بود، پس از تکرار تا پایداری `INVENTORY` کامیت شد (`3cce4d5`).
+
+### WP 3.6 (F‑28) — این کامیت
+- **red:** تست‌ها ابتدا روی کامیت پیش از تغییر (`HEAD` پیش از این WP) اجرا شد: سن `axis` و اسکن `date.today()` و هر دو Dockerfile ناموفق؛ `app.clock` وجود نداشت. نکته: یک بار `app.clock` از نصب editable درخت اصلی خوانده شد و تست ساعت بی‌ارزش سبز شد؛ با جابه‌جایی موقت فایل، red معتبر گرفته شد (`ModuleNotFoundError`) و فایل بازگردانده شد.
+- **green:** ۵ تست؛ `after-wp36` PASS (`date.today()` = ۰، DTZ011 = ۰)؛ pytest کامل ۱۱۵۱ passed، ۲ skipped، exit 0.
+- **زمان‌بندی تست:** ساعت ۲۰۳۰‑۰۳‑۲۰ ۲۱:۰۰ UTC (= ۰۰:۳۰ تهران ۲۱ مارس). ساعت واقعی ماشین (۲۰۲۶‑۱۱‑۲۱) با نتیجه‌ها تداخل ندارد.
+- **پیامد:** `ENV TZ=Asia/Tehran` در `backend/Dockerfile` و `infra/Dockerfile.backend`؛ AD‑1 لایهٔ دوم.

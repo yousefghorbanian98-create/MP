@@ -57,7 +57,7 @@
 | 3.3 | F-14 | TODO | — | `gateway-return` با شناسهٔ نامعتبر ⇒ 404 (BD-5) |
 | 3.4 | F-27 | READY | — | BD-1: 409 `member_profile_required` |
 | 3.5 | F-09/F-25 | TODO | — | آزمون قراردادی سراسری در CI |
-| 3.6 | F-28 | READY | — | الحاقیهٔ A1: `today_in_shop_zone()` ×۳؛ `ENV TZ` در دو Dockerfile؛ تست مرزی نیمه‌شب (AD‑1) |
+| 3.6 | F-28 | DONE | (این کامیت) | red: ۳ تست (سن، اسکن، TZ) ناموفق روی کد قبل ⇒ green: ۵ تست؛ گیت after-wp36 PASS؛ pytest ۱۱۵۱/۲/۰؛ AD‑1 |
 | 4.1 | F-15 | TODO | — | شکستن `validate_production_configuration` (radon F(47)) |
 | 4.2 | F-11 | TODO | — | سه جهش واقعی؛ ≥۸۰٪ |
 | 4.3 | F-19 | READY | — | یک لایهٔ داده در استودیو؛ حذف `await import` در onClick |

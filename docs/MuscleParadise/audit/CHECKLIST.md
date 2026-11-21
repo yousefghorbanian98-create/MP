@@ -100,7 +100,7 @@
 | F-25 | گارد شناسه **کف** ندارد: ۱۲ endpoint با `-1`/`0`/`-0`/INT64_MIN پاسخ **۲۰۰** می‌دهند | OPEN |  |
 | F-26 | دو شکلِ متفاوت برای پاکت خطا: `{"error":…}` در برابر `{"detail":…}` | OPEN |  |
 | F-27 | پیش‌نیازِ «پروندهٔ عضو» در سبد خرید با `404 not_found` بیان می‌شود؛ سفارش به‌نیابت ممکن نیست | OPEN |  |
-| F-28 | «امروز» سه برداشت متفاوت دارد: nutrition و axis_assessment از `date.today()` (ساعت UTC کانتینر) استفاده می‌کنند؛ shop از Asia/Tehran. هر شب ۰۰:۰۰–۰۳:۳۰ تهران روز اشتباه | OPEN | الحاقیهٔ A1 — WP 3.6. اندازه‌گیری (662ff88): date.today() ×3 (DTZ011) در axis_assessment/service.py:31، nutrition/service.py:124،182. |
+| F-28 | «امروز» سه برداشت متفاوت دارد: nutrition و axis_assessment از `date.today()` (ساعت UTC کانتینر) استفاده می‌کنند؛ shop از Asia/Tehran. هر شب ۰۰:۰۰–۰۳:۳۰ تهران روز اشتباه | FIXED | الحاقیهٔ A1 — WP 3.6 (AD‑1). قبل: date.today() ×3 (axis_assessment:31، nutrition:124،182) ⇒ red: ۳ تست ناموفق (سن و اسکن و Dockerfile) روی کد قبل. بعد: app/clock.py::today_in_shop_zone؛ ENV TZ=Asia/Tehran در دو Dockerfile؛ ۵ تست regression/test_wp36_shop_today.py سبز؛ گیت after-wp36 PASS؛ pytest کامل ۱۱۵۱ passed، ۲ skipped، exit 0. مسیر nutrition با اسکن کدی و تابع مشترک پوشش داده شد نه با تست رفتاری مستقل. |
 | F-29 | شش خطای ارسال SMS با `log.error` بدون traceback ثبت می‌شوند (app/sms.py:66,69,72,99,102,105) — علت واقعی خطای فراهم‌کننده در لاگ نیست | FIXED | الحاقیهٔ A1 — WP 2.6. قبل: ۶ شاخهٔ except در app/sms.py با log.error و بدون traceback (red: ۶ تست exc_info ناموفق). بعد: _log_provider_failure با traceback و متن استثنای پنهان (AD‑6)؛ ۱۴ تست regression/test_wp26_sms_logging.py سبز؛ test_sms ۶۱ سبز؛ pytest کامل ۱۱۴۶ passed، ۲ skipped، exit 0. S310 سه مورد با noqa دلیل‌دار؛ TRY400 در sms=0. |
 
 ## ج) موانع محیطی (BLOCKED)
@@ -137,10 +137,10 @@
 | بخش | وضعیت | تعداد |
 |---|---|---|
 | blocked | OPEN | 5 |
-| findings | FIXED | 4 |
+| findings | FIXED | 5 |
 | findings | FIXED-PARTIAL | 3 |
 | findings | IN-PROGRESS | 1 |
-| findings | OPEN | 21 |
+| findings | OPEN | 20 |
 | non_issues | OPEN | 14 |
 | problems | FIXED | 1 |
 | problems | IN-PROGRESS | 1 |

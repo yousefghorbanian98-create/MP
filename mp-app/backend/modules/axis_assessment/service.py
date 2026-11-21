@@ -9,7 +9,6 @@
 from __future__ import annotations
 
 import json
-from datetime import date
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -17,6 +16,7 @@ from sqlalchemy.orm import Session
 from app.errors import ApiError, NotFoundError
 from db.models.assessment import AxisAssessment, AxisScore, FieldTestResult, NormEntry
 from db.models.membership import Member
+from app.clock import today_in_shop_zone
 from engine.axis_map import AXIS_MAP_VERSION, aggregate_axis_scores
 from engine.axis_rules import AXES_FA, decide_axis
 from engine.scoring import SCORE_VERSION, estimate_percentile
@@ -28,7 +28,7 @@ def _member_age_sex(member: Member) -> tuple[int, str]:
         raise ApiError(
             "تاریخ تولد عضو ثبت نشده — داده ناشناخته است نه صفر", code="missing_birthdate"
         )
-    today = date.today()
+    today = today_in_shop_zone()  # F-28: منطقهٔ فروشگاه، نه ساعت کانتینر
     age = (
         today.year
         - member.birth_date.year
