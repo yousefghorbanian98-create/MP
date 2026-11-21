@@ -35,8 +35,11 @@ def test_deploy_workflow_is_manual_and_pushes_sha_tagged_images():
     build = data["jobs"]["build-and-push"]
     assert build["needs"] == ["preflight"]
     assert build["permissions"]["packages"] == "write"
+    # WP 0.8: ارجاع actions به SHA پین شده؛ تطبیق با نام action (نه تگ متحرک).
     push_steps = [
-        step for step in build["steps"] if step.get("uses") == "docker/build-push-action@v6"
+        step
+        for step in build["steps"]
+        if str(step.get("uses", "")).startswith("docker/build-push-action@")
     ]
     assert len(push_steps) == 2
     assert all(step["with"]["push"] is True for step in push_steps)
@@ -172,3 +175,21 @@ def test_rollback_runbook_exists():
     rb = ROOT / "docs/MuscleParadise/runbooks/rollback.md"
     assert rb.exists()
     assert "rollback" in rb.read_text().lower()
+
+
+def test_every_github_action_is_pinned_to_commit_sha():
+    """WP 0.8 / A5: هر `uses:` باید به SHA کامیت (۴۰ hex) پین باشد، نه تگ متحرک.
+
+    ارجاع محلی (`./...`) و Docker image (`docker://`) از این قاعده مستثنا هستند.
+    """
+    import re
+
+    pattern = re.compile(r"^\s*-?\s*uses:\s*(\S+)", re.M)
+    unpinned: list[str] = []
+    for path in sorted((ROOT / ".github/workflows").glob("*.yml")):
+        for ref in pattern.findall(path.read_text(encoding="utf-8")):
+            if ref.startswith(("./", "docker://")):
+                continue
+            if not re.search(r"@[0-9a-f]{40}$", ref):
+                unpinned.append(f"{path.name}: {ref}")
+    assert unpinned == [], "ارجاع بدون SHA: " + "; ".join(unpinned)
