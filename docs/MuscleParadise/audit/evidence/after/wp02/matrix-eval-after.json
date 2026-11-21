@@ -1,0 +1,15 @@
+{
+ "cells": 1141,
+ "exact": 915,
+ "conditional": {
+  "conditional:owner_scope": 184,
+  "conditional:anonymous=may": 1,
+  "conditional:body_credential": 6,
+  "conditional:grant": 35
+ },
+ "mismatch": [],
+ "server_errors": 0,
+ "binary_kit_mismatch": 69,
+ "conditional_total": 226,
+ "mismatch_total": 0
+}

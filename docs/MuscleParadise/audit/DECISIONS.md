@@ -151,3 +151,37 @@
 - **یافته‌های باز برای triage (ادعای جدید نیست):** T7 (CORS، origin توسعه در allowlist پیش‌فرض است)، اشباع استخر در ۸۰ ورکر روی سرور ابزاردار و `SystemError` از casbin در RBAC.
 - **گزینهٔ ردشده:** جایگزین‌کردن ردیف‌های بازنشده با «N/A» یا حذف آن‌ها از شمارش ۴۹. ردیف‌های تعریف‌نشده با D‑1 ثبت شدند و شمارش کم نشد.
 - **نحوهٔ برگرداندن:** این تغییر فقط مستندات و شواهدِ `docs/MuscleParadise/audit/` است؛ کد تغییر نکرده. برگرداندن = revert همان commit WP 0.1. `evidence/after/t-rows/` و `BASELINE.md §ز` حذف می‌شوند و `DEFERRED` ها به حالت قبل برمی‌گردند.
+
+## AD‑10 · گاردهای مؤثر در `routes.json` و گیت باینری کیت (WP 0.2، F‑12)
+
+**زمینه.** `roles` فقط casbin را منعکس می‌کرد. ماتریس زندهٔ ۱۶۳×۷ (۱٬۱۴۱ سلول) با قرارداد ناهمخوان بود. علت‌های واقعی با شاهد:
+- guard فقط‌casbin: `authenticated` (`/auth/sessions`، `logout-all`، `phone-change/*`) برای coach/reception ۲۰۰ می‌داد ولی `roles` آن‌ها را نداشت.
+- مالک‌بودن در بدنهٔ handler/service (`if role != super_admin`، `ensure_owner`): `/admin/retention*`، `/admin/users*`، `/admin/permissions*`، پنج مسیر فروشگاه، بازبینی تغییر قیمت.
+- `metrics_token` با نقش bearer ادعا می‌شد ولی هیچ نقش bearer عبور نمی‌کند.
+- `grant:*` وابسته به ردیف `AdminPermission` است: admin با ردیف عبور می‌کند، manager بدون ردیف نه.
+- مالکیت سطری (`ensure_member_scope`، طرفین گفتگو): member برای `member_id` دیگران ۴۰۳.
+- **F‑12 دربارهٔ `sid` اشتباه بود:** `/auth/sessions` و `/auth/phone-change/*` در کد `sid` اجباری ندارند (`list_sessions(current_sid=None)` و `ensure`ی برای `sid` نیست). ۴۰۱ «نشست معتبر نیست» در ماتریس از **ابطال توکن توسط کال‌های قبلی همان ماتریس** بود (`/auth/logout` و `logout-all` در ترتیب مسیرها). با توکن تازه، `/members/me` و `/auth/sessions` عبور می‌کنند.
+
+**تصمیم.**
+1. `scripts/export_routes.py` مولد `routes.json` است و سیاست مؤثر را ترکیب می‌کند: `roles` (سقف)، `always_roles` (کف)، `anonymous` (`always|may|never`)، `scopes`. guard ناشناخته ⇒ خطا (fail‑closed).
+2. قیدهایی که از برچسب guard درنمی‌آیند در `app/security/route_policy.py` اعلام می‌شوند: `super_admin_only` (۱۵ مسیر)، `owner_scope` (۳۵ مسیر)، `body_credential` (`/auth/refresh`)، `requires_bound_session` (فعلاً ∅).
+3. `grant:*`: admin/manager شرطی‌اند؛ `owner_scope`: همهٔ نقش‌ها شرطی‌اند؛ مسیر عمومی: همهٔ نقش‌ها و anonymous باز.
+4. `tests/integration/test_routes_effective_guards.py` (۸ تست، قرمز قبل از تغییر: ۸ شکست) و `test_routes_access_matrix.py` به منطق جدید رسیدند. `test_public_routes_have_no_role_claims` (که `roles == []` برای عمومی می‌خواست) با `test_public_routes_are_open_to_every_role` جایگزین شد، چون گیت کیت عمومی‌بودن را برای همهٔ نقش‌ها می‌خواهد.
+
+**نتیجهٔ شاهد (زنده، پس از اصلاح، `evidence/after/wp02/`).**
+- ارزیاب سه‌ارزشی (`scripts/wp02_eval.py`) روی ۱٬۱۴۱ سلول: **۰ ناهمخوانی**، ۰ 5xx، ۹۱۵ دقیق، ۲۲۶ شرطی (۱۸۴ `owner_scope`، ۳۵ `grant`، ۶ `body_credential`، ۱ anonymous `may`).
+- قبل از تغییر (artifact قبلی، همان سلول‌های پاک): ۱۱۵ ناهمخوانی باینری (۹۹ «اعلام‌شده مجاز، سرور ۴۰۳»، ۱۵ «اعلام‌نشده، سرور عبور»، ۱ anonymous).
+- `pytest` کامل: `1199 passed، 2 skipped، exit 0` (قبل: ۱۱۹۱/۲).
+- `route_guard_gate.py`: ۱۶۳ مسیر، ۱۵۵ guard، ۸ عمومی، exit 0.
+
+**انحراف از سند (ثبت‌شده، برگشت‌پذیر).**
+- **گیت باینری کیت قرمز است.** `probe_contract.py matrix` (بدون تغییر، `BACKEND` ⇒ همین ریپو) بر اساس `role ∈ roles ⇔ observed_pass` ۵۹۲ `contract_drift_denied` گزارش کرد. علت: ۶۸ سلول «شرطی» (owner/grant) و ۱ anonymous `may`؛ همه در ارزیاب سه‌ارزشی تأیید شدند (۶۹ = ۶۸ + ۱). کیت نمی‌تواند حالت شرطی را بیان کند و نمی‌تواند با ids ثابت هم سبز شود، چون مالکیت سطری و grant به داده وابسته‌اند. گیت کیت **تغییر نشده** و سبز اعلام نشده است.
+- **گیت کیت خودش هم آلوده است.** `probe_contract.py` ترتیب مسیرها را رعایت می‌کند و کال‌های logout ِ قبلی توکن‌ها را باطل می‌کنند؛ ۴۰۱ کاذب تولید می‌شود. برای اندازه‌گیری صحیح از `scripts/wp02_matrix.py` (منطق کیت را بدون تغییر استفاده می‌کند، توکن‌ها را پس از هر عملیات بررسی و در صورت ابطال دوباره لاگین می‌کند) استفاده شد. ۵ عملیات سرویس‌سطحِ super-only که body کیت را در همه نقش‌ها ۴۲۲ می‌کرد، با body معتبر در runner اندازه‌گیری شد؛ ۳۰ عملیات دیگر با guard سطح‌route همه ۴۲۲ دارند که ثابت شد guard قبل از validation اجرا می‌شود (شاهد: member روی `POST /shop/products` ⇒ ۴۰۳ با body نامعتبر).
+- **مسیرهای عمومی:** `roles` از `[]` به همهٔ نقش‌ها تغییر کرد (تعریف قرارداد کیت). تست قدیمی با همین تغییر اصلاح شد.
+- **`requires_bound_session`:** هیچ مسیری فعلاً ندارد؛ فیلد نگه داشته شد.
+
+**گزینه‌های ردشده.** (الف) ids را طوری تنظیم کنیم که member فقط خودش را ببیند: این ورودی‌ها را برای سبز کردن گیت انتخاب می‌کرد، نه برای سنجش. (ب) grant ردیف‌های seed را حذف کنیم: وضعیت داده را دستکاری می‌کرد. (ج) همهٔ owner/grant را به «همیشه مجاز» یا «همیشه ممنوع» تبدیل کنیم: یا گیت را کور می‌کرد یا با داده شکست می‌خورد. (د) تغییر کیت: ممنوع.
+
+**وضعیت.** WP 0.2 = **BLOCKED** با شاهد تا تصمیم مالک. سؤال بسته برای مالک: آیا گیت کیت باید حالت سه‌ارزشی (`always`/`may`/`never`) را بفهمد (تغییر کیت، نیاز تأیید) یا WP 0.2 با گیت سه‌ارزشی پذیرفته شود؟ تا آن زمان ادعای «۰ ناهمخوانی باینری» نمی‌شود.
+
+**نحوهٔ برگرداندن.** `git revert` همان commit WP 0.2 (تغییرات: `api/routes.json`، `scripts/export_routes.py`، `app/security/route_policy.py` (جدید)، دو تست، `evidence/after/wp02/`، سه سند). پس از revert، `routes.json` به نسخهٔ `roles`-only قبلی برمی‌گردد و `test_routes_effective_guards.py` حذف می‌شود.

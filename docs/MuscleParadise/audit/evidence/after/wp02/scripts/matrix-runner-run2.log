@@ -1,0 +1,2 @@
+relogin after POST /api/v1/auth/logout-all: member
+cells 1141 mismatch 115 relogins 1

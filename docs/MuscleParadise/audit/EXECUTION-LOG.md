@@ -211,3 +211,25 @@
 - **اشتباه‌های اجرا و اصلاح:** (۱) probe ها مسیر `/tmp/run` می‌خواستند ⇒ symlink. (۲) `openapi-live.json` لازم بود ⇒ از `/openapi.json` گرفته شد (۱۴۱ مسیر). (۳) `probe_otp_limits bruteforce` mode ندارد و پاس بی‌خروجی بود ⇒ پراب جدید. (۴) اولین اجرای probe ها بدون `MP_ALLOW_DEV_OTP_ECHO` بود؛ کل اجرا دوباره انجام شد.
 - **ابزار تکمیلی:** `knip@5` (exit 1 = یافته، نه کرش)، `madge` exit 0، `jscpd` exit 0، `tsc` exit 0، `vitest` exit 0 (۲۹۸ پاس)، `eslint` exit 0 (۰/۰)، semgrep کیت روی base و HEAD (۱۹ ⇒ ۲)، `pathid` (۶۰/۶۰)، mutmut دستی (۲۶/۴۵).
 - **commit:** `mp-app/studio/dist` وجود نداشت؛ `/home/user/MP/share/` (فایل از پیش موجود، بی‌ارتباط) از commit حذف شد.
+
+## WP 0.2 · F‑12 · گاردهای مؤثر در `routes.json` — BLOCKED (گیت باینری کیت قرمز)
+
+WP: 0.2 · F: F‑12 · برچسب: `routes.json` (فیلد guards/roles) ≡ «ماتریس ۱۶۳×۷ ⇒ مشاهده‌شده == اعلام‌شده»
+commit: (ثبت‌شده در پیام commit WP 0.2؛ شاخهٔ `arena/da474b65-mp`)
+
+- **پیش‌سنجش:** `git status --porcelain` قبل از شروع: تمیز (جز `share/` از پیش موجود، خارج از commit). `git log -3`: `839500d` (WP 0.1) در HEAD. ورودی کیت: `kit.zip` sha256 `9a192500…` (مطابق). venv `/home/user/audit-run/venv` نصب شد (`INSTALL_RC=0`). دیتابیس محلی: `alembic upgrade head` (rc 0) + `seed_live.py` (rc 0، ۲۵۰ عضو).
+- **قرمز (قبل از تغییر):** `pytest tests/integration/test_routes_effective_guards.py` روی artifact قبلی ⇒ `8 failed`. (ابتدا تست نوشته شد، سپس مولد.)
+- **ماتریس قبل از تغییر (شاهد خام):** `probe_contract.py all` (کیت، بدون تغییر) ⇒ `unauth_allowed 5`، `over_permissive 2`، `contract_drift_denied 604`، `server_errors 0` (`/tmp/wp02/all-dump.log` ⇒ `evidence/after/wp02/kit-probe/kit-all-before-change.log`). ماتریس تمیز (`scripts/wp02_matrix.py`، ۱ relogin بعد از `logout-all`) ⇒ `cells 1141`، ناهمخوانی باینری روی artifact قبلی: **115** (99 + 15 + 1).
+- **علت ۴۰۱ «نشست معتبر نیست»:** ابطال توکن‌ها توسط کال‌های قبلیِ ماتریس (logout/logout-all). اثبات: با توکن تازه `GET /members/me` ⇒ ۲۰۰ برای هر ۷ اصل؛ توکن‌ها `sid` و `ver` دارند. `sid` در کد برای `/auth/sessions` اجباری نیست.
+- **اصلاح:** `scripts/export_routes.py` (`effective_access`، `access_matrix`)، `app/security/route_policy.py` (جدید: `SUPER_ADMIN_ONLY` ۱۵، `OWNER_SCOPE` ۳۵، `BODY_CREDENTIAL` ۱، `REQUIRES_BOUND_SESSION` ∅)، `api/routes.json` بازتولید (141 مسیر، 163 عملیات)، `tests/integration/test_routes_access_matrix.py` (منطق جدید + تست عمومی)، `test_routes_effective_guards.py` (جدید).
+- **سبز:** `pytest tests/integration/test_routes_effective_guards.py` ⇒ `8 passed`؛ `test_routes_access_matrix` + `test_routes_artifact` + `test_wp03_axis_single_guard` ⇒ `12 passed` (با تست‌های بالا)؛ **پیش از commit، کل بک‌اند:** `1199 passed، 2 skipped، exit 0` (`backend-test-suite-wp-0-2-check`).
+- **ruff:** `ruff 0.17.6`؛ `ruff check` روی فایل‌های تغییر‌یافته ⇒ `All checks passed!`؛ `ruff format` روی ۴ فایل اعمال شد؛ `route_guard_gate.py` ⇒ exit 0.
+- **گیت‌ها:**
+  - ارزیاب سه‌ارزشی (`scripts/wp02_eval.py` روی `matrix-cells-clean.json`) ⇒ `cells 1141`، `exact 915`، `conditional 226` (owner_scope 184، grant 35، body_credential 6، anonymous may 1)، `server_errors 0`، **`mismatch_total 0`**.
+  - **کیت `probe_contract.py all` (بعد از تغییر، بدون تغییر کیت):** `unauth_allowed 5` (همه عمومی)، `over_permissive 0`، `contract_drift_denied 592`، `server_errors 0`، `leaked_stacktrace 0`، `slow_ops 0` ⇒ `kit-probe/kit-all-after.log`. گیت باینری کیت **قرمز** است؛ ۶۹ سلول اختلاف باینری همه شرطی‌اند (۶۸ «مجاز اعلام‌شده، ۴۰۳» + ۱ anonymous `may`). ۵۹۲ عدد کیت ترکیبی از ۶۹ شرطی و آلودگی ابطال توکن در همان اجراست؛ ادعای «۰» نمی‌شود.
+- **تلاش‌ها (G4، حداکثر ۳):** (۱) تغییر مولد به سیاست مؤثر ⇒ تست‌های قدیمی شکستند و اصلاح شد؛ (۲) ماتریس تمیز با رفع ۴۲۲ کاذب ⇒ ۵ عملیات سرویس‌سطح با body معتبر؛ (۳) تحلیل گیت باینری ⇒ شرطی بودن ذاتی، نه قابل‌سبز‌شدن بدون تغییر گیت یا داده. سه تلاش ⇒ `BLOCKED`.
+- **انحراف از سند:** AD‑10 (گیت باینری کیت قرمز؛ مسیرهای عمومی `roles` = همه؛ `requires_bound_session` تهی). کیت و گیت‌ها تغییر نکردند.
+- **یافته‌های جدید:** (۱) F‑12 علت `sid` را اشتباه نسبت داد؛ 401 از آلودگی ابطال بود. (۲) `probe_contract.py` ترتیب مسیرها را رعایت می‌کند و خودش کاذب 401 تولید می‌کند (گزارش به مالک؛ کیت تغییر نشد). (۳) `matrix`-only کیت `ids` را از `evidence/contract-rbac-findings.json` می‌خواند؛ در اجرای `all` درست شد.
+- **توقف‌ها:** `BLOCKED` (گیت قرمز بعد از ۳ تلاش) | سؤال بسته برای مالک: گیت کیت سه‌ارزشی بفهمد (تغییر کیت، نیاز تأیید) یا WP 0.2 با گیت سه‌ارزشی پذیرفته شود (AD‑10).
+- **نحوهٔ برگرداندن:** `git revert` همان commit. تغییرات در AD‑10 فهرست شده.
+- **ادامه:** بر اساس قانون (ریز‑حلقه: گیت قرمز رد نمی‌شود و توقف کل حلقه نیست)، حلقه به WP مستقل بعدی می‌رود (0.4 → 0.7 → فاز ۲). WP 0.2 `BLOCKED` باز می‌ماند.

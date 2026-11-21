@@ -153,11 +153,18 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -169,11 +176,18 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -185,13 +199,22 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "coach",
     "reception",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -203,11 +226,18 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -219,13 +249,22 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "coach",
     "reception",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -237,11 +276,18 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "PUT",
@@ -253,11 +299,18 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -269,11 +322,18 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -285,11 +345,18 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -301,13 +368,22 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "coach",
     "reception",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -319,9 +395,16 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "super_admin_only"
+   ],
    "roles": [
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -333,9 +416,16 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "super_admin_only"
+   ],
    "roles": [
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -347,9 +437,16 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "super_admin_only"
+   ],
    "roles": [
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "DELETE",
@@ -361,9 +458,16 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "super_admin_only"
+   ],
    "roles": [
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -375,11 +479,16 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "super_admin_only"
+   ],
    "roles": [
-    "manager",
-    "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -391,11 +500,16 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "super_admin_only"
+   ],
    "roles": [
-    "manager",
-    "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -407,11 +521,16 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "super_admin_only"
+   ],
    "roles": [
-    "manager",
-    "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "DELETE",
@@ -423,11 +542,16 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "super_admin_only"
+   ],
    "roles": [
-    "manager",
-    "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -439,11 +563,16 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "super_admin_only"
+   ],
    "roles": [
-    "manager",
-    "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -455,13 +584,22 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -473,13 +611,22 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -491,13 +638,22 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -509,12 +665,20 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "coach",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -526,12 +690,20 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "coach",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -543,13 +715,18 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "owner_scope"
+   ],
    "roles": [
     "member",
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -561,13 +738,22 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -579,13 +765,18 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "owner_scope"
+   ],
    "roles": [
     "member",
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -597,13 +788,18 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "owner_scope"
+   ],
    "roles": [
     "member",
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -615,13 +811,22 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -631,7 +836,24 @@
     "auth"
    ],
    "guards": [],
-   "roles": []
+   "scopes": [],
+   "roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "always"
   },
   {
    "method": "POST",
@@ -643,12 +865,24 @@
    "guards": [
     "authenticated"
    ],
+   "scopes": [],
    "roles": [
     "member",
+    "coach",
+    "reception",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -658,7 +892,24 @@
     "auth"
    ],
    "guards": [],
-   "roles": []
+   "scopes": [],
+   "roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "always"
   },
   {
    "method": "POST",
@@ -668,7 +919,24 @@
     "auth"
    ],
    "guards": [],
-   "roles": []
+   "scopes": [],
+   "roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "always"
   },
   {
    "method": "POST",
@@ -680,11 +948,24 @@
    "guards": [
     "authenticated"
    ],
+   "scopes": [],
    "roles": [
+    "member",
+    "coach",
+    "reception",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -696,11 +977,24 @@
    "guards": [
     "authenticated"
    ],
+   "scopes": [],
    "roles": [
+    "member",
+    "coach",
+    "reception",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -712,11 +1006,24 @@
    "guards": [
     "authenticated"
    ],
+   "scopes": [],
    "roles": [
+    "member",
+    "coach",
+    "reception",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -726,7 +1033,19 @@
     "auth"
    ],
    "guards": [],
-   "roles": []
+   "scopes": [
+    "body_credential"
+   ],
+   "roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "always_roles": [],
+   "anonymous": "may"
   },
   {
    "method": "GET",
@@ -738,12 +1057,24 @@
    "guards": [
     "authenticated"
    ],
+   "scopes": [],
    "roles": [
     "member",
+    "coach",
+    "reception",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "DELETE",
@@ -755,12 +1086,24 @@
    "guards": [
     "authenticated"
    ],
+   "scopes": [],
    "roles": [
     "member",
+    "coach",
+    "reception",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -772,12 +1115,20 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "coach",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -789,13 +1140,18 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "owner_scope"
+   ],
    "roles": [
     "member",
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -807,13 +1163,22 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -825,11 +1190,18 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -841,13 +1213,22 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -859,13 +1240,22 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -877,13 +1267,18 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "owner_scope"
+   ],
    "roles": [
     "member",
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -895,13 +1290,18 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "owner_scope"
+   ],
    "roles": [
     "member",
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -913,13 +1313,18 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "owner_scope"
+   ],
    "roles": [
     "member",
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -931,6 +1336,7 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "coach",
@@ -938,7 +1344,16 @@
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -950,12 +1365,20 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "coach",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -967,13 +1390,18 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "owner_scope"
+   ],
    "roles": [
     "member",
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -985,13 +1413,18 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "owner_scope"
+   ],
    "roles": [
     "member",
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -1004,11 +1437,16 @@
     "grant:finance.read",
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -1021,11 +1459,16 @@
     "grant:finance.write",
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "DELETE",
@@ -1038,11 +1481,16 @@
     "grant:finance.write",
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "PATCH",
@@ -1055,11 +1503,16 @@
     "grant:finance.write",
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -1072,11 +1525,16 @@
     "grant:finance.read",
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -1089,11 +1547,16 @@
     "grant:finance.write",
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -1105,6 +1568,7 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "coach",
@@ -1112,7 +1576,16 @@
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -1124,6 +1597,7 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "coach",
@@ -1131,7 +1605,16 @@
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -1143,13 +1626,22 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -1161,6 +1653,9 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "owner_scope"
+   ],
    "roles": [
     "member",
     "coach",
@@ -1168,7 +1663,9 @@
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -1180,6 +1677,9 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "owner_scope"
+   ],
    "roles": [
     "member",
     "coach",
@@ -1187,7 +1687,9 @@
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -1199,6 +1701,7 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "coach",
@@ -1206,7 +1709,16 @@
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -1218,13 +1730,22 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "DELETE",
@@ -1236,13 +1757,18 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "owner_scope"
+   ],
    "roles": [
     "member",
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -1254,6 +1780,7 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "coach",
@@ -1261,7 +1788,16 @@
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -1273,13 +1809,22 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -1292,11 +1837,16 @@
     "grant:finance.read",
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -1309,11 +1859,16 @@
     "grant:finance.read",
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -1326,11 +1881,16 @@
     "grant:finance.read",
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -1343,11 +1903,16 @@
     "grant:finance.write",
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -1357,7 +1922,24 @@
     "health"
    ],
    "guards": [],
-   "roles": []
+   "scopes": [],
+   "roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "always"
   },
   {
    "method": "GET",
@@ -1369,13 +1951,22 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -1387,13 +1978,22 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -1405,13 +2005,22 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "coach",
     "reception",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -1423,13 +2032,22 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "coach",
     "reception",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -1441,6 +2059,7 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "coach",
@@ -1448,7 +2067,16 @@
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "PUT",
@@ -1460,6 +2088,7 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "coach",
@@ -1467,7 +2096,16 @@
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -1479,6 +2117,9 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "owner_scope"
+   ],
    "roles": [
     "member",
     "coach",
@@ -1486,7 +2127,9 @@
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -1498,6 +2141,7 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "coach",
@@ -1505,7 +2149,16 @@
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -1517,13 +2170,22 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "coach",
     "reception",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -1535,13 +2197,22 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "coach",
     "reception",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -1553,6 +2224,7 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "coach",
@@ -1560,7 +2232,16 @@
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -1572,6 +2253,9 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "owner_scope"
+   ],
    "roles": [
     "member",
     "coach",
@@ -1579,7 +2263,9 @@
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -1591,6 +2277,9 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "owner_scope"
+   ],
    "roles": [
     "member",
     "coach",
@@ -1598,7 +2287,9 @@
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [],
+   "anonymous": "never"
   },
   {
    "method": "PATCH",
@@ -1610,13 +2301,22 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "coach",
     "reception",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -1628,6 +2328,9 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "owner_scope"
+   ],
    "roles": [
     "member",
     "coach",
@@ -1635,7 +2338,9 @@
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -1647,11 +2352,10 @@
    "guards": [
     "metrics_token"
    ],
-   "roles": [
-    "manager",
-    "admin",
-    "super_admin"
-   ]
+   "scopes": [],
+   "roles": [],
+   "always_roles": [],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -1663,11 +2367,18 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -1679,6 +2390,9 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "owner_scope"
+   ],
    "roles": [
     "member",
     "coach",
@@ -1686,7 +2400,9 @@
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -1698,6 +2414,9 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "owner_scope"
+   ],
    "roles": [
     "member",
     "coach",
@@ -1705,7 +2424,9 @@
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -1717,6 +2438,9 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "owner_scope"
+   ],
    "roles": [
     "member",
     "coach",
@@ -1724,7 +2448,9 @@
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -1736,13 +2462,18 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "owner_scope"
+   ],
    "roles": [
     "member",
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -1754,13 +2485,18 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "owner_scope"
+   ],
    "roles": [
     "member",
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -1772,13 +2508,22 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -1790,13 +2535,18 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "owner_scope"
+   ],
    "roles": [
     "member",
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -1808,12 +2558,20 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "coach",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -1825,13 +2583,18 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "owner_scope"
+   ],
    "roles": [
     "member",
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -1843,12 +2606,20 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "coach",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -1860,13 +2631,22 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -1878,13 +2658,22 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "reception",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -1896,13 +2685,18 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "owner_scope"
+   ],
    "roles": [
     "member",
     "reception",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -1915,13 +2709,20 @@
     "grant:finance.write",
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "reception",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "reception",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -1934,12 +2735,18 @@
     "grant:finance.write",
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "reception",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "reception",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -1951,11 +2758,18 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -1967,11 +2781,18 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -1983,11 +2804,18 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -1999,13 +2827,18 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "owner_scope"
+   ],
    "roles": [
     "member",
     "reception",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -2018,12 +2851,18 @@
     "grant:finance.write",
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "reception",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "reception",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -2035,13 +2874,18 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "owner_scope"
+   ],
    "roles": [
     "member",
     "reception",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -2054,12 +2898,18 @@
     "grant:finance.write",
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "reception",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "reception",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -2071,13 +2921,18 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "owner_scope"
+   ],
    "roles": [
     "member",
     "reception",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -2089,13 +2944,18 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "owner_scope"
+   ],
    "roles": [
     "member",
     "reception",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -2107,13 +2967,18 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "owner_scope"
+   ],
    "roles": [
     "member",
     "reception",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -2126,12 +2991,18 @@
     "grant:finance.write",
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "reception",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "reception",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -2143,13 +3014,22 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "reception",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -2161,12 +3041,20 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "reception",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -2176,7 +3064,24 @@
     "payments"
    ],
    "guards": [],
-   "roles": []
+   "scopes": [],
+   "roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "always"
   },
   {
    "method": "GET",
@@ -2188,13 +3093,18 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "owner_scope"
+   ],
    "roles": [
     "member",
     "reception",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -2206,13 +3116,22 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "reception",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -2224,12 +3143,20 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "reception",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -2242,12 +3169,18 @@
     "grant:finance.write",
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "reception",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "reception",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -2259,13 +3192,18 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "owner_scope"
+   ],
    "roles": [
     "member",
     "reception",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -2278,12 +3216,18 @@
     "grant:finance.write",
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "reception",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "reception",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -2295,6 +3239,7 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "coach",
@@ -2302,7 +3247,16 @@
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -2314,6 +3268,7 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "coach",
@@ -2321,7 +3276,16 @@
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -2333,6 +3297,7 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "coach",
@@ -2340,7 +3305,16 @@
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -2352,13 +3326,22 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "coach",
     "reception",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -2370,12 +3353,20 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "coach",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -2387,13 +3378,18 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "owner_scope"
+   ],
    "roles": [
     "member",
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -2405,13 +3401,18 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "owner_scope"
+   ],
    "roles": [
     "member",
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -2423,13 +3424,18 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "owner_scope"
+   ],
    "roles": [
     "member",
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -2441,13 +3447,22 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -2459,13 +3474,18 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "owner_scope"
+   ],
    "roles": [
     "member",
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -2477,13 +3497,22 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -2495,12 +3524,20 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "coach",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -2512,12 +3549,20 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "coach",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "coach",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -2530,11 +3575,17 @@
     "grant:reports.confidential",
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "coach",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "coach",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -2546,6 +3597,7 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "coach",
@@ -2553,7 +3605,16 @@
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -2565,13 +3626,22 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "reception",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "DELETE",
@@ -2583,13 +3653,22 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "reception",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "PATCH",
@@ -2601,13 +3680,22 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "reception",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -2619,6 +3707,7 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "coach",
@@ -2626,7 +3715,16 @@
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -2638,6 +3736,7 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "coach",
@@ -2645,7 +3744,16 @@
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -2657,12 +3765,20 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "reception",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -2674,12 +3790,16 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "super_admin_only"
+   ],
    "roles": [
-    "reception",
-    "manager",
-    "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -2691,13 +3811,22 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "reception",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -2709,6 +3838,7 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "coach",
@@ -2716,7 +3846,16 @@
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -2728,12 +3867,16 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "super_admin_only"
+   ],
    "roles": [
-    "reception",
-    "manager",
-    "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "PUT",
@@ -2745,12 +3888,16 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "super_admin_only"
+   ],
    "roles": [
-    "reception",
-    "manager",
-    "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -2762,6 +3909,7 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "coach",
@@ -2769,7 +3917,16 @@
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "PATCH",
@@ -2781,12 +3938,20 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "reception",
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -2798,6 +3963,7 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "coach",
@@ -2805,7 +3971,16 @@
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -2817,6 +3992,7 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "coach",
@@ -2824,7 +4000,16 @@
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -2836,12 +4021,16 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "super_admin_only"
+   ],
    "roles": [
-    "reception",
-    "manager",
-    "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -2853,6 +4042,7 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "coach",
@@ -2860,7 +4050,16 @@
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "POST",
@@ -2872,12 +4071,16 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "super_admin_only"
+   ],
    "roles": [
-    "reception",
-    "manager",
-    "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -2889,6 +4092,7 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "coach",
@@ -2896,7 +4100,16 @@
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "PATCH",
@@ -2908,12 +4121,16 @@
    "guards": [
     "permission"
    ],
+   "scopes": [
+    "super_admin_only"
+   ],
    "roles": [
-    "reception",
-    "manager",
-    "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -2925,6 +4142,7 @@
    "guards": [
     "permission"
    ],
+   "scopes": [],
    "roles": [
     "member",
     "coach",
@@ -2932,7 +4150,16 @@
     "manager",
     "admin",
     "super_admin"
-   ]
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "never"
   },
   {
    "method": "GET",
@@ -2942,7 +4169,24 @@
     "updates"
    ],
    "guards": [],
-   "roles": []
+   "scopes": [],
+   "roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "always"
   },
   {
    "method": "GET",
@@ -2952,7 +4196,24 @@
     "health"
    ],
    "guards": [],
-   "roles": []
+   "scopes": [],
+   "roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "always_roles": [
+    "member",
+    "coach",
+    "reception",
+    "manager",
+    "admin",
+    "super_admin"
+   ],
+   "anonymous": "always"
   }
  ]
 }
