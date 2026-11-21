@@ -7,7 +7,7 @@
 
 ## ۱. خلاصهٔ تعداد فایل
 
-- کل فایل‌های ترک‌شده: **1170** (خطوط متنی: 162141)
+- کل فایل‌های ترک‌شده: **1171** (خطوط متنی: 162222)
 
 | ناحیه | تعداد فایل | خطوط متنی |
 |---|---|---|
@@ -20,7 +20,7 @@
 | زیرساخت و کانتینر | 15 | 597 |
 | سایر mp-app | 4 | 239 |
 | شواهد QA | 40 | 1626 |
-| مستندات | 180 | 20782 |
+| مستندات | 181 | 20863 |
 | گزارش‌های عامل | 141 | 8325 |
 
 ## ۲. عملیات API (از `app.openapi()`، مرجع اصلی)
@@ -1306,10 +1306,11 @@
 | مستندات | `docs/MuscleParadise/assets/knowledge-atlas.svg` | 77 | 5239 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/assets/readme-hero.svg` | 66 | 4533 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/assets/system-architecture.svg` | 148 | 13022 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/CHECKLIST.md` | 145 | 13382 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/CHECKLIST.md` | 145 | 13921 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/DECISIONS.md` | 78 | 7900 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/EXECUTION-LOG.md` | 103 | 14539 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/INVENTORY.md` | 1535 | 143463 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/FINN-AUDIT-LOOP.md` | 77 | 7138 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/INVENTORY.md` | 1539 | 143897 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/findings.json` | 511 | 14777 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/status.json` | 34 | 2693 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/brand/concepts/M101-CONCEPTS.md` | 75 | 7809 | NOT-REVIEWED |
