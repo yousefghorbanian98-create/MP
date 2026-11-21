@@ -25,6 +25,7 @@ services:
       MP_PAYMENT_GATEWAY: ${MP_PAYMENT_GATEWAY:?set manual}
       MP_PAYMENT_SANDBOX: ${MP_PAYMENT_SANDBOX:-false}
       PROMETHEUS_MULTIPROC_DIR: /tmp/prometheus-multiproc
+      MP_METRICS_TOKEN: ${MP_METRICS_TOKEN:?MP_METRICS_TOKEN باید تنظیم شود}
     volumes:
       - mp-data:/data
     tmpfs:
@@ -106,6 +107,8 @@ services:
       - --storage.tsdb.retention.time=15d
     environment:
       PROMETHEUS_BACKEND_PORT: "8000"
+      # WP 1.3 / F-06: الزامی — بدون آن Compose بالا نمی‌آید تا scrape بی‌توکن نشود.
+      MP_METRICS_TOKEN: ${MP_METRICS_TOKEN:?MP_METRICS_TOKEN باید تنظیم شود}
     volumes:
       - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - ./monitoring/alerts.yml:/etc/prometheus/alerts.yml:ro

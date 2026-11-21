@@ -71,7 +71,7 @@ curl -fsS http://localhost:8080/api/v1/health/ready  # stack deploy، پشت TLS
 
 پیش از ورود دادهٔ واقعی:
 
-- [ ] health و readiness سبز باشند و `/api/v1/metrics` در Prometheus دیده شود.
+- [ ] health و readiness سبز باشند و `/api/v1/metrics` با توکن `MP_METRICS_TOKEN` در Prometheus دیده شود (بدون توکن ۴۰۱، و از مسیر عمومی ۴۰۴).
 - [ ] OTP با provider واقعی در sandbox/provider-approved test انجام شود؛ پاسخ OTP توسعه در production غیرفعال است.
 - [ ] درگاه زنده فقط پس از تأیید پذیرنده/کسب‌وکار؛ کد/Compose موفقیت درگاه واقعی را اثبات نمی‌کند.
 - [ ] عضویت/مالکیت، گردش کیف‌پول و دسترسی اعضا روی دادهٔ مصنوعی بازبینی شوند.

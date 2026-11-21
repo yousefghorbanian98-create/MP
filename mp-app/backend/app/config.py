@@ -67,6 +67,9 @@ class Settings(BaseSettings):
     shop_timezone: str = "Asia/Tehran"
     # QF-26: فهرست IP پروکسی‌های معتمد (ویرگول‌جدا). خالی = هیچ هدر XFF پذیرفته نمی‌شود.
     trusted_proxies: str = ""
+    # WP 1.3 / F-06: توکن Bearer برای scrape پرومتئوس روی `/api/v1/metrics`.
+    # خالی = endpoint بسته است (۴۰۳)؛ بدون هدر یا با توکن غلط ۴۰۱.
+    metrics_token: str = ""
     # QF-27: اگر true، readiness بدون heartbeat تازهٔ worker ⇒ ۵۰۳ (استقرار با worker).
     require_worker: bool = False
     shop_open_hour: int = 7

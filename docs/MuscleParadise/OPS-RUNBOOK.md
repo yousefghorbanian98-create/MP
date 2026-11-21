@@ -55,7 +55,7 @@ MP_DATABASE_URL=sqlite:////tmp/mp-drill/mp.db python -m alembic check     # با
 
 ## ۳) پایش و incident
 
-- Prometheus scrape می‌کند `/api/v1/metrics` و Valkey exporter؛ exposition با `prometheus-client` استاندارد و تجمیع multiprocess است.
+- Prometheus با توکن Bearer (از `MP_METRICS_TOKEN`) scrape می‌کند `/api/v1/metrics` و Valkey exporter؛ exposition با `prometheus-client` استاندارد و تجمیع multiprocess است.
 - آلارم‌های SLO ورود، backend down، نرخ 5xx و Valkey down در `mp-app/infra/monitoring/alerts.yml` هستند. Prometheus به‌تنهایی پیامک/ایمیل/صفحه‌بندی نمی‌فرستد؛ receiver و test notification عملیاتی‌اند.
 - برای readiness: `GET /api/v1/health/ready` باید HTTP 200 و `ready=true` بدهد؛ 503 یعنی DB یا backend محدودسازی نرخ آماده نیست.
 - لاگ‌ها JSON در stdout؛ `X-Request-ID` را برای تطبیق درخواست و لاگ نگه دارید و هیچ OTP، token، کلید یا embedding خام را لاگ/تیکت نکنید.
@@ -120,5 +120,5 @@ MP_DATABASE_URL=sqlite:////tmp/mp-drill/mp.db python -m alembic check     # با
 
 - heartbeat هر دور `python -m jobs.outbox_relay` نوشته می‌شود؛ **صف خالی با worker مرده یکی نیست**.
 - `MP_REQUIRE_WORKER=true` در استقرار worker: readiness بدون heartbeat تازه ۵۰۳ می‌دهد.
-- `/api/v1/metrics` (بدون احراز هویت) فقط عدد می‌دهد: هیچ payload، متن خطا یا شناسهٔ مالی در آن نیست.
+- `/api/v1/metrics` (WP 1.3 / F-06) نیازمند `Authorization: Bearer <MP_METRICS_TOKEN>` است: بدون هدر ۴۰۱، با توکن غلط ۴۰۱، و اگر `MP_METRICS_TOKEN` تنظیم نشده باشد ۴۰۳. Caddy این مسیر را از دسترسی عمومی خارج کرده و `respond 404` می‌دهد. Compose بدون `MP_METRICS_TOKEN` بالا نمی‌آید. هیچ payload، متن خطا یا شناسهٔ مالی در متریک نیست.
 - قاعدهٔ Alertmanager در این مخزن اجرا نمی‌شود (سرور پایش بیرونی نیست) — `BLOCKED` برای اثبات هشدار واقعی.

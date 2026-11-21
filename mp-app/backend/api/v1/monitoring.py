@@ -2,16 +2,44 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Response
+import hmac
+
+from fastapi import APIRouter, Depends, Request, Response
 from fastapi.responses import JSONResponse
 from prometheus_client import CONTENT_TYPE_LATEST
 
+from app.config import settings
+from app.errors import ForbiddenError, UnauthorizedError
 from app.metrics import metrics
 
 router = APIRouter(tags=["health"])
 
 
-@router.get("/metrics", summary="متریک‌های Prometheus-style")
+def require_metrics_token(request: Request) -> None:
+    """گارد `/metrics` (WP 1.3 / F-06): Bearer با `MP_METRICS_TOKEN`.
+
+    - توکن تنظیم‌نشده ⇒ ۴۰۳ (endpoint بسته است).
+    - هدر نبود یا توکن غلط ⇒ ۴۰۱.
+    مقایسهٔ ثابت‌زمان (`hmac.compare_digest`) برای جلوگیری از timing leak.
+    """
+    expected = settings.metrics_token
+    if not expected:
+        raise ForbiddenError("متریک‌ها در این محیط غیرفعال‌اند", code="metrics_disabled")
+    scheme, _, token = request.headers.get("authorization", "").partition(" ")
+    if scheme.lower() != "bearer" or not hmac.compare_digest(
+        token.strip().encode(), expected.encode()
+    ):
+        raise UnauthorizedError("توکن متریک معتبر نیست")
+
+
+require_metrics_token.__rbac__ = "metrics_token"  # type: ignore[attr-defined]
+
+
+@router.get(
+    "/metrics",
+    summary="متریک‌های Prometheus-style (نیازمند Bearer)",
+    dependencies=[Depends(require_metrics_token)],
+)
 def prometheus_metrics() -> Response:
     # QF-27: عمق صف از DB خوانده می‌شود؛ اگر DB در دسترس نبود، متریک قبلی
     # نمایش داده می‌شود — `/metrics` نباید به‌خاطر دیتابیس ۵۰۰ بدهد.

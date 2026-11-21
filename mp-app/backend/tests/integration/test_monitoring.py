@@ -7,6 +7,8 @@ from fastapi.testclient import TestClient
 
 from app.main import create_app
 
+from ._metrics import METRICS_AUTH
+
 
 @pytest.fixture()
 def client() -> Generator[TestClient, None, None]:
@@ -26,7 +28,7 @@ def test_metrics_endpoint_exposes_counters(client):
     from app.metrics import metrics
 
     metrics.inc("mp_test_events_total", tag="x")
-    resp = client.get("/api/v1/metrics")
+    resp = client.get("/api/v1/metrics", headers=METRICS_AUTH)
     assert resp.status_code == 200
     assert "mp_test_events_total" in resp.text
     assert 'tag="x"' in resp.text
@@ -37,7 +39,7 @@ def test_metrics_histogram_uses_prometheus_bucket_exposition(client):
 
     for v in (0.1, 0.5, 1.5, 3.0):
         metrics.observe("mp_demo_seconds", v)
-    text = client.get("/api/v1/metrics").text
+    text = client.get("/api/v1/metrics", headers=METRICS_AUTH).text
     assert "mp_demo_seconds_count 4.0" in text
     assert "mp_demo_seconds_sum" in text
     assert "mp_demo_seconds_bucket" in text
@@ -47,7 +49,7 @@ def test_metrics_histogram_uses_prometheus_bucket_exposition(client):
 
 def test_http_metrics_have_bounded_route_and_status_labels(client):
     client.get("/health")
-    text = client.get("/api/v1/metrics").text
+    text = client.get("/api/v1/metrics", headers=METRICS_AUTH).text
     assert 'mp_http_requests_total{method="GET",route="/health",status="200"}' in text
     assert "mp_http_request_duration_seconds_bucket" in text
 
@@ -115,7 +117,7 @@ def test_checkin_metrics_recorded(client, session, make_member):
 
     member = make_member()
     face_service.check_in(session, member.id, method="qr")
-    text = client.get("/api/v1/metrics").text
+    text = client.get("/api/v1/metrics", headers=METRICS_AUTH).text
     assert "mp_checkins_total" in text
 
 

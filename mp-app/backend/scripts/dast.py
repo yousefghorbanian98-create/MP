@@ -148,7 +148,7 @@ def probe_public(operations) -> list[dict]:
     """هر عملیات را **بدون** توکن با یک درخواست ساده صدا بزن.
 
     اگر پاسخ ۲xx باشد، آن مسیر برای هر کسی باز است. فهرست عمومیِ مستند
-    (auth/health/metrics/updates) انتظار می‌رود؛ بقیه یافته‌اند.
+    (auth/health/updates) انتظار می‌رود؛ بقیه یافته‌اند.
     """
 
     from app.main import create_app
@@ -161,7 +161,6 @@ def probe_public(operations) -> list[dict]:
         "/api/v1/auth/logout-all",
         "/api/v1/updates/manifest",
         "/api/v1/health/ready",
-        "/api/v1/metrics",
         "/health",
     }
     out = []

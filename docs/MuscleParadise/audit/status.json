@@ -8,8 +8,8 @@
   "note": "dev_code در modules/auth/service.py:53 و :261"
  },
  "F-06": {
-  "status": "VERIFIED-IN-CODE",
-  "note": "api/v1/monitoring.py:14 بدون dependency"
+  "status": "FIXED",
+  "note": "WP 1.3: /api/v1/metrics با Bearer (MP_METRICS_TOKEN) محافظت شد: بدون هدر/توکن غلط ۴۰۱، بدون توکن تنظیم‌شده ۴۰۳؛ Caddy مسیر را ۴۰۴ می‌کند؛ Prometheus با credentials؛ Compose الزام متغیر دارد. تست: tests/integration/test_wp13_metrics_auth.py."
  },
  "F-13": {
   "status": "FIXED",
@@ -26,5 +26,9 @@
  "A5": {
   "status": "IN-PROGRESS",
   "note": "WP 0.8: همهٔ ۴۲ ارجاع uses: در ۷ workflow به SHA کامیت پین شد (هر خط با برچسب نسخه در کامنت). گیت‌های لایهٔ تأمین (SBOM/امضا/provenance) هنوز اضافه نشده‌اند."
+ },
+ "A2": {
+  "status": "FIXED",
+  "note": "همان شاهد F-06 (WP 1.3). پیش از اصلاح: ۲۰۰ بدون توکن با ۳۴۶ خط متریک."
  }
 }

@@ -11,7 +11,7 @@
 | شناسه | عنوان | وضعیت | یادداشت |
 |---|---|---|---|
 | A1 | قفل‌شدگی کامل سرور بر اثر پر شدن استخر اتصال — ریشه‌یابی نشده | OPEN |  |
-| A2 | `/api/v1/metrics` کاملاً بدون احراز هویت و عمومی است | OPEN |  |
+| A2 | `/api/v1/metrics` کاملاً بدون احراز هویت و عمومی است | FIXED | همان شاهد F-06 (WP 1.3). پیش از اصلاح: ۲۰۰ بدون توکن با ۳۴۶ خط متریک. |
 | A3 | `MP_TRUSTED_PROXIES` پیش‌فرض خالی است و در production اعتبارسنجی نمی‌شود → همه‌ی کاربران یک سبد rate-limit | OPEN |  |
 | A4 | `mp.db` در ریشهٔ مخزن ترک‌شده است (دیتابیس واقعی در Git) | OPEN |  |
 | A5 | زنجیرهٔ تأمین آرتیفکت صفر گیت دارد | IN-PROGRESS | WP 0.8: همهٔ ۴۲ ارجاع uses: در ۷ workflow به SHA کامیت پین شد (هر خط با برچسب نسخه در کامنت). گیت‌های لایهٔ تأمین (SBOM/امضا/provenance) هنوز اضافه نشده‌اند. |
@@ -78,7 +78,7 @@
 | F-03 | قفل شدن سرور زیر بار؛ رندر `rich` روی event loop | OPEN |  |
 | F-04 | اشباع استخر اتصال؛ نبودِ هیچ متریک pool؛ ناسازگاری ظرفیت‌ها | OPEN |  |
 | F-05 | `SystemError` در `casbin enforce` زیر همزمانی (compile در هر درخواست) | OPEN |  |
-| F-06 | `/api/v1/metrics` بدون احراز هویت | VERIFIED-IN-CODE | api/v1/monitoring.py:14 بدون dependency |
+| F-06 | `/api/v1/metrics` بدون احراز هویت | FIXED | WP 1.3: /api/v1/metrics با Bearer (MP_METRICS_TOKEN) محافظت شد: بدون هدر/توکن غلط ۴۰۱، بدون توکن تنظیم‌شده ۴۰۳؛ Caddy مسیر را ۴۰۴ می‌کند؛ Prometheus با credentials؛ Compose الزام متغیر دارد. تست: tests/integration/test_wp13_metrics_auth.py. |
 | F-07 | پوشش مستند ۹۴٫۲۸٪ در برابر واقعی ۸۳٫۷۳٪ | OPEN |  |
 | F-08 | `logout-all` توکن‌های بدون `sid` را باطل نمی‌کند | OPEN |  |
 | F-09 | پول بزرگ: `2^53`، `2^53+1`، `10^18` پذیرفته می‌شوند + coercion رشته→عدد | OPEN |  |
@@ -135,10 +135,11 @@
 | بخش | وضعیت | تعداد |
 |---|---|---|
 | blocked | OPEN | 5 |
-| findings | FIXED | 2 |
+| findings | FIXED | 3 |
 | findings | IN-PROGRESS | 1 |
 | findings | OPEN | 21 |
-| findings | VERIFIED-IN-CODE | 3 |
+| findings | VERIFIED-IN-CODE | 2 |
 | non_issues | OPEN | 14 |
+| problems | FIXED | 1 |
 | problems | IN-PROGRESS | 1 |
-| problems | OPEN | 57 |
+| problems | OPEN | 56 |

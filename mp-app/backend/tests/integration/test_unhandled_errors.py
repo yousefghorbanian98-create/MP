@@ -23,6 +23,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.config import settings
+from ._metrics import METRICS_AUTH
 
 _counter = itertools.count(880001)
 
@@ -112,7 +113,7 @@ def test_unexpected_error_increments_metric(client, monkeypatch) -> None:
     client.get("/api/v1/members", headers=_headers())
     assert _count() == before + 1
     # و همان از مسیر عمومی متریک هم دیده می‌شود
-    assert "mp_unhandled_errors_total" in client.get("/api/v1/metrics").text
+    assert "mp_unhandled_errors_total" in client.get("/api/v1/metrics", headers=METRICS_AUTH).text
 
 
 def test_huge_offset_is_rejected_before_touching_db(client) -> None:

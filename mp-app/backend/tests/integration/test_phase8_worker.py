@@ -32,6 +32,8 @@ from db.models import OutboxEvent, WorkerHeartbeat
 from modules.outbox import health as outbox_health
 from modules.outbox.service import enqueue
 
+from ._metrics import METRICS_AUTH
+
 
 def _enqueue(db, key: str, topic: str = "payment.approved") -> OutboxEvent:
     return enqueue(db, topic=topic, payload={"amount": 1000}, dedup_key=key, commit=False)
@@ -112,7 +114,7 @@ def test_metrics_endpoint_refreshes_from_database(client: TestClient) -> None:
     with get_session_factory()() as s:
         _enqueue(s, "metrics-endpoint")
         s.commit()
-    res = client.get("/api/v1/metrics")
+    res = client.get("/api/v1/metrics", headers=METRICS_AUTH)
     assert res.status_code == 200
     assert "mp_outbox_pending" in res.text
 

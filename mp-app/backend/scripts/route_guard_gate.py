@@ -50,14 +50,12 @@ PUBLIC: dict[tuple[str, str], str] = {
         "/api/v1/payments/{payment_id}/gateway-return",
     ): "redirect بانک (M110) — با token امضاشده + سقف نرخ",
     ("GET", "/api/v1/health/ready"): "probe زیرساخت",
-    ("GET", "/api/v1/metrics"): "scrape پرومتئوس",
     ("GET", "/health"): "probe زیرساخت",
 }
 
 # مسیرهایی که *عمداً* عمومی‌اند ولی در آینده باید بسته شوند — جدا نگه می‌داریم
 # تا در گزارش به‌عنوان بدهی فنی دیده شوند، نه اینکه با بقیه قاطی شوند.
 KNOWN_DEBT: dict[tuple[str, str], str] = {
-    ("GET", "/api/v1/metrics"): "متریک‌ها بدون احراز هویت — باید در شبکهٔ داخلی محدود شود",
 }
 
 
