@@ -49,7 +49,7 @@
 | 2.1 | F-03 | READY | — | لاگ با `ConsoleRenderer` در پروسهٔ سرویس؛ `QueueHandler` |
 | 2.2 | F-04 | READY | — | گیج‌های pool؛ ۵۰۳ به‌جای ۵۰۰ |
 | 2.3 | F-18 | READY | — | BD-4: یک ورکر + سقف مستند؛ `gateway.py` sync→async |
-| 2.4 | F-05 | READY | — | RBAC پیش‌کامپایل؛ قفل `_enforcer` |
+| 2.4 | F-05 | DONE | (این کامیت) | red: `tests/regression/test_wp24_rbac_decision_cache.py` (۵۰ ارزیابی casbin برای یک درخواست تکراری؛ ۱۰۰۰ ارزیابی برای ۱۰۰۰ شناسهٔ مختلف؛ کش و متریک نبود)؛ اصلاح: `security/rbac.py` کش محدود LRU با نرمال‌سازی شناسه، `get_enforcer` با قفل، `mp_rbac_decisions_total`/`mp_rbac_errors_total`؛ بار کیت (۸۰×۴۰۰، ۳۲٬۰۰۰ فراخوانی): قبل `SystemError` ۱، p50 ۱٫۰۱۶ ms ⇒ بعد ۰، p50 ۰٫۰۰۶ ms (`evidence/after/wp24/`)؛ AD‑19 |
 | 2.5 | F-17 | DONE | `a9146c7` | کیت: semgrep `mp-silent-except-pass` = 0؛ نام شمارنده‌ها طبق کیت (`mp_metrics_scrape_errors_total`، `mp_dast_errors_total`)؛ `/health/ready` بازتاب می‌دهد؛ red 6 تست ⇒ green؛ pytest کامل `1254 passed, 2 skipped, rc=0`. یادداشت: گیت semgrep پیش از تغییر هم ۰ بود؛ تست‌های قرمز شکاف واقعی (نام/بازتاب) را ثبت می‌کنند |
 | 2.6 | F-29 | DONE | (این کامیت) | red: ۶ تست exc_info ناموفق ⇒ green: ۱۴ تست؛ pytest ۱۱۴۶/۲/۰؛ AD‑6 (متن استثنا پنهان) |
 | 3.1 | F-25 | DONE | (این کامیت) | گیت: `unexpected_2xx_on_bad_id` ۴۸ ⇒ ۰ (۸۷۲ سلول)؛ `id_guard_rejections` ۷۰ ⇒ ۳۳۸ (۴×۵۷ مسیر پارامتری برآورده)؛ بار `plain-dev 10 40` بدون رگرسیون (نسبت‌ها در `evidence/after/wp31-load-ratios.json`)؛ red: `test_wp31_id_floor.py` (۲۴۸/۲۴۸ ناموفق) ⇒ ۵ سبز؛ pytest کامل `1262 passed, 2 skipped, rc=0` |

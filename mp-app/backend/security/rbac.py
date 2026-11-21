@@ -6,7 +6,13 @@
 
 from __future__ import annotations
 
+import re
+import threading
+from functools import lru_cache
+
 import casbin
+
+from app.metrics import metrics
 
 MODEL_TEXT = """
 [request_definition]
@@ -242,18 +248,37 @@ def _build_enforcer() -> casbin.Enforcer:
     return enforcer
 
 
-_enforcer: casbin.Enforcer | None = None
+_ENFORCER_SLOT: dict[str, casbin.Enforcer] = {}
+_ENFORCER_LOCK = threading.Lock()
 
 
 def get_enforcer() -> casbin.Enforcer:
-    global _enforcer
-    if _enforcer is None:
-        _enforcer = _build_enforcer()
-    return _enforcer
+    enforcer = _ENFORCER_SLOT.get("enforcer")
+    if enforcer is None:
+        # WP 2.4 / F‑05: ساخت تنبل با قفل — دو نخ همزمان نباید دو enforcer بسازند.
+        with _ENFORCER_LOCK:
+            enforcer = _ENFORCER_SLOT.get("enforcer")
+            if enforcer is None:
+                enforcer = _build_enforcer()
+                _ENFORCER_SLOT["enforcer"] = enforcer
+    return enforcer
 
 
-def enforce(role: str, path: str, method: str) -> bool:
-    """بررسی اجازهٔ نقش برای مسیر/متد — DENIES (رد صریح) بر allow مقدم است (D-004)."""
+_NUMERIC_SEGMENT = re.compile(r"(?<=/)\d+(?=/|$)")
+
+
+def _normalise_path(path: str) -> str:
+    """بخش‌های عددی مسیر (شناسه) را به `:id` تبدیل می‌کند.
+
+    هیچ سیاستی بخش عددی تحت‌اللفظی ندارد (بررسی شد)، پس تصمیم با این نرمال‌سازی تغییر نمی‌کند
+    (تست هم‌ارزی `test_numeric_id_normalisation_preserves_every_decision`). این کار کاردینالیتی
+    کش را از «هر شناسه» به «هر الگوی مسیر» کاهش می‌دهد.
+    """
+    return _NUMERIC_SEGMENT.sub(":id", path)
+
+
+def _decide_raw(role: str, path: str, method: str) -> bool:
+    """تصمیم بدون کش: DENIES (رد صریح) بر allow مقدم است؛ سپس casbin."""
     for deny_role, deny_obj, deny_act in DENIES:
         if (
             role == deny_role
@@ -262,3 +287,25 @@ def enforce(role: str, path: str, method: str) -> bool:
         ):
             return False
     return bool(get_enforcer().enforce(role, path, method))
+
+
+@lru_cache(maxsize=4096)
+def _decide(role: str, path: str, method: str) -> bool:
+    """تصمیم کش‌شده برای مسیر نرمال‌شده. سیاست ثابت است، پس کش امن است؛ خطا کش نمی‌شود."""
+    return _decide_raw(role, path, method)
+
+
+def enforce_cache_clear() -> None:
+    """کش تصمیم را خالی می‌کند (پس از تغییر سیاست در تست‌ها)."""
+    _decide.cache_clear()
+
+
+def enforce(role: str, path: str, method: str) -> bool:
+    """بررسی اجازهٔ نقش برای مسیر/متد — DENIES (رد صریح) بر allow مقدم است (D-004)."""
+    try:
+        allowed = _decide(role, _normalise_path(path), method)
+    except Exception:
+        metrics.inc("mp_rbac_errors_total")
+        raise
+    metrics.inc("mp_rbac_decisions_total", role=role, decision="allow" if allowed else "deny")
+    return allowed

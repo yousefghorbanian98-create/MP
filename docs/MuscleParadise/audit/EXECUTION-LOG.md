@@ -388,3 +388,23 @@ WP: 0.4 · F: F‑07 · شاهد: `evidence/after/wp04/` · تصمیم: AD‑11 
 - **گیت:** `semgrep --config=.semgrep/mp-harness-rules.yml mp-app/studio/src` ⇒ exit 0، ۰ یافته (`mp-ts-float-money` و `mp-ts-negative-sentinel-member-id`).
 - **استودیو:** `npx tsc --noEmit` ⇒ rc=0؛ `npx vitest run` ⇒ 46 فایل passed/1 skipped، ۲۹۹ تست passed/۹ skipped، rc=0 (`/home/user/recovery4/wp46-vitest.log`).
 - **Rollback:** `git revert <commit WP 4.6>`.
+
+## WP 2.4 · RBAC از کش تصمیم — DONE (با یک محدودیت باقی‌مانده، AD‑19)
+
+- **Red:** `tests/regression/test_wp24_rbac_decision_cache.py` ⇒ قبل از اصلاح: `casbin ارزیابی شد 50 بار؛ باید ۱ بار`؛ `۱۰۰۰ شناسه ⇒ 1000 == 1`؛ نبود کش و نبود `mp_rbac_decisions_total`.
+- **Fix:** `security/rbac.py`:
+  - `_decide_raw` (بدون کش) + `_decide` (`lru_cache` با سقف ۴۰۹۶) روی مسیر نرمال‌شده؛
+  - `_normalise_path`: بخش‌های عددی ⇒ `:id` (هیچ سیاستی بخش عددی تحت‌اللفظی ندارد؛ تست هم‌ارزی روی همهٔ مسیرهای OpenAPI و نمونه‌های سیاست، نقش×متد)؛
+  - `get_enforcer` با قفل و ظرف تک‌خانه (بدون `global`)؛
+  - `enforce` ⇒ `mp_rbac_decisions_total{role,decision}` و `mp_rbac_errors_total`.
+- **Green (تست‌ها):** `test_wp24_rbac_decision_cache.py` ۶ passed؛ `test_rbac.py` + `test_routes_access_matrix.py` + `test_wp03_axis_single_guard.py` + `test_m59_shop.py` ⇒ ۹۴ passed، rc=0 (`/home/user/recovery4/wp24-rbac.log`).
+- **گیت بار کیت (repro، ۸۰ نخ × ۴۰ عمق × ۴۰۰ فراخوانی = ۳۲٬۰۰۰)، اسکریپت کپی مقیاسی (تشخیصی، گیت نیست):**
+  | اجرا | خطا | p50 | p95 | توان عملیاتی/s |
+  |---|---|---|---|---|
+  | قبل: HEAD پیش از WP 2.4 (`fe103a4`) | `SystemError` ۱ | ۱٫۰۱۶ ms | ۳۵۲ ms | ۱٬۰۰۲ |
+  | بعد (۵ مسیر کیت) | ۰ | ۰٫۰۰۶ ms | ۰٫۰۱۳ ms | ۱۱۰٬۵۷۰ |
+  | بعد (بار با شناسه‌های متنوع) | ۰ | ۰٫۰۰۶ ms | ۰٫۰۱۱ ms | ۱۰۹٬۱۷۵ |
+  - خروجی‌ها: `evidence/after/wp24/out-*.txt`.
+  - توجه: متن `note` داخل اسکریپت کیت می‌گوید «enable_cache فعال نشده»؛ این متن ایستا است و با اجرای جدید مطابقت ندارد.
+- **باقی‌مانده:** کش‌miss هنوز casbin را ارزیابی می‌کند. بخش‌های غیرعددی بی‌نهایت (مثلاً `job_key` یا `run_date`) می‌توانند miss بسازند. این در AD‑19 ثبت شد.
+- **Rollback:** `git revert <commit WP 2.4>`.
