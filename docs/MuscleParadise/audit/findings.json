@@ -1,0 +1,511 @@
+{
+ "problems": [
+  {
+   "id": "A1",
+   "title": "قفل‌شدگی کامل سرور بر اثر پر شدن استخر اتصال — ریشه‌یابی نشده",
+   "source": "MP-PROBLEMS §A"
+  },
+  {
+   "id": "A2",
+   "title": "`/api/v1/metrics` کاملاً بدون احراز هویت و عمومی است",
+   "source": "MP-PROBLEMS §A"
+  },
+  {
+   "id": "A3",
+   "title": "`MP_TRUSTED_PROXIES` پیش‌فرض خالی است و در production اعتبارسنجی نمی‌شود → همه‌ی کاربران یک سبد rate-limit",
+   "source": "MP-PROBLEMS §A"
+  },
+  {
+   "id": "A4",
+   "title": "`mp.db` در ریشهٔ مخزن ترک‌شده است (دیتابیس واقعی در Git)",
+   "source": "MP-PROBLEMS §A"
+  },
+  {
+   "id": "A5",
+   "title": "زنجیرهٔ تأمین آرتیفکت صفر گیت دارد",
+   "source": "MP-PROBLEMS §A"
+  },
+  {
+   "id": "A6",
+   "title": "هیچ گزارش خطا/crash در زمان اجرا وجود ندارد",
+   "source": "MP-PROBLEMS §A"
+  },
+  {
+   "id": "A7",
+   "title": "`Content-Security-Policy` هیچ‌جا تعریف نشده",
+   "source": "MP-PROBLEMS §A"
+  },
+  {
+   "id": "A8",
+   "title": "بیلد release اندروید بدون shrink/obfuscation و بدون AAB",
+   "source": "MP-PROBLEMS §A"
+  },
+  {
+   "id": "A9",
+   "title": "۲۱ آیتم باز در `RELEASE-CHECKLIST.md` (تعریف خودتان از «آمادهٔ انتشار»)",
+   "source": "MP-PROBLEMS §A"
+  },
+  {
+   "id": "B1",
+   "title": "کیوسک / چک‌این انتها‌به‌انتها ناقص است",
+   "source": "MP-PROBLEMS §B"
+  },
+  {
+   "id": "B2",
+   "title": "`POST /api/v1/axis-assessments/{id}/review` و روتر `classes` گارد تکراری دارند (کد روی کد)",
+   "source": "MP-PROBLEMS §B"
+  },
+  {
+   "id": "B3",
+   "title": "استودیو شناسهٔ نامعتبر `1-` را به API می‌فرستد و سرور ۲۰۰ می‌دهد",
+   "source": "MP-PROBLEMS §B"
+  },
+  {
+   "id": "B4",
+   "title": "همزمانی کوپن روی PostgreSQL تست نشده (فقط SQLite)",
+   "source": "MP-PROBLEMS §B"
+  },
+  {
+   "id": "B5",
+   "title": "پول/شناسه‌ها از مرز `2^53−1` در لایهٔ JS رد می‌شوند — فقط یک مورد اصلاح شده",
+   "source": "MP-PROBLEMS §B"
+  },
+  {
+   "id": "B6",
+   "title": "قواعد گردکردن و تقسیم پول مستند/تست نشده",
+   "source": "MP-PROBLEMS §B"
+  },
+  {
+   "id": "B7",
+   "title": "هیچ تست طلایی/رگرسیون بصری برای کلاینت Flutter نیست",
+   "source": "MP-PROBLEMS §B"
+  },
+  {
+   "id": "B8",
+   "title": "هیچ تست روی‌دستگاه (integration/patrol) وجود ندارد",
+   "source": "MP-PROBLEMS §B"
+  },
+  {
+   "id": "B9",
+   "title": "دسترس‌پذیری کلاینت Flutter تقریباً وجود ندارد",
+   "source": "MP-PROBLEMS §B"
+  },
+  {
+   "id": "B10",
+   "title": "سخت‌گیری نوع در Dart فعال نیست",
+   "source": "MP-PROBLEMS §B"
+  },
+  {
+   "id": "B11",
+   "title": "اسکریپت `lint` استودیو مرده است",
+   "source": "MP-PROBLEMS §B"
+  },
+  {
+   "id": "B12",
+   "title": "نصب غیرقطعی در CI",
+   "source": "MP-PROBLEMS §B"
+  },
+  {
+   "id": "B13",
+   "title": "وابستگی اعلام‌نشده: DAST روی محیط تازه می‌شکند",
+   "source": "MP-PROBLEMS §B"
+  },
+  {
+   "id": "B14",
+   "title": "`openapi.json` در مخزن commit نشده ⇒ تغییر شکننده دیده نمی‌شود",
+   "source": "MP-PROBLEMS §B"
+  },
+  {
+   "id": "B15",
+   "title": "`live-contract` فقط استودیو را پوشش می‌دهد، نه کلاینت Flutter",
+   "source": "MP-PROBLEMS §B"
+  },
+  {
+   "id": "B16",
+   "title": "ماتریس مجوز/مالکیت به‌صورت سیستماتیک تست نشده",
+   "source": "MP-PROBLEMS §B"
+  },
+  {
+   "id": "B17",
+   "title": "`MP_REQUIRE_WORKER=False` ⇒ readiness می‌تواند بدون worker صف سبز شود",
+   "source": "MP-PROBLEMS §B"
+  },
+  {
+   "id": "B18",
+   "title": "`MP_DATABASE_URL` در production اعتبارسنجی نمی‌شود",
+   "source": "MP-PROBLEMS §B"
+  },
+  {
+   "id": "B19",
+   "title": "سه `except Exception: pass` بی‌صدا در مسیر مانیتورینگ",
+   "source": "MP-PROBLEMS §B"
+  },
+  {
+   "id": "B20",
+   "title": "وبِ کلاینت هرگز در PR/push گیت نمی‌شود",
+   "source": "MP-PROBLEMS §B"
+  },
+  {
+   "id": "B21",
+   "title": "Electron و Service Worker سخت‌سازی/تست نشده‌اند",
+   "source": "MP-PROBLEMS §B"
+  },
+  {
+   "id": "B22",
+   "title": "تست بار فقط ۲ اندپوینت سبک را می‌کوبد و فقط روی SQLite/یک worker معتبر است",
+   "source": "MP-PROBLEMS §B"
+  },
+  {
+   "id": "C1",
+   "title": "۶۷۰ یافتهٔ سلامت کد (۲۵ critical، ۷۰ high)",
+   "source": "MP-PROBLEMS §C"
+  },
+  {
+   "id": "C2",
+   "title": "شش نقطهٔ داغ critical:",
+   "source": "MP-PROBLEMS §C"
+  },
+  {
+   "id": "C3",
+   "title": "توابع بیش‌ازحد بزرگ:",
+   "source": "MP-PROBLEMS §C"
+  },
+  {
+   "id": "C4",
+   "title": "`io_in_loop` در چند اسکریپت ابزار و importer",
+   "source": "MP-PROBLEMS §C"
+  },
+  {
+   "id": "C5",
+   "title": "۳۵ یافتهٔ کد مرده:",
+   "source": "MP-PROBLEMS §C"
+  },
+  {
+   "id": "C6",
+   "title": "۲۵ یافتهٔ رانش مستندات در ۱۴ سند",
+   "source": "MP-PROBLEMS §C"
+  },
+  {
+   "id": "C7",
+   "title": "هیچ ابزار سنجش تکرار/مرده/پیچیدگی در CI نیست:",
+   "source": "MP-PROBLEMS §C"
+  },
+  {
+   "id": "C8",
+   "title": "هیچ تست جهش (mutation) نیست",
+   "source": "MP-PROBLEMS §C"
+  },
+  {
+   "id": "C9",
+   "title": "هیچ تست ویژگی‌محور (property) نیست",
+   "source": "MP-PROBLEMS §C"
+  },
+  {
+   "id": "C10",
+   "title": "هیچ l10n/i18n نیست:",
+   "source": "MP-PROBLEMS §C"
+  },
+  {
+   "id": "C11",
+   "title": "دو نقص نمایشی بازِ QA:",
+   "source": "MP-PROBLEMS §C"
+  },
+  {
+   "id": "C12",
+   "title": "۴۱ `print()` در کد غیرتست بک‌اند",
+   "source": "MP-PROBLEMS §C"
+  },
+  {
+   "id": "C13",
+   "title": "۴۸ `TODO/FIXME/HACK` در `mp-app`",
+   "source": "MP-PROBLEMS §C"
+  },
+  {
+   "id": "C14",
+   "title": "۶ تست skip/disabled در بک‌اند + ۹ skip در استودیو + ۲ skip گزارش‌شده",
+   "source": "MP-PROBLEMS §C"
+  },
+  {
+   "id": "C15",
+   "title": "هیچ گیت خودکار لایسنس وابستگی‌ها نیست",
+   "source": "MP-PROBLEMS §C"
+  },
+  {
+   "id": "C16",
+   "title": "هیچ ابزار آشوب/تنزل نیست:",
+   "source": "MP-PROBLEMS §C"
+  },
+  {
+   "id": "C17",
+   "title": "provenance تصاویر مستند نشده:",
+   "source": "MP-PROBLEMS §C"
+  },
+  {
+   "id": "C18",
+   "title": "`.semgrep/project-rules.yml` فقط یک فایل قاعده دارد",
+   "source": "MP-PROBLEMS §C"
+  },
+  {
+   "id": "C19",
+   "title": "فایل‌های سنگین و بزرگ‌ترین‌های ترک‌شده:",
+   "source": "MP-PROBLEMS §C"
+  },
+  {
+   "id": "D1",
+   "title": "جدول مجوزها (§۷) خالی چاپ شده",
+   "source": "MP-PROBLEMS §D"
+  },
+  {
+   "id": "D2",
+   "title": "§۶ مقدار پیش‌فرض `MP_CORS_ORIGINS` را `(` نشان می‌دهد",
+   "source": "MP-PROBLEMS §D"
+  },
+  {
+   "id": "D3",
+   "title": "§۱۳ می‌گوید «`web.yml` و `apk.yml` فقط `workflow_dispatch` دارند»",
+   "source": "MP-PROBLEMS §D"
+  },
+  {
+   "id": "D4",
+   "title": "§۲ می‌گوید پیشوندهای بی‌پوشه «در `api/` یا `app/` تعریف شده‌اند»",
+   "source": "MP-PROBLEMS §D"
+  },
+  {
+   "id": "D5",
+   "title": "سند روی شاخهٔ مرج‌نشده است",
+   "source": "MP-PROBLEMS §D"
+  },
+  {
+   "id": "D6",
+   "title": "§۱۱ می‌گوید اسکرین‌شات‌ها در `docs/MuscleParadise/screenshots/`",
+   "source": "MP-PROBLEMS §D"
+  },
+  {
+   "id": "D7",
+   "title": "اختلاف اعداد بین دو سند RepoWise:",
+   "source": "MP-PROBLEMS §D"
+  },
+  {
+   "id": "D8",
+   "title": "§۲ فهرست ماژول‌ها ناقص است:",
+   "source": "MP-PROBLEMS §D"
+  }
+ ],
+ "findings": [
+  {
+   "id": "F-01",
+   "title": "دورزدن rate‑limit با `X-Forwarded-For` (فرمان Dockerfile)",
+   "source": "FINAL-AUDIT"
+  },
+  {
+   "id": "F-02",
+   "title": "پیش‌فرض fail‑open محیط: `MP_ENVIRONMENT=development` + `MP_SMS_PROVIDER=dev` ⇒ `dev_code` در پاسخ",
+   "source": "FINAL-AUDIT"
+  },
+  {
+   "id": "F-03",
+   "title": "قفل شدن سرور زیر بار؛ رندر `rich` روی event loop",
+   "source": "FINAL-AUDIT"
+  },
+  {
+   "id": "F-04",
+   "title": "اشباع استخر اتصال؛ نبودِ هیچ متریک pool؛ ناسازگاری ظرفیت‌ها",
+   "source": "FINAL-AUDIT"
+  },
+  {
+   "id": "F-05",
+   "title": "`SystemError` در `casbin enforce` زیر همزمانی (compile در هر درخواست)",
+   "source": "FINAL-AUDIT"
+  },
+  {
+   "id": "F-06",
+   "title": "`/api/v1/metrics` بدون احراز هویت",
+   "source": "FINAL-AUDIT"
+  },
+  {
+   "id": "F-07",
+   "title": "پوشش مستند ۹۴٫۲۸٪ در برابر واقعی ۸۳٫۷۳٪",
+   "source": "FINAL-AUDIT"
+  },
+  {
+   "id": "F-08",
+   "title": "`logout-all` توکن‌های بدون `sid` را باطل نمی‌کند",
+   "source": "FINAL-AUDIT"
+  },
+  {
+   "id": "F-09",
+   "title": "پول بزرگ: `2^53`، `2^53+1`، `10^18` پذیرفته می‌شوند + coercion رشته→عدد",
+   "source": "FINAL-AUDIT"
+  },
+  {
+   "id": "F-10",
+   "title": "۳۱ خطای ESLint در استودیو (هیچ lint واقعی اجرا نمی‌شد)",
+   "source": "FINAL-AUDIT"
+  },
+  {
+   "id": "F-11",
+   "title": "امتیاز جهش ۵۷٫۸٪ در ماژول پولی؛ ۳ شکاف واقعی",
+   "source": "FINAL-AUDIT"
+  },
+  {
+   "id": "F-12",
+   "title": "`routes.json` مجموعهٔ گاردهای واقعی را کم‌تر نشان می‌دهد ⇒ اوراکل نامعتبر",
+   "source": "FINAL-AUDIT"
+  },
+  {
+   "id": "F-13",
+   "title": "guard تکراری روی یک مسیر (دو بار casbin enforce)",
+   "source": "FINAL-AUDIT"
+  },
+  {
+   "id": "F-14",
+   "title": "`gateway-return` با شناسهٔ نامعتبر → HTTP 200",
+   "source": "FINAL-AUDIT"
+  },
+  {
+   "id": "F-15",
+   "title": "۵۵ هشدار پیچیدگی (lizard) و ۴۱ بلوک ≥C (radon)؛ بدترین درجهٔ radon **F** با CC ‏۴۷ و ۴۶",
+   "source": "FINAL-AUDIT"
+  },
+  {
+   "id": "F-16",
+   "title": "۷ محل پولِ شناور در استودیو + ۱ sentinel منفی",
+   "source": "FINAL-AUDIT"
+  },
+  {
+   "id": "F-17",
+   "title": "۴ خطای «except بی‌صدا» (از جمله در `api/v1/monitoring.py:18`)",
+   "source": "FINAL-AUDIT"
+  },
+  {
+   "id": "F-18",
+   "title": "ناسازگاری ظرفیت‌ها: ۱۶۴ handler سنکرون، threadpool=40، pool=60، 4 worker",
+   "source": "FINAL-AUDIT"
+  },
+  {
+   "id": "F-19",
+   "title": "۳ لایهٔ جداگانهٔ دسترسی به داده در استودیو + `await import()` پویا در هندلر",
+   "source": "FINAL-AUDIT"
+  },
+  {
+   "id": "F-20",
+   "title": "۲ export مرده در `lib/api.ts`",
+   "source": "FINAL-AUDIT"
+  },
+  {
+   "id": "F-21",
+   "title": "۵ session بدون context manager در اسکریپت‌ها",
+   "source": "FINAL-AUDIT"
+  },
+  {
+   "id": "F-22",
+   "title": "۴ SQL با f‑string در یک migration",
+   "source": "FINAL-AUDIT"
+  },
+  {
+   "id": "F-23",
+   "title": "۱۰ دکمه بدون `onClick` (موجودی، نه لزوماً نقص)",
+   "source": "FINAL-AUDIT"
+  },
+  {
+   "id": "F-24",
+   "title": "هشدارهای انباشتهٔ runtime",
+   "source": "FINAL-AUDIT"
+  },
+  {
+   "id": "F-25",
+   "title": "گارد شناسه **کف** ندارد: ۱۲ endpoint با `-1`/`0`/`-0`/INT64_MIN پاسخ **۲۰۰** می‌دهند",
+   "source": "FINAL-AUDIT"
+  },
+  {
+   "id": "F-26",
+   "title": "دو شکلِ متفاوت برای پاکت خطا: `{\"error\":…}` در برابر `{\"detail\":…}`",
+   "source": "FINAL-AUDIT"
+  },
+  {
+   "id": "F-27",
+   "title": "پیش‌نیازِ «پروندهٔ عضو» در سبد خرید با `404 not_found` بیان می‌شود؛ سفارش به‌نیابت ممکن نیست",
+   "source": "FINAL-AUDIT"
+  }
+ ],
+ "non_issues": [
+  {
+   "id": "N1",
+   "title": "امضای Android: fallback به کلید debug حذف شده"
+  },
+  {
+   "id": "N2",
+   "title": "اعتبارسنجی پیکربندی production قوی است (app/config.py:127-243)"
+  },
+  {
+   "id": "N3",
+   "title": "پول همه‌جا عدد صحیح ریال است"
+  },
+  {
+   "id": "N4",
+   "title": "زمان: هیچ datetime.now() naive نیست"
+  },
+  {
+   "id": "N5",
+   "title": "XFF/پراکسی امن پیاده شده (فقط تنظیمش اجباری نیست)"
+  },
+  {
+   "id": "N6",
+   "title": "مالکیت در مسیر چهره رعایت شده (delete_face)"
+  },
+  {
+   "id": "N7",
+   "title": "Electron پایه امن است (contextIsolation/nodeIntegration)"
+  },
+  {
+   "id": "N8",
+   "title": "هدرهای امنیتی بک‌اند و Caddy کامل‌اند (CSP مانده)"
+  },
+  {
+   "id": "N9",
+   "title": "کد stub وجود ندارد (NotImplementedError = ۰)"
+  },
+  {
+   "id": "N10",
+   "title": "استودیو type-safe است (strict، any = ۰)"
+  },
+  {
+   "id": "N11",
+   "title": "پین SDK و drift حل شده (client-pinned)"
+  },
+  {
+   "id": "N12",
+   "title": "DAST انجام شده: ۰ یافته، ۰ پاسخ 2xx بدون احراز هویت (evidence/m60/dast.json)"
+  },
+  {
+   "id": "N13",
+   "title": "گیت‌های موجود سبز و ارزشمندند (interaction_map، docs_gate، Gitleaks)"
+  },
+  {
+   "id": "N14",
+   "title": "QA مرورگری: ۱۱ صفحه، ۱۰۱ دکمه، ۴۵ کلیک، ۰ خطا"
+  }
+ ],
+ "blocked": [
+  {
+   "id": "E1",
+   "title": "APK امضاشده: secretهای MP_ANDROID_* تنظیم نشده‌اند"
+  },
+  {
+   "id": "E2",
+   "title": "چرخش کلید signing افشاشده + بازنویسی تاریخچه (فقط با تأیید مالک)"
+  },
+  {
+   "id": "E3",
+   "title": "اجرای Flutter در sandbox: pub.dev و storage.googleapis.com مسدود"
+  },
+  {
+   "id": "E4",
+   "title": "دستگاه واقعی، پرداخت بانکی، push/SMS، Valkey، PostgreSQL، Prometheus"
+  },
+  {
+   "id": "E5",
+   "title": "JADX/بازبینی باینری APK: JDK در محیط نیست"
+  }
+ ]
+}

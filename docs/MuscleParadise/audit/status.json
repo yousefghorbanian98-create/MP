@@ -1,0 +1,22 @@
+{
+ "F-01": {
+  "status": "VERIFIED-IN-CODE",
+  "note": "--forwarded-allow-ips='*' در mp-app/backend/Dockerfile:27 و mp-app/infra/Dockerfile.backend:29"
+ },
+ "F-02": {
+  "status": "VERIFIED-IN-CODE",
+  "note": "dev_code در modules/auth/service.py:53 و :261"
+ },
+ "F-06": {
+  "status": "VERIFIED-IN-CODE",
+  "note": "api/v1/monitoring.py:14 بدون dependency"
+ },
+ "F-13": {
+  "status": "VERIFIED-IN-CODE",
+  "note": "axis_assessment/router.py: require_permission در سطح روتر و روی تابع"
+ },
+ "F-10": {
+  "status": "VERIFIED-IN-CODE",
+  "note": "اسکریپت lint وجود دارد؛ eslint.config در studio نیست؛ عدد ۳۱ هنوز اندازه‌گیری نشده"
+ }
+}
