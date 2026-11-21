@@ -39,7 +39,7 @@
 | 0.5 | F-10 | DONE | `bf1daa1` | eslint ۰/۰ (قبل: ۴۲ خطا + ۵ هشدار) |
 | 0.6 | F-24 | PARTIAL | `bf1daa1` | 422 اصلاح؛ هشدار httpx و asyncio باقی |
 | 0.7 | — | READY | — | semgrep روی PyPI نصب می‌شود (میزبان مجاز)؛ قاعدهٔ `harness/semgrep-mp.yml` در CI به‌صورت non-blocking |
-| 0.9 | الحاقیهٔ A1 | READY | — | ruff: بازسازی `ruff-recommended.toml` (در مخزن نیست)؛ ۷۲ RUF100 + ۴۷ fix امن (نه unsafe)؛ `ruff format --check`؛ گام الف (باگ‌یاب) blocking، گام ب non-blocking |
+| 0.9 | الحاقیهٔ A1 | READY | — | ruff: `ruff-recommended.toml` از A1.1 §۲‑الف (⛔ متن در پیام نیست) ⇒ ۴۳۰/۵۲؛ RUF100 قبل ۳۹ ادعا (تأیید‌نشده)؛ ERA001 ignore؛ ۴۷ fix امن (نه unsafe)؛ `ruff format --check`؛ گام الف (باگ‌یاب) blocking، گام ب non-blocking |
 | 0.8 | A5 | PARTIAL | `40c64f7` | ۴۲/۴۲ پین؛ گیت‌های SBOM/امضا باقی |
 | 1.1 | F-01 | PARTIAL | `ccf44ce` | e2e: قبل ۳۰×200، بعد ≥۲۷×429؛ متریک `key_source` باقی |
 | 1.2 | F-02 | PARTIAL | `ccf44ce` | BD-3؛ گیت زنده روی استقرار BLOCKED-ENV |
