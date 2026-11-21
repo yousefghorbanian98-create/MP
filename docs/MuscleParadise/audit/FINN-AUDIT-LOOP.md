@@ -43,7 +43,7 @@
 | 1.1 | F-01 | PARTIAL | `ccf44ce` | e2e: قبل ۳۰×200، بعد ≥۲۷×429؛ متریک `key_source` باقی |
 | 1.2 | F-02 | PARTIAL | `ccf44ce` | BD-3؛ گیت زنده روی استقرار BLOCKED-ENV |
 | 1.3 | F-06, A2 | DONE | `fae50c5` | ۳۲ تست مانیتورینگ passed؛ pytest ۱۱۰۴ |
-| 1.4 | F-08 | PARTIAL | (این کامیت) | BD-6: bump auth_version؛ قبل ۲۰۰ ⇒ بعد ۴۰۱؛ pytest ۱۱۳۲ passed؛ قاعدهٔ Semgrep باقی (WP 0.7) |
+| 1.4 | F-08 | PARTIAL | `d30aed8` | BD-6: bump auth_version؛ قبل ۲۰۰ ⇒ بعد ۴۰۱؛ pytest ۱۱۳۲ passed؛ قاعدهٔ Semgrep باقی (WP 0.7) |
 | 1.5 | F-09 | READY | — | نوع `Rial` و strict؛ ۷ محل پولی شناور در استودیو؛ ۲ محل تقسیم پول در بک‌اند |
 | 2.1 | F-03 | READY | — | لاگ با `ConsoleRenderer` در پروسهٔ سرویس؛ `QueueHandler` |
 | 2.2 | F-04 | READY | — | گیج‌های pool؛ ۵۰۳ به‌جای ۵۰۰ |
