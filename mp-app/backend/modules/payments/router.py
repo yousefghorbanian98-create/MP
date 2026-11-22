@@ -10,7 +10,7 @@ from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field
 
 from app.deps import CurrentUser, DbSession, require_permission
-from app.errors import ApiError
+from app.errors import ApiError, NotFoundError
 from app.ids import MAX_SAFE_ID, Id
 from app.security.grants import require_grant
 from modules.auth.router import limiter
@@ -326,7 +326,7 @@ return_router = APIRouter(prefix="/payments", tags=["payments"])
 payments_return_router = return_router  # نامِ صریح برای api/v1/api.py
 
 
-def _return_page(ok: bool, title: str, note: str) -> HTMLResponse:
+def _return_page(ok: bool, title: str, note: str, status_code: int = 200) -> HTMLResponse:
     color = "#0a7d38" if ok else "#b00020"
     body = (
         "<!doctype html><html dir=rtl lang=fa><meta charset=utf-8>"
@@ -336,7 +336,7 @@ def _return_page(ok: bool, title: str, note: str) -> HTMLResponse:
         f"<h1>{_html.escape(title)}</h1><p>{_html.escape(note)}</p>"
         "<p>می‌توانید به اپ برگردید.</p></html>"
     )
-    return HTMLResponse(body)
+    return HTMLResponse(body, status_code=status_code)
 
 
 @return_router.get("/{payment_id}/gateway-return", summary="بازگشت مرورگر از درگاه (M110)")
@@ -354,6 +354,9 @@ def gateway_return(
         payment = service.verify_with_gateway(
             db, payment_id, authority=bank_authority, callback_token=token, require_token=True
         )
+    except NotFoundError:
+        # WP 3.3 / F-14: پرداخت ناموجود ⇒ 404 (همان صفحه)، تا متریک و مانیتور خطا را ببینند.
+        return _return_page(False, "پرداخت یافت نشد", "شناسهٔ پرداخت معتبر نیست.", status_code=404)
     except ApiError as exc:
         if exc.code == "already_processed":
             # تازگی‌اش همین است: replayِ همین redirect (رفرشِ مرورگر) نباید خطا بدهد،
