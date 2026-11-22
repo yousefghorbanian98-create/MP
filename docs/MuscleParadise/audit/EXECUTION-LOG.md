@@ -726,3 +726,35 @@ WP: 0.4 · F: F‑07 · شاهد: `evidence/after/wp04/` · تصمیم: AD‑11 
 - **اسکریپت INVENTORY:** `build_audit_inventory.py` اکنون در حالت نوشتن تا نقطهٔ ثابت تکرار می‌کند (حداکثر ۵؛ ردیف INVENTORY خودش را ثبت می‌کند). یک بازتولید با `python3` سیستم (بدون وابستگی‌های بک‌اند) بخش «عملیات API» را به حالت ایستای کوتاه برگرداند (۱۷۱۹ ⇒ ۱۵۵۱ خط) — با diff دیده شد و **کامیت نشد**. سپس `/home/user/venv-mp` از همان دستور CI با پین‌ها ساخته شد (`pip install -c mp-app/backend/requirements.txt -e mp-app/backend[dev]`؛ `pip check`: بدون تضاد؛ **۸۴ پین، ۰ اختلاف نسخه**)، و با همان مفسر بازتولید شد: ۱۷۱۹ خط، `--check` rc 0.
 - **تخطی‌ها:** B6 در سقف ۲ کامیت است (`edc01e0` کد و کامیت مستندات). هیچ آستانه، تست، یا job تغییر نکرد؛ هیچ وابستگی ماندگاری اضافه نشد (semgrep و ruff در venvهای موقت `/tmp` با همان پین/نسخهٔ CI نصب شدند).
 - **باز (از B6):** ۱) گام ruff غیرمسدودکننده در `ci.yml`؛ ۲) `scripts/build_audit_inventory.py` (۴ یافته + format)؛ ۳) قاعدهٔ `mp-money-float-cast` هنوز `total` دارد؛ ۴) WP 4.1 PARTIAL؛ ۵) WP 4.2 DEFERRED؛ ۶) WP 4.7 load BLOCKED-ENV؛ ۷) F‑30 (receiptQueue) OPEN.
+
+## MERGE — PR #24 به main (پس از اجازهٔ ممیز؛ پروتکل `MP-MERGE-PROTOCOL-2026-11-22.txt`)
+
+- **پروتکل:** `curl … MP-MERGE-PROTOCOL-2026-11-22.txt` ⇒ `670e287015d4fbd2696181020061987ebd823cb9c52f507fcd6c2060de285c99  /tmp/MERGE-PROTOCOL.txt`، `11660` بایت (با انتظار یکسان).
+- **پیش‌سنجه‌ها (tip مورد انتظار `db28a1ea07000b34f1acf536be09a573faf8727a`):**
+  - ۱‑۱ `branches/arena/5a1e37b3-mp` ⇒ `db28a1ea07000b34f1acf536be09a573faf8727a` ؛ `pulls/24 .head.sha` ⇒ `db28a1ea07000b34f1acf536be09a573faf8727a` (یکسان).
+  - ۱‑۲ `pulls/24 [.state,.mergeable,.mergeable_state,.draft]` ⇒ `open	true	clean	false`.
+  - ۱‑۳ check-runs روی full sha ⇒ ۸ نام یکتا (هر کدام در دو موج push/PR) همه `completed/success`: backend · studio · live-contract · e2e-api · secret-scan · client-flutter · Documentation links and handoff · Client — pinned SDK · format gate · Android debug compile.
+  - ۱‑۴ `actions/runs?head_sha=…` ⇒ `45069489423 pull_request completed/success` و `45069485431 push completed/success`؛ `check-suites` ⇒ `github-actions: completed/success` ×۲. هیچ in_progress/queued/null.
+  - ۱‑۵ `git status --porcelain | grep -v '^??' | wc -l` ⇒ `0`؛ `??`: `mp-app/backend/var/receipts/` (۵۶ فایل) و `share/` (۱)؛ `compare/main...db28a1e…` ⇒ `ahead	122	0`.
+  - ۱‑۶ تأییدیهٔ ممیز با عبارت «اجازهٔ merge صادر شد» و tip موردانتظار در پیام؛ tip واقعی با مورد انتظار یکسان.
+- **merge:** `gh pr merge 24 --merge` (تنها فرمان، بدون پرچم، بدون pipe؛ کد خروج `0`؛ خروجی خام: خالی). تلاش دوم لازم نشد.
+- **پس‌سنجه‌ها:**
+  - ۳‑۱ `pulls/24 [.state,.merged,.merged_at,.merge_commit_sha]` ⇒ `closed	true	2026-11-22T21:34:50Z	35d4b35184b4148c658b415bd009fc076bf24e00`.
+  - ۳‑۲ `branches/main .commit.sha` ⇒ `35d4b35184b4148c658b415bd009fc076bf24e00`؛ `commits/<merge> [sha[0:7], parents]` ⇒ `35d4b35	662ff88+db28a1e`.
+  - ۳‑۳ شاهدها روی main: `cf33ad8 reachable` · `9024f44 reachable` · `e57a992 reachable` · `f852675 reachable` · `b9ce7be reachable`؛ `compare/main...db28a1e` ⇒ `behind` (نه ahead).
+  - ۳‑۴ CI روی main (`actions/runs?branch=main`): `45072899575` (dynamic, Graph Update: pip) `completed/success`؛ **`45072898424` (push, mp-ci) `completed/success` با هر ۸ job `success`**: Documentation links and handoff · Client — pinned SDK · format gate · Android debug compile · studio · secret-scan · live-contract · client-flutter · backend · e2e-api؛ `45072898402` (push, client-format-fix) `skipped` (شرط trigger؛ همان workflow قبلاً هم skipped بود).
+  - ۳‑۵ `contents/docs/MuscleParadise/audit/evidence?ref=main` ⇒ `after, before, bandit.json, detect-secrets.err, detect-secrets.json, lizard-warnings.txt, pip-audit.json, radon-cc.txt, radon-mi.txt, requirements-freeze.txt, vulture.txt`؛ `contents/.gitleaksignore?ref=main .size` ⇒ `60102`.
+  - ۳‑۶ شاخهٔ `arena/5a1e37b3-mp` **حذف نشد**: `branches/arena/5a1e37b3-mp .commit.sha` ⇒ `db28a1ea07000b34f1acf536be09a573faf8727a`.
+- **خطا / توقف:** هیچ خطای 403/احراز هویت یا CI قرمز روی main رخ نداد؛ هیچ revert یا force-push انجام نشد.
+- **یادداشت:** پس از merge، `compare main...db28a1e` از `ahead 122` به `behind` تغییر کرد (انتظار پروتکل: `identical` یا `behind`).
+
+## باز پذیرفته‌شده پس از MERGE (همان‌طور که در دفترِ کل ثبت است)
+
+- **WP 4.1** ⇒ PARTIAL (`prescribe_axis_work` F46⇒C13 در B5؛ باقی: `next_transfer_state` E34، ۱۰ بلوک D، هشت کلید کیت TODO؛ D‑17، D‑20).
+- **WP 4.2** ⇒ DEFERRED (baseline جهش ۵۷٫۸٪ در برابر ≥۸۰٪؛ وابستگی تازه؛ D‑19).
+- **WP 4.7** ⇒ PARTIAL؛ بار پله‌ای/ترکیبی **BLOCKED-ENV** (بدون Docker/Postgres در سندباکس)؛ نیمهٔ semgrep انجام شد (`edc01e0`).
+- **F‑30** (receiptQueue ناپایدار) ⇒ OPEN (D‑18).
+- **مثبت کاذب نهفته:** `mp-money-float-cast` هنوز `total` برهنه دارد و `float(delta.total_seconds())` را می‌گیرد (امروز در مخزن ۰ مورد؛ blocker نیست)؛ اصلاح در فاز P-3 با کنترل مثبت اجباری. عمداً دست نخورد.
+- **گام ruff lint:** `ci.yml` «Lint (ruff) — غیرمسدودکننده» هنوز `continue-on-error` دارد (خارج از WP 0.7).
+- **WP 0.2** ⇒ BLOCKED (AD‑10؛ ۱٬۱۴۱ سلول، ۵۹۲ drift). **WP 1.1 / 1.2 / 1.4** ⇒ PARTIAL (اندازه‌گیری‌ها در ردیف‌های لوپ).
+
