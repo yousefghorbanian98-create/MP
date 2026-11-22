@@ -332,3 +332,12 @@
 
 - `scripts/interaction_map.py:309` برای مسیر عمومی `roles = ", ".join(...) or "—"` می‌نویسد؛ پس `GET /health` و `POST auth/otp/request` در سند با فهرست شش نقش رندر می‌شوند و خواننده فکر می‌کند احراز لازم است. این سند گمراه‌کننده است، هرچند گیت کهنگی را پاس می‌کند.
 - **تصمیم:** رندر عوض نشد (تغییر رندر = تغییر گیت، و اختیار جدا می‌خواهد). **باز:** اختیار مالک برای تغییر رندر یا ستون «احراز» جدا.
+
+## AD‑23 · تصمیم مالک: محدودهٔ انگشت‌نگاریِ دقیق (به‌روزرسانی)
+
+- **تصمیم مالک (۲۰۲۶‑۱۱‑۲۲):** مسیرهای مجاز برای fingerprint دقیق در `.gitleaksignore` هر سه فایل هستند: `docs/MuscleParadise/audit/evidence/detect-secrets.json`، `…/evidence/before/detect-secrets.json`، و `…/evidence/after/detect-secrets.json`. این جایگزین محدودهٔ «فقط `before/`» در بخش بالا می‌شود.
+- **دو تغییر guard (`b9e88e5`، `fae50c5`):** مالک «intended» را تأیید کرد. ثبت D‑10 تأیید شد؛ هیچ بازگردانی انجام نشد.
+- **اجرا:** حلقهٔ همگرایی روی workflow `423857407` (دورهای ۱ تا ۹ در سه commit مرحله‌ای؛ هر دور ≤۱۰ یافته به دلیل سقف annotation). دور ۹ روی `4272eae` صفر یافته داد.
+- **شمارش:** ورودی‌های fingerprint افزوده‌شده از `ea1efe5`: ۴۷۲ (`detect-secrets.json`: ۱۶۲، `before/`: ۱۴۹، `after/`: ۱۶۱)، بدون تکرار و بدون حذف. با ۱۰ ورودی `db37b1b`، `before/` روی هم ۱۵۹ از ۱۶۹ hashed_secret است؛ ۱۰ خط بدون یافته (مثل خط ۱۸۲) اضافه نشد.
+- **CI روی `4272eae`:** `secret-scan` success، `backend` success، `live-contract` success، `Documentation links and handoff` (شامل نقشهٔ تعامل) success، `e2e-api` success.
+- **بازگردانی (rollback):** `git revert` روی ۹ commit حلقه از `0291c49` تا `4272eae` (بدون force-push). پس از بازگردانی، secret-scan دوباره قرمز می‌شود.

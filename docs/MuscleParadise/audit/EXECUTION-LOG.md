@@ -498,3 +498,15 @@ WP: 0.4 · F: F‑07 · شاهد: `evidence/after/wp04/` · تصمیم: AD‑11 
   - یادداشت: annotation‌های job `secret-scan` در `ci.yml` مسیر و خط ندارند (مقدار پنهان، فقط commit)، پس ادعای «annotation‌های after/» از آن job قابل‌تأیید نبود؛ از workflow `423857407` خوانده شد.
 - **بخش ۳ (mermaid):** `docs_gate.py` و `repo_hygiene_gate.py` محلی PASS گزارش شدند؛ `interaction_map --check` پیش از بازتولید FAIL. mermaid هنوز اجرا نشده.
 - **بخش ۴ (نقشه):** بازتولید و commit شد. diff با addendum یکی است (+70/−34)؛ تفکیک ۲۱ ردیف در D‑9؛ ۱۶ تفاوتِ روی‌نشده در D‑10.
+
+## AD‑23 · secret-scan — همگرایی با محدودهٔ مالک (MEASURED-BY-YOU)
+
+- **بازنشانی محیط:** `/home/user/recovery5/` و اسکریپت حلقه در دسترس نبودند؛ شاخه روی `662ff88` با ۱۴۰ تغییر کاری بود. پشتیبان در `/home/user/recovery6/` (patch، status، untracked.tar). سپس `git reset --hard origin/arena/5a1e37b3-mp` (`ea1efe5`، درخت پاک). فایل `share/MP-BUILDER-HANDOFF-A1.3.md` در پشتیبان نبود و بازیابی نشد (فایل untracked، commit نشده).
+- **بررسی نقشهٔ `hashed_secret`:** فرضیهٔ آنتروپی (حد ≈۳٫۴۹–۳٫۵۰) فقط راهنما بود؛ حلقه فقط از یافته‌های واقعیِ workflow استفاده کرد، نه از پیش‌بینی.
+- **گزارش اجرای `423857407` روی `ea1efe5`** (run `44997161209`): ۱۰ annotation، همه در `evidence/detect-secrets.json` (بالاسری)، خطوط ۱۳۶…۲۲۱. این تأیید کرد که مسیر بالاسری باید در محدوده باشد.
+- **حلقه:** `/home/user/recovery6/ss-loop2.sh`. هر دور: push، صبر تا sha برابر HEAD، dispatch، تأیید success (تا ۳ تلاش)، اعتبارسنجی هر annotation (فرمت، fingerprint=`commit:path:rule:line`، مسیر در ۳ فایل مجاز)، افزودن، commit، push. یک بار run ناموفق (`44999664939`) با خطای دانلود gitleaks (curl exit 22، در مرحلهٔ نصب) رخ داد؛ یافته‌ای نداشت و تکرار شد. یک race (dispatch قبل از نمایش push) run روی sha قدیمی داد؛ حلقه اصلاح شد تا قبل از dispatch صبر کند.
+- **commit های حلقه:** `0291c49`، `4499655`، `a8323e5`، `35503e6`، `e4f3645`، `eef9e50`، `a7aebc5`، `187cd7a`، `a1226bc`، `b6b0e28`، `93e0969`، `1cabc15`، `24c964c`، `783e39a`، `033206f`، `67f79d5`، `3bcb799`، `03c9d2d`، `9b8f7ee`، `4272eae`. (هر دور یک commit، بدون force.)
+- **نتیجه:** دور ۹ روی `4272eae`: `findings-listed=0`، `CONVERGED`.
+- **تأیید:** `git diff ea1efe5 HEAD --stat` = `.gitleaksignore` +472/−0. همهٔ ۴۷۲ خط با regex دقیق `839500de…:<مسیر مجاز>:generic-api-key:<خط>` مطابقت دارند؛ تکرار ۰.
+- **CI روی `4272eae` (run `45000297428`):** success در همهٔ jobها: backend، live-contract، secret-scan، Documentation links and handoff، client-flutter، studio، Client، e2e-api.
+- **تعداد fingerprintها:** ۴۸۲ = ۱۶۲ + ۱۵۹ + ۱۶۱.
