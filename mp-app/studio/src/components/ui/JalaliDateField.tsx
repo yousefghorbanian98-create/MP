@@ -2,6 +2,7 @@ import { useId } from "react";
 import DatePicker, { DateObject } from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
+import { fromParts } from "../../lib/clock";
 
 /**
  * فیلد تاریخ جلالی — فقط پوستهٔ نازک دور `react-multi-date-picker`.
@@ -33,7 +34,7 @@ export function toDateObject(iso: string): DateObject | undefined {
   const match = ISO_RE.exec(iso);
   if (!match) return undefined;
   // تاریخ میلادی را به‌صورت محلی می‌سازیم تا مرز روز با تغییر تایم‌زون جابه‌جا نشود.
-  const asDate = new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+  const asDate = fromParts(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
   return new DateObject({ date: asDate, calendar: persian, locale: persian_fa });
 }
 

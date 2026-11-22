@@ -11,9 +11,10 @@
 import { Button, Empty, Popconfirm, Spin, Tag } from "antd";
 import { useCallback, useEffect, useState } from "react";
 import { AuthError, fetchSessions, revokeSession, type DeviceSession } from "../lib/api";
+import { toDate } from "../lib/clock";
 
 function formatUtc(iso: string): string {
-  const d = new Date(iso);
+  const d = toDate(iso);
   if (Number.isNaN(d.getTime())) return "نامشخص";
   return d.toISOString().replace("T", " ").slice(0, 16) + " UTC";
 }

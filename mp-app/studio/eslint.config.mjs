@@ -31,6 +31,24 @@ export default tseslint.config(
       "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
     },
   },
+  // P‑1: ساعت یکتا — هیچ کد src جز src/lib/clock.ts نباید new Date() یا Date.now() بزند.
+  {
+    files: ["src/**/*.{ts,tsx}"],
+    ignores: ["src/lib/clock.ts"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "NewExpression[callee.name='Date']",
+          message: "از src/lib/clock.ts استفاده کنید (now/today/toDate/fromParts).",
+        },
+        {
+          selector: "CallExpression[callee.object.name='Date'][callee.property.name='now']",
+          message: "از now() در src/lib/clock.ts استفاده کنید.",
+        },
+      ],
+    },
+  },
   {
     files: ["electron/**/*.cjs"],
     languageOptions: { sourceType: "commonjs", globals: { ...globals.node } },

@@ -6,6 +6,7 @@ import { useAppStore } from "../stores/appStore";
 import { fa, useApi } from "../lib/useApi";
 import { JalaliDateField } from "../components/ui/JalaliDateField";
 import { Select } from "antd";
+import { today } from "../lib/clock";
 
 /**
  * G5 — تغذیه: جستجوی جدول غذایی واقعی، ثبت وعده، جمع روزانه.
@@ -24,17 +25,10 @@ const slots = [
   { key: "snack", label: "میان‌وعده" },
 ];
 
-function todayIso(): string {
-  // تاریخ محلی، نه UTC — «امروز» برای کاربر یعنی امروز
-  const d = new Date();
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-}
-
 export function Nutrition() {
   // عضو انتخابی از صفحهٔ «اعضا» می‌آید — بدون آن هیچ عضوی فرض نمی‌شود.
   const memberId = useAppStore((s) => s.selectedMemberId);
-  const [date, setDate] = useState(todayIso());
+  const [date, setDate] = useState(today());
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<FoodRow[]>([]);
   const [searching, setSearching] = useState(false);

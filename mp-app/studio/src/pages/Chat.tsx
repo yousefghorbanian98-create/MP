@@ -10,6 +10,7 @@ import {
 } from "../lib/api";
 import { useAppStore } from "../stores/appStore";
 import { fa } from "../lib/useApi";
+import { toDate } from "../lib/clock";
 
 /**
  * G8 — چت مربی–شاگرد.
@@ -23,7 +24,7 @@ import { fa } from "../lib/useApi";
 
 function timeFa(iso: string | null): string {
   if (!iso) return "";
-  const d = new Date(iso);
+  const d = toDate(iso);
   if (Number.isNaN(d.getTime())) return "";
   return d.toLocaleTimeString("fa-IR", { hour: "2-digit", minute: "2-digit" });
 }

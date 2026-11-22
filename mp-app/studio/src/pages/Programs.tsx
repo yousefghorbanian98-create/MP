@@ -9,6 +9,7 @@ import { ExerciseLibrary } from "../components/ExerciseLibrary";
 import { AutoregPanel } from "../components/AutoregPanel";
 import { fa, useApi } from "../lib/useApi";
 import { useAppStore } from "../stores/appStore";
+import { toDate } from "../lib/clock";
 
 /**
  * برنامه‌ها (M45-c2) — از `GET /programs` واقعی، نه mock.
@@ -192,7 +193,7 @@ export function Programs() {
             <div className="mt-4 flex items-center justify-between text-[11px] text-ink-dim">
               <span>
                 {p.approved_at
-                  ? `تأیید: ${new Date(p.approved_at).toLocaleDateString("fa-IR")}`
+                  ? `تأیید: ${toDate(p.approved_at).toLocaleDateString("fa-IR")}`
                   : "تأیید نشده"}
               </span>
               {p.status === "draft" && (

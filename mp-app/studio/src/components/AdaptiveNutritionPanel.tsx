@@ -2,6 +2,7 @@ import { useState } from "react";
 import { fetchAdaptiveReport, logWeight } from "../lib/api";
 import { fa, useApi } from "../lib/useApi";
 import { JalaliDateField } from "./ui/JalaliDateField";
+import { today } from "../lib/clock";
 
 /**
  * G3 — تخمین TDEE واقعی و پیشنهاد اصلاح کالری.
@@ -24,12 +25,6 @@ const actionMap: Record<string, { label: string; cls: string }> = {
   none: { label: "پیشنهادی نیست", cls: "text-ink-dim" },
 };
 
-function todayIso(): string {
-  const d = new Date();
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-}
-
 export function AdaptiveNutritionPanel({ memberId }: { memberId: number }) {
   const { data, loading, error, reload } = useApi(
     (s) => fetchAdaptiveReport(memberId, undefined, s),
@@ -37,7 +32,7 @@ export function AdaptiveNutritionPanel({ memberId }: { memberId: number }) {
   );
 
   const [weight, setWeight] = useState("");
-  const [date, setDate] = useState(todayIso());
+  const [date, setDate] = useState(today());
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
