@@ -38,7 +38,7 @@
 | 0.4 | F-07 | DONE | (این کامیت، WP 0.4) | پوشش per-directory با همهٔ آستانه‌ها سبز: modules 92.33≥90، app 96.62≥92، api 93.69≥90، engine 97.24≥95، security 96.61≥95، db 98.97≥80، jobs 84.55≥80، cache 76.60≥75، scripts 65.85≥60؛ XML در CI artifact؛ ۱۲۴۶ passed/۲ skipped؛ AD‑11 |
 | 0.5 | F-10 | DONE | `bf1daa1` | eslint ۰/۰ (قبل: ۴۲ خطا + ۵ هشدار) |
 | 0.6 | F-24 | DONE | (این کامیت) | ثابت منسوخ `HTTP_422_UNPROCESSABLE_ENTITY` حذف شد (AST: ۰ مورد در app/scripts)؛ هشدار asyncio با `asyncio_default_fixture_loop_scope` بسته شد؛ شمارش ۱۴۱ مسیر/۱۶۳ عملیات از OpenAPI و پیمایشگر یکی است؛ بار و import اپ بدون StarletteDeprecationWarning. باقی‌مانده (فقط تست): هشدار httpx در `starlette.testclient` — نیازمند وابستگی `httpx2` (تصمیم جدا) |
-| 0.7 | — | PARTIAL | (این کامیت) | قاعدهٔ کیت به `.semgrep/mp-harness-rules.yml` (sha256 `d58146b4…`) و CI به‌صورت «غیرمسدودکننده» (`continue-on-error`) اضافه شد. پایه روی `mp-app`: ۵ یافته (۰ silent-except-pass)، exit 0. گیت صفر یافته در پایان فاز ۴ باز است؛ مسدودکننده‌شدن در فاز ۴ |
+| 0.7 | — | DONE | `edc01e0` (B6)؛ قبلاً `4066748`، `fe103a4` | sha256 قاعده: `d58146b4…` (کپی کیت، `4066748`) ⇒ `f9bd5d55…` (`fe103a4`، تنگ‌سازی float در WP 4.6) ⇒ `07f3475b…` (B6، تنگ‌سازی money-division). harness روی mp-app: **۰ یافته، exit 0** (پیش از B6: ۳)؛ project-rules: ۰، exit 0. کنترل مثبت (فایل موقت بیرون مخزن): ۳ یافته؛ کنترل منفی `(end-start).total_seconds()/60.0`: ۰ (قاعدهٔ HEAD: ۱). گام harness مسدودکننده؛ نام jobها بدون تغییر. |
 | 0.9 | الحاقیهٔ A1 | DONE (گام ۱–۵) | — | پیکربندی `5d820a0`؛ ERA001 `e335653`؛ گیت `d4c0f3e`؛ رفع ایمن ۴۵ `9868a11`؛ CI+پین `07f096d`؛ 430→419 (base PASS)؛ pytest 1132/0 exit 0 |
 | 0.8 | A5 | DONE | (این commit) | گیت کیت ۴۲/۴۲ — اندازه‌گیری: ۴۳ خط `uses:` در ۷ فایل workflow، **۴۳/۴۳ پین به SHA** (۰ تگ‌محور)؛ هر ۷ SHA یکتا با `gh api repos/…/commits/<sha>` در مخزن upstream یافت شد. باقی‌مانده A5 (SBOM/امضا) خارج از گیت این WP |
 | 1.1 | F-01 | PARTIAL | `ccf44ce` | e2e: قبل ۳۰×200، بعد ≥۲۷×429؛ متریک `key_source` باقی |
@@ -58,13 +58,13 @@
 | 3.4 | F-27 | DONE | (این کامیت) | red: `test_wp34_member_profile_required.py` (`shop_online_closed`→۴۰۴ به‌جای ۴۰۹)؛ اصلاح: `_own_member` ⇒ `ConflictError(code=member_profile_required)` ۴۰۹؛ گیت ایستا `check_shop_purchase_guard` در `deploy_gate.py` (۱۵ بررسی، ۰ مشکل)؛ pytest کامل `1268 passed, 2 skipped, rc=0`؛ سفارش به‌نیابت: AD‑17 |
 | 3.5 | F-09/F-25 | DONE | commit «WP 3.5» (`git log --grep "WP 3.5"`) (NOT-REPRODUCED؛ گاردهای سبز، D‑16) | آزمون قراردادی سراسری در CI |
 | 3.6 | F-28 | DONE | (این کامیت) | red: ۳ تست (سن، اسکن، TZ) ناموفق روی کد قبل ⇒ green: ۵ تست؛ گیت after-wp36 PASS؛ pytest ۱۱۵۱/۲/۰؛ AD‑1 |
-| 4.1 | F-15 | PARTIAL | B5: prescribe F46→C13 (golden + جهش، D‑18)؛ validate F54→C13 (D‑17)؛ باقی: E34، ۱۰×D، ۸ کلید (TODO) | شکستن `validate_production_configuration` (radon F(47)) |
-| 4.2 | F-11 | DEFERRED | وابستگی جهش‌سنجی تازه لازم است؛ baseline ممیز امتیاز جهش ۵۷٫۸٪ در برابر ≥۸۰٪؛ تصمیم مالک (تعویق، بدون mutmut) | سه جهش واقعی؛ ≥۸۰٪ |
+| 4.1 | F-15 | PARTIAL | `8bae88c`، `a825c00`، `c3d28d8`، `e740938` (B5) | `prescribe_axis_work` F46 ⇒ C13 با golden از HEAD (۳۰۰ نمونه) و جهش (`1 failed` ⇒ بازگردانی `2 passed`، D‑20)؛ `validate_production_configuration` F54 ⇒ C13 (D‑17). باقی: `next_transfer_state` E34، ۱۰ بلوک D، هشت کلید کیت (TODO). |
+| 4.2 | F-11 | DEFERRED | — | baseline جهش ۵۷٫۸٪ در برابر ≥۸۰٪؛ ابزار جهش‌سنجی وابستگی تازه می‌خواهد (ممنوع در این batch)؛ تصمیم مالک، D‑19. |
 | 4.3 | F-19 | DONE | cf33ad8 (حذف await import؛ یک‌لایه‌سازی سه API = TODO، D‑14) | یک لایهٔ داده در استودیو؛ حذف `await import` در onClick | |
 | 4.4 | F-20/F-23 | DONE | cf33ad8 (updateProduct حذف؛ getToken unexport در این بسته: ‏ببینید EXECUTION-LOG) | BD-2: حذف `updateProduct` کلاینت | |
 | 4.5 | F-21/F-22 | DONE | (این کامیت) | F-22 red: ۱ ناموفق (۴ خط) ⇒ green؛ semgrep قاعده repair شد (مرده بود، AD‑8)؛ S فعال و بلوکینگ؛ گیت after-wp45 PASS؛ pytest ۱۱۹۱/۲/۰ |
 | 4.6 | F-16 | DONE | (این کامیت) | red: `tests/nutritionNoMemberSentinel.test.tsx` (درخواست `member_id=-1` بدون عضو)؛ اصلاح `Nutrition.tsx` ⇒ بدون عضو درخواست نمی‌رود؛ `mp-ts-float-money` روی `Analytics.tsx:106` (شمارندهٔ دقیقه) false positive ⇒ regex با lookahead محدود شد (AD‑18) و fixture `.semgrep/tests/mp-ts-float-money.ts` دقیقاً ۵/۵ مطابقت؛ `studio/src` ⇒ ۰ یافته؛ `tsc` rc=0؛ vitest ۲۹۹ passed، rc=0 |
-| 4.7 | — | PARTIAL | semgrep project-rules: blocking (از قبل، ci.yml)؛ harness: هنوز continue-on-error (ci.yml:170–172)؛ بار پله‌ای: BLOCKED-ENV (Docker/Postgres در سندباکس نیست) | Semgrep blocking، بار پله‌ای، جهش، گیت نهایی |
+| 4.7 | — | PARTIAL | `edc01e0` (نیمهٔ semgrep) | semgrep: هر دو فایل قاعده مسدودکننده و صفر یافته (project ۰، harness ۰). **بار پله‌ای/ترکیبی BLOCKED-ENV**: بدون Docker/Postgres در سندباکس. |
 
 **باقی‌مانده‌های `BLOCKED-ENV`** (کاربر باید مطلع شود، نه متوقف شود): Docker/Postgres/Valkey برای بار ۲۰۰ کاربر و `pgBackRest`؛ Prometheus/Alertmanager؛ دستگاه واقعی و اسکرین‌شات Flutter؛ امضای APK؛ آزمون ابری.
 

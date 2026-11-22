@@ -277,17 +277,24 @@ def build_inventory(files: list[str]) -> str:
     return "\n".join(out)
 
 
-def main() -> int:
-    check = "--check" in sys.argv
+def build_outputs() -> dict:
     data = json.loads((AUDIT / "findings.json").read_text(encoding="utf-8"))
     status_path = AUDIT / "status.json"
     status = json.loads(status_path.read_text(encoding="utf-8")) if status_path.exists() else {}
     files = tracked_files()
-    outputs = {
+    return {
         AUDIT / "CHECKLIST.md": build_checklist(data, status),
         AUDIT / "INVENTORY.md": build_inventory(files),
     }
-    if check:
+
+
+def _on_disk_matches(outputs: dict) -> bool:
+    return all(p.exists() and p.read_text(encoding="utf-8") == text for p, text in outputs.items())
+
+
+def main() -> int:
+    if "--check" in sys.argv:
+        outputs = build_outputs()
         stale = [p.name for p, text in outputs.items() if not p.exists() or p.read_text(encoding="utf-8") != text]
         if stale:
             print("کهنه:", ", ".join(stale))
@@ -295,8 +302,18 @@ def main() -> int:
         print("فهرست‌ها هم‌خوان‌اند")
         return 0
     AUDIT.mkdir(parents=True, exist_ok=True)
+    # INVENTORY ردیف خودش را (خط/بایت) ثبت می‌کند؛ یک نوشتن ممکن است یک قدم عقب بماند.
+    # تا نقطهٔ ثابت تکرار می‌کنیم (حداکثر ۵ بار) تا `--check` هرگز کهنه نشود.
+    for _ in range(5):
+        outputs = build_outputs()
+        if _on_disk_matches(outputs):
+            break
+        for path, text in outputs.items():
+            path.write_text(text, encoding="utf-8")
+    else:
+        print("نقطهٔ ثابت پیدا نشد (۵ تکرار)")
+        return 1
     for path, text in outputs.items():
-        path.write_text(text, encoding="utf-8")
         print(f"نوشته شد: {path.relative_to(ROOT)} ({text.count(chr(10))} خط)")
     return 0
 

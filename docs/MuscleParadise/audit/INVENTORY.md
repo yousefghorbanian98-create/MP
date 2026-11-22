@@ -7,20 +7,20 @@
 
 ## ۱. خلاصهٔ تعداد فایل
 
-- کل فایل‌های ترک‌شده: **1352** (خطوط متنی: 305735)
+- کل فایل‌های ترک‌شده: **1352** (خطوط متنی: 305782)
 
 | ناحیه | تعداد فایل | خطوط متنی |
 |---|---|---|
-| CI/CD | 6 | 1400 |
+| CI/CD | 6 | 1399 |
 | استودیو (React) | 122 | 26329 |
-| اسکریپت و ابزار | 19 | 7347 |
-| اپ عضو (Flutter) | 114 | 19319 |
+| اسکریپت و ابزار | 19 | 7364 |
+| اپ عضو (Flutter) | 114 | 19320 |
 | بک‌اند (FastAPI) | 560 | 129494 |
-| ریشه و تنظیمات | 12 | 1527 |
+| ریشه و تنظیمات | 12 | 1529 |
 | زیرساخت و کانتینر | 15 | 597 |
 | سایر mp-app | 4 | 239 |
 | شواهد QA | 40 | 1626 |
-| مستندات | 319 | 109532 |
+| مستندات | 319 | 109560 |
 | گزارش‌های عامل | 141 | 8325 |
 
 ## ۲. عملیات API (از `app.openapi()`، مرجع اصلی)
@@ -365,7 +365,7 @@
 
 | ناحیه | مسیر | خطوط | اندازه (بایت) | بازبینی |
 |---|---|---|---|---|
-| CI/CD | `.github/workflows/ci.yml` | 597 | 32003 | NOT-REVIEWED |
+| CI/CD | `.github/workflows/ci.yml` | 596 | 31954 | NOT-REVIEWED |
 | CI/CD | `.github/workflows/client-format-fix.yml` | 446 | 23828 | NOT-REVIEWED |
 | CI/CD | `.github/workflows/container.yml` | 58 | 2168 | NOT-REVIEWED |
 | CI/CD | `.github/workflows/deploy.yml` | 150 | 6001 | NOT-REVIEWED |
@@ -493,7 +493,7 @@
 | استودیو (React) | `mp-app/studio/tsconfig.json` | 20 | 510 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/vite.config.ts` | 56 | 2320 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/vitest.config.ts` | 21 | 841 | NOT-REVIEWED |
-| اسکریپت و ابزار | `scripts/build_audit_inventory.py` | 305 | 13434 | NOT-REVIEWED |
+| اسکریپت و ابزار | `scripts/build_audit_inventory.py` | 322 | 14148 | NOT-REVIEWED |
 | اسکریپت و ابزار | `scripts/docs_gate.py` | 212 | 9320 | NOT-REVIEWED |
 | اسکریپت و ابزار | `scripts/interaction_map.py` | 405 | 18725 | NOT-REVIEWED |
 | اسکریپت و ابزار | `scripts/repo_hygiene_gate.py` | 104 | 4544 | NOT-REVIEWED |
@@ -547,7 +547,7 @@
 | اپ عضو (Flutter) | `mp-app/client/assets/fonts/Vazirmatn-Regular.ttf` | — | 122752 | NOT-REVIEWED |
 | اپ عضو (Flutter) | `mp-app/client/assets/logo/app_icon.png` | — | 249050 | NOT-REVIEWED |
 | اپ عضو (Flutter) | `mp-app/client/ci_apk.sh` | 25 | 669 | NOT-REVIEWED |
-| اپ عضو (Flutter) | `mp-app/client/lib/core/api_client.dart` | 212 | 8749 | NOT-REVIEWED |
+| اپ عضو (Flutter) | `mp-app/client/lib/core/api_client.dart` | 213 | 8935 | NOT-REVIEWED |
 | اپ عضو (Flutter) | `mp-app/client/lib/core/app_state.dart` | 456 | 19887 | NOT-REVIEWED |
 | اپ عضو (Flutter) | `mp-app/client/lib/core/haptics.dart` | 67 | 3275 | NOT-REVIEWED |
 | اپ عضو (Flutter) | `mp-app/client/lib/core/membership.dart` | 177 | 5774 | NOT-REVIEWED |
@@ -1190,7 +1190,7 @@
 | ریشه و تنظیمات | `.gitignore` | 81 | 1552 | NOT-REVIEWED |
 | ریشه و تنظیمات | `.gitleaksignore` | 505 | 60102 | NOT-REVIEWED |
 | ریشه و تنظیمات | `.repowise/decisions.yaml` | 66 | 3042 | NOT-REVIEWED |
-| ریشه و تنظیمات | `.semgrep/mp-harness-rules.yml` | 186 | 7163 | NOT-REVIEWED |
+| ریشه و تنظیمات | `.semgrep/mp-harness-rules.yml` | 188 | 7426 | NOT-REVIEWED |
 | ریشه و تنظیمات | `.semgrep/project-rules.yml` | 131 | 4943 | NOT-REVIEWED |
 | ریشه و تنظیمات | `.semgrep/tests/mp-ts-float-money.ts` | 19 | 625 | NOT-REVIEWED |
 | ریشه و تنظیمات | `AGENTS.md` | 55 | 9199 | NOT-REVIEWED |
@@ -1350,9 +1350,9 @@
 | مستندات | `docs/MuscleParadise/assets/system-architecture.svg` | 148 | 13022 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/BASELINE.md` | 200 | 34258 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/CHECKLIST.md` | 150 | 21738 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/DECISIONS.md` | 457 | 71463 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/EXECUTION-LOG.md` | 713 | 108742 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/FINN-AUDIT-LOOP.md` | 88 | 13605 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/DECISIONS.md` | 470 | 74408 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/EXECUTION-LOG.md` | 728 | 114833 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/FINN-AUDIT-LOOP.md` | 88 | 13891 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/INVENTORY.md` | 1719 | 164538 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/MICRO-LOOPS.md` | 83 | 6853 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/evidence/after/backend-coverage.xml` | 12153 | 430390 | NOT-REVIEWED |
