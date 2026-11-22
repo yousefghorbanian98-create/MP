@@ -624,3 +624,11 @@ WP: 0.4 · F: F‑07 · شاهد: `evidence/after/wp04/` · تصمیم: AD‑11 
 - **receiptQueue:** در اجرای کامل بعدی با زمان‌بندی ثبت می‌شود.
 - **push:** این بسته یک push نقطه‌ای (checkpoint) برای جلوگیری از گم‌شدن کامیت‌های محلی است و بستهٔ B3 را کامل نمی‌کند. دستور: `git push origin arena/5a1e37b3-mp`.
 
+### B3 · اصلاح CI پس از checkpoint (`92b8db0`)
+- **CI:** run `45039125729` روی `92b8db0`: `backend` = failure در مرحلهٔ **Security scan (bandit + pip-audit)**؛ بقیه (live-contract، secret-scan، studio، client-flutter، docs، Android) success؛ `e2e-api` skipped.
+- **علت:** `bandit -r . -ll -q` ⇒ B613 (trojansource، High) روی `tests/integration/test_wp33_gateway_return_status.py:4` — یک کاراکتر کنترل دوجهته (U+200F) در docstring از اشتباه تایپی من. **این خطای این بسته بود، نه وابستگی.**
+- **pip-audit:** `pip-audit` ⇒ exit 0، «No known vulnerabilities found» (هشدار `mp-backend not on PyPI` فقط نام پروژه است).
+- **اصلاح:** حذف کاراکتر U+200F از آن فایل (`re` روی کد‌پوینت‌های 200E/200F/202A–202E/2066–2069 ⇒ ۱ مورد قبل، ۰ بعد).
+- **تأیید محلی:** `bandit -r . -ll -q` ⇒ exit 0 (`Issue:` = 0)؛ `pytest -q tests/integration/test_wp33_gateway_return_status.py` ⇒ `6 passed`؛ `ruff check` و `ruff format --check` روی دو فایل ⇒ exit 0.
+- **تخطی از سقف دو کامیت:** این اصلاح کامیت سوم B3 است. دلیل: کامیت قبلی push شده بود و بازنویسی آن force-push می‌شد (ممنوع). سقف ≤۲ کامیت برای بستهٔ کامل است؛ این تخطی و علتش ثبت شد.
+
