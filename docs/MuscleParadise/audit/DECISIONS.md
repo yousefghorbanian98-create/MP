@@ -428,3 +428,12 @@
 
 **نحوهٔ برگرداندن:** `git revert` همان commit تست (تنها حذف تست جدید؛ هیچ تست موجودی تغییر نمی‌کند).
 
+## D‑17 · WP 4.1 (F‑15): شکستن validate_production_configuration بدون تغییر قرارداد (برگشت‌پذیر)
+
+- **اندازه‌گیری روی HEAD (`0bc6c2e`، `radon` 6.0.1 در venv مجزای `/tmp/radonvenv`، نه در مخزن):** `validate_production_configuration` = **F (54)** (کیت: F(47) — عدد قدیمی بود؛ ساخت فعلی بیشتر دارد).
+- **تصمیم:** تابع به هفت اعتبارسنجِ خانوادگی شکسته شد (`_secret`، `_biometric`، `_sms`، `_proxy`، `_valkey`، `_cors` با helper `_is_public_https_origin`، `_payment`). **ترتیب، متن پیام‌ها و رفتار** با golden ساخته‌شده روی HEAD (۶۰۰ نمونه، ۲۷۶ OK / ۳۲۴ ERR) قفل است: `tests/regression/test_wp41_config_characterization.py` (۲ passed قبل و بعد از شکستن).
+- **نتیجهٔ کمّی بعد از شکستن:** `validate_production_configuration` دیگر در فهرست ≥D نیست؛ `app/config.py` بیشترین رتبه `C (13)`؛ هیچ بلوک ≥D در `app/config.py`.
+- **مورد باز (TODO، نه در این بسته):** افزودن بررسی برای هشت کلید کیت (`MP_TRUSTED_PROXIES` ⊂ موجود، `MP_DATABASE_URL`، `MP_REQUIRE_WORKER`، `MP_RECEIPTS_DIR`، `MP_PUBLIC_BASE_URL`، `MP_SHOP_*`، `MP_VALKEY_URL` ⊂ موجود، `MP_ALLOWED_ORIGINS`). **دلیل:** افزودن این بررسی‌ها راه‌اندازی production را برای پیکربندی‌هایی که امروز بالا می‌آیند رد می‌کند؛ این همان تغییر قرارداد است که در D‑14 به بعد موکول شد. تصمیم مالک لازم است.
+- **مورد باز (WP 4.1 کامل نیست):** کیت «۰ بلوک با درجهٔ ≥D» را می‌خواهد. پس از این بسته، در کد محصول (بدون تست) ماند: `engine/axis_prescription.py:43 prescribe_axis_work` F(46)، `modules/payments/manual_transfer_policy.py:45 next_transfer_state` E(34)، و هفت بلوک D (`jp7_trend`، `build_confidential_report`، `assess_member_risk`، `apply_suggestions`، `screen`، `estimate_percentile`، `analyze`). این‌ها در همین WP ولی جدا از validate هستند؛ هر کدام بسته‌بندی جدا می‌خواهد.
+- **نحوهٔ برگرداندن:** `git revert` کامیت شکستن (`app/config.py` به تابع یک‌بلوکی برمی‌گردد؛ golden و تست مشخصه‌یابی باقی می‌مانند).
+

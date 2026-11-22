@@ -86,5 +86,9 @@
   "F-25": {
     "status": "NOT-REPRODUCED",
     "note": "WP 3.5 (D‑16): روی HEAD 338abb3 بازتولید نشد — ۲۶۰ درخواست با ۴ شناسهٔ بد و سه نقش: ۰ پاسخ 2xx (id_guard ⇒ 422). گارد سبز: tests/integration/test_wp35_contract_guards.py (۹ passed). شاهد جهش C2: amount_rial:int ⇒ 1 failed."
+  },
+  "F-15": {
+    "status": "FIXED-PARTIAL",
+    "note": "WP 4.1 (کامیت «WP 4.1 … refactor»): validate_production_configuration از F(54) به هفت اعتبارسنج خانوادگی؛ بیشترین رتبه در config.py = C(13)؛ رفتار با golden (600 نمونه) قفل است: tests/regression/test_wp41_config_characterization.py. باقی: prescribe_axis_work F(46)، next_transfer_state E(34)، هفت بلوک D (کد محصول)؛ هشت کلید کیت = TODO (D‑17)."
   }
 }

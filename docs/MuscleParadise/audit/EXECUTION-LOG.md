@@ -658,3 +658,17 @@ WP: 0.4 · F: F‑07 · شاهد: `evidence/after/wp04/` · تصمیم: AD‑11 
 - **ریسک‌ها و عدم‌قطعیت:** کیت F‑25 را روی یک ساخت قدیمی‌تر اندازه گرفته؛ این اندازه‌گیری‌ها در پایگاه داده تهی (`tmp_path` sqlite) انجام شد، نه روی سرور زنده با داده‌های بذرشده. شناسه‌های غیرمنتظره در بدنهٔ JSON (نه مسیر) پوشش داده نشده‌اند.
 - **برگرداندن:** `git revert` همان commit (فقط حذف تست جدید).
 
+## B4 — WP 4.1 / F‑15 (PARTIAL) · D‑17
+
+- **معیار:** D‑17 (شکستن validate بدون تغییر قرارداد؛ ۸ کلید = TODO؛ «۰ بلوک ≥D» = باز).
+- **مشخصه‌یابی (کامیت `8bae88c`، قبل از شکستن):** `tests/regression/test_wp41_config_characterization.py` با golden ساخته‌شده روی HEAD `0bc6c2e` ⇒ `2 passed` (۶۰۰ نمونه: ۲۷۶ OK، ۳۲۴ ERR). پیش‌تر دو بار golden ساخته شد: نمونهٔ تصادفیِ خالص فقط ERR داد (ماتریس بی‌کیفیت)؛ سپس با پایهٔ معتبر و جهش ۰–۳ محور ⇒ هر دو نتیجه.
+- **اندازه‌گیری radon (ابزار موقت در `/tmp/radonvenv`، نسخهٔ 6.0.1 مثل کیت؛ در وابستگی‌های مخزن اضافه نشد):**
+  - `radon cc -s -n C app/config.py` روی HEAD ⇒ `F (54)` برای `validate_production_configuration`.
+  - پس از شکستن: `radon cc -s -n C app/config.py` ⇒ `C (13)` (بیشترین) و `radon cc -n D app/config.py | wc -l` ⇒ `0`.
+  - کد محصول (`app modules engine db devtools`) `radon cc -s -n D` ⇒ F×۱ (`prescribe_axis_work` F46)، E×۱ (`next_transfer_state` E34)، D×۷. کیت: F×۲، E×۱، D×۷ ⇒ یک F کم شد؛ **هدف «۰ بلوک ≥D» برآورده نشد.**
+- **تست‌های همان حوزه:** `pytest -q tests/regression/test_wp41_config_characterization.py tests/regression/test_wp11_xff_trust.py tests/regression/test_wp12_env_failsafe.py tests/regression/test_production_ops.py` ⇒ `46 passed`؛ `pytest -q tests/regression` ⇒ `307 passed, 2 skipped` (قبل: ۳۰۵ + ۲ تست مشخصه‌یابی).
+- **lint/format (مجموعهٔ CI):** `ruff check --select E,F,W,I,N,UP,B,SIM,DTZ,TRY400,S --ignore E501 app/config.py tests/regression/test_wp41_config_characterization.py` ⇒ exit 0؛ `ruff format --check` ⇒ exit 0 (پس از `ruff format`). `bandit -r . -ll -q` ⇒ exit 0.
+- **باز در WP 4.1:** `prescribe_axis_work`، `next_transfer_state`، هفت بلوک D، و هشت کلید کیت (TODO).
+- **انطباق با دستور دائمی (ادعای فقط‌تغییرکننده):** مشخصه‌یابی سبز روی HEAD بود (هیچ قرمزی ادعا نشد؛ شکستن رفتار را تغییر نداد).
+- **INVENTORY/CHECKLIST (باقی‌مانده از B3):** در همین commit آورده شد؛ بازتولید آخرین قدم قبل از commit بود.
+

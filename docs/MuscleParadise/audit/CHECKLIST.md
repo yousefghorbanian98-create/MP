@@ -81,13 +81,13 @@
 | F-06 | `/api/v1/metrics` بدون احراز هویت | FIXED | WP 1.3: /api/v1/metrics با Bearer (MP_METRICS_TOKEN) محافظت شد: بدون هدر/توکن غلط ۴۰۱، بدون توکن تنظیم‌شده ۴۰۳؛ Caddy مسیر را ۴۰۴ می‌کند؛ Prometheus با credentials؛ Compose الزام متغیر دارد. تست: tests/integration/test_wp13_metrics_auth.py. |
 | F-07 | پوشش مستند ۹۴٫۲۸٪ در برابر واقعی ۸۳٫۷۳٪ | OPEN |  |
 | F-08 | `logout-all` توکن‌های بدون `sid` را باطل نمی‌کند | FIXED-PARTIAL | WP 1.4 (BD-6): logout-all عدد auth_version را bump می‌کند؛ توکن بی‌sid پس از آن ۴۰۱ (قبل ۲۰۰). دو اسکریپت توکن با sid واقعی و بدون چاپ روی stdout. تست: tests/integration/test_wp14_logout_all.py. باقی‌مانده: قاعدهٔ Semgrep (WP 0.7). |
-| F-09 | پول بزرگ: `2^53`، `2^53+1`، `10^18` پذیرفته می‌شوند + coercion رشته→عدد | FIXED | الحاقیهٔ A1 — WP 1.5 (AD‑7). قبل: ۵ فیلد درخواستیِ مبلغ `int` (۲^۵۳ و ۱۰^۱۸ و رشتهٔ «۱۰۰۰» پذیرفته می‌شد)؛ کمیسیون `int(int(total)*rate)` با float. red: ۲۳ تست ناموفق (app/money.py نبود، کمیسیون ۱۰^۱۸+۷ با نرخ ۰٫۳ = ۳۰۰۰۰۰۰۰۰۰۰۰۰۰۰۰۰۰ به‌جای ۳۰۰۰۰۰۰۰۰۰۰۰۰۰۰۰۰۰۲). بعد: `Rial` = StrictInt ≤ 2^53−1 روی ۵ فیلد درخواستی؛ کمیسیون Decimal + گرد به پایین؛ استودیو: parseRial/parseRialOrThrow/formatRial در lib/money.ts جای Number() روی ۷ محل. تست: tests/regression/test_wp15_rial_strict.py (۳۳) و studio/tests/wp15Money.test.ts؛ گیت after-wp15 PASS؛ pytest کامل ۱۱۸۴ passed، ۲ skipped، exit 0؛ vitest ۲۹۸ passed، tsc و eslint صفر. |
+| F-09 | پول بزرگ: `2^53`، `2^53+1`، `10^18` پذیرفته می‌شوند + coercion رشته→عدد | NOT-REPRODUCED | WP 3.5 (D‑16): روی HEAD بازتولید نشد — Rial (StrictInt + le=MAX_SAFE_RIAL) برای 2^53، 2^53+1، 10^18، رشته، float و bool رد می‌کند؛ همهٔ ورودی‌های پولی Rial‌اند. گارد سبز: tests/integration/test_wp35_contract_guards.py (9 passed)؛ جهش amount_rial:int ⇒ 1 failed. |
 | F-10 | ۳۱ خطای ESLint در استودیو (هیچ lint واقعی اجرا نمی‌شد) | FIXED | WP 0.5: eslint.config.mjs (flat) + اسکریپت lint = `eslint .` + گیت در CI. اندازه‌گیری قبل: ۴۲ خطا + ۵ هشدار (بریف: ۳۱ خطا؛ عدد دقیق با همین پیکربندی ۴۲ بود). بعد: ۰ خطا، ۰ هشدار. قاعدهٔ label-has-associated-control با controlComponents برای کنترل‌های antd تنظیم شد؛ autoFocus به فوکوس ref تبدیل شد. |
 | F-11 | امتیاز جهش ۵۷٫۸٪ در ماژول پولی؛ ۳ شکاف واقعی | OPEN |  |
 | F-12 | `routes.json` مجموعهٔ گاردهای واقعی را کم‌تر نشان می‌دهد ⇒ اوراکل نامعتبر | BLOCKED | WP 0.2: routes.json اکنون گاردهای مؤثر را اعلام می‌کند (permission/grant/authenticated/metrics_token + super_admin_only/owner_scope/body_credential از app/security/route_policy.py). ارزیاب سه‌ارزشی روی ۱٬۱۴۱ سلول زنده: ۰ ناهمخوانی، ۰ 5xx، ۹۱۵ دقیق + ۲۲۶ شرطی. گیت باینری کیت (probe_contract.py matrix) هنوز قرمز است: ۵۹۲ (هر ۶۹ سلولِ اختلاف باینری شرطی است). تصمیم مالک لازم است (AD‑10). شاهد: evidence/after/wp02/. |
 | F-13 | guard تکراری روی یک مسیر (دو بار casbin enforce) | FIXED | WP 0.3: گارد تکراری روی review حذف شد؛ شاهد: قبل ۲ بار enforce، بعد ۱ بار (tests/integration/test_wp03_axis_single_guard.py، tests/regression/test_no_duplicate_guard.py) |
 | F-14 | `gateway-return` با شناسهٔ نامعتبر → HTTP 200 | FIXED | WP 3.3 (9024f44): پرداخت ناموجود ⇒ HTTP 404 با همان صفحه (`modules/payments/router.py`). شاهد: `tests/integration/test_wp33_gateway_return_status.py` (red 1 failed ⇒ green 6 passed). شناسه‌های -1/0/-0/INT64_MIN در HEAD قبلاً 422 بودند (بازتولید نشد؛ محافظت شده). F‑25 (۱۱ مسیر دیگر) خارج از این WP و در WP 3.5. |
-| F-15 | ۵۵ هشدار پیچیدگی (lizard) و ۴۱ بلوک ≥C (radon)؛ بدترین درجهٔ radon **F** با CC ‏۴۷ و ۴۶ | OPEN |  |
+| F-15 | ۵۵ هشدار پیچیدگی (lizard) و ۴۱ بلوک ≥C (radon)؛ بدترین درجهٔ radon **F** با CC ‏۴۷ و ۴۶ | FIXED-PARTIAL | WP 4.1 (کامیت «WP 4.1 … refactor»): validate_production_configuration از F(54) به هفت اعتبارسنج خانوادگی؛ بیشترین رتبه در config.py = C(13)؛ رفتار با golden (600 نمونه) قفل است: tests/regression/test_wp41_config_characterization.py. باقی: prescribe_axis_work F(46)، next_transfer_state E(34)، هفت بلوک D (کد محصول)؛ هشت کلید کیت = TODO (D‑17). |
 | F-16 | ۷ محل پولِ شناور در استودیو + ۱ sentinel منفی | OPEN |  |
 | F-17 | ۴ خطای «except بی‌صدا» (از جمله در `api/v1/monitoring.py:18`) | OPEN |  |
 | F-18 | ناسازگاری ظرفیت‌ها: ۱۶۴ handler سنکرون، threadpool=40، pool=60، 4 worker | FIXED-PARTIAL | WP 2.3 (f852675): `WEB_CONCURRENCY` پیش‌فرض ۱ در دو Dockerfile؛ بودجهٔ `workers × 60 ≤ بودجهٔ DB` در OPS-RUNBOOK §۱‑الف؛ شاهد: `tests/regression/test_b2_wp23_wp43_wp44.py`. باز (TODO، D‑14): گسترش `validate_production_configuration` با هشت کلید کیت؛ pragmaهای SQLite در `alembic/env.py`؛ rate-limit `memory://` در چند worker. |
@@ -97,7 +97,7 @@
 | F-22 | ۴ SQL با f‑string در یک migration | FIXED | WP 4.5 (AD-8). قبل: ۴ `op.execute(f"DROP INDEX IF EXISTS ...")` در c3f01ab129e2 (خطوط 67/165/169/171) و قاعدهٔ semgrep که این فایل را نمی‌گرفت (سه علت: استثنای migrations؛ الگوهای فقط با آرگومان دوم؛ pattern-not-inside خاموش‌کننده). red: تست AST ناموفق روی ۴ مورد؛ semgrep روی فایل ۰ یافته. بعد: `_drop_index_if_exists` با inspector + `op.drop_index`؛ ۴ noqa حذف؛ S608 از ignore مربوط به migrations حذف. شاهد: upgrade→downgrade f1a2b3c4d5e6→upgrade روی SQLite PASS؛ semgrep روی کل backend ۰ یافته؛ pytest ۱۱۹۱/۲/۰. |
 | F-23 | ۱۰ دکمه بدون `onClick` (موجودی، نه لزوماً نقص) | OPEN |  |
 | F-24 | هشدارهای انباشتهٔ runtime | IN-PROGRESS | WP 0.6: HTTP_422_UNPROCESSABLE_ENTITY → HTTP_422_UNPROCESSABLE_CONTENT در app/errors.py؛ هشدار Starlette دیگر در تست خطاها نیست. هشدارهای دیگر (httpx در TestClient، asyncio_default_fixture_loop_scope) باقی‌اند. |
-| F-25 | گارد شناسه **کف** ندارد: ۱۲ endpoint با `-1`/`0`/`-0`/INT64_MIN پاسخ **۲۰۰** می‌دهند | OPEN |  |
+| F-25 | گارد شناسه **کف** ندارد: ۱۲ endpoint با `-1`/`0`/`-0`/INT64_MIN پاسخ **۲۰۰** می‌دهند | NOT-REPRODUCED | WP 3.5 (D‑16): روی HEAD 338abb3 بازتولید نشد — ۲۶۰ درخواست با ۴ شناسهٔ بد و سه نقش: ۰ پاسخ 2xx (id_guard ⇒ 422). گارد سبز: tests/integration/test_wp35_contract_guards.py (۹ passed). شاهد جهش C2: amount_rial:int ⇒ 1 failed. |
 | F-26 | دو شکلِ متفاوت برای پاکت خطا: `{"error":…}` در برابر `{"detail":…}` | OPEN |  |
 | F-27 | پیش‌نیازِ «پروندهٔ عضو» در سبد خرید با `404 not_found` بیان می‌شود؛ سفارش به‌نیابت ممکن نیست | OPEN |  |
 | F-28 | «امروز» سه برداشت متفاوت دارد: nutrition و axis_assessment از `date.today()` (ساعت UTC کانتینر) استفاده می‌کنند؛ shop از Asia/Tehran. هر شب ۰۰:۰۰–۰۳:۳۰ تهران روز اشتباه | FIXED | الحاقیهٔ A1 — WP 3.6 (AD‑1). قبل: date.today() ×3 (axis_assessment:31، nutrition:124،182) ⇒ red: ۳ تست ناموفق (سن و اسکن و Dockerfile) روی کد قبل. بعد: app/clock.py::today_in_shop_zone؛ ENV TZ=Asia/Tehran در دو Dockerfile؛ ۵ تست regression/test_wp36_shop_today.py سبز؛ گیت after-wp36 PASS؛ pytest کامل ۱۱۵۱ passed، ۲ skipped، exit 0. مسیر nutrition با اسکن کدی و تابع مشترک پوشش داده شد نه با تست رفتاری مستقل. |
@@ -138,10 +138,11 @@
 |---|---|---|
 | blocked | OPEN | 5 |
 | findings | BLOCKED | 1 |
-| findings | FIXED | 10 |
-| findings | FIXED-PARTIAL | 7 |
+| findings | FIXED | 9 |
+| findings | FIXED-PARTIAL | 8 |
 | findings | IN-PROGRESS | 1 |
-| findings | OPEN | 10 |
+| findings | NOT-REPRODUCED | 2 |
+| findings | OPEN | 8 |
 | non_issues | OPEN | 14 |
 | problems | FIXED | 1 |
 | problems | IN-PROGRESS | 1 |
