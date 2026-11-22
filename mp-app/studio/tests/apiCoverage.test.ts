@@ -41,6 +41,13 @@ interface Exception {
 }
 
 const ROUTE_EXCEPTIONS: Record<string, Exception> = {
+  // WP 4.4 (B2): updateProduct حذف شد چون هیچ کدام از Studio و Client آن را صدا نمی‌زد.
+  // بک‌اند PATCH را نگه می‌دارد؛ UI ویرایش قیمت/محصول هنوز ساخته نشده است.
+  "/api/v1/shop/products/{product_id}": {
+    why: "PATCH ویرایش محصول — بدون مصرف‌کنندهٔ Studio/Client پس از حذف updateProduct (WP 4.4)",
+    evidence: null,
+    external: "TODO: فرم ویرایش محصول در Studio یا حذف رسمی PATCH از بک‌اند",
+  },
   // این مسیر در Flutter «پیشرفت» مصرف می‌شود، بیرون از Studio.
   // QF-23: گزارش زمان‌بندی‌شده backend has no Studio screen yet; the owner reads
   // numbers from the finance panel. The gate stays honest instead of inventing UI.

@@ -1555,9 +1555,6 @@ export const createProduct = (
   token = getToken(),
 ) => sendJson<ShopProduct>("POST", "/shop/products", payload, token);
 
-export const updateProduct = (productId: number, payload: Record<string, unknown>, token = getToken()) =>
-  sendJson<ShopProduct>("PATCH", `/shop/products/${productId}`, payload, token);
-
 export const fetchChangeRequests = (token = getToken(), signal?: AbortSignal) =>
   getJson<ChangeRequest[]>("/shop/change-requests", token, signal);
 

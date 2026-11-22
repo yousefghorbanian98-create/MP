@@ -34,6 +34,8 @@ import {
   removeCartItem,
   reviewChangeRequest,
   savePrice,
+  fetchOrderReceipt,
+  markOrderStatus,
   updateCartItem,
   upsertGateway,
   type CartLine,
@@ -444,7 +446,6 @@ export function Shop() {
                   type="button"
                   onClick={() =>
                     act(async () => {
-                      const { fetchOrderReceipt } = await import("../lib/api");
                       setReceipt(await fetchOrderReceipt(o.id));
                     }, "")
                   }
@@ -457,7 +458,7 @@ export function Shop() {
                     type="button"
                     onClick={() =>
                       act(async () => {
-                        await import("../lib/api").then((m) => m.markOrderStatus(o.id, "delivered"));
+                        await markOrderStatus(o.id, "delivered");
                         await reload();
                       }, "تحویل ثبت شد")
                     }

@@ -571,3 +571,23 @@ WP: 0.4 · F: F‑07 · شاهد: `evidence/after/wp04/` · تصمیم: AD‑11 
   - C10 🚫 BLOCKED-ENV (گیت بار ۲۰۰ همزمان؛ Docker/Postgres در این محیط نیست).
   - C11 ⏳ علت ریشه‌ای نشت استخر ادعا نمی‌شود (brief WP‑01 مرحلهٔ ۲).
 - **push B1:** یک push برای دو commit این بسته (WP 2.1 = `e57a992`، WP 2.2 = commit بعدی). CI پس از push بررسی می‌شود.
+
+## B2 — WP 2.3 / F‑18، WP 4.3 / F‑19، WP 4.4 / F‑20 (MEASURED-BY-YOU)
+
+- **معیارها:** کیت F‑18 (خط ۸۴۳)، F‑19 (۸۶۲)، F‑20 (۸۸۲)؛ تصمیم‌ها: D‑14.
+- **قرمز:** `cd mp-app/backend && pytest -q tests/regression/test_b2_wp23_wp43_wp44.py` ⇒ `4 failed`.
+- **اصلاح WP 2.3:** `mp-app/backend/Dockerfile` و `mp-app/infra/Dockerfile.backend`: `WEB_CONCURRENCY:-4` ⇒ `:-1`. سند بودجه در OPS-RUNBOOK §۱‑الف. گسترش `validate_production_configuration` = TODO (D‑14).
+- **اصلاح WP 4.3:** `studio/src/pages/Shop.tsx`: دو `await import("../lib/api")` حذف؛ `fetchOrderReceipt` و `markOrderStatus` به import ایستا اضافه شدند.
+- **اصلاح WP 4.4:** `studio/src/lib/api.ts`: `export const updateProduct` حذف شد.
+- **پیامد (گیت پوشش):** `studio/tests/apiCoverage.test.ts` پس از حذف `updateProduct` قرمز شد: `/api/v1/shop/products/{product_id}` بدون مصرف‌کننده. Flutter (`mp-app/client`) هم PATCH این مسیر را صدا نمی‌زند (`grep` روی `shop/products`). اقدام: یک استثنای مستند با `TODO` در `ROUTE_EXCEPTIONS` (همان قالب موجود). مسیر بک‌اند حذف نشد. تضعیف آستانه یا حذف تست نیست؛ در D‑14 ثبت شد.
+- **ارقام (هر کدام با فرمان):**
+  - `pytest -q tests/regression/test_b2_wp23_wp43_wp44.py` ⇒ `4 passed` (پس از اصلاح).
+  - `pytest -q -p no:cacheprovider tests/regression/` (در `mp-app/backend`) ⇒ `305 passed, 2 skipped, 1 warning`.
+  - `npx tsc --noEmit -p .` (در `mp-app/studio`) ⇒ exit 0.
+  - `npx eslint src/pages/Shop.tsx src/lib/api.ts` ⇒ exit 0؛ `npx eslint tests/apiCoverage.test.ts` ⇒ exit 0.
+  - `npx vitest run` (کل studio) قبل از استثنا ⇒ `Tests 2 failed | 297 passed | 9 skipped (308)`: `apiCoverage` (مسیر PATCH) و `receiptQueue` (timeout ۵۰۰۰ms زیر بار کل اجرا).
+  - `npx vitest run tests/apiCoverage.test.ts` پس از استثنا ⇒ `4 passed`.
+  - `npx vitest run tests/receiptQueue.test.tsx` به‌تنهایی ⇒ `4 passed` (شکست کل‌اجرا زمان‌بندی بود، نه این تغییر؛ کد receipt queue تغییر نکرد).
+- **lint/format (مجموعهٔ CI):** `ruff check --select E,F,W,I,N,UP,B,SIM,DTZ,TRY400,S --ignore E501 tests/regression/test_b2_wp23_wp43_wp44.py` ⇒ exit 0؛ `ruff format --check` ⇒ exit 0 (پس از `ruff format`).
+- **کامیت‌ها (دو commit برای این بسته):** WP 2.3 (Dockerfile ×۲، runbook، تست قرمز/سبز) و WP 4.3+4.4 (studio، `apiCoverage`، D‑14، این لاگ). سقف «حداکثر دو commit» رعایت شد.
+- **باز:** TODO در `validate_production_configuration` (D‑14)؛ 28 فایل untracked `mp-app/backend/var/receipts/*.png` (artifact اجرای تست؛ شمارش با `git status --porcelain`) commit نشدند.
