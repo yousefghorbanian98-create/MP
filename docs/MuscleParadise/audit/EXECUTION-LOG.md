@@ -451,3 +451,9 @@ WP: 0.4 · F: F‑07 · شاهد: `evidence/after/wp04/` · تصمیم: AD‑11 
 | secret-scan | ✗ — BLOCKED-ENV (نبود gitleaks) |
 
 - بسته‌های ۲ تا ۶ شروع نشدند (طبق قاعدهٔ «تا چهار job سبز نشده‌اند»).
+
+### نتیجهٔ CI واقعی روی `3251145` (run `44965386672`، `gh run view --json jobs`)
+- ✓ backend · ✓ live-contract · ✓ e2e-api · ✓ studio · ✓ client-flutter · ✓ Client (pinned SDK)
+- ✗ Documentation links and handoff (رانش نقشه؛ نیازمند تصمیم مالک)
+- ✗ secret-scan (BLOCKED-ENV؛ گزارش gitleaks در دسترس نیست)
+- شش از هشت سبز؛ دو مورد باز است. بستهٔ بعدی شروع نشد.
