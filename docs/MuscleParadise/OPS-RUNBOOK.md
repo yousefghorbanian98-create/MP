@@ -6,13 +6,21 @@ Composeها جایگزین هم‌اند، نه دو replica از یک سیست�
 
 | سرویس | Compose `deploy` | Compose `infra` | یادداشت |
 |---|---:|---:|---|
-| FastAPI | 8000 (فقط internal) | 8000 (فقط internal) | چهار worker؛ `/health` زنده‌بودن، `/api/v1/health/ready` آمادگی DB و storage rate-limit |
+| FastAPI | 8000 (فقط internal) | 8000 (فقط internal) | پیش‌فرض یک worker (`WEB_CONCURRENCY`، B2/WP 2.3)؛ `/health` زنده‌بودن، `/api/v1/health/ready` آمادگی DB و storage rate-limit |
 | Studio/Nginx | 127.0.0.1:8080 | پشت Caddy | `deploy` باید پشت reverse-proxy/TLS بیرونی باشد |
 | Caddy | — | 80/443 | `infra` به DNS، دامنه و ایمیل واقعی نیاز دارد |
 | Valkey | 6379 (internal) | 6379 (internal) | مشترک بین workerها؛ هیچ port روی host منتشر نیست |
 | Prometheus | 9090 loopback | 9090 loopback | ruleها evaluate می‌شوند؛ Alertmanager/receiver هنوز نیاز به تنظیم عملیاتی دارد |
 
 Production به `MP_SECRET_KEY`, `MP_BIOMETRIC_KEY`, originهای HTTPS، provider واقعی SMS، پذیرندهٔ live زرین‌پال و Valkey نیاز دارد. نمونهٔ fail-closed: `mp-app/backend/.env.example`; مقادیر واقعی فقط در secret manager یا `.env` با مجوز محدود.
+
+## ۱‑الف) بودجهٔ ظرفیت اتصال DB (WP 2.3 / F‑18)
+
+- `WEB_CONCURRENCY` پیش‌فرض **۱** است (Dockerfile بک‌اند و `infra/Dockerfile.backend`). پیش از این ۴ بود.
+- هر worker یک استخر دارد: `pool_size = 40` + `max_overflow = 20` ⇒ سقف **۶۰ اتصال** به‌ازای هر worker (`db/base.py`).
+- فرمول: `workers × 60 ≤ بودجهٔ اتصال Postgres` (با رزرو برای مهاجرت، ادمین و worker جدا). با ۱ worker: ۶۰ اتصال.
+- افزایش `WEB_CONCURRENCY` فقط پس از تأیید بودجهٔ Postgres و اجرای گیت بار ۲۰۰ همزمان (C10 در D‑13، BLOCKED-ENV) مجاز است.
+- **TODO:** گسترش `validate_production_configuration` برای رد کردن ترکیب ناسازگار؛ این کار قرارداد راه‌اندازی production را تغییر می‌دهد و در WP 2.3 انجام نشد (D‑14).
 
 ## ۲) Backup و restore
 
