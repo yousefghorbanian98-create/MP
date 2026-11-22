@@ -478,3 +478,14 @@ WP: 0.4 · F: F‑07 · شاهد: `evidence/after/wp04/` · تصمیم: AD‑11 
 - workflow `gitleaks-fingerprints.yml` (id `423857407`) روی `arena/5a1e37b3-mp` اجرا شد: run `44990174499`، conclusion success، ۱۰ annotation، همه در `docs/MuscleParadise/audit/evidence/before/detect-secrets.json` (commit `839500de`).
 - تأیید hash بودن: `hashed_secret` در خطوط مذکور ۴۰ هگز؛ فایل ۱۶۹ ورودی `is_verified:false` و صفر `true`.
 - افزودن ۱۰ fingerprint به `.gitleaksignore` (AD‑23). دور بعد: push، اجرای CI، و بررسی annotation های باقی‌مانده.
+
+### secret-scan — دورِ ۲ و ایست (MEASURED-BY-YOU)
+
+- **commit `db37b1b`** (۱۰ fingerprint از `before/`، دور ۱) push شد. CI روی `db37b1b`: `secret-scan` ✗ هنوز. annotation های `ci.yml` مقدار را پنهان می‌کنند و مسیر/خط نمی‌دهند (فقط «Potential secret match … commit 839500de»).
+- **دور ۲** (run `44990769317` روی `db37b1b`، workflow 423857407): ۱۰ یافته جدید، همه در `before/detect-secrets.json` خطوط ۲۲۳، ۲۳۷، ۲۴۴، ۲۵۳، ۲۶۲، ۲۶۹، ۲۷۶، ۲۸۳، ۲۹۰، ۲۹۷ (commit `839500de`). سقف annotation ها ۱۰ است، پس شمارِ واقعی ممکن است بیشتر باشد.
+- **دور ۳ — ایست:** حلقهٔ همگرایی (`/home/user/recovery5/ss-loop.sh`، خارج از repo) روی `db37b1b` اجرا شد (run `44990830149`، success). اعتبارسنجی هر annotation: یک یافتهٔ **بیرون از مسیر مجاز** پیدا شد:
+  - `generic-api-key docs/MuscleParadise/audit/evidence/detect-secrets.json:221` (کامل: فایل بالاسری، **بدون `before/`**)، commit `839500de`.
+  - در همین دور ۱۰ یافته بود: خطوط ۱۳۶، ۱۴۳، ۱۵۰، ۱۵۷، ۱۶۶، ۱۸۲، ۱۹۱، ۲۰۵، ۲۱۴، ۲۲۱ در فایل بالاسری. این فایل ۱۷۳ ورودی دارد، صفر `is_verified: true`، و `hashed_secret` در خط ۲۲۱ = `18b115546d38…` (۴۰ هگز).
+  - طبق قاعدهٔ AD‑23 (ه) و دستور: **متوقف شد**. هیچ fingerprint بیرون از `before/` اضافه نشد و هیچ commit دیگری ساخته نشد.
+- **وضعیت `.gitleaksignore`:** ۱۰ خط از دور ۱ (`before/`). دورهای بعد اجرا نشدند.
+- **سؤال باز:** مسیر مجاز AD‑23 را `before/detect-secrets.json` بگیریم، یا هر دو فایلِ `evidence/detect-secrets.json` و `evidence/before/detect-secrets.json` (که هر دو از `839500de` هستند)؟
