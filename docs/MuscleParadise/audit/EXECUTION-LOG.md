@@ -457,3 +457,24 @@ WP: 0.4 · F: F‑07 · شاهد: `evidence/after/wp04/` · تصمیم: AD‑11 
 - ✗ Documentation links and handoff (رانش نقشه؛ نیازمند تصمیم مالک)
 - ✗ secret-scan (BLOCKED-ENV؛ گزارش gitleaks در دسترس نیست)
 - شش از هشت سبز؛ دو مورد باز است. بستهٔ بعدی شروع نشد.
+
+## دو شاخه: `arena/da474b65-mp` و `arena/5a1e37b3-mp` — ثبت تاریخ
+
+- کار WP 0.2–4.6 روی `arena/da474b65-mp` (tip `9bfc99d`، PR #23 بسته، merge نشده) انجام شد.
+- شاخهٔ جاری `arena/5a1e37b3-mp` با `git merge --ff-only` روی همان کامیت‌ها آمد (بدون بازنویسی). tip: `3eaed42`.
+- در این نشست، ref محلی `arena/5a1e37b3-mp` عقب (`662ff88`) و فایل‌های کاری مطابق tip بودند؛ پس از بررسی سنجه‌ای (۹۱ فایل tracked + ۴۶ مورد untracked برابر tip) به `origin/arena/5a1e37b3-mp` ریست شد. پشتیبان: `/home/user/recovery5/`.
+
+## نقشهٔ تعامل — ایست (MEASURED-BY-YOU)
+
+- `python3 scripts/interaction_map.py --check` روی `3eaed42`: exit 0، رانش قرارداد ۰، ۱۶۳ مسیر (گیت سبز شد، ولی فقط با بازتولید).
+- بازتولید و مقایسهٔ `routes.json` از `662ff88` تا `3eaed42`: ۱۶۳ operation، **۲۷ تفاوت نقش/guard** (نه ۲۵):
+  - ۱۱ تنگ‌شده (admin/retention×۲، admin/users×۳، shop/change-requests/review، shop/gateways×۲، shop/prices، shop/products×۲) ⇒ `super_admin` تنها. انتساب: commit `55107a99f` «feat(auth): phase 5 — role changes are owner-only…» (وجود دارد، در GitHub تأیید شد).
+  - ۱۴ گشادشده (۸ مسیر از `[]` به شش نقش؛ ۶ مسیر خودِ کاربر با نقش‌های جاافتاده) — مطابق گزارش.
+  - **۲ تفاوت بیرون از ۲۵ مورد:** (۱) `POST /api/v1/axis-assessments/{id}/review`: guard تکراری `permission, permission` ⇒ `permission` (نقش‌ها یکسان؛ commit `b9e88e5`، WP 0.3). (۲) `GET /api/v1/metrics`: guard `[]` ⇒ `metrics_token` (commit `fae50c5`، WP 1.3).
+- طبق قاعدهٔ «هر تفاوتی بیرون از ۲۵ مورد ⇒ توقف»، نقشه **commit نشد**. تصمیم مالک لازم است: آیا این دو تغییر را هم در نقشه بپذیریم؟
+
+## secret-scan — دور ۱
+
+- workflow `gitleaks-fingerprints.yml` (id `423857407`) روی `arena/5a1e37b3-mp` اجرا شد: run `44990174499`، conclusion success، ۱۰ annotation، همه در `docs/MuscleParadise/audit/evidence/before/detect-secrets.json` (commit `839500de`).
+- تأیید hash بودن: `hashed_secret` در خطوط مذکور ۴۰ هگز؛ فایل ۱۶۹ ورودی `is_verified:false` و صفر `true`.
+- افزودن ۱۰ fingerprint به `.gitleaksignore` (AD‑23). دور بعد: push، اجرای CI، و بررسی annotation های باقی‌مانده.

@@ -18,3 +18,16 @@ c6f29449e8a55e0ed1204847357313ca0dd7a9cb:mp-app/client/android/keystore/keystore
 
 # Generated REA evidence/fingerprint metadata (not a credential); exact CI fingerprint.
 6f236a87c5bd67a8dd498507db4dd75a16fd1f00:docs/MuscleParadise/REPORT-QF-00-BASELINE-2026-11-19.md:generic-api-key:81
+
+# AD-23 (WP secret-scan): hashed_secret entries (40-hex SHA1 digests, is_verified=false) in
+# evidence/before/detect-secrets.json. Hashes, not credentials. Exact fingerprints only.
+839500de55bfd08ac0826dc1a795837bdff54c35:docs/MuscleParadise/audit/evidence/before/detect-secrets.json:generic-api-key:136
+839500de55bfd08ac0826dc1a795837bdff54c35:docs/MuscleParadise/audit/evidence/before/detect-secrets.json:generic-api-key:143
+839500de55bfd08ac0826dc1a795837bdff54c35:docs/MuscleParadise/audit/evidence/before/detect-secrets.json:generic-api-key:150
+839500de55bfd08ac0826dc1a795837bdff54c35:docs/MuscleParadise/audit/evidence/before/detect-secrets.json:generic-api-key:157
+839500de55bfd08ac0826dc1a795837bdff54c35:docs/MuscleParadise/audit/evidence/before/detect-secrets.json:generic-api-key:166
+839500de55bfd08ac0826dc1a795837bdff54c35:docs/MuscleParadise/audit/evidence/before/detect-secrets.json:generic-api-key:175
+839500de55bfd08ac0826dc1a795837bdff54c35:docs/MuscleParadise/audit/evidence/before/detect-secrets.json:generic-api-key:189
+839500de55bfd08ac0826dc1a795837bdff54c35:docs/MuscleParadise/audit/evidence/before/detect-secrets.json:generic-api-key:198
+839500de55bfd08ac0826dc1a795837bdff54c35:docs/MuscleParadise/audit/evidence/before/detect-secrets.json:generic-api-key:205
+839500de55bfd08ac0826dc1a795837bdff54c35:docs/MuscleParadise/audit/evidence/before/detect-secrets.json:generic-api-key:214

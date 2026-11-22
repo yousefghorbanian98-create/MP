@@ -286,3 +286,26 @@
 ## نکتهٔ شمارهٔ تصمیم
 
 - `AD‑11`، `AD‑12`، `AD‑13` پیش‌تر در این فایل معنای دیگری دارند (پوشش، شمارنده‌ها، پیام خطا). تصمیم‌های مالک برای حذف تست workflow، پین وابستگی و استثنای secret-scan باید با شماره‌های بعدی ثبت شوند تا با این‌ها تداخل نکنند.
+
+## AD‑23 · استثنای انگشت‌نگاریِ دقیق برای secret-scan (فقط `evidence/before/detect-secrets.json`)
+
+- **تصمیم (مالک):** فقط fingerprint‌های یافته‌شده توسط workflow «Gitleaks fingerprint audit» (`423857407`) برای مسیر `docs/MuscleParadise/audit/evidence/before/detect-secrets.json` به `.gitleaksignore` اضافه می‌شوند. هیچ مسیر، قانون یا allowlist کلی اضافه نمی‌شود.
+- **دلیل سنجه‌شده:** `hashed_secret` در آن فایل مقدار hash است (۴۰ هگز)، و هر ۱۶۹ ورودی `is_verified: false` دارد، با صفر `true`. یافته‌ها hash هستند، نه credential.
+- **شرط‌ها:** (الف) فهرست از گزارش/annotation واقعی گرفته شد؛ (ب) فقط همین مسیر؛ (ج) `scripts/test_retired_signing_scan.py` بدون تغییر؛ (د) هر fingerprint اینجا ثبت می‌شود؛ (ه) یافته بیرون از مسیر ⇒ توقف (در دور اول: صفر).
+- **دور ۱ (run `44990174499` روی `3eaed42`):** ۱۰ یافته، همه `generic-api-key` در `evidence/before/detect-secrets.json` خطوط ۱۳۶، ۱۴۳، ۱۵۰، ۱۵۷، ۱۶۶، ۱۷۵، ۱۸۹، ۱۹۸، ۲۰۵، ۲۱۴ از commit `839500de55bfd08ac0826dc1a795837bdff54c35`. annotation ها به ۱۰ مورد محدود‌اند؛ شمارِ واقعی از لاگ (در دسترس نیست) تأیید نشده، پس دورهای بعدی لازم‌اند.
+- **fingerprint‌های اضافه‌شده:** `839500de55bfd08ac0826dc1a795837bdff54c35:docs/MuscleParadise/audit/evidence/before/detect-secrets.json:generic-api-key:<line>` برای خطوط بالا (ده خط در `.gitleaksignore`).
+- **برگشت:** `git revert <commit .gitleaksignore>`؛ اسکن دوباره یافته‌ها را نشان می‌دهد.
+
+## ثبت F‑33 (یادآوری، بدون اجرا)
+
+- گام اسکن CI سه پرچم دارد نه، `--log-opts=--all`، `--ignore-gitleaks-allow` و `--gitleaks-ignore-path` را ندارد، و `--redact` بدون `=100` است. اجرای اصلاح منوط به تصمیم جداگانه است.
+
+## نگاشت شماره‌ها (جایگزین AD‑11/12/13 قبلی؛ آن‌ها لغو)
+
+- **AD‑21:** حذف `test_release_build_is_guarded_and_audits_all_output_apks` همراه `apk.yml` در یک commit؛ و در پایان مسیر B حذف `mp-app/client` با چهار تست/workflow مرتبط. گیت: `pytest --collect-only -q` ⇒ ۰ خطای جمع‌آوری و N_after = N_before − 59.
+- **AD‑22:** پین وابستگی‌های بک‌اند در `mp-app/backend/requirements.txt` (با `==`، نه constraints.txt)؛ گام CI: `pip install -c mp-app/backend/requirements.txt -e "mp-app/backend[dev]"`. گیت شمارهٔ یک: SBOM باید `pkg:pypi/fastapi@0.165.0` را نشان دهد. صفر تغییر نسخه؛ ruff در 0.17.x. بستن هشدارهای Dependabot ممنوع تا AD‑24.
+- **AD‑24:** هنوز صادر نشده (برای ۱۳ هشدار Dependabot، فقط در npm studio و tools/mermaid-check).
+
+## AD‑20 · ادامه: ثبت سیاست development در CI (WP 1.2)
+
+- گام live-contract از قبل با پیش‌فرض `development` اجرا می‌شد؛ AD‑20 فقط آن را صریح کرد. یادداشت باز: هیچ job در CI اجرای اپ در حالت `production` را در برابر Postgres/Valkey واقعی آزمون نمی‌کند (D‑n، کارزار C). این شکاف پیش از این تغییر هم وجود داشت.
