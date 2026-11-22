@@ -134,3 +134,28 @@ def test_numeric_id_normalisation_preserves_every_decision() -> None:
                 raw = rbac._decide_raw(role, path, method)
                 norm = rbac._decide(role, rbac._normalise_path(path), method)
                 assert raw == norm, (role, method, path)
+
+
+def test_casbin_error_is_counted_and_reraised(monkeypatch) -> None:
+    """مسیر خطا: اگر تصمیم شکست بخورد، خطا بالا می‌رود و `mp_rbac_errors_total` یک واحد زیاد می‌شود.
+
+    مسیر تازه (بدون کش) تا `_decide` به `_decide_raw` برسد و خطا کش نشود.
+    """
+    import uuid
+
+    from app.metrics import metrics as live_metrics
+
+    seen: list[tuple[str, dict]] = []
+
+    def failing(role, path, method):  # noqa: ARG001
+        raise SystemError("simulated casbin failure")
+
+    monkeypatch.setattr(rbac, "_decide_raw", failing)
+    monkeypatch.setattr(
+        live_metrics, "inc", lambda name, value=1.0, **labels: seen.append((name, labels))
+    )
+
+    path = f"/api/v1/error-path/{uuid.uuid4().hex}"
+    with pytest.raises(SystemError, match="simulated casbin failure"):
+        rbac.enforce("member", path, "GET")
+    assert ("mp_rbac_errors_total", {}) in seen
