@@ -7,7 +7,7 @@
 
 ## ۱. خلاصهٔ تعداد فایل
 
-- کل فایل‌های ترک‌شده: **1350** (خطوط متنی: 267679)
+- کل فایل‌های ترک‌شده: **1350** (خطوط متنی: 267705)
 
 | ناحیه | تعداد فایل | خطوط متنی |
 |---|---|---|
@@ -20,7 +20,7 @@
 | زیرساخت و کانتینر | 15 | 597 |
 | سایر mp-app | 4 | 239 |
 | شواهد QA | 40 | 1626 |
-| مستندات | 319 | 109463 |
+| مستندات | 319 | 109489 |
 | گزارش‌های عامل | 141 | 8325 |
 
 ## ۲. عملیات API (از `app.openapi()`، مرجع اصلی)
@@ -1349,7 +1349,7 @@
 | مستندات | `docs/MuscleParadise/audit/BASELINE.md` | 200 | 34258 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/CHECKLIST.md` | 149 | 20965 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/DECISIONS.md` | 439 | 68492 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/EXECUTION-LOG.md` | 674 | 101569 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/EXECUTION-LOG.md` | 700 | 105022 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/FINN-AUDIT-LOOP.md` | 88 | 13193 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/INVENTORY.md` | 1717 | 164290 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/MICRO-LOOPS.md` | 83 | 6853 | NOT-REVIEWED |

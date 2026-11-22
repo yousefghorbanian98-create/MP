@@ -672,3 +672,29 @@ WP: 0.4 · F: F‑07 · شاهد: `evidence/after/wp04/` · تصمیم: AD‑11 
 - **انطباق با دستور دائمی (ادعای فقط‌تغییرکننده):** مشخصه‌یابی سبز روی HEAD بود (هیچ قرمزی ادعا نشد؛ شکستن رفتار را تغییر نداد).
 - **INVENTORY/CHECKLIST (باقی‌مانده از B3):** در همین commit آورده شد؛ بازتولید آخرین قدم قبل از commit بود.
 
+## اجرای کامل و BATCH-SUMMARY (HEAD `c3d28d8`، پیش از مرج)
+
+### تست‌های کامل
+- **بک‌اند:** `cd mp-app/backend && PATH=/home/user/venv-mp/bin:$PATH bash scripts/coverage_run.sh` ⇒ **exit 0**؛ `1305 passed, 2 skipped, 2 warnings in 674.17s`؛ پوشش کل `91%`؛ گیت per-directory: `PASS` (modules 92.47 / آستانه 90، app 96.36 / 92، api 93.75 / 90، engine 97.24 / 95، security 97.65 / 95، db 98.98 / 80، jobs 84.55 / 80، cache 76.60 / 75، scripts 67.41 / 60).
+- **استودیو:** `cd mp-app/studio && npx vitest run` ⇒ **exit 1**؛ `Test Files 1 failed | 45 passed | 1 skipped (47)`؛ `Tests 1 failed | 298 passed | 9 skipped (308)`. شکست: `tests/receiptQueue.test.tsx` «رد فیش دلیل می‌خواهد…» ⇒ `Test timed out in 5000ms`.
+- **زمان‌بندی receiptQueue (یافته، skip نشد):** اجرای تنها `npx vitest run tests/receiptQueue.test.tsx` ⇒ `2 failed | 2 passed` با دو timeout ۵۰۰۰ms («خطای سرور…» و «رد فیش…»). **این با اجرای قبلی (۴/۴ سبز در B2) در تضاد است ⇒ آزمون ناپایدار است.** علت ریشه‌ای ادعا نشده. پیشنهاد: بررسی `user-event`/انتظار ناهمگام و `getComputedStyle` (هشدارهای jsdom در خروجی)؛ افزایش timeout بدون دلیل ثبت نشد (پوشاندن مشکل است).
+
+### BATCH-SUMMARY (وضعیت واقعی، نه ادعا)
+| بسته | WP | وضعیت | کامیت‌ها | شاهد |
+|---|---|---|---|---|
+| B1 | 2.1 F‑03 | DONE (C1–C3)، C4/C5 باز | `e57a992` | CI `45025193794` |
+| B1 | 2.2 F‑04 | DONE (C6–C8)، C9/C10 باز، C11 ادعا نشد | `b9ce7be` | CI `45025193794` |
+| B2 | 2.3 F‑18 | PARTIAL (WEB_CONCURRENCY=1؛ validate TODO) | `f852675` | CI `45036409460` |
+| B2 | 4.3 F‑19 | PARTIAL (await import حذف؛ یک‌لایه‌سازی TODO) | `cf33ad8` | CI `45036409460` |
+| B2 | 4.4 F‑20 | DONE (updateProduct حذف، getToken unexport) | `cf33ad8` | CI `45036409460` |
+| B3 | 3.3 F‑14 | DONE (پرداخت ناموجود ⇒ 404؛ D‑15) | `9024f44`، `338abb3` (CI) | CI `45039993907` |
+| B3 | 3.5 F‑09/F‑25 | NOT-REPRODUCED؛ ۹ گارد سبز (D‑16) | `0bc6c2e` | CI `45042383503` |
+| B4 | 4.1 F‑15 | PARTIAL (validate F54 ⇒ C13؛ F46/E34/۷×D و ۸ کلید باز) | `8bae88c`، `a825c00`، `c3d28d8` | CI `45043853981` |
+| B4 | 4.2 | BLOCKED: جهش‌سنجی نیازمند ابزار جدید = وابستگی تازه؛ نیاز به تصمیم مالک | — | — |
+| B4 | 4.7 | BLOCKED-ENV/تصمیم: بار پله‌ای و تغییر harness به blocking | — | — |
+| B4 | 0.2 | BLOCKED (AD‑10) | `b6f347f` (قبلی) | — |
+| B4 | 0.7 / 1.1 / 1.2 / 1.4 | PARTIAL / BLOCKED-ENV (وضعیت از صف؛ در این دستهٔ اجرا بازبینی نشد) | قبلی | — |
+
+- **تخطی‌های ثبت‌شده:** سقف کامیت B3 (۴، با تأیید) و B4 (۳، بدون تأیید؛ در گزارش اعلام شد).
+- **توقف:** ممیزی تا لحظهٔ مرج **کامل نیست**. موانع: WP 4.2 (نیاز به ابزار جهش‌سنجی؛ نصب آن وابستگی تازه است و طبق دستور ممنوع است)، WP 4.7 (BLOCKED-ENV و تغییر گیت)، ناپایداری receiptQueue (یافته باز)، و ۸ کلید کیت (TODO، تصمیم مالک).
+
