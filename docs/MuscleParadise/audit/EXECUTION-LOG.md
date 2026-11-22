@@ -553,3 +553,21 @@ WP: 0.4 · F: F‑07 · شاهد: `evidence/after/wp04/` · تصمیم: AD‑11 
 - **lint/format (مجموعهٔ CI):** `ruff check --select E,F,W,I,N,UP,B,SIM,DTZ,TRY400,S app/logging.py tests/regression/test_wp21_logging_queue.py` ⇒ exit 0؛ `ruff format --check` ⇒ exit 0.
 - **پروکسی C4 (۸۰ خطا < ۵ MB):** در همین اجرا سبز شد؛ عدد دقیق حجم در خروجی تست نیست. **شاهد پذیرش کیت (بار ۸۰ کلاینتی، SIGTERM < ۱۰ s، `/health` < ۵۰۰ ms) اجرا نشد: BLOCKED-ENV** (ابزار بار و محیط زنده).
 - **باز (TODO در D‑13):** C5 (گیت CI برای json_logs و بودجهٔ لاگ).
+
+## B1 — WP 2.2 / F‑04 (MEASURED-BY-YOU)
+
+- **معیارها:** D‑13 (C6–C11).
+- **قرمز:** `pytest -q tests/regression/test_wp22_pool_observability.py` ⇒ خطای جمع‌آوری (`ImportError: app.pool_metrics`) — ماژول وجود نداشت؛ کد بیرون از این ماژول و `TimeoutError` استخر ۵۰۰ می‌داد.
+- **تفسیر گیج overflow:** `pool.overflow()` در SQLAlchemy وقتی زیر `pool_size` باشیم منفی است (تست اولیه: `-1.0`)؛ گیج از صفر گرفته شد (`max(0, …)`). این تفسیر در کد کامنت شده است.
+- **اصلاح:** `app/pool_metrics.py` (گیج‌های size/checkedout/overflow، histogram `mp_db_connection_held_seconds`، `pool_saturated` با N=۱۰s و آستانهٔ ۰٫۹)؛ `db/base.py` (نصب listenerها در `_build_engine`)؛ `api/v1/monitoring.py` (به‌روزرسانی گیج‌ها در `/metrics`؛ فیلد `db_pool_saturated` و شرط قرمزی در `/health/ready`)؛ `app/unhandled.py` (`sqlalchemy.exc.TimeoutError` ⇒ ۵۰۳ با `Retry-After: 1`، کد `db_pool_exhausted`، شمارندهٔ `mp_db_pool_timeout_total`).
+- **سبز:** `pytest -q tests/regression/test_wp22_pool_observability.py` ⇒ `5 passed` (همراه WP 2.1: `10 passed`).
+- **ناحیهٔ مرتبط:** `pytest -q tests/regression/test_wp22_pool_observability.py tests/regression/test_wp21_logging_queue.py tests/integration/test_monitoring.py tests/integration/test_m46_db_pool.py tests/integration/test_unhandled_errors.py tests/regression/test_production_ops.py tests/integration/test_wp25_scrape_errors_ready.py tests/integration/test_wp13_metrics_auth.py` ⇒ `68 passed, 1 warning`.
+- **lint/format (مجموعهٔ CI):** `ruff check --select E,F,W,I,N,UP,B,SIM,DTZ,TRY400,S` روی فایل‌های تغییریافته ⇒ exit 0؛ `ruff format --check` ⇒ exit 0.
+- **پوشش معیارها:**
+  - C6: size/checkedout/overflow و histogram ✅؛ `mp_db_pool_wait_total` ⏳ TODO (SQLAlchemy رویداد انتظار ندارد).
+  - C7 ✅ (۵۰۳ + Retry-After + شمارنده).
+  - C8 ✅ (تست پنجره با ساعت تزریقی).
+  - C9 ⏳ TODO (حساب ظرفیت و همزمانی ورودی؛ تصمیم معماری/Postgres).
+  - C10 🚫 BLOCKED-ENV (گیت بار ۲۰۰ همزمان؛ Docker/Postgres در این محیط نیست).
+  - C11 ⏳ علت ریشه‌ای نشت استخر ادعا نمی‌شود (brief WP‑01 مرحلهٔ ۲).
+- **push B1:** یک push برای دو commit این بسته (WP 2.1 = `e57a992`، WP 2.2 = commit بعدی). CI پس از push بررسی می‌شود.

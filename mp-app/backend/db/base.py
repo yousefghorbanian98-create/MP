@@ -129,6 +129,11 @@ def _build_engine(url: str):
     engine = create_engine(url, **opts)
     if wants_pragmas:
         _apply_sqlite_pragmas(engine)
+    # WP 2.2 / F‑04: گیج‌ها و histogram استخر (D‑13)
+    from app.metrics import metrics
+    from app.pool_metrics import install_pool_metrics
+
+    install_pool_metrics(engine, metrics)
     return engine
 
 

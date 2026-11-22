@@ -75,6 +75,13 @@ def prometheus_metrics() -> Response:
     except Exception:  # noqa: BLE001 - scrape نباید بشکند
         # WP 4.5 (S110): خطای به‌روزرسانی متریک بی‌صدا رد نمی‌شود؛ ثبت در سطح debug.
         _log_scrape_failure()
+    try:
+        from app.pool_metrics import publish_pool_gauges
+        from db.base import get_engine
+
+        publish_pool_gauges(get_engine(), metrics)
+    except Exception:  # noqa: BLE001 - scrape نباید بشکند (WP 2.2)
+        _log_scrape_failure()
     return Response(content=metrics.render(), media_type=CONTENT_TYPE_LATEST)
 
 
@@ -93,7 +100,12 @@ def ready() -> Response:
         db_ok = False
 
     rate_limit_storage_ok = rate_limit_storage_healthy()
+    # WP 2.2 / F‑04: اشباع پایدار استخر ⇒ readiness قرمز (D‑13 C8)
+    from app.pool_metrics import pool_saturated
+
+    pool_sat = pool_saturated(get_engine())
     payload: dict = {
+        "db_pool_saturated": pool_sat,
         "database_ok": db_ok,
         "rate_limit_storage_ok": rate_limit_storage_ok,
         "checkin_slo_ok": metrics.checkin_slo_ok(),
@@ -119,7 +131,7 @@ def ready() -> Response:
         except Exception:  # noqa: BLE001 - readiness نباید به‌خاطر یک جدول بشکند
             payload["outbox"] = {"error": "unavailable"}
 
-    ready_ok = db_ok and rate_limit_storage_ok and worker_ok
+    ready_ok = db_ok and rate_limit_storage_ok and worker_ok and not pool_sat
     return JSONResponse(
         status_code=200 if ready_ok else 503,
         content={"ready": ready_ok, **payload},
