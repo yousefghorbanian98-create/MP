@@ -58,7 +58,7 @@ function authHeaders(token: string | null): HeadersInit {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
-export function getToken(): string | null {
+function getToken(): string | null {
   return getAccessToken();
 }
 

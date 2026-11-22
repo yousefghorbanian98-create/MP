@@ -58,5 +58,29 @@
   "F-12": {
     "status": "BLOCKED",
     "note": "WP 0.2: routes.json اکنون گاردهای مؤثر را اعلام می‌کند (permission/grant/authenticated/metrics_token + super_admin_only/owner_scope/body_credential از app/security/route_policy.py). ارزیاب سه‌ارزشی روی ۱٬۱۴۱ سلول زنده: ۰ ناهمخوانی، ۰ 5xx، ۹۱۵ دقیق + ۲۲۶ شرطی. گیت باینری کیت (probe_contract.py matrix) هنوز قرمز است: ۵۹۲ (هر ۶۹ سلولِ اختلاف باینری شرطی است). تصمیم مالک لازم است (AD‑10). شاهد: evidence/after/wp02/."
+  },
+  "F-03": {
+    "status": "FIXED-PARTIAL",
+    "note": "WP 2.1 (B1، e57a992): dev با plain_traceback؛ JSON با سقف ۵۰ فریم بدون locals؛ نوشتن لاگ با صف محدود (۱۰٬۰۰۰) و نخ نویسنده (`app/logging.py`). شاهد: `tests/regression/test_wp21_logging_queue.py` (۵ passed). باز: C4 بار ۸۰ کلاینت = BLOCKED-ENV؛ C5 گیت CI برای json_logs و بودجهٔ لاگ = TODO."
+  },
+  "F-04": {
+    "status": "FIXED-PARTIAL",
+    "note": "WP 2.2 (B1، b9ce7be): گیج‌های size/checkedout/overflow، histogram `mp_db_connection_held_seconds`، timeout ⇒ 503 + Retry-After: 1، `/health/ready` با پنجرهٔ ۱۰ ثانیه (`app/pool_metrics.py`). شاهد: `tests/regression/test_wp22_pool_observability.py` (۵ passed). باز: C9 حساب ظرفیت و سقف همزمانی = TODO؛ C10 بار ۲۰۰ همزمان = BLOCKED-ENV؛ C11 علت ریشه‌ای ادعا نشده؛ `mp_db_pool_wait_total` = TODO."
+  },
+  "F-14": {
+    "status": "FIXED",
+    "note": "WP 3.3 (9024f44): پرداخت ناموجود ⇒ HTTP 404 با همان صفحه (`modules/payments/router.py`). شاهد: `tests/integration/test_wp33_gateway_return_status.py` (red 1 failed ⇒ green 6 passed). شناسه‌های -1/0/-0/INT64_MIN در HEAD قبلاً 422 بودند (بازتولید نشد؛ محافظت شده). F‑25 (۱۱ مسیر دیگر) خارج از این WP و در WP 3.5."
+  },
+  "F-18": {
+    "status": "FIXED-PARTIAL",
+    "note": "WP 2.3 (f852675): `WEB_CONCURRENCY` پیش‌فرض ۱ در دو Dockerfile؛ بودجهٔ `workers × 60 ≤ بودجهٔ DB` در OPS-RUNBOOK §۱‑الف؛ شاهد: `tests/regression/test_b2_wp23_wp43_wp44.py`. باز (TODO، D‑14): گسترش `validate_production_configuration` با هشت کلید کیت؛ pragmaهای SQLite در `alembic/env.py`؛ rate-limit `memory://` در چند worker."
+  },
+  "F-19": {
+    "status": "FIXED-PARTIAL",
+    "note": "WP 4.3 (cf33ad8): دو `await import()` پویا در `Shop.tsx` حذف و import ایستا شد. باز (TODO): یکپارچه‌سازی سه لایهٔ دسترسی به داده (`api.ts`، `session.ts`، `adminApi.ts`) در یک لایه و code-splitting در سطح route."
+  },
+  "F-20": {
+    "status": "FIXED",
+    "note": "WP 4.4 (cf33ad8): `updateProduct` حذف شد (BD‑2)؛ مسیر PATCH بک‌اند با استثنای مستند `TODO` در `apiCoverage` (D‑14). `getToken` از export خارج شد و فقط داخل `api.ts` می‌ماند. تأیید: `tsc --noEmit` و `eslint` exit 0."
   }
 }

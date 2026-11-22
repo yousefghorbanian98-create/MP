@@ -75,8 +75,8 @@
 |---|---|---|---|
 | F-01 | دورزدن rate‑limit با `X-Forwarded-For` (فرمان Dockerfile) | FIXED-PARTIAL | WP 1.1: uvicorn فقط به MP_TRUSTED_PROXIES اعتماد می‌کند (scripts/uvicorn_proxy_flags.sh)؛ production بدون فهرست معتبر بالا نمی‌آید. شاهد: e2e زنده ۳۰ درخواست با XFF جعلی ⇒ ≥۲۷×429 (قبل: ۳۰×200). تست: tests/regression/test_wp11_xff_trust.py. باقی‌مانده: متریک mp_rate_limit_key_source. |
 | F-02 | پیش‌فرض fail‑open محیط: `MP_ENVIRONMENT=development` + `MP_SMS_PROVIDER=dev` ⇒ `dev_code` در پاسخ | FIXED-PARTIAL | WP 1.2 (BD-3): MP_ENVIRONMENT صریح الزامی؛ dev_code فقط development+MP_ALLOW_DEV_OTP_ECHO؛ رد echo در production؛ WARNING شروع؛ گیت استاتیک deploy_gate. تست: tests/regression/test_wp12_env_failsafe.py. باقی‌مانده: گیت زنده روی استقرار BLOCKED. |
-| F-03 | قفل شدن سرور زیر بار؛ رندر `rich` روی event loop | OPEN |  |
-| F-04 | اشباع استخر اتصال؛ نبودِ هیچ متریک pool؛ ناسازگاری ظرفیت‌ها | OPEN |  |
+| F-03 | قفل شدن سرور زیر بار؛ رندر `rich` روی event loop | FIXED-PARTIAL | WP 2.1 (B1، e57a992): dev با plain_traceback؛ JSON با سقف ۵۰ فریم بدون locals؛ نوشتن لاگ با صف محدود (۱۰٬۰۰۰) و نخ نویسنده (`app/logging.py`). شاهد: `tests/regression/test_wp21_logging_queue.py` (۵ passed). باز: C4 بار ۸۰ کلاینت = BLOCKED-ENV؛ C5 گیت CI برای json_logs و بودجهٔ لاگ = TODO. |
+| F-04 | اشباع استخر اتصال؛ نبودِ هیچ متریک pool؛ ناسازگاری ظرفیت‌ها | FIXED-PARTIAL | WP 2.2 (B1، b9ce7be): گیج‌های size/checkedout/overflow، histogram `mp_db_connection_held_seconds`، timeout ⇒ 503 + Retry-After: 1، `/health/ready` با پنجرهٔ ۱۰ ثانیه (`app/pool_metrics.py`). شاهد: `tests/regression/test_wp22_pool_observability.py` (۵ passed). باز: C9 حساب ظرفیت و سقف همزمانی = TODO؛ C10 بار ۲۰۰ همزمان = BLOCKED-ENV؛ C11 علت ریشه‌ای ادعا نشده؛ `mp_db_pool_wait_total` = TODO. |
 | F-05 | `SystemError` در `casbin enforce` زیر همزمانی (compile در هر درخواست) | OPEN |  |
 | F-06 | `/api/v1/metrics` بدون احراز هویت | FIXED | WP 1.3: /api/v1/metrics با Bearer (MP_METRICS_TOKEN) محافظت شد: بدون هدر/توکن غلط ۴۰۱، بدون توکن تنظیم‌شده ۴۰۳؛ Caddy مسیر را ۴۰۴ می‌کند؛ Prometheus با credentials؛ Compose الزام متغیر دارد. تست: tests/integration/test_wp13_metrics_auth.py. |
 | F-07 | پوشش مستند ۹۴٫۲۸٪ در برابر واقعی ۸۳٫۷۳٪ | OPEN |  |
@@ -84,15 +84,15 @@
 | F-09 | پول بزرگ: `2^53`، `2^53+1`، `10^18` پذیرفته می‌شوند + coercion رشته→عدد | FIXED | الحاقیهٔ A1 — WP 1.5 (AD‑7). قبل: ۵ فیلد درخواستیِ مبلغ `int` (۲^۵۳ و ۱۰^۱۸ و رشتهٔ «۱۰۰۰» پذیرفته می‌شد)؛ کمیسیون `int(int(total)*rate)` با float. red: ۲۳ تست ناموفق (app/money.py نبود، کمیسیون ۱۰^۱۸+۷ با نرخ ۰٫۳ = ۳۰۰۰۰۰۰۰۰۰۰۰۰۰۰۰۰۰ به‌جای ۳۰۰۰۰۰۰۰۰۰۰۰۰۰۰۰۰۰۲). بعد: `Rial` = StrictInt ≤ 2^53−1 روی ۵ فیلد درخواستی؛ کمیسیون Decimal + گرد به پایین؛ استودیو: parseRial/parseRialOrThrow/formatRial در lib/money.ts جای Number() روی ۷ محل. تست: tests/regression/test_wp15_rial_strict.py (۳۳) و studio/tests/wp15Money.test.ts؛ گیت after-wp15 PASS؛ pytest کامل ۱۱۸۴ passed، ۲ skipped، exit 0؛ vitest ۲۹۸ passed، tsc و eslint صفر. |
 | F-10 | ۳۱ خطای ESLint در استودیو (هیچ lint واقعی اجرا نمی‌شد) | FIXED | WP 0.5: eslint.config.mjs (flat) + اسکریپت lint = `eslint .` + گیت در CI. اندازه‌گیری قبل: ۴۲ خطا + ۵ هشدار (بریف: ۳۱ خطا؛ عدد دقیق با همین پیکربندی ۴۲ بود). بعد: ۰ خطا، ۰ هشدار. قاعدهٔ label-has-associated-control با controlComponents برای کنترل‌های antd تنظیم شد؛ autoFocus به فوکوس ref تبدیل شد. |
 | F-11 | امتیاز جهش ۵۷٫۸٪ در ماژول پولی؛ ۳ شکاف واقعی | OPEN |  |
-| F-12 | `routes.json` مجموعهٔ گاردهای واقعی را کم‌تر نشان می‌دهد ⇒ اوراکل نامعتبر | OPEN |  |
+| F-12 | `routes.json` مجموعهٔ گاردهای واقعی را کم‌تر نشان می‌دهد ⇒ اوراکل نامعتبر | BLOCKED | WP 0.2: routes.json اکنون گاردهای مؤثر را اعلام می‌کند (permission/grant/authenticated/metrics_token + super_admin_only/owner_scope/body_credential از app/security/route_policy.py). ارزیاب سه‌ارزشی روی ۱٬۱۴۱ سلول زنده: ۰ ناهمخوانی، ۰ 5xx، ۹۱۵ دقیق + ۲۲۶ شرطی. گیت باینری کیت (probe_contract.py matrix) هنوز قرمز است: ۵۹۲ (هر ۶۹ سلولِ اختلاف باینری شرطی است). تصمیم مالک لازم است (AD‑10). شاهد: evidence/after/wp02/. |
 | F-13 | guard تکراری روی یک مسیر (دو بار casbin enforce) | FIXED | WP 0.3: گارد تکراری روی review حذف شد؛ شاهد: قبل ۲ بار enforce، بعد ۱ بار (tests/integration/test_wp03_axis_single_guard.py، tests/regression/test_no_duplicate_guard.py) |
-| F-14 | `gateway-return` با شناسهٔ نامعتبر → HTTP 200 | OPEN |  |
+| F-14 | `gateway-return` با شناسهٔ نامعتبر → HTTP 200 | FIXED | WP 3.3 (9024f44): پرداخت ناموجود ⇒ HTTP 404 با همان صفحه (`modules/payments/router.py`). شاهد: `tests/integration/test_wp33_gateway_return_status.py` (red 1 failed ⇒ green 6 passed). شناسه‌های -1/0/-0/INT64_MIN در HEAD قبلاً 422 بودند (بازتولید نشد؛ محافظت شده). F‑25 (۱۱ مسیر دیگر) خارج از این WP و در WP 3.5. |
 | F-15 | ۵۵ هشدار پیچیدگی (lizard) و ۴۱ بلوک ≥C (radon)؛ بدترین درجهٔ radon **F** با CC ‏۴۷ و ۴۶ | OPEN |  |
 | F-16 | ۷ محل پولِ شناور در استودیو + ۱ sentinel منفی | OPEN |  |
 | F-17 | ۴ خطای «except بی‌صدا» (از جمله در `api/v1/monitoring.py:18`) | OPEN |  |
-| F-18 | ناسازگاری ظرفیت‌ها: ۱۶۴ handler سنکرون، threadpool=40، pool=60، 4 worker | OPEN |  |
-| F-19 | ۳ لایهٔ جداگانهٔ دسترسی به داده در استودیو + `await import()` پویا در هندلر | OPEN |  |
-| F-20 | ۲ export مرده در `lib/api.ts` | OPEN |  |
+| F-18 | ناسازگاری ظرفیت‌ها: ۱۶۴ handler سنکرون، threadpool=40، pool=60، 4 worker | FIXED-PARTIAL | WP 2.3 (f852675): `WEB_CONCURRENCY` پیش‌فرض ۱ در دو Dockerfile؛ بودجهٔ `workers × 60 ≤ بودجهٔ DB` در OPS-RUNBOOK §۱‑الف؛ شاهد: `tests/regression/test_b2_wp23_wp43_wp44.py`. باز (TODO، D‑14): گسترش `validate_production_configuration` با هشت کلید کیت؛ pragmaهای SQLite در `alembic/env.py`؛ rate-limit `memory://` در چند worker. |
+| F-19 | ۳ لایهٔ جداگانهٔ دسترسی به داده در استودیو + `await import()` پویا در هندلر | FIXED-PARTIAL | WP 4.3 (cf33ad8): دو `await import()` پویا در `Shop.tsx` حذف و import ایستا شد. باز (TODO): یکپارچه‌سازی سه لایهٔ دسترسی به داده (`api.ts`، `session.ts`، `adminApi.ts`) در یک لایه و code-splitting در سطح route. |
+| F-20 | ۲ export مرده در `lib/api.ts` | FIXED | WP 4.4 (cf33ad8): `updateProduct` حذف شد (BD‑2)؛ مسیر PATCH بک‌اند با استثنای مستند `TODO` در `apiCoverage` (D‑14). `getToken` از export خارج شد و فقط داخل `api.ts` می‌ماند. تأیید: `tsc --noEmit` و `eslint` exit 0. |
 | F-21 | ۵ session بدون context manager در اسکریپت‌ها | FIXED | WP 4.5. hypothesis در extras dev اعلام شد (pyproject)؛ `scripts/dast.py --help` exit 0. پنج اسکریپت با `with get_session_factory()() as session:` یکدست شدند؛ تست red: ۵ ناموفق ⇒ green: ۵ پاس (tests/regression/test_wp45_session_pattern.py). اعتراف: کد قبلی نشت نداشت (finally: close)؛ این یکدست‌سازی است. محدودیت: «تمیز» واقعی (محیط بدون hypothesis) دوباره نصب نشد؛ بررسی با extras dev انجام شد. |
 | F-22 | ۴ SQL با f‑string در یک migration | FIXED | WP 4.5 (AD-8). قبل: ۴ `op.execute(f"DROP INDEX IF EXISTS ...")` در c3f01ab129e2 (خطوط 67/165/169/171) و قاعدهٔ semgrep که این فایل را نمی‌گرفت (سه علت: استثنای migrations؛ الگوهای فقط با آرگومان دوم؛ pattern-not-inside خاموش‌کننده). red: تست AST ناموفق روی ۴ مورد؛ semgrep روی فایل ۰ یافته. بعد: `_drop_index_if_exists` با inspector + `op.drop_index`؛ ۴ noqa حذف؛ S608 از ignore مربوط به migrations حذف. شاهد: upgrade→downgrade f1a2b3c4d5e6→upgrade روی SQLite PASS؛ semgrep روی کل backend ۰ یافته؛ pytest ۱۱۹۱/۲/۰. |
 | F-23 | ۱۰ دکمه بدون `onClick` (موجودی، نه لزوماً نقص) | OPEN |  |
@@ -137,10 +137,11 @@
 | بخش | وضعیت | تعداد |
 |---|---|---|
 | blocked | OPEN | 5 |
-| findings | FIXED | 8 |
-| findings | FIXED-PARTIAL | 3 |
+| findings | BLOCKED | 1 |
+| findings | FIXED | 10 |
+| findings | FIXED-PARTIAL | 7 |
 | findings | IN-PROGRESS | 1 |
-| findings | OPEN | 17 |
+| findings | OPEN | 10 |
 | non_issues | OPEN | 14 |
 | problems | FIXED | 1 |
 | problems | IN-PROGRESS | 1 |

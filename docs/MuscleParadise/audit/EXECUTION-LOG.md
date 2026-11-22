@@ -591,3 +591,36 @@ WP: 0.4 · F: F‑07 · شاهد: `evidence/after/wp04/` · تصمیم: AD‑11 
 - **lint/format (مجموعهٔ CI):** `ruff check --select E,F,W,I,N,UP,B,SIM,DTZ,TRY400,S --ignore E501 tests/regression/test_b2_wp23_wp43_wp44.py` ⇒ exit 0؛ `ruff format --check` ⇒ exit 0 (پس از `ruff format`).
 - **کامیت‌ها (دو commit برای این بسته):** WP 2.3 (Dockerfile ×۲، runbook، تست قرمز/سبز) و WP 4.3+4.4 (studio، `apiCoverage`، D‑14، این لاگ). سقف «حداکثر دو commit» رعایت شد.
 - **باز:** TODO در `validate_production_configuration` (D‑14)؛ 28 فایل untracked `mp-app/backend/var/receipts/*.png` (artifact اجرای تست؛ شمارش با `git status --porcelain`) commit نشدند.
+
+## B3 — WP 3.3 / F‑14 (DONE) · WP 3.5 / F‑09، F‑25 (باز) · بستن یافته‌های داوری B2 (MEASURED-BY-YOU)
+
+**وضعیت این بسته:** ناتمام. WP 3.3 و بستن یافته‌های داوری انجام شد؛ WP 3.5 شروع نشده و بسته push نشده تا پس از آن تکمیل شود (در بخش «باز» دیده شود).
+
+### یافته‌های داوری B2 (بسته‌شده در این بسته)
+- **۱) کامنت Dockerfile:** `mp-app/backend/Dockerfile` خط «4 is the measured floor» بازنویسی شد: پیش‌فرض ۱، بودجهٔ `workers × 60`، و ارجاع به OPS-RUNBOOK §۱‑الف. `mp-app/infra/Dockerfile.backend` کامنت مشابه ندارد (`grep -n "WEB_CONCURRENCY\|measured"` فقط خط CMD را نشان می‌دهد)؛ تغییری لازم نشد.
+- **۲) CHECKLIST:** فایل تولیدی است (هدر: «دستی ویرایش نکنید»)؛ وضعیت از `status.json` می‌آید. اقدام: ورودی‌های F‑03، F‑04، F‑14، F‑18، F‑19، F‑20 در `status.json` ثبت شد و با `python3 scripts/build_audit_inventory.py` بازتولید شد. نتیجهٔ هر کدام:
+  - F‑03 ⇒ FIXED-PARTIAL (C4 BLOCKED-ENV، C5 TODO) · F‑04 ⇒ FIXED-PARTIAL (C9 TODO، C10 BLOCKED-ENV، C11 ادعا نشده)
+  - F‑14 ⇒ FIXED · F‑18 ⇒ FIXED-PARTIAL (validate ۸ کلید و pragma alembic = TODO)
+  - F‑19 ⇒ FIXED-PARTIAL (یک‌لایه‌سازی سه API = TODO؛ این مورد در حکم کیت «رفع» است و هنوز انجام نشده) · F‑20 ⇒ FIXED
+- **تصحیح ۳ — F‑19 و F‑20 بیش از آنچه کد B2 کرده بود:** کیت F‑20 دو export مرده (`updateProduct` و `getToken`) را خواسته بود. `updateProduct` در B2 حذف شد؛ `getToken` اکنون از export خارج شد (`studio/src/lib/api.ts`، فقط داخل فایل استفاده می‌شود: `grep -rn getToken studio/src studio/tests | grep import` ⇒ ۰ خط؛ `tsc --noEmit` exit 0؛ `eslint src/lib/api.ts` exit 0).
+- **تصحیح ۴ — جدول لوپ:** ردیف‌های ۲٫۱، ۲٫۲ (از B1) و ۲٫۳، ۳٫۳، ۴٫۳، ۴٫۴ به DONE با sha به‌روز شد (`FINN-AUDIT-LOOP.md`).
+- **همگام‌سازی تولیدی:** `scripts/build_audit_inventory.py --check` پیش از بازتولید exit 1 بود. علت دو چیز بود: (الف) `INVENTORY.md` از ورودی‌های قبلی (WP های بدون بازتولید) کهنه بود (۱٬۱۸۳ ⇒ ۱٬۳۴۷ فایل ترک‌شده)؛ (ب) `CHECKLIST.md` ردیف F‑12 را با وضعیت BLOCKED (WP 0.2 در `status.json`) نشان نمی‌داد. هر دو با بازتولید اصلاح شد؛ پس از آن `--check` ⇒ exit 0، «فهرست‌ها هم‌خوان‌اند».
+
+### WP 3.3 / F‑14
+- **قرمز:** `pytest -q tests/integration/test_wp33_gateway_return_status.py` ⇒ `1 failed, 5 passed` (قرمز: `999999999` ⇒ 200 به‌جای 404). دو تست اولیهٔ «-1 ⇒ 200» قبل از اصلاح بررسی شدند و **بازتولید نشدند** (HEAD: 422 `invalid_id`)؛ تست‌ها به قرارداد guard اصلاح شدند و کیت ادعای آن‌ها را رفع‌شده نمی‌داند.
+- **اصلاح:** `modules/payments/router.py`: `NotFoundError` ⇒ HTML با HTTP 404؛ `_return_page(..., status_code=)`.
+- **سبز:** `pytest -q tests/integration/test_wp33_gateway_return_status.py tests/integration/test_sandbox_bank.py tests/integration/test_q6_gateway.py` ⇒ `44 passed, 1 warning`.
+- **route guard:** `python mp-app/backend/scripts/route_guard_gate.py` ⇒ exit 0 (۱۶۳ مسیر؛ ۱۵۵ guard؛ ۸ عمومی مستند).
+- **interaction map:** `python scripts/interaction_map.py --check` ⇒ exit 0 (رانش صفر، ۳۱ سطح، ۱۶۳ مسیر قرارداد).
+- **lint/format (مجموعهٔ CI):** `ruff check --select E,F,W,I,N,UP,B,SIM,DTZ,TRY400,S --ignore E501` روی دو فایل تغییریافته ⇒ exit 0؛ `ruff format --check` ⇒ exit 0 (پس از `ruff format` روی فایل تست).
+- **کامیت:** `9024f44`.
+- **تصمیم:** D‑15.
+
+### باز در این بسته
+- **WP 3.5 / F‑09، F‑25:** آزمون قراردادی سراسری در CI — شروع نشده.
+- **F‑25 (۱۱ مسیر با الگوی 200 برای شناسهٔ نامعتبر):** در WP 3.5 است؛ D‑15 آن را پوشش نمی‌دهد.
+- **B4 (WP 4.1، 4.2، 4.7، PARTIAL 0.2/0.7/1.1/1.2/1.4):** شروع نشده.
+- **اجرای کامل تست‌ها و BATCH-SUMMARY:** پس از B4.
+- **receiptQueue:** در اجرای کامل بعدی با زمان‌بندی ثبت می‌شود.
+- **push:** این بسته یک push نقطه‌ای (checkpoint) برای جلوگیری از گم‌شدن کامیت‌های محلی است و بستهٔ B3 را کامل نمی‌کند. دستور: `git push origin arena/5a1e37b3-mp`.
+

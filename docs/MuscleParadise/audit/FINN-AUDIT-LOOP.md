@@ -46,22 +46,22 @@
 | 1.3 | F-06, A2 | DONE | `fae50c5` | ۳۲ تست مانیتورینگ passed؛ pytest ۱۱۰۴ |
 | 1.4 | F-08 | PARTIAL | `d30aed8` | BD-6: bump auth_version؛ قبل ۲۰۰ ⇒ بعد ۴۰۱؛ pytest ۱۱۳۲ passed؛ قاعدهٔ Semgrep باقی (WP 0.7) |
 | 1.5 | F-09 | DONE | (این کامیت) | red: ۲۳ ناموفق ⇒ green: ۳۳ تست بک‌اند + ۱۵ استودیو؛ گیت after-wp15 PASS؛ pytest ۱۱۸۴/۲/۰؛ AD‑7 |
-| 2.1 | F-03 | READY | — | لاگ با `ConsoleRenderer` در پروسهٔ سرویس؛ `QueueHandler` |
-| 2.2 | F-04 | READY | — | گیج‌های pool؛ ۵۰۳ به‌جای ۵۰۰ |
-| 2.3 | F-18 | READY | — | BD-4: یک ورکر + سقف مستند؛ `gateway.py` sync→async |
+| 2.1 | F-03 | DONE | e57a992 (B1، D‑13 C1–C5؛ C4/C5 باز) | لاگ با `ConsoleRenderer` در پروسهٔ سرویس؛ `QueueHandler` | |
+| 2.2 | F-04 | DONE | b9ce7be (B1، D‑13 C6–C11؛ C9/C10 باز، C11 ادعا نشده) | گیج‌های pool؛ ۵۰۳ به‌جای ۵۰۰ | |
+| 2.3 | F-18 | DONE | f852675 (WEB_CONCURRENCY=1، بودجه در OPS-RUNBOOK؛ گسترش validate = TODO، D‑14) | BD-4: یک ورکر + سقف مستند؛ `gateway.py` sync→async | |
 | 2.4 | F-05 | DONE | (این کامیت) | red: `tests/regression/test_wp24_rbac_decision_cache.py` (۵۰ ارزیابی casbin برای یک درخواست تکراری؛ ۱۰۰۰ ارزیابی برای ۱۰۰۰ شناسهٔ مختلف؛ کش و متریک نبود)؛ اصلاح: `security/rbac.py` کش محدود LRU با نرمال‌سازی شناسه، `get_enforcer` با قفل، `mp_rbac_decisions_total`/`mp_rbac_errors_total`؛ بار کیت (۸۰×۴۰۰، ۳۲٬۰۰۰ فراخوانی): قبل `SystemError` ۱، p50 ۱٫۰۱۶ ms ⇒ بعد ۰، p50 ۰٫۰۰۶ ms (`evidence/after/wp24/`)؛ AD‑19 |
 | 2.5 | F-17 | DONE | `a9146c7` | کیت: semgrep `mp-silent-except-pass` = 0؛ نام شمارنده‌ها طبق کیت (`mp_metrics_scrape_errors_total`، `mp_dast_errors_total`)؛ `/health/ready` بازتاب می‌دهد؛ red 6 تست ⇒ green؛ pytest کامل `1254 passed, 2 skipped, rc=0`. یادداشت: گیت semgrep پیش از تغییر هم ۰ بود؛ تست‌های قرمز شکاف واقعی (نام/بازتاب) را ثبت می‌کنند |
 | 2.6 | F-29 | DONE | (این کامیت) | red: ۶ تست exc_info ناموفق ⇒ green: ۱۴ تست؛ pytest ۱۱۴۶/۲/۰؛ AD‑6 (متن استثنا پنهان) |
 | 3.1 | F-25 | DONE | (این کامیت) | گیت: `unexpected_2xx_on_bad_id` ۴۸ ⇒ ۰ (۸۷۲ سلول)؛ `id_guard_rejections` ۷۰ ⇒ ۳۳۸ (۴×۵۷ مسیر پارامتری برآورده)؛ بار `plain-dev 10 40` بدون رگرسیون (نسبت‌ها در `evidence/after/wp31-load-ratios.json`)؛ red: `test_wp31_id_floor.py` (۲۴۸/۲۴۸ ناموفق) ⇒ ۵ سبز؛ pytest کامل `1262 passed, 2 skipped, rc=0` |
 | 3.2 | F-26 | DONE | (این کامیت) | گیت کیت: `fastapi_default_detail` ۷۰ ⇒ ۰ روی ۸۷۲ سلول (`evidence/after/wp32/summary.json`)؛ اصلاح: پیام خاص `HTTPException` برنامه حفظ شد (red: `test_wp32_detail_preserved.py`)؛ pytest کامل `1257 passed, 2 skipped, rc=0` |
-| 3.3 | F-14 | TODO | — | `gateway-return` با شناسهٔ نامعتبر ⇒ 404 (BD-5) |
+| 3.3 | F-14 | DONE | 9024f44 (پرداخت ناموجود ⇒ 404؛ D‑15) | `gateway-return` با شناسهٔ نامعتبر ⇒ 404 (BD-5) | |
 | 3.4 | F-27 | DONE | (این کامیت) | red: `test_wp34_member_profile_required.py` (`shop_online_closed`→۴۰۴ به‌جای ۴۰۹)؛ اصلاح: `_own_member` ⇒ `ConflictError(code=member_profile_required)` ۴۰۹؛ گیت ایستا `check_shop_purchase_guard` در `deploy_gate.py` (۱۵ بررسی، ۰ مشکل)؛ pytest کامل `1268 passed, 2 skipped, rc=0`؛ سفارش به‌نیابت: AD‑17 |
 | 3.5 | F-09/F-25 | TODO | — | آزمون قراردادی سراسری در CI |
 | 3.6 | F-28 | DONE | (این کامیت) | red: ۳ تست (سن، اسکن، TZ) ناموفق روی کد قبل ⇒ green: ۵ تست؛ گیت after-wp36 PASS؛ pytest ۱۱۵۱/۲/۰؛ AD‑1 |
 | 4.1 | F-15 | TODO | — | شکستن `validate_production_configuration` (radon F(47)) |
 | 4.2 | F-11 | TODO | — | سه جهش واقعی؛ ≥۸۰٪ |
-| 4.3 | F-19 | READY | — | یک لایهٔ داده در استودیو؛ حذف `await import` در onClick |
-| 4.4 | F-20/F-23 | READY | — | BD-2: حذف `updateProduct` کلاینت |
+| 4.3 | F-19 | DONE | cf33ad8 (حذف await import؛ یک‌لایه‌سازی سه API = TODO، D‑14) | یک لایهٔ داده در استودیو؛ حذف `await import` در onClick | |
+| 4.4 | F-20/F-23 | DONE | cf33ad8 (updateProduct حذف؛ getToken unexport در این بسته: ‏ببینید EXECUTION-LOG) | BD-2: حذف `updateProduct` کلاینت | |
 | 4.5 | F-21/F-22 | DONE | (این کامیت) | F-22 red: ۱ ناموفق (۴ خط) ⇒ green؛ semgrep قاعده repair شد (مرده بود، AD‑8)؛ S فعال و بلوکینگ؛ گیت after-wp45 PASS؛ pytest ۱۱۹۱/۲/۰ |
 | 4.6 | F-16 | DONE | (این کامیت) | red: `tests/nutritionNoMemberSentinel.test.tsx` (درخواست `member_id=-1` بدون عضو)؛ اصلاح `Nutrition.tsx` ⇒ بدون عضو درخواست نمی‌رود؛ `mp-ts-float-money` روی `Analytics.tsx:106` (شمارندهٔ دقیقه) false positive ⇒ regex با lookahead محدود شد (AD‑18) و fixture `.semgrep/tests/mp-ts-float-money.ts` دقیقاً ۵/۵ مطابقت؛ `studio/src` ⇒ ۰ یافته؛ `tsc` rc=0؛ vitest ۲۹۹ passed، rc=0 |
 | 4.7 | — | TODO | — | Semgrep blocking، بار پله‌ای، جهش، گیت نهایی |

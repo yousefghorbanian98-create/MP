@@ -7,23 +7,191 @@
 
 ## ۱. خلاصهٔ تعداد فایل
 
-- کل فایل‌های ترک‌شده: **1183** (خطوط متنی: 163236)
+- کل فایل‌های ترک‌شده: **1347** (خطوط متنی: 255907)
 
 | ناحیه | تعداد فایل | خطوط متنی |
 |---|---|---|
-| CI/CD | 7 | 1558 |
-| استودیو (React) | 121 | 26291 |
+| CI/CD | 6 | 1400 |
+| استودیو (React) | 122 | 26329 |
 | اسکریپت و ابزار | 19 | 7347 |
 | اپ عضو (Flutter) | 114 | 19319 |
-| بک‌اند (FastAPI) | 528 | 75949 |
-| ریشه و تنظیمات | 10 | 835 |
+| بک‌اند (FastAPI) | 555 | 79822 |
+| ریشه و تنظیمات | 12 | 1527 |
 | زیرساخت و کانتینر | 15 | 597 |
 | سایر mp-app | 4 | 239 |
 | شواهد QA | 40 | 1626 |
-| مستندات | 184 | 21150 |
+| مستندات | 319 | 109376 |
 | گزارش‌های عامل | 141 | 8325 |
 
-## ۲. عملیات API (ایستا؛ `app.openapi()` در این اجرا در دسترس نبود)
+## ۲. عملیات API (از `app.openapi()`، مرجع اصلی)
+
+مسیرها: **141**؛ عملیات (روش×مسیر): **163**.
+
+| روش | مسیر |
+|---|---|
+| DELETE | `/api/v1/admin/permissions/{grant_id}` |
+| DELETE | `/api/v1/admin/users/{user_id}/role` |
+| DELETE | `/api/v1/auth/sessions/{session_id}` |
+| DELETE | `/api/v1/expenses/{expense_id}` |
+| DELETE | `/api/v1/face/enroll/{member_id}` |
+| DELETE | `/api/v1/shop/cart/{item_id}` |
+| GET | `/api/v1/admin/analytics/churn-risk` |
+| GET | `/api/v1/admin/analytics/leaderboards` |
+| GET | `/api/v1/admin/attendance` |
+| GET | `/api/v1/admin/audit` |
+| GET | `/api/v1/admin/checkins` |
+| GET | `/api/v1/admin/flags` |
+| GET | `/api/v1/admin/flags/{key}` |
+| GET | `/api/v1/admin/kpis` |
+| GET | `/api/v1/admin/members-summary` |
+| GET | `/api/v1/admin/permissions` |
+| GET | `/api/v1/admin/permissions/known` |
+| GET | `/api/v1/admin/retention` |
+| GET | `/api/v1/admin/users` |
+| GET | `/api/v1/assessments/jp7/member/{member_id}/trend` |
+| GET | `/api/v1/assessments/limb/member/{member_id}/report` |
+| GET | `/api/v1/assessments/member/{member_id}` |
+| GET | `/api/v1/assessments/{assessment_id}` |
+| GET | `/api/v1/auth/sessions` |
+| GET | `/api/v1/axis-assessments/member/{member_id}` |
+| GET | `/api/v1/axis-assessments/{assessment_id}/matrix` |
+| GET | `/api/v1/chat/conversations` |
+| GET | `/api/v1/chat/conversations/{conversation_id}/messages` |
+| GET | `/api/v1/classes` |
+| GET | `/api/v1/expenses` |
+| GET | `/api/v1/expenses/{expense_id}/receipt` |
+| GET | `/api/v1/face/deep-status` |
+| GET | `/api/v1/face/privacy-notice` |
+| GET | `/api/v1/face/qr-token` |
+| GET | `/api/v1/finance/reports/daily/{run_date}` |
+| GET | `/api/v1/finance/reports/period` |
+| GET | `/api/v1/finance/reports/schedule` |
+| GET | `/api/v1/health/ready` |
+| GET | `/api/v1/library/exercises` |
+| GET | `/api/v1/library/exercises/{exercise_id}` |
+| GET | `/api/v1/members` |
+| GET | `/api/v1/members/me` |
+| GET | `/api/v1/members/me/checkins` |
+| GET | `/api/v1/members/me/face-consent` |
+| GET | `/api/v1/members/memberships/plans` |
+| GET | `/api/v1/members/memberships/{membership_id}/invoice` |
+| GET | `/api/v1/members/{member_id}` |
+| GET | `/api/v1/members/{member_id}/memberships` |
+| GET | `/api/v1/metrics` |
+| GET | `/api/v1/notifications/member/{member_id}` |
+| GET | `/api/v1/notifications/reminders/member/{member_id}` |
+| GET | `/api/v1/nutrition/food-logs/member/{member_id}/daily` |
+| GET | `/api/v1/nutrition/foods` |
+| GET | `/api/v1/nutrition/member/{member_id}/adaptive` |
+| GET | `/api/v1/nutrition/plans/member/{member_id}` |
+| GET | `/api/v1/payments` |
+| GET | `/api/v1/payments/coupons` |
+| GET | `/api/v1/payments/finance/export.csv` |
+| GET | `/api/v1/payments/finance/summary` |
+| GET | `/api/v1/payments/invoice/{member_id}` |
+| GET | `/api/v1/payments/ledger/{member_id}` |
+| GET | `/api/v1/payments/wallet/{member_id}` |
+| GET | `/api/v1/payments/wallet/{member_id}/transactions` |
+| GET | `/api/v1/payments/{payment_id}/gateway-return` |
+| GET | `/api/v1/payments/{payment_id}/receipt` |
+| GET | `/api/v1/population/paths` |
+| GET | `/api/v1/programs` |
+| GET | `/api/v1/programs/member/{member_id}` |
+| GET | `/api/v1/programs/member/{member_id}/readiness` |
+| GET | `/api/v1/programs/member/{member_id}/volume` |
+| GET | `/api/v1/programs/{program_id}` |
+| GET | `/api/v1/reports/confidential/{member_id}` |
+| GET | `/api/v1/shop/cart` |
+| GET | `/api/v1/shop/categories` |
+| GET | `/api/v1/shop/change-requests` |
+| GET | `/api/v1/shop/gateways` |
+| GET | `/api/v1/shop/orders` |
+| GET | `/api/v1/shop/orders/{order_id}/receipt` |
+| GET | `/api/v1/shop/prices` |
+| GET | `/api/v1/shop/products` |
+| GET | `/api/v1/shop/products/{product_id}` |
+| GET | `/api/v1/shop/status` |
+| GET | `/api/v1/updates/manifest` |
+| GET | `/health` |
+| PATCH | `/api/v1/expenses/{expense_id}` |
+| PATCH | `/api/v1/members/{member_id}` |
+| PATCH | `/api/v1/shop/cart/{item_id}` |
+| PATCH | `/api/v1/shop/orders/{order_id}` |
+| PATCH | `/api/v1/shop/products/{product_id}` |
+| POST | `/api/v1/admin/permissions` |
+| POST | `/api/v1/admin/retention/run` |
+| POST | `/api/v1/admin/users/{user_id}/role` |
+| POST | `/api/v1/ai/nutrition/generate` |
+| POST | `/api/v1/ai/program/generate` |
+| POST | `/api/v1/ai/suggest-weight` |
+| POST | `/api/v1/assessments` |
+| POST | `/api/v1/assessments/jp7` |
+| POST | `/api/v1/assessments/limb` |
+| POST | `/api/v1/auth/logout` |
+| POST | `/api/v1/auth/logout-all` |
+| POST | `/api/v1/auth/otp/request` |
+| POST | `/api/v1/auth/otp/verify` |
+| POST | `/api/v1/auth/phone-change/confirm` |
+| POST | `/api/v1/auth/phone-change/request` |
+| POST | `/api/v1/auth/phone-change/verify-old` |
+| POST | `/api/v1/auth/refresh` |
+| POST | `/api/v1/axis-assessments` |
+| POST | `/api/v1/axis-assessments/{assessment_id}/review` |
+| POST | `/api/v1/chat/conversations` |
+| POST | `/api/v1/chat/conversations/{conversation_id}/messages` |
+| POST | `/api/v1/chat/conversations/{conversation_id}/read` |
+| POST | `/api/v1/classes` |
+| POST | `/api/v1/classes/book` |
+| POST | `/api/v1/classes/cancel` |
+| POST | `/api/v1/expenses` |
+| POST | `/api/v1/expenses/{expense_id}/receipt` |
+| POST | `/api/v1/face/checkin` |
+| POST | `/api/v1/face/checkin-qr` |
+| POST | `/api/v1/face/checkins/{checkin_id}/exit` |
+| POST | `/api/v1/face/consent` |
+| POST | `/api/v1/face/consent/revoke` |
+| POST | `/api/v1/face/enroll` |
+| POST | `/api/v1/finance/reports/schedule/{job_key}/run` |
+| POST | `/api/v1/members` |
+| POST | `/api/v1/members/memberships` |
+| POST | `/api/v1/members/memberships/from-plan` |
+| POST | `/api/v1/notifications` |
+| POST | `/api/v1/notifications/{notification_id}/read` |
+| POST | `/api/v1/nutrition/food-logs` |
+| POST | `/api/v1/nutrition/plans` |
+| POST | `/api/v1/nutrition/plans/{plan_id}/approve` |
+| POST | `/api/v1/nutrition/weight-logs` |
+| POST | `/api/v1/payments` |
+| POST | `/api/v1/payments/coupons` |
+| POST | `/api/v1/payments/finance/commission` |
+| POST | `/api/v1/payments/ledger/{entry_id}/reverse` |
+| POST | `/api/v1/payments/wallet/charge` |
+| POST | `/api/v1/payments/wallet/pay` |
+| POST | `/api/v1/payments/{payment_id}/approve` |
+| POST | `/api/v1/payments/{payment_id}/callback` |
+| POST | `/api/v1/payments/{payment_id}/fail` |
+| POST | `/api/v1/payments/{payment_id}/receipt` |
+| POST | `/api/v1/payments/{payment_id}/refund` |
+| POST | `/api/v1/payments/{payment_id}/reject` |
+| POST | `/api/v1/payments/{payment_id}/start` |
+| POST | `/api/v1/payments/{payment_id}/verify` |
+| POST | `/api/v1/population/gate-check` |
+| POST | `/api/v1/population/intake/next` |
+| POST | `/api/v1/programs/from-engine` |
+| POST | `/api/v1/programs/set-feedback` |
+| POST | `/api/v1/programs/sync/set-feedback` |
+| POST | `/api/v1/programs/{program_id}/approve` |
+| POST | `/api/v1/programs/{program_id}/reject` |
+| POST | `/api/v1/shop/cart` |
+| POST | `/api/v1/shop/change-requests` |
+| POST | `/api/v1/shop/change-requests/{request_id}/review` |
+| POST | `/api/v1/shop/checkout` |
+| POST | `/api/v1/shop/gateways` |
+| POST | `/api/v1/shop/prices` |
+| POST | `/api/v1/shop/products` |
+| PUT | `/api/v1/admin/flags` |
+| PUT | `/api/v1/members/me` |
+| PUT | `/api/v1/shop/gateways/{gateway_id}` |
 
 ### ۲-الف. دکوراتورهای `@router.*` (ایستا)
 
@@ -31,7 +199,7 @@
 
 | روش | مسیر کامل | فایل | خط |
 |---|---|---|---|
-| GET | `/health/ready` | `mp-app/backend/api/v1/monitoring.py` | 65 |
+| GET | `/health/ready` | `mp-app/backend/api/v1/monitoring.py` | 88 |
 | GET | `/admin/audit` | `mp-app/backend/modules/admin/router.py` | 16 |
 | GET | `/admin/flags/{key}` | `mp-app/backend/modules/admin/router.py` | 28 |
 | PUT | `/admin/flags` | `mp-app/backend/modules/admin/router.py` | 33 |
@@ -131,7 +299,7 @@
 
 ## ۳. صفحه‌ها و دکمه‌های استودیو
 
-فایل‌های TSX در `src/`: **44**؛ دکمهٔ `<button>`: **67**؛ `onClick`: **75**؛ `await import()` پویا: **2**.
+فایل‌های TSX در `src/`: **44**؛ دکمهٔ `<button>`: **67**؛ `onClick`: **75**؛ `await import()` پویا: **0**.
 
 کامپوننت `<Button>` (antd): **17**. شمارش `onClick` شامل هر دو است.
 
@@ -177,16 +345,15 @@
 | `mp-app/studio/src/pages/Finance.tsx` | 3 | 0 | 3 | 0 | 182 |
 | `mp-app/studio/src/pages/Login.tsx` | 3 | 0 | 3 | 0 | 145 |
 | `mp-app/studio/src/pages/Members.tsx` | 3 | 0 | 3 | 0 | 216 |
-| `mp-app/studio/src/pages/Nutrition.tsx` | 3 | 0 | 3 | 0 | 319 |
+| `mp-app/studio/src/pages/Nutrition.tsx` | 3 | 0 | 3 | 0 | 323 |
 | `mp-app/studio/src/pages/Programs.tsx` | 4 | 0 | 4 | 0 | 243 |
 | `mp-app/studio/src/pages/Settings.tsx` | 1 | 0 | 1 | 0 | 172 |
-| `mp-app/studio/src/pages/Shop.tsx` | 16 | 0 | 12 | 2 | 829 |
+| `mp-app/studio/src/pages/Shop.tsx` | 16 | 0 | 12 | 0 | 830 |
 
 ## ۴. Workflowهای CI
 
 | فایل | jobs | `uses:` بدون SHA |
 |---|---|---|
-| `.github/workflows/apk.yml` | apk | 0 |
 | `.github/workflows/ci.yml` | secret-scan, docs, backend, studio, client-flutter, live-contract, e2e-api, client-pinned | 0 |
 | `.github/workflows/client-format-fix.yml` | gitleaks-fingerprints, format-qr, format-client | 0 |
 | `.github/workflows/container.yml` | build-push | 0 |
@@ -198,8 +365,7 @@
 
 | ناحیه | مسیر | خطوط | اندازه (بایت) | بازبینی |
 |---|---|---|---|---|
-| CI/CD | `.github/workflows/apk.yml` | 180 | 8073 | NOT-REVIEWED |
-| CI/CD | `.github/workflows/ci.yml` | 575 | 30503 | NOT-REVIEWED |
+| CI/CD | `.github/workflows/ci.yml` | 597 | 32003 | NOT-REVIEWED |
 | CI/CD | `.github/workflows/client-format-fix.yml` | 446 | 23828 | NOT-REVIEWED |
 | CI/CD | `.github/workflows/container.yml` | 58 | 2168 | NOT-REVIEWED |
 | CI/CD | `.github/workflows/deploy.yml` | 150 | 6001 | NOT-REVIEWED |
@@ -250,7 +416,7 @@
 | استودیو (React) | `mp-app/studio/src/components/VolumePanel.tsx` | 136 | 6081 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/src/components/ui/JalaliDateField.tsx` | 66 | 2923 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/src/lib/adminApi.ts` | 221 | 7838 | NOT-REVIEWED |
-| استودیو (React) | `mp-app/studio/src/lib/api.ts` | 1619 | 46679 | NOT-REVIEWED |
+| استودیو (React) | `mp-app/studio/src/lib/api.ts` | 1616 | 46484 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/src/lib/money.ts` | 43 | 1802 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/src/lib/motion.ts` | 126 | 5195 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/src/lib/roleNav.ts` | 133 | 6548 | NOT-REVIEWED |
@@ -267,10 +433,10 @@
 | استودیو (React) | `mp-app/studio/src/pages/Finance.tsx` | 181 | 8186 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/src/pages/Login.tsx` | 144 | 5839 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/src/pages/Members.tsx` | 215 | 9433 | NOT-REVIEWED |
-| استودیو (React) | `mp-app/studio/src/pages/Nutrition.tsx` | 318 | 12593 | NOT-REVIEWED |
+| استودیو (React) | `mp-app/studio/src/pages/Nutrition.tsx` | 322 | 12759 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/src/pages/Programs.tsx` | 242 | 9910 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/src/pages/Settings.tsx` | 171 | 7125 | NOT-REVIEWED |
-| استودیو (React) | `mp-app/studio/src/pages/Shop.tsx` | 828 | 35870 | NOT-REVIEWED |
+| استودیو (React) | `mp-app/studio/src/pages/Shop.tsx` | 829 | 35794 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/src/stores/appStore.ts` | 45 | 1493 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/src/styles/index.css` | 124 | 3680 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/src/vite-env.d.ts` | 4 | 193 | NOT-REVIEWED |
@@ -280,7 +446,7 @@
 | استودیو (React) | `mp-app/studio/tests/adminApi.test.ts` | 61 | 2733 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/tests/adminPermissions.test.tsx` | 206 | 8545 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/tests/api.test.ts` | 129 | 4443 | NOT-REVIEWED |
-| استودیو (React) | `mp-app/studio/tests/apiCoverage.test.ts` | 743 | 35109 | NOT-REVIEWED |
+| استودیو (React) | `mp-app/studio/tests/apiCoverage.test.ts` | 750 | 35670 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/tests/appStore.test.ts` | 33 | 1166 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/tests/authFlow.test.tsx` | 205 | 8806 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/tests/autoregPanel.test.tsx` | 103 | 3805 | NOT-REVIEWED |
@@ -300,6 +466,7 @@
 | استودیو (React) | `mp-app/studio/tests/ledgerPanel.test.tsx` | 198 | 7769 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/tests/liveContract.test.ts` | 201 | 7684 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/tests/motion.test.tsx` | 112 | 5483 | NOT-REVIEWED |
+| استودیو (React) | `mp-app/studio/tests/nutritionNoMemberSentinel.test.tsx` | 29 | 1151 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/tests/nutritionPage.test.tsx` | 235 | 8993 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/tests/paymentPanel.test.tsx` | 312 | 15077 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/tests/periodReportPanel.test.tsx` | 95 | 3268 | NOT-REVIEWED |
@@ -460,42 +627,46 @@
 | اپ عضو (Flutter) | `mp-app/client/tools/dart_gate.py` | 290 | 12498 | NOT-REVIEWED |
 | اپ عضو (Flutter) | `mp-app/client/tools/manifest_gate.py` | 153 | 5486 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/.env.example` | 46 | 1933 | NOT-REVIEWED |
-| بک‌اند (FastAPI) | `mp-app/backend/Dockerfile` | 27 | 1481 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/Dockerfile` | 31 | 1762 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/README.md` | 3 | 121 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/alembic.ini` | 149 | 5014 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/api/__init__.py` | 0 | 0 | NOT-REVIEWED |
-| بک‌اند (FastAPI) | `mp-app/backend/api/routes.json` | 2958 | 53972 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/api/routes.json` | 4219 | 74480 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/api/v1/__init__.py` | 0 | 0 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/api/v1/api.py` | 57 | 2795 | NOT-REVIEWED |
-| بک‌اند (FastAPI) | `mp-app/backend/api/v1/monitoring.py` | 108 | 4136 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/api/v1/monitoring.py` | 138 | 5275 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/app/__init__.py` | 0 | 0 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/app/clock.py` | 23 | 956 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/app/config.py` | 271 | 13967 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/app/deps.py` | 142 | 5833 | NOT-REVIEWED |
-| بک‌اند (FastAPI) | `mp-app/backend/app/errors.py` | 74 | 2496 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/app/errors.py` | 102 | 3916 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/app/id_floor.py` | 34 | 1709 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/app/id_guard.py` | 64 | 3134 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/app/ids.py` | 36 | 1760 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/app/jalali.py` | 94 | 2646 | NOT-REVIEWED |
-| بک‌اند (FastAPI) | `mp-app/backend/app/logging.py` | 43 | 1393 | NOT-REVIEWED |
-| بک‌اند (FastAPI) | `mp-app/backend/app/main.py` | 190 | 7982 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/app/logging.py` | 145 | 4727 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/app/main.py` | 195 | 8385 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/app/metrics.py` | 140 | 5359 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/app/money.py` | 15 | 522 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/app/pool_metrics.py` | 69 | 3003 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/app/security/grants.py` | 117 | 4844 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/app/security/headers.py` | 37 | 1452 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/app/security/hierarchy.py` | 61 | 3211 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/app/security/jwt.py` | 103 | 3443 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/app/security/ownership.py` | 36 | 1514 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/app/security/proxy.py` | 65 | 2859 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/app/security/route_policy.py` | 141 | 7660 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/app/sms.py` | 145 | 5573 | NOT-REVIEWED |
-| بک‌اند (FastAPI) | `mp-app/backend/app/unhandled.py` | 100 | 5322 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/app/unhandled.py` | 119 | 6204 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/cache/__init__.py` | 0 | 0 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/cache/keys.py` | 21 | 661 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/cache/store.py` | 123 | 4137 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/coverage-subprocess.rc` | — | 525 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/data/external/free_exercise_db/SOURCE.md` | 13 | 845 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/data/external/free_exercise_db/exercises.json` | 22694 | 1005327 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/data/food/iranian_foods.js` | 347 | 38344 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/db/__init__.py` | 0 | 0 | NOT-REVIEWED |
-| بک‌اند (FastAPI) | `mp-app/backend/db/base.py` | 168 | 7031 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/db/base.py` | 173 | 7234 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/db/migrations/README` | 1 | 38 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/db/migrations/env.py` | 53 | 1482 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/db/migrations/script.py.mako` | — | 704 | NOT-REVIEWED |
@@ -605,7 +776,7 @@
 | بک‌اند (FastAPI) | `mp-app/backend/modules/assessment/repository.py` | 59 | 1848 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/modules/assessment/router.py` | 91 | 2918 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/modules/assessment/schemas.py` | 86 | 2678 | NOT-REVIEWED |
-| بک‌اند (FastAPI) | `mp-app/backend/modules/assessment/service.py` | 422 | 16417 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/modules/assessment/service.py` | 429 | 16773 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/modules/auth/__init__.py` | 0 | 0 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/modules/auth/router.py` | 156 | 5646 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/modules/auth/schemas.py` | 93 | 2484 | NOT-REVIEWED |
@@ -657,7 +828,7 @@
 | بک‌اند (FastAPI) | `mp-app/backend/modules/payments/manual_transfer_policy.py` | 117 | 4480 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/modules/payments/receipts.py` | 318 | 11498 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/modules/payments/repository.py` | 48 | 1391 | NOT-REVIEWED |
-| بک‌اند (FastAPI) | `mp-app/backend/modules/payments/router.py` | 367 | 14442 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/modules/payments/router.py` | 370 | 14809 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/modules/payments/schemas.py` | 151 | 4128 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/modules/payments/service.py` | 593 | 25842 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/modules/population/__init__.py` | 0 | 0 | NOT-REVIEWED |
@@ -680,19 +851,22 @@
 | بک‌اند (FastAPI) | `mp-app/backend/modules/reports/router.py` | 79 | 2643 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/modules/reports/schedule.py` | 200 | 7539 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/modules/shop/router.py` | 295 | 12307 | NOT-REVIEWED |
-| بک‌اند (FastAPI) | `mp-app/backend/modules/shop/service.py` | 796 | 30175 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/modules/shop/service.py` | 800 | 30388 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/modules/updates/registry.json` | 65 | 1690 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/modules/updates/router.py` | 17 | 550 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/modules/updates/service.py` | 137 | 5311 | NOT-REVIEWED |
-| بک‌اند (FastAPI) | `mp-app/backend/pyproject.toml` | 137 | 7464 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/pyproject.toml` | 138 | 7597 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/requirements.txt` | 86 | 1686 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/scripts/__init__.py` | 0 | 0 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/scripts/attach_exercise_media.py` | 108 | 3910 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/scripts/backup.py` | 283 | 12621 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/scripts/build_exercise_gifs.py` | 144 | 6824 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/scripts/build_progressions.py` | 248 | 9530 | NOT-REVIEWED |
-| بک‌اند (FastAPI) | `mp-app/backend/scripts/dast.py` | 246 | 10296 | NOT-REVIEWED |
-| بک‌اند (FastAPI) | `mp-app/backend/scripts/deploy_gate.py` | 221 | 8902 | NOT-REVIEWED |
-| بک‌اند (FastAPI) | `mp-app/backend/scripts/export_routes.py` | 122 | 5051 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/scripts/coverage_gate.py` | 133 | 5439 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/scripts/coverage_run.sh` | 27 | 1052 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/scripts/dast.py` | 249 | 10405 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/scripts/deploy_gate.py` | 240 | 9903 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/scripts/export_routes.py` | 177 | 7861 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/scripts/import_exercise_catalog.py` | 155 | 5381 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/scripts/import_food_catalog.py` | 206 | 8809 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/scripts/locust_m39c3.py` | 43 | 1254 | NOT-REVIEWED |
@@ -705,7 +879,7 @@
 | بک‌اند (FastAPI) | `mp-app/backend/scripts/uvicorn_proxy_flags.sh` | 11 | 643 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/security/__init__.py` | 0 | 0 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/security/crypto.py` | 65 | 3044 | NOT-REVIEWED |
-| بک‌اند (FastAPI) | `mp-app/backend/security/rbac.py` | 264 | 14488 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/security/rbac.py` | 311 | 16466 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/static/exercises/1.gif` | — | 340590 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/static/exercises/10.gif` | — | 296855 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/static/exercises/10_0.jpg` | — | 9764 | NOT-REVIEWED |
@@ -772,17 +946,21 @@
 | بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_ai_engine.py` | 148 | 4984 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_ai_kpis.py` | 70 | 1917 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_api_contract.py` | 343 | 11728 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_attach_exercise_media.py` | 120 | 4025 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_axis_assessment_api.py` | 291 | 10112 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_backup_drill.py` | 57 | 2211 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_battle.py` | 247 | 8507 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_ci_artifacts.py` | 195 | 7584 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_classes_finance.py` | 127 | 4212 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_coverage_gate.py` | 99 | 3259 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_deploy_gate_branches.py` | 292 | 10992 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_e2e_adaptive_loop.py` | 369 | 14188 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_e2e_dataflow.py` | 254 | 9949 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_face_privacy.py` | 89 | 3060 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_g2_coupons.py` | 168 | 6780 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_g9_library.py` | 200 | 8122 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_gender_plans_api.py` | 142 | 5227 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_import_food_catalog.py` | 203 | 6648 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_infra.py` | 54 | 2017 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_m45_admin_attendance.py` | 239 | 9614 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_m45_checkin_feed.py` | 107 | 3756 | NOT-REVIEWED |
@@ -842,8 +1020,9 @@
 | بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_qf10_period_report.py` | 151 | 5824 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_rea_fixes.py` | 80 | 3015 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_reporting.py` | 120 | 4020 | NOT-REVIEWED |
-| بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_routes_access_matrix.py` | 110 | 5132 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_routes_access_matrix.py` | 127 | 5956 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_routes_artifact.py` | 54 | 2657 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_routes_effective_guards.py` | 105 | 5335 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_sandbox_bank.py` | 558 | 23268 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_security.py` | 139 | 5100 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_sms.py` | 111 | 3661 | NOT-REVIEWED |
@@ -852,11 +1031,17 @@
 | بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_wp03_axis_single_guard.py` | 58 | 2033 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_wp13_metrics_auth.py` | 76 | 2700 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_wp14_logout_all.py` | 85 | 3721 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_wp25_scrape_errors_ready.py` | 15 | 561 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_wp31_id_floor.py` | 82 | 3394 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_wp32_error_envelope.py` | 28 | 1069 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_wp33_gateway_return_status.py` | 43 | 1794 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_wp34_member_profile_required.py` | 24 | 1032 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/load/locustfile.py` | 65 | 2282 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/load/locustfile_full.py` | 208 | 7169 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/regression/__init__.py` | 0 | 0 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/regression/test_apk_audit.py` | 95 | 3464 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/regression/test_apk_deep_audit.py` | 159 | 6797 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/tests/regression/test_b2_wp23_wp43_wp44.py` | 54 | 2290 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/regression/test_branch_id.py` | 39 | 1351 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/regression/test_ci_test_failures.py` | 169 | 7069 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/regression/test_dart_gate.py` | 135 | 4982 | NOT-REVIEWED |
@@ -867,14 +1052,23 @@
 | بک‌اند (FastAPI) | `mp-app/backend/tests/regression/test_production_ops.py` | 198 | 7678 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/regression/test_qr_format_workflow.py` | 120 | 5023 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/regression/test_rbac.py` | 68 | 3451 | NOT-REVIEWED |
-| بک‌اند (FastAPI) | `mp-app/backend/tests/regression/test_release_signing_policy.py` | 45 | 1771 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/tests/regression/test_release_signing_policy.py` | 18 | 656 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/regression/test_role_nav_parity.py` | 76 | 4180 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/regression/test_route_guard_gate.py` | 72 | 2983 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/tests/regression/test_wp06_deprecations_and_counts.py` | 78 | 2577 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/regression/test_wp11_xff_trust.py` | 157 | 5609 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/regression/test_wp12_env_failsafe.py` | 132 | 5023 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/regression/test_wp15_rial_strict.py` | 79 | 3107 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/tests/regression/test_wp21_logging_queue.py` | 99 | 3411 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/tests/regression/test_wp22_pool_observability.py` | 108 | 4059 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/tests/regression/test_wp24_rbac_decision_cache.py` | 161 | 5916 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/tests/regression/test_wp25_dast_skip_counter.py` | 39 | 1083 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/tests/regression/test_wp25_silent_failures.py` | 108 | 4088 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/regression/test_wp26_sms_logging.py` | 100 | 4141 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/tests/regression/test_wp32_detail_preserved.py` | 35 | 1439 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/regression/test_wp36_shop_today.py` | 57 | 2408 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/tests/regression/test_wp45_f22_migration_sql.py` | 58 | 2430 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/tests/regression/test_wp45_session_pattern.py` | 49 | 1889 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/unit/__init__.py` | 0 | 0 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/unit/test_adaptive_nutrition.py` | 271 | 10351 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/unit/test_autoreg.py` | 36 | 1311 | NOT-REVIEWED |
@@ -988,10 +1182,12 @@
 | بک‌اند (FastAPI) | `mp-app/backend/var/receipts/ff2a6b016df49fe82b669f42f625aaf2.png` | — | 82 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/verify-addendum-gates.sh` | 120 | 6916 | NOT-REVIEWED |
 | ریشه و تنظیمات | `.dockerignore` | 37 | 571 | NOT-REVIEWED |
-| ریشه و تنظیمات | `.gitignore` | 79 | 1504 | NOT-REVIEWED |
-| ریشه و تنظیمات | `.gitleaksignore` | 20 | 1761 | NOT-REVIEWED |
+| ریشه و تنظیمات | `.gitignore` | 81 | 1552 | NOT-REVIEWED |
+| ریشه و تنظیمات | `.gitleaksignore` | 505 | 60102 | NOT-REVIEWED |
 | ریشه و تنظیمات | `.repowise/decisions.yaml` | 66 | 3042 | NOT-REVIEWED |
+| ریشه و تنظیمات | `.semgrep/mp-harness-rules.yml` | 186 | 7163 | NOT-REVIEWED |
 | ریشه و تنظیمات | `.semgrep/project-rules.yml` | 131 | 4943 | NOT-REVIEWED |
+| ریشه و تنظیمات | `.semgrep/tests/mp-ts-float-money.ts` | 19 | 625 | NOT-REVIEWED |
 | ریشه و تنظیمات | `AGENTS.md` | 55 | 9199 | NOT-REVIEWED |
 | ریشه و تنظیمات | `LICENSE` | 36 | 1637 | NOT-REVIEWED |
 | ریشه و تنظیمات | `NOTICE-THIRD-PARTY.md` | 80 | 6770 | NOT-REVIEWED |
@@ -1084,7 +1280,7 @@
 | مستندات | `docs/MuscleParadise/M46-REPORT-2026-11-15.md` | 225 | 10939 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/MASTER-PLAN-M59.md` | 175 | 11369 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/MASTER_MAP.md` | 277 | 28237 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/OPS-RUNBOOK.md` | 124 | 11419 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/OPS-RUNBOOK.md` | 132 | 12425 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/OSS-DEEP-RESEARCH-2026-11-18.md` | 130 | 28934 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/OSS-REUSE-RESEARCH-2026-11-16.md` | 124 | 34704 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/OUTPUT-AUDIT-2026-11-14.md` | 47 | 5160 | NOT-REVIEWED |
@@ -1099,9 +1295,9 @@
 | مستندات | `docs/MuscleParadise/PROPOSAL-SUBAGENTS-AND-CHECKPOINTS.md` | 85 | 17775 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/REA-OPERATIONS.md` | 237 | 12949 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/REA-REVIEW-2026-11-15.md` | 58 | 5100 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/READY-TO-BUILD-2026-11-15.md` | 247 | 15533 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/READY-TO-BUILD-2026-11-15.md` | 247 | 15598 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/READY-TO-RESUME-2026-11-15.md` | 163 | 10249 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/RELEASE-CHECKLIST.md` | 62 | 5444 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/RELEASE-CHECKLIST.md` | 62 | 5629 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/REPORT-ECC-QA-TRIAL-2026-11-18.md` | 37 | 7620 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/REPORT-ECC-SUBAGENT-SMOKE.md` | 23 | 5630 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/REPORT-FREE-ECC-ALTERNATIVES-2026-11-18.md` | 76 | 14018 | NOT-REVIEWED |
@@ -1116,7 +1312,7 @@
 | مستندات | `docs/MuscleParadise/ROADMAP-NEXT-2026-11-19.md` | 249 | 34005 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/SECURITY-AUDIT-2026-11-15.md` | 54 | 2920 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/SECURITY-REVIEW-2026-11-15.md` | 79 | 5279 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/SESSION_HANDOFF.md` | 283 | 64827 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/SESSION_HANDOFF.md` | 283 | 64856 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/TODO-2026-11-16.md` | 557 | 96281 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/TODO-CLOUD-FINANCE-ACCESS.md` | 153 | 32699 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/TOOLING-RUNBOOK.md` | 71 | 6579 | NOT-REVIEWED |
@@ -1132,31 +1328,166 @@
 | مستندات | `docs/MuscleParadise/architecture/c4.md` | 84 | 4444 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/architecture/cloud-finance-access.md` | 91 | 6803 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/architecture/interaction-baseline.json` | 11 | 229 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/architecture/interaction-map-2026-11-19.md` | 292 | 18277 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/architecture/interaction-map.json` | 2224 | 51756 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/architecture/interaction-map-2026-11-19.md` | 291 | 18627 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/architecture/interaction-map.json` | 2261 | 52640 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/architecture/module-map.md` | 25 | 2995 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/architecture/modules/shop.md` | 90 | 7764 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/architecture/oss-value-flows.md` | 40 | 3259 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/architecture/pr-review-flows-2026-11-18.md` | 55 | 5590 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/architecture/repowise-model-2026-11-19.dsl` | 583 | 22449 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/architecture/repowise-pr-review-2026-11-18.dsl` | 513 | 22577 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/architecture/repowise-pr-review-scope-2026-11-18.txt` | 576 | 26134 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/architecture/repowise-pr-review-scope-2026-11-18.txt` | 576 | 26241 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/architecture/repowise-transfer-2026-11-18.dsl` | 511 | 22209 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/architecture/repowise-transfer-scope-2026-11-18.txt` | 564 | 25620 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/architecture/repowise-transfer-scope-2026-11-18.txt` | 564 | 25727 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/architecture/system-atlas.md` | 73 | 6836 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/assets/knowledge-atlas.svg` | 77 | 5239 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/assets/readme-hero.svg` | 66 | 4533 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/assets/system-architecture.svg` | 148 | 13022 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/BASELINE.md` | 79 | 8111 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/CHECKLIST.md` | 147 | 17821 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/DECISIONS.md` | 140 | 18538 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/EXECUTION-LOG.md` | 205 | 30421 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/FINN-AUDIT-LOOP.md` | 88 | 8917 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/INVENTORY.md` | 1383 | 137974 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/BASELINE.md` | 200 | 34258 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/CHECKLIST.md` | 148 | 20706 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/DECISIONS.md` | 412 | 63530 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/EXECUTION-LOG.md` | 626 | 92589 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/FINN-AUDIT-LOOP.md` | 88 | 13004 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/INVENTORY.md` | 1714 | 163908 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/MICRO-LOOPS.md` | 83 | 6853 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/backend-coverage.xml` | 12153 | 430390 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/bandit.json` | 3064 | 84377 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/contract-invalid-authed.json` | 12111 | 477649 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/contract-invalid-findings.json` | 13 | 227 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/contract-matrix-raw.json` | 32264 | 845117 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/contract-rbac-findings.json` | 3692 | 73721 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/detect-secrets.err` | — | 0 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/detect-secrets.json` | 1463 | 53157 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/live-security-raw.json` | 654 | 17024 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/live-security-verdicts.json` | 93 | 4620 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/lizard-warnings.txt` | 55 | 6316 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/openapi-live.json` | 1 | 171735 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/otp-ratelimit-verdicts.json` | 1 | 2 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/radon-cc.txt` | 83 | 2578 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/radon-mi.txt` | 224 | 7654 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/ruff-blocking.rc` | — | 2 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/ruff-blocking.txt` | 1 | 19 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/ruff-format.rc` | — | 2 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/ruff-format.txt` | 1 | 28 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/ruff-recommended-stats.txt` | 44 | 1800 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/ruff-recommended.rc` | — | 2 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/ruff-recommended.txt` | 382 | 38125 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/ruff-tree-config.rc` | — | 2 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/ruff-tree-config.txt` | 340 | 34092 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/semgrep-project.json` | 1 | 12405 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/summary.json` | 22 | 418 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/T02-alembic-heads.txt` | 2 | 30 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/T03-orm-vs-db.txt` | 3 | 56 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/T04-tsc.log` | — | 0 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/T04.rc` | — | 18 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/T05-vitest.log` | — | 132149 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/T14-semgrep-backend-BASE-662ff88.json` | 1 | 28488 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/T14-semgrep-backend-full.json` | 1 | 13391 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/T14-semgrep-backend.json` | 1 | 8233 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/T15-semgrep-studio-BASE-662ff88.json` | 1 | 9172 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/T15-semgrep-studio.json` | 1 | 4793 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/T16-semgrep-client-BASE-662ff88.json` | 1 | 5395 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/T16-semgrep-client.json` | 1 | 4225 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/T17-eslint.json` | 1 | 14272 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/T17-eslint.log` | — | 0 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/T18-madge.log` | — | 91 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/T19-jscpd.log` | — | 3723 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/T19-jscpd/jscpd-report.json` | 133 | 3758 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/T20-knip-v5.err` | — | 0 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/T20-knip-v5.json` | 1 | 5528 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/T20-knip.err` | — | 1382 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/T20-knip.json` | 0 | 0 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/T21-mutmut-manual.json` | 461 | 10067 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/T23-pathid-scan-base.json` | 444 | 7185 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/T23-pathid-scan.json` | 444 | 7185 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/T30-smoke-recheck.txt` | 4 | 469 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/T30-smoke.txt` | 14 | 573 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/T37-otp-bruteforce.json` | 13 | 419 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/T38-xff-dockerfile.txt` | 4 | 248 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/T39-env-docker.txt` | 7 | 249 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/T40-load-plain-dev.log` | — | 1878 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/T46-load-instr.log` | — | 1022 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/T48-shop-S1.txt` | 3 | 337 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/T48-shop-S3.txt` | 3 | 383 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/bench_logging.log` | — | 973 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/contract_invalid.log` | — | 856 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/contract_matrix.log` | — | 608 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/contract_seed.log` | — | 1556 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/invalid_authed.log` | — | 2582 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/live-security-raw.json` | 577 | 14141 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/live-security-verdicts.json` | 72 | 3723 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/live_security.log` | — | 4018 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/load-backend-instr.json` | 61 | 1165 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/load-plain-dev.json` | 113 | 2193 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/logging-cost.json` | 85 | 1934 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/otp-ratelimit-verdicts.json` | 1 | 2 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/otp_bruteforce.log` | — | 88 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/otp_limits_all.log` | — | 1950 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/pool-events.jsonl` | — | 8145 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/rbac-systemerror-repro.json` | 22 | 525 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/repro_rbac.log` | — | 663 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/scan_ui_wiring.log` | — | 1358 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/scripts/T37_bruteforce.py` | 20 | 1162 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/scripts/mut_loop.py` | 23 | 1746 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/scripts/pathid_scan.py` | 26 | 1704 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/scripts/run-t-rows-2.sh` | 15 | 752 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/t-rows/scripts/run-t-rows.sh` | 20 | 993 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/vulture.txt` | 1 | 74 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/wp02/kit-probe/contract-rbac-findings-after.json` | 3608 | 72160 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/wp02/kit-probe/kit-all-after.log` | — | 2052 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/wp02/kit-probe/kit-all-before-change.log` | — | 2040 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/wp02/matrix-cells-clean.json` | 1 | 518446 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/wp02/matrix-eval-after.json` | 15 | 300 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/wp02/routes-HEAD-before.json` | 2958 | 53972 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/wp02/scripts/matrix-eval-run.log` | — | 301 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/wp02/scripts/matrix-runner-run2.log` | — | 86 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/wp02/scripts/wp02_eval.py` | 52 | 2647 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/wp02/scripts/wp02_matrix.py` | 72 | 3820 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/wp04/README.txt` | 9 | 876 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/wp04/coverage-by-dir.json` | 68 | 996 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/wp04/full-run.log` | — | 3797 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/wp24/out-after-miss2.txt` | 18 | 511 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/wp24/out-after2.txt` | 18 | 511 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/wp24/out-before.txt` | 22 | 620 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/wp31-load-ratios.json` | 45 | 1177 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/wp31/probe-invalid-authed-after.log` | — | 698 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/wp31/probe-invalid-authed-before-822e483.log` | — | 2581 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/wp31/summary.json` | 55 | 1581 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/wp32/probe-after-8926fcd+fix.log` | — | 2577 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/wp32/probe-before-0afd240.log` | — | 2579 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/after/wp32/summary.json` | 54 | 1820 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/bandit.json` | 3064 | 84377 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/before/bandit.json` | 3162 | 88436 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/before/detect-secrets.err` | — | 0 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/before/detect-secrets.json` | 1447 | 52573 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/before/lizard-warnings.txt` | 55 | 6316 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/before/radon-cc.txt` | 83 | 2578 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/before/radon-mi.txt` | 222 | 7620 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/before/ruff-blocking.rc` | — | 2 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/before/ruff-blocking.txt` | 1 | 19 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/before/ruff-format.rc` | — | 2 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/before/ruff-format.txt` | 1 | 28 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/before/ruff-recommended-stats.txt` | 54 | 2153 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/before/ruff-recommended.rc` | — | 2 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/before/ruff-recommended.txt` | 432 | 42414 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/before/ruff-tree-config.rc` | — | 2 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/before/ruff-tree-config.txt` | 1 | 19 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/before/semgrep-project.json` | 1 | 12345 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/before/summary.json` | 22 | 418 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/before/vulture.txt` | 1 | 74 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/detect-secrets.err` | — | 0 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/detect-secrets.json` | 1479 | 53680 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/lizard-warnings.txt` | 55 | 6316 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/pip-audit.json` | 1 | 5206 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/radon-cc.txt` | 83 | 2578 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/radon-mi.txt` | 224 | 7654 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/requirements-freeze.txt` | 91 | 1746 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/evidence/vulture.txt` | 1 | 74 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/findings.json` | 521 | 15410 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/measure-baseline.sh` | 79 | 5235 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/probes/probe_invalid_authed.repo-copy.py` | 213 | 11482 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/ruff-recommended.toml` | 70 | 4973 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/status.json` | 58 | 6475 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/status.json` | 86 | 9710 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/brand/concepts/M101-CONCEPTS.md` | 75 | 7809 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/brand/concepts/m101-a-geometric-mp.png` | — | 85273 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/brand/concepts/m101-a-geometric-mp.svg` | 87 | 6179 | NOT-REVIEWED |
@@ -1206,9 +1537,9 @@
 | مستندات | `docs/MuscleParadise/finn/install-ecc.sh` | 5 | 246 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/finn/install-toolchain.sh` | 172 | 8604 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/finn/test-check-rea-skill.sh` | 26 | 1240 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/guides/flutter-codespace.md` | 79 | 4033 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/guides/flutter-codespace.md` | 79 | 4096 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/handoff/fitness-handoff-2026-11-11.zip` | — | 97258 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/runbooks/codespaces-execution.md` | 258 | 22002 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/runbooks/codespaces-execution.md` | 257 | 21949 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/runbooks/incident.md` | 22 | 2672 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/runbooks/provisioning.md` | 50 | 5740 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/runbooks/rollback.md` | 31 | 2858 | NOT-REVIEWED |
@@ -1235,7 +1566,7 @@
 | مستندات | `docs/architecture/diagram-design/png/01-architecture.png` | — | 146270 | NOT-REVIEWED |
 | مستندات | `docs/architecture/diagram-design/png/02-payments-lifecycle.png` | — | 86723 | NOT-REVIEWED |
 | مستندات | `docs/architecture/diagram-design/png/03-ci-release.png` | — | 133208 | NOT-REVIEWED |
-| مستندات | `docs/architecture/repowise/PROJECT-HANDOFF.md` | 458 | 34993 | NOT-REVIEWED |
+| مستندات | `docs/architecture/repowise/PROJECT-HANDOFF.md` | 458 | 35000 | NOT-REVIEWED |
 | مستندات | `docs/architecture/repowise/README.md` | 29 | 2388 | NOT-REVIEWED |
 | مستندات | `docs/architecture/repowise/architecture.dsl` | 288 | 11578 | NOT-REVIEWED |
 | مستندات | `docs/architecture/repowise/findings-2026-11-20.md` | 21 | 1945 | NOT-REVIEWED |
