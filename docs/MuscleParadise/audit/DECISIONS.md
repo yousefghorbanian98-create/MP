@@ -309,3 +309,26 @@
 ## AD‑20 · ادامه: ثبت سیاست development در CI (WP 1.2)
 
 - گام live-contract از قبل با پیش‌فرض `development` اجرا می‌شد؛ AD‑20 فقط آن را صریح کرد. یادداشت باز: هیچ job در CI اجرای اپ در حالت `production` را در برابر Postgres/Valkey واقعی آزمون نمی‌کند (D‑n، کارزار C). این شکاف پیش از این تغییر هم وجود داشت.
+
+## D‑9 · بازتولید نقشهٔ تعامل ۲۰۲۶‑۱۱‑۲۲ و حسابِ شش نقش (ممیز، از addendum تأیید شد)
+
+- **سنجه‌شده:** `scripts/interaction_map.py` روی `37a829d` ⇒ `--check` exit 0، رانش قرارداد ۰، ۱۶۳ مسیر، ۳۱ سطح، بی‌تست ۶. diff: `+70/−34` (md `+21/−21`، json `−12/+49`) که با addendum یکی است.
+- **تفکیک ۲۱ ردیف تغییریافته (شش نقش):** admin 102→103، manager 102→103، super_admin 106→110، coach 65→73، reception 42→50، member 69→76. هیچ جابه‌جایی نقش (swap) بین نقش‌ها نیست.
+  - تنگ‌شدن (۳): `GET/POST/DELETE /api/v1/admin/users…` از «manager, admin, super_admin» به «super_admin»؛ منبع: commit `55107a99f` (phase 5، owner-only).
+  - نمایش (۶): `POST auth/otp/request`، `auth/otp/verify`، `auth/refresh`، `auth/logout` (قبلاً «—»)، و `GET /health/ready`/`/health` در کنار آن‌ها؛ مسیرهای عمومی‌اند (router.py بدون `AuthenticatedUser`).
+  - گشادشدن واقعی (۴ ردیف نقشه، +۸ نقش): `GET auth/sessions` (+coach، +reception)، `POST auth/phone-change/{request,confirm,verify-old}` (+member، +coach، +reception).
+- **امنیت این گشادشدن (خوانده شد):** `router.py:142/147` هویت را از توکن می‌گیرد (`user.id`) و `service.py:174` مالکیت را سنجیده است؛ هر سه phone-change بدون پارامتر id؛ مالکیت `challenge_id` در query (`service.py:220–232`، `user_id == user.id`)، پس ۴۰۴ نه ۴۰۳ (بدون نشت وجود). **نتیجه:** اصلاح کارکردی نه ارتقای دسترسی.
+- **برگشت:** `git revert <commit نقشه>` (فقط دو فایل `docs/MuscleParadise/architecture/interaction-map*`).
+
+## D‑10 · تغییرهای نقش/guard در routes.json که روی نقشه نیستند (ثبت، بدون اقدام)
+
+- مقایسهٔ `routes.json` از `662ff88` تا `37a829d` (۱۶۳ operation): **۲۷ تفاوت**، که از این‌ها **۱۱ روی نقشه** است (بالا) و **۱۶ روی نقشه نیست** (نقشه فقط سطح‌های استودیو/کلاینت را می‌آورد):
+  - تنگ‌شدن (۸): `admin/retention` و `admin/retention/run` (admin، manager ⇒ super_admin)؛ `shop/change-requests/*/review`، `shop/gateways` POST/PUT، `shop/prices` POST، `shop/products` POST/PATCH (reception/manager/admin ⇒ super_admin).
+  - گشادشدن (۶): `auth/logout-all`، `auth/sessions/{id}` DELETE، `payments/{id}/gateway-return`، `updates/manifest`، `/health/ready` و `/health` (در بخش «نمایش» بالا برای دو مورد آخر؛ بقیه روی نقشه نیست).
+  - guard بدون تغییر نقش (۲): `POST axis-assessments/{id}/review` (guard تکراری `permission` حذف شد؛ commit `b9e88e5`، WP 0.3)، `GET /api/v1/metrics` (guard `metrics_token` اضافه شد؛ commit `fae50c5`، WP 1.3).
+- **وضعیت:** تنگ‌شدن‌ها در مسیرهای پول و مدیریت هم‌راستای F‑30/C1 است. این ۱۶ مورد در نقشهٔ تعامل دیده نمی‌شوند؛ ثبت می‌شوند تا پنهان نمانند.
+
+## D‑11 · ابهام ستون «نقش‌ها» در نقشهٔ رندرشده (ثبت، رندر تغییر نکرد)
+
+- `scripts/interaction_map.py:309` برای مسیر عمومی `roles = ", ".join(...) or "—"` می‌نویسد؛ پس `GET /health` و `POST auth/otp/request` در سند با فهرست شش نقش رندر می‌شوند و خواننده فکر می‌کند احراز لازم است. این سند گمراه‌کننده است، هرچند گیت کهنگی را پاس می‌کند.
+- **تصمیم:** رندر عوض نشد (تغییر رندر = تغییر گیت، و اختیار جدا می‌خواهد). **باز:** اختیار مالک برای تغییر رندر یا ستون «احراز» جدا.

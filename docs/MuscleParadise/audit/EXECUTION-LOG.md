@@ -489,3 +489,12 @@ WP: 0.4 · F: F‑07 · شاهد: `evidence/after/wp04/` · تصمیم: AD‑11 
   - طبق قاعدهٔ AD‑23 (ه) و دستور: **متوقف شد**. هیچ fingerprint بیرون از `before/` اضافه نشد و هیچ commit دیگری ساخته نشد.
 - **وضعیت `.gitleaksignore`:** ۱۰ خط از دور ۱ (`before/`). دورهای بعد اجرا نشدند.
 - **سؤال باز:** مسیر مجاز AD‑23 را `before/detect-secrets.json` بگیریم، یا هر دو فایلِ `evidence/detect-secrets.json` و `evidence/before/detect-secrets.json` (که هر دو از `839500de` هستند)؟
+
+## addendum 2026‑11‑22 — نتیجه (MEASURED-BY-YOU)
+
+- **بخش ۱ (push به `arena/da474b65-mp`): رد شد.** دستور قاعدهٔ شاخه را نقض می‌کند (فقط شاخهٔ جاری). PR #23 هم از `gh pr list` **CLOSED** است، نه باز. بازکردن/به‌روزرسانی آن تصمیم مالک است. (سنجه: `gh pr list --state all` ⇒ #23 `CLOSED`، head `arena/da474b65-mp`.)
+- **بخش ۲ (AD‑23 دو مسیر): تأیید داده، توسعه نه.** روی `839500de`: `evidence/after/detect-secrets.json` = ۶۶ فایل، ۱۷۱ یافته، ۰ `is_verified:true`، ۱۷۱ `hashed_secret` از ۴۰ هگز؛ `evidence/before/…` = ۶۵ فایل، ۱۶۹، ۰ true، ۱۶۹ hex40. اعداد addendum درست است.
+  - **اما** `evidence/detect-secrets.json` (بالاسری) = ۶۷ فایل، ۱۷۳ یافته، ۰ true، ۱۷۳ hex40؛ و workflow `423857407` روی `37a829d`/`db37b1b` یافتهٔ **این** فایل را نشان داد (خط ۲۲۱، و ۱۰ مورد خط ۱۳۶–۲۲۱). این مسیر نه در مجوز قبلی (`before/`) است نه در addendum (`before/`+`after/`). ⇒ **ایست**. هیچ fingerprint بیرون از دو مسیر اضافه نشد.
+  - یادداشت: annotation‌های job `secret-scan` در `ci.yml` مسیر و خط ندارند (مقدار پنهان، فقط commit)، پس ادعای «annotation‌های after/» از آن job قابل‌تأیید نبود؛ از workflow `423857407` خوانده شد.
+- **بخش ۳ (mermaid):** `docs_gate.py` و `repo_hygiene_gate.py` محلی PASS گزارش شدند؛ `interaction_map --check` پیش از بازتولید FAIL. mermaid هنوز اجرا نشده.
+- **بخش ۴ (نقشه):** بازتولید و commit شد. diff با addendum یکی است (+70/−34)؛ تفکیک ۲۱ ردیف در D‑9؛ ۱۶ تفاوتِ روی‌نشده در D‑10.
