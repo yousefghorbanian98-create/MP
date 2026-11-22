@@ -7,7 +7,7 @@
 
 ## ۱. خلاصهٔ تعداد فایل
 
-- کل فایل‌های ترک‌شده: **1347** (خطوط متنی: 255915)
+- کل فایل‌های ترک‌شده: **1348** (خطوط متنی: 256084)
 
 | ناحیه | تعداد فایل | خطوط متنی |
 |---|---|---|
@@ -15,12 +15,12 @@
 | استودیو (React) | 122 | 26329 |
 | اسکریپت و ابزار | 19 | 7347 |
 | اپ عضو (Flutter) | 114 | 19319 |
-| بک‌اند (FastAPI) | 555 | 79822 |
+| بک‌اند (FastAPI) | 556 | 79943 |
 | ریشه و تنظیمات | 12 | 1527 |
 | زیرساخت و کانتینر | 15 | 597 |
 | سایر mp-app | 4 | 239 |
 | شواهد QA | 40 | 1626 |
-| مستندات | 319 | 109384 |
+| مستندات | 319 | 109432 |
 | گزارش‌های عامل | 141 | 8325 |
 
 ## ۲. عملیات API (از `app.openapi()`، مرجع اصلی)
@@ -1036,6 +1036,7 @@
 | بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_wp32_error_envelope.py` | 28 | 1069 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_wp33_gateway_return_status.py` | 43 | 1791 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_wp34_member_profile_required.py` | 24 | 1032 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_wp35_contract_guards.py` | 121 | 4831 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/load/locustfile.py` | 65 | 2282 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/load/locustfile_full.py` | 208 | 7169 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/regression/__init__.py` | 0 | 0 | NOT-REVIEWED |
@@ -1345,9 +1346,9 @@
 | مستندات | `docs/MuscleParadise/assets/system-architecture.svg` | 148 | 13022 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/BASELINE.md` | 200 | 34258 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/CHECKLIST.md` | 148 | 20706 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/DECISIONS.md` | 412 | 63530 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/EXECUTION-LOG.md` | 634 | 94045 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/FINN-AUDIT-LOOP.md` | 88 | 13004 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/DECISIONS.md` | 430 | 65932 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/EXECUTION-LOG.md` | 660 | 99077 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/FINN-AUDIT-LOOP.md` | 88 | 13096 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/INVENTORY.md` | 1714 | 163908 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/MICRO-LOOPS.md` | 83 | 6853 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/evidence/after/backend-coverage.xml` | 12153 | 430390 | NOT-REVIEWED |
@@ -1487,7 +1488,7 @@
 | مستندات | `docs/MuscleParadise/audit/measure-baseline.sh` | 79 | 5235 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/probes/probe_invalid_authed.repo-copy.py` | 213 | 11482 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/ruff-recommended.toml` | 70 | 4973 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/status.json` | 86 | 9710 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/status.json` | 90 | 9540 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/brand/concepts/M101-CONCEPTS.md` | 75 | 7809 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/brand/concepts/m101-a-geometric-mp.png` | — | 85273 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/brand/concepts/m101-a-geometric-mp.svg` | 87 | 6179 | NOT-REVIEWED |

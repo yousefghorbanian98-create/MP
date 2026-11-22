@@ -16,8 +16,8 @@
     "note": "WP 0.3: گارد تکراری روی review حذف شد؛ شاهد: قبل ۲ بار enforce، بعد ۱ بار (tests/integration/test_wp03_axis_single_guard.py، tests/regression/test_no_duplicate_guard.py)"
   },
   "F-09": {
-    "status": "FIXED",
-    "note": "الحاقیهٔ A1 — WP 1.5 (AD‑7). قبل: ۵ فیلد درخواستیِ مبلغ `int` (۲^۵۳ و ۱۰^۱۸ و رشتهٔ «۱۰۰۰» پذیرفته می‌شد)؛ کمیسیون `int(int(total)*rate)` با float. red: ۲۳ تست ناموفق (app/money.py نبود، کمیسیون ۱۰^۱۸+۷ با نرخ ۰٫۳ = ۳۰۰۰۰۰۰۰۰۰۰۰۰۰۰۰۰۰ به‌جای ۳۰۰۰۰۰۰۰۰۰۰۰۰۰۰۰۰۰۲). بعد: `Rial` = StrictInt ≤ 2^53−1 روی ۵ فیلد درخواستی؛ کمیسیون Decimal + گرد به پایین؛ استودیو: parseRial/parseRialOrThrow/formatRial در lib/money.ts جای Number() روی ۷ محل. تست: tests/regression/test_wp15_rial_strict.py (۳۳) و studio/tests/wp15Money.test.ts؛ گیت after-wp15 PASS؛ pytest کامل ۱۱۸۴ passed، ۲ skipped، exit 0؛ vitest ۲۹۸ passed، tsc و eslint صفر."
+    "status": "NOT-REPRODUCED",
+    "note": "WP 3.5 (D‑16): روی HEAD بازتولید نشد — Rial (StrictInt + le=MAX_SAFE_RIAL) برای 2^53، 2^53+1، 10^18، رشته، float و bool رد می‌کند؛ همهٔ ورودی‌های پولی Rial‌اند. گارد سبز: tests/integration/test_wp35_contract_guards.py (9 passed)؛ جهش amount_rial:int ⇒ 1 failed."
   },
   "F-10": {
     "status": "FIXED",
@@ -82,5 +82,9 @@
   "F-20": {
     "status": "FIXED",
     "note": "WP 4.4 (cf33ad8): `updateProduct` حذف شد (BD‑2)؛ مسیر PATCH بک‌اند با استثنای مستند `TODO` در `apiCoverage` (D‑14). `getToken` از export خارج شد و فقط داخل `api.ts` می‌ماند. تأیید: `tsc --noEmit` و `eslint` exit 0."
+  },
+  "F-25": {
+    "status": "NOT-REPRODUCED",
+    "note": "WP 3.5 (D‑16): روی HEAD 338abb3 بازتولید نشد — ۲۶۰ درخواست با ۴ شناسهٔ بد و سه نقش: ۰ پاسخ 2xx (id_guard ⇒ 422). گارد سبز: tests/integration/test_wp35_contract_guards.py (۹ passed). شاهد جهش C2: amount_rial:int ⇒ 1 failed."
   }
 }

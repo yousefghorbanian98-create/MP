@@ -632,3 +632,29 @@ WP: 0.4 · F: F‑07 · شاهد: `evidence/after/wp04/` · تصمیم: AD‑11 
 - **تأیید محلی:** `bandit -r . -ll -q` ⇒ exit 0 (`Issue:` = 0)؛ `pytest -q tests/integration/test_wp33_gateway_return_status.py` ⇒ `6 passed`؛ `ruff check` و `ruff format --check` روی دو فایل ⇒ exit 0.
 - **تخطی از سقف دو کامیت:** این اصلاح کامیت سوم B3 است. دلیل: کامیت قبلی push شده بود و بازنویسی آن force-push می‌شد (ممنوع). سقف ≤۲ کامیت برای بستهٔ کامل است؛ این تخطی و علتش ثبت شد.
 
+### ریسک شناخته‌شده: کاراکتر دوجهته (U+200F) در فایل‌های track‌شده (ثبت‌شده در B3، اصلاح در P‑3)
+- **شمارش (فرمان):** اسکن `git ls-files` (۱٬۳۴۸ مسیر، فایل‌های متنی) برای `\u200f` ⇒ **۵ فایل، ۷ خط**: `scripts/repo_hygiene_gate.py:41,50,66`؛ `docs/MuscleParadise/audit/CHECKLIST.md:90` (از `findings.json:367` تولید شده)؛ `docs/MuscleParadise/audit/findings.json:367`؛ `docs/MuscleParadise/audit/FINN-AUDIT-LOOP.md:64` (این یکی را خودم در B3 نوشتم)؛ `docs/MuscleParadise/REPORT-OLD-ANDROID-KEY-REVIEW-2026-11-18.md:34`.
+- **چرا CI سبز ماند:** `.github/workflows/ci.yml` (مرحلهٔ bandit، خط‌های ۱۵۵–۱۵۶) در `mp-app/backend` اجرا می‌شود (`bandit -r . -ll -q`) و `scripts/` ریشه را اسکن نمی‌کند. فایل‌های بالا در ریشه‌اند؛ پس B613 آن‌ها را نمی‌بیند.
+- **ریسک:** (الف) هر RLM تازه زیر `mp-app/backend` ⇒ قرمزیِ دوباره در bandit؛ (ب) گسترش دامنهٔ bandit به ریشه ⇒ قرمزیِ فوری روی همین ۵ فایل. دامنهٔ bandit در این بسته تغییر نکرد.
+- **اقدام:** ثبت به‌عنوان ریسک. اصلاح در فاز P‑3: گیت `BIDI-###` با دامنهٔ فایل‌های کد، و جایگزینی ۷ خط با گریز `\u200f` در سطح داده.
+
+
+## B3 — WP 3.5 / F‑09 و F‑25 (NOT-REPRODUCED؛ گاردهای سبز) · D‑16
+
+- **معیار:** D‑16 (C1 هیچ 2xx برای شناسهٔ بد؛ C2 مرزهای `Rial` و قید `strict`+`le=MAX_SAFE_RIAL` روی همهٔ فیلدهای ورودی پولی).
+- **اندازه‌گیری روی HEAD `338abb3` (پیش از هر تغییر، ابزار موقت در `tests/integration` که پس از اندازه‌گیری حذف شد):**
+  - نقش `manager` بدون مجوز مالی: ۲۶۰ درخواست (۵۴ مسیر پارامتری، ۴ شناسهٔ بد) ⇒ ۲۴۸×422 (`id_guard`)، ۸×403، ۴×404؛ ۰×2xx. ۴۰۳ها `permission_required` بودند، یعنی handler اجرا نشد.
+  - `owner` با مجوز مالی: ۲۴۸×422، ۱۲×403 (`forbidden` از سیاست نقش). ۰×2xx.
+  - `super_admin` با `finance.read/write`: ۲۴۸×422، ۸×400 (`unknown_job`، `invalid_date` از handler)، ۴×404 (`flag یافت نشد`، کلید رشته‌ای). **۰×2xx** ⇒ F‑25 در HEAD بازتولید نشد.
+  - `Rial` در HEAD: `2^53`، `2^53+1`، `10^18`، `"1500000"`، `1500000.0`، `True` ⇒ همه رد؛ `1500000` ⇒ پذیرفته. ورودی‌های پولی (`payments/schemas.py:16,100`، `expenses/schemas.py:25,35`، `membership/schemas.py:51`) همه `Rial`؛ `int` فقط در `*Out`. ⇒ F‑09 در HEAD بازتولید نشد.
+  - **شناسه‌های بد و F‑14:** همان الگوی F‑14 (WP 3.1 / `id_guard`).
+- **تغییر کد:** هیچ. نتیجه: **هیچ تستی قرمز نشد؛ ادعای رفع نمی‌شود**. وضعیت F‑09 و F‑25 = NOT-REPRODUCED (`status.json`).
+- **گاردهای جدید:** `tests/integration/test_wp35_contract_guards.py` (۹ تست؛ C1 یک تست سراسری روی OpenAPI، C2 شش تست مرز + یک تست ساختاری روی همهٔ مدل‌های ورودی).
+  - `pytest -q tests/integration/test_wp35_contract_guards.py` ⇒ `9 passed` (ابتدا یک تست قرمز به‌خاطر ساختار Pydantic (`Optional[Annotated]` و `FieldInfo` داخلی) بود؛ بررسی‌کننده اصلاح شد، نه schema).
+  - **جهش (mutation) برای C2:** `modules/expenses/schemas.py` ⇒ `amount_rial: int` موقتاً ⇒ `pytest ...::test_every_input_money_field_uses_rial` ⇒ `1 failed`؛ `git checkout --` ⇒ `git status` خالی؛ اجرای مجدد ⇒ `9 passed`.
+  - **جهش برای C1:** انجام نشد. C1 فقط در حالت سبز اجرا شده است (گارد، نه شاهد قرمز).
+- **CI:** مرحلهٔ `Test (pytest + per-directory coverage gate)` (`scripts/coverage_run.sh` ⇒ `pytest` بدون آرگومان) همه `tests/` را اجرا می‌کند؛ job تازه نیست.
+- **lint/format:** `ruff check --select E,F,W,I,N,UP,B,SIM,DTZ,TRY400,S --ignore E501` ⇒ exit 0؛ `ruff format --check` ⇒ exit 0؛ `bandit -r . -ll -q` (در `mp-app/backend`) ⇒ exit 0؛ کاراکتر دوجهته در فایل تست ⇒ ۰.
+- **ریسک‌ها و عدم‌قطعیت:** کیت F‑25 را روی یک ساخت قدیمی‌تر اندازه گرفته؛ این اندازه‌گیری‌ها در پایگاه داده تهی (`tmp_path` sqlite) انجام شد، نه روی سرور زنده با داده‌های بذرشده. شناسه‌های غیرمنتظره در بدنهٔ JSON (نه مسیر) پوشش داده نشده‌اند.
+- **برگرداندن:** `git revert` همان commit (فقط حذف تست جدید).
+
