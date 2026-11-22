@@ -408,3 +408,46 @@ WP: 0.4 · F: F‑07 · شاهد: `evidence/after/wp04/` · تصمیم: AD‑11 
   - توجه: متن `note` داخل اسکریپت کیت می‌گوید «enable_cache فعال نشده»؛ این متن ایستا است و با اجرای جدید مطابقت ندارد.
 - **باقی‌مانده:** کش‌miss هنوز casbin را ارزیابی می‌کند. بخش‌های غیرعددی بی‌نهایت (مثلاً `job_key` یا `run_date`) می‌توانند miss بسازند. این در AD‑19 ثبت شد.
 - **Rollback:** `git revert <commit WP 2.4>`.
+
+## CI triage روی tip `9bfc99d` (شاخهٔ `arena/5a1e37b3-mp`، بدون merge) — MEASURED-BY-YOU
+
+- **شاخه:** کارِ قبلی روی `arena/da474b65-mp` بود (PR #23 بسته‌شده، merge نشده). شاخهٔ جاری `arena/5a1e37b3-mp` از main جدا شده بود؛ با `git merge --ff-only origin/arena/da474b65-mp` همان کامیت‌ها (بدون بازنویسی) به شاخهٔ جاری آمدند. تاریخ `9bfc99d` بی‌تغییر است.
+- **job ها روی `9bfc99d`** (`gh run list`): `backend` ✗ (Test)، `live-contract` ✗ (Seed + run API)، `Documentation links and handoff` ✗ (Interaction map gate)، `secret-scan` ✗ (Scan full Git history)، `e2e-api` skipped (needs backend). `studio`، `client-flutter` و Client ✓.
+- **لاگ Actions:** `gh run view --log-failed` ⇒ «failed to get run log» (302 به `release-assets`). نام تست‌ها از لاگ خوانده نشد؛ بازتولید محلی انجام شد.
+
+### 1. backend — گیت پوشش، نه تست
+- بازتولید: `bash scripts/coverage_run.sh` (`/home/user/recovery4/ci-repro/coverage.log`، RUN_RC=1).
+- نتیجهٔ pytest: **1274 passed، 2 skipped، rc=0** — هیچ تستی شکست نخورد.
+- شکست: `security: 94.12٪ < 95.0٪` (80/85). خطوط بی‌پوشش: `security/rbac.py` 307–309 (شاخهٔ خطای `enforce` از WP 2.4) و `security/crypto.py` 40–41 (از پیش؛ تغییر نکرده).
+- **اصلاح (commit جداگانه):** `tests/regression/test_wp24_rbac_decision_cache.py::test_casbin_error_is_counted_and_reraised` — خطای casbin بالا می‌رود و `mp_rbac_errors_total` یک واحد زیاد می‌شود. این تست روی کد موجود سبز شد؛ هدفش پوشش شاخهٔ تازه است، نه رفع باگ.
+- **بعد از اصلاح:** `RUN_RC=0`، **1275 passed، 2 skipped**، `security 97.65٪ (83/85)`، بقیهٔ دایرکتوری‌ها بالای آستانه (`/home/user/recovery4/ci-repro/coverage2.log`).
+- آستانه کاهش نیافت.
+
+### 2. live-contract — سرور بالا نمی‌آید (curl exit 7)
+- علت سنجش‌شده: `app/main.py::_assert_explicit_environment` بدون `MP_ENVIRONMENT` صریح `RuntimeError` می‌دهد (`/tmp/ci-live/api.log`). گام CI این متغیر را ست نمی‌کند.
+- سنجه: با `MP_ENVIRONMENT=development` ⇒ `/health` = 200.
+- **اصلاح (commit جداگانه):** `.github/workflows/ci.yml` گام «Seed + run API» ⇒ `env: MP_ENVIRONMENT: development`. اعتبارسنجیِ سرور حذف نشد.
+- **بعد از اصلاح (دقیقاً دستورهای گام):** seed ⇒ `SEED_RC=0`؛ `curl -sf /health` ⇒ `{"status":"ok"}`، `HEALTH_RC=0`؛ `npm test -- tests/liveContract.test.ts` ⇒ **9 passed، rc=0** (`/tmp/ci-live/livecontract.log`).
+- معرّفی‌شده در `ccf44ce` (WP 1.1/1.2)، نه در این شاخه‌ها.
+
+### 3. Documentation links and handoff — رانش نقشه: متوقف شد
+- `python3 scripts/interaction_map.py --check` ⇒ `رانش قرارداد 0` و فقط «نقشه کهنه است».
+- بازتولید برای بررسی (سپس برگردانده شد؛ commit نشده): ۱۳ خط تغییر در **نقش‌های قرارداد** و **تست‌ها**، نه فقط WP 3.4. نمونه: `/api/v1/admin/users` از `manager, admin, super_admin` به `super_admin`؛ `/api/v1/auth/sessions` و `/api/v1/auth/phone-change/*` و `/api/v1/auth/otp/request` نقش‌های جدید؛ `studio-page:Analytics` از بی‌تست خارج شد؛ تست‌های جدید.
+- منبع: `mp-app/backend/api/routes.json` از `b6f347f` (WP 0.2، بازتولید guardها) و تغییرات بعدی؛ WP 3.4 (`fc402a8`) فایل `routes.json` را تغییر نداد.
+- **نتیجه:** این رانش «دقیقاً تغییر WP 3.4» نیست ⇒ طبق دستور، بازتولید نقشه commit نشد. **نیازمند تصمیم شما:** آیا این تغییرات نقش (که در `routes.json` از WP 0.2 است) عمدی و قابل قبول‌اند؟
+
+### 4. secret-scan — بلاک‌شده (BLOCKED-ENV)
+- برای گرفتن گزارش gitleaks به نسخهٔ ۸٫۳۰٫۱ نیاز است. دانلود `release-assets.githubusercontent.com` از این محیط ممکن نیست (`curl` خطای SSL/تونل؛ آن میزبان در فهرست مجاز نیست). بدون گزارش، هیچ انگشت‌نگاری‌ای اضافه نشد.
+- `docs/MuscleParadise/audit/evidence/detect-secrets.json` **۶۷ فایل** با `hashed_secret` دارد، نه فقط ۵ مورد. نیاز است گزارش gitleaks واقعی بررسی شود تا معلوم شود کدام یافته‌ها در کدام مسیرها هستند (شرط «هر یافتهٔ بیرون از مسیر ⇒ توقف»).
+- **تعارض شماره:** `AD‑11`، `AD‑12`، `AD‑13` در `DECISIONS.md` از قبل معنای دیگری دارند (پوشش، ایمنی، پیام خطا). تصمیم‌های جدید باید شماره‌های بعدی بگیرند.
+- **F‑33 (تأیید شد):** گام CI فقط `--redact` دارد (نه `--redact=100`) و فاقد `--log-opts=--all`، `--ignore-gitleaks-allow` و `--gitleaks-ignore-path` است؛ تست خود مخزن (`scripts/test_retired_signing_scan.py` خط ۹۷) همهٔ آن‌ها را دارد. اسکنرِ CI ضعیف‌تر از تستش است.
+
+### وضعیت چهار job
+| job | وضعیت |
+|---|---|
+| backend | ✓ محلی (`RUN_RC=0`) — نیاز به push و CI واقعی |
+| live-contract | ✓ محلی (seed + health + 9/9) — نیاز به push و CI واقعی |
+| Documentation links and handoff | ✗ — تصمیم مالک لازم است |
+| secret-scan | ✗ — BLOCKED-ENV (نبود gitleaks) |
+
+- بسته‌های ۲ تا ۶ شروع نشدند (طبق قاعدهٔ «تا چهار job سبز نشده‌اند»).
