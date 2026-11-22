@@ -357,3 +357,10 @@
 - **SBOM:** `cyclonedx-py environment` روی این venv ⇒ `pkg:pypi/fastapi@0.165.0` و `pkg:pypi/ruff@0.17.6`.
 - **نکتهٔ نام:** در متن قبلی «constraints.txt» آمده بود؛ تصمیم نهایی همان `requirements.txt` با `-c` است (این بخش مطابق تصمیم مالک/بریف است).
 - **نحوهٔ برگرداندن:** `git revert` همان commit؛ `requirements.txt` حذف و سه گام CI به `pip install -e "mp-app/backend[dev]"` برمی‌گردند.
+
+## D‑12 · دستور کم‌توکن: گروه‌بندی بسته‌ها و توقف پس از B1 (ثبت، برگشت‌پذیر)
+
+- **گروه‌بندی:** B1 = اسناد عملیاتی ارجاع‌دهنده به `apk.yml` + WP 2.1 + WP 2.2؛ B2 = 2.3 + 4.3 + 4.4؛ B3 = 3.3 + 3.5؛ B4 = 4.1 + 4.2 + 4.7 + PARTIAL/BLOCKED باز. جدول لوپ همین شماره‌ها را دارد.
+- **سندهای عملیاتی:** ۸ فایل ارجاع‌دهنده، شامل ۶ سند عملیاتی تغییرکرده (`RELEASE-CHECKLIST`، `READY-TO-BUILD`، `SESSION_HANDOFF`، `guides/flutter-codespace.md`، `runbooks/codespaces-execution.md`، `repowise/PROJECT-HANDOFF.md`) و ۲ فهرست snapshot تاریخی (`repowise-*-scope-2026-11-18.txt`) که فقط یک یادداشت گرفتند. CHANGELOG، گزارش‌های `finn/` و `.finn/state` تاریخی‌اند و تغییر نکردند.
+- **توقف:** WP 2.1 و 2.2 مشخصات کامل (بریف) ندارند؛ فقط یک‌خطی‌های لوپ و یافته‌های CHECKLIST (F‑03 رندر rich روی event loop؛ F‑04 نبود متریک pool و ۵۰۰ به‌جای ۵۰۳) در دست است. بدون بریف، تست قرمز پیش از اصلاح و معیار پذیرش قابل تعریف نیست؛ پس اجرا نشدند. B2–B4 هم اجرا نشدند.
+- **نحوهٔ برگرداندن:** `git revert` همان commit B1 (فقط اسناد).

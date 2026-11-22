@@ -528,3 +528,16 @@ WP: 0.4 · F: F‑07 · شاهد: `evidence/after/wp04/` · تصمیم: AD‑11 
 - **SBOM:** `cyclonedx-py environment` rc 0 ⇒ `fastapi@0.165.0`، `ruff@0.17.6`.
 - **collect:** `pytest --collect-only -q tests` در `/tmp/venv-ad22` ⇒ ۱۲۷۵.
 - **CI:** `ci.yml` YAML معتبر (`yaml.safe_load` rc 0)؛ ۳ گام نصب (خطوط ۱۲۲، ۳۹۲، ۴۴۲) تغییر کردند؛ `git diff --stat`: ۳ خط اضافه، ۳ حذف.
+
+## دستور کم‌توکن — بستهٔ B1 (بخش اسناد) و توقف (MEASURED-BY-YOU)
+
+- **دستور:** `handoff/MP-BUILDER-BATCH-DIRECTIVE-2026-11-22.txt` از `arena/2cde32d6-chat2db` (`e29d11b`) با `fetch_page` خوانده شد.
+- **پیش از کار:** محیط دوباره روی `662ff88` با ۱۷۱ تغییر کاری بود؛ پشتیبان در `/home/user/recovery8/` و ریست به `origin/arena/5a1e37b3-mp` (`7fefb6f`، CI سبز). `share/` از دستور بازیابی شد (sha256 `3a0f9582…737a2c2`، ۲۷۹۰۸ بایت)، untracked.
+- **اسناد (B1، بخش ۱):** ۸ فایل ارجاع‌دهنده به `apk.yml` بررسی شد؛ ۶ سند عملیاتی و ۲ snapshot. `grep -rn "apk\.yml"` پیش و پس: سندهای عملیاتی ۰ ارجاع بدون یادداشت.
+- **WP 2.1 و 2.2:** اجرا نشد (بریف موجود نیست؛ ر.ک. D‑12). WP 2.3، 4.3، 4.4 (B2)، 3.3، 3.5 (B3)، 4.1، 4.2، 4.7 و PARTIAL/BLOCKED (B4): اجرا نشد.
+- **گیت‌های این commit (فقط سند):**
+  - `python3 scripts/docs_gate.py` ⇒ rc 0؛ «18 Markdown files، 276 local links، 15 Mermaid diagram block(s)».
+  - `python3 scripts/interaction_map.py --check` ⇒ rc 0؛ «31 سطح، 163 مسیر، رانش صفر».
+  - ruff روی کد: بدون تغییر کد پایتون؛ suite کامل اجرا نشد (طبق دستور، فقط پس از آخرین بسته).
+- **CI:** این commit یک موج CI می‌سازد؛ نتیجه در بخش بعدی ثبت می‌شود.
+- **BATCH-SUMMARY:** نوشته نشد؛ دستور پایان (B4 و suite کامل) اجرا نشد.

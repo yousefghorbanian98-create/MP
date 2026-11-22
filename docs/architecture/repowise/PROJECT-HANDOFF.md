@@ -392,7 +392,7 @@
 ## ۱۰. CI و انتشار
 | فایل | نام | رویداد(ها) | jobs |
 |---|---|---|---|
-| `apk.yml` | mp-apk | push, workflow_dispatch | apk |
+| ~~`apk.yml`~~ | mp-apk | (حذف‌شده با AD‑21، ۲۰۲۶‑۱۱‑۲۲) | — |
 | `ci.yml` | mp-ci | pull_request, push | secret-scan, docs, backend, studio, client-flutter, live-contract, e2e-api, client-pinned |
 | `client-format-fix.yml` | client-format-fix (M109) | push, workflow_dispatch | gitleaks-fingerprints, format-qr, format-client |
 | `container.yml` | mp-container | push, workflow_dispatch | build-push |
@@ -442,7 +442,7 @@
 ## ۱۳. کاستی‌ها و ادعاهای قدیمی
 - **README** پیش‌تر ۱۲۱ مسیر و ۱۳۷ عملیات ذکر می‌کرد؛ عدد درست ۱۴۱ مسیر و ۱۶۳ عملیات است (منبع: `routes.json`).
 - **README** پیش‌تر فقط بعضی workflowها را نام می‌برد؛ جدول بالا همهٔ فایل‌های `.github/workflows` را دارد.
-- **`web.yml` و `apk.yml`** فقط `workflow_dispatch` دارند؛ اجرای خودکار روی push ندارند.
+- **`web.yml`** فقط `workflow_dispatch` دارد؛ `apk.yml` با AD‑21 حذف شد.
 - **کیوسک / چک‌این** مسیر ناقص است و اتصال انتها‌به‌انتها کامل نشده است.
 - **PostgreSQL، Valkey، pgBackRest، Prometheus** در نقشه‌اند و در این مخزن به‌صورت کامل اجرا و تأیید نشده‌اند.
 - **تغذیه:** درخواست `nutrition/food-logs/member/-1/daily` با شناسهٔ placeholder `-1` ارسال می‌شود؛ باید بررسی شود.

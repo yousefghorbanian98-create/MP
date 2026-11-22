@@ -1,6 +1,6 @@
 .finn/state/LEDGER.md
 .finn/state/STATE.md
-.github/workflows/apk.yml
+.github/workflows/apk.yml  # (حذف‌شده با AD-21، ۲۰۲۶-۱۱-۲۲؛ این فهرست یک snapshot تاریخی است)
 .github/workflows/ci.yml
 .github/workflows/client-format-fix.yml
 .github/workflows/container.yml
