@@ -541,3 +541,15 @@ WP: 0.4 · F: F‑07 · شاهد: `evidence/after/wp04/` · تصمیم: AD‑11 
   - ruff روی کد: بدون تغییر کد پایتون؛ suite کامل اجرا نشد (طبق دستور، فقط پس از آخرین بسته).
 - **CI:** این commit یک موج CI می‌سازد؛ نتیجه در بخش بعدی ثبت می‌شود.
 - **BATCH-SUMMARY:** نوشته نشد؛ دستور پایان (B4 و suite کامل) اجرا نشد.
+
+## B1 — WP 2.1 / F‑03 (MEASURED-BY-YOU)
+
+- **معوقهٔ CI f42342a (ثبت‌شده در این commit):** run `45021576798` روی `f42342a` — همهٔ jobها success: backend، live-contract، secret-scan، Documentation links and handoff، client-flutter، studio، Client، e2e-api.
+- **معیارها:** D‑13 (C1–C5).
+- **قرمز (پیش از اصلاح):** `pytest -q tests/regression/test_wp21_logging_queue.py` ⇒ `4 failed, 1 passed` (علت: `configure_logging` پارامتر `stream` نداشت؛ حالت dev rich بود).
+- **اصلاح:** `mp-app/backend/app/logging.py`: حالت dev با `plain_traceback` و بدون رنگ روی غیرTTY؛ JSON با `ExceptionRenderer` (۵۰ فریم، بدون locals)؛ نوشتن از طریق صف محدود (۱۰٬۰۰۰) و نخ نویسنده؛ `flush_logs()`؛ `dropped_log_count()`.
+- **سبز:** `pytest -q tests/regression/test_wp21_logging_queue.py` ⇒ `5 passed`.
+- **ناحیهٔ مرتبط:** `pytest -q tests/integration/test_unhandled_errors.py tests/integration/test_monitoring.py tests/regression/test_wp25_silent_failures.py tests/regression/test_wp26_sms_logging.py tests/regression/test_wp25_dast_skip_counter.py tests/regression/test_wp21_logging_queue.py tests/integration/test_sms.py` ⇒ `59 passed, 1 warning`.
+- **lint/format (مجموعهٔ CI):** `ruff check --select E,F,W,I,N,UP,B,SIM,DTZ,TRY400,S app/logging.py tests/regression/test_wp21_logging_queue.py` ⇒ exit 0؛ `ruff format --check` ⇒ exit 0.
+- **پروکسی C4 (۸۰ خطا < ۵ MB):** در همین اجرا سبز شد؛ عدد دقیق حجم در خروجی تست نیست. **شاهد پذیرش کیت (بار ۸۰ کلاینتی، SIGTERM < ۱۰ s، `/health` < ۵۰۰ ms) اجرا نشد: BLOCKED-ENV** (ابزار بار و محیط زنده).
+- **باز (TODO در D‑13):** C5 (گیت CI برای json_logs و بودجهٔ لاگ).
