@@ -7,7 +7,7 @@
 
 ## ۱. خلاصهٔ تعداد فایل
 
-- کل فایل‌های ترک‌شده: **1350** (خطوط متنی: 267705)
+- کل فایل‌های ترک‌شده: **1352** (خطوط متنی: 305733)
 
 | ناحیه | تعداد فایل | خطوط متنی |
 |---|---|---|
@@ -15,12 +15,12 @@
 | استودیو (React) | 122 | 26329 |
 | اسکریپت و ابزار | 19 | 7347 |
 | اپ عضو (Flutter) | 114 | 19319 |
-| بک‌اند (FastAPI) | 558 | 91507 |
+| بک‌اند (FastAPI) | 560 | 129494 |
 | ریشه و تنظیمات | 12 | 1527 |
 | زیرساخت و کانتینر | 15 | 597 |
 | سایر mp-app | 4 | 239 |
 | شواهد QA | 40 | 1626 |
-| مستندات | 319 | 109489 |
+| مستندات | 319 | 109530 |
 | گزارش‌های عامل | 141 | 8325 |
 
 ## ۲. عملیات API (از `app.openapi()`، مرجع اصلی)
@@ -732,7 +732,7 @@
 | بک‌اند (FastAPI) | `mp-app/backend/engine/adaptive_nutrition.py` | 388 | 17691 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/engine/autoreg.py` | 59 | 2647 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/engine/axis_map.py` | 56 | 2548 | NOT-REVIEWED |
-| بک‌اند (FastAPI) | `mp-app/backend/engine/axis_prescription.py` | 189 | 8671 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/engine/axis_prescription.py` | 226 | 9710 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/engine/axis_rules.py` | 222 | 10060 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/engine/catalog_sync.py` | 77 | 2710 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/engine/churn_risk.py` | 117 | 4556 | NOT-REVIEWED |
@@ -1073,10 +1073,12 @@
 | بک‌اند (FastAPI) | `mp-app/backend/tests/regression/test_wp45_f22_migration_sql.py` | 58 | 2430 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/regression/test_wp45_session_pattern.py` | 49 | 1889 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/unit/__init__.py` | 0 | 0 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/tests/unit/fixtures/axis_prescription_golden.json` | 37864 | 727182 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/unit/test_adaptive_nutrition.py` | 271 | 10351 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/unit/test_autoreg.py` | 36 | 1311 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/unit/test_axis_assessment_models.py` | 82 | 2817 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/unit/test_axis_prescription.py` | 103 | 4174 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/tests/unit/test_axis_prescription_golden.py` | 86 | 3317 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/unit/test_axis_rules.py` | 77 | 2898 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/unit/test_axis_schema.py` | 52 | 1712 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/unit/test_axis_tagging.py` | 123 | 3635 | NOT-REVIEWED |
@@ -1347,10 +1349,10 @@
 | مستندات | `docs/MuscleParadise/assets/readme-hero.svg` | 66 | 4533 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/assets/system-architecture.svg` | 148 | 13022 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/BASELINE.md` | 200 | 34258 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/CHECKLIST.md` | 149 | 20965 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/DECISIONS.md` | 439 | 68492 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/EXECUTION-LOG.md` | 700 | 105022 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/FINN-AUDIT-LOOP.md` | 88 | 13193 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/CHECKLIST.md` | 150 | 21738 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/DECISIONS.md` | 457 | 71463 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/EXECUTION-LOG.md` | 713 | 108381 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/FINN-AUDIT-LOOP.md` | 88 | 13605 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/INVENTORY.md` | 1717 | 164290 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/MICRO-LOOPS.md` | 83 | 6853 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/evidence/after/backend-coverage.xml` | 12153 | 430390 | NOT-REVIEWED |
@@ -1486,11 +1488,11 @@
 | مستندات | `docs/MuscleParadise/audit/evidence/radon-mi.txt` | 224 | 7654 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/evidence/requirements-freeze.txt` | 91 | 1746 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/evidence/vulture.txt` | 1 | 74 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/findings.json` | 521 | 15410 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/findings.json` | 526 | 17171 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/measure-baseline.sh` | 79 | 5235 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/probes/probe_invalid_authed.repo-copy.py` | 213 | 11482 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/ruff-recommended.toml` | 70 | 4973 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/status.json` | 94 | 10045 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/status.json` | 98 | 10585 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/brand/concepts/M101-CONCEPTS.md` | 75 | 7809 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/brand/concepts/m101-a-geometric-mp.png` | — | 85273 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/brand/concepts/m101-a-geometric-mp.svg` | 87 | 6179 | NOT-REVIEWED |

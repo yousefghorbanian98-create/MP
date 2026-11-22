@@ -167,7 +167,7 @@ def build_checklist(data: dict, status: dict) -> str:
     ]
     sections = [
         ("problems", "الف) ۵۸ مشکل (بخش‌های A–D بریف)"),
-        ("findings", "ب) ۲۹ یافته (F-01 … F-29)"),
+        ("findings", "ب) ۳۰ یافته (F-01 … F-30)"),
         ("blocked", "ج) موانع محیطی (BLOCKED)"),
         ("non_issues", "د) مواردی که مشکل نیستند (دوباره بررسی نشوند)"),
     ]

@@ -89,6 +89,10 @@
   },
   "F-15": {
     "status": "FIXED-PARTIAL",
-    "note": "WP 4.1 (کامیت «WP 4.1 … refactor»): validate_production_configuration از F(54) به هفت اعتبارسنج خانوادگی؛ بیشترین رتبه در config.py = C(13)؛ رفتار با golden (600 نمونه) قفل است: tests/regression/test_wp41_config_characterization.py. باقی: prescribe_axis_work F(46)، next_transfer_state E(34)، هفت بلوک D (کد محصول)؛ هشت کلید کیت = TODO (D‑17)."
+    "note": "B5 (WP 4.1، پیش‌تر: `c3d28d8` و مشخصه‌یابی `8bae88c`): validate_production_configuration از F(54) به هفت اعتبارسنج خانوادگی؛ prescribe_axis_work از F(46) به ۶ مرحلهٔ کوچک (بیشترین C(13))؛ هیچ بلوک F ماند نشد؛ رفتار با golden قفل است (config: 600 نمونه؛ axis: 300 نمونه). باقی: next_transfer_state E(34)، ۱۰ بلوک D در کد محصول (شامل scripts/eval)، و هشت کلید کیت = TODO (D‑17)."
+  },
+  "F-30": {
+    "status": "OPEN",
+    "note": "B5: شمارهٔ بعدیِ آزاد (بزرگ‌ترین F موجود F-29). اجرای کامل محلی exit 1 با timeout ۵۰۰۰ms؛ اجرای تنها ۲ failed/۲ passed؛ هیچ testTimeout صریح نیست؛ fetch با vi.stubGlobal. ممنوع: افزایش timeout، skip، حذف تست. اصلاح مصوب (فاز P): کاهش await های پشت‌سرهم و تنظیم interval polling."
   }
 }

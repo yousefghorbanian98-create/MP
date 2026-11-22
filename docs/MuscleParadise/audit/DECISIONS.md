@@ -437,3 +437,21 @@
 - **مورد باز (WP 4.1 کامل نیست):** کیت «۰ بلوک با درجهٔ ≥D» را می‌خواهد. پس از این بسته، در کد محصول (بدون تست) ماند: `engine/axis_prescription.py:43 prescribe_axis_work` F(46)، `modules/payments/manual_transfer_policy.py:45 next_transfer_state` E(34)، و هفت بلوک D (`jp7_trend`، `build_confidential_report`، `assess_member_risk`، `apply_suggestions`، `screen`، `estimate_percentile`، `analyze`). این‌ها در همین WP ولی جدا از validate هستند؛ هر کدام بسته‌بندی جدا می‌خواهد.
 - **نحوهٔ برگرداندن:** `git revert` کامیت شکستن (`app/config.py` به تابع یک‌بلوکی برمی‌گردد؛ golden و تست مشخصه‌یابی باقی می‌مانند).
 
+## D‑18 — ناپایداری receiptQueue ثبت شد به‌عنوان یافتهٔ F‑30 (B5)
+- **تصمیم:** تست‌های `mp-app/studio/tests/receiptQueue.test.tsx` به‌عنوان یافتهٔ باز **F‑30** ثبت شدند؛ هیچ timeout‌ای بالا نرفت، هیچ تستی skip یا حذف نشد.
+- **شاهد:** اجرای کامل `npx vitest run` در `c3d28d8`: ۱ failed / ۲۹۸ passed / ۹ skipped؛ خطا «Test timed out in 5000ms». اجرای تنها همان فایل: ۲ failed / ۲ passed. فایل ۱۴۳ خط، ۴ تست `it(`، ۱۰ `await`؛ هیچ `testTimeout` صریح در `vitest.config.ts`/`vite.config.ts` نیست.
+- **دلیل:** افزایش timeout یا skip، هر دو توقف‌های سخت این batch هستند؛ اصلاح ریشه‌ای (کاهش await زنجیره‌ای و polling) جدا از این بسته و در فاز P انجام می‌شود.
+- **نحوهٔ برگرداندن:** ثبت فقط مستندات است؛ `git revert` کامیت مستندات B5 کافی است.
+
+## D‑19 — WP 4.2 (F‑11، جهش‌سنجی) = DEFERRED (B5)
+- **تصمیم:** WP 4.2 به تصمیم مالک موکول شد.
+- **شاهد:** امتیاز جهش‌سنجی پایه ممیز ۵۷٫۸٪ در برابر آستانهٔ ≥۸۰٪؛ اجرای ابزار جهش‌سنجی (مثل mutmut) وابستگی تازه می‌خواهد که در این batch ممنوع است. آستانه تغییر نکرد.
+- **نحوهٔ برگرداندن:** نامربوط (وضعیت مستندات)؛ با اجازهٔ مالک و افزودن وابستگی در بسته‌ای جدا قابل اجرا است.
+
+## D‑20 — شکستن `prescribe_axis_work` (F46 ⇒ C13) در WP 4.1 (B5)
+- **تصمیم:** تابع به یک کلاس وضعیت `_Prescription` و توابع کوچک تقسیم شد؛ ترتیب پاس‌ها (direct/maintain ⇒ covered ⇒ بقیه)، قاعدهٔ حامل، و بودجهٔ خستگی (maintain سپس carrier، هرگز direct) بدون تغییر ماندند.
+- **شاهد:** golden از HEAD (`tests/unit/fixtures/axis_prescription_golden.json`، ۳۰۰ مورد، seed 46؛ ۲۶۸ نتیجه، ۳۲ خطا، ۱۶ مورد با trim) بدون تغییر ماند و روی HEAD سبز است. جهش آزمایشی (شرط بودجه `>` به `<`) ⇒ ۱ failed؛ بازگردانی ⇒ ۲ passed و diff خالی.
+- **radon:** F ۱ ⇒ ۰؛ بلوک‌های ≥D از ۱۲ ⇒ ۱۱ (هیچ بلوک جدیدی ≥D نشد)؛ بیشترین تابع جدید C(13).
+- **نحوهٔ برگرداندن:** `git revert` کامیت کد (`engine/axis_prescription.py` به تابع یک‌بلوکی برمی‌گردد؛ golden و تست جهش‌سنجی باقی می‌مانند و باید سبز بمانند).
+- **مورد باز:** `next_transfer_state` E(34) و ۱۰ بلوک D (در کد محصول و scripts/eval) همچنان باز است.
+

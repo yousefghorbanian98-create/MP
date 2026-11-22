@@ -69,7 +69,7 @@
 | D7 | اختلاف اعداد بین دو سند RepoWise: | OPEN |  |
 | D8 | §۲ فهرست ماژول‌ها ناقص است: | OPEN |  |
 
-## ب) ۲۹ یافته (F-01 … F-29)
+## ب) ۳۰ یافته (F-01 … F-30)
 
 | شناسه | عنوان | وضعیت | یادداشت |
 |---|---|---|---|
@@ -87,7 +87,7 @@
 | F-12 | `routes.json` مجموعهٔ گاردهای واقعی را کم‌تر نشان می‌دهد ⇒ اوراکل نامعتبر | BLOCKED | WP 0.2: routes.json اکنون گاردهای مؤثر را اعلام می‌کند (permission/grant/authenticated/metrics_token + super_admin_only/owner_scope/body_credential از app/security/route_policy.py). ارزیاب سه‌ارزشی روی ۱٬۱۴۱ سلول زنده: ۰ ناهمخوانی، ۰ 5xx، ۹۱۵ دقیق + ۲۲۶ شرطی. گیت باینری کیت (probe_contract.py matrix) هنوز قرمز است: ۵۹۲ (هر ۶۹ سلولِ اختلاف باینری شرطی است). تصمیم مالک لازم است (AD‑10). شاهد: evidence/after/wp02/. |
 | F-13 | guard تکراری روی یک مسیر (دو بار casbin enforce) | FIXED | WP 0.3: گارد تکراری روی review حذف شد؛ شاهد: قبل ۲ بار enforce، بعد ۱ بار (tests/integration/test_wp03_axis_single_guard.py، tests/regression/test_no_duplicate_guard.py) |
 | F-14 | `gateway-return` با شناسهٔ نامعتبر → HTTP 200 | FIXED | WP 3.3 (9024f44): پرداخت ناموجود ⇒ HTTP 404 با همان صفحه (`modules/payments/router.py`). شاهد: `tests/integration/test_wp33_gateway_return_status.py` (red 1 failed ⇒ green 6 passed). شناسه‌های -1/0/-0/INT64_MIN در HEAD قبلاً 422 بودند (بازتولید نشد؛ محافظت شده). F‑25 (۱۱ مسیر دیگر) خارج از این WP و در WP 3.5. |
-| F-15 | ۵۵ هشدار پیچیدگی (lizard) و ۴۱ بلوک ≥C (radon)؛ بدترین درجهٔ radon **F** با CC ‏۴۷ و ۴۶ | FIXED-PARTIAL | WP 4.1 (کامیت «WP 4.1 … refactor»): validate_production_configuration از F(54) به هفت اعتبارسنج خانوادگی؛ بیشترین رتبه در config.py = C(13)؛ رفتار با golden (600 نمونه) قفل است: tests/regression/test_wp41_config_characterization.py. باقی: prescribe_axis_work F(46)، next_transfer_state E(34)، هفت بلوک D (کد محصول)؛ هشت کلید کیت = TODO (D‑17). |
+| F-15 | ۵۵ هشدار پیچیدگی (lizard) و ۴۱ بلوک ≥C (radon)؛ بدترین درجهٔ radon **F** با CC ‏۴۷ و ۴۶ | FIXED-PARTIAL | B5 (WP 4.1، پیش‌تر: `c3d28d8` و مشخصه‌یابی `8bae88c`): validate_production_configuration از F(54) به هفت اعتبارسنج خانوادگی؛ prescribe_axis_work از F(46) به ۶ مرحلهٔ کوچک (بیشترین C(13))؛ هیچ بلوک F ماند نشد؛ رفتار با golden قفل است (config: 600 نمونه؛ axis: 300 نمونه). باقی: next_transfer_state E(34)، ۱۰ بلوک D در کد محصول (شامل scripts/eval)، و هشت کلید کیت = TODO (D‑17). |
 | F-16 | ۷ محل پولِ شناور در استودیو + ۱ sentinel منفی | OPEN |  |
 | F-17 | ۴ خطای «except بی‌صدا» (از جمله در `api/v1/monitoring.py:18`) | OPEN |  |
 | F-18 | ناسازگاری ظرفیت‌ها: ۱۶۴ handler سنکرون، threadpool=40، pool=60، 4 worker | FIXED-PARTIAL | WP 2.3 (f852675): `WEB_CONCURRENCY` پیش‌فرض ۱ در دو Dockerfile؛ بودجهٔ `workers × 60 ≤ بودجهٔ DB` در OPS-RUNBOOK §۱‑الف؛ شاهد: `tests/regression/test_b2_wp23_wp43_wp44.py`. باز (TODO، D‑14): گسترش `validate_production_configuration` با هشت کلید کیت؛ pragmaهای SQLite در `alembic/env.py`؛ rate-limit `memory://` در چند worker. |
@@ -102,6 +102,7 @@
 | F-27 | پیش‌نیازِ «پروندهٔ عضو» در سبد خرید با `404 not_found` بیان می‌شود؛ سفارش به‌نیابت ممکن نیست | OPEN |  |
 | F-28 | «امروز» سه برداشت متفاوت دارد: nutrition و axis_assessment از `date.today()` (ساعت UTC کانتینر) استفاده می‌کنند؛ shop از Asia/Tehran. هر شب ۰۰:۰۰–۰۳:۳۰ تهران روز اشتباه | FIXED | الحاقیهٔ A1 — WP 3.6 (AD‑1). قبل: date.today() ×3 (axis_assessment:31، nutrition:124،182) ⇒ red: ۳ تست ناموفق (سن و اسکن و Dockerfile) روی کد قبل. بعد: app/clock.py::today_in_shop_zone؛ ENV TZ=Asia/Tehran در دو Dockerfile؛ ۵ تست regression/test_wp36_shop_today.py سبز؛ گیت after-wp36 PASS؛ pytest کامل ۱۱۵۱ passed، ۲ skipped، exit 0. مسیر nutrition با اسکن کدی و تابع مشترک پوشش داده شد نه با تست رفتاری مستقل. |
 | F-29 | شش خطای ارسال SMS با `log.error` بدون traceback ثبت می‌شوند (app/sms.py:66,69,72,99,102,105) — علت واقعی خطای فراهم‌کننده در لاگ نیست | FIXED | الحاقیهٔ A1 — WP 2.6. قبل: ۶ شاخهٔ except در app/sms.py با log.error و بدون traceback (red: ۶ تست exc_info ناموفق). بعد: _log_provider_failure با traceback و متن استثنای پنهان (AD‑6)؛ ۱۴ تست regression/test_wp26_sms_logging.py سبز؛ test_sms ۶۱ سبز؛ pytest کامل ۱۱۴۶ passed، ۲ skipped، exit 0. S310 سه مورد با noqa دلیل‌دار؛ TRY400 در sms=0. |
+| F-30 | receiptQueue.test.tsx ناپایدار: تست‌های آن زیر بودجهٔ پیش‌فرض ۵۰۰۰ms (بدون testTimeout) timeout می‌دهند؛ ۱۴۳ خط، ۴ تست، ۱۰ await؛ اجرای تنها ۲ failed/۲ passed و اجرای کامل exit 1 | OPEN | B5: شمارهٔ بعدیِ آزاد (بزرگ‌ترین F موجود F-29). اجرای کامل محلی exit 1 با timeout ۵۰۰۰ms؛ اجرای تنها ۲ failed/۲ passed؛ هیچ testTimeout صریح نیست؛ fetch با vi.stubGlobal. ممنوع: افزایش timeout، skip، حذف تست. اصلاح مصوب (فاز P): کاهش await های پشت‌سرهم و تنظیم interval polling. |
 
 ## ج) موانع محیطی (BLOCKED)
 
@@ -142,7 +143,7 @@
 | findings | FIXED-PARTIAL | 8 |
 | findings | IN-PROGRESS | 1 |
 | findings | NOT-REPRODUCED | 2 |
-| findings | OPEN | 8 |
+| findings | OPEN | 9 |
 | non_issues | OPEN | 14 |
 | problems | FIXED | 1 |
 | problems | IN-PROGRESS | 1 |

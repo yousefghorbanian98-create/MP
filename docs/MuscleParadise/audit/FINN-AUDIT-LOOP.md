@@ -58,13 +58,13 @@
 | 3.4 | F-27 | DONE | (این کامیت) | red: `test_wp34_member_profile_required.py` (`shop_online_closed`→۴۰۴ به‌جای ۴۰۹)؛ اصلاح: `_own_member` ⇒ `ConflictError(code=member_profile_required)` ۴۰۹؛ گیت ایستا `check_shop_purchase_guard` در `deploy_gate.py` (۱۵ بررسی، ۰ مشکل)؛ pytest کامل `1268 passed, 2 skipped, rc=0`؛ سفارش به‌نیابت: AD‑17 |
 | 3.5 | F-09/F-25 | DONE | commit «WP 3.5» (`git log --grep "WP 3.5"`) (NOT-REPRODUCED؛ گاردهای سبز، D‑16) | آزمون قراردادی سراسری در CI |
 | 3.6 | F-28 | DONE | (این کامیت) | red: ۳ تست (سن، اسکن، TZ) ناموفق روی کد قبل ⇒ green: ۵ تست؛ گیت after-wp36 PASS؛ pytest ۱۱۵۱/۲/۰؛ AD‑1 |
-| 4.1 | F-15 | PARTIAL | characterization `8bae88c`؛ شکستن validate در کامیت «WP 4.1 … refactor» (D‑17) | شکستن `validate_production_configuration` (radon F(47)) |
-| 4.2 | F-11 | TODO | — | سه جهش واقعی؛ ≥۸۰٪ |
+| 4.1 | F-15 | PARTIAL | B5: prescribe F46→C13 (golden + جهش، D‑18)؛ validate F54→C13 (D‑17)؛ باقی: E34، ۱۰×D، ۸ کلید (TODO) | شکستن `validate_production_configuration` (radon F(47)) |
+| 4.2 | F-11 | DEFERRED | وابستگی جهش‌سنجی تازه لازم است؛ baseline ممیز امتیاز جهش ۵۷٫۸٪ در برابر ≥۸۰٪؛ تصمیم مالک (تعویق، بدون mutmut) | سه جهش واقعی؛ ≥۸۰٪ |
 | 4.3 | F-19 | DONE | cf33ad8 (حذف await import؛ یک‌لایه‌سازی سه API = TODO، D‑14) | یک لایهٔ داده در استودیو؛ حذف `await import` در onClick | |
 | 4.4 | F-20/F-23 | DONE | cf33ad8 (updateProduct حذف؛ getToken unexport در این بسته: ‏ببینید EXECUTION-LOG) | BD-2: حذف `updateProduct` کلاینت | |
 | 4.5 | F-21/F-22 | DONE | (این کامیت) | F-22 red: ۱ ناموفق (۴ خط) ⇒ green؛ semgrep قاعده repair شد (مرده بود، AD‑8)؛ S فعال و بلوکینگ؛ گیت after-wp45 PASS؛ pytest ۱۱۹۱/۲/۰ |
 | 4.6 | F-16 | DONE | (این کامیت) | red: `tests/nutritionNoMemberSentinel.test.tsx` (درخواست `member_id=-1` بدون عضو)؛ اصلاح `Nutrition.tsx` ⇒ بدون عضو درخواست نمی‌رود؛ `mp-ts-float-money` روی `Analytics.tsx:106` (شمارندهٔ دقیقه) false positive ⇒ regex با lookahead محدود شد (AD‑18) و fixture `.semgrep/tests/mp-ts-float-money.ts` دقیقاً ۵/۵ مطابقت؛ `studio/src` ⇒ ۰ یافته؛ `tsc` rc=0؛ vitest ۲۹۹ passed، rc=0 |
-| 4.7 | — | TODO | — | Semgrep blocking، بار پله‌ای، جهش، گیت نهایی |
+| 4.7 | — | PARTIAL | semgrep project-rules: blocking (از قبل، ci.yml)؛ harness: هنوز continue-on-error (ci.yml:170–172)؛ بار پله‌ای: BLOCKED-ENV (Docker/Postgres در سندباکس نیست) | Semgrep blocking، بار پله‌ای، جهش، گیت نهایی |
 
 **باقی‌مانده‌های `BLOCKED-ENV`** (کاربر باید مطلع شود، نه متوقف شود): Docker/Postgres/Valkey برای بار ۲۰۰ کاربر و `pgBackRest`؛ Prometheus/Alertmanager؛ دستگاه واقعی و اسکرین‌شات Flutter؛ امضای APK؛ آزمون ابری.
 

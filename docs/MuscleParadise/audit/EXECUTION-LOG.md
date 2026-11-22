@@ -698,3 +698,16 @@ WP: 0.4 · F: F‑07 · شاهد: `evidence/after/wp04/` · تصمیم: AD‑11 
 - **تخطی‌های ثبت‌شده:** سقف کامیت B3 (۴، با تأیید) و B4 (۳، بدون تأیید؛ در گزارش اعلام شد).
 - **توقف:** ممیزی تا لحظهٔ مرج **کامل نیست**. موانع: WP 4.2 (نیاز به ابزار جهش‌سنجی؛ نصب آن وابستگی تازه است و طبق دستور ممنوع است)، WP 4.7 (BLOCKED-ENV و تغییر گیت)، ناپایداری receiptQueue (یافته باز)، و ۸ کلید کیت (TODO، تصمیم مالک).
 
+## B5 — بستهٔ بستن (WP 4.1 `prescribe_axis_work` F46 ⇒ C13 · F‑30 · ستون‌های 4.2 / 4.7)
+
+- **WP 4.1 (PARTIAL):** golden از HEAD (`tests/unit/test_axis_prescription_golden.py` + fixture، seed 46، ۳۰۰ مورد) قبل از شکستن ساخته شد و روی HEAD سبز بود. **جهش‌سنجی:** شرط بودجهٔ خستگی `>`⇒`<` ⇒ `1 failed, 1 passed`؛ بازگردانی ⇒ `2 passed`، `git diff` خالی. **شکستن:** `prescribe_axis_work` به کلاس `_Prescription` و توابع کوچک (`plan_all`، `plan_covered`، `plan_carrier`، `trim_to_budget`…) تقسیم شد؛ golden بدون تغییر ماند.
+- **radon (`radon cc mp-app/backend -j`، HEAD در `/tmp/headsnap` از `git archive`):** قبل: F=1 (`prescribe_axis_work` 46)، بلوک ≥D در محصول = ۱۲. بعد: **F=0**، ≥D = ۱۱ (E: `next_transfer_state` 34؛ D: ۱۰ مورد)؛ **هیچ بلوک جدید ≥D**؛ بیشترین CCN تابع‌های جدید = ۱۳ (`prescribe_axis_work`) < ۱۵.
+- **شاهد تأیید:** `ruff check` (انتخاب CI) ⇒ rc 0؛ `ruff format --check` ⇒ rc 0؛ `bandit -r . -ll -q` ⇒ rc 0؛ `pytest tests/unit tests/integration/test_pilot_dry_run.py` + فایل‌های prescription ⇒ ۳۲۹ passed.
+- **WP 4.1 هنوز PARTIAL:** `next_transfer_state` (E34) و ۱۰ بلوک D باز؛ هشت کلید کیت (D‑17) TODO. Rollback: `git revert` کامیت کد B5 (D‑20).
+- **F‑30 (ثبت شد، OPEN):** receiptQueue ناپایدار؛ شاهد: اجرای کامل ۱ failed/۲۹۸ passed (timeout ۵۰۰۰ms)، اجرای تنها ۲ failed/۲ passed. timeout بالا نرفت، تست skip یا حذف نشد (D‑18).
+- **بستن ستون‌ها (FINN-AUDIT-LOOP):** WP 4.2 (F‑11) = **DEFERRED** (baseline جهش ۵۷٫۸٪ در برابر ≥۸۰٪؛ وابستگی تازه لازم؛ D‑19). WP 4.7 = **PARTIAL**: بار پله‌ای/ترکیبی **BLOCKED-ENV** (بدون Docker/Postgres در سندباکس)؛ Semgrep: قواعد project-rules مسدودکننده است (`ci.yml:158–168`، `--error`)، اما قواعد harness هنوز `continue-on-error` است (`ci.yml:170–172`) — **این بخش انجام نشده است؛ گزارش قبلی آن را کامل خوانده بود و اصلاح شد.**
+- **یادداشت‌های اندازه‌گیری‌شده برای ردیف‌های PARTIAL/BLOCKED:** 0.2 (۱٬۱۴۱ سلول، ۵۹۲ drift)؛ 0.7 (`continue-on-error`، ۵ یافتهٔ پایه، ۰ silent-except-pass)؛ 1.1 (e2e قبل ۳۰×200، بعد ≥۲۷×429)؛ 1.2 (گیت زنده روی استقرار BLOCKED-ENV)؛ 1.4 (قبل ۲۰۰ ⇒ بعد ۴۰۱).
+- **اجرای کامل بک‌اند (`scripts/coverage_run.sh` در `e740938`):** `1307 passed, 2 skipped, 2 warnings in 615.07s`، exit 0، گیت پوشش PASS (۲ تست golden جدید افزوده شد).
+- **تخطی‌ها:** B5 دو کامیت (کد + مستندات) در سقف مجاز؛ هیچ آستانه، وابستگی، یا تست حذف/skip نشد.
+- **BATCH-SUMMARY نهایی:** این بسته آخرین بستهٔ closure است؛ ممیزی تا لحظهٔ مرج کامل نیست (WP 4.2 DEFERRED، WP 4.7 load BLOCKED-ENV، F‑30 باز، WP 4.1 PARTIAL). مرج فقط با اجازهٔ داور مجاز است.
+
