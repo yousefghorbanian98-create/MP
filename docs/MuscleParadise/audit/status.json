@@ -41,7 +41,7 @@
   },
   "F-28": {
     "status": "FIXED",
-    "note": "الحاقیهٔ A1 — WP 3.6 (AD‑1). قبل: date.today() ×3 (axis_assessment:31، nutrition:124،182) ⇒ red: ۳ تست ناموفق (سن و اسکن و Dockerfile) روی کد قبل. بعد: app/clock.py::today_in_shop_zone؛ ENV TZ=Asia/Tehran در دو Dockerfile؛ ۵ تست regression/test_wp36_shop_today.py سبز؛ گیت after-wp36 PASS؛ pytest کامل ۱۱۵۱ passed، ۲ skipped، exit 0. مسیر nutrition با اسکن کدی و تابع مشترک پوشش داده شد نه با تست رفتاری مستقل."
+    "note": "A1 / WP 3.6 (AD‑1) بک‌اند: app/clock.py::today_in_shop_zone؛ ENV TZ در Dockerfile؛ pytest ۱۱۵۱ passed. P‑A (eafb335): نیمهٔ استودیو بسته شد — src/lib/clock.ts (تنها مصرف‌کنندهٔ new Date/Date.now)؛ grep در src خارج از clock.ts = ۰ (کل ۵، همه در clock.ts)؛ ESLint no-restricted-syntax (probe: ۲ خطا)؛ npm run lint ۰/۰؛ tsc -b rc 0؛ npm test ۳۰۶ passed/۹ skipped rc 0؛ backend: date.today()=۰ و datetime.now() بی‌منطقه=۰ در app/api/modules/engine/db/jobs/security/cache."
   },
   "F-29": {
     "status": "FIXED",

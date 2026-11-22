@@ -726,3 +726,28 @@ WP: 0.4 · F: F‑07 · شاهد: `evidence/after/wp04/` · تصمیم: AD‑11 
 - **اسکریپت INVENTORY:** `build_audit_inventory.py` اکنون در حالت نوشتن تا نقطهٔ ثابت تکرار می‌کند (حداکثر ۵؛ ردیف INVENTORY خودش را ثبت می‌کند). یک بازتولید با `python3` سیستم (بدون وابستگی‌های بک‌اند) بخش «عملیات API» را به حالت ایستای کوتاه برگرداند (۱۷۱۹ ⇒ ۱۵۵۱ خط) — با diff دیده شد و **کامیت نشد**. سپس `/home/user/venv-mp` از همان دستور CI با پین‌ها ساخته شد (`pip install -c mp-app/backend/requirements.txt -e mp-app/backend[dev]`؛ `pip check`: بدون تضاد؛ **۸۴ پین، ۰ اختلاف نسخه**)، و با همان مفسر بازتولید شد: ۱۷۱۹ خط، `--check` rc 0.
 - **تخطی‌ها:** B6 در سقف ۲ کامیت است (`edc01e0` کد و کامیت مستندات). هیچ آستانه، تست، یا job تغییر نکرد؛ هیچ وابستگی ماندگاری اضافه نشد (semgrep و ruff در venvهای موقت `/tmp` با همان پین/نسخهٔ CI نصب شدند).
 - **باز (از B6):** ۱) گام ruff غیرمسدودکننده در `ci.yml`؛ ۲) `scripts/build_audit_inventory.py` (۴ یافته + format)؛ ۳) قاعدهٔ `mp-money-float-cast` هنوز `total` دارد؛ ۴) WP 4.1 PARTIAL؛ ۵) WP 4.2 DEFERRED؛ ۶) WP 4.7 load BLOCKED-ENV؛ ۷) F‑30 (receiptQueue) OPEN.
+
+## P‑A — P‑1 ساعت یکتای استودیو (نیمهٔ استودیوییِ F‑28) · D‑23 · D‑24
+
+- **پلن:** `curl -sL … MP-PRODUCTION-PLAN-P-2026-11-22.md` ⇒ `23829` بایت، `f525a5143ebe8a3a607012788be0275b2cd12db4352f55e67464f78f767f32fc  /tmp/PLAN-P.md` (با انتظار یکسان).
+- **شاخه:** `arena/ff32c436-mp` از `35d4b35` (= main). شاخهٔ `arena/5a1e37b3-mp` دست‌نخورده. PR تازه ساخته نشد.
+- **پیش‌فرض‌های پلن (سنجیده):** `ls src/lib/clock.ts` ⇒ `No such file`؛ `grep -rnE "new Date\(|Date\.now\(" src | wc -l` ⇒ `11` در ۱۱ فایل؛ `eslint.config.mjs` بدون قاعدهٔ `no-restricted-syntax`.
+- **پایهٔ lint پیش از تغییر:** `npm ci` (از lock) ⇒ rc 0؛ `npm run lint` ⇒ rc 0، خروجی خالی (۰ خطا، ۰ هشدار).
+- **قرمز (red‑first):** `tests/clock.test.ts` پیش از `src/lib/clock.ts` ⇒ `Error: Failed to resolve import "../src/lib/clock"`؛ `Test Files  1 failed (1)`؛ `Tests  no tests`؛ rc 1.
+- **سبز پس از پیاده‌سازی:** `npx vitest run tests/clock.test.ts` ⇒ `Test Files  1 passed (1)`، `Tests  7 passed (7)`، rc 0. شامل C5 (`2026-03-20T20:30:00Z` ⇒ `2026-03-21`؛ `20:00Z` ⇒ `2026-03-20`؛ `23:50Z` ⇒ `2026-03-22`).
+- **C4 — probe قاعدهٔ ESLint:** فایل موقت `src/__clock_probe.ts` با `new Date()` و `Date.now()` ⇒ `npx eslint` ⇒ `2 problems (2 errors, 0 warnings)` با `no-restricted-syntax`، rc 1؛ فایل پس از سنجش حذف شد (`ls` ⇒ No such file).
+- **C3 — مهاجرت ۱۱ محل:** `grep -rE "new Date\(|Date\.now\(" src | wc -l` ⇒ `5` (همه در `src/lib/clock.ts`)؛ `… | grep -v "lib/clock.ts" | wc -l` ⇒ **`0`**.
+- **lint/tsc پس از تغییر:** `npm run lint` ⇒ rc 0، خروجی خالی (۰/۰)؛ `npx tsc -b` ⇒ rc 0.
+- **تست‌های حوزهٔ تغییر:** ۱۵ فایل (clock، adaptivePanel، adminPermissions، deviceSessions، paymentPanel، periodReportPanel، jalaliDate، chatPage، expensesPage، nutritionPage، nutritionNoMemberSentinel، programsPage، readinessPanel، expenseReceipt، session) ⇒ `Test Files  15 passed (15)`، `Tests  93 passed (93)`، rc 0.
+- **build (همان گام CI):** `npm run build` ⇒ rc 0، `✓ built in 11.85s`؛ سپس `rm -rf dist` (پیش از commit).
+- **کل studio (`npm test`، همان گام CI):** rc 0، `Test Files  47 passed | 1 skipped (48)`، `Tests  306 passed | 9 skipped (315)`، ۱۷۴ ثانیه. (`receiptQueue` این بار سبز شد؛ F‑30 همچنان OPEN، بدون افزایش timeout یا skip.)
+- **بک‌اند (سنجهٔ F‑28):** `grep -rn "date\.today()"` در پوشه‌های محصول ⇒ خالی؛ `grep -rnE "datetime\.now\(\)"` ⇒ خالی.
+- **بدون وابستگی تازه:** `git diff 35d4b35 HEAD -- '*package.json' '*package-lock.json' '*requirements.txt'` ⇒ خالی؛ `git diff 35d4b35 HEAD -- mp-app/studio/package.json | wc -l` ⇒ `0`.
+- **commit 1:** `eafb335` — `git show --stat HEAD` ⇒ `14 files changed, 145 insertions(+), 30 deletions(-)` (clock.ts و clock.test.ts جدید؛ eslint.config.mjs؛ ۱۱ فایل مصرف‌کننده).
+- **commit 2 (این سند، status، تصمیم‌ها، INVENTORY/CHECKLIST):** INVENTORY آخرین گام، با venv کامل (`/home/user/venv-mp`، `pip install -c requirements.txt -e mp-app/backend[dev]`، `pip check` ⇒ بدون تضاد، fastapi 0.165.0، Python 3.11.2).
+- **تغییرات مدیریتی:** F‑28 در `status.json` از FIXED به FIXED با شاهد نیمهٔ استودیو به‌روز شد؛ D‑23 (منبع منطقه = ثابت، نه API) و D‑24 (چهار «امروز» از محلی دستگاه به تهران).
+- **تخطی‌ها:** هیچ (۲ کامیت، ۱ بخش LOG، ۱ push). هیچ jobِ CI، ruleset، آستانه، تست یا skip تغییر نکرد. بسته‌های P‑2 و بعد شروع نشدند.
+- **بندِ ۶ پیام ممیز (`mp-money-float-cast`):** طبق دستور قبلی و ترتیب پلن (P‑3 = P‑C)، در P‑A دست نخورد؛ در بستهٔ P‑C با کنترل مثبت اجباری انجام می‌شود.
+- **باز (از P‑A):** مصرف API منطقه (D‑23)؛ WP 4.1 PARTIAL؛ WP 4.2 DEFERRED؛ WP 4.7 PARTIAL (BLOCKED-ENV)؛ F‑30 OPEN؛ `mp-money-float-cast`؛ گام ruff lint غیرمسدودکننده؛ WP 0.2 BLOCKED؛ WP 1.1/1.2/1.4 PARTIAL.
+- **توقف:** طبق دستور، P‑B شروع نشد تا داوری عددی ممیز.
+
