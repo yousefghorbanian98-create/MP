@@ -12,8 +12,6 @@ import json
 import random
 from pathlib import Path
 
-import pytest
-
 from app.config import Settings
 
 GOLDEN = Path(__file__).parent / "fixtures" / "wp41_config_golden.json"
@@ -26,18 +24,50 @@ def _matrix(n: int = SAMPLES, seed: int = SEED):
     secret_good = "s" * 40
     biometric_ok = base64.b64encode(b"b" * 32).decode()
     axes = {
-        "secret_key": ["", "short", "change-me-please-000000000000000000000000", secret_good, "x" * 16],
-        "biometric_key": ["", "not base64!", base64.b64encode(b"c" * 16).decode(), biometric_ok, secret_good],
+        "secret_key": [
+            "",
+            "short",
+            "change-me-please-000000000000000000000000",
+            secret_good,
+            "x" * 16,
+        ],
+        "biometric_key": [
+            "",
+            "not base64!",
+            base64.b64encode(b"c" * 16).decode(),
+            biometric_ok,
+            secret_good,
+        ],
         "sms_provider": ["dev", "webmagfa", "kavenegar"],
         "allow_dev_otp_echo": [False, True],
-        "sms_api_url": ["", "http://sms.example.ir", "https://sms.example.ir", "https://u:p@sms.example.ir", "not a url"],
+        "sms_api_url": [
+            "",
+            "http://sms.example.ir",
+            "https://sms.example.ir",
+            "https://u:p@sms.example.ir",
+            "not a url",
+        ],
         "sms_api_key": ["", "k"],
         "sms_username": ["", "u"],
         "sms_password": ["", "p"],
         "sms_originator": ["", "3000"],
         "trusted_proxies": ["", "10.0.0.0/8", "10.0.0.1, bad", "10.0.0.1", " , "],
-        "valkey_url": ["redis://localhost:6379/0", "redis://valkey.internal:6379/0", "http://valkey:1", "", "rediss://10.1.2.3:6380/0"],
-        "cors_origins": ["", "*", "https://app.example.ir", "http://app.example.ir", "https://a.ir/path", "https://a.ir,https://b.ir", "https://localhost"],
+        "valkey_url": [
+            "redis://localhost:6379/0",
+            "redis://valkey.internal:6379/0",
+            "http://valkey:1",
+            "",
+            "rediss://10.1.2.3:6380/0",
+        ],
+        "cors_origins": [
+            "",
+            "*",
+            "https://app.example.ir",
+            "http://app.example.ir",
+            "https://a.ir/path",
+            "https://a.ir,https://b.ir",
+            "https://localhost",
+        ],
         "payment_gateway": ["manual", "mock", "sandbox"],
         "payment_sandbox": [True, False],
     }
@@ -81,7 +111,7 @@ def test_outcomes_match_golden():
     cases = _matrix()
     assert len(golden) == len(cases) == SAMPLES
     mismatches = []
-    for case, expected in zip(cases, golden):
+    for case, expected in zip(cases, golden, strict=True):
         got = _outcome(case)
         if got != expected["outcome"]:
             mismatches.append((case, expected["outcome"], got))
