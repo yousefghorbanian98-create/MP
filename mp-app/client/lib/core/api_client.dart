@@ -188,6 +188,7 @@ class ApiClient {
   /// «کار می‌کرد» ولی همیشه خطا می‌داد. تست `api_client_test` این را قفل
   /// می‌کند.
   dynamic _decode(http.Response r) {
+    // nosemgrep: mp-dart-dynamic-cast — عمدی: بدنهٔ JSON پیش از تشخیص نوع (Map یا List) decode می‌شود؛ قفل‌شده در test/api_client_test.dart.
     final dynamic decoded = r.body.isEmpty ? null : jsonDecode(r.body);
     if (r.statusCode >= 200 && r.statusCode < 300) {
       return decoded ?? <String, dynamic>{};

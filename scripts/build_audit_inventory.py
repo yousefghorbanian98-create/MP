@@ -2,7 +2,7 @@
 """تولید فهرست کامل ممیزی (stdlib فقط).
 
 ورودی‌ها:
-  docs/MuscleParadise/audit/findings.json  — ۵۸ مشکل، ۲۹ یافته، موارد «مشکل نیست»، موانع محیطی
+  docs/MuscleParadise/audit/findings.json  — ۵۸ مشکل، ۳۰ یافته، موارد «مشکل نیست»، موانع محیطی
   docs/MuscleParadise/audit/status.json    — وضعیت هر مورد (OPEN / IN-PROGRESS / FIXED / DEFERRED / NOT-REPRODUCED)
 
 خروجی‌ها:

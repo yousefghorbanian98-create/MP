@@ -26,7 +26,9 @@ rules:
       - pattern: $A / $B
       - metavariable-regex:
           metavariable: $A
-          regex: (?i).*(rial|amount|price|balance|fee|total|discount).*
+          # B6: `total` حذف شد — `(end - start).total_seconds() / 60.0` (دقیقه) را می‌گرفت (FP سنجش‌شدهٔ ممیز).
+          # `total_rial|total_amount|total_price` همچنان از راه rial/amount/price گرفته می‌شوند.
+          regex: (?i).*(rial|amount|price|balance|fee|discount).*
     paths:
       exclude: ["*/tests/*", "*test_*", "scripts/*", "eval/*", "devtools/*"]
 
