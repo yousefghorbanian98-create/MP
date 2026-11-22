@@ -13,7 +13,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # RFC 7518 §3.2 — HMAC-SHA256 با کلید کوتاه‌تر از ۳۲ بایت، امنیت اعلام‌شده را ندارد.
 MIN_SECRET_BYTES = 32
-DEFAULT_DEV_SECRET = "dev-secret-change-in-production-x"
+DEFAULT_DEV_SECRET = "dev-secret-change-in-production-x"  # noqa: S105 — WP 4.5 (S): مقدار پیش‌فرض توسعه؛ در production رد می‌شود، رمز واقعی نیست
 
 
 class Settings(BaseSettings):
@@ -67,6 +67,15 @@ class Settings(BaseSettings):
     shop_timezone: str = "Asia/Tehran"
     # QF-26: فهرست IP پروکسی‌های معتمد (ویرگول‌جدا). خالی = هیچ هدر XFF پذیرفته نمی‌شود.
     trusted_proxies: str = ""
+    # WP 1.2 / F-02: کد OTP فقط در development و با این پرچم صریح در پاسخ می‌آید.
+    # پیش‌فرض false؛ در production هرگز true نشود (deploy_gate این را بررسی می‌کند).
+    allow_dev_otp_echo: bool = False
+    # WP 1.2 / F-02: اگر MP_ENVIRONMENT صریح نباشد، اپ بالا نمی‌آید مگر این
+    # متغیر (فقط برای تست‌های خودکار) true باشد.
+    allow_implicit_dev: bool = False
+    # WP 1.3 / F-06: توکن Bearer برای scrape پرومتئوس روی `/api/v1/metrics`.
+    # خالی = endpoint بسته است (۴۰۳)؛ بدون هدر یا با توکن غلط ۴۰۱.
+    metrics_token: str = ""
     # QF-27: اگر true، readiness بدون heartbeat تازهٔ worker ⇒ ۵۰۳ (استقرار با worker).
     require_worker: bool = False
     shop_open_hour: int = 7
@@ -131,10 +140,30 @@ class Settings(BaseSettings):
         Reading ``os.environ`` inside a field validator misses values loaded from
         Pydantic Settings' env file and previously allowed the development key to
         reach a production app.
+
+        WP 4.1 / F‑15: هر خانوادهٔ پیکربندی یک اعتبارسنج جدا دارد؛ ترتیب و متن پیام‌ها
+        با golden در `tests/regression/test_wp41_config_characterization.py` قفل است.
         """
         if self.environment != "production":
             return self
 
+        problems: list[str] = []
+        for check in (
+            self._secret_problems,
+            self._biometric_problems,
+            self._sms_problems,
+            self._proxy_problems,
+            self._valkey_problems,
+            self._cors_problems,
+            self._payment_problems,
+        ):
+            problems.extend(check())
+
+        if problems:
+            raise ValueError("تنظیمات production نامعتبر: " + "؛ ".join(problems))
+        return self
+
+    def _secret_problems(self) -> list[str]:
         problems: list[str] = []
         secret_bytes = len(self.secret_key.encode("utf-8"))
         if secret_bytes < MIN_SECRET_BYTES:
@@ -143,27 +172,35 @@ class Settings(BaseSettings):
             ("change-me", "replace-me", "example", "your-secret")
         ):
             problems.append("کلید MP_SECRET_KEY پیش‌فرض/نمونه در production مجاز نیست")
+        return problems
 
+    def _biometric_problems(self) -> list[str]:
+        problems: list[str] = []
         if not self.biometric_key:
             problems.append("MP_BIOMETRIC_KEY در production الزامی است")
-        else:
-            try:
-                biometric_bytes = base64.b64decode(self.biometric_key, validate=True)
-            except (binascii.Error, ValueError):
-                problems.append("MP_BIOMETRIC_KEY باید Base64 معتبر باشد")
-            else:
-                if len(biometric_bytes) != 32:
-                    problems.append("MP_BIOMETRIC_KEY باید Base64 از دقیقاً ۳۲ بایت باشد")
-                secret_material = self.secret_key.encode("utf-8")
-                try:
-                    decoded_secret = base64.b64decode(self.secret_key, validate=True)
-                except (binascii.Error, ValueError):
-                    decoded_secret = b""
-                if biometric_bytes in {secret_material, decoded_secret}:
-                    problems.append("MP_BIOMETRIC_KEY باید از MP_SECRET_KEY جدا باشد")
+            return problems
+        try:
+            biometric_bytes = base64.b64decode(self.biometric_key, validate=True)
+        except (binascii.Error, ValueError):
+            problems.append("MP_BIOMETRIC_KEY باید Base64 معتبر باشد")
+            return problems
+        if len(biometric_bytes) != 32:
+            problems.append("MP_BIOMETRIC_KEY باید Base64 از دقیقاً ۳۲ بایت باشد")
+        secret_material = self.secret_key.encode("utf-8")
+        try:
+            decoded_secret = base64.b64decode(self.secret_key, validate=True)
+        except (binascii.Error, ValueError):
+            decoded_secret = b""
+        if biometric_bytes in {secret_material, decoded_secret}:
+            problems.append("MP_BIOMETRIC_KEY باید از MP_SECRET_KEY جدا باشد")
+        return problems
 
+    def _sms_problems(self) -> list[str]:
+        problems: list[str] = []
         if self.sms_provider == "dev":
             problems.append("MP_SMS_PROVIDER در production نباید dev باشد")
+        if self.allow_dev_otp_echo:
+            problems.append("MP_ALLOW_DEV_OTP_ECHO در production باید false باشد")
         elif self.sms_provider == "webmagfa":
             for name, value in (
                 ("MP_SMS_API_URL", self.sms_api_url),
@@ -193,7 +230,27 @@ class Settings(BaseSettings):
                 problems.append(
                     "MP_SMS_API_URL در production باید HTTPS معتبر و بدون credential باشد"
                 )
+        return problems
 
+    def _proxy_problems(self) -> list[str]:
+        # WP 1.1 / F-01: بدون پروکسی معتمد، X-Forwarded-For نادیده گرفته می‌شود و
+        # همهٔ کاربران پشت Caddy یک سهمیهٔ نرخ می‌شوند؛ پس فهرست باید معتبر باشد.
+        problems: list[str] = []
+        trusted_entries = [item.strip() for item in self.trusted_proxies.split(",")]
+        trusted_entries = [item for item in trusted_entries if item]
+        if not trusted_entries:
+            problems.append("MP_TRUSTED_PROXIES در production الزامی است (IP یا CIDR پروکسی)")
+            return problems
+        for entry in trusted_entries:
+            try:
+                ipaddress.ip_network(entry, strict=False)
+            except ValueError:
+                problems.append("MP_TRUSTED_PROXIES فقط IP یا CIDR معتبر می‌پذیرد")
+                break
+        return problems
+
+    def _valkey_problems(self) -> list[str]:
+        problems: list[str] = []
         valkey_url = urlsplit(self.valkey_url)
         valkey_host = (valkey_url.hostname or "").lower()
         try:
@@ -202,31 +259,20 @@ class Settings(BaseSettings):
             valkey_is_loopback = valkey_host == "localhost"
         if valkey_url.scheme not in {"redis", "rediss"} or not valkey_host or valkey_is_loopback:
             problems.append("MP_VALKEY_URL باید به Valkey/Redis قابل‌دسترسی production اشاره کند")
+        return problems
 
+    def _cors_problems(self) -> list[str]:
+        problems: list[str] = []
         origins = [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]
         if not origins or "*" in origins:
             problems.append("MP_CORS_ORIGINS باید allowlist واقعی محیط production باشد")
-        else:
-            for origin in origins:
-                parsed = urlsplit(origin)
-                host = (parsed.hostname or "").lower()
-                try:
-                    host_is_loopback = ipaddress.ip_address(host).is_loopback
-                except ValueError:
-                    host_is_loopback = host == "localhost"
-                if (
-                    parsed.scheme != "https"
-                    or not host
-                    or parsed.username is not None
-                    or parsed.password is not None
-                    or host_is_loopback
-                    or parsed.path not in {"", "/"}
-                    or parsed.query
-                    or parsed.fragment
-                ):
-                    problems.append("MP_CORS_ORIGINS باید originهای HTTPS واقعی باشد")
-                    break
+            return problems
+        if not all(_is_public_https_origin(origin) for origin in origins):
+            problems.append("MP_CORS_ORIGINS باید originهای HTTPS واقعی باشد")
+        return problems
 
+    def _payment_problems(self) -> list[str]:
+        problems: list[str] = []
         if self.payment_gateway == "mock":
             problems.append("MP_PAYMENT_GATEWAY=mock در production مجاز نیست؛ پرداخت حضوری است")
         if self.payment_gateway == "sandbox":
@@ -237,10 +283,27 @@ class Settings(BaseSettings):
             problems.append(
                 "MP_PAYMENT_SANDBOX بدون درگاه آنلاین معنا ندارد؛ MP_PAYMENT_SANDBOX=false بگذارید"
             )
+        return problems
 
-        if problems:
-            raise ValueError("تنظیمات production نامعتبر: " + "؛ ".join(problems))
-        return self
+
+def _is_public_https_origin(origin: str) -> bool:
+    """یک origin معتبر production: HTTPS، میزبان واقعی، بدون credential/path/query/fragment، نه loopback."""
+    parsed = urlsplit(origin)
+    host = (parsed.hostname or "").lower()
+    try:
+        host_is_loopback = ipaddress.ip_address(host).is_loopback
+    except ValueError:
+        host_is_loopback = host == "localhost"
+    return not (
+        parsed.scheme != "https"
+        or not host
+        or parsed.username is not None
+        or parsed.password is not None
+        or host_is_loopback
+        or parsed.path not in {"", "/"}
+        or parsed.query
+        or parsed.fragment
+    )
 
 
 settings = Settings()

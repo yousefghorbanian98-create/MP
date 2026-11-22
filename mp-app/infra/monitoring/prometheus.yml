@@ -5,6 +5,10 @@ rule_files:
 scrape_configs:
   - job_name: mp-backend
     metrics_path: /api/v1/metrics
+    # WP 1.3 / F-06: scrape با توکن Bearer؛ مقدار از MP_METRICS_TOKEN (expand-env).
+    authorization:
+      type: Bearer
+      credentials: ${MP_METRICS_TOKEN}
     static_configs:
       - targets: ["backend:${PROMETHEUS_BACKEND_PORT}"]
   - job_name: valkey

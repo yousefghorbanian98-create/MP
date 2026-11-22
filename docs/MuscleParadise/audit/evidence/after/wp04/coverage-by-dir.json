@@ -1,0 +1,68 @@
+{
+ "modules": {
+  "lines": 5147,
+  "covered": 4752,
+  "percent": 92.33,
+  "threshold": 90.0
+ },
+ "app": {
+  "lines": 829,
+  "covered": 801,
+  "percent": 96.62,
+  "threshold": 92.0
+ },
+ "api": {
+  "lines": 111,
+  "covered": 104,
+  "percent": 93.69,
+  "threshold": 90.0
+ },
+ "engine": {
+  "lines": 1088,
+  "covered": 1058,
+  "percent": 97.24,
+  "threshold": 95.0
+ },
+ "security": {
+  "lines": 59,
+  "covered": 57,
+  "percent": 96.61,
+  "threshold": 95.0
+ },
+ "db": {
+  "lines": 1755,
+  "covered": 1737,
+  "percent": 98.97,
+  "threshold": 80.0
+ },
+ "jobs": {
+  "lines": 110,
+  "covered": 93,
+  "percent": 84.55,
+  "threshold": 80.0
+ },
+ "cache": {
+  "lines": 94,
+  "covered": 72,
+  "percent": 76.6,
+  "threshold": 75.0
+ },
+ "scripts": {
+  "lines": 1341,
+  "covered": 883,
+  "percent": 65.85,
+  "threshold": 60.0
+ },
+ "devtools": {
+  "lines": 133,
+  "covered": 122,
+  "percent": 91.73,
+  "threshold": null
+ },
+ "eval": {
+  "lines": 344,
+  "covered": 284,
+  "percent": 82.56,
+  "threshold": null
+ }
+}

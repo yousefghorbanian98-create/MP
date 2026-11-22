@@ -5,6 +5,7 @@ from __future__ import annotations
 from fastapi import Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 
 class ApiError(Exception):
@@ -69,6 +70,33 @@ async def validation_error_handler(request: Request, exc: RequestValidationError
         for e in exc.errors()
     ]
     return JSONResponse(
-        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
         content=_payload("validation_error", "داده‌های ورودی معتبر نیستند", details),
+    )
+
+
+# WP 3.2 / F‑26: خطاهای HTTP خود Starlette (۴۰۴ مسیر، ۴۰۵ متد) هم پاکت پروژه را دارند.
+_HTTP_CODES: dict[int, str] = {404: "not_found", 405: "method_not_allowed"}
+_HTTP_MESSAGES: dict[int, str] = {
+    404: "منبع یافت نشد",
+    405: "متد درخواستی برای این مسیر مجاز نیست",
+}
+
+
+# متن پیش‌فرض Starlette/FastAPI (بی‌معنا برای کاربر)؛ اگر دیده شود، پیام پروژه جایگزین می‌شود.
+_STARLETTE_DEFAULT_DETAILS = {"Not Found", "Method Not Allowed"}
+
+
+async def http_error_handler(request: Request, exc: StarletteHTTPException) -> JSONResponse:
+    code = _HTTP_CODES.get(exc.status_code, f"http_{exc.status_code}")
+    # پیام خاصِ خطای برنامه (مثلاً «authority نامعتبر») حفظ می‌شود؛ فقط متن پیش‌فرض کتابخانه جایگزین می‌شود.
+    app_detail = exc.detail if isinstance(exc.detail, str) else None
+    if app_detail is not None and app_detail not in _STARLETTE_DEFAULT_DETAILS:
+        message = app_detail
+    else:
+        message = _HTTP_MESSAGES.get(exc.status_code, "خطای درخواست")
+    return JSONResponse(
+        status_code=exc.status_code,
+        content=_payload(code, message),
+        headers=exc.headers,
     )

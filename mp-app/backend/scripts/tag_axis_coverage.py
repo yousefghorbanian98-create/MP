@@ -18,8 +18,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from db.base import get_session_factory  # noqa: E402
-from db.models.content import CatalogExercise  # noqa: E402
+from db.base import get_session_factory
+from db.models.content import CatalogExercise
 
 # ۱۴ محور — شناسه‌های پایدار (هم‌ارز DomainScore.domain در db/models/assessment.py)
 AXES_FA: dict[int, str] = {
@@ -672,12 +672,9 @@ def main() -> int:
     if args.dump_rules:
         print(json.dumps(dump_rules(), ensure_ascii=False, indent=2))
         return 0
-    session = get_session_factory()()
-    try:
+    with get_session_factory()() as session:
         stats = tag_all(session)
         print(json.dumps(stats, ensure_ascii=False))
-    finally:
-        session.close()
     return 0
 
 

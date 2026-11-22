@@ -13,8 +13,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from engine.axis_prescription import prescribe_axis_work  # noqa: E402
-from engine.axis_rules import decide_axis  # noqa: E402
+from engine.axis_prescription import prescribe_axis_work
+from engine.axis_rules import decide_axis
 
 REPORTS = Path(__file__).resolve().parents[3] / "finn" / "reports" / "eval"
 

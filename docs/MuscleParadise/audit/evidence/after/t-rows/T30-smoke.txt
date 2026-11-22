@@ -1,0 +1,14 @@
+== T30 smoke (S3 Dockerfile CMD, dev echo on)
+/health                200 61B
+/health/ready          404 22B
+/api/v1/metrics        403 125B
+/openapi.json          200 171735B
+security headers:
+x-content-type-options: nosniff
+x-frame-options: DENY
+referrer-policy: no-referrer
+content-security-policy: default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; frame-ancestors 'none'
+x-request-id: 1ae8be0315274745b12467c788126364
+otp request dev_code:
+{"phone":"09121230001","expires_in":120,"dev_code":"154130"}
+openapi paths: 141

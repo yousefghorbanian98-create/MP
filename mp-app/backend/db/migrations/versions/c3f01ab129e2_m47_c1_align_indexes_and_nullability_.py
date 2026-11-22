@@ -39,6 +39,17 @@ _TIMESTAMP_TABLES = [
 ]
 
 
+def _drop_index_if_exists(table: str, name: str) -> None:
+    """حذف ایندکس بدون ساختن SQL از رشته (F‑22).
+
+    وجود ایندکس با inspector بررسی می‌شود و حذف با `op.drop_index` انجام می‌شود، پس
+    متن SQL در این migration ساخته نمی‌شود. نام‌ها از فهرست ثابتِ همین فایل می‌آیند.
+    """
+    existing = {ix["name"] for ix in sa.inspect(op.get_bind()).get_indexes(table)}
+    if name in existing:
+        op.drop_index(name, table_name=table)
+
+
 def upgrade() -> None:
     bind = op.get_bind()
     is_sqlite = bind.dialect.name == "sqlite"
@@ -64,7 +75,7 @@ def upgrade() -> None:
     # created_at را ایندکس می‌کند. batch_alter_table در SQLite آن‌ها را حفظ
     # می‌کند، پس صریح حذف می‌شوند تا schema = مدل شود.
     for table in ("class_bookings", "gym_classes"):
-        op.execute(f"DROP INDEX IF EXISTS ix_{table}_updated_at")  # noqa: S608
+        _drop_index_if_exists(table, f"ix_{table}_updated_at")
 
     # ── ۳) nullable → NOT NULL، با backfill قبلی ──
     nullable_fixes = [
@@ -162,10 +173,10 @@ def downgrade() -> None:
         "ix_class_bookings_member_id",
         "ix_class_bookings_class_id",
     ):
-        op.execute(f"DROP INDEX IF EXISTS {idx}")  # noqa: S608
+        _drop_index_if_exists("class_bookings", idx)
 
     for table, ts_cols, has_branch in _TIMESTAMP_TABLES:
         for col in ts_cols:
-            op.execute(f"DROP INDEX IF EXISTS ix_{table}_{col}")  # noqa: S608
+            _drop_index_if_exists(table, f"ix_{table}_{col}")
         if has_branch:
-            op.execute(f"DROP INDEX IF EXISTS ix_{table}_branch_id")  # noqa: S608
+            _drop_index_if_exists(table, f"ix_{table}_branch_id")

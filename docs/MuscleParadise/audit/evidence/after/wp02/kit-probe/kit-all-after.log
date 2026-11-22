@@ -1,0 +1,44 @@
+== principals (OTP login for 7 identities) ==
+  token[member] len=292 user_id=1
+  token[coach] len=293 user_id=252
+  token[reception] len=299 user_id=253
+  token[manager] len=296 user_id=254
+  token[admin] len=293 user_id=255
+  token[super_admin] len=301 user_id=256
+
+== pass 1: live seed through the API ==
+  [OK ] member.create          200     9.3ms 
+  [OK ] member.create2         200     7.8ms 
+  [OK ] membership.create      200     6.7ms 
+  [OK ] coupon.percent         201     7.4ms 
+  [OK ] coupon.fixed           201     6.9ms 
+  [OK ] payment.cash           200     6.9ms 
+  [OK ] payment.with_coupon    200     8.0ms 
+  [OK ] wallet.charge          200     8.3ms 
+  [OK ] expense.create         200     9.3ms 
+  [FAIL] shop.cart_add          422     6.6ms {'error': {'code': 'validation_error', 'message': 'داده\u200cهای ورودی معتبر نیستند', 'details': [{'loc': ['bo
+  [FAIL] shop.checkout          409     7.2ms {'error': {'code': 'shop_online_closed', 'message': 'خرید درون\u200cبرنامه\u200cای بسته است؛ خرید حضوری در ساع
+  [OK ] nutrition.weight       200     7.6ms 
+  [OK ] notification.create    200     7.7ms 
+  [OK ] chat.conversation      200     6.7ms 
+  [OK ] class.create           200     5.8ms 
+  [OK ] member.create3_for_shop 200     6.1ms 
+  captured ids: {"user_id": 1, "member_id": 18, "member_id2": 19, "membership_id": 4, "coupon_id": 7, "payment_id": 7, "payment_id2": 8, "expense_id": 10, "notification_id": 5, "conversation_id": 4, "class_id": 4, "member_id3": 20}
+
+== pass 2: authorization matrix (163 ops × 7 principals) ==
+  done in 5s | classification summary: {"denied": 996, "allowed_2xx": 88, "reached_4xx": 57}
+  unauth_allowed: 5
+  over_permissive: 0
+  contract_drift_denied: 592
+  server_errors: 0
+  leaked_stacktrace: 0
+  slow_ops: 0
+
+== pass 3: invalid / hostile inputs ==
+  done in 3s
+  server_errors: 0
+  leaked_stacktrace: 0
+  unexpected_2xx: 1
+  bad_error_envelope: 0
+
+raw rows → /tmp/wp02/kit-run/contract-matrix-raw.json (1961 records)

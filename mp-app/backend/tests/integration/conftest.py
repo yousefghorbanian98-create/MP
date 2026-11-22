@@ -19,6 +19,16 @@ from db.base import get_session_factory, init_db, reset_engine
 _counter = itertools.count(10_000)
 
 
+@pytest.fixture(autouse=True)
+def _metrics_token_configured(monkeypatch):
+    """هر تست یکپارچه توکن متریک آزمایشی دارد (WP 1.3 / F-06)."""
+    from app.config import settings
+
+    from ._metrics import METRICS_TOKEN
+
+    monkeypatch.setattr(settings, "metrics_token", METRICS_TOKEN)
+
+
 @pytest.fixture()
 def client(tmp_path, monkeypatch):
     from app.config import settings

@@ -1,0 +1,45 @@
+{
+  "gate": "WP 3.1 load (ratios only, kit: probe_load.py plain-dev 10 40)",
+  "method": "same DB (mp.db), sequential runs; before=822e483 (:8011), after=current (:8010)",
+  "ratios": [
+    {
+      "workers": 10,
+      "rps_ratio_after_over_before": 1.203,
+      "p50_ratio": 0.86,
+      "p95_ratio": 0.814,
+      "p99_ratio": 0.827,
+      "status_before": {
+        "200": 3837,
+        "404": 2976
+      },
+      "status_after": {
+        "200": 4537,
+        "404": 3660
+      },
+      "server_5xx_before": 0,
+      "server_5xx_after": 0,
+      "client_timeouts_before": 0,
+      "client_timeouts_after": 0
+    },
+    {
+      "workers": 40,
+      "rps_ratio_after_over_before": 1.066,
+      "p50_ratio": 0.936,
+      "p95_ratio": 0.969,
+      "p99_ratio": 0.95,
+      "status_before": {
+        "200": 4315,
+        "404": 3597
+      },
+      "status_after": {
+        "200": 4571,
+        "404": 3860
+      },
+      "server_5xx_before": 0,
+      "server_5xx_after": 0,
+      "client_timeouts_before": 0,
+      "client_timeouts_after": 0
+    }
+  ],
+  "note": "Two kit paths (/api/v1/exercises, /api/v1/reports/financial/summary) return 404 on both builds; included as-is."
+}

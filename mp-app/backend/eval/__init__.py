@@ -4,4 +4,4 @@
 (۳) توافق با استاندارد طلایی مربی. خروجی: JSON + Markdown در finn/reports/eval.
 """
 
-__all__ = ["harness", "gold", "scenarios", "run_eval"]
+__all__ = ["gold", "harness", "run_eval", "scenarios"]

@@ -1,0 +1,22 @@
+threads=80 stack_depth=40 calls_per_thread=400 recursionlimit=1000
+{
+ "threads": 80,
+ "stack_depth": 40,
+ "calls_per_thread": 400,
+ "total_calls": 32000,
+ "elapsed_s": 31.9,
+ "throughput_calls_per_s": 1002.5,
+ "errors": {
+  "SystemError": 1
+ },
+ "error_samples": [
+  "SystemError: AST constructor recursion depth mismatch (before=159, after=156)"
+ ],
+ "latency_ms": {
+  "p50": 1.016,
+  "p95": 352.256,
+  "max": 2585.855
+ },
+ "note": "casbin روی هر enforce عبارت را compile/eval می‌کند؛ enable_cache در security/rbac.py فعال نشده است."
+}
+→ /tmp/run/audit-24/rbac-systemerror-repro.json

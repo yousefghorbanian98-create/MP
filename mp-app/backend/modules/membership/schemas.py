@@ -8,6 +8,7 @@ from typing import Literal
 from pydantic import BaseModel, Field
 
 from app.ids import Id
+from app.money import Rial
 
 
 class MemberCreate(BaseModel):
@@ -47,7 +48,7 @@ class MembershipCreate(BaseModel):
     member_id: Id
     plan_name: str = Field(..., min_length=2, max_length=60)
     duration_days: int = Field(..., ge=1, le=730)
-    price_rial: int = Field(..., ge=0)
+    price_rial: Rial = Field(..., ge=0)
 
 
 class MembershipOut(BaseModel):

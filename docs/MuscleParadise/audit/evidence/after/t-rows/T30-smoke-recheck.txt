@@ -1,0 +1,4 @@
+/health                    200 61B {"status":"ok","service":"Muscle Paradise","version":"1.0.0"}
+/api/v1/health/ready       200 185B {"ready":true,"database_ok":true,"rate_limit_storage_ok":true,"checkin_slo_ok":true,"outbox":{"pending":0,"sending":0,"s
+/health/ready              404 22B {"detail":"Not Found"}
+/api/v1/metrics            403 125B {"error":{"code":"metrics_disabled","message":"متریک‌ها در این محیط غیرفعال‌اند","details"

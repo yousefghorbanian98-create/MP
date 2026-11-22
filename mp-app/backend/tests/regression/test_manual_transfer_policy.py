@@ -162,7 +162,7 @@ def test_rejection_requires_bounded_reason(reason):
         decide(S.PENDING_REVIEW, A.REJECT, rejection_reason=reason)
 
 
-@pytest.mark.parametrize("bad", [datetime(2026, 1, 1), None, "2026-01-01"])
+@pytest.mark.parametrize("bad", [datetime(2026, 1, 1), None, "2026-01-01"])  # noqa: DTZ001 — WP 4.5 (DTZ): عمداً naive است تا رد timestamp بدون منطقه آزموده شود
 def test_naive_or_invalid_timestamps_rejected(bad):
     with pytest.raises(TransferPolicyError):
         decide(S.AWAITING_PROOF, A.SUBMIT, now=bad)

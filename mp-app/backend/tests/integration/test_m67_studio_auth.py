@@ -2,11 +2,15 @@
 
 from __future__ import annotations
 
+import pytest
 from fastapi.testclient import TestClient
 
 from app.config import settings
 from app.main import create_app
 from db.base import init_db, reset_engine
+
+# WP 1.2 / F-02: این ماژول کد OTP را از پاسخ dev می‌خواند ⇒ opt-in صریح.
+pytestmark = pytest.mark.usefixtures("dev_otp_echo")
 
 
 def test_otp_rotation_and_logout_revoke_refresh_session(tmp_path, monkeypatch) -> None:

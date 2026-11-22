@@ -175,12 +175,11 @@ npm run lint 2>&1 | tail -4 | tee /tmp/m107/step4-lint.txt || true
 
 دو راه، به ترتیب ترجیح:
 
-**الف) بدون Codespace، در همان CI (دقیق‌ترین):** `apk.yml` روی `workflow_dispatch` است و کامل‌ترین کار را می‌کند
+**الف) بدون Codespace (منسوخ — AD‑21):** `apk.yml` حذف شد؛ گیت Android اکنون جاب `client-pinned` در `ci.yml` است و با push اجرا می‌شود.
 (pub get · analyze · test · `flutter build apk --release --split-per-abi` · بازرسی عمیق apktool).
 
 ```bash
-gh workflow run apk.yml --ref arena/4f336f66-mp -f build_number=99
-gh run watch "$(gh run list --workflow=apk.yml --limit 1 --json databaseId --jq '.[0].databaseId')"
+# (حذف‌شده با AD‑21؛ به `client-pinned` در `ci.yml` مراجعه کنید)
 ```
 
 > **قبل از زدن این دستور بخوان:** این workflow با `android/keystore/keystore.properties` موجود در مخزن امضا می‌کند —

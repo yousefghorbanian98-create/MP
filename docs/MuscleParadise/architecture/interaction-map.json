@@ -42,7 +42,9 @@
           ]
         }
       ],
-      "tests": []
+      "tests": [
+        "mp-app/studio/tests/wp15Money.test.ts"
+      ]
     },
     {
       "surface": "Assessment",
@@ -846,6 +848,7 @@
         }
       ],
       "tests": [
+        "mp-app/studio/tests/nutritionNoMemberSentinel.test.tsx",
         "mp-app/studio/tests/nutritionPage.test.tsx"
       ]
     },
@@ -1099,8 +1102,6 @@
             "permission"
           ],
           "roles": [
-            "manager",
-            "admin",
             "super_admin"
           ]
         },
@@ -1113,8 +1114,6 @@
             "permission"
           ],
           "roles": [
-            "manager",
-            "admin",
             "super_admin"
           ]
         },
@@ -1127,8 +1126,6 @@
             "permission"
           ],
           "roles": [
-            "manager",
-            "admin",
             "super_admin"
           ]
         },
@@ -1142,6 +1139,8 @@
           ],
           "roles": [
             "member",
+            "coach",
+            "reception",
             "manager",
             "admin",
             "super_admin"
@@ -1168,7 +1167,8 @@
       },
       "endpoints": [],
       "tests": [
-        "mp-app/studio/tests/shopPage.test.tsx"
+        "mp-app/studio/tests/shopPage.test.tsx",
+        "mp-app/studio/tests/wp15Money.test.ts"
       ]
     },
     {
@@ -1251,7 +1251,14 @@
           "path": "/api/v1/auth/otp/request",
           "in_contract": true,
           "guards": [],
-          "roles": []
+          "roles": [
+            "member",
+            "coach",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
         }
       ],
       "tests": []
@@ -1717,6 +1724,9 @@
             "authenticated"
           ],
           "roles": [
+            "member",
+            "coach",
+            "reception",
             "manager",
             "admin",
             "super_admin"
@@ -1730,6 +1740,9 @@
             "authenticated"
           ],
           "roles": [
+            "member",
+            "coach",
+            "reception",
             "manager",
             "admin",
             "super_admin"
@@ -1743,6 +1756,9 @@
             "authenticated"
           ],
           "roles": [
+            "member",
+            "coach",
+            "reception",
             "manager",
             "admin",
             "super_admin"
@@ -2185,21 +2201,42 @@
           "path": "/api/v1/auth/logout",
           "in_contract": true,
           "guards": [],
-          "roles": []
+          "roles": [
+            "member",
+            "coach",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
         },
         {
           "method": "POST",
           "path": "/api/v1/auth/otp/verify",
           "in_contract": true,
           "guards": [],
-          "roles": []
+          "roles": [
+            "member",
+            "coach",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
         },
         {
           "method": "POST",
           "path": "/api/v1/auth/refresh",
           "in_contract": true,
           "guards": [],
-          "roles": []
+          "roles": [
+            "member",
+            "coach",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
         },
         {
           "method": "POST",

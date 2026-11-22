@@ -1,7 +1,7 @@
 # راهنمای مرحله‌ای: Flutter در Codespace و ساخت پکیج نهایی
 
 این راهنما برای اجرای کلاینت Flutter (`mp-app/client`) در GitHub Codespaces و ساخت نسخهٔ وب و APK است.
-دستورها عیناً از `.github/workflows/web.yml` و `.github/workflows/apk.yml` گرفته شده‌اند.
+دستورها عیناً از `.github/workflows/web.yml` گرفته شده‌اند. `apk.yml` با AD‑21 حذف شد؛ گیت Android در `ci.yml` (`client-pinned`) است.
 
 > **توجه:** در sandbox پروژه `pub.dev` و `storage.googleapis.com` مسدود است، پس ساخت Flutter در sandbox ممکن نیست.
 > در Codespace معمولاً دسترسی کامل به اینترنت هست. اگر شبکهٔ Codespace هم این دامنه‌ها را ببندد، ساخت فقط از طریق CI انجام می‌شود.
@@ -40,7 +40,7 @@ cd build/web && python3 -m http.server 8080 --bind 0.0.0.0
 (در Codespace پورت ۸۰۸۰ را از تب Ports باز کنید.)
 
 ## ۵. ساخت APK (امضاشده)
-ساخت امضاشده به اسرار (secrets) مخزن نیاز دارد. بدون آن‌ها `apk.yml` عمداً شکست می‌خورد.
+ساخت امضاشدهٔ release به اسرار (secrets) مخزن نیاز دارد؛ این workflow با AD‑21 حذف شده است.
 
 ### ۵.الف. ساخت keystore اختصاصی انتشار (یک‌بار، روی سیستم خودتان)
 ```bash
@@ -64,7 +64,7 @@ keytool -list -v -keystore mp-release.p12 -alias mp-release | grep SHA256
 
 ### ۵.ج. اجرای ساخت
 ```bash
-gh workflow run apk.yml --ref main -f build_number=<شماره>
+# (حذف‌شده با AD‑21؛ دستور جایگزین ندارد)
 gh run watch
 ```
 خروجی APK در artifacts همان run است. `MP_ANDROID_CERT_SHA256` باید با اثرانگشت keystore یکی باشد؛ در غیر این صورت job شکست می‌خورد.

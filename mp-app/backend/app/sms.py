@@ -14,6 +14,17 @@ from app.config import settings
 log = logging.getLogger("mp.sms")
 
 
+def _log_provider_failure(message: str, *args: object, exc: BaseException) -> None:
+    """ثبت خطای فراهم‌کننده با traceback بدون متن استثنا (F-29 + AD-6).
+
+    `log.exception` متن استثنا را در traceback می‌گذارد، و متن `URLError`/`HTTPError`
+    می‌تواند URL یا کلید API را داشته باشد (تست test_sms::credentials این نشت را گرفت).
+    پس نوع استثنا و قاب‌های traceback ثبت می‌شوند، متن آن پنهان می‌شود.
+    """
+    redacted = RuntimeError("پیام استثنا پنهان شد (ممکن است کلید یا URL در آن باشد)")
+    log.error(message, *args, exc_info=(type(exc), redacted, exc.__traceback__))
+
+
 class SmsProvider(Protocol):
     name: str
 
@@ -49,7 +60,7 @@ class WebMagfaProvider:
                 "text": text,
             }
         ).encode()
-        req = urllib.request.Request(
+        req = urllib.request.Request(  # noqa: S310 — F-29: https در خط بعد اجبار می‌شود
             settings.sms_api_url,
             data=payload,
             headers={"Content-Type": "application/json"},
@@ -58,18 +69,20 @@ class WebMagfaProvider:
             log.error("[SMS] sms_api_url must be https")
             return False
         try:
-            with urllib.request.urlopen(  # nosec B310,nosemgrep — URL از تنظیمات اپراتور + اجبار https
+            with urllib.request.urlopen(  # nosec B310,nosemgrep  # noqa: S310 — F-29: URL از تنظیمات اپراتور + https اجباری
                 req, timeout=10
             ) as resp:
                 return 200 <= resp.status < 300
         except urllib.error.HTTPError as exc:
-            log.error("[SMS-MAGFA] provider returned HTTP %s", exc.code)
+            _log_provider_failure("[SMS-MAGFA] provider returned HTTP %s", exc.code, exc=exc)
             return False
         except urllib.error.URLError as exc:
-            log.error("[SMS-MAGFA] network request failed (%s)", type(exc.reason).__name__)
+            _log_provider_failure(
+                "[SMS-MAGFA] network request failed (%s)", type(exc.reason).__name__, exc=exc
+            )
             return False
-        except TimeoutError:
-            log.error("[SMS-MAGFA] request timed out")
+        except TimeoutError as exc:
+            _log_provider_failure("[SMS-MAGFA] request timed out", exc=exc)
             return False
 
 
@@ -91,18 +104,20 @@ class KavenegarProvider:
             log.error("[SMS] sms_api_url must be https")
             return False
         try:
-            with urllib.request.urlopen(  # nosec B310,nosemgrep — URL از تنظیمات اپراتور + اجبار https
+            with urllib.request.urlopen(  # nosec B310,nosemgrep  # noqa: S310 — F-29: URL از تنظیمات اپراتور + https اجباری
                 url, data=data, timeout=10
             ) as resp:
                 return 200 <= resp.status < 300
         except urllib.error.HTTPError as exc:
-            log.error("[SMS-KAVENEGAR] provider returned HTTP %s", exc.code)
+            _log_provider_failure("[SMS-KAVENEGAR] provider returned HTTP %s", exc.code, exc=exc)
             return False
         except urllib.error.URLError as exc:
-            log.error("[SMS-KAVENEGAR] network request failed (%s)", type(exc.reason).__name__)
+            _log_provider_failure(
+                "[SMS-KAVENEGAR] network request failed (%s)", type(exc.reason).__name__, exc=exc
+            )
             return False
-        except TimeoutError:
-            log.error("[SMS-KAVENEGAR] request timed out")
+        except TimeoutError as exc:
+            _log_provider_failure("[SMS-KAVENEGAR] request timed out", exc=exc)
             return False
 
 

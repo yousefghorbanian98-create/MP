@@ -1,0 +1,7 @@
+== docker info (T-39 environment check)
+/bin/bash: line 1: docker: command not found
+docker_rc=127
+ls: cannot access '/var/run/docker.sock': No such file or directory
+== postgres/valkey reachable?
+psql: not installed
+valkey/redis-cli: not installed

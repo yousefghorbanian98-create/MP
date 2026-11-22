@@ -1,0 +1,17 @@
+cells=872 elapsed=76.0s relogins=0 tokens_live=True
+status: {'422': 531, '404': 220, '200': 55, '403': 34, '400': 24, '409': 8}
+finding_counts: {'server_errors_5xx': 0, 'leaked_stacktrace': 0, 'unexpected_2xx_on_bad_id': 48, 'bad_error_envelope': 0, 'revoked_token_cells': 0, 'id_guard_rejections': 70, 'fastapi_default_detail': 0}
+  unexpected_2xx_on_bad_id: {"role": "admin", "method": "GET", "path": "/api/v1/assessments/jp7/member/{member_id}/trend", "injected": "-1", "status": 200}
+  unexpected_2xx_on_bad_id: {"role": "admin", "method": "GET", "path": "/api/v1/assessments/jp7/member/{member_id}/trend", "injected": "0", "status": 200}
+  unexpected_2xx_on_bad_id: {"role": "admin", "method": "GET", "path": "/api/v1/assessments/jp7/member/{member_id}/trend", "injected": "-9223372036854775808", "status": 200}
+  unexpected_2xx_on_bad_id: {"role": "admin", "method": "GET", "path": "/api/v1/assessments/jp7/member/{member_id}/trend", "injected": "-0", "status": 200}
+  unexpected_2xx_on_bad_id: {"role": "admin", "method": "GET", "path": "/api/v1/assessments/member/{member_id}", "injected": "-1", "status": 200}
+  unexpected_2xx_on_bad_id: {"role": "admin", "method": "GET", "path": "/api/v1/assessments/member/{member_id}", "injected": "0", "status": 200}
+  unexpected_2xx_on_bad_id: {"role": "admin", "method": "GET", "path": "/api/v1/assessments/member/{member_id}", "injected": "-9223372036854775808", "status": 200}
+  unexpected_2xx_on_bad_id: {"role": "admin", "method": "GET", "path": "/api/v1/assessments/member/{member_id}", "injected": "-0", "status": 200}
+  unexpected_2xx_on_bad_id: {"role": "admin", "method": "GET", "path": "/api/v1/axis-assessments/member/{member_id}", "injected": "-1", "status": 200}
+  unexpected_2xx_on_bad_id: {"role": "admin", "method": "GET", "path": "/api/v1/axis-assessments/member/{member_id}", "injected": "0", "status": 200}
+  unexpected_2xx_on_bad_id: {"role": "admin", "method": "GET", "path": "/api/v1/axis-assessments/member/{member_id}", "injected": "-9223372036854775808", "status": 200}
+  unexpected_2xx_on_bad_id: {"role": "admin", "method": "GET", "path": "/api/v1/axis-assessments/member/{member_id}", "injected": "-0", "status": 200}
+canary_after: [{"role": "admin", "path": "/api/v1/members/me", "status": 200, "body_head": "{\"id\":1,\"user_id\":5,\"full_name\":\"کاربر مصنوعی admin\",\"phone\":\"09120000904\",\"role\":\"admin\",\"goal\":\"\",\"gender\":\"unknown\",\"height_cm\":null,\"constraints\":\"[]\"}", "token_is_live": true}, {"role": "
+wrote /tmp/run/audit-31-before/contract-invalid-authed.json

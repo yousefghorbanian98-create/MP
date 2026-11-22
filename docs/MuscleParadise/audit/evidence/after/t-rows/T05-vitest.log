@@ -1,0 +1,2322 @@
+
+ RUN  v3.2.7 /home/user/MP/mp-app/studio
+
+ ✓ tests/apiCoverage.test.ts (4 tests) 589ms
+ ✓ tests/session.test.ts (16 tests) 220ms
+ ✓ tests/paymentPanel.test.tsx (12 tests) 1981ms
+   ✓ PaymentPanel (Q6) > جریان کامل حضوری: ساخت → تأیید دریافت در پذیرش  400ms
+stderr | tests/shopPage.test.tsx > صفحهٔ فروشگاه — سطوح دسترسی و جریان خرید > مالک کنسول کامل (محصول/قیمت/درگاه) را می‌بیند
+Warning: An update to Shop inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Shop (/home/user/MP/mp-app/studio/src/pages/Shop.tsx:24:46)
+
+stderr | tests/shopPage.test.tsx > صفحهٔ فروشگاه — سطوح دسترسی و جریان خرید > تسویه دیالوگ تأیید می‌خواهد و سپس POST /shop/checkout می‌زند
+Warning: An update to Shop inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Shop (/home/user/MP/mp-app/studio/src/pages/Shop.tsx:24:46)
+
+stderr | tests/shopPage.test.tsx > صفحهٔ فروشگاه — سطوح دسترسی و جریان خرید > تسویه دیالوگ تأیید می‌خواهد و سپس POST /shop/checkout می‌زند
+Warning: An update to Shop inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Shop (/home/user/MP/mp-app/studio/src/pages/Shop.tsx:24:46)
+
+stderr | tests/shopPage.test.tsx > صفحهٔ فروشگاه — سطوح دسترسی و جریان خرید > تسویه دیالوگ تأیید می‌خواهد و سپس POST /shop/checkout می‌زند
+Error: Not implemented: window.getComputedStyle(elt, pseudoElt)
+    at module.exports (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at window.getComputedStyle (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/Window.js:895:7)
+    at measureScrollbarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:35:32)
+    at getTargetScrollBarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:83:10)
+    at /home/user/MP/mp-app/studio/node_modules/@rc-component/portal/lib/useScrollLocker.js:27:72
+    at /home/user/MP/mp-app/studio/node_modules/rc-util/lib/hooks/useLayoutEffect.js:18:12
+    at commitHookEffectListMount (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24917:7) [90mundefined[39m
+
+stderr | tests/shopPage.test.tsx > صفحهٔ فروشگاه — سطوح دسترسی و جریان خرید > تسویه دیالوگ تأیید می‌خواهد و سپس POST /shop/checkout می‌زند
+Warning: An update to Shop inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Shop (/home/user/MP/mp-app/studio/src/pages/Shop.tsx:24:46)
+
+stderr | tests/shopPage.test.tsx > صفحهٔ فروشگاه — سطوح دسترسی و جریان خرید > شمارهٔ کارت فقط ماسک‌شده روی صفحه می‌آید
+Warning: An update to Shop inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Shop (/home/user/MP/mp-app/studio/src/pages/Shop.tsx:24:46)
+
+stderr | tests/shopPage.test.tsx > صفحهٔ فروشگاه — سطوح دسترسی و جریان خرید > دکمهٔ رسید، رسید واقعی سفارش را باز می‌کند
+Warning: An update to Shop inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Shop (/home/user/MP/mp-app/studio/src/pages/Shop.tsx:24:46)
+
+stderr | tests/shopPage.test.tsx > صفحهٔ فروشگاه — سطوح دسترسی و جریان خرید > دکمهٔ رسید، رسید واقعی سفارش را باز می‌کند
+Error: Not implemented: window.getComputedStyle(elt, pseudoElt)
+    at module.exports (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at window.getComputedStyle (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/Window.js:895:7)
+    at measureScrollbarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:35:32)
+    at getTargetScrollBarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:83:10)
+    at /home/user/MP/mp-app/studio/node_modules/@rc-component/portal/lib/useScrollLocker.js:27:72
+    at /home/user/MP/mp-app/studio/node_modules/rc-util/lib/hooks/useLayoutEffect.js:18:12
+    at commitHookEffectListMount (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24917:7) [90mundefined[39m
+
+ ✓ tests/shopPage.test.tsx (8 tests) 2857ms
+   ✓ صفحهٔ فروشگاه — سطوح دسترسی و جریان خرید > تسویه دیالوگ تأیید می‌خواهد و سپس POST /shop/checkout می‌زند  634ms
+   ✓ صفحهٔ فروشگاه — سطوح دسترسی و جریان خرید > دکمهٔ رسید، رسید واقعی سفارش را باز می‌کند  367ms
+   ✓ صفحهٔ فروشگاه — سطوح دسترسی و جریان خرید > فروشگاه نمایش‌محور: با پاسخ بستهٔ سرور، سبد و دکمهٔ خرید پنهان می‌شوند  380ms
+   ✓ صفحهٔ فروشگاه — سطوح دسترسی و جریان خرید > فروشگاه نمایش‌محور: با پاسخ باز سرور، دکمهٔ خرید برمی‌گردد  1063ms
+stderr | tests/expensesPage.test.tsx > Expenses (QF-06) > loads the period total on mount with the auth header
+Error: Not implemented: window.getComputedStyle(elt, pseudoElt)
+    at module.exports (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at window.getComputedStyle (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/Window.js:895:7)
+    at measureScrollbarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:35:32)
+    at getTargetScrollBarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:83:10)
+    at /home/user/MP/mp-app/studio/node_modules/rc-table/lib/Table.js:427:71
+    at /home/user/MP/mp-app/studio/node_modules/rc-util/lib/hooks/useLayoutEffect.js:18:12
+    at commitHookEffectListMount (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24917:7) [90mundefined[39m
+
+stderr | tests/expensesPage.test.tsx > Expenses (QF-06) > requires a reason before sending an edit
+Error: Not implemented: window.getComputedStyle(elt, pseudoElt)
+    at module.exports (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at window.getComputedStyle (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/Window.js:895:7)
+    at measureScrollbarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:35:32)
+    at getTargetScrollBarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:83:10)
+    at /home/user/MP/mp-app/studio/node_modules/rc-table/lib/Table.js:427:71
+    at /home/user/MP/mp-app/studio/node_modules/rc-util/lib/hooks/useLayoutEffect.js:18:12
+    at commitHookEffectListMount (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24917:7) [90mundefined[39m
+
+stderr | tests/expensesPage.test.tsx > Expenses (QF-06) > requires a reason before sending an edit
+Error: Not implemented: window.getComputedStyle(elt, pseudoElt)
+    at module.exports (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at window.getComputedStyle (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/Window.js:895:7)
+    at measureScrollbarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:35:32)
+    at getTargetScrollBarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:83:10)
+    at /home/user/MP/mp-app/studio/node_modules/@rc-component/portal/lib/useScrollLocker.js:27:72
+    at /home/user/MP/mp-app/studio/node_modules/rc-util/lib/hooks/useLayoutEffect.js:18:12
+    at commitHookEffectListMount (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24917:7) [90mundefined[39m
+
+stderr | tests/expensesPage.test.tsx > Expenses (QF-06) > sends the edit with amount and reason, then reloads
+Error: Not implemented: window.getComputedStyle(elt, pseudoElt)
+    at module.exports (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at window.getComputedStyle (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/Window.js:895:7)
+    at measureScrollbarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:35:32)
+    at getTargetScrollBarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:83:10)
+    at /home/user/MP/mp-app/studio/node_modules/rc-table/lib/Table.js:427:71
+    at /home/user/MP/mp-app/studio/node_modules/rc-util/lib/hooks/useLayoutEffect.js:18:12
+    at commitHookEffectListMount (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24917:7) [90mundefined[39m
+
+stderr | tests/expensesPage.test.tsx > Expenses (QF-06) > sends the edit with amount and reason, then reloads
+Error: Not implemented: window.getComputedStyle(elt, pseudoElt)
+    at module.exports (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at window.getComputedStyle (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/Window.js:895:7)
+    at measureScrollbarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:35:32)
+    at getTargetScrollBarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:83:10)
+    at /home/user/MP/mp-app/studio/node_modules/@rc-component/portal/lib/useScrollLocker.js:27:72
+    at /home/user/MP/mp-app/studio/node_modules/rc-util/lib/hooks/useLayoutEffect.js:18:12
+    at commitHookEffectListMount (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24917:7) [90mundefined[39m
+
+stderr | tests/expensesPage.test.tsx > Expenses (QF-06) > sends a soft delete with the prompted reason
+Error: Not implemented: window.getComputedStyle(elt, pseudoElt)
+    at module.exports (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at window.getComputedStyle (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/Window.js:895:7)
+    at measureScrollbarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:35:32)
+    at getTargetScrollBarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:83:10)
+    at /home/user/MP/mp-app/studio/node_modules/rc-table/lib/Table.js:427:71
+    at /home/user/MP/mp-app/studio/node_modules/rc-util/lib/hooks/useLayoutEffect.js:18:12
+    at commitHookEffectListMount (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24917:7) [90mundefined[39m
+
+stderr | tests/expensesPage.test.tsx > Expenses (QF-06) > sends a soft delete with the prompted reason
+Error: Not implemented: window.getComputedStyle(elt, pseudoElt)
+    at module.exports (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at window.getComputedStyle (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/Window.js:895:7)
+    at measureScrollbarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:35:32)
+    at getTargetScrollBarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:83:10)
+    at /home/user/MP/mp-app/studio/node_modules/@rc-component/portal/lib/useScrollLocker.js:27:72
+    at /home/user/MP/mp-app/studio/node_modules/rc-util/lib/hooks/useLayoutEffect.js:18:12
+    at commitHookEffectListMount (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24917:7) [90mundefined[39m
+
+stderr | tests/expensesPage.test.tsx > Expenses (QF-06) > does not delete when the reason prompt is cancelled
+Error: Not implemented: window.getComputedStyle(elt, pseudoElt)
+    at module.exports (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at window.getComputedStyle (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/Window.js:895:7)
+    at measureScrollbarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:35:32)
+    at getTargetScrollBarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:83:10)
+    at /home/user/MP/mp-app/studio/node_modules/rc-table/lib/Table.js:427:71
+    at /home/user/MP/mp-app/studio/node_modules/rc-util/lib/hooks/useLayoutEffect.js:18:12
+    at commitHookEffectListMount (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24917:7) [90mundefined[39m
+
+stderr | tests/expensesPage.test.tsx > Expenses (QF-06) > does not delete when the reason prompt is cancelled
+Error: Not implemented: window.getComputedStyle(elt, pseudoElt)
+    at module.exports (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at window.getComputedStyle (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/Window.js:895:7)
+    at measureScrollbarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:35:32)
+    at getTargetScrollBarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:83:10)
+    at /home/user/MP/mp-app/studio/node_modules/@rc-component/portal/lib/useScrollLocker.js:27:72
+    at /home/user/MP/mp-app/studio/node_modules/rc-util/lib/hooks/useLayoutEffect.js:18:12
+    at commitHookEffectListMount (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24917:7) [90mundefined[39m
+
+ ✓ tests/expensesPage.test.tsx (8 tests) 17385ms
+   ✓ Expenses (QF-06) > loads the period total on mount with the auth header  1055ms
+   ✓ Expenses (QF-06) > posts a new expense with the auth header and reloads the period  729ms
+   ✓ Expenses (QF-06) > refuses an amount below 1,000 rial without calling the API  510ms
+   ✓ Expenses (QF-06) > requires a reason before sending an edit  4106ms
+   ✓ Expenses (QF-06) > sends the edit with amount and reason, then reloads  3691ms
+   ✓ Expenses (QF-06) > sends a soft delete with the prompted reason  3508ms
+   ✓ Expenses (QF-06) > does not delete when the reason prompt is cancelled  3708ms
+stderr | tests/nutritionPage.test.tsx > Nutrition page (G5) > says nothing was logged rather than showing a zero day
+Warning: An update to Nutrition inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Nutrition (/home/user/MP/mp-app/studio/src/pages/Nutrition.tsx:31:42)
+
+stderr | tests/nutritionPage.test.tsx > Nutrition page (G5) > says nothing was logged rather than showing a zero day
+Warning: An update to Nutrition inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Nutrition (/home/user/MP/mp-app/studio/src/pages/Nutrition.tsx:31:42)
+Warning: An update to Nutrition inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Nutrition (/home/user/MP/mp-app/studio/src/pages/Nutrition.tsx:31:42)
+
+stderr | tests/nutritionPage.test.tsx > Nutrition page (G5) > does not invent a target without an approved plan
+Warning: An update to Nutrition inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Nutrition (/home/user/MP/mp-app/studio/src/pages/Nutrition.tsx:31:42)
+
+stderr | tests/nutritionPage.test.tsx > Nutrition page (G5) > does not invent a target without an approved plan
+Warning: An update to Nutrition inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Nutrition (/home/user/MP/mp-app/studio/src/pages/Nutrition.tsx:31:42)
+Warning: An update to Nutrition inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Nutrition (/home/user/MP/mp-app/studio/src/pages/Nutrition.tsx:31:42)
+
+stderr | tests/nutritionPage.test.tsx > Nutrition page (G5) > shows the dry-weight warning from the server
+Warning: An update to Nutrition inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Nutrition (/home/user/MP/mp-app/studio/src/pages/Nutrition.tsx:31:42)
+
+stderr | tests/nutritionPage.test.tsx > Nutrition page (G5) > shows the dry-weight warning from the server
+Warning: An update to Nutrition inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Nutrition (/home/user/MP/mp-app/studio/src/pages/Nutrition.tsx:31:42)
+Warning: An update to Nutrition inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Nutrition (/home/user/MP/mp-app/studio/src/pages/Nutrition.tsx:31:42)
+
+stderr | tests/nutritionPage.test.tsx > Nutrition page (G5) > searches the real catalog and reveals the dry flag
+Warning: An update to Nutrition inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Nutrition (/home/user/MP/mp-app/studio/src/pages/Nutrition.tsx:31:42)
+
+stderr | tests/nutritionPage.test.tsx > Nutrition page (G5) > searches the real catalog and reveals the dry flag
+Warning: An update to Nutrition inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Nutrition (/home/user/MP/mp-app/studio/src/pages/Nutrition.tsx:31:42)
+Warning: An update to Nutrition inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Nutrition (/home/user/MP/mp-app/studio/src/pages/Nutrition.tsx:31:42)
+
+stderr | tests/nutritionPage.test.tsx > Nutrition page (G5) > reports an empty search honestly
+Warning: An update to Nutrition inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Nutrition (/home/user/MP/mp-app/studio/src/pages/Nutrition.tsx:31:42)
+
+stderr | tests/nutritionPage.test.tsx > Nutrition page (G5) > reports an empty search honestly
+Warning: An update to Nutrition inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Nutrition (/home/user/MP/mp-app/studio/src/pages/Nutrition.tsx:31:42)
+Warning: An update to Nutrition inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Nutrition (/home/user/MP/mp-app/studio/src/pages/Nutrition.tsx:31:42)
+
+stderr | tests/nutritionPage.test.tsx > Nutrition page (G5) > posts a real log entry and shows the confirmation
+Warning: An update to Nutrition inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Nutrition (/home/user/MP/mp-app/studio/src/pages/Nutrition.tsx:31:42)
+
+stderr | tests/nutritionPage.test.tsx > Nutrition page (G5) > posts a real log entry and shows the confirmation
+Warning: An update to Nutrition inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Nutrition (/home/user/MP/mp-app/studio/src/pages/Nutrition.tsx:31:42)
+Warning: An update to Nutrition inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Nutrition (/home/user/MP/mp-app/studio/src/pages/Nutrition.tsx:31:42)
+
+stderr | tests/nutritionPage.test.tsx > Nutrition page (G5) > surfaces server-side rejections instead of a fake success
+Warning: An update to Nutrition inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Nutrition (/home/user/MP/mp-app/studio/src/pages/Nutrition.tsx:31:42)
+
+stderr | tests/nutritionPage.test.tsx > Nutrition page (G5) > surfaces server-side rejections instead of a fake success
+Warning: An update to Nutrition inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Nutrition (/home/user/MP/mp-app/studio/src/pages/Nutrition.tsx:31:42)
+Warning: An update to Nutrition inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Nutrition (/home/user/MP/mp-app/studio/src/pages/Nutrition.tsx:31:42)
+
+stderr | tests/nutritionPage.test.tsx > Nutrition page (G5) > keeps submit disabled until a food is selected
+Warning: An update to Nutrition inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Nutrition (/home/user/MP/mp-app/studio/src/pages/Nutrition.tsx:31:42)
+
+stderr | tests/nutritionPage.test.tsx > Nutrition page (G5) > keeps submit disabled until a food is selected
+Warning: An update to Nutrition inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Nutrition (/home/user/MP/mp-app/studio/src/pages/Nutrition.tsx:31:42)
+Warning: An update to Nutrition inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Nutrition (/home/user/MP/mp-app/studio/src/pages/Nutrition.tsx:31:42)
+
+ ✓ tests/nutritionPage.test.tsx (9 tests) 1172ms
+ ✓ tests/authFlow.test.tsx (3 tests) 242ms
+stderr | tests/adminPermissions.test.tsx > مجوز شخصی ادمین > مجوزهای موجود را با وضعیت مؤثر از سرور می‌خواند و کاربر مالک را در فهرست هدف نمی‌آورد
+Error: Not implemented: window.getComputedStyle(elt, pseudoElt)
+    at module.exports (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at window.getComputedStyle (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/Window.js:895:7)
+    at measureScrollbarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:35:32)
+    at getTargetScrollBarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:83:10)
+    at /home/user/MP/mp-app/studio/node_modules/rc-table/lib/Table.js:427:71
+    at /home/user/MP/mp-app/studio/node_modules/rc-util/lib/hooks/useLayoutEffect.js:18:12
+    at commitHookEffectListMount (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24917:7) [90mundefined[39m
+
+stderr | tests/adminPermissions.test.tsx > مجوز شخصی ادمین > اعطای مجوز را با کلید، مدت و شناسهٔ کاربر می‌فرستد و بعد از آن از سرور بازخوانی می‌کند
+Error: Not implemented: window.getComputedStyle(elt, pseudoElt)
+    at module.exports (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at window.getComputedStyle (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/Window.js:895:7)
+    at measureScrollbarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:35:32)
+    at getTargetScrollBarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:83:10)
+    at /home/user/MP/mp-app/studio/node_modules/rc-table/lib/Table.js:427:71
+    at /home/user/MP/mp-app/studio/node_modules/rc-util/lib/hooks/useLayoutEffect.js:18:12
+    at commitHookEffectListMount (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24917:7) [90mundefined[39m
+
+stderr | tests/adminPermissions.test.tsx > مجوز شخصی ادمین > سلب مجوز را با DELETE می‌فرستد و وضعیت تازه را از سرور می‌گیرد
+Error: Not implemented: window.getComputedStyle(elt, pseudoElt)
+    at module.exports (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at window.getComputedStyle (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/Window.js:895:7)
+    at measureScrollbarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:35:32)
+    at getTargetScrollBarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:83:10)
+    at /home/user/MP/mp-app/studio/node_modules/rc-table/lib/Table.js:427:71
+    at /home/user/MP/mp-app/studio/node_modules/rc-util/lib/hooks/useLayoutEffect.js:18:12
+    at commitHookEffectListMount (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24917:7) [90mundefined[39m
+
+ ✓ tests/adminPermissions.test.tsx (4 tests) 4053ms
+   ✓ مجوز شخصی ادمین > مجوزهای موجود را با وضعیت مؤثر از سرور می‌خواند و کاربر مالک را در فهرست هدف نمی‌آورد  764ms
+   ✓ مجوز شخصی ادمین > اعطای مجوز را با کلید، مدت و شناسهٔ کاربر می‌فرستد و بعد از آن از سرور بازخوانی می‌کند  963ms
+   ✓ مجوز شخصی ادمین > سلب مجوز را با DELETE می‌فرستد و وضعیت تازه را از سرور می‌گیرد  2322ms
+stderr | tests/segmentalPanel.test.tsx > SegmentalPanel (M54-c1) > always states that this is NOT body composition
+Warning: An update to SegmentalPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at SegmentalPanel (/home/user/MP/mp-app/studio/src/components/SegmentalPanel.tsx:54:50)
+
+stderr | tests/segmentalPanel.test.tsx > SegmentalPanel (M54-c1) > always states that this is NOT body composition
+Warning: An update to SegmentalPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at SegmentalPanel (/home/user/MP/mp-app/studio/src/components/SegmentalPanel.tsx:54:50)
+Warning: An update to SegmentalPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at SegmentalPanel (/home/user/MP/mp-app/studio/src/components/SegmentalPanel.tsx:54:50)
+Warning: An update to SegmentalPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at SegmentalPanel (/home/user/MP/mp-app/studio/src/components/SegmentalPanel.tsx:54:50)
+
+stderr | tests/segmentalPanel.test.tsx > SegmentalPanel (M54-c1) > shows real ratios and renders an unknown ratio as نامعلوم
+Warning: An update to SegmentalPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at SegmentalPanel (/home/user/MP/mp-app/studio/src/components/SegmentalPanel.tsx:54:50)
+
+stderr | tests/segmentalPanel.test.tsx > SegmentalPanel (M54-c1) > shows real ratios and renders an unknown ratio as نامعلوم
+Warning: An update to SegmentalPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at SegmentalPanel (/home/user/MP/mp-app/studio/src/components/SegmentalPanel.tsx:54:50)
+Warning: An update to SegmentalPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at SegmentalPanel (/home/user/MP/mp-app/studio/src/components/SegmentalPanel.tsx:54:50)
+
+stderr | tests/segmentalPanel.test.tsx > SegmentalPanel (M54-c1) > reports asymmetry with both sides
+Warning: An update to SegmentalPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at SegmentalPanel (/home/user/MP/mp-app/studio/src/components/SegmentalPanel.tsx:54:50)
+
+stderr | tests/segmentalPanel.test.tsx > SegmentalPanel (M54-c1) > reports asymmetry with both sides
+Warning: An update to SegmentalPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at SegmentalPanel (/home/user/MP/mp-app/studio/src/components/SegmentalPanel.tsx:54:50)
+Warning: An update to SegmentalPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at SegmentalPanel (/home/user/MP/mp-app/studio/src/components/SegmentalPanel.tsx:54:50)
+
+stderr | tests/segmentalPanel.test.tsx > SegmentalPanel (M54-c1) > does not render asymmetry rows when a side is missing
+Warning: An update to SegmentalPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at SegmentalPanel (/home/user/MP/mp-app/studio/src/components/SegmentalPanel.tsx:54:50)
+
+stderr | tests/segmentalPanel.test.tsx > SegmentalPanel (M54-c1) > does not render asymmetry rows when a side is missing
+Warning: An update to SegmentalPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at SegmentalPanel (/home/user/MP/mp-app/studio/src/components/SegmentalPanel.tsx:54:50)
+Warning: An update to SegmentalPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at SegmentalPanel (/home/user/MP/mp-app/studio/src/components/SegmentalPanel.tsx:54:50)
+
+stderr | tests/segmentalPanel.test.tsx > SegmentalPanel (M54-c1) > refuses to submit an empty form
+Warning: An update to SegmentalPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at SegmentalPanel (/home/user/MP/mp-app/studio/src/components/SegmentalPanel.tsx:54:50)
+
+stderr | tests/segmentalPanel.test.tsx > SegmentalPanel (M54-c1) > refuses to submit an empty form
+Warning: An update to SegmentalPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at SegmentalPanel (/home/user/MP/mp-app/studio/src/components/SegmentalPanel.tsx:54:50)
+Warning: An update to SegmentalPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at SegmentalPanel (/home/user/MP/mp-app/studio/src/components/SegmentalPanel.tsx:54:50)
+
+stderr | tests/segmentalPanel.test.tsx > SegmentalPanel (M54-c1) > refuses a nonsensical circumference without calling the API
+Warning: An update to SegmentalPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at SegmentalPanel (/home/user/MP/mp-app/studio/src/components/SegmentalPanel.tsx:54:50)
+
+stderr | tests/segmentalPanel.test.tsx > SegmentalPanel (M54-c1) > refuses a nonsensical circumference without calling the API
+Warning: An update to SegmentalPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at SegmentalPanel (/home/user/MP/mp-app/studio/src/components/SegmentalPanel.tsx:54:50)
+Warning: An update to SegmentalPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at SegmentalPanel (/home/user/MP/mp-app/studio/src/components/SegmentalPanel.tsx:54:50)
+
+stderr | tests/segmentalPanel.test.tsx > SegmentalPanel (M54-c1) > sends only the filled fields and reloads the report
+Warning: An update to SegmentalPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at SegmentalPanel (/home/user/MP/mp-app/studio/src/components/SegmentalPanel.tsx:54:50)
+
+stderr | tests/segmentalPanel.test.tsx > SegmentalPanel (M54-c1) > sends only the filled fields and reloads the report
+Warning: An update to SegmentalPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at SegmentalPanel (/home/user/MP/mp-app/studio/src/components/SegmentalPanel.tsx:54:50)
+Warning: An update to SegmentalPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at SegmentalPanel (/home/user/MP/mp-app/studio/src/components/SegmentalPanel.tsx:54:50)
+
+stderr | tests/segmentalPanel.test.tsx > SegmentalPanel (M54-c1) > shows the member-facing reason when there is no measurement yet
+Warning: An update to SegmentalPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at SegmentalPanel (/home/user/MP/mp-app/studio/src/components/SegmentalPanel.tsx:54:50)
+
+stderr | tests/segmentalPanel.test.tsx > SegmentalPanel (M54-c1) > shows the member-facing reason when there is no measurement yet
+Warning: An update to SegmentalPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at SegmentalPanel (/home/user/MP/mp-app/studio/src/components/SegmentalPanel.tsx:54:50)
+Warning: An update to SegmentalPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at SegmentalPanel (/home/user/MP/mp-app/studio/src/components/SegmentalPanel.tsx:54:50)
+
+stderr | tests/segmentalPanel.test.tsx > SegmentalPanel (M54-c1) > shows the trend headline once two measurements exist
+Warning: An update to SegmentalPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at SegmentalPanel (/home/user/MP/mp-app/studio/src/components/SegmentalPanel.tsx:54:50)
+
+stderr | tests/segmentalPanel.test.tsx > SegmentalPanel (M54-c1) > shows the trend headline once two measurements exist
+Warning: An update to SegmentalPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at SegmentalPanel (/home/user/MP/mp-app/studio/src/components/SegmentalPanel.tsx:54:50)
+Warning: An update to SegmentalPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at SegmentalPanel (/home/user/MP/mp-app/studio/src/components/SegmentalPanel.tsx:54:50)
+
+ ✓ tests/segmentalPanel.test.tsx (10 tests) 267ms
+stderr | tests/chatPage.test.tsx > Chat (G8) > lists conversations and loads the first one's messages
+Warning: An update to Chat inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Chat (/home/user/MP/mp-app/studio/src/pages/Chat.tsx:18:50)
+
+stderr | tests/chatPage.test.tsx > Chat (G8) > lists conversations and loads the first one's messages
+Warning: An update to Chat inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Chat (/home/user/MP/mp-app/studio/src/pages/Chat.tsx:18:50)
+Warning: An update to Chat inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Chat (/home/user/MP/mp-app/studio/src/pages/Chat.tsx:18:50)
+
+stderr | tests/chatPage.test.tsx > Chat (G8) > sends a message and shows it without a reload
+Warning: An update to Chat inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Chat (/home/user/MP/mp-app/studio/src/pages/Chat.tsx:18:50)
+
+stderr | tests/chatPage.test.tsx > Chat (G8) > sends a message and shows it without a reload
+Warning: An update to Chat inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Chat (/home/user/MP/mp-app/studio/src/pages/Chat.tsx:18:50)
+Warning: An update to Chat inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Chat (/home/user/MP/mp-app/studio/src/pages/Chat.tsx:18:50)
+
+stderr | tests/chatPage.test.tsx > Chat (G8) > keeps the draft when sending fails
+Warning: An update to Chat inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Chat (/home/user/MP/mp-app/studio/src/pages/Chat.tsx:18:50)
+
+stderr | tests/chatPage.test.tsx > Chat (G8) > keeps the draft when sending fails
+Warning: An update to Chat inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Chat (/home/user/MP/mp-app/studio/src/pages/Chat.tsx:18:50)
+Warning: An update to Chat inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Chat (/home/user/MP/mp-app/studio/src/pages/Chat.tsx:18:50)
+
+stderr | tests/chatPage.test.tsx > Chat (G8) > disables send on an empty or whitespace-only draft
+Warning: An update to Chat inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Chat (/home/user/MP/mp-app/studio/src/pages/Chat.tsx:18:50)
+
+stderr | tests/chatPage.test.tsx > Chat (G8) > disables send on an empty or whitespace-only draft
+Warning: An update to Chat inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Chat (/home/user/MP/mp-app/studio/src/pages/Chat.tsx:18:50)
+Warning: An update to Chat inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Chat (/home/user/MP/mp-app/studio/src/pages/Chat.tsx:18:50)
+
+stderr | tests/chatPage.test.tsx > Chat (G8) > marks messages read and clears the counter
+Warning: An update to Chat inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Chat (/home/user/MP/mp-app/studio/src/pages/Chat.tsx:18:50)
+
+stderr | tests/chatPage.test.tsx > Chat (G8) > marks messages read and clears the counter
+Warning: An update to Chat inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Chat (/home/user/MP/mp-app/studio/src/pages/Chat.tsx:18:50)
+Warning: An update to Chat inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Chat (/home/user/MP/mp-app/studio/src/pages/Chat.tsx:18:50)
+
+stderr | tests/chatPage.test.tsx > Chat (G8) > asks for a member before starting a conversation
+Warning: An update to Chat inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Chat (/home/user/MP/mp-app/studio/src/pages/Chat.tsx:18:50)
+
+stderr | tests/chatPage.test.tsx > Chat (G8) > starts a conversation and selects it
+Warning: An update to Chat inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Chat (/home/user/MP/mp-app/studio/src/pages/Chat.tsx:18:50)
+
+stderr | tests/chatPage.test.tsx > Chat (G8) > starts a conversation and selects it
+Warning: An update to Chat inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Chat (/home/user/MP/mp-app/studio/src/pages/Chat.tsx:18:50)
+Warning: An update to Chat inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Chat (/home/user/MP/mp-app/studio/src/pages/Chat.tsx:18:50)
+
+ ✓ tests/chatPage.test.tsx (7 tests) 263ms
+stderr | tests/ledgerPanel.test.tsx > LedgerPanel (QF-05) > loads the ledger for the given member with the auth header
+Error: Not implemented: window.getComputedStyle(elt, pseudoElt)
+    at module.exports (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at window.getComputedStyle (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/Window.js:895:7)
+    at measureScrollbarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:35:32)
+    at getTargetScrollBarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:83:10)
+    at /home/user/MP/mp-app/studio/node_modules/rc-table/lib/Table.js:427:71
+    at /home/user/MP/mp-app/studio/node_modules/rc-util/lib/hooks/useLayoutEffect.js:18:12
+    at commitHookEffectListMount (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24917:7) [90mundefined[39m
+
+stderr | tests/ledgerPanel.test.tsx > LedgerPanel (QF-05) > shows a mismatch as an alert-worthy difference, not as matched
+Error: Not implemented: window.getComputedStyle(elt, pseudoElt)
+    at module.exports (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at window.getComputedStyle (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/Window.js:895:7)
+    at measureScrollbarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:35:32)
+    at getTargetScrollBarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:83:10)
+    at /home/user/MP/mp-app/studio/node_modules/rc-table/lib/Table.js:427:71
+    at /home/user/MP/mp-app/studio/node_modules/rc-util/lib/hooks/useLayoutEffect.js:18:12
+    at commitHookEffectListMount (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24917:7) [90mundefined[39m
+
+stderr | tests/ledgerPanel.test.tsx > LedgerPanel (QF-05) > requires a reason before reversing an entry
+Error: Not implemented: window.getComputedStyle(elt, pseudoElt)
+    at module.exports (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at window.getComputedStyle (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/Window.js:895:7)
+    at measureScrollbarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:35:32)
+    at getTargetScrollBarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:83:10)
+    at /home/user/MP/mp-app/studio/node_modules/rc-table/lib/Table.js:427:71
+    at /home/user/MP/mp-app/studio/node_modules/rc-util/lib/hooks/useLayoutEffect.js:18:12
+    at commitHookEffectListMount (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24917:7) [90mundefined[39m
+
+stderr | tests/ledgerPanel.test.tsx > LedgerPanel (QF-05) > requires a reason before reversing an entry
+Error: Not implemented: window.getComputedStyle(elt, pseudoElt)
+    at module.exports (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at window.getComputedStyle (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/Window.js:895:7)
+    at measureScrollbarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:35:32)
+    at getTargetScrollBarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:83:10)
+    at /home/user/MP/mp-app/studio/node_modules/@rc-component/portal/lib/useScrollLocker.js:27:72
+    at /home/user/MP/mp-app/studio/node_modules/rc-util/lib/hooks/useLayoutEffect.js:18:12
+    at commitHookEffectListMount (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24917:7) [90mundefined[39m
+
+stderr | tests/ledgerPanel.test.tsx > LedgerPanel (QF-05) > reverses with the reason and reloads the ledger
+Error: Not implemented: window.getComputedStyle(elt, pseudoElt)
+    at module.exports (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at window.getComputedStyle (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/Window.js:895:7)
+    at measureScrollbarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:35:32)
+    at getTargetScrollBarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:83:10)
+    at /home/user/MP/mp-app/studio/node_modules/rc-table/lib/Table.js:427:71
+    at /home/user/MP/mp-app/studio/node_modules/rc-util/lib/hooks/useLayoutEffect.js:18:12
+    at commitHookEffectListMount (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24917:7) [90mundefined[39m
+
+stderr | tests/ledgerPanel.test.tsx > LedgerPanel (QF-05) > reverses with the reason and reloads the ledger
+Error: Not implemented: window.getComputedStyle(elt, pseudoElt)
+    at module.exports (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at window.getComputedStyle (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/Window.js:895:7)
+    at measureScrollbarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:35:32)
+    at getTargetScrollBarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:83:10)
+    at /home/user/MP/mp-app/studio/node_modules/@rc-component/portal/lib/useScrollLocker.js:27:72
+    at /home/user/MP/mp-app/studio/node_modules/rc-util/lib/hooks/useLayoutEffect.js:18:12
+    at commitHookEffectListMount (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24917:7) [90mundefined[39m
+
+stderr | tests/ledgerPanel.test.tsx > LedgerPanel (QF-05) > offers no reverse button for already reversed or compensating rows
+Error: Not implemented: window.getComputedStyle(elt, pseudoElt)
+    at module.exports (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at window.getComputedStyle (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/Window.js:895:7)
+    at measureScrollbarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:35:32)
+    at getTargetScrollBarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:83:10)
+    at /home/user/MP/mp-app/studio/node_modules/rc-table/lib/Table.js:427:71
+    at /home/user/MP/mp-app/studio/node_modules/rc-util/lib/hooks/useLayoutEffect.js:18:12
+    at commitHookEffectListMount (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24917:7) [90mundefined[39m
+
+ ✓ tests/ledgerPanel.test.tsx (6 tests) 8795ms
+   ✓ LedgerPanel (QF-05) > loads the ledger for the given member with the auth header  657ms
+   ✓ LedgerPanel (QF-05) > shows a mismatch as an alert-worthy difference, not as matched  512ms
+   ✓ LedgerPanel (QF-05) > requires a reason before reversing an entry  2648ms
+   ✓ LedgerPanel (QF-05) > reverses with the reason and reloads the ledger  3336ms
+   ✓ LedgerPanel (QF-05) > offers no reverse button for already reversed or compensating rows  1426ms
+ ↓ tests/liveContract.test.ts (9 tests | 9 skipped)
+ ✓ tests/a11y.test.tsx (14 tests) 14543ms
+   ✓ a11y — rule-based audit across every page (Q5) > finance: no blocking accessibility defects  2466ms
+   ✓ a11y — rule-based audit across every page (Q5) > analytics: no blocking accessibility defects  1329ms
+   ✓ a11y — rule-based audit across every page (Q5) > settings: no blocking accessibility defects  1678ms
+   ✓ a11y — rule-based audit across every page (Q5) > nutrition: no blocking accessibility defects  1852ms
+   ✓ a11y — rule-based audit across every page (Q5) > assessment: no blocking accessibility defects  1513ms
+   ✓ a11y — rule-based audit across every page (Q5) > chat: no blocking accessibility defects  1420ms
+   ✓ a11y — rule-based audit across every page (Q5) > every page has exactly one h1  1237ms
+   ✓ a11y — rule-based audit across every page (Q5) > headings never skip a level  1475ms
+   ✓ a11y — rule-based audit across every page (Q5) > the sidebar navigation is reachable as buttons with names  1251ms
+ ✓ tests/adaptivePanel.test.tsx (6 tests) 305ms
+stderr | tests/financePage.test.tsx > Finance (M52-c1) > loads the summary on mount WITH the auth header
+The width(0) and height(0) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+stderr | tests/financePage.test.tsx > Finance (M52-c1) > reloads the summary when the button is pressed
+The width(0) and height(0) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+stderr | tests/financePage.test.tsx > Finance (M52-c1) > reloads the summary when the button is pressed
+The width(0) and height(0) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+stderr | tests/financePage.test.tsx > Finance (M52-c1) > reloads the summary when the button is pressed
+The width(0) and height(0) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+stderr | tests/financePage.test.tsx > Finance (M52-c1) > computes commission with the token and shows the result
+The width(0) and height(0) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+stderr | tests/financePage.test.tsx > Finance (M52-c1) > computes commission with the token and shows the result
+The width(0) and height(0) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+The width(0) and height(0) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+stderr | tests/financePage.test.tsx > Finance (M52-c1) > computes commission with the token and shows the result
+The width(0) and height(0) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+stderr | tests/financePage.test.tsx > Finance (M52-c1) > computes commission with the token and shows the result
+The width(0) and height(0) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+stderr | tests/financePage.test.tsx > Finance (M52-c1) > rejects a non-numeric coach id without calling the API
+The width(0) and height(0) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+stderr | tests/financePage.test.tsx > Finance (M52-c1) > rejects a non-numeric coach id without calling the API
+The width(0) and height(0) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+The width(0) and height(0) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+stderr | tests/financePage.test.tsx > Finance (M52-c1) > rejects a non-numeric coach id without calling the API
+The width(0) and height(0) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+stderr | tests/financePage.test.tsx > Finance (M52-c1) > downloads the CSV with the auth header
+The width(0) and height(0) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+stderr | tests/financePage.test.tsx > Finance (M52-c1) > downloads the CSV with the auth header
+The width(0) and height(0) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+stderr | tests/financePage.test.tsx > Finance (M52-c1) > downloads the CSV with the auth header
+The width(0) and height(0) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+stderr | tests/financePage.test.tsx > Finance (M52-c1) > shows an OTP re-login error instead of a silent empty table on 401
+The width(0) and height(0) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+stderr | tests/financePage.test.tsx > Finance (M52-c1) > sends no Authorization header when there is no token
+The width(0) and height(0) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+ ✓ tests/financePage.test.tsx (7 tests) 4497ms
+   ✓ Finance (M52-c1) > loads the summary on mount WITH the auth header  335ms
+   ✓ Finance (M52-c1) > reloads the summary when the button is pressed  1133ms
+   ✓ Finance (M52-c1) > computes commission with the token and shows the result  973ms
+   ✓ Finance (M52-c1) > rejects a non-numeric coach id without calling the API  1007ms
+   ✓ Finance (M52-c1) > downloads the CSV with the auth header  856ms
+ ✓ tests/uiLibrary.test.ts (5 tests) 9ms
+stderr | tests/jp7Trend.test.tsx > Assessment page > renders the trend panel for the selected member
+Warning: An update to SegmentalPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at SegmentalPanel (/home/user/MP/mp-app/studio/src/components/SegmentalPanel.tsx:54:50)
+    at div
+    at Assessment (/home/user/MP/mp-app/studio/src/pages/Assessment.tsx:12:42)
+Warning: An update to RemindersPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at RemindersPanel (/home/user/MP/mp-app/studio/src/components/RemindersPanel.tsx:16:50)
+    at div
+    at Assessment (/home/user/MP/mp-app/studio/src/pages/Assessment.tsx:12:42)
+Warning: An update to Assessment inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Assessment (/home/user/MP/mp-app/studio/src/pages/Assessment.tsx:12:42)
+Warning: An update to SegmentalPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at SegmentalPanel (/home/user/MP/mp-app/studio/src/components/SegmentalPanel.tsx:54:50)
+    at div
+    at Assessment (/home/user/MP/mp-app/studio/src/pages/Assessment.tsx:12:42)
+Warning: An update to RemindersPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at RemindersPanel (/home/user/MP/mp-app/studio/src/components/RemindersPanel.tsx:16:50)
+    at div
+    at Assessment (/home/user/MP/mp-app/studio/src/pages/Assessment.tsx:12:42)
+
+ ✓ tests/jp7Trend.test.tsx (8 tests) 146ms
+stderr | tests/exerciseLibrary.test.tsx > ExerciseLibrary (G9) > با کلیک، انیمیشن به فریم پایان ثابت تبدیل می‌شود
+Warning: An update to ExerciseLibrary inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ExerciseLibrary (/home/user/MP/mp-app/studio/src/components/ExerciseLibrary.tsx:18:49)
+
+ ✓ tests/exerciseLibrary.test.tsx (7 tests) 209ms
+stderr | tests/remindersPanel.test.tsx > RemindersPanel (G11) > shows each reminder with its priority and rule
+Warning: An update to RemindersPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at RemindersPanel (/home/user/MP/mp-app/studio/src/components/RemindersPanel.tsx:16:50)
+
+stderr | tests/remindersPanel.test.tsx > RemindersPanel (G11) > shows each reminder with its priority and rule
+Warning: An update to RemindersPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at RemindersPanel (/home/user/MP/mp-app/studio/src/components/RemindersPanel.tsx:16:50)
+Warning: An update to RemindersPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at RemindersPanel (/home/user/MP/mp-app/studio/src/components/RemindersPanel.tsx:16:50)
+
+stderr | tests/remindersPanel.test.tsx > RemindersPanel (G11) > distinguishes 'nothing due' from 'not enough data'
+Warning: An update to RemindersPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at RemindersPanel (/home/user/MP/mp-app/studio/src/components/RemindersPanel.tsx:16:50)
+
+stderr | tests/remindersPanel.test.tsx > RemindersPanel (G11) > distinguishes 'nothing due' from 'not enough data'
+Warning: An update to RemindersPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at RemindersPanel (/home/user/MP/mp-app/studio/src/components/RemindersPanel.tsx:16:50)
+Warning: An update to RemindersPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at RemindersPanel (/home/user/MP/mp-app/studio/src/components/RemindersPanel.tsx:16:50)
+
+stderr | tests/remindersPanel.test.tsx > RemindersPanel (G11) > shows the thresholds so the user can audit the rules
+Warning: An update to RemindersPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at RemindersPanel (/home/user/MP/mp-app/studio/src/components/RemindersPanel.tsx:16:50)
+
+stderr | tests/remindersPanel.test.tsx > RemindersPanel (G11) > shows the thresholds so the user can audit the rules
+Warning: An update to RemindersPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at RemindersPanel (/home/user/MP/mp-app/studio/src/components/RemindersPanel.tsx:16:50)
+Warning: An update to RemindersPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at RemindersPanel (/home/user/MP/mp-app/studio/src/components/RemindersPanel.tsx:16:50)
+
+stderr | tests/remindersPanel.test.tsx > RemindersPanel (G11) > shows an error instead of an empty panel when the API fails
+Warning: An update to RemindersPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at RemindersPanel (/home/user/MP/mp-app/studio/src/components/RemindersPanel.tsx:16:50)
+
+stderr | tests/remindersPanel.test.tsx > RemindersPanel (G11) > shows an error instead of an empty panel when the API fails
+Warning: An update to RemindersPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at RemindersPanel (/home/user/MP/mp-app/studio/src/components/RemindersPanel.tsx:16:50)
+Warning: An update to RemindersPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at RemindersPanel (/home/user/MP/mp-app/studio/src/components/RemindersPanel.tsx:16:50)
+
+stderr | tests/remindersPanel.test.tsx > RemindersPanel (G11) > re-fetches when reload is pressed
+Warning: An update to RemindersPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at RemindersPanel (/home/user/MP/mp-app/studio/src/components/RemindersPanel.tsx:16:50)
+
+stderr | tests/remindersPanel.test.tsx > RemindersPanel (G11) > re-fetches when reload is pressed
+Warning: An update to RemindersPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at RemindersPanel (/home/user/MP/mp-app/studio/src/components/RemindersPanel.tsx:16:50)
+Warning: An update to RemindersPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at RemindersPanel (/home/user/MP/mp-app/studio/src/components/RemindersPanel.tsx:16:50)
+
+stderr | tests/remindersPanel.test.tsx > RemindersPanel (G11) > does not invent a 'high' label for normal-priority reminders
+Warning: An update to RemindersPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at RemindersPanel (/home/user/MP/mp-app/studio/src/components/RemindersPanel.tsx:16:50)
+
+stderr | tests/remindersPanel.test.tsx > RemindersPanel (G11) > does not invent a 'high' label for normal-priority reminders
+Warning: An update to RemindersPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at RemindersPanel (/home/user/MP/mp-app/studio/src/components/RemindersPanel.tsx:16:50)
+Warning: An update to RemindersPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at RemindersPanel (/home/user/MP/mp-app/studio/src/components/RemindersPanel.tsx:16:50)
+
+stderr | tests/remindersPanel.test.tsx > RemindersPanel — مقاومت به پاسخ ناقص > does not crash when the API returns an unrelated shape
+Warning: An update to RemindersPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at RemindersPanel (/home/user/MP/mp-app/studio/src/components/RemindersPanel.tsx:16:50)
+
+stderr | tests/remindersPanel.test.tsx > RemindersPanel — مقاومت به پاسخ ناقص > does not crash when the API returns an unrelated shape
+Warning: An update to RemindersPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at RemindersPanel (/home/user/MP/mp-app/studio/src/components/RemindersPanel.tsx:16:50)
+Warning: An update to RemindersPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at RemindersPanel (/home/user/MP/mp-app/studio/src/components/RemindersPanel.tsx:16:50)
+
+stderr | tests/remindersPanel.test.tsx > RemindersPanel — مقاومت به پاسخ ناقص > does not crash when thresholds are missing
+Warning: An update to RemindersPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at RemindersPanel (/home/user/MP/mp-app/studio/src/components/RemindersPanel.tsx:16:50)
+
+stderr | tests/remindersPanel.test.tsx > RemindersPanel — مقاومت به پاسخ ناقص > does not crash when thresholds are missing
+Warning: An update to RemindersPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at RemindersPanel (/home/user/MP/mp-app/studio/src/components/RemindersPanel.tsx:16:50)
+Warning: An update to RemindersPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at RemindersPanel (/home/user/MP/mp-app/studio/src/components/RemindersPanel.tsx:16:50)
+
+ ✓ tests/remindersPanel.test.tsx (9 tests) 148ms
+stderr | tests/receiptQueue.test.tsx > صف بازبینی فیش > فهرست را از ?status=in_review می‌خواند و مبلغ را نشان می‌دهد
+Error: Not implemented: window.getComputedStyle(elt, pseudoElt)
+    at module.exports (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at window.getComputedStyle (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/Window.js:895:7)
+    at measureScrollbarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:35:32)
+    at getTargetScrollBarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:83:10)
+    at /home/user/MP/mp-app/studio/node_modules/rc-table/lib/Table.js:427:71
+    at /home/user/MP/mp-app/studio/node_modules/rc-util/lib/hooks/useLayoutEffect.js:18:12
+    at commitHookEffectListMount (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24917:7) [90mundefined[39m
+
+stderr | tests/receiptQueue.test.tsx > صف بازبینی فیش > تأیید را به POST /payments/{id}/approve می‌فرستد و صف را بازخوانی می‌کند
+Error: Not implemented: window.getComputedStyle(elt, pseudoElt)
+    at module.exports (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at window.getComputedStyle (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/Window.js:895:7)
+    at measureScrollbarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:35:32)
+    at getTargetScrollBarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:83:10)
+    at /home/user/MP/mp-app/studio/node_modules/rc-table/lib/Table.js:427:71
+    at /home/user/MP/mp-app/studio/node_modules/rc-util/lib/hooks/useLayoutEffect.js:18:12
+    at commitHookEffectListMount (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24917:7) [90mundefined[39m
+
+stderr | tests/receiptQueue.test.tsx > صف بازبینی فیش > خطای سرور (تأیید پرداخت خود) را نشان می‌دهد و ردیف را خوش‌بینانه حذف نمی‌کند
+Error: Not implemented: window.getComputedStyle(elt, pseudoElt)
+    at module.exports (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at window.getComputedStyle (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/Window.js:895:7)
+    at measureScrollbarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:35:32)
+    at getTargetScrollBarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:83:10)
+    at /home/user/MP/mp-app/studio/node_modules/rc-table/lib/Table.js:427:71
+    at /home/user/MP/mp-app/studio/node_modules/rc-util/lib/hooks/useLayoutEffect.js:18:12
+    at commitHookEffectListMount (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24917:7) [90mundefined[39m
+
+stderr | tests/receiptQueue.test.tsx > صف بازبینی فیش > رد فیش دلیل می‌خواهد و آن را در بدنه می‌فرستد
+Error: Not implemented: window.getComputedStyle(elt, pseudoElt)
+    at module.exports (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at window.getComputedStyle (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/Window.js:895:7)
+    at measureScrollbarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:35:32)
+    at getTargetScrollBarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:83:10)
+    at /home/user/MP/mp-app/studio/node_modules/rc-table/lib/Table.js:427:71
+    at /home/user/MP/mp-app/studio/node_modules/rc-util/lib/hooks/useLayoutEffect.js:18:12
+    at commitHookEffectListMount (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24917:7) [90mundefined[39m
+
+stderr | tests/receiptQueue.test.tsx > صف بازبینی فیش > رد فیش دلیل می‌خواهد و آن را در بدنه می‌فرستد
+Error: Not implemented: window.getComputedStyle(elt, pseudoElt)
+    at module.exports (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at window.getComputedStyle (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/Window.js:895:7)
+    at measureScrollbarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:35:32)
+    at getTargetScrollBarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:83:10)
+    at /home/user/MP/mp-app/studio/node_modules/@rc-component/portal/lib/useScrollLocker.js:27:72
+    at /home/user/MP/mp-app/studio/node_modules/rc-util/lib/hooks/useLayoutEffect.js:18:12
+    at commitHookEffectListMount (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24917:7) [90mundefined[39m
+
+ ✓ tests/receiptQueue.test.tsx (4 tests) 4213ms
+   ✓ صف بازبینی فیش > فهرست را از ?status=in_review می‌خواند و مبلغ را نشان می‌دهد  365ms
+   ✓ صف بازبینی فیش > تأیید را به POST /payments/{id}/approve می‌فرستد و صف را بازخوانی می‌کند  304ms
+   ✓ صف بازبینی فیش > خطای سرور (تأیید پرداخت خود) را نشان می‌دهد و ردیف را خوش‌بینانه حذف نمی‌کند  1832ms
+   ✓ صف بازبینی فیش > رد فیش دلیل می‌خواهد و آن را در بدنه می‌فرستد  1711ms
+stderr | tests/readinessPanel.test.tsx > ReadinessPanel (G13) > asks for a member instead of assuming one
+Warning: An update to ReadinessPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ReadinessPanel (/home/user/MP/mp-app/studio/src/components/ReadinessPanel.tsx:28:42)
+
+stderr | tests/readinessPanel.test.tsx > ReadinessPanel (G13) > shows the score, the band and the automatic deload recommendation
+Warning: An update to ReadinessPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ReadinessPanel (/home/user/MP/mp-app/studio/src/components/ReadinessPanel.tsx:28:42)
+
+stderr | tests/readinessPanel.test.tsx > ReadinessPanel (G13) > shows the score, the band and the automatic deload recommendation
+Warning: An update to ReadinessPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ReadinessPanel (/home/user/MP/mp-app/studio/src/components/ReadinessPanel.tsx:28:42)
+Warning: An update to ReadinessPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ReadinessPanel (/home/user/MP/mp-app/studio/src/components/ReadinessPanel.tsx:28:42)
+Warning: An update to ReadinessPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ReadinessPanel (/home/user/MP/mp-app/studio/src/components/ReadinessPanel.tsx:28:42)
+
+stderr | tests/readinessPanel.test.tsx > ReadinessPanel (G13) > shows the score, the band and the automatic deload recommendation
+Warning: An update to ReadinessPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ReadinessPanel (/home/user/MP/mp-app/studio/src/components/ReadinessPanel.tsx:28:42)
+Warning: An update to ReadinessPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ReadinessPanel (/home/user/MP/mp-app/studio/src/components/ReadinessPanel.tsx:28:42)
+
+stderr | tests/readinessPanel.test.tsx > ReadinessPanel (G13) > explains every signal, including the unknown one
+Warning: An update to ReadinessPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ReadinessPanel (/home/user/MP/mp-app/studio/src/components/ReadinessPanel.tsx:28:42)
+
+stderr | tests/readinessPanel.test.tsx > ReadinessPanel (G13) > explains every signal, including the unknown one
+Warning: An update to ReadinessPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ReadinessPanel (/home/user/MP/mp-app/studio/src/components/ReadinessPanel.tsx:28:42)
+Warning: An update to ReadinessPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ReadinessPanel (/home/user/MP/mp-app/studio/src/components/ReadinessPanel.tsx:28:42)
+
+stderr | tests/readinessPanel.test.tsx > ReadinessPanel (G13) > explains every signal, including the unknown one
+Warning: An update to ReadinessPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ReadinessPanel (/home/user/MP/mp-app/studio/src/components/ReadinessPanel.tsx:28:42)
+Warning: An update to ReadinessPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ReadinessPanel (/home/user/MP/mp-app/studio/src/components/ReadinessPanel.tsx:28:42)
+
+stderr | tests/readinessPanel.test.tsx > ReadinessPanel (G13) > says why RIR is unknown instead of hiding it
+Warning: An update to ReadinessPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ReadinessPanel (/home/user/MP/mp-app/studio/src/components/ReadinessPanel.tsx:28:42)
+
+stderr | tests/readinessPanel.test.tsx > ReadinessPanel (G13) > says why RIR is unknown instead of hiding it
+Warning: An update to ReadinessPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ReadinessPanel (/home/user/MP/mp-app/studio/src/components/ReadinessPanel.tsx:28:42)
+Warning: An update to ReadinessPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ReadinessPanel (/home/user/MP/mp-app/studio/src/components/ReadinessPanel.tsx:28:42)
+
+stderr | tests/readinessPanel.test.tsx > ReadinessPanel (G13) > says why RIR is unknown instead of hiding it
+Warning: An update to ReadinessPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ReadinessPanel (/home/user/MP/mp-app/studio/src/components/ReadinessPanel.tsx:28:42)
+Warning: An update to ReadinessPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ReadinessPanel (/home/user/MP/mp-app/studio/src/components/ReadinessPanel.tsx:28:42)
+
+stderr | tests/readinessPanel.test.tsx > ReadinessPanel (G13) > shows the raw data counts behind the score
+Warning: An update to ReadinessPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ReadinessPanel (/home/user/MP/mp-app/studio/src/components/ReadinessPanel.tsx:28:42)
+
+stderr | tests/readinessPanel.test.tsx > ReadinessPanel (G13) > shows the raw data counts behind the score
+Warning: An update to ReadinessPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ReadinessPanel (/home/user/MP/mp-app/studio/src/components/ReadinessPanel.tsx:28:42)
+Warning: An update to ReadinessPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ReadinessPanel (/home/user/MP/mp-app/studio/src/components/ReadinessPanel.tsx:28:42)
+
+stderr | tests/readinessPanel.test.tsx > ReadinessPanel (G13) > shows the raw data counts behind the score
+Warning: An update to ReadinessPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ReadinessPanel (/home/user/MP/mp-app/studio/src/components/ReadinessPanel.tsx:28:42)
+Warning: An update to ReadinessPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ReadinessPanel (/home/user/MP/mp-app/studio/src/components/ReadinessPanel.tsx:28:42)
+
+stderr | tests/readinessPanel.test.tsx > ReadinessPanel (G13) > does not invent a score when there is no feedback
+Warning: An update to ReadinessPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ReadinessPanel (/home/user/MP/mp-app/studio/src/components/ReadinessPanel.tsx:28:42)
+
+stderr | tests/readinessPanel.test.tsx > ReadinessPanel (G13) > does not invent a score when there is no feedback
+Warning: An update to ReadinessPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ReadinessPanel (/home/user/MP/mp-app/studio/src/components/ReadinessPanel.tsx:28:42)
+Warning: An update to ReadinessPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ReadinessPanel (/home/user/MP/mp-app/studio/src/components/ReadinessPanel.tsx:28:42)
+
+stderr | tests/readinessPanel.test.tsx > ReadinessPanel (G13) > does not invent a score when there is no feedback
+Warning: An update to ReadinessPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ReadinessPanel (/home/user/MP/mp-app/studio/src/components/ReadinessPanel.tsx:28:42)
+Warning: An update to ReadinessPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ReadinessPanel (/home/user/MP/mp-app/studio/src/components/ReadinessPanel.tsx:28:42)
+
+stderr | tests/readinessPanel.test.tsx > ReadinessPanel (G13) > keeps volume when the athlete is ready
+Warning: An update to ReadinessPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ReadinessPanel (/home/user/MP/mp-app/studio/src/components/ReadinessPanel.tsx:28:42)
+
+stderr | tests/readinessPanel.test.tsx > ReadinessPanel (G13) > keeps volume when the athlete is ready
+Warning: An update to ReadinessPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ReadinessPanel (/home/user/MP/mp-app/studio/src/components/ReadinessPanel.tsx:28:42)
+Warning: An update to ReadinessPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ReadinessPanel (/home/user/MP/mp-app/studio/src/components/ReadinessPanel.tsx:28:42)
+
+stderr | tests/readinessPanel.test.tsx > ReadinessPanel (G13) > keeps volume when the athlete is ready
+Warning: An update to ReadinessPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ReadinessPanel (/home/user/MP/mp-app/studio/src/components/ReadinessPanel.tsx:28:42)
+Warning: An update to ReadinessPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ReadinessPanel (/home/user/MP/mp-app/studio/src/components/ReadinessPanel.tsx:28:42)
+
+ ✓ tests/readinessPanel.test.tsx (7 tests) 110ms
+ ✓ tests/motion.test.tsx (13 tests) 18ms
+ ✓ tests/roleNav.test.tsx (13 tests) 58ms
+stderr | tests/expenseReceipt.test.tsx > Expenses receipt (QF-06) > uploads the picked image to the expense with the session token as multipart
+Error: Not implemented: window.getComputedStyle(elt, pseudoElt)
+    at module.exports (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at window.getComputedStyle (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/Window.js:895:7)
+    at measureScrollbarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:35:32)
+    at getTargetScrollBarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:83:10)
+    at /home/user/MP/mp-app/studio/node_modules/rc-table/lib/Table.js:427:71
+    at /home/user/MP/mp-app/studio/node_modules/rc-util/lib/hooks/useLayoutEffect.js:18:12
+    at commitHookEffectListMount (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24917:7) [90mundefined[39m
+
+stderr | tests/expenseReceipt.test.tsx > Expenses receipt (QF-06) > shows a forbidden message when the upload is refused with 403
+Error: Not implemented: window.getComputedStyle(elt, pseudoElt)
+    at module.exports (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at window.getComputedStyle (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/Window.js:895:7)
+    at measureScrollbarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:35:32)
+    at getTargetScrollBarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:83:10)
+    at /home/user/MP/mp-app/studio/node_modules/rc-table/lib/Table.js:427:71
+    at /home/user/MP/mp-app/studio/node_modules/rc-util/lib/hooks/useLayoutEffect.js:18:12
+    at commitHookEffectListMount (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24917:7) [90mundefined[39m
+
+stderr | tests/expenseReceipt.test.tsx > Expenses receipt (QF-06) > explains that a missing receipt is missing, not silently empty
+Error: Not implemented: window.getComputedStyle(elt, pseudoElt)
+    at module.exports (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at window.getComputedStyle (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/Window.js:895:7)
+    at measureScrollbarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:35:32)
+    at getTargetScrollBarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:83:10)
+    at /home/user/MP/mp-app/studio/node_modules/rc-table/lib/Table.js:427:71
+    at /home/user/MP/mp-app/studio/node_modules/rc-util/lib/hooks/useLayoutEffect.js:18:12
+    at commitHookEffectListMount (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24917:7) [90mundefined[39m
+
+ ✓ tests/expenseReceipt.test.tsx (3 tests) 5922ms
+   ✓ Expenses receipt (QF-06) > uploads the picked image to the expense with the session token as multipart  2386ms
+   ✓ Expenses receipt (QF-06) > shows a forbidden message when the upload is refused with 403  1800ms
+   ✓ Expenses receipt (QF-06) > explains that a missing receipt is missing, not silently empty  1735ms
+ ✓ tests/deviceSessions.test.tsx (4 tests) 414ms
+ ✓ tests/volumePanel.test.tsx (5 tests) 99ms
+ ✓ tests/foodLibrary.test.tsx (7 tests) 208ms
+ ✓ tests/api.test.ts (8 tests) 8ms
+stderr | tests/phoneChange.test.tsx > M82 phone-change dialog > verifies the old phone before the new one and does not refresh for a wrong OTP
+Error: Not implemented: window.getComputedStyle(elt, pseudoElt)
+    at module.exports (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at window.getComputedStyle (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/Window.js:895:7)
+    at measureScrollbarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:35:32)
+    at getTargetScrollBarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:83:10)
+    at /home/user/MP/mp-app/studio/node_modules/@rc-component/portal/lib/useScrollLocker.js:27:72
+    at /home/user/MP/mp-app/studio/node_modules/rc-util/lib/hooks/useLayoutEffect.js:18:12
+    at commitHookEffectListMount (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24917:7) [90mundefined[39m
+
+ ✓ tests/phoneChange.test.tsx (1 test) 243ms
+ ✓ tests/programsPage.test.tsx (2 tests) 82ms
+ ✓ tests/autoregPanel.test.tsx (4 tests) 204ms
+ ✓ tests/pwa.test.ts (8 tests) 4ms
+stderr | tests/periodReportPanel.test.tsx > PeriodReportPanel (QF-10) > requests the month report with a session token and shows the profit
+The width(0) and height(0) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+stderr | tests/periodReportPanel.test.tsx > PeriodReportPanel (QF-10) > warns instead of claiming a final profit when a refund has no date
+The width(0) and height(0) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+
+ ✓ tests/periodReportPanel.test.tsx (3 tests) 212ms
+ ✓ tests/updateBanner.test.tsx (3 tests) 430ms
+   ✓ UpdateBanner (M20) > دکمه، reload را فراخوانی می‌کند (نه یک دکمهٔ تشریفاتی)  333ms
+ ✓ tests/safetyBadge.test.tsx (9 tests) 31ms
+ ✓ tests/couponPanel.test.tsx (2 tests) 1683ms
+   ✓ CouponPanel > کد درصدی با سقف استفاده را به API می‌فرستد و فهرست را تازه می‌کند  1084ms
+   ✓ CouponPanel > خطای سرور به‌صورت هشدار نمایش داده می‌شود  597ms
+ ✓ tests/dashboard.test.tsx (2 tests) 84ms
+ ✓ tests/adminApi.test.ts (6 tests) 7ms
+ ✓ tests/settingsRole.test.tsx (2 tests) 257ms
+ ✓ tests/design-tokens.test.ts (9 tests) 3ms
+ ✓ tests/wp15Money.test.ts (16 tests) 14ms
+ ✓ tests/jalaliDate.test.tsx (4 tests) 28ms
+ ✓ tests/topbarTitles.test.tsx (12 tests) 116ms
+ ✓ tests/components.test.tsx (4 tests) 54ms
+ ✓ tests/appStore.test.ts (3 tests) 2ms
+ ✓ tests/update.test.ts (1 test) 3ms
+
+ Test Files  45 passed | 1 skipped (46)
+      Tests  298 passed | 9 skipped (307)
+   Start at  16:26:23
+   Duration  113.77s (transform 863ms, setup 139ms, collect 22.64s, tests 72.19s, environment 12.28s, prepare 2.37s)
+

@@ -1,0 +1,44 @@
+== principals (OTP login for 7 identities) ==
+  token[member] len=292 user_id=1
+  token[coach] len=293 user_id=252
+  token[reception] len=299 user_id=253
+  token[manager] len=296 user_id=254
+  token[admin] len=293 user_id=255
+  token[super_admin] len=301 user_id=256
+
+== pass 1: live seed through the API ==
+  [OK ] member.create          200     9.7ms 
+  [OK ] member.create2         200     6.7ms 
+  [OK ] membership.create      200     6.3ms 
+  [OK ] coupon.percent         201     7.1ms 
+  [OK ] coupon.fixed           201     6.9ms 
+  [OK ] payment.cash           200     6.8ms 
+  [OK ] payment.with_coupon    200     7.7ms 
+  [OK ] wallet.charge          200     7.8ms 
+  [OK ] expense.create         200     7.0ms 
+  [FAIL] shop.cart_add          422     5.9ms {'error': {'code': 'validation_error', 'message': 'داده\u200cهای ورودی معتبر نیستند', 'details': [{'loc': ['bo
+  [FAIL] shop.checkout          409     6.0ms {'error': {'code': 'shop_online_closed', 'message': 'خرید درون\u200cبرنامه\u200cای بسته است؛ خرید حضوری در ساع
+  [OK ] nutrition.weight       200     6.0ms 
+  [OK ] notification.create    200     6.3ms 
+  [OK ] chat.conversation      200     6.3ms 
+  [OK ] class.create           200     5.0ms 
+  [OK ] member.create3_for_shop 200     6.0ms 
+  captured ids: {"user_id": 1, "member_id": 7, "member_id2": 8, "membership_id": 3, "coupon_id": 5, "payment_id": 5, "payment_id2": 6, "expense_id": 3, "notification_id": 3, "conversation_id": 3, "class_id": 3, "member_id3": 9}
+
+== pass 2: authorization matrix (163 ops × 7 principals) ==
+  done in 4s | classification summary: {"denied": 996, "allowed_2xx": 88, "reached_4xx": 57}
+  unauth_allowed: 5
+  over_permissive: 2
+  contract_drift_denied: 604
+  server_errors: 0
+  leaked_stacktrace: 0
+  slow_ops: 0
+
+== pass 3: invalid / hostile inputs ==
+  done in 3s
+  server_errors: 0
+  leaked_stacktrace: 0
+  unexpected_2xx: 1
+  bad_error_envelope: 0
+
+raw rows → /tmp/wp02/contract-matrix-raw.json (1961 records)

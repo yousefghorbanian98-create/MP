@@ -49,7 +49,7 @@
 - [x] مسیرهای گیت‌شده (population) با خطای صریح متوقف می‌شوند
 - [x] خروجی گزارش: HTML چاپی + JSON (D-020)
 - [x] RTL/فارسی + جزئیات میکرو (DESIGN.md)
-- [x] APK اندروید: workflow ساخت در CI (`.github/workflows/apk.yml` + `ci_apk.sh`) — اجرا با workflow_dispatch/tag
+- [x] APK اندروید: ساخت debug در CI با جاب `client-pinned` (`ci.yml`) (**توجه:** `apk.yml` با AD‑21 در ۲۰۲۶‑۱۱‑۲۲ حذف شد؛ گیت Android اکنون جاب `client-pinned` در `ci.yml` است) — ساخت امضاشدهٔ release دیگر workflow جداگانه ندارد
 
 ## د) عملیات
 - [x] ران‌بوک عملیات (OPS-RUNBOOK.md)

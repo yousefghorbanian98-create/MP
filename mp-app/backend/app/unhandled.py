@@ -36,6 +36,7 @@ from __future__ import annotations
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import TimeoutError as PoolTimeoutError
 
 from app.logging import get_logger
 
@@ -47,6 +48,7 @@ UNEXPECTED_MESSAGE = "خطای غیرمنتظرهٔ سرور. رخداد ثبت 
 
 REFERENCE_MESSAGE = "شناسهٔ ارجاع‌شده وجود ندارد یا با دادهٔ فعلی نمی‌خواند."
 CONFLICT_MESSAGE = "این داده با وضعیت فعلی تعارض دارد."
+POOL_EXHAUSTED_MESSAGE = "ظرفیت اتصال پایگاه داده موقتاً پر است؛ چند لحظه بعد دوباره تلاش کنید."
 
 
 def _integrity_payload(exc: IntegrityError) -> tuple[int, dict]:
@@ -77,6 +79,23 @@ def register(app: FastAPI) -> None:
             status_code=status_code,
         )
         return JSONResponse(status_code=status_code, content=content)
+
+    @app.exception_handler(PoolTimeoutError)
+    async def _pool_timeout(request: Request, exc: PoolTimeoutError) -> JSONResponse:
+        # WP 2.2 / F‑04 (D‑13 C7): پر بودن استخر ⇒ ۵۰۳ + Retry-After، نه ۵۰۰.
+        from app.metrics import metrics
+
+        metrics.inc("mp_db_pool_timeout_total")
+        logger.warning(
+            "db_pool_exhausted",
+            method=request.method,
+            path=request.url.path,
+        )
+        return JSONResponse(
+            status_code=503,
+            headers={"Retry-After": "1"},
+            content={"error": {"code": "db_pool_exhausted", "message": POOL_EXHAUSTED_MESSAGE}},
+        )
 
     @app.exception_handler(Exception)
     async def _unexpected(request: Request, exc: Exception) -> JSONResponse:

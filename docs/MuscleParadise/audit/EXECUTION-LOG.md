@@ -1,0 +1,728 @@
+# گزارش اجرای ممیزی MP
+
+> ثبت هر بستهٔ کاری (WP). قالب: بازتولید → ریشه → تغییر → تست → شاهد بعد → گیت.
+
+## خط پایه (WP 0.1 بخشی)
+
+- `pytest -q` در `mp-app/backend` (قبل از تغییرات این نشست): **۱۰۹۵ passed، ۲ skipped** در ۲۸۹٫۵۳ ثانیه. خروجی: `/tmp/baseline-pytest.txt` (بیرون از مخزن).
+- تعداد عملیات OpenAPI: **۱۴۱ مسیر، ۱۶۳ عملیات**.
+
+## WP 0.3 · F-13 · گارد تکراری روی `POST /axis-assessments/{id}/review`
+
+- **بازتولید:** `tests/integration/test_wp03_axis_single_guard.py` قبل از اصلاح ⇒ `گارد مجوز برای یک درخواست 2 بار اجرا شد` (assert 2 == 1).
+- **ریشه:** `mp-app/backend/modules/axis_assessment/router.py:49` — پارامتر `user: Annotated[User, Depends(require_permission())]` در کنار `dependencies=[Depends(require_permission())]` روی روتر (خط ۱۷).
+- **تغییر:** پارامتر به `user: CurrentUser` تغییر کرد؛ importهای بی‌مصرف `Annotated` و `User` حذف شدند. (۳ خط، جایگزینی ۲ خط + حذف ۲ import)
+- **تست‌های اضافه:** ۲ — `test_review_route_runs_permission_guard_exactly_once`، `test_no_route_has_same_kind_guard_twice`.
+- **شاهد بعد:** `test_wp03…` + `test_axis_assessment_api.py` + `test_route_guard_gate.py` ⇒ **13 passed**؛ شمارش گارد هم‌نوع تکراری در کل اپ ⇒ **۰**.
+- **گیت عددی:** `enforce` به‌ازای درخواست review: ۲ ⇒ ۱ ✅
+- **یادداشت دامنه:** ۱۹ مسیر دیگر دو گارد دارند، ولی هم‌نوع نیستند (`permission` روی روتر + `grant:*` روی مسیر، مثلاً `payments/*` و `expenses/*`). این عمدی است و تغییر داده نشد.
+- **آرتیفکت:** `mp-app/backend/api/routes.json` با `scripts/export_routes.py` بازسازی شد؛ تنها تغییر: حذف یک `permission` تکراری از عملیات review (`git diff`: ۱ خط). تست `test_routes_artifact_records_access_matrix` قبل از این بازسازی شکست خورد (artifact کهنه) و بعدش سبز شد.
+- **اجرای کامل pytest پس از بازسازی آرتیفکت:** 1097 passed, 2 skipped, 38 warnings in 298.26s (0:04:58) (خام: `/tmp/after-wp03-pytest-2.txt`).
+- **ریسک:** رفتار مجوز تغییر نکرد؛ همان `require_permission()` روی روتر همچنان اجرا می‌شود.
+
+## WP 0.6 · F-24 · ثابت منسوخ HTTP 422
+
+- **بازتولید:** `StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated` در `tests/integration/test_unhandled_errors.py`.
+- **ریشه:** `mp-app/backend/app/errors.py:72`.
+- **تغییر:** ثابت به `HTTP_422_UNPROCESSABLE_CONTENT` (۱ خط).
+- **شاهد بعد:** همان تست ۱۶ پاس؛ هشدار 422 دیگر ظاهر نمی‌شود. ruff check و format سبز.
+- **باقی‌مانده:** هشدارهای httpx در TestClient و `asyncio_default_fixture_loop_scope` (ابزار تست، نه کد محصول).
+
+## WP 0.5 · F-10 · ESLint استودیو
+
+- **بازتولید:** `npx eslint .` (ESLint 9.39.5) قبل از تغییر ⇒ **۴۲ خطا، ۵ هشدار**. شامل: no-undef برای globalهای Node/SW در `electron/*.cjs` و `public/sw.js` (۲۳)، label-has-associated-control (۱۲)، no-require-imports در تست‌ها (۲)، no-unused-vars، no-autofocus (۱)، و یک eslint-disable بی‌مصرف.
+- **ریشه:** نبود `eslint.config` در استودیو؛ اسکریپت `eslint src --ext` با ESLint 9 کار نمی‌کند، و سه نوع globals/تنظیم اشتباه.
+- **تغییرات:**
+  - `mp-app/studio/eslint.config.mjs` (جدید) — همان flat config بریف با globals مناسب هر فایل و `controlComponents` برای کنترل‌های antd.
+  - `package.json`: `lint` = `eslint .`؛ devDependencies: eslint@9، @eslint/js، typescript-eslint، eslint-plugin-react-hooks، eslint-plugin-jsx-a11y، globals.
+  - اصلاح کد: `CouponPanel.tsx` (eslint-disable بی‌مصرف)، `PaymentPanel.tsx` (import بی‌مصرف)، `Members.tsx` (ثابت بی‌مصرف)، `PhoneChangeDialog.tsx` (autoFocus ⇒ فوکوس ref با effect)، `public/sw.js` (پارامتر بی‌مصرف)، تست‌ها (require ⇒ import؛ متغیرهای بی‌مصرف).
+  - `.github/workflows/ci.yml`: گام «Lint» در job استودیو، پیش از تست.
+- **شاهد بعد:** `npx eslint .` ⇒ **۰ خطا، ۰ هشدار** (exit 0). `tsc -b` ⇒ exit 0. `vitest run` ⇒ **۲۸۲ پاس، ۹ skip** (با خط پایه برابر). `vite build` ⇒ موفق.
+- **تصمیم:** autoFocus حذف شد و فوکوس با ref در مرحلهٔ کد انجام می‌شود. رفتار کاربر تقریباً همان است، و قاعدهٔ دسترس‌پذیری نقض نمی‌شود. (ثبت در DECISIONS در مرحلهٔ بعدی.)
+- **ریسک:** کمترین ریسک؛ تغییر کد فقط در حد import/متغیر بی‌مصرف و یک فوکوس.
+
+## WP 0.8 · A5 · پین SHA برای GitHub Actions
+
+- **بازتولید:** `grep -rhE "uses:" .github/workflows` ⇒ ۴۲ ارجاع، همه با تگ متحرک (`@v4`/`@v2`/`@v6`/`@v3`/`@v5`)، صفر پین‌شده.
+- **تعداد یکتا:** ۷ ارجاع (checkout@v4 ×۱۷، flutter-action@v2 ×۶، upload-artifact@v4 ×۶، build-push-action@v6 ×۴، setup-python@v5 ×۴، setup-node@v4 ×۳، login-action@v3 ×۲).
+- **روش:** SHA هر تگ از `gh api repos/<o>/<r>/commits/<tag>` (api.github.com) گرفته شد؛ هر خط به `@<40-hex> # <tag>` تبدیل شد.
+- **شاهد بعد:** ۴۲/۴۲ پین‌شده (`grep ... | grep -vE "@[0-9a-f]{40}"` ⇒ ۰)؛ YAML همهٔ workflowها با PyYAML parse می‌شود.
+- **ریسک:** اگر یکی از SHAها بعداً حذف شود، CI شکست می‌خورد؛ به‌روزرسانی با `pin-github-action` یا Renovate انجام می‌شود (ابزار به‌روزرسانی در مرحلهٔ بعد).
+
+### تکمیل WP 0.8: تست‌ها
+
+- `test_deploy_workflow_is_manual_and_pushes_sha_tagged_images` پس از پین شدن `uses:` شکست خورد (تطبیق رشتهٔ `@v6`). تست به تطبیق با نام action اصلاح شد؛ معیار تست تضعیف نشد.
+- تست گیت جدید `test_every_github_action_is_pinned_to_commit_sha` اضافه شد (ارجاع بدون SHA ⇒ شکست؛ با جدا کردن نمونهٔ `@v4` تأیید شد).
+- **pytest کامل:** ۱۰۹۸ passed، ۲ skipped، ۲ warning (قبل: ۳۸ warning)، خروجی صفر.
+
+## WP 1.3 · F-06 / A2 · `/api/v1/metrics` بدون احراز هویت
+
+- **بازتولید (قبل):** `mp-app/backend/api/v1/monitoring.py:14` بدون dependency؛ `api/routes.json` guard را `—` ثبت کرده بود؛ `route_guard_gate.PUBLIC` این مسیر را «عمومی» نگه داشته بود. (شاهد بیرونی بریف: ۲۰۰ بدون توکن، ۳۴۶ خط، ۱۲ خانوادهٔ متریک.)
+- **تصمیم (D-؟ — ثبت در DECISIONS در مرحلهٔ بعد):** Bearer با `MP_METRICS_TOKEN` در اپ، نه فقط Caddy. دلیل: دفاع عمق؛ گزینهٔ «فقط Caddy» رد شد چون حفاظت را به یک لایه می‌سپارد. توکن خالی = بسته (۴۰۳) — پیش‌فرض ایمن.
+- **تغییرات:**
+  - `app/config.py`: `metrics_token` (MP_METRICS_TOKEN).
+  - `api/v1/monitoring.py`: `require_metrics_token` با `hmac.compare_digest` و `__rbac__="metrics_token"`.
+  - `scripts/route_guard_gate.py`: حذف دو ورودی `/api/v1/metrics` از PUBLIC.
+  - `scripts/dast.py`: حذف `/api/v1/metrics` از فهرست عمومی مورد انتظار (حالا باید ۲xx ندهد).
+  - `infra/Caddyfile`: `handle /api/v1/metrics { respond 404 }` پیش از `/api/*`.
+  - `infra/docker-compose.yml`: `MP_METRICS_TOKEN` برای backend و prometheus با `:?` (الزامی).
+  - `infra/monitoring/prometheus.yml`: `authorization: Bearer credentials: ${MP_METRICS_TOKEN}`.
+  - `api/routes.json`: بازسازی شد (۸ خط؛ guard متریک حالا `metrics_token`).
+  - تست‌ها: فیکسچر autouse توکن در `tests/integration/conftest.py`، ثابت‌ها در `tests/integration/_metrics.py`، هدر در ۶ فراخوانی `/metrics`.
+  - مستندات: `OPS-RUNBOOK.md`، `DEPLOYMENT.md`.
+- **تست‌های جدید:** `tests/integration/test_wp13_metrics_auth.py` (۶ تست: بدون توکن ۴۰۱، توکن غلط ۴۰۱، scheme غلط ۴۰۱، توکن درست ۲۰۰، توکن خالی ۴۰۳، گیت guard ثبت‌شده).
+- **شاهد بعد:** ۴۴ تست مرتبط پاس؛ artifact و ماتریس دسترسی ۲۶۷ پاس.
+- **باقی‌مانده:** اعتبارسنجی `MP_METRICS_TOKEN` در `validate_production_configuration` (در WP 4.1 با بقیهٔ کلیدها)؛ اجرای واقعی Prometheus با Compose (BLOCKED: Docker در این محیط نیست).
+
+- **pytest کامل پس از WP 1.3:** ۱۱۰۴ passed، ۲ skipped، ۲ warning، خروجی صفر (`/tmp/after-wp13-pytest.txt`).
+
+## WP 1.1 · F-01 · اعتماد به X-Forwarded-For فقط از پروکسی معتمد
+
+- **بازتولید:** `tests/regression/test_wp11_xff_trust.py` با uvicorn زنده و فلگ‌های قبلی (`--forwarded-allow-ips='*'`) ⇒ `[200 × 30]`؛ یعنی هر ۳۰ درخواست با XFF جعلی از peer نامعتمد پذیرفته می‌شد.
+- **ریشه:** `mp-app/backend/Dockerfile:27` و `mp-app/infra/Dockerfile.backend:29`: uvicorn همهٔ peerها را معتمد می‌کرد، پس `request.client` پیش از اپ از هدر جعلی پر می‌شد.
+- **تغییرات:** `scripts/uvicorn_proxy_flags.sh` (جدید، ۱۰ خط)؛ هر دو Dockerfile از آن استفاده می‌کنند؛ `app/config.py` (اعتبارسنجی `MP_TRUSTED_PROXIES` در production)؛ `infra/docker-compose.yml` (+۲)؛ `docs/MuscleParadise/DEPLOYMENT.md`؛ `tests/regression/test_production_ops.py` (فیکسچر production یک مقدار معتبر گرفت).
+- **تست‌های اضافه:** `test_wp11_xff_trust.py` — ۱۳ مورد (۵ اعتبارسنجی، ۲ Dockerfile، ۲ فلگ، ۱ compose، ۱ e2e زنده با ۳۰ درخواست).
+- **شاهد بعد از اصلاح:** `pytest tests/regression/test_wp11_xff_trust.py` ⇒ ۱۳ passed؛ همان e2e با فلگ قدیمی ⇒ ۱ failed (`[200×30]`)، پس تست واقعاً نقص را می‌گیرد.
+- **گیت عددی:** ≥۲۷ × 429 از ۳۰ ⇒ PASS (شاهد: ۲۷+ ۴۲۹).
+- **کنترل‌نشده / باقی‌مانده:** متریک `mp_rate_limit_key_source{peer|xff}` هنوز اضافه نشده (بخش بریف). وضعیت: **FIXED-PARTIAL**.
+
+## WP 1.2 · F-02 · محیط fail-safe و dev_code دوشرطی (BD-3)
+
+- **بازتولید:** پیش از اصلاح، `POST /api/v1/auth/otp/request` در محیط بدون `MP_ENVIRONMENT` پاسخ `dev_code` می‌داد (`modules/auth/service.py:53` و `:261` بدون شرط محیط جز `provider.name=="dev"`).
+- **ریشه:** `app/config.py` پیش‌فرض `environment="development"`؛ `MP_SMS_PROVIDER` پیش‌فرض `dev`؛ هیچ گیت شروع وجود نداشت.
+- **تغییرات:** `app/config.py` (`allow_dev_otp_echo`، `allow_implicit_dev`، رد echo در production)؛ `app/main.py` (`_assert_explicit_environment`، `_log_effective_configuration` با WARNING)؛ `modules/auth/service.py` (`dev_otp_echo_enabled`)؛ `modules/auth/router.py` (`response_model_exclude_none` برای دو مسیر OTP)؛ `scripts/deploy_gate.py` (`check_otp_echo_guard`، `otp_body_exposes_dev_code`)؛ `tests/conftest.py` (`MP_ALLOW_IMPLICIT_DEV` و فیکسچر `dev_otp_echo`)؛ پنج ماژول تست OTP با `pytestmark` opt-in؛ `test_sms.py` (بازنویسی تست قدیمی‌ای که پیش‌فرض را مجاز می‌دانست).
+- **ابزارهای اصلاح‌شده:** `scripts/route_guard_gate.py`، `scripts/export_routes.py`، `scripts/dast.py` و `scripts/build_audit_inventory.py` (`setdefault("MP_ENVIRONMENT","development")` برای ابزار فقط‌خواندنی).
+- **تست‌های اضافه:** `tests/regression/test_wp12_env_failsafe.py` — ۱۰ مورد (پاسخ بدون کد، پاسخ با پرچم، guard در منبع، شروع بدون محیط، شروع با محیط صریح، محیط از env، رد echo در production، پذیرش production بدون echo، گیت روی مخزن، تشخیص بدنه).
+- **شاهد بعد از اصلاح:** `deploy_gate.py` ⇒ ۱۴ بررسی، ۰ مشکل، خروجی صفر؛ `route_guard_gate.py` ⇒ خروجی صفر، ۱۶۳ مسیر، ۱۵۵ دارای guard؛ `pytest` کامل ⇒ **۱۱۲۸ passed، ۲ skipped، خروجی صفر** (`/tmp/after-wp11-12-pytest.txt`).
+- **یادداشت صادقانه:** تست‌های «شروع بدون محیط» همراه پیاده‌سازی نوشته شدند نه قبل از آن (قرمزِ اول فقط برای `dev_code` و شمارش منبع دیده شد). تأیید red برای این دو مورد انجام نشده؛ در WP بعدی با حذف موقت guard بازتولید می‌شود.
+- **گیت زنده (`curl` روی استقرار):** عمداً پیاده‌سازی نشد؛ هر درخواست OTP به شماره ناشناس SMS واقعی می‌فرستد. جایگزین: گیت استاتیک + `otp_body_exposes_dev_code` روی پاسخ‌های واقعی در استقرار (BLOCKED تا محیط استقرار). وضعیت: **FIXED-PARTIAL**.
+
+## نگهداری ابزارهای ممیزی (WP 1.1–1.2)
+
+- `scripts/build_audit_inventory.py --check` پس از ایجاد فایل‌های جدید باید کامیت شده باشد: این گیت از `git ls-files` استفاده می‌کند، پس قبل از کامیت «کهنه» می‌دهد. `INVENTORY.md` پس از کامیت دوباره ساخته و بررسی شد.
+- مشکل میانی: اسکریپت فهرست بدون متغیر محیط، بخش OpenAPI (۱۶۳ عملیات) را حذف کرد؛ با `setdefault` در کد subprocess اصلاح شد. این مورد به‌عنوان تله ثبت شد.
+
+## WP 1.4 · F-08 · خروج از همه و توکن‌های بی‌sid (BD-6)
+
+- **بازتولید:** `tests/integration/test_wp14_logout_all.py` پیش از اصلاح ⇒ `assert 200 == 401` برای توکن بی‌sid/بی‌ver پس از `POST /auth/logout-all`؛ و `seed_s3c_m39.py` ⇒ `print(f"{token}|{member.id}")` در تست نشت‌توکن قرمز.
+- **ریشه:** `modules/auth/service.py::logout_all` فقط refreshها را revoke می‌کرد؛ `app/deps.py` برای tokenهای بی‌`sid` فقط نسخهٔ `ver` را می‌سنجید و `ver` قدیمی‌ها را هم کاربر فعال تلقی می‌کرد.
+- **تغییرات:** `modules/auth/service.py` (bump `auth_version`)؛ `scripts/dast.py` (`_token` با RefreshToken و sid واقعی)؛ `scripts/seed_s3c_m39.py` (توکن به فایل 0600 با `MP_SEED_TOKEN_FILE`، stdout فقط member_id)؛ `tests/regression/test_wp12_env_failsafe.py` (پاک‌سازی `MP_ENVIRONMENT` در تست‌های محیط).
+- **تست‌های اضافه:** `tests/integration/test_wp14_logout_all.py` — ۴ مورد (توکن بی‌sid ⇒ ۴۰۱، توکن OTP ⇒ ۴۰۱، ورود تازه پس از logout-all ⇒ ۲۰۰، نبود چاپ توکن در ابزارها).
+- **شاهد بعد از اصلاح:** `pytest tests/integration/test_wp14_logout_all.py` ⇒ ۴ passed (پس از اصلاح)؛ ماژول‌های auth/session/rbac ⇒ ۹۱ passed؛ **pytest کامل ⇒ 1132 passed، 2 skipped، خروجی صفر** (`/tmp/after-wp14-pytest.txt`).
+- **خطای میانی:** تست «شروع بدون محیط» در اجرای کامل شکست خورد چون متغیر `MP_ENVIRONMENT` از تست قبلی به فرایند نشت می‌کرد؛ تست اکنون متغیر را خودش پاک می‌کند. ثبت به‌عنوان تله: تست‌های پیکربندی باید محیط خودشان را کنترل کنند.
+- **گیت عددی:** توکن بی‌sid پس از logout-all = ۴۰۱ ⇒ PASS.
+- **باقی‌مانده:** قاعدهٔ Semgrep «`create_access_token(` بدون `session_id=` خارج از تست» به WP 0.7/4.7 منتقل شد. وضعیت F-08: **FIXED-PARTIAL**.
+
+## الحاقیهٔ A1 · ثبت خط پایه (قبل از هر تغییر) و یافته‌های F-28 و F-29
+
+- **قبل (اندازه‌گیری‌شده روی 662ff88، ruff 0.17.6):** `ruff check .` = All checks passed (exit 0، ۵۲–۵۸ ms)؛ `ruff check --select ALL .` = ۱۱٬۷۷۸ یافته (exit 1، ۲۹۶ ms)؛ `ruff format --check .` = ۳۷۸ فایل پیش‌تر قالب‌بندی‌شده. جدول کامل و اختلاف‌ها در `BASELINE.md`.
+- **تأیید یافته‌ها:** `TRY400`×۶ در `app/sms.py` (F‑29)؛ `DTZ011`×۳ و `DTZ001`×۱ (F‑28)؛ `C901` بدترین ۲۸ در `app/config.py:128` (F‑15)؛ `ERA001`×۱۱ همه کامنت فارسی.
+- **اختلاف‌ها:** `RUF100` = ۷۲ (نه ۳۹)؛ قاعده‌های `ALL` = ۱۰۴ (نه ۱۰۸)؛ `S105` = ۳ (نه ۴)؛ `ruff-recommended.toml` در مخزن نیست و باید بازسازی شود. این اختلاف‌ها در `BASELINE.md` بخش ج ثبت شده‌اند.
+- **تغییر در این مرحله:** `findings.json` (F‑28، F‑29)، `status.json` (هر دو OPEN)، `scripts/build_audit_inventory.py` (شمارش ۲۹)، `BASELINE.md` (جدید، بخشی)، `DECISIONS.md` (AD‑1، AD‑2). هیچ کد محصولی تغییر نکرد.
+- **باقی‌مانده:** WP 0.9، WP 2.6، WP 3.6 و بازنگری WP 4.5 در صف `FINN-AUDIT-LOOP.md`؛ هنوز اجرا نشده‌اند.
+- **یادداشت محیطی:** در این نشست، فضای `/tmp` (venv و بستهٔ ممیزی) بازنشانی شده بود؛ شاخهٔ محلی روی `662ff88` قرار داشت و کامیت‌های ممیزی فقط روی remote بودند. با `git reset --mixed origin/arena/da474b65-mp` همگام شد؛ پیش از آن، هر ۷۵ فایل تغییریافته/بی‌ردیابی بایت‌به‌بایت با remote برابر بودند (هیچ کاری از دست نرفت).
+
+### A1.1 · اصلاحیه و نگاشت نام‌ها
+
+- **نگاشت:** AD‑1 ≡ D‑6 و AD‑2 ≡ D‑7 در الحاقیهٔ A1 (نام‌گذاری AD به‌خاطر اشغال بودن D‑6/D‑7 در این مخزن).
+- **تأیید مستقل روی base 662ff88:** ۱۰۴ قاعدهٔ متمایز؛ S105=۳ + S106=۱؛ `log.error` در ۶ محل داخل `except`؛ ERA001=۱۱.
+- **تصحیح:** RUF100 = ۳۹ ادعا تأیید نشد (`--select`=۷۲؛ `--extend-select` روی پیکربندی فعلی=۵۹)؛ عدد ۳۹ وابسته به ruff-recommended است.
+- **مانع WP 0.9 (مرحلهٔ ۱):** `ruff-recommended.toml` در مخزن نیست و متن آن در A1.1 §۲‑الف در پیام دریافتی وجود ندارد. تا دریافت آن هیچ پیکربندی ruff تغییر نکرد.
+
+## A1.3 · WP 0.9 (گام‌های ۱–۵) — رکورد اجرای بی‌ناظر
+
+- **برچسب:** addendum A1.3 · **نگاشت:** AD‑3 (مبنای گیت)، AD‑4 (CI)، AD‑5 (S608/کامنت). AD‑1≡D‑6، AD‑2≡D‑7 (قبلاً ثبت شد).
+- **پیش‌نیاز:** متن ruff-recommended در A1.3 §۵ دریافت شد؛ sha256 `6bafdba17d60db628197cf89aa4c65477025e0207bc3e1612612f2c2cdf72e5a` تطبیق داده شد (۴٬۹۷۳ بایت).
+
+### گام ۱ — پیکربندی (`5d820a0`)
+- فرمان: `pyproject.toml` بلوک `[tool.ruff]` با همان متن §۵ جایگزین شد (با سرآیندهای `[tool.ruff.lint]`)؛ `known-first-party` حفظ شد.
+- گیت: `RUFF=/tmp/venv/bin/ruff ./verify-addendum-gates.sh before` روی **662ff88** ⇒ `کل یافته 430 MATCH · قواعد 52 MATCH · RUF100 39 MATCH · TRY400 6 · DTZ011 3 · format 0 · ۲۰ noqa 20 · S608 4` ⇒ **PASS**.
+- روی HEAD (پیش از رفع): ۴۴۰ / ۴۰ RUF100 / ۱۲ از ۲۰ noqa (**جابه‌جایی خط**، نه حذف؛ شمارش به‌ازای فایل شد) ⇒ AD‑3.
+
+### گام ۲ — ERA001 به ignore (`e335653`)
+- فرمان: افزودن `"ERA001"` با دلیل فارسی به `ignore`.
+- گیت: `stage=after-era` روی **662ff88** ⇒ `419 MATCH · 51 MATCH · RUF100 39 · ۲۰ noqa 20 · S608 4` ⇒ **PASS**.
+- یادداشت: `ruff check --select ERA001` هنوز ۱۱ می‌دهد؛ این طبیعی است چون `--select` روی CLI ignore را دور می‌زند.
+
+### گام ۳ — ترتیب F‑22 و RUF100 (تصحیح روش)
+- **اشتباه من، اصلاح‌شده:** اولین dry-run با `--select RUF100` ⇒ ۶۹ (نادرست؛ `--select` بقیه را خاموش می‌کند). با پیکربندی کامل و فیلتر `RUF100` ⇒ **۴۰** روی HEAD، که ۴ تا در migration و ۳۶ قابل حذف‌اند. dry-run‌ها فقط `--diff` بودند؛ `git status` بعدش تمیز ماند.
+- ترتیب اجرا: `ruff check --fix --exclude db/migrations/versions/c3f01ab129e2_*.py` ⇒ `45 fixed` (ایمن)؛ migration بدون تغییر؛ ۴ `noqa: S608` باقی.
+
+### گام ۴ — رفع‌های ایمن (`9868a11`)
+- شامل: ۳۶ RUF100 (ـ بدون noqa بلااثر)، RUF022 (ترتیب `__all__`)، FURB110 (`a if a else b → a or b`؛ معادل)، FURB167، RUF021.
+- کامنت دلیل‌دار `test_m46_db_pool.py:33` به‌صورت کامنت ساده حفظ شد.
+- **اشتباه کمکی (اصلاح‌شده، قبل از push):** `git add -A` ۱۴ PNG آزمایشی `var/receipts/` را هم staged کرد؛ commit بازنویسی شد؛ PNGهای untracked آزمایشی پاک شدند (۷۵ tracked دست‌نخورده).
+- `ruff check .` ⇒ `384 errors` (شامل migration)؛ `ruff format --check .` ⇒ `385 files already formatted`.
+- pytest: `1132 passed, 2 skipped, 2 warnings in 308.04s` ⇒ **exit 0** (پایهٔ WP 1.4 همین بود).
+
+### گام ۵ — CI و پین ruff (`07f096d`)
+- `.github/workflows/ci.yml`: مرحلهٔ بلوکینگ `ruff check --select E,F,W,I,N,UP,B,SIM --ignore E501 .` + `ruff format --check .` (⇒ exit 0)؛ مرحلهٔ کامل `continue-on-error: true`.
+- `pyproject.toml`: `ruff>=0.3` ⇒ `ruff==0.17.6`.
+- YAML با PyYAML بارگذاری شد (`ok`) — پس از رفع خطای نام مرحله (`: ` در scalar بدون نقل‌قول).
+
+### تأیید نهایی
+- **انحراف از سند:** (۱) گیت مطلق روی base (AD‑3)؛ (۲) ۴۵ به‌جای ۴۷ رفع ایمن (AD‑5)؛ (۳) CI زیرمجموعهٔ بلوکینگ به‌جای «S بلوکینگ» (AD‑4، چون S هنوز ۴۰ یافته دارد)؛ (۴) `RUF100 = 0` پس از ۲.۶ به‌جای `0` در جدول: صفر فقط پس از WP 4.5 ممکن است (AD‑5).
+- **HARD-STOP برخورد‌شده:** هیچ. (`ruff --fix --unsafe-fixes` اجرا نشد؛ هیچ migration تغییر نکرد؛ هیچ ignore/per-file-ignore جز ERA001 اضافه نشد.)
+- **فایل `share/MP-BUILDER-HANDOFF-A1.3.md`:** در این مخزن وجود ندارد (`share/` نیست)؛ شناسهٔ `bce286e` روی `arena/2cde32d6-chat2db` است، نه شاخهٔ من؛ به آن شاخه سوئیچ نکردم.
+- **/tmp/venv:** دوباره ساخته شد (ruff 0.17.6، `pip install -e .[dev]`)؛ هر شاهد در مخزن ثبت شده است.
+- **باقی‌مانده:** WP 2.6 (F‑29)، WP 3.6 (F‑28)، WP 4.5 (F‑22)، گیت نهایی و گزارش ۲۹ یافته (§۳‑۷) — **NOT-STARTED**.
+
+## WP 2.6 و WP 3.6 — ریز‑حلقه‌ها (الحاقیهٔ A1)
+
+### WP 2.6 (F‑29) — کامیت `95b1a44`، شاخص `3cce4d5`
+- **red:** `tests/regression/test_wp26_sms_logging.py` روی کد قبل: ۶ تست exc_info ناموفق؛ ۸ تست دیگر (نشت کلید، رد https) از قبل سبز بودند ⇒ به‌عنوان گارد ثبت شد، نه اصلاح.
+- **انحراف:** `log.exception` مستقیم کلید Kavenegar را از متن استثنا نشت می‌داد (تست موجود `test_sms::credentials` گرفت) ⇒ helper `_log_provider_failure` و AD‑6.
+- **green:** ۱۴ تست جدید + ۶۱ تست sms/security؛ pytest کامل ۱۱۴۶ passed، ۲ skipped، exit 0؛ `after-wp26` PASS.
+- **یادداشت:** `build_audit_inventory.py` دو بار اجرا و سپس `--check`؛ نوشتن و خواندن ناهمگون بود، پس از تکرار تا پایداری `INVENTORY` کامیت شد (`3cce4d5`).
+
+### WP 3.6 (F‑28) — این کامیت
+- **red:** تست‌ها ابتدا روی کامیت پیش از تغییر (`HEAD` پیش از این WP) اجرا شد: سن `axis` و اسکن `date.today()` و هر دو Dockerfile ناموفق؛ `app.clock` وجود نداشت. نکته: یک بار `app.clock` از نصب editable درخت اصلی خوانده شد و تست ساعت بی‌ارزش سبز شد؛ با جابه‌جایی موقت فایل، red معتبر گرفته شد (`ModuleNotFoundError`) و فایل بازگردانده شد.
+- **green:** ۵ تست؛ `after-wp36` PASS (`date.today()` = ۰، DTZ011 = ۰)؛ pytest کامل ۱۱۵۱ passed، ۲ skipped، exit 0.
+- **زمان‌بندی تست:** ساعت ۲۰۳۰‑۰۳‑۲۰ ۲۱:۰۰ UTC (= ۰۰:۳۰ تهران ۲۱ مارس). ساعت واقعی ماشین (۲۰۲۶‑۱۱‑۲۱) با نتیجه‌ها تداخل ندارد.
+- **پیامد:** `ENV TZ=Asia/Tehran` در `backend/Dockerfile` و `infra/Dockerfile.backend`؛ AD‑1 لایهٔ دوم.
+
+### WP 1.5 (F‑09) — این کامیت
+- **red:** `tests/regression/test_wp15_rial_strict.py` روی کد قبل: ۲۳ ناموفق / ۱۰ موفق (موفق‌ها مواردی‌اند که کد قبل همان ورودی را رد می‌کرد، مثل `True` و `'1e6'`، یا تست پذیرش). استودیو: `tests/wp15Money.test.ts` ناموفق با خطای import (`src/lib/money` نبود).
+- **تنظیم red:** نمونهٔ اولیه (۱۰^۱۸+۷ با نرخ ۰٫۱) در float و Decimal برابر درآمد؛ با نرخ ۰٫۳ اختلاف دیده شد؛ تست روی همان اصلاح شد.
+- **green:** ۳۳ تست بک‌اند؛ ۱۵ تست استودیو؛ vitest کامل ۲۹۸ passed، tsc و eslint صفر.
+- **گیت:** `verify-addendum-gates.sh after-wp15` PASS (پیش از این، تعداد فیلدها یک‌بار به‌ازای هر فایل شمرده می‌شد و BLOCKED-NUMERIC می‌داد؛ اصلاح به شمارش خط‌ها، ۵ از ۵).
+- **lint:** lint بلوکینگ CI (E,F,W,I,N,UP,B,SIM) و `ruff format --check` صفر. TC001/TC003 جدید در schemaها هم‌الگوی فایل‌های موجود است و در بخش غیربلوکینگ است.
+- **pytest کامل:** ۱۱۸۴ passed، ۲ skipped، exit 0 (۳۴۰ ثانیه).
+- **پیامد:** AD‑7.
+
+### WP 4.5 (F‑21، F‑22) — این کامیت
+- **red (F‑22):** `tests/regression/test_wp45_f22_migration_sql.py` روی کد قبل: ۱ ناموفق (فراخوانی `execute` با SQL ساخته‌شده در migration). آشکارساز روی الگوی `DROP INDEX` سبز بود (تست حفاظتی).
+- **کشف مهم — قاعدهٔ semgrep مرده بود:** `mp-raw-sql-string-format` در `.semgrep/project-rules.yml` هرگز روی هیچ فایلی یافته نمی‌داد: (۱) `**/migrations/*` مستثنا بود؛ (۲) الگوها فقط با `, ...` تطبیق می‌یافتند؛ (۳) `pattern-not-inside: def $F(...): ...` هر تابعی را می‌پوشاند. نمونهٔ دیباگ روی فایل نمونه: قبل ۰، بعد ۴ (خطوط مطابق). بعد از repair روی migration دقیقاً ۴ یافته (۶۷/۱۶۵/۱۶۹/۱۷۱) و روی کل backend ۰.
+- **green (F‑22):** `_drop_index_if_exists` با inspector و `op.drop_index`؛ ۴ `# noqa: S608` حذف؛ `S608` از ignore مربوط به `db/migrations/**` حذف شد.
+- **شاهد زنجیرهٔ migration:** `alembic upgrade head` ⇒ `downgrade f1a2b3c4d5e6` ⇒ `upgrade head` روی SQLite همه exit 0؛ ایندکس‌ها پس از برگشت دوباره ساخته شدند.
+- **F‑21:** `hypothesis>=6.100` در extras dev؛ پنج اسکریپت به `with` یکدست شدند (red ۵/۵ ⇒ green ۵/۵). `dast.py --help` exit 0.
+- **S family فعال و بلوکینگ:** ۳۷ یافتهٔ S (بیشترشان تست). تست‌ها: ignore با دلیل برای S603/S607/S105/S106. کد واقعی: `monitoring` (S110) و `dast` (S112) با لاگ debug در helper ⇒ `noqa: BLE001` حفظ شد (۲۰ noqa محفوظ). `build_exercise_gifs` assert ⇒ `RuntimeError`. دو S105 مستند با `noqa` (مقدار توسعه و `token_type`). CI blocking: `--select E,F,W,I,N,UP,B,SIM,DTZ,TRY400,S`.
+- **TRY به‌صورت کد دقیق:** خانوادهٔ `TRY` در خط فرمان `TRY003` را برمی‌گرداند که در pyproject ignore است؛ پس `TRY400` آمد.
+- **خطای کشف‌شده در WP 3.6:** کامیت `3ee7838` یک `I001` در `modules/axis_assessment/service.py` گذاشت که lint بلوکینگ CI را می‌شکست. با safe fix (`--select I001`) اصلاح شد؛ این را ثبت می‌کنم که WP 3.6 گیت lint کامل را اجرا نکرده بود.
+- **یادداشت:** `seed_criteria.py --help` exit 1 است، ولی این رفتار قبل از تغییر هم همین بود (اسکریپت آرگومان ندارد و روی DB خالی اجرا می‌شود).
+- **گیت:** `verify-addendum-gates.sh after-wp45` PASS (RUF100 = ۰، S608 = ۰، ۲۰ noqa = ۲۰، format = ۰، date.today = ۰).
+- **pytest کامل:** ۱۱۹۱ passed، ۲ skipped، exit 0 (۲۹۶ ثانیه). semgrep کل backend: ۰ یافته، ۰ خطا.
+
+
+## WP 0.1 · ۴۹ ردیف خط پایه و شواهد زنده (HEAD `5188a0d`، base `662ff88`)
+- **بازیابی سند بازتولید:** `MP-REPLICATION-2026-11-21.md` از شاخهٔ کیت (`handoff/`) گرفته شد؛ sha256 `6a7a71ef…` تطبیق داده شد.
+- **پراب‌ها روی S3 (فرمان Dockerfile، ۲ ورکر، `MP_ALLOW_DEV_OTP_ECHO=true`):** `probe_contract seed/matrix/invalid` exit 0؛ `probe_invalid_authed` exit 0؛ `probe_live_security` exit 0؛ `probe_otp_limits all` exit 0؛ `probe_load plain-dev 10 40 60 80` exit 0؛ `probe_load backend-instr 40 80` exit 0؛ `bench_logging` exit 0؛ `repro_rbac_systemerror` exit 0؛ `scan_ui_wiring` exit 0.
+- **pytest کامل با پوشش:** `1191 passed، 2 skipped، exit 0` (`PYTEST_RC=0`)؛ پوشش ۸۴٪. `npm ci` در `mp-app/studio`: `NPM_RC=0`.
+- **اشتباه‌های اجرا و اصلاح:** (۱) probe ها مسیر `/tmp/run` می‌خواستند ⇒ symlink. (۲) `openapi-live.json` لازم بود ⇒ از `/openapi.json` گرفته شد (۱۴۱ مسیر). (۳) `probe_otp_limits bruteforce` mode ندارد و پاس بی‌خروجی بود ⇒ پراب جدید. (۴) اولین اجرای probe ها بدون `MP_ALLOW_DEV_OTP_ECHO` بود؛ کل اجرا دوباره انجام شد.
+- **ابزار تکمیلی:** `knip@5` (exit 1 = یافته، نه کرش)، `madge` exit 0، `jscpd` exit 0، `tsc` exit 0، `vitest` exit 0 (۲۹۸ پاس)، `eslint` exit 0 (۰/۰)، semgrep کیت روی base و HEAD (۱۹ ⇒ ۲)، `pathid` (۶۰/۶۰)، mutmut دستی (۲۶/۴۵).
+- **commit:** `mp-app/studio/dist` وجود نداشت؛ `/home/user/MP/share/` (فایل از پیش موجود، بی‌ارتباط) از commit حذف شد.
+
+## WP 0.2 · F‑12 · گاردهای مؤثر در `routes.json` — BLOCKED (گیت باینری کیت قرمز)
+
+WP: 0.2 · F: F‑12 · برچسب: `routes.json` (فیلد guards/roles) ≡ «ماتریس ۱۶۳×۷ ⇒ مشاهده‌شده == اعلام‌شده»
+commit: (ثبت‌شده در پیام commit WP 0.2؛ شاخهٔ `arena/da474b65-mp`)
+
+- **پیش‌سنجش:** `git status --porcelain` قبل از شروع: تمیز (جز `share/` از پیش موجود، خارج از commit). `git log -3`: `839500d` (WP 0.1) در HEAD. ورودی کیت: `kit.zip` sha256 `9a192500…` (مطابق). venv `/home/user/audit-run/venv` نصب شد (`INSTALL_RC=0`). دیتابیس محلی: `alembic upgrade head` (rc 0) + `seed_live.py` (rc 0، ۲۵۰ عضو).
+- **قرمز (قبل از تغییر):** `pytest tests/integration/test_routes_effective_guards.py` روی artifact قبلی ⇒ `8 failed`. (ابتدا تست نوشته شد، سپس مولد.)
+- **ماتریس قبل از تغییر (شاهد خام):** `probe_contract.py all` (کیت، بدون تغییر) ⇒ `unauth_allowed 5`، `over_permissive 2`، `contract_drift_denied 604`، `server_errors 0` (`/tmp/wp02/all-dump.log` ⇒ `evidence/after/wp02/kit-probe/kit-all-before-change.log`). ماتریس تمیز (`scripts/wp02_matrix.py`، ۱ relogin بعد از `logout-all`) ⇒ `cells 1141`، ناهمخوانی باینری روی artifact قبلی: **115** (99 + 15 + 1).
+- **علت ۴۰۱ «نشست معتبر نیست»:** ابطال توکن‌ها توسط کال‌های قبلیِ ماتریس (logout/logout-all). اثبات: با توکن تازه `GET /members/me` ⇒ ۲۰۰ برای هر ۷ اصل؛ توکن‌ها `sid` و `ver` دارند. `sid` در کد برای `/auth/sessions` اجباری نیست.
+- **اصلاح:** `scripts/export_routes.py` (`effective_access`، `access_matrix`)، `app/security/route_policy.py` (جدید: `SUPER_ADMIN_ONLY` ۱۵، `OWNER_SCOPE` ۳۵، `BODY_CREDENTIAL` ۱، `REQUIRES_BOUND_SESSION` ∅)، `api/routes.json` بازتولید (141 مسیر، 163 عملیات)، `tests/integration/test_routes_access_matrix.py` (منطق جدید + تست عمومی)، `test_routes_effective_guards.py` (جدید).
+- **سبز:** `pytest tests/integration/test_routes_effective_guards.py` ⇒ `8 passed`؛ `test_routes_access_matrix` + `test_routes_artifact` + `test_wp03_axis_single_guard` ⇒ `12 passed` (با تست‌های بالا)؛ **پیش از commit، کل بک‌اند:** `1199 passed، 2 skipped، exit 0` (`backend-test-suite-wp-0-2-check`).
+- **ruff:** `ruff 0.17.6`؛ `ruff check` روی فایل‌های تغییر‌یافته ⇒ `All checks passed!`؛ `ruff format` روی ۴ فایل اعمال شد؛ `route_guard_gate.py` ⇒ exit 0.
+- **گیت‌ها:**
+  - ارزیاب سه‌ارزشی (`scripts/wp02_eval.py` روی `matrix-cells-clean.json`) ⇒ `cells 1141`، `exact 915`، `conditional 226` (owner_scope 184، grant 35، body_credential 6، anonymous may 1)، `server_errors 0`، **`mismatch_total 0`**.
+  - **کیت `probe_contract.py all` (بعد از تغییر، بدون تغییر کیت):** `unauth_allowed 5` (همه عمومی)، `over_permissive 0`، `contract_drift_denied 592`، `server_errors 0`، `leaked_stacktrace 0`، `slow_ops 0` ⇒ `kit-probe/kit-all-after.log`. گیت باینری کیت **قرمز** است؛ ۶۹ سلول اختلاف باینری همه شرطی‌اند (۶۸ «مجاز اعلام‌شده، ۴۰۳» + ۱ anonymous `may`). ۵۹۲ عدد کیت ترکیبی از ۶۹ شرطی و آلودگی ابطال توکن در همان اجراست؛ ادعای «۰» نمی‌شود.
+- **تلاش‌ها (G4، حداکثر ۳):** (۱) تغییر مولد به سیاست مؤثر ⇒ تست‌های قدیمی شکستند و اصلاح شد؛ (۲) ماتریس تمیز با رفع ۴۲۲ کاذب ⇒ ۵ عملیات سرویس‌سطح با body معتبر؛ (۳) تحلیل گیت باینری ⇒ شرطی بودن ذاتی، نه قابل‌سبز‌شدن بدون تغییر گیت یا داده. سه تلاش ⇒ `BLOCKED`.
+- **انحراف از سند:** AD‑10 (گیت باینری کیت قرمز؛ مسیرهای عمومی `roles` = همه؛ `requires_bound_session` تهی). کیت و گیت‌ها تغییر نکردند.
+- **یافته‌های جدید:** (۱) F‑12 علت `sid` را اشتباه نسبت داد؛ 401 از آلودگی ابطال بود. (۲) `probe_contract.py` ترتیب مسیرها را رعایت می‌کند و خودش کاذب 401 تولید می‌کند (گزارش به مالک؛ کیت تغییر نشد). (۳) `matrix`-only کیت `ids` را از `evidence/contract-rbac-findings.json` می‌خواند؛ در اجرای `all` درست شد.
+- **توقف‌ها:** `BLOCKED` (گیت قرمز بعد از ۳ تلاش) | سؤال بسته برای مالک: گیت کیت سه‌ارزشی بفهمد (تغییر کیت، نیاز تأیید) یا WP 0.2 با گیت سه‌ارزشی پذیرفته شود (AD‑10).
+- **نحوهٔ برگرداندن:** `git revert` همان commit. تغییرات در AD‑10 فهرست شده.
+- **ادامه:** بر اساس قانون (ریز‑حلقه: گیت قرمز رد نمی‌شود و توقف کل حلقه نیست)، حلقه به WP مستقل بعدی می‌رود (0.4 → 0.7 → فاز ۲). WP 0.2 `BLOCKED` باز می‌ماند.
+
+## WP 0.4 · F‑07 · پوشش per-directory با آستانه‌های بریف — DONE
+
+WP: 0.4 · F: F‑07 · شاهد: `evidence/after/wp04/` · تصمیم: AD‑11 · commit: (این کامیت؛ شاخهٔ `arena/da474b65-mp`)
+
+- **بازیابی محیط (پیش از کار):** محیط بازنشانی شده بود: `/home/user/audit-run` و venv و `/tmp` نبودند؛ شاخهٔ محلی روی `662ff88` بود با ۱۲۹ تغییر کاری نامرتبط. این تغییرات **حذف نشدند**: patch و tar در `/home/user/recovery3/` و `git stash` (`recovery3-pre-sync-wp04`) ذخیره شد. شاخه به `origin/arena/da474b65-mp` = `b6f347f` هم‌گام شد؛ WP 0.4 فقط دو فایل از stash بازآوری شد. venv تازه: `/home/user/wp04-venv` (`pip install -e ".[dev]"` exit 0).
+- **پیش‌سنجش (قبل از تغییر):** `coverage run` با `pytest-cov` روی کل بک‌اند: `1199 passed, 2 skipped`، exit 0؛ گیت per-directory ⇒ **exit 1**: `db` ۷۰٫۳۰٪ (آستانه ۸۰)، `scripts` ۴۸٫۳۲٪ (آستانه ۶۰).
+- **علت `db`:** migrationها در تست‌ها در subprocess اجرا می‌شوند؛ پوشش فرزند ثبت نمی‌شد (`39f0cd2d8531` = ۵٪). تلاش in-process با `alembic` API سه بار شکست خورد (خروجی `check` در بافر دیده نشد، ۴ تست drift/round‑trip/backup قرمز) ⇒ برگردانده شد.
+- **اصلاح ۱ (اندازه‌گیری):** `mp-app/backend/coverage-subprocess.rc` (`parallel = True`) + `COVERAGE_PROCESS_START` + `coverage run --parallel-mode` + `coverage combine` در `scripts/coverage_run.sh`. با همین، `db/migrations/versions/39f0cd2d8531` = ۱۰۰٪ و `db` = ۹۸٫۹۷٪.
+- **اصلاح ۲ (تست‌ها برای `scripts`):** `tests/integration/test_deploy_gate_branches.py` (۲۲ تست، شاخه‌های bad/warn/crash روی درخت موقت)، `test_import_food_catalog.py` (۱۳ تست)، `test_attach_exercise_media.py` (۶ تست). `scripts` از ۵۷٫۴۲٪ (با migrations) به **۶۵٫۸۵٪** رسید.
+- **گیت `scripts/coverage_gate.py` + تست:** `tests/integration/test_coverage_gate.py` (۶ تست سبز). **قرمز:** جهش‌یافتهٔ گیت (`if percent + 1e-9 < minimum:` ⇒ `if False:`) در یک کپی موقت ⇒ ۳ تست ناموفق (`test_evaluate_fails_below_threshold_and_on_missing_directory`، `test_low_directories_are_not_hidden_by_total[db]`، `[scripts]`)؛ نسخهٔ اصلی ⇒ ۶ پاس؛ گیت روی XML قبل از اصلاح ⇒ exit 1.
+- **CI:** `.github/workflows/ci.yml` مرحلهٔ تست به `bash scripts/coverage_run.sh` تغییر کرد (کد خروج غیرصفر = شکست) و `actions/upload-artifact` با نام `backend-coverage-xml` (`coverage.xml` + `coverage-by-dir.json`، `if: always()`). `.gitignore`: `.coverage.*`، `coverage-by-dir.json`.
+- **lint/security:** ruff (`E,F,W,I,N,UP,B,SIM,DTZ,TRY400,S`) و `ruff format --check` روی ۵ فایل جدید ⇒ exit 0؛ `ruff check` کامل ⇒ exit 0؛ `bandit -r . -ll` ⇒ exit 0، ۰ مورد (B314 در `coverage_gate.py` با `nosec` و توضیح؛ AD‑11).
+- **اجرای نهایی روی وضعیت کامیت‌شده:** `cd mp-app/backend && bash scripts/coverage_run.sh -q` ⇒ **RUN_RC=0**؛ `1246 passed, 2 skipped, 2 warnings in 480.95s`.
+
+| دایرکتوری | پوشش | خطوط | آستانه | وضعیت |
+|---|---|---|---|---|
+| modules | 92.33٪ | 4752/5147 | ≥90 | PASS |
+| app | 96.62٪ | 801/829 | ≥92 | PASS |
+| api | 93.69٪ | 104/111 | ≥90 | PASS |
+| engine | 97.24٪ | 1058/1088 | ≥95 | PASS |
+| security | 96.61٪ | 57/59 | ≥95 | PASS |
+| db | 98.97٪ | 1737/1755 | ≥80 | PASS |
+| jobs | 84.55٪ | 93/110 | ≥80 | PASS |
+| cache | 76.60٪ | 72/94 | ≥75 | PASS |
+| scripts | 65.85٪ | 883/1341 | ≥60 | PASS |
+| devtools | 91.73٪ | 122/133 | — | گزارش‌شده، بدون آستانه |
+| eval | 82.56٪ | 284/344 | — | گزارش‌شده، بدون آستانه |
+
+- **دامنهٔ هر عدد:** فرمان `bash scripts/coverage_run.sh` از `mp-app/backend`؛ `source="."`، `omit tests/*`؛ فرایندهای فرزند (alembic) شامل؛ دایرکتوری = اولین بخش مسیر در XML.
+- **نتیجه کلی:** TOTAL 90٪ (11011 خط، 1048 بدون پوشش) در کل بک‌اند.
+- **انحراف/یادداشت:** آستانه‌ها کاهش نیافتند. `coverage.xml` (۴۳۶KB) در git نیست؛ در CI artifact است. `scripts/coverage_gate.py` با `noqa S314 / nosec B314` (ورودی XML محلی).
+- **نحوهٔ برگرداندن:** `git revert` همان commit؛ AD‑11.
+
+## WP 0.7 · BLOCKED-ENV · کیت مفقود پس از بازنشانی محیط
+
+- **شاهد:** `ls /home/user/audit-run` ⇒ `No such file or directory`. `harness/semgrep-mp.yml` و `kit.zip` (sha256 مورد انتظار `9a192500…`) در دسترس نیستند؛ `/home/user/wp04-venv` (venv تازه) جایگزین venv قبلی شد.
+- **وضعیت:** WP 0.7 به قاعدهٔ کیت وابسته است؛ بدون آن نمی‌توان شاهد معتبر تولید کرد. ساخت قاعدهٔ جایگزین، شاهد کیت محسوب نمی‌شود.
+- **مورد نیاز از مالک:** بازگردانی کیت (`kit.zip` با sha256 مطابق) در `/home/user/audit-run/`، یا تأیید مسیر دیگر. پس از آن WP 0.7 از همین نقطه ادامه می‌یابد.
+- **صف باقی‌مانده (بدون تغییر):** WP 0.2 BLOCKED (AD‑10)؛ WP 0.6 و 0.8 PARTIAL؛ فازهای ۱ (PARTIAL/BLOCKED-ENV)، ۲، ۳، ۴ هنوز انجام نشده‌اند. **ممیزی کامل نیست.**
+
+## WP 2.5 · F‑17 · خطاهای بی‌صدا ⇒ لاگ + شمارنده — DONE
+
+- **بررسی:** AST روی کد تولید (`app, api, modules, engine, security, db, jobs, cache`): سه `except` از F‑17 قبلاً در WP 4.5 (S110) به `debug` با traceback تبدیل شده بودند (`api/v1/monitoring.py`). باقی‌مانده: `modules/assessment/service.py:180` (`except (TypeError, ValueError): continue`).
+- **قرمز (قبل از تغییر):** `tests/regression/test_wp25_silent_failures.py` ⇒ ۳ ناموفق: شمارندهٔ JP7 صفر، شمارندهٔ scrape صفر، نگهبان AST یک مورد (`service.py:180`). (یک بار خطای تست خودم — `render()` بایت برمی‌گرداند نه str — اصلاح شد؛ شکست‌های بعدی علت واقعی‌اند.)
+- **سبز:** `jp7_trend` ردیف خراب را با `_log.warning` و `metrics.inc("assessment_jp7_rows_skipped")` ثبت می‌کند؛ `_log_scrape_failure` شمارندهٔ `mp_metrics_scrape_failures` را هم افزایش می‌دهد. ⇒ `4 passed`.
+- **کل:** `pytest -q --no-cov` ⇒ `1250 passed, 2 skipped, exit 0` (`/home/user/wp04-cov/wp25/pytest.log`).
+- **نحوهٔ برگرداندن:** `git revert` همان commit.
+
+## WP 3.2 · F‑26 · یک شکل پاکت خطا — DONE
+
+- **یافته:** خطاهای HTTP خود Starlette (۴۰۴ مسیر ناموجود، ۴۰۵ متد نامجاز) با `{"detail": …}` برمی‌گشتند؛ بقیهٔ API `{"error": {code, message, details}}`. کلاینت‌ها (`studio/src/lib/session.ts`، `client/lib/core/api_client.dart`) `error.message` را اول می‌خوانند و `detail` را فقط پشتیبان دارند ⇒ تغییر سازگار است.
+- **قرمز:** `tests/integration/test_wp32_error_envelope.py` ⇒ `2 failed` (`{'detail': 'Not Found'}`، `{'detail': 'Method Not Allowed'}`).
+- **سبز:** `app/errors.py::http_error_handler` (کد: `not_found`/`method_not_allowed`/`http_<status>`؛ پیام فارسی برای ۴۰۴ و ۴۰۵؛ هدرهای خطا مثل `Allow` حفظ می‌شوند) و ثبت در `app/main.py`. ⇒ `2 passed`.
+- **کل:** `pytest -q --no-cov` ⇒ `1252 passed, 2 skipped, exit 0`.
+- **یادداشت:** پیام‌های ۴۰۴/۴۰۵ متن فارسی ثابت‌اند؛ اگر مالک متن دیگری بخواهد، فقط `_HTTP_MESSAGES` تغییر می‌کند.
+- **نحوهٔ برگرداندن:** `git revert` همان commit.
+
+## وضعیت باقی‌مانده پس از WP 3.2
+
+- WP 3.1 (F‑25): کف شناسه نیاز به نوع پارامترها دارد؛ middleware قبل از مسیریابی است. طراحی و تست جدا لازم است (احتمال شکستن کدهای رشته‌ای). باز.
+- WP 0.7: BLOCKED-ENV (کیت). WP 0.2: BLOCKED (AD‑10).
+- READY باقی‌مانده: 2.1، 2.2، 2.3، 2.4، 3.4، 4.3، 4.4، 4.6؛ TODO: 3.3، 3.5، 4.1، 4.2، 4.7؛ PARTIAL: 0.6، 0.8، 1.1، 1.2، 1.4.
+
+## WP 2.5 · بازبینی پس از بازیابی کیت — DONE (`a9146c7`)
+
+- **کیت:** `harness/semgrep-mp.yml` (semgrep 1.186.0) روی `mp-app/backend` قبل و بعد: `mp-silent-except-pass` = **۰** در هر دو (`/home/user/recovery4/semgrep-before.json`، `semgrep-after.json`؛ rc=0). نتیجهٔ دیگر: `mp-money-division` ۲ مورد (قاعدهٔ دیگر، خارج از این WP).
+- **شکاف واقعی:** نام شمارنده‌ها طبق کیت نبود؛ `/health/ready` بازتاب نمی‌داد؛ `scripts/dast.py::_log_skip` فقط `debug` بود.
+- **قرمز:** `test_wp25_silent_failures.py` (۲ ناموفق)، `test_wp25_dast_skip_counter.py`، `test_wp25_scrape_errors_ready.py` (KeyError `metrics_scrape_errors`) ⇒ ۴ ناموفق.
+- **سبز:** `mp_assessment_jp7_rows_skipped_total`؛ `mp_metrics_scrape_errors_total` + `logger.warning` + فیلد `metrics_scrape_errors` در `/health/ready`؛ `mp_dast_errors_total{where}` در `_log_skip`. ⇒ ۶ passed.
+- **lint/format:** ruff (E,F,W,I,N,UP,B,SIM,DTZ,TRY400,S) exit 0؛ `ruff format --check` exit 0.
+- **کل:** `pytest -q --no-cov` (backend) ⇒ `1254 passed, 2 skipped, rc=0` (`/home/user/recovery4/wp25/pytest.log`).
+- **اصلاح ثبت:** پیام commit می‌گوید «was 0 before» برای گیت semgrep؛ دقیق‌تر: گیت semgrep از قبل ۰ بود و شکاف در نام/بازتاب بود. commit منتشرشده بازنویسی نشد (بدون force-push).
+- **نحوهٔ برگرداندن:** `git revert a9146c7`.
+
+## WP 3.2 · وضعیت PARTIAL
+
+- گیت کیت `fastapi_default_detail == 0` اندازه‌گیری نشده. probe کیت این فیلد را ندارد و کیت منجمد است؛ برای اندازه‌گیری لازم است یک نسخهٔ مخزن از probe با این یافته ساخته شود، backend زنده با seed اجرا شود و خروجی ۷۱ ⇒ ۰ ثبت شود. این کار انجام نشده.
+- **تأثیر:** چهار `raise HTTPException` در `backend/devtools/sandbox_bank.py` شکل بدنه‌شان تغییر کرده است (ثبت‌شده، بررسی نشده).
+
+## وضعیت کلی
+
+- **ممیزی کامل نیست.** باقی‌مانده: WP 3.2 گیت زنده؛ WP 3.1 (F‑25)؛ WP 0.2 (BLOCKED، AD‑10 با کیت باید دوباره ارزیابی شود، ماتریس ۱۱۴۱ سلول)؛ WP 0.7 (کیت اکنون موجود است، باید دوباره ارزیابی شود)؛ WP 0.8؛ و صف READY/TODO.
+
+## WP 3.2 · گیت زنده — DONE
+
+- **probe:** نسخهٔ مخزن `probes/probe_invalid_authed.repo-copy.py` (فقط یک یافته اضافه: `fastapi_default_detail`؛ هش کیت `edd3c25c…`). کیت دست‌نخورده.
+- **پایه (قبل):** `0afd240` روی `:8011` ⇒ `fastapi_default_detail = 70` (همه ۴۰۴) از ۸۷۲ سلول.
+- **بعد:** `8926fcd` + اصلاح پیام ⇒ `fastapi_default_detail = 0` از ۸۷۲ سلول. وضعیت‌ها یکسان: ۴۲۲:۵۳۱، ۴۰۴:۲۲۰، ۲۰۰:۵۵، ۴۰۳:۳۴، ۴۰۰:۲۴، ۴۰۹:۸.
+- **یادداشت ۷۱ در کیت:** کیت ۷۱ (۷۰×۴۰۴ + ۱×۴۰۵) نوشته؛ این probe ۴۰۵ تولید نمی‌کند. ۴۰۵ جداگانه با curl: قبل `{"detail":…}`، بعد پاکت `method_not_allowed`.
+- **اصلاح حین اجرا:** `http_error_handler` پیام خاص برنامه (مثلاً `authority نامعتبر`) را با پیام عمومی جایگزین می‌کرد. red ⇒ green با `tests/regression/test_wp32_detail_preserved.py` (۱ ناموفق ⇒ ۳ سبز).
+- **سازگاری کلاینت:** studio `session.ts` ابتدا `error.message` سپس `detail`؛ Flutter `api_client.dart` هر دو را می‌پذیرد.
+- **کل:** `pytest -q --no-cov` ⇒ `1257 passed, 2 skipped, rc=0` (`/home/user/recovery4/wp32/pytest.log`).
+- **شواهد:** `docs/MuscleParadise/audit/evidence/after/wp32/` (summary.json و لاگ‌ها). JSON کامل سلول‌ها (~۴۹۰KB) خارج از مخزن: `/tmp/run/audit-before` و `/tmp/run/audit-final`.
+- **نحوهٔ برگرداندن:** `git revert` همان commit.
+
+## WP 3.1 · F‑25 · کف شناسه — DONE
+
+- **ریشه:** `id_guard._too_big` با `isdigit()` مقادیر منفی را نمی‌دید و `0` فقط از سقف رد نمی‌شد.
+- **قرمز:** `tests/integration/test_wp31_id_floor.py` (از `app.openapi()`، چون FastAPI 0.141 مسیرها را در `_IncludedRouter` نگه می‌دارد) ⇒ ۲۴۸ از ۲۴۸ سلول ناموفق (۴۰۱ بدون `invalid_id`).
+- **سبز:** `app/id_floor.py::check_path_id_floor` به‌عنوان dependency سراسری (`FastAPI(dependencies=…)`). فقط پارامترهای `*_id` (در OpenAPI همه integer) با regex `[+-]?[0-9]+\Z` سنجیده می‌شوند؛ `v < 1` یا `v > MAX_SAFE_ID` ⇒ ۴۲۲ `invalid_id`. بدون `lstrip` روی رشتهٔ اصلی. ⇒ `5 passed`.
+- **گیت کیت (probe زنده، ۸۷۲ سلول):**
+  - پایه (822e483): `unexpected_2xx_on_bad_id = 48`، `id_guard_rejections = 70`.
+  - بعد: `unexpected_2xx_on_bad_id = 0`، `id_guard_rejections = 338` = ۴×۶۷ + ۷۰ (۶۷ = ۵۷ سلول admin + ۱۰ سلول member برای هر مقدار منفی؛ ۷۰ = مقدار سقف از middleware قبلی).
+  - `server_errors_5xx = 0`، `leaked_stacktrace = 0`، `fastapi_default_detail = 0`، `tokens_live_throughout = True`.
+- **بار (kit: `probe_load.py plain-dev 10 40`، اجرای پشت‌سرهم روی همان DB):** نسبت بعد/قبل — ۱۰ کارگر: rps ×۱٫۲۰، p50 ×۰٫۸۶، p95 ×۰٫۸۱؛ ۴۰ کارگر: rps ×۱٫۰۷، p50 ×۰٫۹۴، p95 ×۰٫۹۷. بدون 5xx و بدون timeout. یک اجرا برای هر مرحله؛ فقط «بدون رگرسیون» ادعا می‌شود.
+- **یادداشت probe بار:** دو مسیر فهرست کیت (`/api/v1/exercises`، `/api/v1/reports/financial/summary`) در هر دو ساخت ۴۰۴ می‌دهند؛ همان‌طور که هست ثبت شد.
+- **کل:** `pytest -q --no-cov` ⇒ `1262 passed, 2 skipped, rc=0` (`/home/user/recovery4/wp31/pytest.log`).
+- **شواهد:** `evidence/after/wp31/` (summary.json، لاگ‌های before/after)، `evidence/after/wp31-load-ratios.json`.
+- **نحوهٔ برگرداندن:** `git revert` همان commit.
+
+## WP 0.6 · F‑24 · منسوخ‌ها و شمارش مسیرها — DONE
+
+- **قرمز:** `tests/regression/test_wp06_deprecations_and_counts.py` — `test_no_deprecated_422_constant` ⇒ ناموفق: `app/id_floor.py:33` (خودِ WP 3.1 این ثابت را وارد کرده بود).
+- **سبز:** `id_floor.py` از عدد `422` مستقیم استفاده می‌کند. دو آزمون شمارش (141 مسیر، 163 عملیات، و تطابق پیمایشگر `route_guard_gate._walk` با OpenAPI) از ابتدا سبز بودند.
+- **اسکریپت‌ها:** `scripts/route_guard_gate.py` و `export_routes.py` مسیرها را با پیمایش بازگشتی می‌خوانند (چون guardها روی شیء مسیر هستند)؛ تطابق آن‌ها با OpenAPI در آزمون قفل شده است (۱۶۳ = ۱۶۳، اختلاف ۰).
+- **هشدار asyncio:** `pyproject.toml` ⇒ `asyncio_default_fixture_loop_scope = "function"` (رفتار فعلی همین است).
+- **بار/import:** `create_app()` و `openapi()` بدون هشدار؛ لاگ‌های `load-plain-dev` و probe بدون کلمهٔ deprecat.
+- **باقی‌مانده:** هشدار httpx در `fastapi/testclient.py` (فقط تست)؛ حذفش نیازمند وابستگی `httpx2` است و تصمیم جداگانه می‌خواهد.
+- **کل:** `pytest -q --no-cov` ⇒ `1265 passed, 2 skipped, rc=0` (`/home/user/recovery4/wp06/pytest.log`).
+- **نحوهٔ برگرداندن:** `git revert` همان commit.
+
+## WP 0.7 · semgrep در CI (غیرمسدودکننده) — PARTIAL
+
+- **اجرای محلی:** `semgrep --config=.semgrep/mp-harness-rules.yml --exclude=… mp-app` ⇒ exit 0، ۵ یافته: `mp-money-division`×۲، `mp-dart-dynamic-cast`×۱، `mp-ts-float-money`×۱، `mp-ts-negative-sentinel-member-id`×۱؛ `mp-silent-except-pass`×۰ (`/home/user/recovery4/semgrep-mp-all.json`).
+- **CI:** مرحلهٔ «Semgrep (harness rules, non-blocking)» در job بک‌اند با `continue-on-error: true`. YAML اعتبارسنجی شد.
+- **باز:** گیت «صفر یافته» در پایان فاز ۴ و تبدیل به مسدودکننده در همان فاز.
+
+## WP 0.8 · پین SHA — DONE (گیت کیت)
+
+- `grep -rh "uses:" .github/workflows/` ⇒ ۴۳ خط؛ همه با SHA ۴۰‌کاراکتری؛ ۰ تگ‌محور.
+- اختلاف با عدد کیت (۴۲): کیت در زمان نگارش ۴۲ دیده؛ عدد فعلی ۴۳ است و همه پین‌اند.
+- `gh api repos/<repo>/commits/<sha>` برای ۷ SHA یکتا ⇒ همه یافت شد (checkout، setup-node، setup-python، upload-artifact، build-push-action، login-action، flutter-action).
+- **تغییر کد:** ندارد (از قبل برقرار بود).
+
+
+## WP 3.4 · پروفایل عضو لازم — DONE
+
+- **Red:** `tests/integration/test_wp34_member_profile_required.py` با پرچم خرید روشن (`monkeypatch` روی `shop_online_purchase_enabled`، مثل `test_m59_shop.py`). پیش از اصلاح: `assert 404 == 409` (بررسی پروفایل بعد از `shop_online_closed` نبود؛ با پرچم بسته ۴۰۹ هم نمی‌رسید).
+- **Fix:** `modules/shop/service.py::_own_member` ⇒ `ConflictError(..., code="member_profile_required")` (۴۰۹).
+- **Green:** `test_wp34`, `test_m59_shop`, `test_phase2_shop_display` ⇒ ۵۱ passed.
+- **گیت ایستا:** `scripts/deploy_gate.py::check_shop_purchase_guard` ⇒ `studio/src/pages/Shop.tsx` باید تب سبد و دکمهٔ خرید را با `purchaseOpen` شرط کند. دو تست در `test_deploy_gate_branches.py` (یکی روی مخزن واقعی، یکی قرمز با دکمهٔ بدون شرط). `deploy_gate.py` ⇒ ۱۵ بررسی، ۰ مشکل؛ `test_deploy_gate_branches` + `test_deploy_gate` ⇒ ۲۵ passed.
+- **کل بک‌اند:** `pytest -q --no-cov` ⇒ `1268 passed, 2 skipped`, rc=0 (`/home/user/recovery4/wp34/pytest.log`).
+- **ruff:** `check` ⇒ All checks passed؛ `format --check` ⇒ مرتب.
+- **سفارش به‌نیابت:** کد آن را ندارد؛ مستندسازی‌شده در AD‑17.
+- **Rollback:** `git revert <commit WP 3.4>`.
+
+## WP 4.6 · قاعدهٔ ریال و sentinel منفی — DONE
+
+- **Red (sentinel):** `studio/tests/nutritionNoMemberSentinel.test.tsx` ⇒ قبل از اصلاح: یک درخواست با `member_id=-1` (`expected [ Array(1) ] to deeply equal []`).
+- **Fix:** `pages/Nutrition.tsx` — وقتی `memberId === null` است، fetcher `Promise.resolve(null)` برمی‌گرداند و درخواست نمی‌رود. تست سبز.
+- **Float money:** `Analytics.tsx:106` (`Number(row.total_minutes)`) false positive بود؛ regex `total` هر نام حاوی آن را می‌گرفت. regex با lookahead برای `minute|visit|score|kcal` محدود شد (AD‑18). fixture `.semgrep/tests/mp-ts-float-money.ts`: ۵ ruleid و ۴ ok؛ مطابقت کامل `[3,5,7,9,11]`.
+- **گیت:** `semgrep --config=.semgrep/mp-harness-rules.yml mp-app/studio/src` ⇒ exit 0، ۰ یافته (`mp-ts-float-money` و `mp-ts-negative-sentinel-member-id`).
+- **استودیو:** `npx tsc --noEmit` ⇒ rc=0؛ `npx vitest run` ⇒ 46 فایل passed/1 skipped، ۲۹۹ تست passed/۹ skipped، rc=0 (`/home/user/recovery4/wp46-vitest.log`).
+- **Rollback:** `git revert <commit WP 4.6>`.
+
+## WP 2.4 · RBAC از کش تصمیم — DONE (با یک محدودیت باقی‌مانده، AD‑19)
+
+- **Red:** `tests/regression/test_wp24_rbac_decision_cache.py` ⇒ قبل از اصلاح: `casbin ارزیابی شد 50 بار؛ باید ۱ بار`؛ `۱۰۰۰ شناسه ⇒ 1000 == 1`؛ نبود کش و نبود `mp_rbac_decisions_total`.
+- **Fix:** `security/rbac.py`:
+  - `_decide_raw` (بدون کش) + `_decide` (`lru_cache` با سقف ۴۰۹۶) روی مسیر نرمال‌شده؛
+  - `_normalise_path`: بخش‌های عددی ⇒ `:id` (هیچ سیاستی بخش عددی تحت‌اللفظی ندارد؛ تست هم‌ارزی روی همهٔ مسیرهای OpenAPI و نمونه‌های سیاست، نقش×متد)؛
+  - `get_enforcer` با قفل و ظرف تک‌خانه (بدون `global`)؛
+  - `enforce` ⇒ `mp_rbac_decisions_total{role,decision}` و `mp_rbac_errors_total`.
+- **Green (تست‌ها):** `test_wp24_rbac_decision_cache.py` ۶ passed؛ `test_rbac.py` + `test_routes_access_matrix.py` + `test_wp03_axis_single_guard.py` + `test_m59_shop.py` ⇒ ۹۴ passed، rc=0 (`/home/user/recovery4/wp24-rbac.log`).
+- **گیت بار کیت (repro، ۸۰ نخ × ۴۰ عمق × ۴۰۰ فراخوانی = ۳۲٬۰۰۰)، اسکریپت کپی مقیاسی (تشخیصی، گیت نیست):**
+  | اجرا | خطا | p50 | p95 | توان عملیاتی/s |
+  |---|---|---|---|---|
+  | قبل: HEAD پیش از WP 2.4 (`fe103a4`) | `SystemError` ۱ | ۱٫۰۱۶ ms | ۳۵۲ ms | ۱٬۰۰۲ |
+  | بعد (۵ مسیر کیت) | ۰ | ۰٫۰۰۶ ms | ۰٫۰۱۳ ms | ۱۱۰٬۵۷۰ |
+  | بعد (بار با شناسه‌های متنوع) | ۰ | ۰٫۰۰۶ ms | ۰٫۰۱۱ ms | ۱۰۹٬۱۷۵ |
+  - خروجی‌ها: `evidence/after/wp24/out-*.txt`.
+  - توجه: متن `note` داخل اسکریپت کیت می‌گوید «enable_cache فعال نشده»؛ این متن ایستا است و با اجرای جدید مطابقت ندارد.
+- **باقی‌مانده:** کش‌miss هنوز casbin را ارزیابی می‌کند. بخش‌های غیرعددی بی‌نهایت (مثلاً `job_key` یا `run_date`) می‌توانند miss بسازند. این در AD‑19 ثبت شد.
+- **Rollback:** `git revert <commit WP 2.4>`.
+
+## CI triage روی tip `9bfc99d` (شاخهٔ `arena/5a1e37b3-mp`، بدون merge) — MEASURED-BY-YOU
+
+- **شاخه:** کارِ قبلی روی `arena/da474b65-mp` بود (PR #23 بسته‌شده، merge نشده). شاخهٔ جاری `arena/5a1e37b3-mp` از main جدا شده بود؛ با `git merge --ff-only origin/arena/da474b65-mp` همان کامیت‌ها (بدون بازنویسی) به شاخهٔ جاری آمدند. تاریخ `9bfc99d` بی‌تغییر است.
+- **job ها روی `9bfc99d`** (`gh run list`): `backend` ✗ (Test)، `live-contract` ✗ (Seed + run API)، `Documentation links and handoff` ✗ (Interaction map gate)، `secret-scan` ✗ (Scan full Git history)، `e2e-api` skipped (needs backend). `studio`، `client-flutter` و Client ✓.
+- **لاگ Actions:** `gh run view --log-failed` ⇒ «failed to get run log» (302 به `release-assets`). نام تست‌ها از لاگ خوانده نشد؛ بازتولید محلی انجام شد.
+
+### 1. backend — گیت پوشش، نه تست
+- بازتولید: `bash scripts/coverage_run.sh` (`/home/user/recovery4/ci-repro/coverage.log`، RUN_RC=1).
+- نتیجهٔ pytest: **1274 passed، 2 skipped، rc=0** — هیچ تستی شکست نخورد.
+- شکست: `security: 94.12٪ < 95.0٪` (80/85). خطوط بی‌پوشش: `security/rbac.py` 307–309 (شاخهٔ خطای `enforce` از WP 2.4) و `security/crypto.py` 40–41 (از پیش؛ تغییر نکرده).
+- **اصلاح (commit جداگانه):** `tests/regression/test_wp24_rbac_decision_cache.py::test_casbin_error_is_counted_and_reraised` — خطای casbin بالا می‌رود و `mp_rbac_errors_total` یک واحد زیاد می‌شود. این تست روی کد موجود سبز شد؛ هدفش پوشش شاخهٔ تازه است، نه رفع باگ.
+- **بعد از اصلاح:** `RUN_RC=0`، **1275 passed، 2 skipped**، `security 97.65٪ (83/85)`، بقیهٔ دایرکتوری‌ها بالای آستانه (`/home/user/recovery4/ci-repro/coverage2.log`).
+- آستانه کاهش نیافت.
+
+### 2. live-contract — سرور بالا نمی‌آید (curl exit 7)
+- علت سنجش‌شده: `app/main.py::_assert_explicit_environment` بدون `MP_ENVIRONMENT` صریح `RuntimeError` می‌دهد (`/tmp/ci-live/api.log`). گام CI این متغیر را ست نمی‌کند.
+- سنجه: با `MP_ENVIRONMENT=development` ⇒ `/health` = 200.
+- **اصلاح (commit جداگانه):** `.github/workflows/ci.yml` گام «Seed + run API» ⇒ `env: MP_ENVIRONMENT: development`. اعتبارسنجیِ سرور حذف نشد.
+- **بعد از اصلاح (دقیقاً دستورهای گام):** seed ⇒ `SEED_RC=0`؛ `curl -sf /health` ⇒ `{"status":"ok"}`، `HEALTH_RC=0`؛ `npm test -- tests/liveContract.test.ts` ⇒ **9 passed، rc=0** (`/tmp/ci-live/livecontract.log`).
+- معرّفی‌شده در `ccf44ce` (WP 1.1/1.2)، نه در این شاخه‌ها.
+
+### 3. Documentation links and handoff — رانش نقشه: متوقف شد
+- `python3 scripts/interaction_map.py --check` ⇒ `رانش قرارداد 0` و فقط «نقشه کهنه است».
+- بازتولید برای بررسی (سپس برگردانده شد؛ commit نشده): ۱۳ خط تغییر در **نقش‌های قرارداد** و **تست‌ها**، نه فقط WP 3.4. نمونه: `/api/v1/admin/users` از `manager, admin, super_admin` به `super_admin`؛ `/api/v1/auth/sessions` و `/api/v1/auth/phone-change/*` و `/api/v1/auth/otp/request` نقش‌های جدید؛ `studio-page:Analytics` از بی‌تست خارج شد؛ تست‌های جدید.
+- منبع: `mp-app/backend/api/routes.json` از `b6f347f` (WP 0.2، بازتولید guardها) و تغییرات بعدی؛ WP 3.4 (`fc402a8`) فایل `routes.json` را تغییر نداد.
+- **نتیجه:** این رانش «دقیقاً تغییر WP 3.4» نیست ⇒ طبق دستور، بازتولید نقشه commit نشد. **نیازمند تصمیم شما:** آیا این تغییرات نقش (که در `routes.json` از WP 0.2 است) عمدی و قابل قبول‌اند؟
+
+### 4. secret-scan — بلاک‌شده (BLOCKED-ENV)
+- برای گرفتن گزارش gitleaks به نسخهٔ ۸٫۳۰٫۱ نیاز است. دانلود `release-assets.githubusercontent.com` از این محیط ممکن نیست (`curl` خطای SSL/تونل؛ آن میزبان در فهرست مجاز نیست). بدون گزارش، هیچ انگشت‌نگاری‌ای اضافه نشد.
+- `docs/MuscleParadise/audit/evidence/detect-secrets.json` **۶۷ فایل** با `hashed_secret` دارد، نه فقط ۵ مورد. نیاز است گزارش gitleaks واقعی بررسی شود تا معلوم شود کدام یافته‌ها در کدام مسیرها هستند (شرط «هر یافتهٔ بیرون از مسیر ⇒ توقف»).
+- **تعارض شماره:** `AD‑11`، `AD‑12`، `AD‑13` در `DECISIONS.md` از قبل معنای دیگری دارند (پوشش، ایمنی، پیام خطا). تصمیم‌های جدید باید شماره‌های بعدی بگیرند.
+- **F‑33 (تأیید شد):** گام CI فقط `--redact` دارد (نه `--redact=100`) و فاقد `--log-opts=--all`، `--ignore-gitleaks-allow` و `--gitleaks-ignore-path` است؛ تست خود مخزن (`scripts/test_retired_signing_scan.py` خط ۹۷) همهٔ آن‌ها را دارد. اسکنرِ CI ضعیف‌تر از تستش است.
+
+### وضعیت چهار job
+| job | وضعیت |
+|---|---|
+| backend | ✓ محلی (`RUN_RC=0`) — نیاز به push و CI واقعی |
+| live-contract | ✓ محلی (seed + health + 9/9) — نیاز به push و CI واقعی |
+| Documentation links and handoff | ✗ — تصمیم مالک لازم است |
+| secret-scan | ✗ — BLOCKED-ENV (نبود gitleaks) |
+
+- بسته‌های ۲ تا ۶ شروع نشدند (طبق قاعدهٔ «تا چهار job سبز نشده‌اند»).
+
+### نتیجهٔ CI واقعی روی `3251145` (run `44965386672`، `gh run view --json jobs`)
+- ✓ backend · ✓ live-contract · ✓ e2e-api · ✓ studio · ✓ client-flutter · ✓ Client (pinned SDK)
+- ✗ Documentation links and handoff (رانش نقشه؛ نیازمند تصمیم مالک)
+- ✗ secret-scan (BLOCKED-ENV؛ گزارش gitleaks در دسترس نیست)
+- شش از هشت سبز؛ دو مورد باز است. بستهٔ بعدی شروع نشد.
+
+## دو شاخه: `arena/da474b65-mp` و `arena/5a1e37b3-mp` — ثبت تاریخ
+
+- کار WP 0.2–4.6 روی `arena/da474b65-mp` (tip `9bfc99d`، PR #23 بسته، merge نشده) انجام شد.
+- شاخهٔ جاری `arena/5a1e37b3-mp` با `git merge --ff-only` روی همان کامیت‌ها آمد (بدون بازنویسی). tip: `3eaed42`.
+- در این نشست، ref محلی `arena/5a1e37b3-mp` عقب (`662ff88`) و فایل‌های کاری مطابق tip بودند؛ پس از بررسی سنجه‌ای (۹۱ فایل tracked + ۴۶ مورد untracked برابر tip) به `origin/arena/5a1e37b3-mp` ریست شد. پشتیبان: `/home/user/recovery5/`.
+
+## نقشهٔ تعامل — ایست (MEASURED-BY-YOU)
+
+- `python3 scripts/interaction_map.py --check` روی `3eaed42`: exit 0، رانش قرارداد ۰، ۱۶۳ مسیر (گیت سبز شد، ولی فقط با بازتولید).
+- بازتولید و مقایسهٔ `routes.json` از `662ff88` تا `3eaed42`: ۱۶۳ operation، **۲۷ تفاوت نقش/guard** (نه ۲۵):
+  - ۱۱ تنگ‌شده (admin/retention×۲، admin/users×۳، shop/change-requests/review، shop/gateways×۲، shop/prices، shop/products×۲) ⇒ `super_admin` تنها. انتساب: commit `55107a99f` «feat(auth): phase 5 — role changes are owner-only…» (وجود دارد، در GitHub تأیید شد).
+  - ۱۴ گشادشده (۸ مسیر از `[]` به شش نقش؛ ۶ مسیر خودِ کاربر با نقش‌های جاافتاده) — مطابق گزارش.
+  - **۲ تفاوت بیرون از ۲۵ مورد:** (۱) `POST /api/v1/axis-assessments/{id}/review`: guard تکراری `permission, permission` ⇒ `permission` (نقش‌ها یکسان؛ commit `b9e88e5`، WP 0.3). (۲) `GET /api/v1/metrics`: guard `[]` ⇒ `metrics_token` (commit `fae50c5`، WP 1.3).
+- طبق قاعدهٔ «هر تفاوتی بیرون از ۲۵ مورد ⇒ توقف»، نقشه **commit نشد**. تصمیم مالک لازم است: آیا این دو تغییر را هم در نقشه بپذیریم؟
+
+## secret-scan — دور ۱
+
+- workflow `gitleaks-fingerprints.yml` (id `423857407`) روی `arena/5a1e37b3-mp` اجرا شد: run `44990174499`، conclusion success، ۱۰ annotation، همه در `docs/MuscleParadise/audit/evidence/before/detect-secrets.json` (commit `839500de`).
+- تأیید hash بودن: `hashed_secret` در خطوط مذکور ۴۰ هگز؛ فایل ۱۶۹ ورودی `is_verified:false` و صفر `true`.
+- افزودن ۱۰ fingerprint به `.gitleaksignore` (AD‑23). دور بعد: push، اجرای CI، و بررسی annotation های باقی‌مانده.
+
+### secret-scan — دورِ ۲ و ایست (MEASURED-BY-YOU)
+
+- **commit `db37b1b`** (۱۰ fingerprint از `before/`، دور ۱) push شد. CI روی `db37b1b`: `secret-scan` ✗ هنوز. annotation های `ci.yml` مقدار را پنهان می‌کنند و مسیر/خط نمی‌دهند (فقط «Potential secret match … commit 839500de»).
+- **دور ۲** (run `44990769317` روی `db37b1b`، workflow 423857407): ۱۰ یافته جدید، همه در `before/detect-secrets.json` خطوط ۲۲۳، ۲۳۷، ۲۴۴، ۲۵۳، ۲۶۲، ۲۶۹، ۲۷۶، ۲۸۳، ۲۹۰، ۲۹۷ (commit `839500de`). سقف annotation ها ۱۰ است، پس شمارِ واقعی ممکن است بیشتر باشد.
+- **دور ۳ — ایست:** حلقهٔ همگرایی (`/home/user/recovery5/ss-loop.sh`، خارج از repo) روی `db37b1b` اجرا شد (run `44990830149`، success). اعتبارسنجی هر annotation: یک یافتهٔ **بیرون از مسیر مجاز** پیدا شد:
+  - `generic-api-key docs/MuscleParadise/audit/evidence/detect-secrets.json:221` (کامل: فایل بالاسری، **بدون `before/`**)، commit `839500de`.
+  - در همین دور ۱۰ یافته بود: خطوط ۱۳۶، ۱۴۳، ۱۵۰، ۱۵۷، ۱۶۶، ۱۸۲، ۱۹۱، ۲۰۵، ۲۱۴، ۲۲۱ در فایل بالاسری. این فایل ۱۷۳ ورودی دارد، صفر `is_verified: true`، و `hashed_secret` در خط ۲۲۱ = `18b115546d38…` (۴۰ هگز).
+  - طبق قاعدهٔ AD‑23 (ه) و دستور: **متوقف شد**. هیچ fingerprint بیرون از `before/` اضافه نشد و هیچ commit دیگری ساخته نشد.
+- **وضعیت `.gitleaksignore`:** ۱۰ خط از دور ۱ (`before/`). دورهای بعد اجرا نشدند.
+- **سؤال باز:** مسیر مجاز AD‑23 را `before/detect-secrets.json` بگیریم، یا هر دو فایلِ `evidence/detect-secrets.json` و `evidence/before/detect-secrets.json` (که هر دو از `839500de` هستند)؟
+
+## addendum 2026‑11‑22 — نتیجه (MEASURED-BY-YOU)
+
+- **بخش ۱ (push به `arena/da474b65-mp`): رد شد.** دستور قاعدهٔ شاخه را نقض می‌کند (فقط شاخهٔ جاری). PR #23 هم از `gh pr list` **CLOSED** است، نه باز. بازکردن/به‌روزرسانی آن تصمیم مالک است. (سنجه: `gh pr list --state all` ⇒ #23 `CLOSED`، head `arena/da474b65-mp`.)
+- **بخش ۲ (AD‑23 دو مسیر): تأیید داده، توسعه نه.** روی `839500de`: `evidence/after/detect-secrets.json` = ۶۶ فایل، ۱۷۱ یافته، ۰ `is_verified:true`، ۱۷۱ `hashed_secret` از ۴۰ هگز؛ `evidence/before/…` = ۶۵ فایل، ۱۶۹، ۰ true، ۱۶۹ hex40. اعداد addendum درست است.
+  - **اما** `evidence/detect-secrets.json` (بالاسری) = ۶۷ فایل، ۱۷۳ یافته، ۰ true، ۱۷۳ hex40؛ و workflow `423857407` روی `37a829d`/`db37b1b` یافتهٔ **این** فایل را نشان داد (خط ۲۲۱، و ۱۰ مورد خط ۱۳۶–۲۲۱). این مسیر نه در مجوز قبلی (`before/`) است نه در addendum (`before/`+`after/`). ⇒ **ایست**. هیچ fingerprint بیرون از دو مسیر اضافه نشد.
+  - یادداشت: annotation‌های job `secret-scan` در `ci.yml` مسیر و خط ندارند (مقدار پنهان، فقط commit)، پس ادعای «annotation‌های after/» از آن job قابل‌تأیید نبود؛ از workflow `423857407` خوانده شد.
+- **بخش ۳ (mermaid):** `docs_gate.py` و `repo_hygiene_gate.py` محلی PASS گزارش شدند؛ `interaction_map --check` پیش از بازتولید FAIL. mermaid هنوز اجرا نشده.
+- **بخش ۴ (نقشه):** بازتولید و commit شد. diff با addendum یکی است (+70/−34)؛ تفکیک ۲۱ ردیف در D‑9؛ ۱۶ تفاوتِ روی‌نشده در D‑10.
+
+## AD‑23 · secret-scan — همگرایی با محدودهٔ مالک (MEASURED-BY-YOU)
+
+- **بازنشانی محیط:** `/home/user/recovery5/` و اسکریپت حلقه در دسترس نبودند؛ شاخه روی `662ff88` با ۱۴۰ تغییر کاری بود. پشتیبان در `/home/user/recovery6/` (patch، status، untracked.tar). سپس `git reset --hard origin/arena/5a1e37b3-mp` (`ea1efe5`، درخت پاک). فایل `share/MP-BUILDER-HANDOFF-A1.3.md` در پشتیبان نبود و بازیابی نشد (فایل untracked، commit نشده).
+- **بررسی نقشهٔ `hashed_secret`:** فرضیهٔ آنتروپی (حد ≈۳٫۴۹–۳٫۵۰) فقط راهنما بود؛ حلقه فقط از یافته‌های واقعیِ workflow استفاده کرد، نه از پیش‌بینی.
+- **گزارش اجرای `423857407` روی `ea1efe5`** (run `44997161209`): ۱۰ annotation، همه در `evidence/detect-secrets.json` (بالاسری)، خطوط ۱۳۶…۲۲۱. این تأیید کرد که مسیر بالاسری باید در محدوده باشد.
+- **حلقه:** `/home/user/recovery6/ss-loop2.sh`. هر دور: push، صبر تا sha برابر HEAD، dispatch، تأیید success (تا ۳ تلاش)، اعتبارسنجی هر annotation (فرمت، fingerprint=`commit:path:rule:line`، مسیر در ۳ فایل مجاز)، افزودن، commit، push. یک بار run ناموفق (`44999664939`) با خطای دانلود gitleaks (curl exit 22، در مرحلهٔ نصب) رخ داد؛ یافته‌ای نداشت و تکرار شد. یک race (dispatch قبل از نمایش push) run روی sha قدیمی داد؛ حلقه اصلاح شد تا قبل از dispatch صبر کند.
+- **commit های حلقه:** `0291c49`، `4499655`، `a8323e5`، `35503e6`، `e4f3645`، `eef9e50`، `a7aebc5`، `187cd7a`، `a1226bc`، `b6b0e28`، `93e0969`، `1cabc15`، `24c964c`، `783e39a`، `033206f`، `67f79d5`، `3bcb799`، `03c9d2d`، `9b8f7ee`، `4272eae`. (هر دور یک commit، بدون force.)
+- **نتیجه:** دور ۹ روی `4272eae`: `findings-listed=0`، `CONVERGED`.
+- **تأیید:** `git diff ea1efe5 HEAD --stat` = `.gitleaksignore` +472/−0. همهٔ ۴۷۲ خط با regex دقیق `839500de…:<مسیر مجاز>:generic-api-key:<خط>` مطابقت دارند؛ تکرار ۰.
+- **CI روی `4272eae` (run `45000297428`):** success در همهٔ jobها: backend، live-contract، secret-scan، Documentation links and handoff، client-flutter، studio، Client، e2e-api.
+- **تعداد fingerprintها:** ۴۸۲ = ۱۶۲ + ۱۵۹ + ۱۶۱.
+
+## AD‑21 · حذف apk.yml و تست guard (MEASURED-BY-YOU)
+
+- **پشتیبان محیط:** شاخهٔ محلی روی `662ff88` با ۱۴۰ تغییر بود؛ در `/home/user/recovery7/` ذخیره و به `origin/arena/5a1e37b3-mp` (`6c204ec`) ریست شد. venv بک‌اند از نو ساخته شد (`/home/user/venv-mp`، `pip install -e mp-app/backend[dev]`، rc 0).
+- **شاهد نسخه‌ها:** `fastapi==0.165.0`، `ruff==0.17.6`، `pytest==9.2.0` (مطابق هدف‌های مستند).
+- **قبل:** `collect-only` ⇒ ۱۲۷۶ تست؛ شامل `test_release_build_is_guarded_and_audits_all_output_apks`.
+- **تغییر:** حذف `.github/workflows/apk.yml` (`git rm`) و تابع guard و import `yaml` بلااستفاده؛ `ruff format` روی همان یک فایل.
+- **بعد:** `collect-only` ⇒ ۱۲۷۵؛ `ruff check` exit 0؛ `ruff format --check` exit 0؛ تست فایل ۱ passed.
+- **suite کامل:** `pytest tests` ⇒ rc 0، `1274 passed, 2 skipped, 2 warnings`. skipها: `test_dart_gate.py:25` (tree-sitter نصب نیست) و `test_apk_deep_audit.py:109` (java/apktool نیست).
+- **ناهمخوانی باز:** جمع‌آوری ۱۲۷۵ است اما خلاصهٔ اجرا ۱۲۷۶ نتیجه (۱۲۷۴+۲) می‌دهد. علت شناسایی نشد؛ هیچ hook جمع‌آوری یا addopts وجود ندارد. گزارش شد و در این WP نادیده گرفته نشد.
+
+## AD‑22 · پین `requirements.txt` و گام‌های CI (MEASURED-BY-YOU)
+
+- **ساخت:** `pip freeze --exclude-editable` از venv `pip install -e mp-app/backend[dev]` ⇒ ۸۴ خط `==`. `requirements.txt` با سرآیند.
+- **نصب تازه:** `python3 -m venv /tmp/venv-ad22` ⇒ `pip install -c mp-app/backend/requirements.txt -e "mp-app/backend[dev]"` rc 0؛ `freeze` ⇒ `diff` تهی (۸۴ = ۸۴).
+- **SBOM:** `cyclonedx-py environment` rc 0 ⇒ `fastapi@0.165.0`، `ruff@0.17.6`.
+- **collect:** `pytest --collect-only -q tests` در `/tmp/venv-ad22` ⇒ ۱۲۷۵.
+- **CI:** `ci.yml` YAML معتبر (`yaml.safe_load` rc 0)؛ ۳ گام نصب (خطوط ۱۲۲، ۳۹۲، ۴۴۲) تغییر کردند؛ `git diff --stat`: ۳ خط اضافه، ۳ حذف.
+
+## دستور کم‌توکن — بستهٔ B1 (بخش اسناد) و توقف (MEASURED-BY-YOU)
+
+- **دستور:** `handoff/MP-BUILDER-BATCH-DIRECTIVE-2026-11-22.txt` از `arena/2cde32d6-chat2db` (`e29d11b`) با `fetch_page` خوانده شد.
+- **پیش از کار:** محیط دوباره روی `662ff88` با ۱۷۱ تغییر کاری بود؛ پشتیبان در `/home/user/recovery8/` و ریست به `origin/arena/5a1e37b3-mp` (`7fefb6f`، CI سبز). `share/` از دستور بازیابی شد (sha256 `3a0f9582…737a2c2`، ۲۷۹۰۸ بایت)، untracked.
+- **اسناد (B1، بخش ۱):** ۸ فایل ارجاع‌دهنده به `apk.yml` بررسی شد؛ ۶ سند عملیاتی و ۲ snapshot. `grep -rn "apk\.yml"` پیش و پس: سندهای عملیاتی ۰ ارجاع بدون یادداشت.
+- **WP 2.1 و 2.2:** اجرا نشد (بریف موجود نیست؛ ر.ک. D‑12). WP 2.3، 4.3، 4.4 (B2)، 3.3، 3.5 (B3)، 4.1، 4.2، 4.7 و PARTIAL/BLOCKED (B4): اجرا نشد.
+- **گیت‌های این commit (فقط سند):**
+  - `python3 scripts/docs_gate.py` ⇒ rc 0؛ «18 Markdown files، 276 local links، 15 Mermaid diagram block(s)».
+  - `python3 scripts/interaction_map.py --check` ⇒ rc 0؛ «31 سطح، 163 مسیر، رانش صفر».
+  - ruff روی کد: بدون تغییر کد پایتون؛ suite کامل اجرا نشد (طبق دستور، فقط پس از آخرین بسته).
+- **CI:** این commit یک موج CI می‌سازد؛ نتیجه در بخش بعدی ثبت می‌شود.
+- **BATCH-SUMMARY:** نوشته نشد؛ دستور پایان (B4 و suite کامل) اجرا نشد.
+
+## B1 — WP 2.1 / F‑03 (MEASURED-BY-YOU)
+
+- **معوقهٔ CI f42342a (ثبت‌شده در این commit):** run `45021576798` روی `f42342a` — همهٔ jobها success: backend، live-contract، secret-scan، Documentation links and handoff، client-flutter، studio، Client، e2e-api.
+- **معیارها:** D‑13 (C1–C5).
+- **قرمز (پیش از اصلاح):** `pytest -q tests/regression/test_wp21_logging_queue.py` ⇒ `4 failed, 1 passed` (علت: `configure_logging` پارامتر `stream` نداشت؛ حالت dev rich بود).
+- **اصلاح:** `mp-app/backend/app/logging.py`: حالت dev با `plain_traceback` و بدون رنگ روی غیرTTY؛ JSON با `ExceptionRenderer` (۵۰ فریم، بدون locals)؛ نوشتن از طریق صف محدود (۱۰٬۰۰۰) و نخ نویسنده؛ `flush_logs()`؛ `dropped_log_count()`.
+- **سبز:** `pytest -q tests/regression/test_wp21_logging_queue.py` ⇒ `5 passed`.
+- **ناحیهٔ مرتبط:** `pytest -q tests/integration/test_unhandled_errors.py tests/integration/test_monitoring.py tests/regression/test_wp25_silent_failures.py tests/regression/test_wp26_sms_logging.py tests/regression/test_wp25_dast_skip_counter.py tests/regression/test_wp21_logging_queue.py tests/integration/test_sms.py` ⇒ `59 passed, 1 warning`.
+- **lint/format (مجموعهٔ CI):** `ruff check --select E,F,W,I,N,UP,B,SIM,DTZ,TRY400,S app/logging.py tests/regression/test_wp21_logging_queue.py` ⇒ exit 0؛ `ruff format --check` ⇒ exit 0.
+- **پروکسی C4 (۸۰ خطا < ۵ MB):** در همین اجرا سبز شد؛ عدد دقیق حجم در خروجی تست نیست. **شاهد پذیرش کیت (بار ۸۰ کلاینتی، SIGTERM < ۱۰ s، `/health` < ۵۰۰ ms) اجرا نشد: BLOCKED-ENV** (ابزار بار و محیط زنده).
+- **باز (TODO در D‑13):** C5 (گیت CI برای json_logs و بودجهٔ لاگ).
+
+## B1 — WP 2.2 / F‑04 (MEASURED-BY-YOU)
+
+- **معیارها:** D‑13 (C6–C11).
+- **قرمز:** `pytest -q tests/regression/test_wp22_pool_observability.py` ⇒ خطای جمع‌آوری (`ImportError: app.pool_metrics`) — ماژول وجود نداشت؛ کد بیرون از این ماژول و `TimeoutError` استخر ۵۰۰ می‌داد.
+- **تفسیر گیج overflow:** `pool.overflow()` در SQLAlchemy وقتی زیر `pool_size` باشیم منفی است (تست اولیه: `-1.0`)؛ گیج از صفر گرفته شد (`max(0, …)`). این تفسیر در کد کامنت شده است.
+- **اصلاح:** `app/pool_metrics.py` (گیج‌های size/checkedout/overflow، histogram `mp_db_connection_held_seconds`، `pool_saturated` با N=۱۰s و آستانهٔ ۰٫۹)؛ `db/base.py` (نصب listenerها در `_build_engine`)؛ `api/v1/monitoring.py` (به‌روزرسانی گیج‌ها در `/metrics`؛ فیلد `db_pool_saturated` و شرط قرمزی در `/health/ready`)؛ `app/unhandled.py` (`sqlalchemy.exc.TimeoutError` ⇒ ۵۰۳ با `Retry-After: 1`، کد `db_pool_exhausted`، شمارندهٔ `mp_db_pool_timeout_total`).
+- **سبز:** `pytest -q tests/regression/test_wp22_pool_observability.py` ⇒ `5 passed` (همراه WP 2.1: `10 passed`).
+- **ناحیهٔ مرتبط:** `pytest -q tests/regression/test_wp22_pool_observability.py tests/regression/test_wp21_logging_queue.py tests/integration/test_monitoring.py tests/integration/test_m46_db_pool.py tests/integration/test_unhandled_errors.py tests/regression/test_production_ops.py tests/integration/test_wp25_scrape_errors_ready.py tests/integration/test_wp13_metrics_auth.py` ⇒ `68 passed, 1 warning`.
+- **lint/format (مجموعهٔ CI):** `ruff check --select E,F,W,I,N,UP,B,SIM,DTZ,TRY400,S` روی فایل‌های تغییریافته ⇒ exit 0؛ `ruff format --check` ⇒ exit 0.
+- **پوشش معیارها:**
+  - C6: size/checkedout/overflow و histogram ✅؛ `mp_db_pool_wait_total` ⏳ TODO (SQLAlchemy رویداد انتظار ندارد).
+  - C7 ✅ (۵۰۳ + Retry-After + شمارنده).
+  - C8 ✅ (تست پنجره با ساعت تزریقی).
+  - C9 ⏳ TODO (حساب ظرفیت و همزمانی ورودی؛ تصمیم معماری/Postgres).
+  - C10 🚫 BLOCKED-ENV (گیت بار ۲۰۰ همزمان؛ Docker/Postgres در این محیط نیست).
+  - C11 ⏳ علت ریشه‌ای نشت استخر ادعا نمی‌شود (brief WP‑01 مرحلهٔ ۲).
+- **push B1:** یک push برای دو commit این بسته (WP 2.1 = `e57a992`، WP 2.2 = commit بعدی). CI پس از push بررسی می‌شود.
+
+## B2 — WP 2.3 / F‑18، WP 4.3 / F‑19، WP 4.4 / F‑20 (MEASURED-BY-YOU)
+
+- **معیارها:** کیت F‑18 (خط ۸۴۳)، F‑19 (۸۶۲)، F‑20 (۸۸۲)؛ تصمیم‌ها: D‑14.
+- **قرمز:** `cd mp-app/backend && pytest -q tests/regression/test_b2_wp23_wp43_wp44.py` ⇒ `4 failed`.
+- **اصلاح WP 2.3:** `mp-app/backend/Dockerfile` و `mp-app/infra/Dockerfile.backend`: `WEB_CONCURRENCY:-4` ⇒ `:-1`. سند بودجه در OPS-RUNBOOK §۱‑الف. گسترش `validate_production_configuration` = TODO (D‑14).
+- **اصلاح WP 4.3:** `studio/src/pages/Shop.tsx`: دو `await import("../lib/api")` حذف؛ `fetchOrderReceipt` و `markOrderStatus` به import ایستا اضافه شدند.
+- **اصلاح WP 4.4:** `studio/src/lib/api.ts`: `export const updateProduct` حذف شد.
+- **پیامد (گیت پوشش):** `studio/tests/apiCoverage.test.ts` پس از حذف `updateProduct` قرمز شد: `/api/v1/shop/products/{product_id}` بدون مصرف‌کننده. Flutter (`mp-app/client`) هم PATCH این مسیر را صدا نمی‌زند (`grep` روی `shop/products`). اقدام: یک استثنای مستند با `TODO` در `ROUTE_EXCEPTIONS` (همان قالب موجود). مسیر بک‌اند حذف نشد. تضعیف آستانه یا حذف تست نیست؛ در D‑14 ثبت شد.
+- **ارقام (هر کدام با فرمان):**
+  - `pytest -q tests/regression/test_b2_wp23_wp43_wp44.py` ⇒ `4 passed` (پس از اصلاح).
+  - `pytest -q -p no:cacheprovider tests/regression/` (در `mp-app/backend`) ⇒ `305 passed, 2 skipped, 1 warning`.
+  - `npx tsc --noEmit -p .` (در `mp-app/studio`) ⇒ exit 0.
+  - `npx eslint src/pages/Shop.tsx src/lib/api.ts` ⇒ exit 0؛ `npx eslint tests/apiCoverage.test.ts` ⇒ exit 0.
+  - `npx vitest run` (کل studio) قبل از استثنا ⇒ `Tests 2 failed | 297 passed | 9 skipped (308)`: `apiCoverage` (مسیر PATCH) و `receiptQueue` (timeout ۵۰۰۰ms زیر بار کل اجرا).
+  - `npx vitest run tests/apiCoverage.test.ts` پس از استثنا ⇒ `4 passed`.
+  - `npx vitest run tests/receiptQueue.test.tsx` به‌تنهایی ⇒ `4 passed` (شکست کل‌اجرا زمان‌بندی بود، نه این تغییر؛ کد receipt queue تغییر نکرد).
+- **lint/format (مجموعهٔ CI):** `ruff check --select E,F,W,I,N,UP,B,SIM,DTZ,TRY400,S --ignore E501 tests/regression/test_b2_wp23_wp43_wp44.py` ⇒ exit 0؛ `ruff format --check` ⇒ exit 0 (پس از `ruff format`).
+- **کامیت‌ها (دو commit برای این بسته):** WP 2.3 (Dockerfile ×۲، runbook، تست قرمز/سبز) و WP 4.3+4.4 (studio، `apiCoverage`، D‑14، این لاگ). سقف «حداکثر دو commit» رعایت شد.
+- **باز:** TODO در `validate_production_configuration` (D‑14)؛ 28 فایل untracked `mp-app/backend/var/receipts/*.png` (artifact اجرای تست؛ شمارش با `git status --porcelain`) commit نشدند.
+
+## B3 — WP 3.3 / F‑14 (DONE) · WP 3.5 / F‑09، F‑25 (باز) · بستن یافته‌های داوری B2 (MEASURED-BY-YOU)
+
+**وضعیت این بسته:** ناتمام. WP 3.3 و بستن یافته‌های داوری انجام شد؛ WP 3.5 شروع نشده و بسته push نشده تا پس از آن تکمیل شود (در بخش «باز» دیده شود).
+
+### یافته‌های داوری B2 (بسته‌شده در این بسته)
+- **۱) کامنت Dockerfile:** `mp-app/backend/Dockerfile` خط «4 is the measured floor» بازنویسی شد: پیش‌فرض ۱، بودجهٔ `workers × 60`، و ارجاع به OPS-RUNBOOK §۱‑الف. `mp-app/infra/Dockerfile.backend` کامنت مشابه ندارد (`grep -n "WEB_CONCURRENCY\|measured"` فقط خط CMD را نشان می‌دهد)؛ تغییری لازم نشد.
+- **۲) CHECKLIST:** فایل تولیدی است (هدر: «دستی ویرایش نکنید»)؛ وضعیت از `status.json` می‌آید. اقدام: ورودی‌های F‑03، F‑04، F‑14، F‑18، F‑19، F‑20 در `status.json` ثبت شد و با `python3 scripts/build_audit_inventory.py` بازتولید شد. نتیجهٔ هر کدام:
+  - F‑03 ⇒ FIXED-PARTIAL (C4 BLOCKED-ENV، C5 TODO) · F‑04 ⇒ FIXED-PARTIAL (C9 TODO، C10 BLOCKED-ENV، C11 ادعا نشده)
+  - F‑14 ⇒ FIXED · F‑18 ⇒ FIXED-PARTIAL (validate ۸ کلید و pragma alembic = TODO)
+  - F‑19 ⇒ FIXED-PARTIAL (یک‌لایه‌سازی سه API = TODO؛ این مورد در حکم کیت «رفع» است و هنوز انجام نشده) · F‑20 ⇒ FIXED
+- **تصحیح ۳ — F‑19 و F‑20 بیش از آنچه کد B2 کرده بود:** کیت F‑20 دو export مرده (`updateProduct` و `getToken`) را خواسته بود. `updateProduct` در B2 حذف شد؛ `getToken` اکنون از export خارج شد (`studio/src/lib/api.ts`، فقط داخل فایل استفاده می‌شود: `grep -rn getToken studio/src studio/tests | grep import` ⇒ ۰ خط؛ `tsc --noEmit` exit 0؛ `eslint src/lib/api.ts` exit 0).
+- **تصحیح ۴ — جدول لوپ:** ردیف‌های ۲٫۱، ۲٫۲ (از B1) و ۲٫۳، ۳٫۳، ۴٫۳، ۴٫۴ به DONE با sha به‌روز شد (`FINN-AUDIT-LOOP.md`).
+- **همگام‌سازی تولیدی:** `scripts/build_audit_inventory.py --check` پیش از بازتولید exit 1 بود. علت دو چیز بود: (الف) `INVENTORY.md` از ورودی‌های قبلی (WP های بدون بازتولید) کهنه بود (۱٬۱۸۳ ⇒ ۱٬۳۴۷ فایل ترک‌شده)؛ (ب) `CHECKLIST.md` ردیف F‑12 را با وضعیت BLOCKED (WP 0.2 در `status.json`) نشان نمی‌داد. هر دو با بازتولید اصلاح شد؛ پس از آن `--check` ⇒ exit 0، «فهرست‌ها هم‌خوان‌اند».
+
+### WP 3.3 / F‑14
+- **قرمز:** `pytest -q tests/integration/test_wp33_gateway_return_status.py` ⇒ `1 failed, 5 passed` (قرمز: `999999999` ⇒ 200 به‌جای 404). دو تست اولیهٔ «-1 ⇒ 200» قبل از اصلاح بررسی شدند و **بازتولید نشدند** (HEAD: 422 `invalid_id`)؛ تست‌ها به قرارداد guard اصلاح شدند و کیت ادعای آن‌ها را رفع‌شده نمی‌داند.
+- **اصلاح:** `modules/payments/router.py`: `NotFoundError` ⇒ HTML با HTTP 404؛ `_return_page(..., status_code=)`.
+- **سبز:** `pytest -q tests/integration/test_wp33_gateway_return_status.py tests/integration/test_sandbox_bank.py tests/integration/test_q6_gateway.py` ⇒ `44 passed, 1 warning`.
+- **route guard:** `python mp-app/backend/scripts/route_guard_gate.py` ⇒ exit 0 (۱۶۳ مسیر؛ ۱۵۵ guard؛ ۸ عمومی مستند).
+- **interaction map:** `python scripts/interaction_map.py --check` ⇒ exit 0 (رانش صفر، ۳۱ سطح، ۱۶۳ مسیر قرارداد).
+- **lint/format (مجموعهٔ CI):** `ruff check --select E,F,W,I,N,UP,B,SIM,DTZ,TRY400,S --ignore E501` روی دو فایل تغییریافته ⇒ exit 0؛ `ruff format --check` ⇒ exit 0 (پس از `ruff format` روی فایل تست).
+- **کامیت:** `9024f44`.
+- **تصمیم:** D‑15.
+
+### باز در این بسته
+- **WP 3.5 / F‑09، F‑25:** آزمون قراردادی سراسری در CI — شروع نشده.
+- **F‑25 (۱۱ مسیر با الگوی 200 برای شناسهٔ نامعتبر):** در WP 3.5 است؛ D‑15 آن را پوشش نمی‌دهد.
+- **B4 (WP 4.1، 4.2، 4.7، PARTIAL 0.2/0.7/1.1/1.2/1.4):** شروع نشده.
+- **اجرای کامل تست‌ها و BATCH-SUMMARY:** پس از B4.
+- **receiptQueue:** در اجرای کامل بعدی با زمان‌بندی ثبت می‌شود.
+- **push:** این بسته یک push نقطه‌ای (checkpoint) برای جلوگیری از گم‌شدن کامیت‌های محلی است و بستهٔ B3 را کامل نمی‌کند. دستور: `git push origin arena/5a1e37b3-mp`.
+
+### B3 · اصلاح CI پس از checkpoint (`92b8db0`)
+- **CI:** run `45039125729` روی `92b8db0`: `backend` = failure در مرحلهٔ **Security scan (bandit + pip-audit)**؛ بقیه (live-contract، secret-scan، studio، client-flutter، docs، Android) success؛ `e2e-api` skipped.
+- **علت:** `bandit -r . -ll -q` ⇒ B613 (trojansource، High) روی `tests/integration/test_wp33_gateway_return_status.py:4` — یک کاراکتر کنترل دوجهته (U+200F) در docstring از اشتباه تایپی من. **این خطای این بسته بود، نه وابستگی.**
+- **pip-audit:** `pip-audit` ⇒ exit 0، «No known vulnerabilities found» (هشدار `mp-backend not on PyPI` فقط نام پروژه است).
+- **اصلاح:** حذف کاراکتر U+200F از آن فایل (`re` روی کد‌پوینت‌های 200E/200F/202A–202E/2066–2069 ⇒ ۱ مورد قبل، ۰ بعد).
+- **تأیید محلی:** `bandit -r . -ll -q` ⇒ exit 0 (`Issue:` = 0)؛ `pytest -q tests/integration/test_wp33_gateway_return_status.py` ⇒ `6 passed`؛ `ruff check` و `ruff format --check` روی دو فایل ⇒ exit 0.
+- **تخطی از سقف دو کامیت:** این اصلاح کامیت سوم B3 است. دلیل: کامیت قبلی push شده بود و بازنویسی آن force-push می‌شد (ممنوع). سقف ≤۲ کامیت برای بستهٔ کامل است؛ این تخطی و علتش ثبت شد.
+
+### ریسک شناخته‌شده: کاراکتر دوجهته (U+200F) در فایل‌های track‌شده (ثبت‌شده در B3، اصلاح در P‑3)
+- **شمارش (فرمان):** اسکن `git ls-files` (۱٬۳۴۸ مسیر، فایل‌های متنی) برای `\u200f` ⇒ **۵ فایل، ۷ خط**: `scripts/repo_hygiene_gate.py:41,50,66`؛ `docs/MuscleParadise/audit/CHECKLIST.md:90` (از `findings.json:367` تولید شده)؛ `docs/MuscleParadise/audit/findings.json:367`؛ `docs/MuscleParadise/audit/FINN-AUDIT-LOOP.md:64` (این یکی را خودم در B3 نوشتم)؛ `docs/MuscleParadise/REPORT-OLD-ANDROID-KEY-REVIEW-2026-11-18.md:34`.
+- **چرا CI سبز ماند:** `.github/workflows/ci.yml` (مرحلهٔ bandit، خط‌های ۱۵۵–۱۵۶) در `mp-app/backend` اجرا می‌شود (`bandit -r . -ll -q`) و `scripts/` ریشه را اسکن نمی‌کند. فایل‌های بالا در ریشه‌اند؛ پس B613 آن‌ها را نمی‌بیند.
+- **ریسک:** (الف) هر RLM تازه زیر `mp-app/backend` ⇒ قرمزیِ دوباره در bandit؛ (ب) گسترش دامنهٔ bandit به ریشه ⇒ قرمزیِ فوری روی همین ۵ فایل. دامنهٔ bandit در این بسته تغییر نکرد.
+- **اقدام:** ثبت به‌عنوان ریسک. اصلاح در فاز P‑3: گیت `BIDI-###` با دامنهٔ فایل‌های کد، و جایگزینی ۷ خط با گریز `\u200f` در سطح داده.
+
+
+## B3 — WP 3.5 / F‑09 و F‑25 (NOT-REPRODUCED؛ گاردهای سبز) · D‑16
+
+- **معیار:** D‑16 (C1 هیچ 2xx برای شناسهٔ بد؛ C2 مرزهای `Rial` و قید `strict`+`le=MAX_SAFE_RIAL` روی همهٔ فیلدهای ورودی پولی).
+- **اندازه‌گیری روی HEAD `338abb3` (پیش از هر تغییر، ابزار موقت در `tests/integration` که پس از اندازه‌گیری حذف شد):**
+  - نقش `manager` بدون مجوز مالی: ۲۶۰ درخواست (۵۴ مسیر پارامتری، ۴ شناسهٔ بد) ⇒ ۲۴۸×422 (`id_guard`)، ۸×403، ۴×404؛ ۰×2xx. ۴۰۳ها `permission_required` بودند، یعنی handler اجرا نشد.
+  - `owner` با مجوز مالی: ۲۴۸×422، ۱۲×403 (`forbidden` از سیاست نقش). ۰×2xx.
+  - `super_admin` با `finance.read/write`: ۲۴۸×422، ۸×400 (`unknown_job`، `invalid_date` از handler)، ۴×404 (`flag یافت نشد`، کلید رشته‌ای). **۰×2xx** ⇒ F‑25 در HEAD بازتولید نشد.
+  - `Rial` در HEAD: `2^53`، `2^53+1`، `10^18`، `"1500000"`، `1500000.0`، `True` ⇒ همه رد؛ `1500000` ⇒ پذیرفته. ورودی‌های پولی (`payments/schemas.py:16,100`، `expenses/schemas.py:25,35`، `membership/schemas.py:51`) همه `Rial`؛ `int` فقط در `*Out`. ⇒ F‑09 در HEAD بازتولید نشد.
+  - **شناسه‌های بد و F‑14:** همان الگوی F‑14 (WP 3.1 / `id_guard`).
+- **تغییر کد:** هیچ. نتیجه: **هیچ تستی قرمز نشد؛ ادعای رفع نمی‌شود**. وضعیت F‑09 و F‑25 = NOT-REPRODUCED (`status.json`).
+- **گاردهای جدید:** `tests/integration/test_wp35_contract_guards.py` (۹ تست؛ C1 یک تست سراسری روی OpenAPI، C2 شش تست مرز + یک تست ساختاری روی همهٔ مدل‌های ورودی).
+  - `pytest -q tests/integration/test_wp35_contract_guards.py` ⇒ `9 passed` (ابتدا یک تست قرمز به‌خاطر ساختار Pydantic (`Optional[Annotated]` و `FieldInfo` داخلی) بود؛ بررسی‌کننده اصلاح شد، نه schema).
+  - **جهش (mutation) برای C2:** `modules/expenses/schemas.py` ⇒ `amount_rial: int` موقتاً ⇒ `pytest ...::test_every_input_money_field_uses_rial` ⇒ `1 failed`؛ `git checkout --` ⇒ `git status` خالی؛ اجرای مجدد ⇒ `9 passed`.
+  - **جهش برای C1:** انجام نشد. C1 فقط در حالت سبز اجرا شده است (گارد، نه شاهد قرمز).
+- **CI:** مرحلهٔ `Test (pytest + per-directory coverage gate)` (`scripts/coverage_run.sh` ⇒ `pytest` بدون آرگومان) همه `tests/` را اجرا می‌کند؛ job تازه نیست.
+- **lint/format:** `ruff check --select E,F,W,I,N,UP,B,SIM,DTZ,TRY400,S --ignore E501` ⇒ exit 0؛ `ruff format --check` ⇒ exit 0؛ `bandit -r . -ll -q` (در `mp-app/backend`) ⇒ exit 0؛ کاراکتر دوجهته در فایل تست ⇒ ۰.
+- **ریسک‌ها و عدم‌قطعیت:** کیت F‑25 را روی یک ساخت قدیمی‌تر اندازه گرفته؛ این اندازه‌گیری‌ها در پایگاه داده تهی (`tmp_path` sqlite) انجام شد، نه روی سرور زنده با داده‌های بذرشده. شناسه‌های غیرمنتظره در بدنهٔ JSON (نه مسیر) پوشش داده نشده‌اند.
+- **برگرداندن:** `git revert` همان commit (فقط حذف تست جدید).
+
+## B4 — WP 4.1 / F‑15 (PARTIAL) · D‑17
+
+- **معیار:** D‑17 (شکستن validate بدون تغییر قرارداد؛ ۸ کلید = TODO؛ «۰ بلوک ≥D» = باز).
+- **مشخصه‌یابی (کامیت `8bae88c`، قبل از شکستن):** `tests/regression/test_wp41_config_characterization.py` با golden ساخته‌شده روی HEAD `0bc6c2e` ⇒ `2 passed` (۶۰۰ نمونه: ۲۷۶ OK، ۳۲۴ ERR). پیش‌تر دو بار golden ساخته شد: نمونهٔ تصادفیِ خالص فقط ERR داد (ماتریس بی‌کیفیت)؛ سپس با پایهٔ معتبر و جهش ۰–۳ محور ⇒ هر دو نتیجه.
+- **اندازه‌گیری radon (ابزار موقت در `/tmp/radonvenv`، نسخهٔ 6.0.1 مثل کیت؛ در وابستگی‌های مخزن اضافه نشد):**
+  - `radon cc -s -n C app/config.py` روی HEAD ⇒ `F (54)` برای `validate_production_configuration`.
+  - پس از شکستن: `radon cc -s -n C app/config.py` ⇒ `C (13)` (بیشترین) و `radon cc -n D app/config.py | wc -l` ⇒ `0`.
+  - کد محصول (`app modules engine db devtools`) `radon cc -s -n D` ⇒ F×۱ (`prescribe_axis_work` F46)، E×۱ (`next_transfer_state` E34)، D×۷. کیت: F×۲، E×۱، D×۷ ⇒ یک F کم شد؛ **هدف «۰ بلوک ≥D» برآورده نشد.**
+- **تست‌های همان حوزه:** `pytest -q tests/regression/test_wp41_config_characterization.py tests/regression/test_wp11_xff_trust.py tests/regression/test_wp12_env_failsafe.py tests/regression/test_production_ops.py` ⇒ `46 passed`؛ `pytest -q tests/regression` ⇒ `307 passed, 2 skipped` (قبل: ۳۰۵ + ۲ تست مشخصه‌یابی).
+- **lint/format (مجموعهٔ CI):** `ruff check --select E,F,W,I,N,UP,B,SIM,DTZ,TRY400,S --ignore E501 app/config.py tests/regression/test_wp41_config_characterization.py` ⇒ exit 0؛ `ruff format --check` ⇒ exit 0 (پس از `ruff format`). `bandit -r . -ll -q` ⇒ exit 0.
+- **باز در WP 4.1:** `prescribe_axis_work`، `next_transfer_state`، هفت بلوک D، و هشت کلید کیت (TODO).
+- **انطباق با دستور دائمی (ادعای فقط‌تغییرکننده):** مشخصه‌یابی سبز روی HEAD بود (هیچ قرمزی ادعا نشد؛ شکستن رفتار را تغییر نداد).
+- **INVENTORY/CHECKLIST (باقی‌مانده از B3):** در همین commit آورده شد؛ بازتولید آخرین قدم قبل از commit بود.
+
+## اجرای کامل و BATCH-SUMMARY (HEAD `c3d28d8`، پیش از مرج)
+
+### تست‌های کامل
+- **بک‌اند:** `cd mp-app/backend && PATH=/home/user/venv-mp/bin:$PATH bash scripts/coverage_run.sh` ⇒ **exit 0**؛ `1305 passed, 2 skipped, 2 warnings in 674.17s`؛ پوشش کل `91%`؛ گیت per-directory: `PASS` (modules 92.47 / آستانه 90، app 96.36 / 92، api 93.75 / 90، engine 97.24 / 95، security 97.65 / 95، db 98.98 / 80، jobs 84.55 / 80، cache 76.60 / 75، scripts 67.41 / 60).
+- **استودیو:** `cd mp-app/studio && npx vitest run` ⇒ **exit 1**؛ `Test Files 1 failed | 45 passed | 1 skipped (47)`؛ `Tests 1 failed | 298 passed | 9 skipped (308)`. شکست: `tests/receiptQueue.test.tsx` «رد فیش دلیل می‌خواهد…» ⇒ `Test timed out in 5000ms`.
+- **زمان‌بندی receiptQueue (یافته، skip نشد):** اجرای تنها `npx vitest run tests/receiptQueue.test.tsx` ⇒ `2 failed | 2 passed` با دو timeout ۵۰۰۰ms («خطای سرور…» و «رد فیش…»). **این با اجرای قبلی (۴/۴ سبز در B2) در تضاد است ⇒ آزمون ناپایدار است.** علت ریشه‌ای ادعا نشده. پیشنهاد: بررسی `user-event`/انتظار ناهمگام و `getComputedStyle` (هشدارهای jsdom در خروجی)؛ افزایش timeout بدون دلیل ثبت نشد (پوشاندن مشکل است).
+
+### BATCH-SUMMARY (وضعیت واقعی، نه ادعا)
+| بسته | WP | وضعیت | کامیت‌ها | شاهد |
+|---|---|---|---|---|
+| B1 | 2.1 F‑03 | DONE (C1–C3)، C4/C5 باز | `e57a992` | CI `45025193794` |
+| B1 | 2.2 F‑04 | DONE (C6–C8)، C9/C10 باز، C11 ادعا نشد | `b9ce7be` | CI `45025193794` |
+| B2 | 2.3 F‑18 | PARTIAL (WEB_CONCURRENCY=1؛ validate TODO) | `f852675` | CI `45036409460` |
+| B2 | 4.3 F‑19 | PARTIAL (await import حذف؛ یک‌لایه‌سازی TODO) | `cf33ad8` | CI `45036409460` |
+| B2 | 4.4 F‑20 | DONE (updateProduct حذف، getToken unexport) | `cf33ad8` | CI `45036409460` |
+| B3 | 3.3 F‑14 | DONE (پرداخت ناموجود ⇒ 404؛ D‑15) | `9024f44`، `338abb3` (CI) | CI `45039993907` |
+| B3 | 3.5 F‑09/F‑25 | NOT-REPRODUCED؛ ۹ گارد سبز (D‑16) | `0bc6c2e` | CI `45042383503` |
+| B4 | 4.1 F‑15 | PARTIAL (validate F54 ⇒ C13؛ F46/E34/۷×D و ۸ کلید باز) | `8bae88c`، `a825c00`، `c3d28d8` | CI `45043853981` |
+| B4 | 4.2 | BLOCKED: جهش‌سنجی نیازمند ابزار جدید = وابستگی تازه؛ نیاز به تصمیم مالک | — | — |
+| B4 | 4.7 | BLOCKED-ENV/تصمیم: بار پله‌ای و تغییر harness به blocking | — | — |
+| B4 | 0.2 | BLOCKED (AD‑10) | `b6f347f` (قبلی) | — |
+| B4 | 0.7 / 1.1 / 1.2 / 1.4 | PARTIAL / BLOCKED-ENV (وضعیت از صف؛ در این دستهٔ اجرا بازبینی نشد) | قبلی | — |
+
+- **تخطی‌های ثبت‌شده:** سقف کامیت B3 (۴، با تأیید) و B4 (۳، بدون تأیید؛ در گزارش اعلام شد).
+- **توقف:** ممیزی تا لحظهٔ مرج **کامل نیست**. موانع: WP 4.2 (نیاز به ابزار جهش‌سنجی؛ نصب آن وابستگی تازه است و طبق دستور ممنوع است)، WP 4.7 (BLOCKED-ENV و تغییر گیت)، ناپایداری receiptQueue (یافته باز)، و ۸ کلید کیت (TODO، تصمیم مالک).
+
+## B5 — بستهٔ بستن (WP 4.1 `prescribe_axis_work` F46 ⇒ C13 · F‑30 · ستون‌های 4.2 / 4.7)
+
+- **WP 4.1 (PARTIAL):** golden از HEAD (`tests/unit/test_axis_prescription_golden.py` + fixture، seed 46، ۳۰۰ مورد) قبل از شکستن ساخته شد و روی HEAD سبز بود. **جهش‌سنجی:** شرط بودجهٔ خستگی `>`⇒`<` ⇒ `1 failed, 1 passed`؛ بازگردانی ⇒ `2 passed`، `git diff` خالی. **شکستن:** `prescribe_axis_work` به کلاس `_Prescription` و توابع کوچک (`plan_all`، `plan_covered`، `plan_carrier`، `trim_to_budget`…) تقسیم شد؛ golden بدون تغییر ماند.
+- **radon (`radon cc mp-app/backend -j`، HEAD در `/tmp/headsnap` از `git archive`):** قبل: F=1 (`prescribe_axis_work` 46)، بلوک ≥D در محصول = ۱۲. بعد: **F=0**، ≥D = ۱۱ (E: `next_transfer_state` 34؛ D: ۱۰ مورد)؛ **هیچ بلوک جدید ≥D**؛ بیشترین CCN تابع‌های جدید = ۱۳ (`prescribe_axis_work`) < ۱۵.
+- **شاهد تأیید:** `ruff check` (انتخاب CI) ⇒ rc 0؛ `ruff format --check` ⇒ rc 0؛ `bandit -r . -ll -q` ⇒ rc 0؛ `pytest tests/unit tests/integration/test_pilot_dry_run.py` + فایل‌های prescription ⇒ ۳۲۹ passed.
+- **WP 4.1 هنوز PARTIAL:** `next_transfer_state` (E34) و ۱۰ بلوک D باز؛ هشت کلید کیت (D‑17) TODO. Rollback: `git revert` کامیت کد B5 (D‑20).
+- **F‑30 (ثبت شد، OPEN):** receiptQueue ناپایدار؛ شاهد: اجرای کامل ۱ failed/۲۹۸ passed (timeout ۵۰۰۰ms)، اجرای تنها ۲ failed/۲ passed. timeout بالا نرفت، تست skip یا حذف نشد (D‑18).
+- **بستن ستون‌ها (FINN-AUDIT-LOOP):** WP 4.2 (F‑11) = **DEFERRED** (baseline جهش ۵۷٫۸٪ در برابر ≥۸۰٪؛ وابستگی تازه لازم؛ D‑19). WP 4.7 = **PARTIAL**: بار پله‌ای/ترکیبی **BLOCKED-ENV** (بدون Docker/Postgres در سندباکس)؛ Semgrep: قواعد project-rules مسدودکننده است (`ci.yml:158–168`، `--error`)، اما قواعد harness هنوز `continue-on-error` است (`ci.yml:170–172`) — **این بخش انجام نشده است؛ گزارش قبلی آن را کامل خوانده بود و اصلاح شد.**
+- **یادداشت‌های اندازه‌گیری‌شده برای ردیف‌های PARTIAL/BLOCKED:** 0.2 (۱٬۱۴۱ سلول، ۵۹۲ drift)؛ 0.7 (`continue-on-error`، ۵ یافتهٔ پایه، ۰ silent-except-pass)؛ 1.1 (e2e قبل ۳۰×200، بعد ≥۲۷×429)؛ 1.2 (گیت زنده روی استقرار BLOCKED-ENV)؛ 1.4 (قبل ۲۰۰ ⇒ بعد ۴۰۱).
+- **اجرای کامل بک‌اند (`scripts/coverage_run.sh` در `e740938`):** `1307 passed, 2 skipped, 2 warnings in 615.07s`، exit 0، گیت پوشش PASS (۲ تست golden جدید افزوده شد).
+- **تخطی‌ها:** B5 سه کامیت: `e740938` (کد + golden)، `5bd369c` (مستندات)، و کامیت سوم (اصلاح INVENTORY): سطر INVENTORY.md تعداد خط و بایت خودش را ثبت می‌کند، پس یک بازتولید پس از کامیت `5bd369c` لازم بود؛ طبق قاعدهٔ «در کامیت بعدی، بدون amend». این از سقف ۲ کامیت B5 عبور است و ثبت می‌شود. هیچ آستانه، وابستگی، یا تست حذف/skip نشد.
+- **BATCH-SUMMARY نهایی:** این بسته آخرین بستهٔ closure است؛ ممیزی تا لحظهٔ مرج کامل نیست (WP 4.2 DEFERRED، WP 4.7 load BLOCKED-ENV، F‑30 باز، WP 4.1 PARTIAL). مرج فقط با اجازهٔ داور مجاز است.
+
+## B6 — WP 0.7 DONE (قاعدهٔ harness مسدودکننده) · WP 4.7 PARTIAL (نیمهٔ semgrep) · D‑21، D‑22
+
+- **پیش از تغییر (`/tmp/sgvenv`، semgrep 1.186.0):** `semgrep --config=.semgrep/mp-harness-rules.yml --error --exclude=… mp-app` ⇒ rc 1، **۳ یافته**: `mp-money-division` ×۲ (`modules/admin/analytics.py:157` و `:325`، هر دو `(end - start).total_seconds() / 60.0`)؛ `mp-dart-dynamic-cast` (`client/lib/core/api_client.dart:191`، خط `final dynamic decoded = …`). `project-rules` ⇒ rc 0، ۰ یافته.
+- **تنگ‌سازی:** `mp-money-division` ⇒ `regex: (?i).*(rial|amount|price|balance|fee|discount).*` (کلیدواژهٔ `total` حذف شد؛ `total_rial/total_amount/total_price` از راه همان کلیدواژه‌ها گرفته می‌شوند). sha256: `f9bd5d55…` ⇒ `07f3475b…`. قاعدهٔ `mp-money-float-cast` دست نخورد (FP سنجش‌نشده).
+- **کنترل مثبت (الزامی؛ فایل موقت `/tmp/ctrl/money_ctrl.py`، خارج از مخزن، commit نشد):** فرمان: `semgrep --config=/tmp/ctrl/final-rules.yml --json -q /tmp/ctrl/money_ctrl.py` ⇒ rc 0، خروجی: `mp-money-division` خطوط **3، 4، 5** (`payable_rial = total_rial / 3`، `avg = amount_rial / count`، `total_rial / members`)، مجموع **3** (≥۱ ✓). خط ۸ (`(end - start).total_seconds() / 60.0`) **گرفته نشد** ✓. کنترل تمایز: با قاعدهٔ HEAD همان خط ۸ گرفته می‌شد (`old division-hits` شامل خط ۸).
+- **پس از تغییر روی mp-app:** harness ⇒ rc **0**، خروجی **۰ سطر**؛ project-rules ⇒ rc **0**. تنها تغییر کد: کامنت `nosemgrep: mp-dart-dynamic-cast` با دلیل، یک خط بالای `final dynamic decoded` (عمدی؛ قفل‌شده در `test/api_client_test.dart`؛ استثنای پوشهٔ `client` ممنوع و اعمال نشد).
+- **CI (`.github/workflows/ci.yml`):** گام `Semgrep (harness rules, non-blocking)` ⇒ `Semgrep (harness rules)`، `continue-on-error: true` حذف شد. بررسی: کلیدهای jobs و نام jobها با `HEAD` **یکسان** (`True / True`) و گام harness در job `backend` است. گام غیرمرتبط `Lint (ruff) — غیرمسدودکننده` هنوز `continue-on-error` دارد؛ **باز** (خارج از WP 0.7).
+- **Lint/format/bandit روی فایل‌های دست‌خورده:** فایل پایتونِ تغییرکرده فقط `scripts/build_audit_inventory.py` (docstring: ۲۹ ⇒ ۳۰). `ruff==0.17.6` (پین `requirements.txt:68`) با CI selection ⇒ **۴ یافته** (S607، S603، E741×۲)؛ `ruff format --check` ⇒ rc 1. **پیش از B6 هم دقیقاً همین ۴ یافته و همین rc بود** (`git show 6c473d0:…` ⇒ `Found 4 errors`، `format_before_rc=1`). این اسکریپت در محدودهٔ ruff CI (`mp-app/backend`) نیست؛ اصلاح نشد تا تغییر بیرون از بسته نباشد. `bandit==1.9.4 -ll` ⇒ rc 0. فایل‌های YAML (`mp-harness-rules.yml`، `ci.yml`) با `yaml.safe_load` ⇒ معتبر.
+- **dart:** `dart`/`flutter` در sandbox نیست؛ تغییر فقط یک خط کامنت است و `analyze` اجرا نشد.
+- **اجرای بک‌اند/استودیو:** در B6 هیچ کد بک‌اند یا استودیو تغییر نکرد؛ `/home/user/venv-mp` پس از بازهم‌ترازی نبود و مجدداً ساخته نشد؛ آخرین اجرای کامل بک‌اند `1307 passed, 2 skipped` در B5 (`e740938`) است.
+- **بازهم‌ترازی شاخهٔ محلی (D‑22):** پیش از تغییر، `/home/user/MP` روی `662ff88` بود با ۱۰۸ فایل تغییرکرده؛ آرشیو `/tmp/wt_backup/worktree-before-B6.tar` (sha256 `57a2570b…`)، `status-before.txt`، `diff-vs-main.patch`، `diff-vs-origin.patch` ذخیره شد؛ ۱۰۷ فایل از diff با `origin/arena/5a1e37b3-mp` بایت‌به‌بایت یکسان بودند؛ سپس `reset --hard` و `checkout -B` به تیپ `6c473d0`.
+- **وضعیت دفترچه:** WP 0.7 ⇒ **DONE** (`edc01e0`؛ sha `d58146b4…` ⇒ `f9bd5d55…` ⇒ `07f3475b…`). WP 4.7 ⇒ **PARTIAL**: semgrep هر دو فایل قاعده مسدودکننده و صفر یافته؛ بار پله‌ای/ترکیبی **BLOCKED-ENV** (بدون Docker/Postgres). `status.json` تغییر نکرد: فقط کلیدهای F-xx دارد و WP 0.7/4.7 شناسهٔ F ندارند (`—` در لوپ)؛ ساختن کلید ساختگی ممنوع است. CHECKLIST فقط از F-xx ساخته می‌شود.
+- **اسکریپت INVENTORY:** `build_audit_inventory.py` اکنون در حالت نوشتن تا نقطهٔ ثابت تکرار می‌کند (حداکثر ۵؛ ردیف INVENTORY خودش را ثبت می‌کند). یک بازتولید با `python3` سیستم (بدون وابستگی‌های بک‌اند) بخش «عملیات API» را به حالت ایستای کوتاه برگرداند (۱۷۱۹ ⇒ ۱۵۵۱ خط) — با diff دیده شد و **کامیت نشد**. سپس `/home/user/venv-mp` از همان دستور CI با پین‌ها ساخته شد (`pip install -c mp-app/backend/requirements.txt -e mp-app/backend[dev]`؛ `pip check`: بدون تضاد؛ **۸۴ پین، ۰ اختلاف نسخه**)، و با همان مفسر بازتولید شد: ۱۷۱۹ خط، `--check` rc 0.
+- **تخطی‌ها:** B6 در سقف ۲ کامیت است (`edc01e0` کد و کامیت مستندات). هیچ آستانه، تست، یا job تغییر نکرد؛ هیچ وابستگی ماندگاری اضافه نشد (semgrep و ruff در venvهای موقت `/tmp` با همان پین/نسخهٔ CI نصب شدند).
+- **باز (از B6):** ۱) گام ruff غیرمسدودکننده در `ci.yml`؛ ۲) `scripts/build_audit_inventory.py` (۴ یافته + format)؛ ۳) قاعدهٔ `mp-money-float-cast` هنوز `total` دارد؛ ۴) WP 4.1 PARTIAL؛ ۵) WP 4.2 DEFERRED؛ ۶) WP 4.7 load BLOCKED-ENV؛ ۷) F‑30 (receiptQueue) OPEN.

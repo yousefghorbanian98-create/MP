@@ -1,0 +1,55 @@
+{
+  "gate": "WP 3.1 / F-25: unexpected_2xx_on_bad_id == 0 (baseline 48); id_guard_rejections ~ 4x parameterized paths",
+  "probe": "probes/probe_invalid_authed.repo-copy.py (kit hash edd3c25c..)",
+  "before": {
+    "commit": "822e483 (pre-WP 3.1)",
+    "cells_total": 872,
+    "status_histogram": {
+      "422": 531,
+      "404": 220,
+      "200": 55,
+      "403": 34,
+      "400": 24,
+      "409": 8
+    },
+    "finding_counts": {
+      "server_errors_5xx": 0,
+      "leaked_stacktrace": 0,
+      "unexpected_2xx_on_bad_id": 48,
+      "bad_error_envelope": 0,
+      "revoked_token_cells": 0,
+      "id_guard_rejections": 70,
+      "fastapi_default_detail": 0
+    }
+  },
+  "after": {
+    "commit": "WP 3.1 commit (see git log)",
+    "cells_total": 872,
+    "finding_counts": {
+      "server_errors_5xx": 0,
+      "leaked_stacktrace": 0,
+      "unexpected_2xx_on_bad_id": 0,
+      "bad_error_envelope": 0,
+      "revoked_token_cells": 0,
+      "id_guard_rejections": 338,
+      "fastapi_default_detail": 0
+    },
+    "status_histogram": {
+      "422": 759,
+      "404": 80,
+      "400": 20,
+      "200": 7,
+      "403": 6
+    },
+    "tokens_live_throughout": true,
+    "relogins": 0
+  },
+  "id_guard_rejections_breakdown": {
+    "per_negative_value_(-1,0,-0,INT64_MIN)": 67,
+    "ceiling_value_(10^23)": 70,
+    "total": 338,
+    "templated_paths_in_probe": 57,
+    "note": "67 = 57 admin cells + 10 member cells per value; 4x57=228 minimum met"
+  },
+  "note_correction": "earlier draft mislabelled the before run; the before values above come from a run against 822e483 on :8011"
+}

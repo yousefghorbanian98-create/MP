@@ -195,7 +195,7 @@ Next (گزارش محلی و ثبت وضعیت؛ push خودکار/فوری ند
 - [ ] c3: تست + rule-evidence
 
 ### P3 — رفع گپ‌های REA (کوچک، سریع)
-- [ ] همگام‌سازی `versionName` با تگ ریلیز در `apk.yml`
+- [ ] همگام‌سازی `versionName` با تگ ریلیز (`apk.yml` حذف شد؛ AD‑21 — تصمیم جایگزین لازم است)
 - [ ] `domain-config` باریک برای cleartext (LAN فقط)
 - [ ] `android:debuggable="false"` صریح در مانیفست release
 - [ ] `audit-release-exposure` در چک‌لیست انتشار

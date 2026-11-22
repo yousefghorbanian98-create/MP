@@ -116,7 +116,7 @@ def score_rep_drop(
     اگر `previous_reps` داده شود، افت نسبت به جلسهٔ قبل سنجیده می‌شود
     (مقایسهٔ منصفانه‌تر). وگرنه نسبت به هدف برنامه.
     """
-    baseline = previous_reps if previous_reps else target_reps
+    baseline = previous_reps or target_reps
     if baseline <= 0:
         return Signal("rep_drop", None, None, "هدف تکرار نامعتبر است")
     ratio = reps_done / baseline

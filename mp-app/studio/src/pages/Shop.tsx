@@ -34,6 +34,8 @@ import {
   removeCartItem,
   reviewChangeRequest,
   savePrice,
+  fetchOrderReceipt,
+  markOrderStatus,
   updateCartItem,
   upsertGateway,
   type CartLine,
@@ -48,6 +50,7 @@ import {
 } from "../lib/api";
 
 import { roleFromToken } from "../lib/roleNav";
+import { parseRialOrThrow } from "../lib/money";
 
 /** InputNumber با stringMode مقدار رشته‌ای می‌دهد؛ stateها رشته‌ای می‌مانند. */
 const asText = (value: string | number | null | undefined): string =>
@@ -443,7 +446,6 @@ export function Shop() {
                   type="button"
                   onClick={() =>
                     act(async () => {
-                      const { fetchOrderReceipt } = await import("../lib/api");
                       setReceipt(await fetchOrderReceipt(o.id));
                     }, "")
                   }
@@ -456,7 +458,7 @@ export function Shop() {
                     type="button"
                     onClick={() =>
                       act(async () => {
-                        await import("../lib/api").then((m) => m.markOrderStatus(o.id, "delivered"));
+                        await markOrderStatus(o.id, "delivered");
                         await reload();
                       }, "تحویل ثبت شد")
                     }
@@ -621,7 +623,7 @@ function OwnerConsole({
               title,
               sku,
               category_id: Number(categoryId),
-              price_rial: Number(price || 0),
+              price_rial: parseRialOrThrow(price || "0", "قیمت"),
               image_url: imageUrl,
               stock_qty: Number(stock || 0),
             });
@@ -668,7 +670,7 @@ function OwnerConsole({
               category: priceCategory,
               code: priceCode,
               title: priceTitle,
-              price_rial: Number(priceValue || 0),
+              price_rial: parseRialOrThrow(priceValue || "0", "مبلغ"),
             });
             setPriceCode("");
             setPriceTitle("");
@@ -782,8 +784,8 @@ function AdminRequestForm({
           try {
             const payload =
               kind === "product_price"
-                ? { product_id: Number(productId), price_rial: Number(newPrice || 0) }
-                : { code: note, title: note, price_rial: Number(newPrice || 0) };
+                ? { product_id: Number(productId), price_rial: parseRialOrThrow(newPrice || "0", "قیمت") }
+                : { code: note, title: note, price_rial: parseRialOrThrow(newPrice || "0", "قیمت") };
             await askChangeRequest(kind, payload);
             toast.success("درخواست ثبت شد — منتظر تأیید مالک");
             await onDone();

@@ -1,0 +1,19 @@
+== principals (OTP login for 7 identities) ==
+  token[member] len=292 user_id=1
+  token[coach] len=293 user_id=252
+  token[reception] len=299 user_id=253
+  token[manager] len=296 user_id=254
+  token[admin] len=293 user_id=255
+  token[super_admin] len=301 user_id=256
+
+== pass 1: live seed through the API ==
+  captured ids: {}
+
+== pass 2: authorization matrix (163 ops × 7 principals) ==
+  done in 3s | classification summary: {"denied": 996, "allowed_2xx": 88, "reached_4xx": 57}
+  unauth_allowed: 5
+  over_permissive: 2
+  contract_drift_denied: 604
+  server_errors: 0
+  leaked_stacktrace: 0
+  slow_ops: 0

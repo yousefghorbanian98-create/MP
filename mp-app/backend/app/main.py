@@ -6,19 +6,22 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 from time import perf_counter
 
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from slowapi.errors import RateLimitExceeded
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.config import settings
-from app.errors import ApiError, api_error_handler, validation_error_handler
+from app.errors import ApiError, api_error_handler, http_error_handler, validation_error_handler
+from app.id_floor import check_path_id_floor
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # init_db فقط برای dev — production با alembic migration می‌سازد
+    _log_effective_configuration()
     if settings.environment == "development":
         from db.base import init_db
 
@@ -26,7 +29,7 @@ async def lifespan(app: FastAPI):
     yield
 
 
-def _rate_limit_handler(request, exc):  # noqa: ANN001, ARG001
+def _rate_limit_handler(request, exc):  # noqa: ARG001
     """پاسخ ۴۲۹ یکنواخت — handler ماژول‌سطح (رفع یافتهٔ semgrep useless-inner-function)."""
     from app.errors import _payload_for_rate_limit
 
@@ -41,7 +44,39 @@ def health() -> dict:
     return {"status": "ok", "service": settings.app_name, "version": "1.0.0"}
 
 
+def _assert_explicit_environment() -> None:
+    """WP 1.2 / F-02: بدون MP_ENVIRONMENT صریح، اپ بالا نمی‌آید (fail-safe).
+
+    پیش‌فرض کلاس `development` است؛ اگر استقرار متغیر را فراموش کند، قبلاً اپ با
+    پیام‌رسان dev و نشت کد OTP بالا می‌آمد. تست‌های خودکار با
+    `MP_ALLOW_IMPLICIT_DEV=true` (در tests/conftest.py) اجازه دارند.
+    """
+    if "environment" in settings.model_fields_set or settings.allow_implicit_dev:
+        return
+    raise RuntimeError(
+        "MP_ENVIRONMENT باید صریح تنظیم شود (development یا production)؛ "
+        "پیش‌فرض ضمنی برای بالا آمدن مجاز نیست"
+    )
+
+
+def _log_effective_configuration() -> None:
+    """WP 1.2 / F-02: یک WARNING با محیط مؤثر و پیام‌رسان تا اشتباه دیده شود."""
+    from app.logging import get_logger
+
+    get_logger("startup").warning(
+        "effective_configuration",
+        environment=settings.environment,
+        sms_provider=settings.sms_provider,
+        dev_otp_echo=bool(settings.environment == "development" and settings.allow_dev_otp_echo),
+        rate_limit_storage="valkey" if settings.environment == "production" else "memory",
+        log_format="json" if settings.environment != "development" else "console",
+        init_db_on_startup=settings.environment == "development",
+        trusted_proxies_configured=bool(settings.trusted_proxies.strip()),
+    )
+
+
 def create_app() -> FastAPI:
+    _assert_explicit_environment()
     # M46-c3 — لاگ ساختاریافته را واقعاً روشن کن.
     # پیش از این `configure_logging` تعریف شده بود ولی هیچ‌جا صدا زده نمی‌شد،
     # پس `get_logger("jobs")` در scheduler به پیکربندی پیش‌فرض structlog می‌افتاد.
@@ -56,6 +91,8 @@ def create_app() -> FastAPI:
             "قاعدهٔ G8: اعداد بار/ست/تکرار فقط از موتور قواعد می‌آیند."
         ),
         version="1.0.0",
+        # WP 3.1 / F‑25: کف شناسه برای همهٔ مسیرها (پس از مسیریابی، قبل از هندلر).
+        dependencies=[Depends(check_path_id_floor)],
         openapi_tags=[
             {"name": "health", "description": "سلامت سیستم"},
             {"name": "auth", "description": "احراز هویت OTP و نشست"},
@@ -88,7 +125,7 @@ def create_app() -> FastAPI:
     from app.metrics import metrics
 
     @app.middleware("http")
-    async def record_http_metrics(request, call_next):  # noqa: ANN001
+    async def record_http_metrics(request, call_next):
         started_at = perf_counter()
         status_code = 500
         try:
@@ -118,6 +155,7 @@ def create_app() -> FastAPI:
     app.add_middleware(CorrelationIdMiddleware, header_name="X-Request-ID")
 
     app.add_exception_handler(ApiError, api_error_handler)
+    app.add_exception_handler(StarletteHTTPException, http_error_handler)
     app.add_exception_handler(RequestValidationError, validation_error_handler)
 
     from modules.auth.router import limiter

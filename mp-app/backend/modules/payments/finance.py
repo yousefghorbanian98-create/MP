@@ -5,6 +5,7 @@ from __future__ import annotations
 import csv
 import io
 from datetime import UTC, datetime
+from decimal import ROUND_FLOOR, Decimal
 
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
@@ -99,5 +100,8 @@ def coach_commission(db: Session, coach_id: int, rate: float | None = None) -> d
         "coach_name": coach.full_name,
         "rate": rate,
         "attributed_payments_rial": int(total),
-        "commission_rial": int(int(total) * rate),
+        # F‑09: کمیسیون با Decimal (نه float) و گرد به پایین محاسبه می‌شود.
+        "commission_rial": int(
+            (Decimal(int(total)) * Decimal(str(rate))).to_integral_value(rounding=ROUND_FLOOR)
+        ),
     }

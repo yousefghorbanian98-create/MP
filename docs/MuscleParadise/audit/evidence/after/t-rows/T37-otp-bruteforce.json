@@ -1,0 +1,13 @@
+{
+ "test": "T37-bruteforce (reconstructed; kit probe lacks this mode)",
+ "guesses": 60,
+ "elapsed_s": 0.135,
+ "guesses_per_s": 443.2,
+ "status_histogram": {
+  "401": 3,
+  "429": 57
+ },
+ "real_code_after_burst_status": 429,
+ "replay_status": 429,
+ "replay_body": "{\"error\":{\"code\":\"rate_limited\",\"message\":\"تعداد درخواست‌ها زیاد است؛ کمی بعد تلاش کنید\",\"details\":[]}}"
+}

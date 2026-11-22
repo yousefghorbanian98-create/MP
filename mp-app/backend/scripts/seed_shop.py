@@ -20,10 +20,10 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from sqlalchemy import select  # noqa: E402
+from sqlalchemy import select
 
-from db.base import get_session_factory, init_db  # noqa: E402
-from db.models import PaymentGatewayConfig, PriceBook, Product, ProductCategory  # noqa: E402
+from db.base import get_session_factory, init_db
+from db.models import PaymentGatewayConfig, PriceBook, Product, ProductCategory
 
 CATEGORIES = [
     {"slug": "supplements", "title": "مکمل‌ها", "kind": "supplement", "sort_order": 1},

@@ -33,6 +33,8 @@ import os
 import sys
 from pathlib import Path
 
+os.environ.setdefault("MP_ENVIRONMENT", "development")  # WP 1.2: ابزار فقط‌خواندنی مسیر/OpenAPI
+
 # مسیرهای عمومی — هر ورودی باید دلیل داشته باشد. افزودن مسیر عمومیِ بی‌دلیل
 # همان چیزی است که این گیت باید جلویش را بگیرد، پس فهرست کوچک می‌ماند.
 PUBLIC: dict[tuple[str, str], str] = {
@@ -50,15 +52,12 @@ PUBLIC: dict[tuple[str, str], str] = {
         "/api/v1/payments/{payment_id}/gateway-return",
     ): "redirect بانک (M110) — با token امضاشده + سقف نرخ",
     ("GET", "/api/v1/health/ready"): "probe زیرساخت",
-    ("GET", "/api/v1/metrics"): "scrape پرومتئوس",
     ("GET", "/health"): "probe زیرساخت",
 }
 
 # مسیرهایی که *عمداً* عمومی‌اند ولی در آینده باید بسته شوند — جدا نگه می‌داریم
 # تا در گزارش به‌عنوان بدهی فنی دیده شوند، نه اینکه با بقیه قاطی شوند.
-KNOWN_DEBT: dict[tuple[str, str], str] = {
-    ("GET", "/api/v1/metrics"): "متریک‌ها بدون احراز هویت — باید در شبکهٔ داخلی محدود شود",
-}
+KNOWN_DEBT: dict[tuple[str, str], str] = {}
 
 
 def _walk(routes, prefix: str = ""):

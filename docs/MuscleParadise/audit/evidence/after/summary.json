@@ -1,0 +1,22 @@
+{
+  "label": "after",
+  "ruff_recommended_findings": 380,
+  "ruff_recommended_rc": 1,
+  "ruff_format_rc": 0,
+  "ruff_tree_config_findings": 338,
+  "ruff_blocking_rc": 0,
+  "radon_cc_C_or_worse": 47,
+  "lizard_ccn_over_10": 55,
+  "vulture_80": 1,
+  "bandit": {
+    "high": 0,
+    "low": 4,
+    "medium": 0,
+    "undefined": 0
+  },
+  "detect_secrets": 171,
+  "semgrep_project": {
+    "findings": 0,
+    "errors": 0
+  }
+}

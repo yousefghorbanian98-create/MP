@@ -12,17 +12,21 @@ rules:
     patterns:
       - pattern-either:
           - pattern: $DB.execute(f"...", ...)
+          - pattern: $DB.execute(f"...")
           - pattern: $DB.execute("..." % ..., ...)
+          - pattern: $DB.execute("..." % ...)
           - pattern: $DB.execute("...".format(...), ...)
+          - pattern: $DB.execute("...".format(...))
           - pattern: $DB.exec_driver_sql(f"...", ...)
-      - pattern-not-inside: |
-          def $F(...):
-              ...
-              # nosec
+          - pattern: $DB.exec_driver_sql(f"...")
+      # F‑22 (WP 4.5): یک pattern-not-inside قبلی (`def $F(...): ...`) هر تابعی را
+      # می‌پوشاند و قاعده را عملاً خاموش می‌کرد؛ حذف شد. استثنای عمدی با
+      # `# nosemgrep: mp-raw-sql-string-format` و دلیل فارسی انجام می‌شود.
     paths:
       exclude:
         - "**/tests/*"
-        - "**/migrations/*"
+        # F‑22 (WP 4.5): migrationها هم SQL می‌سازند؛ استثنا برداشته شد تا
+        # `op.execute(f"DROP INDEX ...")` گرفته شود.
 
   - id: mp-jwt-decode-without-verify
     languages: [python]

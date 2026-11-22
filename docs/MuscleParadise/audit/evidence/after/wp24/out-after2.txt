@@ -1,0 +1,18 @@
+threads=80 stack_depth=40 calls_per_thread=400 recursionlimit=1000
+{
+ "threads": 80,
+ "stack_depth": 40,
+ "calls_per_thread": 400,
+ "total_calls": 32000,
+ "elapsed_s": 0.3,
+ "throughput_calls_per_s": 110570.1,
+ "errors": {},
+ "error_samples": [],
+ "latency_ms": {
+  "p50": 0.006,
+  "p95": 0.013,
+  "max": 5.301
+ },
+ "note": "casbin روی هر enforce عبارت را compile/eval می‌کند؛ enable_cache در security/rbac.py فعال نشده است."
+}
+→ /tmp/run/audit-24/rbac-systemerror-repro.json

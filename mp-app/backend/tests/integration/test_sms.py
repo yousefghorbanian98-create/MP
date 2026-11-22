@@ -83,10 +83,17 @@ def test_provider_failure_logs_do_not_echo_credentials(
     assert secret not in caplog.text
 
 
-def test_otp_response_exposes_dev_code_only_in_dev(client):
+def test_otp_response_hides_dev_code_by_default(client):
+    """WP 1.2 / F-02: حتی در development، بدون پرچم صریح کد OTP در پاسخ نیست."""
     r = client.post("/api/v1/auth/otp/request", json={"phone": f"091{next(_counter):08d}"})
     assert r.status_code == 200
-    assert "dev_code" in r.json()  # حالت dev (پیش‌فرض)
+    assert "dev_code" not in r.json()
+
+
+def test_otp_response_exposes_dev_code_only_with_flag(client, dev_otp_echo):
+    r = client.post("/api/v1/auth/otp/request", json={"phone": f"091{next(_counter):08d}"})
+    assert r.status_code == 200
+    assert "dev_code" in r.json()
 
 
 def test_otp_sms_failure_surfaces_error(client, monkeypatch):

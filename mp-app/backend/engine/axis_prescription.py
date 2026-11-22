@@ -40,6 +40,134 @@ def _pick_level(movers: list[dict], prefer_low: bool) -> dict | None:
     )[0]
 
 
+def _new_plan(axis: int, d: dict) -> dict:
+    return {
+        "axis": axis,
+        "state": d.get("state"),
+        "movement_ids": [],
+        "roles": [],
+        "sets": 0,
+        "reason": d.get("reason", ""),
+    }
+
+
+class _Prescription:
+    """وضعیت یک اجرای تجویز. مراحل همان ترتیب و همان قواعد نسخهٔ HEAD را دارند (B5 / WP 4.1)."""
+
+    def __init__(self, movements: list[dict]) -> None:
+        self.movements = movements
+        self.axis_plans: dict[int, dict] = {}
+        self.selected: dict[str, dict] = {}  # external_id → movement (dedup)
+        self.sets_by_movement: dict[str, float] = {}
+        self.trimmed: list[str] = []
+
+    def select(self, mover: dict, sets: float, axis: int, role: str, plan: dict) -> None:
+        mid = mover["external_id"]
+        self.selected.setdefault(mid, mover)
+        # ست‌ها: بیشینهٔ درخواست‌شده (حرکت مشترک ست‌هایش ضرب نمی‌شود — یک‌بار)
+        self.sets_by_movement[mid] = max(self.sets_by_movement.get(mid, 0.0), sets)
+        plan["movement_ids"].append(mid)
+        plan["roles"].append(role)
+
+    def plan_direct(self, axis: int, plan: dict) -> None:
+        mover = _pick_level(_covering(self.movements, axis, DIRECT_MIN_WEIGHT), prefer_low=True)
+        if mover is None:
+            plan["reason"] += " — اما حرکت مناسب در کاتالوگ یافت نشد (شکاف محتوا)"
+            return
+        self.select(mover, DIRECT_SETS, axis, "direct", plan)
+        plan["sets"] = DIRECT_SETS
+
+    def plan_maintain(self, axis: int, plan: dict) -> None:
+        mover = _pick_level(_covering(self.movements, axis, COVERED_MIN_WEIGHT), prefer_low=False)
+        if mover is None:
+            return
+        self.select(mover, MAINTAIN_SETS, axis, "maintain", plan)
+        plan["sets"] = MAINTAIN_SETS
+
+    def plan_covered(self, axis: int, plan: dict) -> None:
+        carriers = [
+            m
+            for m in self.selected.values()
+            if float(m.get("axis_coverage", {}).get(str(axis), 0.0)) >= COVERED_MIN_WEIGHT
+        ]
+        if carriers:
+            plan["movement_ids"] = [m["external_id"] for m in carriers]
+            plan["roles"] = ["covered_in"] * len(carriers)
+            plan["reason"] += " — پوشش از حرکات منتخب دیگر"
+            return
+        self.plan_carrier(axis, plan)
+
+    def plan_carrier(self, axis: int, plan: dict) -> None:
+        multi = [
+            m
+            for m in _covering(self.movements, axis, COVERED_MIN_WEIGHT)
+            if sum(1 for w in m["axis_coverage"].values() if float(w) >= COVERED_MIN_WEIGHT) >= 2
+        ]
+        mover = _pick_level(multi, prefer_low=True)
+        if mover is None:
+            return
+        self.select(mover, DIRECT_SETS, axis, "carrier", plan)
+        plan["sets"] = DIRECT_SETS
+        plan["reason"] += " — حامل چندمحوره انتخاب شد"
+
+    def plan_all(self, decisions: dict[int, dict]) -> None:
+        # پاس ۱: direct + maintain (تا پوشش‌ها در پاس ۲ دیده شوند)؛ پاس ۲: covered؛ پاس ۳: بقیه
+        pass1 = [
+            a for a in sorted(decisions) if decisions[a].get("state") in ("direct", "maintain")
+        ]
+        pass2 = [a for a in sorted(decisions) if decisions[a].get("state") == "covered"]
+        pass3 = [
+            a
+            for a in sorted(decisions)
+            if decisions[a].get("state") not in ("direct", "maintain", "covered")
+        ]
+        for axis in pass1 + pass2 + pass3:
+            d = decisions[axis]
+            state = d.get("state")
+            plan = _new_plan(axis, d)
+            if state == "direct":
+                self.plan_direct(axis, plan)
+            elif state == "maintain":
+                self.plan_maintain(axis, plan)
+            elif state == "covered":
+                self.plan_covered(axis, plan)
+            # refer/unknown: بدون تجویز — دلیل همان reason تصمیم است
+            self.axis_plans[axis] = plan
+
+    def entries(self) -> list[dict]:
+        return [
+            attribute_load(
+                movement_id=mid,
+                axis_coverage=self.selected[mid]["axis_coverage"],
+                sets=sets,
+            )
+            for mid, sets in self.sets_by_movement.items()
+            if sets > 0
+        ]
+
+    def trim_to_budget(self, fatigue_budget: float) -> list[dict]:
+        """بودجهٔ خستگی: اول maintain، سپس carrier — هرگز direct (قاعدهٔ ثبت‌شده)."""
+        entries = self.entries()
+        total = sum(e["fatigue_units"] for e in entries)
+        if total > fatigue_budget:
+            for role_cut in ("maintain", "carrier"):
+                total = self._trim_role(role_cut, total, fatigue_budget)
+            entries = self.entries()
+        return entries
+
+    def _trim_role(self, role_cut: str, total: float, fatigue_budget: float) -> float:
+        for plan in self.axis_plans.values():
+            for mid, role in zip(plan["movement_ids"], plan["roles"], strict=True):
+                if total <= fatigue_budget:
+                    break
+                if role == role_cut and self.sets_by_movement.get(mid, 0) > 0:
+                    cut = min(self.sets_by_movement[mid], total - fatigue_budget)
+                    self.sets_by_movement[mid] -= cut
+                    total -= cut
+                    self.trimmed.append(f"{mid}: -{cut} ست (بودجهٔ خستگی — {role_cut})")
+        return total
+
+
 def prescribe_axis_work(
     *,
     decisions: dict[int, dict],
@@ -58,103 +186,9 @@ def prescribe_axis_work(
                 code="invalid_movement",
             )
 
-    axis_plans: dict[int, dict] = {}
-    selected: dict[str, dict] = {}  # external_id → movement (dedup)
-    sets_by_movement: dict[str, float] = {}
-    trimmed: list[str] = []
-
-    def _select(mover: dict, sets: float, axis: int, role: str, plan_for_axis: dict) -> None:
-        mid = mover["external_id"]
-        selected.setdefault(mid, mover)
-        # ست‌ها: بیشینهٔ درخواست‌شده (حرکت مشترک ست‌هایش ضرب نمی‌شود — یک‌بار)
-        sets_by_movement[mid] = max(sets_by_movement.get(mid, 0.0), sets)
-        plan_for_axis["movement_ids"].append(mid)
-        plan_for_axis["roles"].append(role)
-
-    def _new_plan(axis: int, d: dict) -> dict:
-        return {
-            "axis": axis,
-            "state": d.get("state"),
-            "movement_ids": [],
-            "roles": [],
-            "sets": 0,
-            "reason": d.get("reason", ""),
-        }
-
-    # پاس ۱: direct + maintain (تا پوشش‌ها در پاس ۲ دیده شوند)؛ پاس ۲: covered
-    pass1 = [a for a in sorted(decisions) if decisions[a].get("state") in ("direct", "maintain")]
-    pass2 = [a for a in sorted(decisions) if decisions[a].get("state") == "covered"]
-    pass3 = [
-        a
-        for a in sorted(decisions)
-        if decisions[a].get("state") not in ("direct", "maintain", "covered")
-    ]
-
-    for axis in pass1 + pass2 + pass3:
-        d = decisions[axis]
-        state = d.get("state")
-        plan_for_axis = _new_plan(axis, d)
-        if state == "direct":
-            mover = _pick_level(_covering(movements, axis, DIRECT_MIN_WEIGHT), prefer_low=True)
-            if mover is None:
-                plan_for_axis["reason"] += " — اما حرکت مناسب در کاتالوگ یافت نشد (شکاف محتوا)"
-            else:
-                _select(mover, DIRECT_SETS, axis, "direct", plan_for_axis)
-                plan_for_axis["sets"] = DIRECT_SETS
-        elif state == "maintain":
-            mover = _pick_level(_covering(movements, axis, COVERED_MIN_WEIGHT), prefer_low=False)
-            if mover is not None:
-                _select(mover, MAINTAIN_SETS, axis, "maintain", plan_for_axis)
-                plan_for_axis["sets"] = MAINTAIN_SETS
-        elif state == "covered":
-            carriers = [
-                m
-                for m in selected.values()
-                if float(m.get("axis_coverage", {}).get(str(axis), 0.0)) >= COVERED_MIN_WEIGHT
-            ]
-            if carriers:
-                plan_for_axis["movement_ids"] = [m["external_id"] for m in carriers]
-                plan_for_axis["roles"] = ["covered_in"] * len(carriers)
-                plan_for_axis["reason"] += " — پوشش از حرکات منتخب دیگر"
-            else:
-                multi = [
-                    m
-                    for m in _covering(movements, axis, COVERED_MIN_WEIGHT)
-                    if sum(1 for w in m["axis_coverage"].values() if float(w) >= COVERED_MIN_WEIGHT)
-                    >= 2
-                ]
-                mover = _pick_level(multi, prefer_low=True)
-                if mover is not None:
-                    _select(mover, DIRECT_SETS, axis, "carrier", plan_for_axis)
-                    plan_for_axis["sets"] = DIRECT_SETS
-                    plan_for_axis["reason"] += " — حامل چندمحوره انتخاب شد"
-        # refer/unknown: بدون تجویز — دلیل همان reason تصمیم است
-        axis_plans[axis] = plan_for_axis
-
-    # بودجهٔ خستگی: اول maintain، سپس carrier — هرگز direct
-    entries = [
-        attribute_load(movement_id=mid, axis_coverage=selected[mid]["axis_coverage"], sets=sets)
-        for mid, sets in sets_by_movement.items()
-        if sets > 0
-    ]
-    total = sum(e["fatigue_units"] for e in entries)
-    if total > fatigue_budget:
-        # اول maintain، سپس carrier — هرگز direct (قاعدهٔ ثبت‌شده)
-        for role_cut in ("maintain", "carrier"):
-            for plan in axis_plans.values():
-                for mid, role in zip(plan["movement_ids"], plan["roles"], strict=True):
-                    if total <= fatigue_budget:
-                        break
-                    if role == role_cut and sets_by_movement.get(mid, 0) > 0:
-                        cut = min(sets_by_movement[mid], total - fatigue_budget)
-                        sets_by_movement[mid] -= cut
-                        total -= cut
-                        trimmed.append(f"{mid}: -{cut} ست (بودجهٔ خستگی — {role_cut})")
-        entries = [
-            attribute_load(movement_id=mid, axis_coverage=selected[mid]["axis_coverage"], sets=sets)
-            for mid, sets in sets_by_movement.items()
-            if sets > 0
-        ]
+    state = _Prescription(movements)
+    state.plan_all(decisions)
+    entries = state.trim_to_budget(fatigue_budget)
     load = (
         tally_weekly_load(entries)
         if entries
@@ -166,6 +200,9 @@ def prescribe_axis_work(
             "rule_version": LOAD_RULES_VERSION,
         }
     )
+    axis_plans = state.axis_plans
+    selected = state.selected
+    sets_by_movement = state.sets_by_movement
     return {
         "axis_plans": [axis_plans[a] for a in sorted(axis_plans)],
         "selected": [
@@ -180,7 +217,7 @@ def prescribe_axis_work(
             for mid in selected
         ],
         "load": load,
-        "trimmed": trimmed,
+        "trimmed": state.trimmed,
         "rule_version": PRESCRIPTION_VERSION,
         "reason": (
             f"{sum(1 for p in axis_plans.values() if p['movement_ids'])} محور تجویز شد؛ "

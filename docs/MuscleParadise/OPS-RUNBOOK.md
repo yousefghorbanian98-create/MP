@@ -6,13 +6,21 @@ Composeها جایگزین هم‌اند، نه دو replica از یک سیست�
 
 | سرویس | Compose `deploy` | Compose `infra` | یادداشت |
 |---|---:|---:|---|
-| FastAPI | 8000 (فقط internal) | 8000 (فقط internal) | چهار worker؛ `/health` زنده‌بودن، `/api/v1/health/ready` آمادگی DB و storage rate-limit |
+| FastAPI | 8000 (فقط internal) | 8000 (فقط internal) | پیش‌فرض یک worker (`WEB_CONCURRENCY`، B2/WP 2.3)؛ `/health` زنده‌بودن، `/api/v1/health/ready` آمادگی DB و storage rate-limit |
 | Studio/Nginx | 127.0.0.1:8080 | پشت Caddy | `deploy` باید پشت reverse-proxy/TLS بیرونی باشد |
 | Caddy | — | 80/443 | `infra` به DNS، دامنه و ایمیل واقعی نیاز دارد |
 | Valkey | 6379 (internal) | 6379 (internal) | مشترک بین workerها؛ هیچ port روی host منتشر نیست |
 | Prometheus | 9090 loopback | 9090 loopback | ruleها evaluate می‌شوند؛ Alertmanager/receiver هنوز نیاز به تنظیم عملیاتی دارد |
 
 Production به `MP_SECRET_KEY`, `MP_BIOMETRIC_KEY`, originهای HTTPS، provider واقعی SMS، پذیرندهٔ live زرین‌پال و Valkey نیاز دارد. نمونهٔ fail-closed: `mp-app/backend/.env.example`; مقادیر واقعی فقط در secret manager یا `.env` با مجوز محدود.
+
+## ۱‑الف) بودجهٔ ظرفیت اتصال DB (WP 2.3 / F‑18)
+
+- `WEB_CONCURRENCY` پیش‌فرض **۱** است (Dockerfile بک‌اند و `infra/Dockerfile.backend`). پیش از این ۴ بود.
+- هر worker یک استخر دارد: `pool_size = 40` + `max_overflow = 20` ⇒ سقف **۶۰ اتصال** به‌ازای هر worker (`db/base.py`).
+- فرمول: `workers × 60 ≤ بودجهٔ اتصال Postgres` (با رزرو برای مهاجرت، ادمین و worker جدا). با ۱ worker: ۶۰ اتصال.
+- افزایش `WEB_CONCURRENCY` فقط پس از تأیید بودجهٔ Postgres و اجرای گیت بار ۲۰۰ همزمان (C10 در D‑13، BLOCKED-ENV) مجاز است.
+- **TODO:** گسترش `validate_production_configuration` برای رد کردن ترکیب ناسازگار؛ این کار قرارداد راه‌اندازی production را تغییر می‌دهد و در WP 2.3 انجام نشد (D‑14).
 
 ## ۲) Backup و restore
 
@@ -55,7 +63,7 @@ MP_DATABASE_URL=sqlite:////tmp/mp-drill/mp.db python -m alembic check     # با
 
 ## ۳) پایش و incident
 
-- Prometheus scrape می‌کند `/api/v1/metrics` و Valkey exporter؛ exposition با `prometheus-client` استاندارد و تجمیع multiprocess است.
+- Prometheus با توکن Bearer (از `MP_METRICS_TOKEN`) scrape می‌کند `/api/v1/metrics` و Valkey exporter؛ exposition با `prometheus-client` استاندارد و تجمیع multiprocess است.
 - آلارم‌های SLO ورود، backend down، نرخ 5xx و Valkey down در `mp-app/infra/monitoring/alerts.yml` هستند. Prometheus به‌تنهایی پیامک/ایمیل/صفحه‌بندی نمی‌فرستد؛ receiver و test notification عملیاتی‌اند.
 - برای readiness: `GET /api/v1/health/ready` باید HTTP 200 و `ready=true` بدهد؛ 503 یعنی DB یا backend محدودسازی نرخ آماده نیست.
 - لاگ‌ها JSON در stdout؛ `X-Request-ID` را برای تطبیق درخواست و لاگ نگه دارید و هیچ OTP، token، کلید یا embedding خام را لاگ/تیکت نکنید.
@@ -120,5 +128,5 @@ MP_DATABASE_URL=sqlite:////tmp/mp-drill/mp.db python -m alembic check     # با
 
 - heartbeat هر دور `python -m jobs.outbox_relay` نوشته می‌شود؛ **صف خالی با worker مرده یکی نیست**.
 - `MP_REQUIRE_WORKER=true` در استقرار worker: readiness بدون heartbeat تازه ۵۰۳ می‌دهد.
-- `/api/v1/metrics` (بدون احراز هویت) فقط عدد می‌دهد: هیچ payload، متن خطا یا شناسهٔ مالی در آن نیست.
+- `/api/v1/metrics` (WP 1.3 / F-06) نیازمند `Authorization: Bearer <MP_METRICS_TOKEN>` است: بدون هدر ۴۰۱، با توکن غلط ۴۰۱، و اگر `MP_METRICS_TOKEN` تنظیم نشده باشد ۴۰۳. Caddy این مسیر را از دسترسی عمومی خارج کرده و `respond 404` می‌دهد. Compose بدون `MP_METRICS_TOKEN` بالا نمی‌آید. هیچ payload، متن خطا یا شناسهٔ مالی در متریک نیست.
 - قاعدهٔ Alertmanager در این مخزن اجرا نمی‌شود (سرور پایش بیرونی نیست) — `BLOCKED` برای اثبات هشدار واقعی.

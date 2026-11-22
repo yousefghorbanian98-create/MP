@@ -20,7 +20,7 @@ python3 scripts/interaction_map.py --check
 | صفحهٔ استودیو | 13 |
 | ویژگی کلاینت | 18 |
 | endpoint یکتای استفاده‌شده | 95 |
-| سطح بی‌تست | 7 |
+| سطح بی‌تست | 6 |
 
 ## گپ‌های قرارداد
 
@@ -32,7 +32,6 @@ python3 scripts/interaction_map.py --check
 - client-feature:core
 - client-feature:intake
 - client-feature:progress
-- studio-page:Analytics
 - studio-page:CheckIn
 - studio-page:Members
 
@@ -47,7 +46,7 @@ python3 scripts/interaction_map.py --check
 | GET | `/api/v1/admin/analytics/churn-risk` | permission | manager, admin, super_admin | بله |
 | GET | `/api/v1/admin/analytics/leaderboards` | permission | manager, admin, super_admin | بله |
 
-تست: **ندارد**
+تست: `mp-app/studio/tests/wp15Money.test.ts`
 
 ### Assessment
 
@@ -167,7 +166,7 @@ python3 scripts/interaction_map.py --check
 | GET | `/api/v1/nutrition/member/*/adaptive` | permission | member, coach, manager, admin, super_admin | بله |
 | POST | `/api/v1/nutrition/weight-logs` | permission | member, coach, manager, admin, super_admin | بله |
 
-تست: `mp-app/studio/tests/nutritionPage.test.tsx`
+تست: `mp-app/studio/tests/nutritionNoMemberSentinel.test.tsx`، `mp-app/studio/tests/nutritionPage.test.tsx`
 
 ### Programs
 
@@ -198,10 +197,10 @@ python3 scripts/interaction_map.py --check
 | POST | `/api/v1/admin/permissions` | permission | super_admin | بله |
 | DELETE | `/api/v1/admin/permissions/*` | permission | super_admin | بله |
 | GET | `/api/v1/admin/permissions/known` | permission | super_admin | بله |
-| GET | `/api/v1/admin/users` | permission | manager, admin, super_admin | بله |
-| DELETE | `/api/v1/admin/users/*/role` | permission | manager, admin, super_admin | بله |
-| POST | `/api/v1/admin/users/*/role` | permission | manager, admin, super_admin | بله |
-| GET | `/api/v1/auth/sessions` | authenticated | member, manager, admin, super_admin | بله |
+| GET | `/api/v1/admin/users` | permission | super_admin | بله |
+| DELETE | `/api/v1/admin/users/*/role` | permission | super_admin | بله |
+| POST | `/api/v1/admin/users/*/role` | permission | super_admin | بله |
+| GET | `/api/v1/auth/sessions` | authenticated | member, coach, reception, manager, admin, super_admin | بله |
 
 تست: `mp-app/studio/tests/settingsRole.test.tsx`
 
@@ -211,7 +210,7 @@ python3 scripts/interaction_map.py --check
 
 بدون فراخوانی API در این صفحه و کامپوننت‌هایش.
 
-تست: `mp-app/studio/tests/shopPage.test.tsx`
+تست: `mp-app/studio/tests/shopPage.test.tsx`، `mp-app/studio/tests/wp15Money.test.ts`
 
 ## کلاینت
 
@@ -220,7 +219,7 @@ python3 scripts/interaction_map.py --check
 | assessment14 | `GET /api/v1/axis-assessments/*/matrix` | permission | member, coach, manager, admin, super_admin | بله | 1 فایل |
 | assessment14 | `GET /api/v1/axis-assessments/member/*` | permission | member, coach, manager, admin, super_admin | بله | 1 فایل |
 | assessment14 | `POST /api/v1/axis-assessments` | permission | coach, manager, admin, super_admin | بله | 1 فایل |
-| auth | `POST /api/v1/auth/otp/request` | — | — | بله | **ندارد** |
+| auth | `POST /api/v1/auth/otp/request` | — | member, coach, reception, manager, admin, super_admin | بله | **ندارد** |
 | bodycomp | `GET /api/v1/assessments/jp7/member/*/trend` | permission | member, coach, manager, admin, super_admin | بله | 1 فایل |
 | chat | `GET /api/v1/chat/conversations` | permission | member, coach, manager, admin, super_admin | بله | 1 فایل |
 | chat | `GET /api/v1/chat/conversations/*/messages` | permission | member, coach, manager, admin, super_admin | بله | 1 فایل |
@@ -243,9 +242,9 @@ python3 scripts/interaction_map.py --check
 | notifications | — | — | — | — | دارد |
 | nutrition | — | — | — | — | دارد |
 | profile | `GET /api/v1/members/me` | permission | member, coach, reception, manager, admin, super_admin | بله | 2 فایل |
-| profile | `POST /api/v1/auth/phone-change/confirm` | authenticated | manager, admin, super_admin | بله | 2 فایل |
-| profile | `POST /api/v1/auth/phone-change/request` | authenticated | manager, admin, super_admin | بله | 2 فایل |
-| profile | `POST /api/v1/auth/phone-change/verify-old` | authenticated | manager, admin, super_admin | بله | 2 فایل |
+| profile | `POST /api/v1/auth/phone-change/confirm` | authenticated | member, coach, reception, manager, admin, super_admin | بله | 2 فایل |
+| profile | `POST /api/v1/auth/phone-change/request` | authenticated | member, coach, reception, manager, admin, super_admin | بله | 2 فایل |
+| profile | `POST /api/v1/auth/phone-change/verify-old` | authenticated | member, coach, reception, manager, admin, super_admin | بله | 2 فایل |
 | profile | `PUT /api/v1/members/me` | permission | member, coach, reception, manager, admin, super_admin | بله | 2 فایل |
 | progress | `GET /api/v1/assessments/member/*` | permission | member, coach, manager, admin, super_admin | بله | **ندارد** |
 | shell | — | — | — | — | **ندارد** |
@@ -269,21 +268,21 @@ python3 scripts/interaction_map.py --check
 | core | `GET /api/v1/shop/orders` | permission | member, coach, reception, manager, admin, super_admin | بله | **ندارد** |
 | core | `GET /api/v1/shop/orders/*/receipt` | permission | member, coach, reception, manager, admin, super_admin | بله | **ندارد** |
 | core | `GET /api/v1/shop/products` | permission | member, coach, reception, manager, admin, super_admin | بله | **ندارد** |
-| core | `POST /api/v1/auth/logout` | — | — | بله | **ندارد** |
-| core | `POST /api/v1/auth/otp/verify` | — | — | بله | **ندارد** |
-| core | `POST /api/v1/auth/refresh` | — | — | بله | **ندارد** |
+| core | `POST /api/v1/auth/logout` | — | member, coach, reception, manager, admin, super_admin | بله | **ندارد** |
+| core | `POST /api/v1/auth/otp/verify` | — | member, coach, reception, manager, admin, super_admin | بله | **ندارد** |
+| core | `POST /api/v1/auth/refresh` | — | member, coach, reception, manager, admin, super_admin | بله | **ندارد** |
 | core | `POST /api/v1/programs/sync/set-feedback` | permission | member, coach, manager, admin, super_admin | بله | **ندارد** |
 
 ## پوشش نقش‌ها
 
 | نقش | تعداد endpoint | نمونهٔ سطح‌ها |
 |---|---|---|
-| admin | 102 | Analytics، Assessment، Chat، CheckIn، Dashboard، Expenses |
-| coach | 65 | Assessment، Chat، CheckIn، Dashboard، Members، Nutrition |
-| manager | 102 | Analytics، Assessment، Chat، CheckIn، Dashboard، Expenses |
-| member | 69 | Assessment، Chat، Finance، Members، Nutrition، Programs |
-| reception | 42 | Assessment، CheckIn، Dashboard، Finance، Members، Programs |
-| super_admin | 106 | Analytics، Assessment، Chat، CheckIn، Dashboard، Expenses |
+| admin | 103 | Analytics، Assessment، Chat، CheckIn، Dashboard، Expenses |
+| coach | 73 | Assessment، Chat، CheckIn، Dashboard، Members، Nutrition |
+| manager | 103 | Analytics، Assessment، Chat، CheckIn، Dashboard، Expenses |
+| member | 76 | Assessment، Chat، Finance، Members، Nutrition، Programs |
+| reception | 50 | Assessment، CheckIn، Dashboard، Finance، Members، Programs |
+| super_admin | 110 | Analytics، Assessment، Chat، CheckIn، Dashboard، Expenses |
 
 ## محدودیت صریح
 

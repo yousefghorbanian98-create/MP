@@ -2,7 +2,7 @@
 # ساخت از ریشهٔ مخزن: docker build -f mp-app/backend/Dockerfile -t mp-backend .
 FROM python:3.11-slim
 
-ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 TZ=Asia/Tehran
 
 WORKDIR /srv/mp
 COPY mp-app/backend/ ./backend/
@@ -22,6 +22,10 @@ EXPOSE 8000
 #   1 worker  → 373 ms p50, QueuePool timeout 500s, 199 req/s
 #   4 workers →   9 ms p50, zero errors,           304 req/s
 # The app is sync-only, so one process cannot use more than one core and the
-# other cores idle while requests queue on the pool. WEB_CONCURRENCY lets the
-# platform size this to the real CPU count; 4 is the measured floor.
-CMD ["sh", "-c", "if [ -n \"${PROMETHEUS_MULTIPROC_DIR:-}\" ]; then mkdir -p \"$PROMETHEUS_MULTIPROC_DIR\" && rm -f \"$PROMETHEUS_MULTIPROC_DIR\"/*; fi && alembic upgrade head && exec uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers ${WEB_CONCURRENCY:-4} --proxy-headers --forwarded-allow-ips='*'"]
+# other cores idle while requests queue on the pool. WEB_CONCURRENCY sets the
+# worker count. The default is 1 (WP 2.3 / F-18): each worker holds up to
+# pool_size 40 + max_overflow 20 = 60 DB connections, so workers x 60 must fit
+# the Postgres connection budget (OPS-RUNBOOK section 1-alef). The 4-worker
+# measurement above needs roughly 240 connections; set WEB_CONCURRENCY explicitly
+# only after that budget is confirmed.
+CMD ["sh", "-c", "if [ -n \"${PROMETHEUS_MULTIPROC_DIR:-}\" ]; then mkdir -p \"$PROMETHEUS_MULTIPROC_DIR\" && rm -f \"$PROMETHEUS_MULTIPROC_DIR\"/*; fi && alembic upgrade head && exec uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers ${WEB_CONCURRENCY:-1} $(sh scripts/uvicorn_proxy_flags.sh)"]

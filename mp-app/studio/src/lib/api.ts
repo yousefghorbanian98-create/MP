@@ -58,7 +58,7 @@ function authHeaders(token: string | null): HeadersInit {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
-export function getToken(): string | null {
+function getToken(): string | null {
   return getAccessToken();
 }
 
@@ -1554,9 +1554,6 @@ export const createProduct = (
   },
   token = getToken(),
 ) => sendJson<ShopProduct>("POST", "/shop/products", payload, token);
-
-export const updateProduct = (productId: number, payload: Record<string, unknown>, token = getToken()) =>
-  sendJson<ShopProduct>("PATCH", `/shop/products/${productId}`, payload, token);
 
 export const fetchChangeRequests = (token = getToken(), signal?: AbortSignal) =>
   getJson<ChangeRequest[]>("/shop/change-requests", token, signal);
