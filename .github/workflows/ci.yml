@@ -391,6 +391,10 @@ jobs:
       - name: Install backend
         run: pip install -e "mp-app/backend[dev]"
       - name: Seed + run API
+        # برنامه بدون MP_ENVIRONMENT صریح بالا نمی‌آید (ccf44ce، WP 1.1/1.2): این job
+        # محیط توسعه را صریح می‌دهد، نه پیش‌فرض ضمنی. سرور همچنان اعتبارسنجی می‌شود.
+        env:
+          MP_ENVIRONMENT: development
         run: |
           cd mp-app/backend
           python - <<'EOF'
