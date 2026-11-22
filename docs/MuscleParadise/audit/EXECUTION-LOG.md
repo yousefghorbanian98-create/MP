@@ -510,3 +510,13 @@ WP: 0.4 · F: F‑07 · شاهد: `evidence/after/wp04/` · تصمیم: AD‑11 
 - **تأیید:** `git diff ea1efe5 HEAD --stat` = `.gitleaksignore` +472/−0. همهٔ ۴۷۲ خط با regex دقیق `839500de…:<مسیر مجاز>:generic-api-key:<خط>` مطابقت دارند؛ تکرار ۰.
 - **CI روی `4272eae` (run `45000297428`):** success در همهٔ jobها: backend، live-contract، secret-scan، Documentation links and handoff، client-flutter، studio، Client، e2e-api.
 - **تعداد fingerprintها:** ۴۸۲ = ۱۶۲ + ۱۵۹ + ۱۶۱.
+
+## AD‑21 · حذف apk.yml و تست guard (MEASURED-BY-YOU)
+
+- **پشتیبان محیط:** شاخهٔ محلی روی `662ff88` با ۱۴۰ تغییر بود؛ در `/home/user/recovery7/` ذخیره و به `origin/arena/5a1e37b3-mp` (`6c204ec`) ریست شد. venv بک‌اند از نو ساخته شد (`/home/user/venv-mp`، `pip install -e mp-app/backend[dev]`، rc 0).
+- **شاهد نسخه‌ها:** `fastapi==0.165.0`، `ruff==0.17.6`، `pytest==9.2.0` (مطابق هدف‌های مستند).
+- **قبل:** `collect-only` ⇒ ۱۲۷۶ تست؛ شامل `test_release_build_is_guarded_and_audits_all_output_apks`.
+- **تغییر:** حذف `.github/workflows/apk.yml` (`git rm`) و تابع guard و import `yaml` بلااستفاده؛ `ruff format` روی همان یک فایل.
+- **بعد:** `collect-only` ⇒ ۱۲۷۵؛ `ruff check` exit 0؛ `ruff format --check` exit 0؛ تست فایل ۱ passed.
+- **suite کامل:** `pytest tests` ⇒ rc 0، `1274 passed, 2 skipped, 2 warnings`. skipها: `test_dart_gate.py:25` (tree-sitter نصب نیست) و `test_apk_deep_audit.py:109` (java/apktool نیست).
+- **ناهمخوانی باز:** جمع‌آوری ۱۲۷۵ است اما خلاصهٔ اجرا ۱۲۷۶ نتیجه (۱۲۷۴+۲) می‌دهد. علت شناسایی نشد؛ هیچ hook جمع‌آوری یا addopts وجود ندارد. گزارش شد و در این WP نادیده گرفته نشد.

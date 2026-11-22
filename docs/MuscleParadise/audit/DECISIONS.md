@@ -341,3 +341,11 @@
 - **شمارش:** ورودی‌های fingerprint افزوده‌شده از `ea1efe5`: ۴۷۲ (`detect-secrets.json`: ۱۶۲، `before/`: ۱۴۹، `after/`: ۱۶۱)، بدون تکرار و بدون حذف. با ۱۰ ورودی `db37b1b`، `before/` روی هم ۱۵۹ از ۱۶۹ hashed_secret است؛ ۱۰ خط بدون یافته (مثل خط ۱۸۲) اضافه نشد.
 - **CI روی `4272eae`:** `secret-scan` success، `backend` success، `live-contract` success، `Documentation links and handoff` (شامل نقشهٔ تعامل) success، `e2e-api` success.
 - **بازگردانی (rollback):** `git revert` روی ۹ commit حلقه از `0291c49` تا `4272eae` (بدون force-push). پس از بازگردانی، secret-scan دوباره قرمز می‌شود.
+
+## AD‑21 · حذف `apk.yml` و تست guard آن (تنها حذف تست مجاز)
+
+- **تصمیم:** فایل `.github/workflows/apk.yml` و تابع `test_release_build_is_guarded_and_audits_all_output_apks` در `mp-app/backend/tests/regression/test_release_signing_policy.py` در یک commit حذف شدند. تست `test_gradle_release_uses_only_dedicated_signing_environment` بدون تغییر باقی ماند.
+- **دلیل:** `apk.yml` با keystore مخزن امضا می‌کرد (SEC-01)؛ گیت Android در `ci.yml` (`client-pinned`) جایگزین ساخت debug شده است. تست guard فقط همین workflow را می‌خواند.
+- **شمارش:** `pytest --collect-only -q tests` قبل: ۱۲۷۶؛ بعد: ۱۲۷۵ (کاهش ۱ = همان تست).
+- **یادداشت باز:** اسنادی که `gh workflow run apk.yml` را نشان می‌دهند (`docs/MuscleParadise/guides/flutter-codespace.md`، `runbooks/codespaces-execution.md`، `RELEASE-CHECKLIST.md`) اکنون به workflow حذف‌شده اشاره دارند؛ به‌روزرسانی آن‌ها در commit جداگانهٔ مستندسازی انجام می‌شود.
+- **نحوهٔ برگرداندن:** `git revert` همان commit (فایل workflow و تست برمی‌گردند).
