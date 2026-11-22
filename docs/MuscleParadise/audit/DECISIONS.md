@@ -349,3 +349,11 @@
 - **شمارش:** `pytest --collect-only -q tests` قبل: ۱۲۷۶؛ بعد: ۱۲۷۵ (کاهش ۱ = همان تست).
 - **یادداشت باز:** اسنادی که `gh workflow run apk.yml` را نشان می‌دهند (`docs/MuscleParadise/guides/flutter-codespace.md`، `runbooks/codespaces-execution.md`، `RELEASE-CHECKLIST.md`) اکنون به workflow حذف‌شده اشاره دارند؛ به‌روزرسانی آن‌ها در commit جداگانهٔ مستندسازی انجام می‌شود.
 - **نحوهٔ برگرداندن:** `git revert` همان commit (فایل workflow و تست برمی‌گردند).
+
+## AD‑22 · پین وابستگی‌های بک‌اند در `requirements.txt` (با `==`)
+
+- **تصمیم:** `mp-app/backend/requirements.txt` شامل ۸۴ پین `==` (کل بسته‌های `[dev]`، بدون پکیج محلی). هر سه گام نصب بک‌اند در `ci.yml` (`backend`، `e2e-api` و جاب سوم) به `pip install -c mp-app/backend/requirements.txt -e "mp-app/backend[dev]"` تغییر کردند. فایل از نصب `pyproject` در همین روز ساخته شد، نه از نسخهٔ جدید.
+- **صفر تغییر نسخه:** نصب تازه با `-c requirements.txt` در `/tmp/venv-ad22` همان ۸۴ پین را داد (`diff` بدون خروجی). `fastapi==0.165.0` و `ruff==0.17.6` (هدف‌های مستند) برقرارند.
+- **SBOM:** `cyclonedx-py environment` روی این venv ⇒ `pkg:pypi/fastapi@0.165.0` و `pkg:pypi/ruff@0.17.6`.
+- **نکتهٔ نام:** در متن قبلی «constraints.txt» آمده بود؛ تصمیم نهایی همان `requirements.txt` با `-c` است (این بخش مطابق تصمیم مالک/بریف است).
+- **نحوهٔ برگرداندن:** `git revert` همان commit؛ `requirements.txt` حذف و سه گام CI به `pip install -e "mp-app/backend[dev]"` برمی‌گردند.

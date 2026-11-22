@@ -520,3 +520,11 @@ WP: 0.4 · F: F‑07 · شاهد: `evidence/after/wp04/` · تصمیم: AD‑11 
 - **بعد:** `collect-only` ⇒ ۱۲۷۵؛ `ruff check` exit 0؛ `ruff format --check` exit 0؛ تست فایل ۱ passed.
 - **suite کامل:** `pytest tests` ⇒ rc 0، `1274 passed, 2 skipped, 2 warnings`. skipها: `test_dart_gate.py:25` (tree-sitter نصب نیست) و `test_apk_deep_audit.py:109` (java/apktool نیست).
 - **ناهمخوانی باز:** جمع‌آوری ۱۲۷۵ است اما خلاصهٔ اجرا ۱۲۷۶ نتیجه (۱۲۷۴+۲) می‌دهد. علت شناسایی نشد؛ هیچ hook جمع‌آوری یا addopts وجود ندارد. گزارش شد و در این WP نادیده گرفته نشد.
+
+## AD‑22 · پین `requirements.txt` و گام‌های CI (MEASURED-BY-YOU)
+
+- **ساخت:** `pip freeze --exclude-editable` از venv `pip install -e mp-app/backend[dev]` ⇒ ۸۴ خط `==`. `requirements.txt` با سرآیند.
+- **نصب تازه:** `python3 -m venv /tmp/venv-ad22` ⇒ `pip install -c mp-app/backend/requirements.txt -e "mp-app/backend[dev]"` rc 0؛ `freeze` ⇒ `diff` تهی (۸۴ = ۸۴).
+- **SBOM:** `cyclonedx-py environment` rc 0 ⇒ `fastapi@0.165.0`، `ruff@0.17.6`.
+- **collect:** `pytest --collect-only -q tests` در `/tmp/venv-ad22` ⇒ ۱۲۷۵.
+- **CI:** `ci.yml` YAML معتبر (`yaml.safe_load` rc 0)؛ ۳ گام نصب (خطوط ۱۲۲، ۳۹۲، ۴۴۲) تغییر کردند؛ `git diff --stat`: ۳ خط اضافه، ۳ حذف.
