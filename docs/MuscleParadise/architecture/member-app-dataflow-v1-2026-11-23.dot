@@ -24,7 +24,7 @@ digraph MemberAppDataflow {
     inbox_ui [label="اعلان‌ها / گفت‌وگو\nخواندن، پیام، read-state", color="#6CAAF8"];
     shop_ui [label="فروشگاه / سبد / سفارش\nکاتالوگ و رسید", color="#6CAAF8"];
     today_local [label="تیک «انجام شد» تمرین\nTodayController فقط Set<int> محلی\nبدون درخواست ثبت اجرا", fillcolor="#301B2A", color="#FF7887", fontcolor="#FFE8EC"];
-    biometric_note [label="برچسب UI «چهره» ≠ تطبیق چهره\nمسیر self-check-in با نشست عضو؛\nاسکن QR پذیرش endpoint جدا دارد", fillcolor="#30271A", color="#FFC56E"];
+    biometric_note [label="چک‌این چهره غیرفعال\nبدون اثبات تطبیق/liveness؛ API با 409 رد می‌کند\nحضور پشتیبانی‌شده: QR امضاشده", fillcolor="#301B2A", color="#FF7887", fontcolor="#FFE8EC"];
     kiosk [label="اسکنر QR پذیرش\nمصرف‌کنندهٔ بیرون از اپ عضو", fillcolor="#211D39", color="#B99AFB"];
   }
 
@@ -37,7 +37,7 @@ digraph MemberAppDataflow {
     program_api [label="/programs/*"];
     assessment_api [label="/axis-assessments/*\n/assessments/*"];
     nutrition_api [label="/ai/* · /nutrition/*"];
-    face_api [label="/face/qr-token · /face/checkin\n/face/checkin-qr"];
+    face_api [label="/face/qr-token · consent/status\n/face/checkin (face → 409) · /checkin-qr"];
     classes_api [label="/classes · /classes/book\n/classes/cancel"];
     payments_api [label="/payments/*\n/wallet/*"];
     message_api [label="/notifications/*\n/chat/conversations/*"];
@@ -52,7 +52,7 @@ digraph MemberAppDataflow {
     program_service [label="programs.service\ndraft / approval / feedback"];
     assessment_service [label="axis_assessment + assessment\nNorm → score → axis؛ JP7 trend خام"];
     nutrition_service [label="ai_engine + nutrition.service\nبرنامه، food logs، وزن، گزارش adaptive"];
-    face_service [label="face_id.service\nاشتراک فعال → CheckIn؛ QR یک‌بارمصرف"];
+    face_service [label="face_id.service\nmethod=face رد می‌شود؛ QR یک‌بارمصرف → CheckIn"];
     classes_service [label="classes.service\nظرفیت / waitlist / رزرو"];
     payments_service [label="payments.service\nموجودی / پرداخت / تراکنش‌ها"];
     notify_service [label="notification.service\nلیست / mark-read"];
@@ -79,7 +79,7 @@ digraph MemberAppDataflow {
   training_ui -> program_api [label="GET /programs/member/{id}"];
   training_ui -> assessment_api [label="axis history/matrix · assessments · JP7 trend"];
   nutrition_ui -> nutrition_api [label="generate · plans · food-logs · weight-logs"];
-  checkin_ui -> face_api [label="qr-token · self /face/checkin"];
+  checkin_ui -> face_api [label="QR token · consent/status؛ بدون self /face/checkin"];
   kiosk -> face_api [label="POST /face/checkin-qr"];
   checkin_ui -> classes_api [label="GET /classes"];
   class_ui -> classes_api [label="book / cancel"];

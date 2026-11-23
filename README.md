@@ -101,7 +101,7 @@ flowchart LR
 
 **هدف پرداخت انتشار اول:** کارت‌به‌کارت با فیش و تطبیق مستقل انسانی با بانک است؛ مسیر کامل آن هنوز اثبات نشده و با مسیر پرداخت موجود یکسان نیست. [جزئیات جریان و وضعیت](docs/MuscleParadise/architecture/cloud-finance-access.md).
 
-[گراف متنی، راهنمای نمودار و مسیرهای کد](docs/MuscleParadise/architecture/system-atlas.md) · [معماری C4](docs/MuscleParadise/architecture/c4.md) · [نقشهٔ ماژول‌ها](docs/MuscleParadise/architecture/module-map.md)
+[گراف متنی، راهنمای نمودار و مسیرهای کد](docs/MuscleParadise/architecture/system-atlas.md) · [معماری C4](docs/MuscleParadise/architecture/c4.md) · [نقشهٔ ماژول‌ها](docs/MuscleParadise/architecture/module-map.md) · [معماری هدف و شکاف‌های زیرساخت](docs/MuscleParadise/architecture/muscle-paradise-world-class-target-architecture-v1-2026-11-23.md)
 
 <a id="build"></a>
 ## 🧱 لایه‌های ساخت و مراحل تولید

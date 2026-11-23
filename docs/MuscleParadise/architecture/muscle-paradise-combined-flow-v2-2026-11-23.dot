@@ -29,7 +29,7 @@ digraph MuscleParadiseCombinedFlowV2 {
     kiosk [label="کیوسک / اسکنر QR", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE"];
     flutter [label="MP Client · Flutter\nاپ عضو", color="#6CAAF8"];
     studio [label="MP Studio · React / TypeScript\nپنل وب کادر", color="#6CAAF8"];
-    gate_ui [label="رابط حضور در باشگاه\nQR؛ گیت چهره شرطی", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE"];
+    gate_ui [label="رابط حضور در باشگاه\nQR فعال؛ چک‌این چهره غیرفعال", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE"];
   }
 
   subgraph cluster_api_access {
@@ -56,12 +56,14 @@ digraph MuscleParadiseCombinedFlowV2 {
   subgraph cluster_current_training {
     label="۴ · برنامهٔ تمرین: مسیر فعلی کد"; color="#B99AFB"; fontcolor="#B99AFB"; style="rounded"; penwidth=1.4;
     intake [label="فرم Intake عضو\nهدف · سطح · تعداد روز · قیدها", color="#6CAAF8"];
-    gate_check [label="`POST /population/gate-check`\nقرارداد فعلی route", color="#B99AFB", fillcolor="#211D39"];
-    intake_422 [label="توقف فعلی: 422\nکلاینت body می‌فرستد؛ route، `path` را\nاز query می‌خواند", color="#FF7887", fillcolor="#301B2A", fontcolor="#FFE8EC"];
-    direct_api [label="`POST /ai/program/generate`\nAPI مستقل؛ آزمون مستقیم synthetic\nبه‌تنهایی E2E عضو نیست", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE"];
-    rule_engine [label="موتور قطعی قواعد فعلی\ngoal / level / days / weeks / constraints\nکتابخانهٔ کوچک ثابت", color="#B99AFB", fillcolor="#211D39"];
+    gate_check [label="`POST /population/gate-check`\nJSON body: `GateCheckIn(path)`", color="#B99AFB", fillcolor="#211D39"];
+    gate_contract [label="قرارداد Flutter/backend همسو\nTestClient: body {path} → 200 (adult)", color="#6CAAF8"];
+    population_hold [label="مسیر ناشناخته/غیرفعال\nتوقف خودکار (E05)", color="#FF7887", fillcolor="#301B2A", fontcolor="#FFE8EC"];
+    direct_api [label="`POST /ai/program/generate`\nمسیر مصرف‌شده از Intake؛ خروجی قواعد\nپیش‌نویس (نیازمند تأیید کادر)", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE"];
+    rule_engine [label="موتور قطعی قواعد فعلی\ngoal / level / days / weeks / constraints\nExercise ID + pattern", color="#B99AFB", fillcolor="#211D39"];
+    safety_map [label="exercise_id + pattern → taxonomy ایمنی\nنگاشت کاتالوگ؛ شناسهٔ ناشناخته = بازبینی", color="#6CAAF8"];
     safety [shape=diamond, label="Safety flags\nclear / unknown / blocked", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", margin="0.12,0.05"];
-    safety_gap [label="گپ fail-closed\nblocked/unknown الزاماً مانع ساخت draft نیست", color="#FF7887", fillcolor="#301B2A", fontcolor="#FFE8EC"];
+    safety_gap [label="گپ مصرفی باقی‌مانده\nblocked/unknown هنوز draft می‌شود؛\nIntake نتیجه را پیش از تأیید نمایش می‌دهد", color="#FF7887", fillcolor="#301B2A", fontcolor="#FFE8EC"];
     draft_now [label="ذخیرهٔ WorkoutProgram\nWeek → Exercise؛ status=draft", color="#51D6C2", fillcolor="#142B32"];
     coach_queue [label="Studio: صف approve / reject\nممیزی تغییر وضعیت", color="#6CAAF8"];
     approve_now [shape=diamond, label="مربی تأیید می‌کند؟", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", margin="0.12,0.05"];
@@ -105,9 +107,13 @@ digraph MuscleParadiseCombinedFlowV2 {
     class_capacity [shape=diamond, label="ظرفیت کلاس\nجا دارد؟", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", margin="0.12,0.05"];
     booking [label="رزرو تأییدشده", color="#51D6C2", fillcolor="#142B32"];
     waitlist_entry [label="ظرفیت پر → waitlist", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE"];
-    class_cancel [label="لغو → ارتقای FIFO\nrebook با همان ردیف و زمان تازه", color="#6CAAF8"];
+    class_cancel [label="لغو رزرو → cancelled\nrebook: همان ردیف، زمان تازه", color="#6CAAF8"];
+    cancel_promotion_gate [shape=diamond, label="پس از لغو confirmed\nظرفیت آزاد است؟", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", margin="0.12,0.05"];
+    waitlist_available [shape=diamond, label="رزرو waitlisted\nوجود دارد؟", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", margin="0.12,0.05"];
+    waitlist_promote [label="نفر اول FIFO → confirmed", color="#6CAAF8"];
+    cancel_no_promotion [label="لغو waitlisted / بدون جا\nیا صف خالی → بدون ارتقا", color="#6CAAF8"];
     qr_checkin [label="QR یک‌بارمصرف حضور\nاعتبارسنجی → CheckIn", color="#51D6C2", fillcolor="#142B32"];
-    biometric [label="Face template/consent\nتطبیق و liveness دستگاهی\nاثبات نشده؛ QR/پذیرش fallback", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    biometric [label="Face check-in غیرفعال\nبدون probe/liveness معتبر؛ method=face → 409\nمسیر حضور فعال: QR امضاشده", color="#FF7887", fillcolor="#301B2A", fontcolor="#FFE8EC"];
     shop_switch [shape=diamond, label="Shop online فعال؟\nپیش‌فرض خیر", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", margin="0.12,0.05"];
     shop_denied [label="خاموش: fail closed\nCheckout رد می‌شود", color="#FF7887", fillcolor="#301B2A", fontcolor="#FFE8EC"];
     wallet_check [shape=diamond, label="در مسیر wallet\nموجودی کافی؟", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", margin="0.12,0.05"];
@@ -162,14 +168,16 @@ digraph MuscleParadiseCombinedFlowV2 {
   coach -> athlete_form [style=dashed, color="#FFC56E", label="C01–C11 · طرح مربی"];
   member_assess -> jp7_raw [style=dashed, color="#FFC56E", label="طرح C02"];
   member_assess -> today_gap [style=dashed, color="#FF7887"];
-  intake -> gate_check;
-  gate_check -> intake_422 [color="#FF7887", penwidth=1.4];
-  intake_422 -> direct_api [style=dashed, color="#FFC56E", label="فقط با اصلاح قرارداد\nیا API مستقیم"];
+  intake -> gate_check [label="JSON body: {path}"];
+  gate_check -> gate_contract [label="مسیر مجاز"];
+  gate_check -> population_hold [label="unknown / gated", color="#FF7887"];
+  gate_contract -> direct_api [label="ادامهٔ Intake"];
   direct_api -> rule_engine;
-  rule_engine -> safety;
+  rule_engine -> safety_map;
+  safety_map -> safety;
   safety -> safety_gap [label="blocked/unknown", color="#FF7887"];
-  safety -> draft_now [label="flag/status"];
-  safety_gap -> draft_now [style=dashed, color="#FF7887", label="ممکن است همچنان draft بسازد"];
+  safety -> draft_now [label="نتیجه در safety_flags؛ status=draft"];
+  safety_gap -> draft_now [style=dashed, color="#FF7887", label="هنوز مانع ذخیره نیست"];
   draft_now -> coach_queue;
   coach_queue -> approve_now;
   approve_now -> publish_now [label="بله"];
@@ -216,9 +224,16 @@ digraph MuscleParadiseCombinedFlowV2 {
   classes_flow -> class_capacity;
   class_capacity -> booking [label="بله"];
   class_capacity -> waitlist_entry [label="خیر"];
-  booking -> class_cancel [label="لغو"];
-  waitlist_entry -> class_cancel [label="لغو / انتظار"];
-  class_cancel -> waitlist_entry [label="ارتقای نفر بعد با FIFO"];
+  booking -> class_cancel [label="لغو رزرو confirmed"];
+  waitlist_entry -> class_cancel [label="لغو رزرو waitlisted"];
+  class_cancel -> cancel_promotion_gate [label="رزرو قبلی confirmed"];
+  class_cancel -> cancel_no_promotion [label="رزرو قبلی waitlisted"];
+  class_cancel -> class_capacity [label="rebook: زمان تازه + بررسی دوبارهٔ ظرفیت"];
+  cancel_promotion_gate -> waitlist_available [label="بله"];
+  cancel_promotion_gate -> cancel_no_promotion [label="خیر: جا نیست"];
+  waitlist_available -> waitlist_promote [label="بله: نفر اول FIFO"];
+  waitlist_available -> cancel_no_promotion [label="خیر: صف خالی"];
+  waitlist_promote -> booking [label="status=confirmed"];
   attendance_flow -> qr_checkin;
   gate_ui -> qr_checkin [style=dashed, color="#FFC56E"];
   attendance_flow -> biometric [style=dashed, color="#FFC56E"];

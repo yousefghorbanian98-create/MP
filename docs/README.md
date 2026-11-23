@@ -43,7 +43,7 @@ flowchart LR
 | اگر می‌خواهی… | از اینجا شروع کن | مرجع تکمیلی |
 |---|---|---|
 | سریع بفهمی نشست قبل چه کرد و بعد چه باید کرد | [پیش‌نیاز و نصب](MuscleParadise/BUILDER-START-AND-REPOWISE.md) · [SESSION_HANDOFF](MuscleParadise/SESSION_HANDOFF.md) · [هندآف تفصیلی و نشست تازه](MuscleParadise/HANDOFF-PROJECT-2026-11-18.md) | [صف قبلی](MuscleParadise/TODO-2026-11-16.md) و [تصمیم‌های جدید](MuscleParadise/TODO-CLOUD-FINANCE-ACCESS.md) |
-| ساختار سیستم یا مرز بک‌اند را بفهمی | [Architecture Atlas](MuscleParadise/architecture/README.md) | [C4 تاریخی](MuscleParadise/architecture/c4.md) · [نقشهٔ هدف ابری/مالی](MuscleParadise/architecture/cloud-finance-access.md) |
+| ساختار سیستم یا مرز بک‌اند را بفهمی | [Architecture Atlas](MuscleParadise/architecture/README.md) | [C4 تاریخی](MuscleParadise/architecture/c4.md) · [نقشهٔ هدف ابری/مالی](MuscleParadise/architecture/cloud-finance-access.md) · [برنامهٔ کلان تولید/AI تا آمادگی انتشار](MuscleParadise/architecture/ai-autonomous-production-plan-v1-2026-11-23.md) |
 | چرایی یک انتخاب را پیدا کنی | [فهرست ADRها](MuscleParadise/adr/README.md) | [قالب ADR](MuscleParadise/adr/TEMPLATE.md) |
 | اجرای loop و وضعیت نقش‌ها/REA را بفهمی | [۳۳ میکرولوپ و QA در هر حلقه](MuscleParadise/PLAN-FINN-ECC-MICROLOOPS-QA.md) | [پروتکل FINN](MuscleParadise/FINN_LOOP.md) · [تاریخچهٔ آزمایش ECC](MuscleParadise/REPORT-ECC-SUBAGENT-SMOKE.md) (ECC حذف شده) |
 | محدودهٔ محصول/رفتار موردانتظار را بفهمی | [TODO ابری و مالی](MuscleParadise/TODO-CLOUD-FINANCE-ACCESS.md) | [PRD](MuscleParadise/PRD.md) · [User stories](MuscleParadise/user-stories/) · [صف ساخت](MuscleParadise/BUILD-QUEUE.md) |
