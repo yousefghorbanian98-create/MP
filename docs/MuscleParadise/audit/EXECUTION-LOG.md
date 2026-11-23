@@ -784,3 +784,53 @@ WP: 0.4 · F: F‑07 · شاهد: `evidence/after/wp04/` · تصمیم: AD‑11 
 - **تصمیم‌ها (بدون D‑n جدید؛ D‑25 برای carry‑over منطقهٔ فروشگاه رزرو است):** (۱) موتور در `scripts/agent_drive.mjs` ⇒ تست‌ها با `../../scripts/agent_drive.mjs` وارد می‌شوند؛ ماژول‌های UI با `import()` پویا تا `node` مستقیم فقط CLI را اجرا کند. (۲) CLI از طریق `vitest run tests/driver/cli.test.tsx` با `MP_DRIVE_ARGV`/`MP_DRIVE_OUT` ⇒ هیچ runner جدید. (۳) پاسخ‌های fetch فیکسچرهای کمینه‌اند، نه بک‌اند زنده؛ درایور ادعای پوشش API واقعی نمی‌کند. (۴) `/* global */` در فایل به‌جای تغییر eslint config (خارج از محدوده).
 - **تخطی‌ها / اشتباه‌های ثبت‌شده:** (الف) اجرای قرمز اول ادعا شده بود «موتور وجود ندارد»، اما در واقع `node_modules` نبود و خطای پیکربندی vitest بود؛ با `npm ci` (rc 0) و اجرای قرمز مجدد با موتور کنار رفته، قرمزِ معتبر تکرار شد. (ب) `/home/user/venv-mp` دوباره نبود و بازسازی شد. (ج) هیچ آستانه، تست، skip، job، ruleset یا وابستگی تغییر نکرد.
 - **باز (از P‑B):** پوشش API واقعی برای درایور (فعلاً فیکسچر)؛ کنترل‌های P‑C (`mp-money-float-cast`، setClock guard، shop timezone bootstrap یا D‑25، ۶ ردیف قدیمی دفترچه، F‑23)؛ F‑11 و F‑30 OPEN. P‑C شروع نشد تا دستور داور.
+
+## P‑C — کدهای پایدار گیت‌ها (P‑3 کدگذاری) · بستن carry‑over های P‑B
+
+- **مجوز:** `handoff/MP-BUILDER-PC-AUTHORIZATION-2026-11-23.txt` (ref `arena/2cde32d6-chat2db`) ⇒ `21160` بایت، `4d56279c92451142057d8aa6289aa4e7b30c100e2ed0a3269e79ffd5e0474b55  /tmp/PC-AUTH.txt` (با انتظار یکسان). محدوده: `scripts/docs_gate.py`، `scripts/interaction_map.py`، `GATE-CODES.md` (تازه)، `test_gate_codes.py` (تازه)، شش کلید در `status.json`، این بخش، و بازتولید INVENTORY/CHECKLIST. ممنوع (مطلق): `.github/**`، `.semgrep/**`، lockfile، requirements، eslint.config، ruleset، کد محصول، `agent_drive.mjs`، `clock.ts`، وابستگی تازه، PR، merge، force-push، amend.
+- **شاخه و پایه:** HEAD = `6ff2685` (تأیید). `git fetch origin` ⇒ شاخهٔ محلی همگام؛ هیچ `reset` لازم نشد.
+- **محیط:** `/home/user/venv-mp` موجود بود (`fastapi 0.165.0`، Python `3.11.2`). clone محلی در ابتدا **shallow** بود (۵ کامیت)؛ برای سنجش شش SHA شاهد `git fetch origin --unshallow` ⇒ ۲۷۲ کامیت. این تغییرِ کلون محلی است و روی شاخه اثری ندارد.
+- **شاهدهای status (سنجیده):** `git cat-file -t` برای `9bfc99d`، `20c3173`، `fe103a4`، `0afd240`، `8926fcd`، `fc402a8` ⇒ همه `commit`؛ پیام‌ها با مجوز یکی؛ همه اجداد HEAD.
+- **baseline پیش از تغییر (C4، خروجی خام + sort + sha256):**
+  - `python3 scripts/docs_gate.py` ⇒ rc 0؛ `Documentation gate passed: 18 Markdown files, 276 local links, 15 Mermaid diagram block(s), …`؛ sorted-sha `1730e4d9b55c800ae48adad3…` ✔
+  - `python3 scripts/interaction_map.py --check` ⇒ rc 0؛ `Interaction map gate passed: 31 سطح، 163 مسیر قرارداد، رانش صفر.`؛ sorted-sha `29261bdef03b3369718ccf79…` ✔ (`--check` فقط؛ نقشه درجا نوشته نشد)
+  - `python3 scripts/repo_hygiene_gate.py` ⇒ rc 0؛ sorted-sha `e7635353f6757cbc756c4d26…` ✔
+- **قرمز (red‑first، C8):** `mp-app/backend/tests/integration/test_gate_codes.py` پیش از هر تغییرِ اسکریپت نوشته شد. `cd mp-app/backend && python -m pytest tests/integration/test_gate_codes.py -q` ⇒ **`10 failed`، `1 warning`** (خروجی: `/tmp/pc/red.log`). دلیل‌های محتوایی: خلاصهٔ `18 Markdown files` به‌جای ۱۹؛ `--json` ناشناخته؛ نبودِ کدهای DOC/MAP؛ نبودِ `GATE-CODES.md`؛ تست ساختگیِ `--check` بدون `MAP-002`. قرمزِ ناشی از node_modules/venv نبود؛ محیط سالم بود.
+- **دو باگِ خودِ تست (کشف‌شده در سبز، اصلاح‌شده در تست نه در گیت):**
+  - `dataclasses` در پایتون ۳٫۱۱ `sys.modules[__module__]` لازم دارد؛ بارگذاری با `spec_from_file_location` باید ماژول را ثبت کند ⇒ `sys.modules[name] = module` در `_load`.
+  - `resolve_local_target` گام‌های لینک را نسبت به **cwd** حل می‌کند، نه `ROOT`. CI از ریشهٔ ریپو اجرا می‌کند، پس درست است؛ نمونهٔ آزمایشی باید `chdir` به `tmp_path` شود (`monkeypatch.chdir`). **این رفتارِ گیت تغییر نکرد** (C4 معنی را ثابت می‌خواهد). یادداشت برای P‑C بعدی: حل لینک نسبت به `ROOT` امن‌تر است؛ فعلاً ثبت، نه اصلاح.
+- **سبز:** `10 passed, 1 warning` (هشدار از `fastapi/testclient` و استارلت، بی‌ربط). `ruff check --select E,F,W,I,N,UP,B,SIM,DTZ,TRY400,S --ignore E501 tests/integration/test_gate_codes.py` ⇒ rc 0 پس از تغییرِ چهار نام تابع به حروف کوچک (N802)؛ `ruff format --check` ⇒ rc 0 (`ruff 0.17.6` همان نسخهٔ سنجاق‌شده).
+- **C1 — کدهای پایدار:** `DOC-001…DOC-009` در `docs_gate.py` (جدول `SUGGESTIONS` + کلاس `Finding`)؛ `MAP-001…MAP-003` در `interaction_map.py`؛ `DRV-001…DRV-005` فقط در `GATE-CODES.md` ثبت شد و `agent_drive.mjs` دست نخورد.
+- **C2 — قالب واحد:** `CODE path:line: پیام ← پیشنهاد` (خط ناشناخته = `-`). نمونهٔ واقعیِ خروجیِ `interaction_map.py --check` با نقشهٔ کهنهٔ موقت (مسیر خارج از ریپو، نوشته‌نشده):
+  ```text
+  Interaction map gate FAILED:
+  MAP-002 /tmp/…/stale.md:-: نقشهٔ سطح تعامل کهنه است — python3 scripts/interaction_map.py را اجرا و commit کن ← python3 scripts/interaction_map.py را اجرا و نتیجه را commit کنید.
+  ```
+  و از `docs_gate` با ۲۵ لینک شکسته (cap):
+  ```text
+  DOC-006 bad.md:1: broken local link: m0.md ← مسیر را اصلاح کنید یا فایل مقصد را بسازید.
+  … (۲۰ سطر DOC-006) …
+  +5 موردِ دیگر (DOC-006)
+  ```
+- **C3 — دسته‌بندی کامل + سقف ۲۰:** گیت در اولین خطا نمی‌ایستد؛ `print_capped` هر کد را تا ۲۰ سطر چاپ و بقیه را `+N موردِ دیگر (CODE)` می‌نویسد (سنجیده: ۲۰ سطر + `+5`).
+- **C4 — معنی ثابت (خروجیِ sort و diff پیش/پس):**
+  - `docs_gate`: تنها اختلاف یک سطر خلاصه است: `18 Markdown files, 276 local links` ⇒ `19 Markdown files, 280 local links`. `15 Mermaid diagram block(s)` ثابت. ⇒ `N = 280 − 276 = 4` (چهار لینک محلی در `GATE-CODES.md`).
+  - `interaction_map --check`: `diff` تهی؛ sorted-sha پیش و پس `29261bdef03b3369718ccf79…` یکسان.
+  - `repo_hygiene_gate`: sorted-sha پیش و پس `e7635353f6757cbc756c4d26…` یکسان.
+- **C5 — exit codes:** `docs_gate` سبز ⇒ rc 0؛ قرمزِ ساختگی (کپیِ موقتِ اسکریپت در `/tmp`، سند خراب) ⇒ rc 1. `interaction_map --check` سبز ⇒ rc 0؛ قرمز ⇒ rc 1 (تست). مسیرهای `--write-baseline` و نوشتن نقشه بدون تغییر ماندند (کد نوشتن در خط‌های اصلی دست نخورد).
+- **C6 — `--json`:** `docs_gate --json` و `interaction_map --check --json` روی stdout فقط آرایهٔ JSON با کلیدهای `code/path/line/message/suggestion` (همه، بدون سقف). در حالت سبز آرایهٔ خالی و خلاصه روی **stderr**؛ `--json` بدون `--check` در نقشه با `parser.error` رد می‌شود. این تصمیم در `GATE-CODES.md` هم آمده است.
+- **C7 — دامنهٔ docs_gate:** `Path("docs/MuscleParadise/audit/GATE-CODES.md")` به `CORE_MARKDOWN_FILES` افزوده شد؛ `len(MARKDOWN_FILES)` از ۱۸ به ۱۹ رفت. Mermaid ۱۵ ماند (جدول کد بلوک Mermaid ندارد). لینک‌های `GATE-CODES.md` زنده‌اند (گیت سبز است).
+- **C8 — نقشهٔ تغییر در `docs_gate`:** `fail()` به `report()` و `Finding` تبدیل شد؛ شرط‌ها و متن پیام‌ها بدون تغییرند؛ DOC-001 تا DOC-009 به ترتیبِ قبلیِ بررسی‌ها نسبت داده شد.
+- **C9 — ترتیب بازتولید:** این بخش **پیش از** بازتولیدِ INVENTORY/CHECKLIST نوشته شد؛ بازتولید آخرین گام پیش از commit است (CO‑1). شمارهٔ نهاییِ INVENTORY در خلاصهٔ گزارش آمده، نه در این بخش، تا بخش ناهم‌خوان نشود. **تلهٔ سنجیده:** `python3 scripts/build_audit_inventory.py --check` با پایتون سیستمی ⇒ rc 1 با «کهنه: INVENTORY.md» حتی وقتی فایل درست است (بخش API از OpenAPI می‌آید و فقط با venv کامل است)؛ با `/home/user/venv-mp/bin/python` ⇒ rc 0. سنجش همیشه با venv.
+- **C10 — بودجه:** کامیت ۱ = `b7ed4ae` (کد + GATE-CODES + تست، ۴ فایل)؛ کامیت ۲ = این بخش + `status.json` + CHECKLIST + INVENTORY. ۱ push. هیچ PR، هیچ merge، هیچ amend.
+- **status.json — شش کلید تازه (ASCII-hyphen؛ قبلاً غایب بودند و CHECKLIST آن‌ها را OPEN نشان می‌داد):**
+  - `F-05` ⇒ FIXED · شاهد `9bfc99d`
+  - `F-07` ⇒ IN-PROGRESS · شاهد `20c3173`
+  - `F-16` ⇒ FIXED · شاهد `fe103a4`
+  - `F-17` ⇒ FIXED · شاهد `0afd240`
+  - `F-26` ⇒ FIXED · شاهد `8926fcd`
+  - `F-27` ⇒ FIXED · شاهد `fc402a8`
+  - **F‑11 و F‑30 دست نخورده و OPEN‌اند.** **F‑23 مبهم است؛ تصمیم داده نشد و دست نخورد.**
+- **اصلاحیهٔ P‑B (CO‑2):** `git diff --shortstat main...HEAD` روی tip پیش از متن نهایی بخش P‑B گرفته شده بود و `24 files changed, 619 insertions(+), 63 deletions(-)` نشان می‌داد. مقدار درست روی `6ff2685` **`24 files changed, 657 insertions(+), 64 deletions(-)`** است (علت: بازتولید و گرفتن diff stat پیش از نشستن متن نهایی بخش LOG انجام شده بود؛ ردیف EXECUTION-LOG در INVENTORY آن کامیت ۷۵۳ سطر نشان می‌داد). INVENTORY آن کامیت هم کهنه بود؛ در این بسته بازتولید شد (CO‑1). کامیت‌های P‑B amend نشدند.
+- **تخطی‌ها / تصمیم‌های ثبت‌شده:** (۱) فقط دو اصلاح در خودِ تست (sys.modules و chdir)؛ گیت تغییر معنایی نکرد. (۲) `ruff` روی تست: N802 و قالب‌بندی همان فایل اصلاح شد. (۳) `--json` خلاصه را روی stderr می‌گذارد (توضیح داده‌شده). (۴) خط‌های بدون شماره با `-` نشان داده می‌شوند. (۵) رفتار حل لینک نسبت به cwd ثبت شد، نه تغییر کرد. (۶) هیچ کد محصول، `.github/`، `.semgrep/`، lockfile، requirements، eslint، ruleset، `agent_drive.mjs`، `clock.ts` یا وابستگی تغییر نکرد.
+- **باز (از P‑C):** F‑11 OPEN؛ F‑30 OPEN؛ F‑23 مبهم (نیاز به تصمیم)؛ `mp-money-float-cast` تنگ‌سازی‌نشده (P‑F؛ مجوز نیست)؛ گاردِ setClock (P‑D؛ مجوز نیست)؛ `bootstrap` منطقهٔ فروشگاه/D‑25 (P‑F؛ مجوز نیست)؛ حل لینک نسبت به `ROOT` (یادداشت بالا)؛ شش کلید حالا ثبت شده‌اند؛ WP 4.1 PARTIAL؛ WP 4.2 DEFERRED؛ WP 4.7 PARTIAL (BLOCKED-ENV)؛ WP 0.2 BLOCKED؛ WP 1.1/1.2/1.4 PARTIAL.

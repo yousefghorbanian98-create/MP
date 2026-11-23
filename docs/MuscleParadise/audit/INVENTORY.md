@@ -7,20 +7,20 @@
 
 ## ۱. خلاصهٔ تعداد فایل
 
-- کل فایل‌های ترک‌شده: **1358** (خطوط متنی: 306342)
+- کل فایل‌های ترک‌شده: **1360** (خطوط متنی: 306825)
 
 | ناحیه | تعداد فایل | خطوط متنی |
 |---|---|---|
 | CI/CD | 6 | 1399 |
 | استودیو (React) | 128 | 26847 |
-| اسکریپت و ابزار | 19 | 7364 |
+| اسکریپت و ابزار | 19 | 7502 |
 | اپ عضو (Flutter) | 114 | 19320 |
-| بک‌اند (FastAPI) | 560 | 129494 |
+| بک‌اند (FastAPI) | 561 | 129665 |
 | ریشه و تنظیمات | 12 | 1529 |
 | زیرساخت و کانتینر | 15 | 597 |
 | سایر mp-app | 4 | 239 |
 | شواهد QA | 40 | 1626 |
-| مستندات | 319 | 109602 |
+| مستندات | 320 | 109776 |
 | گزارش‌های عامل | 141 | 8325 |
 
 ## ۲. عملیات API (از `app.openapi()`، مرجع اصلی)
@@ -500,8 +500,8 @@
 | استودیو (React) | `mp-app/studio/vite.config.ts` | 56 | 2320 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/vitest.config.ts` | 21 | 841 | NOT-REVIEWED |
 | اسکریپت و ابزار | `scripts/build_audit_inventory.py` | 322 | 14148 | NOT-REVIEWED |
-| اسکریپت و ابزار | `scripts/docs_gate.py` | 212 | 9320 | NOT-REVIEWED |
-| اسکریپت و ابزار | `scripts/interaction_map.py` | 405 | 18725 | NOT-REVIEWED |
+| اسکریپت و ابزار | `scripts/docs_gate.py` | 276 | 12632 | NOT-REVIEWED |
+| اسکریپت و ابزار | `scripts/interaction_map.py` | 479 | 21863 | NOT-REVIEWED |
 | اسکریپت و ابزار | `scripts/repo_hygiene_gate.py` | 104 | 4544 | NOT-REVIEWED |
 | اسکریپت و ابزار | `scripts/repowise_handoff.py` | 357 | 20974 | NOT-REVIEWED |
 | اسکریپت و ابزار | `scripts/test_retired_signing_scan.py` | 123 | 5777 | NOT-REVIEWED |
@@ -965,6 +965,7 @@
 | بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_face_privacy.py` | 89 | 3060 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_g2_coupons.py` | 168 | 6780 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_g9_library.py` | 200 | 8122 | NOT-REVIEWED |
+| بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_gate_codes.py` | 171 | 6221 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_gender_plans_api.py` | 142 | 5227 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_import_food_catalog.py` | 203 | 6648 | NOT-REVIEWED |
 | بک‌اند (FastAPI) | `mp-app/backend/tests/integration/test_infra.py` | 54 | 2017 | NOT-REVIEWED |
@@ -1355,11 +1356,12 @@
 | مستندات | `docs/MuscleParadise/assets/readme-hero.svg` | 66 | 4533 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/assets/system-architecture.svg` | 148 | 13022 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/BASELINE.md` | 200 | 34258 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/CHECKLIST.md` | 150 | 21769 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/CHECKLIST.md` | 150 | 22621 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/DECISIONS.md` | 481 | 76690 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/EXECUTION-LOG.md` | 753 | 119428 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/EXECUTION-LOG.md` | 836 | 137527 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/FINN-AUDIT-LOOP.md` | 88 | 13891 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/INVENTORY.md` | 1725 | 165113 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/GATE-CODES.md` | 65 | 5106 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/INVENTORY.md` | 1727 | 165317 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/MICRO-LOOPS.md` | 83 | 6853 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/evidence/after/backend-coverage.xml` | 12153 | 430390 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/evidence/after/bandit.json` | 3064 | 84377 | NOT-REVIEWED |
@@ -1498,7 +1500,7 @@
 | مستندات | `docs/MuscleParadise/audit/measure-baseline.sh` | 79 | 5235 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/probes/probe_invalid_authed.repo-copy.py` | 213 | 11482 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/ruff-recommended.toml` | 70 | 4973 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/status.json` | 98 | 10616 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/status.json` | 122 | 11791 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/brand/concepts/M101-CONCEPTS.md` | 75 | 7809 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/brand/concepts/m101-a-geometric-mp.png` | — | 85273 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/brand/concepts/m101-a-geometric-mp.svg` | 87 | 6179 | NOT-REVIEWED |
