@@ -3,10 +3,13 @@
 
 from __future__ import annotations
 
+import argparse
 import html
+import json
 import re
 import sys
 import xml.etree.ElementTree as ET
+from dataclasses import asdict, dataclass
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
@@ -54,6 +57,8 @@ CORE_MARKDOWN_FILES = (
     # ۲۰۲۶-۱۱-۱۹ (فاز ۱): نقشهٔ سطح تعامل از کد ساخته می‌شود؛ همان هم باید
     # فاصلهٔ اضافه و لینک مرده نداشته باشد.
     Path("docs/MuscleParadise/architecture/interaction-map-2026-11-19.md"),
+    # P‑C: جدول کدهای گیت (DOC-### / MAP-###) هم باید لینک‌هایش زنده باشند.
+    Path("docs/MuscleParadise/audit/GATE-CODES.md"),
 )
 MARKDOWN_FILES = (*CORE_MARKDOWN_FILES, *_module_docs())
 SVG_FILES = (
@@ -77,15 +82,71 @@ REQUIRED_HANDOFF_HEADINGS = (
 )
 
 
-def fail(errors: list[str]) -> None:
-    if errors:
+PER_CODE_LIMIT = 20
+
+SUGGESTIONS = {
+    "DOC-001": "فایل را بازگردانید یا فهرست REQUIRED_FILES در scripts/docs_gate.py را اصلاح کنید.",
+    "DOC-002": "فاصلهٔ انتهای سطر را حذف کنید.",
+    "DOC-003": "بلوک Mermaid خالی است؛ محتوا بنویسید یا بلوک را حذف کنید.",
+    "DOC-004": "اولین خط بلوک Mermaid باید اعلان نمودار معتبر باشد (مثلاً flowchart).",
+    "DOC-005": "بلوک کد را با همان تعداد علامت ببندید.",
+    "DOC-006": "مسیر را اصلاح کنید یا فایل مقصد را بسازید.",
+    "DOC-007": "عنوان الزامی SESSION_HANDOFF را اضافه کنید.",
+    "DOC-008": "لینک ورودی را در README.md اضافه کنید.",
+    "DOC-009": "فایل SVG را با XML معتبر ذخیره کنید.",
+}
+
+
+@dataclass(frozen=True)
+class Finding:
+    code: str
+    path: str
+    line: int | None
+    message: str
+    suggestion: str
+
+    def render(self) -> str:
+        # قالب ثابت C2: CODE path:line: پیام ← پیشنهاد (خط ناشناخته = «-»)
+        return f"{self.code} {self.path}:{self.line or '-'}: {self.message} ← {self.suggestion}"
+
+
+def finding(code: str, path: str, line: int | None, message: str) -> Finding:
+    return Finding(code, path, line, message, SUGGESTIONS[code])
+
+
+def ordered(findings: list[Finding]) -> list[Finding]:
+    return sorted(set(findings), key=lambda f: (f.code, f.path, f.line or 0, f.message))
+
+
+def print_capped(findings: list[Finding], stream) -> None:
+    """دسته‌بندی کامل بر اساس کد؛ هر دسته حداکثر PER_CODE_LIMIT سطر، بقیه «+N»."""
+    counts: dict[str, int] = {}
+    for item in findings:
+        counts[item.code] = counts.get(item.code, 0) + 1
+        if counts[item.code] <= PER_CODE_LIMIT:
+            print(item.render(), file=stream)
+    for code, total in counts.items():
+        if total > PER_CODE_LIMIT:
+            print(f"+{total - PER_CODE_LIMIT} موردِ دیگر ({code})", file=stream)
+
+
+def report(findings: list[Finding], *, as_json: bool, summary: str) -> int:
+    items = ordered(findings)
+    if as_json:
+        # stdout فقط JSON است؛ خلاصهٔ سبز روی stderr.
+        print(json.dumps([asdict(item) for item in items], ensure_ascii=False, indent=2))
+        if not items:
+            print(summary, file=sys.stderr)
+        return 1 if items else 0
+    if items:
         print("Documentation gate failed:", file=sys.stderr)
-        for error in errors:
-            print(f"- {error}", file=sys.stderr)
-        raise SystemExit(1)
+        print_capped(items, sys.stderr)
+        return 1
+    print(summary)
+    return 0
 
 
-def parse_fences(path: Path, text: str, errors: list[str]) -> tuple[int, list[str]]:
+def parse_fences(path: Path, text: str, errors: list[Finding]) -> tuple[int, list[str]]:
     open_fence: tuple[str, int, str, int] | None = None
     mermaid_blocks: list[str] = []
     current_body: list[str] = []
@@ -108,15 +169,15 @@ def parse_fences(path: Path, text: str, errors: list[str]) -> tuple[int, list[st
             if opened_language == "mermaid":
                 body = "\n".join(current_body).strip()
                 if not body:
-                    errors.append(f"{path}:{opened_at}: empty Mermaid block")
+                    errors.append(finding("DOC-003", path.as_posix(), opened_at, "empty Mermaid block"))
                 elif not DIAGRAM_START.match(body.splitlines()[0].strip()):
-                    errors.append(f"{path}:{opened_at}: Mermaid block has no recognized diagram declaration")
+                    errors.append(finding("DOC-004", path.as_posix(), opened_at, "Mermaid block has no recognized diagram declaration"))
                 mermaid_blocks.append(body)
             open_fence = None
             current_body = []
 
     if open_fence is not None:
-        errors.append(f"{path}:{open_fence[3]}: unclosed fenced code block")
+        errors.append(finding("DOC-005", path.as_posix(), open_fence[3], "unclosed fenced code block"))
     return len(mermaid_blocks), mermaid_blocks
 
 
@@ -149,10 +210,14 @@ def resolve_local_target(source: Path, raw_target: str) -> Path | None:
     return (source.parent / relative).resolve()
 
 
-def main() -> int:
-    errors: list[str] = []
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="گیت مستندات؛ کدها در docs/MuscleParadise/audit/GATE-CODES.md")
+    parser.add_argument("--json", action="store_true", help="خروجی JSON؛ خلاصهٔ سبز روی stderr")
+    args = parser.parse_args(argv)
+
+    errors: list[Finding] = []
     missing = [path.as_posix() for path in REQUIRED_FILES if not (ROOT / path).exists()]
-    errors.extend(f"required file missing: {path}" for path in missing)
+    errors.extend(finding("DOC-001", path, None, f"required file missing: {path}") for path in missing)
 
     checked_links = 0
     total_mermaid = 0
@@ -163,7 +228,7 @@ def main() -> int:
         text = path.read_text(encoding="utf-8")
         for line_number, line in enumerate(text.splitlines(), start=1):
             if line.rstrip() != line:
-                errors.append(f"{relative}:{line_number}: trailing whitespace")
+                errors.append(finding("DOC-002", relative.as_posix(), line_number, "trailing whitespace"))
 
         mermaid_count, _ = parse_fences(relative, text, errors)
         total_mermaid += mermaid_count
@@ -173,14 +238,14 @@ def main() -> int:
                 continue
             checked_links += 1
             if not target.exists():
-                errors.append(f"{relative}:{line_number}: broken local link: {raw_target}")
+                errors.append(finding("DOC-006", relative.as_posix(), line_number, f"broken local link: {raw_target}"))
 
     handoff_path = ROOT / "docs/MuscleParadise/SESSION_HANDOFF.md"
     if handoff_path.is_file():
         handoff = handoff_path.read_text(encoding="utf-8")
         for heading in REQUIRED_HANDOFF_HEADINGS:
             if heading not in handoff:
-                errors.append(f"docs/MuscleParadise/SESSION_HANDOFF.md: missing heading: {heading}")
+                errors.append(finding("DOC-007", "docs/MuscleParadise/SESSION_HANDOFF.md", None, f"missing heading: {heading}"))
 
     readme = (ROOT / "README.md").read_text(encoding="utf-8") if (ROOT / "README.md").is_file() else ""
     for required_target in (
@@ -189,7 +254,7 @@ def main() -> int:
         "docs/MuscleParadise/SESSION_HANDOFF.md",
     ):
         if not re.search(rf"\]\({re.escape(required_target)}(?:#[^)]+)?\)", readme):
-            errors.append(f"README.md: missing documentation entry: {required_target}")
+            errors.append(finding("DOC-008", "README.md", None, f"missing documentation entry: {required_target}"))
 
     for relative in SVG_FILES:
         svg_path = ROOT / relative
@@ -197,15 +262,14 @@ def main() -> int:
             try:
                 ET.parse(svg_path)
             except ET.ParseError as exc:
-                errors.append(f"{relative}: invalid XML: {exc}")
+                errors.append(finding("DOC-009", relative.as_posix(), None, f"invalid XML: {exc}"))
 
-    fail(errors)
-    print(
+    summary = (
         "Documentation gate passed: "
         f"{len(MARKDOWN_FILES)} Markdown files, {checked_links} local links, "
         f"{total_mermaid} Mermaid diagram block(s), handoff headings, README entrypoints, SVG XML."
     )
-    return 0
+    return report(errors, as_json=args.json, summary=summary)
 
 
 if __name__ == "__main__":
