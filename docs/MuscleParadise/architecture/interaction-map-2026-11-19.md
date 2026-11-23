@@ -122,7 +122,7 @@ python3 scripts/interaction_map.py --check
 | POST | `/api/v1/payments/*/approve` | grant:finance.write, permission | reception, manager, admin, super_admin | بله |
 | POST | `/api/v1/payments/*/fail` | permission | reception, manager, admin, super_admin | بله |
 | GET | `/api/v1/payments/*/receipt` | permission | member, reception, manager, admin, super_admin | بله |
-| POST | `/api/v1/payments/*/refund` | permission | reception, manager, admin, super_admin | بله |
+| POST | `/api/v1/payments/*/refund` | grant:finance.write, permission, roles | manager, admin, super_admin | بله |
 | POST | `/api/v1/payments/*/reject` | grant:finance.write, permission | reception, manager, admin, super_admin | بله |
 | POST | `/api/v1/payments/*/verify` | grant:finance.write, permission | reception, manager, admin, super_admin | بله |
 | GET | `/api/v1/payments/coupons` | grant:finance.write, permission | member, reception, manager, admin, super_admin | بله |
@@ -281,7 +281,7 @@ python3 scripts/interaction_map.py --check
 | coach | 73 | Assessment، Chat، CheckIn، Dashboard، Members، Nutrition |
 | manager | 103 | Analytics، Assessment، Chat، CheckIn، Dashboard، Expenses |
 | member | 76 | Assessment، Chat، Finance، Members، Nutrition، Programs |
-| reception | 50 | Assessment، CheckIn، Dashboard، Finance، Members، Programs |
+| reception | 49 | Assessment، CheckIn، Dashboard، Finance، Members، Programs |
 | super_admin | 110 | Analytics، Assessment، Chat، CheckIn، Dashboard، Expenses |
 
 ## محدودیت صریح

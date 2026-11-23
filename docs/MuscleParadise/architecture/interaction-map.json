@@ -530,10 +530,11 @@
           "path": "/api/v1/payments/*/refund",
           "in_contract": true,
           "guards": [
-            "permission"
+            "grant:finance.write",
+            "permission",
+            "roles"
           ],
           "roles": [
-            "reception",
             "manager",
             "admin",
             "super_admin"
