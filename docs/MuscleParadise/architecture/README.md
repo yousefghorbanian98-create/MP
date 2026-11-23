@@ -6,6 +6,7 @@
 
 | سطح | سند | چه چیزی را توضیح می‌دهد |
 |---|---|---|
+| **فلوچارت یکپارچهٔ کل برنامه** | [صفحهٔ اصلی](muscle-paradise-full-program-flow-v1-2026-11-23.md) · [نقشهٔ کامل PNG v2](muscle-paradise-combined-flow-v2-2026-11-23.png) · [SVG بزرگ‌نمایی‌پذیر](muscle-paradise-combined-flow-v2-2026-11-23.svg) · [ZIP نمودارها](muscle-paradise-architecture-diagrams-v1-2026-11-23.zip) · [DOT](muscle-paradise-combined-flow-v2-2026-11-23.dot) | مسیرهای جاری عضو/کادر و تراکنش‌ها به‌علاوهٔ چرخهٔ پیشنهادی برنامه، منبع‌ها، PDF/QR و بازخورد؛ تفاوت current/target مشخص است |
 | **System Atlas** | [system-atlas.md](system-atlas.md) | تصویر README، گراف متنی، وضعیت ادعاها و مسیرهای کد مرتبط |
 | **C4 — Context** | [c4.md](c4.md) | نقش‌های عضو، مربی، پذیرش و مدیر؛ مرز محصول و سامانه‌های بیرونی |
 | **C4 — Container** | [c4.md](c4.md) | Client، Studio، API، پایگاه داده، cache، jobها و مرزهای شبکه |
@@ -14,6 +15,9 @@
 | **هدف ابری، مالی و دسترسی** | [cloud-finance-access.md](cloud-finance-access.md) | وضعیت موجود در برابر هدف، پرداخت انسانی و QA هر میکرولوپ؛ نه تأیید پیاده‌سازی |
 | **جریان‌های بازبینی PR** | [pr-review-flows-2026-11-18.md](pr-review-flows-2026-11-18.md) | بازگشت وجه، QR و checkpoint؛ یافته‌ها و مرز هر شاهد |
 | **RepoWise snapshot بازبینی** | [گراف DSL](repowise-pr-review-2026-11-18.dsl) · [فهرست ورودی](repowise-pr-review-scope-2026-11-18.txt) | snapshot انتخابی از commit بازبینی‌شده؛ نه index کامل یا اثبات runtime |
+| **مسیر کامل ورزشکار و بازطراحی چرخهٔ بعد** | [سند lifecycle](athlete-program-lifecycle-v2-2026-11-23.md) · [فلوچارت برگشت v3](athlete-program-return-workflow-v3-2026-11-23.png) · [scorecard و ساختار v3](athlete-program-component-score-rebuild-v3-2026-11-23.png) · [مشخصات JP7/QR canonical v6](athlete-jp7-program-qr-v6-2026-11-23.md) · [فلوچارت نهایی QR/سنجش/برنامه](athlete-jp7-program-qr-flow-v6-2026-11-23.png) | طرح محصول؛ نه قابلیت runtime |
+| **فلوهای مستقل عضو / Studio / تراکنش** | [راهنمای نمودارها](member-studio-dataflow-v1-2026-11-23.md) · [Flutter عضو (DOT)](member-app-dataflow-v1-2026-11-23.dot) · [Studio (DOT)](studio-dataflow-v1-2026-11-23.dot) · [یافته‌های تراکنشی (DOT)](transaction-findings-flow-v1-2026-11-23.dot) | route/service/DB از کد ردیابی شده؛ تصویرها جدا و بازتولیدپذیرند؛ نمودارها به‌تنهایی شاهد E2E یا production نیستند |
+| **مسیریابی منابع ورزشی** | [سند سؤال→منبع→لایه](open-source-question-routing-and-layered-data-architecture-v1-2026-11-23.md) · [Graphviz DOT flow](open-source-question-routing-flow-v1-2026-11-23.dot) · [درخت source registry](open-source-source-registry-tree-v1-2026-11-23.dot) | منبع‌ها جدا و license-gated؛ Graphviz imageها از DOT بازتولید می‌شوند، نه دادهٔ زنده |
 
 ### چهار سطح C4 در این مخزن
 
@@ -47,7 +51,7 @@
 
 ## قرارداد صحت و نمایش
 
-- دیاگرام‌ها را Mermaid متنی نگه دار تا review و diff آن‌ها در Git قابل‌فهم باشد.
+- پیش‌فرض دیاگرام‌های مستندات Mermaid متنی است تا diff/review ساده بماند؛ برای گراف متراکمِ منبع‌ها/routeهای چندبه‌چند، درخواست کاربر با Graphviz DOT اجرا شده و فایل `.dot` کنار PNG/SVG حفظ می‌شود تا خروجی بازتولیدپذیر بماند.
 - پیکانِ هدف یا آینده‌نگر را با برچسب **هدف/پیشنهادی** و خط‌چین نشان بده؛ جریان تأییدشده را بدون شاهد، خط پیوسته نکش.
 - کنار هر claim مهم، مسیر کد/تست را بنویس. شمارهٔ خط را فقط اگر لازم است اضافه کن و در تغییر بعدی دوباره بررسی‌اش کن.
 - «آزموده‌نشده/نامعلوم» از «پیاده‌نشده» متفاوت است؛ در صورت نبود شاهد، `UNKNOWN` ثبت کن.

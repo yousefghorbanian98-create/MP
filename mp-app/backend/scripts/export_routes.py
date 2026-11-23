@@ -12,8 +12,9 @@ operationId و tagها نیز برای inventory/trace لازم‌اند. اجر
 - `guards`: برچسب‌های `__rbac__` روی درخت وابستگی همان route
   (`permission` / `roles` / `authenticated`). فهرست خالی = مسیر عمومی.
 - `roles`: سقف نقش‌هایی که می‌توانند از guardها عبور کنند. برای `permission`
-  از `security.rbac.enforce` (همان تابع runtime) می‌آید؛ برای `authenticated`
-  همهٔ نقش‌ها؛ برای مسیر عمومی همهٔ نقش‌ها؛ برای `metrics_token` هیچ‌کدام.
+  از `security.rbac.enforce` و برای `roles` از metadata خود `require_roles`
+  (با استثنای `super_admin` مانند runtime) می‌آید؛ برای `authenticated` و مسیر
+  عمومی همهٔ نقش‌ها؛ برای `metrics_token` هیچ‌کدام.
 - `always_roles`: کف — نقش‌هایی که همیشه عبور می‌کنند. `grant:*` نقش‌های
   محدودشده (admin/manager) را شرطی می‌کند و `owner_scope` همه را شرطی می‌کند.
 - `anonymous`: `always` | `may` | `never` برای درخواست بدون توکن.
@@ -73,7 +74,53 @@ def guard_kinds(dependant, out: list[str] | None = None) -> list[str]:
     return sorted(out)
 
 
-def effective_access(guards: list[str], scopes: dict[str, str], method: str, sample: str) -> dict:
+def guard_role_sets(dependant, out: list[set[str]] | None = None) -> list[set[str]]:
+    """مجموعه‌های نقش مجازِ require_roles؛ چند guard با هم اشتراک می‌گیرند."""
+    out = out if out is not None else []
+    roles = getattr(dependant.call, "__roles__", None)
+    if roles is not None:
+        out.append(set(roles))
+    for dep in dependant.dependencies:
+        guard_role_sets(dep, out)
+    return out
+
+
+def _limit_to_role_sets(
+    roles: list[str],
+    always: list[str],
+    role_sets: list[set[str]],
+    owner_role: str,
+) -> tuple[list[str], list[str]]:
+    """Intersect require_roles constraints while preserving the owner exception."""
+    if not role_sets:
+        return roles, always
+    permitted_sets = [allowed | {owner_role} for allowed in role_sets]
+    permitted = permitted_sets[0].intersection(*permitted_sets[1:])
+    return (
+        [role for role in roles if role in permitted],
+        [role for role in always if role in permitted],
+    )
+
+
+def _validate_guards(
+    kinds: set[str], role_sets: list[set[str]], method: str, sample: str
+) -> set[str]:
+    grant_kinds = {kind for kind in kinds if kind.startswith("grant:")}
+    unknown = kinds - {"permission", "roles", "authenticated", "metrics_token"} - grant_kinds
+    if unknown:
+        raise ValueError(f"guard ناشناخته در {method} {sample}: {sorted(unknown)}")
+    if "roles" in kinds and not role_sets:
+        raise ValueError(f"guard roles بدون metadata نقش در {method} {sample}")
+    return grant_kinds
+
+
+def effective_access(
+    guards: list[str],
+    scopes: dict[str, str],
+    method: str,
+    sample: str,
+    role_sets: list[set[str]] | None = None,
+) -> dict:
     """سیاست مؤثر یک operation — ترکیب برچسب guardها و قیدهای اعلامی `route_policy`.
 
     - `roles`: سقف (ممکن است عبور کند). `always_roles`: کف (همیشه عبور می‌کند).
@@ -84,10 +131,8 @@ def effective_access(guards: list[str], scopes: dict[str, str], method: str, sam
     from security.rbac import enforce
 
     kinds = set(guards)
-    grant_kinds = {g for g in kinds if g.startswith("grant:")}
-    unknown = kinds - {"permission", "authenticated", "metrics_token"} - grant_kinds
-    if unknown:
-        raise ValueError(f"guard ناشناخته در {method} {sample}: {sorted(unknown)}")
+    role_sets = role_sets or []
+    grant_kinds = _validate_guards(kinds, role_sets, method, sample)
 
     if "super_admin_only" in scopes:
         roles = [OWNER_ROLE]
@@ -118,6 +163,8 @@ def effective_access(guards: list[str], scopes: dict[str, str], method: str, sam
         if "owner_scope" in scopes:
             always = []
         anonymous = "never"
+
+    roles, always = _limit_to_role_sets(roles, always, role_sets, OWNER_ROLE)
     return {"roles": roles, "always_roles": always, "anonymous": anonymous}
 
 
@@ -128,13 +175,14 @@ def access_matrix(app) -> dict[tuple[str, str], dict]:
     for prefix, route in walk_routes(app.routes):
         path = prefix + route.path
         guards = guard_kinds(route.dependant)
+        role_sets = guard_role_sets(route.dependant)
         sample = re.sub(r"\{[^}]+\}", "1", path)
         for method in sorted(route.methods):
             scopes = declared_scopes(method, path)
             access[(method, path)] = {
                 "guards": guards,
                 "scopes": sorted(scopes),
-                **effective_access(guards, scopes, method, sample),
+                **effective_access(guards, scopes, method, sample, role_sets=role_sets),
             }
     return access
 

@@ -424,6 +424,9 @@ def test_checkout_debits_wallet_and_creates_order(client: TestClient) -> None:
     orders = client.get("/api/v1/shop/orders", headers=member["headers"]).json()
     assert orders[0]["status"] == "paid"
     assert orders[0]["items"][0]["qty"] == 2
+    payments = client.get("/api/v1/payments", headers=member["headers"]).json()
+    assert len(payments) == 1  # checkout فقط یک Payment paid می‌سازد، نه pending اضافه
+    assert payments[0]["status"] == "paid" and payments[0]["method"] == "wallet"
     # سبد خالی شد و موجودی کم شد
     assert client.get("/api/v1/shop/cart", headers=member["headers"]).json()["count"] == 0
     assert (
@@ -446,6 +449,20 @@ def test_checkout_insufficient_balance_keeps_cart(client: TestClient) -> None:
     assert r.status_code == 400
     assert "insufficient_balance" in r.text
     assert client.get("/api/v1/shop/cart", headers=member["headers"]).json()["count"] == 1
+    assert client.get("/api/v1/shop/orders", headers=member["headers"]).json() == []
+    assert client.get("/api/v1/payments", headers=member["headers"]).json() == []
+    assert (
+        client.get(f"/api/v1/shop/products/{product['id']}", headers=member["headers"]).json()[
+            "stock_qty"
+        ]
+        == 5
+    )
+    assert (
+        client.get(
+            f"/api/v1/payments/wallet/{_member_id(member)}", headers=member["headers"]
+        ).json()["balance_rial"]
+        == 100_000
+    )
 
 
 def test_cart_rejects_beyond_stock(client: TestClient) -> None:

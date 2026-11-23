@@ -393,7 +393,7 @@ def remove_cart_item(db: Session, *, user: User, item_id: int) -> dict:
 
 
 def checkout(db: Session, *, user: User, method: str = "wallet", note: str = "") -> Order:
-    """سبد ← سفارش. مبلغ از DB، نه از کلاینت. پرداخت از کیف‌پول یا درگاه."""
+    """سبد ← سفارش؛ سفارش/موجودی/پرداخت فقط با یک commit نهایی ثبت می‌شوند."""
     from app.security.ownership import ensure_member_scope
     from modules.payments import service as payments
 
@@ -403,57 +403,64 @@ def checkout(db: Session, *, user: User, method: str = "wallet", note: str = "")
     member_id = cart["member_id"]
     ensure_member_scope(db, user, member_id)
 
-    order = Order(
-        member_id=member_id,
-        status="pending",
-        total_rial=cart["total_rial"],
-        note=note,
-        branch_id=1,
-    )
-    db.add(order)
-    db.flush()
-    for line in cart["items"]:
-        product = db.get(Product, line["product_id"])
-        variant = db.get(ProductVariant, line["variant_id"]) if line["variant_id"] else None
-        stock = variant.stock_qty if variant is not None else (product.stock_qty if product else 0)
-        if stock >= 0 and stock < line["qty"]:
-            raise ConflictError(f"موجودی «{line['title']}» کافی نیست")
-        db.add(
-            OrderItem(
-                order_id=order.id,
-                product_id=line["product_id"],
-                variant_id=line["variant_id"],
-                title_snapshot=line["title"],
-                unit_price_rial=line["unit_price_rial"],
-                qty=line["qty"],
-            )
+    # SAVEPOINT تضمین می‌کند حتی فراخواننده‌ای که خطا را می‌گیرد، سفارش/موجودیِ
+    # نیمه‌کاره در همان Session نبیند. سرویس‌های پرداخت در این مسیر commit نمی‌کنند.
+    with db.begin_nested():
+        order = Order(
+            member_id=member_id,
+            status="pending",
+            total_rial=cart["total_rial"],
+            note=note,
+            branch_id=1,
         )
-        if variant is not None and variant.stock_qty >= 0:
-            variant.stock_qty -= line["qty"]
-        elif product is not None and product.stock_qty >= 0:
-            product.stock_qty -= line["qty"]
+        db.add(order)
+        db.flush()
+        for line in cart["items"]:
+            product = db.get(Product, line["product_id"])
+            variant = db.get(ProductVariant, line["variant_id"]) if line["variant_id"] else None
+            stock = (
+                variant.stock_qty if variant is not None else (product.stock_qty if product else 0)
+            )
+            if stock >= 0 and stock < line["qty"]:
+                raise ConflictError(f"موجودی «{line['title']}» کافی نیست")
+            db.add(
+                OrderItem(
+                    order_id=order.id,
+                    product_id=line["product_id"],
+                    variant_id=line["variant_id"],
+                    title_snapshot=line["title"],
+                    unit_price_rial=line["unit_price_rial"],
+                    qty=line["qty"],
+                )
+            )
+            if variant is not None and variant.stock_qty >= 0:
+                variant.stock_qty -= line["qty"]
+            elif product is not None and product.stock_qty >= 0:
+                product.stock_qty -= line["qty"]
 
-    payment = payments.create_payment(
-        db,
-        member_id,
-        order.total_rial,
-        method=method,
-        description=f"سفارش #{order.id}",
-        user=user,
-    )
-    order.payment_id = payment.id
+        description = f"سفارش #{order.id}"
+        if method == "wallet":
+            # پرداخت، بدهکاری کیف‌پول، دفتر و سفارش با commit نهایی یکی هستند.
+            payment = payments.wallet_pay(
+                db, member_id, order.total_rial, description, user=user, commit=False
+            )
+            order.status = "paid"
+        else:
+            payment = payments.create_payment(
+                db,
+                member_id,
+                order.total_rial,
+                method=method,
+                description=description,
+                user=user,
+                commit=False,
+            )
+        order.payment_id = payment.id
 
-    if method == "wallet":
-        # پرداخت از کیف‌پول: برداشت + تسویه در یک تراکنش.
-        paid = payments.wallet_pay(db, member_id, order.total_rial, f"سفارش #{order.id}", user=user)
-        order.status = "paid"
-        order.payment_id = paid.id
-    else:
-        order.status = "pending"
+        # سبد فقط همراه با سفارش موفق پاک می‌شود.
+        for item in db.scalars(select(CartItem).where(CartItem.member_id == member_id)):
+            db.delete(item)
 
-    # سبد خالی می‌شود فقط وقتی سفارش ثبت شد (اگر خطا داد، سبد می‌ماند).
-    for item in db.scalars(select(CartItem).where(CartItem.member_id == member_id)):
-        db.delete(item)
     db.commit()
     db.refresh(order)
     _audit(

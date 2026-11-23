@@ -1,0 +1,131 @@
+digraph MemberAppDataflow {
+  graph [
+    rankdir=LR, bgcolor="#0B1220", pad="0.34", nodesep="0.26", ranksep="0.60",
+    splines=ortho, compound=true, newrank=true, dpi=180,
+    fontname="DejaVu Sans", fontsize=23, fontcolor="#EEF4FC",
+    label="جریان عضو · Flutter → API → سرویس/منطق → مدل‌های پایدار\nنقشهٔ کد فعلی؛ نه ادعای موفقیت همهٔ درخواست‌ها در runtime",
+    labelloc="t", labeljust="c"
+  ];
+  node [shape=box, style="rounded,filled", fontname="DejaVu Sans", fontsize=12,
+        color="#49627D", fillcolor="#15243A", fontcolor="#EEF4FC",
+        penwidth=1.2, margin="0.15,0.10"];
+  edge [fontname="DejaVu Sans", fontsize=9, color="#8296AD", fontcolor="#DCE6F1",
+        penwidth=1.0, arrowsize=0.62];
+
+  subgraph cluster_client {
+    label="۱ · اپ عضو (Flutter)";
+    color="#6CAAF8"; fontcolor="#6CAAF8"; style="rounded"; penwidth=1.4;
+    identity_ui [label="ورود / نشست / پروفایل\nOTP · /members/me · تغییر شماره", color="#6CAAF8"];
+    training_ui [label="برنامه / توانایی‌ها / پیشرفت\nPrograms · Axis assessment · JP7", color="#6CAAF8"];
+    nutrition_ui [label="تغذیه / ثبت خوراک و وزن\nهدف تغذیه جدا از خوراک واقعی", color="#6CAAF8"];
+    checkin_ui [label="حضور / QR / سوابق\nاحراز محلی فقط برای نمایش QR", color="#6CAAF8"];
+    class_ui [label="کلاس‌ها\nفهرست / رزرو / لغو", color="#6CAAF8"];
+    wallet_ui [label="کیف‌پول / پرداخت‌ها\nموجودی و گردش", color="#6CAAF8"];
+    inbox_ui [label="اعلان‌ها / گفت‌وگو\nخواندن، پیام، read-state", color="#6CAAF8"];
+    shop_ui [label="فروشگاه / سبد / سفارش\nکاتالوگ و رسید", color="#6CAAF8"];
+    today_local [label="تیک «انجام شد» تمرین\nTodayController فقط Set<int> محلی\nبدون درخواست ثبت اجرا", fillcolor="#301B2A", color="#FF7887", fontcolor="#FFE8EC"];
+    biometric_note [label="برچسب UI «چهره» ≠ تطبیق چهره\nمسیر self-check-in با نشست عضو؛\nاسکن QR پذیرش endpoint جدا دارد", fillcolor="#30271A", color="#FFC56E"];
+    kiosk [label="اسکنر QR پذیرش\nمصرف‌کنندهٔ بیرون از اپ عضو", fillcolor="#211D39", color="#B99AFB"];
+  }
+
+  shared_guard [label="مرز مشترک هر درخواست\nBearer → get_current_user / نشست + Casbin RBAC\nمالکیت member_id در service/handler", fillcolor="#30271A", color="#FFC56E", fontcolor="#FFF0CE"];
+
+  subgraph cluster_api {
+    label="۲ · FastAPI `/api/v1` — routerها";
+    color="#6CAAF8"; fontcolor="#6CAAF8"; style="rounded"; penwidth=1.4;
+    auth_api [label="/auth/*\n/members/me · /members/me/checkins"];
+    program_api [label="/programs/*"];
+    assessment_api [label="/axis-assessments/*\n/assessments/*"];
+    nutrition_api [label="/ai/* · /nutrition/*"];
+    face_api [label="/face/qr-token · /face/checkin\n/face/checkin-qr"];
+    classes_api [label="/classes · /classes/book\n/classes/cancel"];
+    payments_api [label="/payments/*\n/wallet/*"];
+    message_api [label="/notifications/*\n/chat/conversations/*"];
+    shop_api [label="/shop/*\nخرید آنلاین: fail-closed در تنظیم پیش‌فرض"];
+  }
+
+  subgraph cluster_service {
+    label="۳ · منطق دامنه / لایهٔ ثبت";
+    color="#B99AFB"; fontcolor="#B99AFB"; style="rounded"; penwidth=1.4;
+    auth_service [label="auth.service\nOTP · refresh · نشست"];
+    profile_handler [label="membership router / service\n/me مستقیم ORM؛ تاریخچهٔ حضور با scope خود عضو"];
+    program_service [label="programs.service\ndraft / approval / feedback"];
+    assessment_service [label="axis_assessment + assessment\nNorm → score → axis؛ JP7 trend خام"];
+    nutrition_service [label="ai_engine + nutrition.service\nبرنامه، food logs، وزن، گزارش adaptive"];
+    face_service [label="face_id.service\nاشتراک فعال → CheckIn؛ QR یک‌بارمصرف"];
+    classes_service [label="classes.service\nظرفیت / waitlist / رزرو"];
+    payments_service [label="payments.service\nموجودی / پرداخت / تراکنش‌ها"];
+    notify_service [label="notification.service\nلیست / mark-read"];
+    chat_service [label="chat_service\nگفت‌وگوی عضو و پیام‌ها"];
+    shop_service [label="shop.service\nکاتالوگ / سبد / سفارش"];
+  }
+
+  subgraph cluster_db {
+    label="۴ · مدل‌های SQLAlchemy / دادهٔ پایدار";
+    color="#51D6C2"; fontcolor="#51D6C2"; style="rounded"; penwidth=1.4;
+    identity_db [label="User · OtpCode · RefreshToken\nMember · Membership", color="#51D6C2"];
+    program_db [label="WorkoutProgram → ProgramWeek\n→ ProgramExercise · Exercise · SetFeedback", color="#51D6C2"];
+    assessment_db [label="AxisAssessment · AxisScore\nFieldTestResult · NormEntry\nJacksonPollockMeasurement", color="#51D6C2"];
+    nutrition_db [label="NutritionPlan · MealItem\nFoodLog · FoodItem · BodyWeightLog", color="#51D6C2"];
+    checkin_db [label="CheckIn · BiometricConsent\nFaceTemplate (encrypted)\nQR jti hash; نه QR خام", color="#51D6C2"];
+    class_db [label="GymClass · ClassBooking", color="#51D6C2"];
+    payment_db [label="Payment · WalletTransaction\nLedgerEntry (دفتر جداگانه)", color="#51D6C2"];
+    inbox_db [label="Notification\nConversation · Message", color="#51D6C2"];
+    shop_db [label="Product · ProductVariant · CartItem\nOrder · OrderItem", color="#51D6C2"];
+  }
+
+  identity_ui -> auth_api [label="OTP / refresh"];
+  identity_ui -> auth_api [label="GET/PUT /members/me"];
+  training_ui -> program_api [label="GET /programs/member/{id}"];
+  training_ui -> assessment_api [label="axis history/matrix · assessments · JP7 trend"];
+  nutrition_ui -> nutrition_api [label="generate · plans · food-logs · weight-logs"];
+  checkin_ui -> face_api [label="qr-token · self /face/checkin"];
+  kiosk -> face_api [label="POST /face/checkin-qr"];
+  checkin_ui -> classes_api [label="GET /classes"];
+  class_ui -> classes_api [label="book / cancel"];
+  wallet_ui -> payments_api [label="wallet balance / transactions · payments"];
+  inbox_ui -> message_api [label="list / read / messages"];
+  shop_ui -> shop_api [label="products / cart / checkout / orders"];
+
+  auth_api -> auth_service;
+  auth_api -> profile_handler [label="/members/*"];
+  program_api -> program_service;
+  assessment_api -> assessment_service;
+  nutrition_api -> nutrition_service;
+  face_api -> face_service;
+  classes_api -> classes_service;
+  payments_api -> payments_service;
+  message_api -> notify_service [label="notifications"];
+  message_api -> chat_service [label="chat"];
+  shop_api -> shop_service;
+
+  auth_service -> identity_db;
+  profile_handler -> identity_db [label="/me: direct ORM"];
+  profile_handler -> checkin_db [label="own check-in history"];
+  program_service -> program_db;
+  assessment_service -> assessment_db;
+  nutrition_service -> nutrition_db;
+  face_service -> identity_db [label="Member + active Membership"];
+  face_service -> checkin_db;
+  classes_service -> class_db;
+  classes_service -> identity_db [label="Member / User display name"];
+  payments_service -> payment_db;
+  notify_service -> inbox_db;
+  chat_service -> inbox_db;
+  shop_service -> shop_db;
+
+  shared_guard -> auth_api [style=dashed, color="#FFC56E", arrowhead=none];
+  shared_guard -> program_api [style=dashed, color="#FFC56E", arrowhead=none];
+  shared_guard -> assessment_api [style=dashed, color="#FFC56E", arrowhead=none];
+  shared_guard -> nutrition_api [style=dashed, color="#FFC56E", arrowhead=none];
+  shared_guard -> face_api [style=dashed, color="#FFC56E", arrowhead=none];
+  shared_guard -> classes_api [style=dashed, color="#FFC56E", arrowhead=none];
+  shared_guard -> payments_api [style=dashed, color="#FFC56E", arrowhead=none];
+  shared_guard -> message_api [style=dashed, color="#FFC56E", arrowhead=none];
+  shared_guard -> shop_api [style=dashed, color="#FFC56E", arrowhead=none];
+  identity_ui -> shared_guard [style=dashed, color="#FFC56E", label="نشست احرازشده"];
+
+  today_local -> program_api [style=dashed, color="#FF7887", arrowhead=none,
+                              label="پیکان عملیاتی وجود ندارد؛ فقط برنامه را می‌خواند"];
+  checkin_ui -> biometric_note [style=dotted, color="#FFC56E", arrowhead=none];
+}

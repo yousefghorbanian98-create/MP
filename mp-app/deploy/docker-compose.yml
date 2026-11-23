@@ -25,6 +25,9 @@ services:
       # درگاه اینترنتی حذف شد؛ پرداخت حضوری و کارت‌به‌کارت با رسید.
       MP_PAYMENT_GATEWAY: ${MP_PAYMENT_GATEWAY:?set manual}
       MP_PAYMENT_SANDBOX: ${MP_PAYMENT_SANDBOX:-false}
+      MP_METRICS_TOKEN: ${MP_METRICS_TOKEN:?MP_METRICS_TOKEN must be set}
+      # Only the immediate reverse-proxy IP/CIDR is trusted for forwarded headers.
+      MP_TRUSTED_PROXIES: ${MP_TRUSTED_PROXIES:?set the reverse-proxy IP or CIDR}
       PROMETHEUS_MULTIPROC_DIR: /tmp/prometheus-multiproc
     volumes:
       - mp-data:/data
@@ -87,6 +90,7 @@ services:
       - --storage.tsdb.retention.time=15d
     environment:
       PROMETHEUS_BACKEND_PORT: "8000"
+      MP_METRICS_TOKEN: ${MP_METRICS_TOKEN:?MP_METRICS_TOKEN must be set}
     volumes:
       - ../infra/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - ../infra/monitoring/alerts.yml:/etc/prometheus/alerts.yml:ro

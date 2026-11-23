@@ -285,6 +285,40 @@ def reception(client):
 
 
 @pytest.fixture()
+def refund_operator(client):
+    """مدیر مالی برای بازگشت وجه — نقش مجاز + grant زمان‌دار/شخصیِ finance.write."""
+    from app.security.jwt import create_access_token
+    from db.base import get_session_factory
+    from db.models import AdminPermission, User
+
+    n = next(_counter)
+    with get_session_factory()() as s:
+        u = User(phone=f"09{n:09d}", full_name=f"refund-{n}", role="manager")
+        s.add(u)
+        s.commit()
+        s.add(AdminPermission(user_id=u.id, permission="finance.write", note="refund test"))
+        s.commit()
+        return {
+            "headers": {"Authorization": f"Bearer {create_access_token(u.id, u.role)}"},
+            "user_id": u.id,
+        }
+
+
+@pytest.fixture()
+def manager_without_grant(client):
+    from app.security.jwt import create_access_token
+    from db.base import get_session_factory
+    from db.models import User
+
+    n = next(_counter)
+    with get_session_factory()() as s:
+        u = User(phone=f"09{n:09d}", full_name=f"manager-{n}", role="manager")
+        s.add(u)
+        s.commit()
+        return {"Authorization": f"Bearer {create_access_token(u.id, u.role)}"}
+
+
+@pytest.fixture()
 def admin_headers(client):
     """خلاصهٔ مالی عمداً برای پذیرش ۴۰۳ است (M59/R3) — این تست با admin می‌خواندش."""
     from app.security.jwt import create_access_token
@@ -386,7 +420,7 @@ def test_cancelled_at_bank_then_failed_locally(client, bank, reception, member_i
 
 
 def test_refund_marks_refunded_and_finance_subtracts_it(
-    client, bank, reception, admin_headers, member_id
+    client, bank, reception, refund_operator, manager_without_grant, admin_headers, member_id
 ):
     h, fin = reception, admin_headers
     pid, body = _paid_payment(client, bank, h, member_id)
@@ -396,9 +430,25 @@ def test_refund_marks_refunded_and_finance_subtracts_it(
     before = client.get("/api/v1/payments/finance/summary", headers=fin).json()
     assert before["total_paid_rial"] >= 250_000
 
-    r = client.post(f"/api/v1/payments/{pid}/refund", headers=h)
+    # Casbin's broad payment allowance must not make refund a reception action;
+    # even an otherwise permitted manager needs the explicit finance.write grant.
+    reception_refund = client.post(f"/api/v1/payments/{pid}/refund", headers=h)
+    assert reception_refund.status_code == 403
+    ungranted_refund = client.post(f"/api/v1/payments/{pid}/refund", headers=manager_without_grant)
+    assert ungranted_refund.status_code == 403
+    assert ungranted_refund.json()["error"]["code"] == "permission_required"
+
+    r = client.post(f"/api/v1/payments/{pid}/refund", headers=refund_operator["headers"])
     assert r.status_code == 200, r.text
     assert r.json()["status"] == "refunded"
+    from db.base import get_session_factory
+    from db.models import AuditLog
+
+    with get_session_factory()() as session:
+        audit_row = (
+            session.query(AuditLog).filter_by(action="payment_refunded", entity_id=pid).one()
+        )
+        assert audit_row.actor_user_id == refund_operator["user_id"]
     refund_reference = r.json()["refund_reference"]
     assert refund_reference
     assert r.json()["reference_id"] == body["reference_id"]
@@ -417,7 +467,7 @@ def test_refund_marks_refunded_and_finance_subtracts_it(
     assert [x["id"] for x in listing] == [pid]
     assert listing[0]["refund_reference"] == refund_reference
 
-    again = client.post(f"/api/v1/payments/{pid}/refund", headers=h)
+    again = client.post(f"/api/v1/payments/{pid}/refund", headers=refund_operator["headers"])
     assert again.status_code == 400
     assert again.json()["error"]["code"] == "already_refunded"
 
@@ -425,7 +475,9 @@ def test_refund_marks_refunded_and_finance_subtracts_it(
     assert st["refunded"] and st["state"] == "refunded"
 
 
-def test_wallet_and_pending_payments_are_not_refundable(client, bank, reception, member_id):
+def test_wallet_and_pending_payments_are_not_refundable(
+    client, bank, reception, refund_operator, member_id
+):
     h = reception
     ch = client.post(
         "/api/v1/payments/wallet/charge",
@@ -440,7 +492,7 @@ def test_wallet_and_pending_payments_are_not_refundable(client, bank, reception,
     )
     assert w.status_code == 200, w.text
     wid = w.json()["id"]
-    r = client.post(f"/api/v1/payments/{wid}/refund", headers=h)
+    r = client.post(f"/api/v1/payments/{wid}/refund", headers=refund_operator["headers"])
     assert r.status_code == 400
     assert r.json()["error"]["code"] == "wallet_not_gateway"
 
@@ -449,12 +501,14 @@ def test_wallet_and_pending_payments_are_not_refundable(client, bank, reception,
         json={"member_id": member_id, "amount_rial": 50_000, "method": "card_to_card"},
         headers=h,
     ).json()
-    r2 = client.post(f"/api/v1/payments/{p['id']}/refund", headers=h)
+    r2 = client.post(f"/api/v1/payments/{p['id']}/refund", headers=refund_operator["headers"])
     assert r2.status_code == 400
     assert r2.json()["error"]["code"] == "not_refundable"  # پرداخت‌نشده برگشت ندارد
 
 
-def test_mock_gateway_has_no_refund_path(client, monkeypatch, reception, member_id):
+def test_mock_gateway_has_no_refund_path(
+    client, monkeypatch, reception, refund_operator, member_id
+):
     """refunded یک مسیر درگاهی است؛ Mock عمداً refund ندارد تا پولِ آزمایشیِ درون‌پروسه
     با «بازگشت داده‌شده» اشتباه گرفته نشود — درگاه باید صریحاً پشتیبانی کند."""
     from db.base import get_session_factory
@@ -474,7 +528,7 @@ def test_mock_gateway_has_no_refund_path(client, monkeypatch, reception, member_
     import modules.payments.gateway as gateway_mod
 
     monkeypatch.setattr(gateway_mod, "get_gateway", lambda: gateway_mod.MockGateway())
-    r = client.post(f"/api/v1/payments/{p['id']}/refund", headers=h)
+    r = client.post(f"/api/v1/payments/{p['id']}/refund", headers=refund_operator["headers"])
     assert r.status_code == 400
     assert r.json()["error"]["code"] == "refund_unsupported"
 

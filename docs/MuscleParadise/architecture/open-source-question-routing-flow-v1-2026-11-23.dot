@@ -1,0 +1,138 @@
+digraph OpenSourceQuestionRouting {
+  graph [
+    rankdir=LR, bgcolor="#0B1220", pad="0.34", nodesep="0.22", ranksep="0.72",
+    splines=ortho, compound=true, newrank=true, dpi=180,
+    fontname="DejaVu Sans", fontsize=24, fontcolor="#EEF4FC",
+    label="مسیریابی سؤال‌ها به منابع مستقل → منطق تمرین + لایهٔ تغذیهٔ مستقل → برنامهٔ واحد",
+    labelloc="t", labeljust="c"
+  ];
+  node [shape=box, style="rounded,filled", fontname="DejaVu Sans", fontsize=12,
+        color="#49627D", fillcolor="#15243A", fontcolor="#EEF4FC",
+        penwidth=1.25, margin="0.16,0.10"];
+  edge [fontname="DejaVu Sans", fontsize=9, color="#8296AD", fontcolor="#DCE6F1",
+        penwidth=1.05, arrowsize=0.62];
+
+  subgraph cluster_questions {
+    label="۱ · پرسش‌های ورزشکار و مربی؛ هر Q/C route خودش را دارد";
+    color="#6CAAF8"; fontcolor="#6CAAF8"; style="rounded"; penwidth=1.5;
+    q01 [label="Q01\nپروفایل / baseline"];
+    q02 [label="Q02\nهدف / معیار موفقیت"];
+    q03 [label="Q03\nسابقه / برنامه قبلی"];
+    q04 [label="Q04\nسلامت / درد / علائم"];
+    q05 [label="Q05\nزمان / روزهای تمرین"];
+    q06 [label="Q06\nتجهیزات / محل"];
+    q07 [label="Q07\nتغذیه / آلرژی"];
+    q08 [label="Q08\nخواب / ریکاوری / هوازی"];
+    q09 [label="Q09\nترجیح حرکت / درد"];
+    q10 [label="Q10\nخودارزیابی مهارت"];
+    q11 [label="Q11\nتعهد / موانع"];
+    c01 [label="C01\nمرور و اصلاح داده", fillcolor="#211D39"];
+    c02 [label="C02\nJP7 خام / protocol", fillcolor="#211D39"];
+    c03 [label="C03\nپیکرسنجی", fillcolor="#211D39"];
+    c04 [label="C04\nارزیابی مهارت", fillcolor="#211D39"];
+    c05 [label="C05\nریسک / red flags", fillcolor="#211D39"];
+    c06 [label="C06\nمحدودیت آسیب", fillcolor="#211D39"];
+    c07 [label="C07\nارجاع", fillcolor="#211D39"];
+    c08 [label="C08\nآزمون عملکرد", fillcolor="#211D39"];
+    c09 [label="C09\nهدف / metric", fillcolor="#211D39"];
+    c10 [label="C10\nطراحی / override", fillcolor="#211D39"];
+    c11 [label="C11\nتصویب / امضا", fillcolor="#211D39"];
+    {rank=same; q01; q02; q03; q04; q05; q06; q07; q08; q09; q10; q11;}
+    {rank=same; c01; c02; c03; c04; c05; c06; c07; c08; c09; c10; c11;}
+  }
+
+  subgraph cluster_private {
+    label="۲ · DB خصوصی عضو؛ دادهٔ شخصی از منابع عمومی نمی‌آید";
+    color="#51D6C2"; fontcolor="#51D6C2"; style="rounded"; penwidth=1.5;
+    profile [label="MemberProfileDB\nconsent + profile + availability", fillcolor="#142B38", color="#51D6C2"];
+    measure [label="Measurement / Assessment DB\nraw site + unit + protocol + assessor", fillcolor="#142B38", color="#51D6C2"];
+    history [label="ProgramHistory / TrainingLog DB\nversion + planned/actual dose slots", fillcolor="#142B38", color="#51D6C2"];
+    safety [label="SafetyCase / Referral DB\nprivate restriction + status + expiry", fillcolor="#301B2A", color="#FF7887"];
+    goals [label="Goal / Preference / Adherence DB\nanswer snapshots + provenance", fillcolor="#142B38", color="#51D6C2"];
+    approval [label="Approval / Audit DB\nC11 + actor + reason + time", fillcolor="#211D39", color="#B99AFB"];
+    {rank=same; profile; measure; history; safety; goals; approval;}
+  }
+
+  subgraph cluster_external {
+    label="۳ · source registry؛ هر source_id جدا؛ بدون ارسال PII عضو به repo بیرونی";
+    color="#FFC56E"; fontcolor="#FFC56E"; style="rounded"; penwidth=1.5;
+    movement [label="Exercise Catalog stores\nEX01–EX05 · WGER-EX · EX09/10\nهر repo جدا؛ canonical view پس از dedupe/review", fillcolor="#30271A", color="#FFC56E"];
+    anatomy [label="Anatomy / Media stores\nAN01 · VIS01/02 · BIO04\nasset-rights و license به‌ازای فایل", fillcolor="#211D39", color="#B99AFB"];
+    rehab [label="Biomechanics / Rehab stores + tools\nBIO01–BIO11\ncompute / dataset / evidence از هم جدا", fillcolor="#301B2A", color="#FF7887"];
+    loads [label="Performance / Training Science stores\nTL01–TL08\ncalculatorها روی logs؛ datasetها جدا", fillcolor="#15243A", color="#6CAAF8"];
+    evidence [label="Evidence / Education registry\nEDU01–EDU03 + BIO09–BIO11\nهر book/page/source و citation جدا", fillcolor="#211D39", color="#B99AFB"];
+    nutrition [label="Nutrition stores — namespace مجزا\nNUT01 = wger food/meal adapter\nMET ≠ food nutrient database", fillcolor="#30271A", color="#FFC56E"];
+    renderer [label="Document tools\nPDF01 Typst · PDF02 Vazirmatn\nrender-only؛ نه ورودی planner", fillcolor="#15243A", color="#6CAAF8"];
+    {rank=same; movement; anatomy; rehab; loads; evidence; nutrition; renderer;}
+  }
+
+  subgraph cluster_domain {
+    label="۴ · کنترل منبع و لایه‌های تخصصی";
+    color="#B99AFB"; fontcolor="#B99AFB"; style="rounded"; penwidth=1.5;
+    gate [label="Source Registry Gate\ncommit/hash + schema + license/data rights\nquality + scope + provenance", fillcolor="#30271A", color="#FFC56E"];
+    canonical [label="Domain read models\nExercise · Assessment · Performance\nEvidence · Nutrition؛ منبع خام محفوظ", fillcolor="#15243A", color="#B99AFB"];
+    jp7engine [label="C02 / JP7 engine (proposed)\nraw sites → quality + Equation Registry gate\n→ immutable derived snapshot + comparable trend\nlocked until schema/site/evidence review", fillcolor="#142B38", color="#51D6C2"];
+    perfcalc [label="L10 · Load / Performance logic\nOpenAthlete + training-load\n+ metric selection + validated inputs", fillcolor="#142B38", color="#51D6C2"];
+    rehabreview [label="L5 · Biomech / Rehab review\nconsent + calibration + coach/clinician\nنه diagnosis/clearance خودکار", fillcolor="#301B2A", color="#FF7887"];
+    nutritionlogic [label="L8 · Nutrition logic\nQ07 + wger-N + allergy/consent\noptional, مستقل از training planner", fillcolor="#30271A", color="#FFC56E"];
+    ruleengine [label="L10 · Versioned programming rules\ngoal + limits + evidence + scores\nhard safety gate قبل از ranker", fillcolor="#142B38", color="#51D6C2"];
+    {rank=same; gate; canonical; perfcalc; rehabreview; nutritionlogic; ruleengine;}
+  }
+
+  subgraph cluster_output {
+    label="۵ · خروجی برنامهٔ جامع";
+    color="#7BE0A2"; fontcolor="#7BE0A2"; style="rounded"; penwidth=1.5;
+    safe [label="Safety / eligibility gate\nstop, hold, referral, or pass", fillcolor="#301B2A", color="#FF7887"];
+    compose [label="Program Composer\ntraining + optional nutrition +\napproved support modules", fillcolor="#17352F", color="#7BE0A2", fontsize=14];
+    coach [label="Coach C11\napprove / adjust / reject", fillcolor="#30271A", color="#FFC56E"];
+    version [label="ProgramVersion n+1\nimmutable canonical data + schema/rule/catalog version + content hash", fillcolor="#17352F", color="#7BE0A2"];
+    deliver [label="App + complete private multi-page PDF\nPDF rendered from canonical ProgramVersion · QR on final page\nQR resolves full version after auth/ownership check; no OCR", fillcolor="#211D39", color="#B99AFB"];
+    feedback [label="next-cycle logs + measurements\nback to private stores", fillcolor="#142B38", color="#51D6C2"];
+    {rank=same; safe; compose; coach; version; deliver; feedback;}
+  }
+
+  // Q/C -> exact private record domains
+  q01 -> profile; q01 -> measure;
+  q02 -> goals; q02 -> movement; q02 -> loads;
+  q03 -> history; q03 -> loads;
+  q04 -> safety; q04 -> rehab; q04 -> evidence;
+  q05 -> profile;
+  q06 -> movement;
+  q07 -> nutrition;
+  q08 -> history; q08 -> loads;
+  q09 -> goals; q09 -> movement; q09 -> anatomy;
+  q10 -> measure; q10 -> rehab; q10 -> evidence;
+  q11 -> goals; q11 -> history;
+  c01 -> profile; c01 -> measure;
+  c02 -> measure; c03 -> measure;
+  c04 -> measure; c04 -> rehab; c04 -> evidence;
+  c05 -> safety; c05 -> evidence;
+  c06 -> safety; c06 -> rehab;
+  c07 -> safety; c07 -> evidence;
+  c08 -> measure; c08 -> history; c08 -> loads; c08 -> rehab;
+  c09 -> goals; c09 -> loads; c09 -> evidence;
+  c10 -> movement; c10 -> loads; c10 -> evidence;
+  c11 -> approval; c11 -> renderer;
+
+  // Isolated sources pass through their own registry contracts.
+  movement -> gate; anatomy -> gate; rehab -> gate; loads -> gate;
+  evidence -> gate; nutrition -> gate;
+  profile -> canonical; measure -> canonical; history -> canonical;
+  measure -> jp7engine [label="C02 raw readings"];
+  jp7engine -> canonical [label="approved derived view only"];
+  safety -> safe; goals -> canonical; approval -> coach;
+  gate -> canonical;
+  canonical -> perfcalc [label="actual logs only"];
+  canonical -> ruleengine;
+  perfcalc -> ruleengine;
+  canonical -> rehabreview;
+  rehabreview -> safe [label="reviewed restriction only"];
+  canonical -> nutritionlogic [label="NUT namespace only"];
+  profile -> nutritionlogic [label="consented Q07"];
+  nutritionlogic -> compose [label="optional module", style=dashed, color="#FFC56E"];
+  ruleengine -> safe;
+  safe -> compose [label="pass only", color="#7BE0A2"];
+  compose -> coach; coach -> version [label="approved"];
+  version -> deliver; renderer -> deliver;
+  deliver -> feedback; feedback -> history; feedback -> measure; feedback -> profile;
+}

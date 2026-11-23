@@ -123,6 +123,7 @@ def require_roles(*roles: str):
     # برچسب برای گیتِ «هر مسیر یک guard دارد» (tests/integration/test_route_guards.py):
     # بدون برچسب، گیت نمی‌تواند guardهای همین ماژول را از تابع‌های عادی تفکیک کند.
     _guard.__rbac__ = "roles"  # type: ignore[attr-defined]
+    _guard.__roles__ = tuple(roles)  # type: ignore[attr-defined]
     return _guard
 
 

@@ -124,7 +124,7 @@ def test_member_cancels_own_booking_and_duplicate_cancel_is_rejected(client: Tes
     member_id = _member(client, staff, "09120000031")
     member = _member_headers(member_id)
     class_id = _create_class(client, staff)
-    _book(client, staff, class_id, member_id)
+    original = _book(client, staff, class_id, member_id)
 
     before = client.get("/api/v1/classes", headers=member).json()[0]
     assert before["member_booking_status"] == "confirmed"
@@ -148,6 +148,61 @@ def test_member_cancels_own_booking_and_duplicate_cancel_is_rejected(client: Tes
     assert after["member_booking_status"] is None
     assert after["confirmed"] == 0
     assert after["seats_left"] == 1
+
+    rebooked = client.post(
+        "/api/v1/classes/book",
+        json={"class_id": class_id, "member_id": member_id},
+        headers=member,
+    )
+    assert rebooked.status_code == 200, rebooked.text
+    assert rebooked.json()["id"] == original["id"]  # قید یکتا: همان ردیف دوباره فعال می‌شود
+    assert rebooked.json()["status"] == "confirmed"
+    listed_again = client.get("/api/v1/classes", headers=member).json()[0]
+    assert listed_again["member_booking_status"] == "confirmed"
+    assert listed_again["confirmed"] == 1
+
+
+def test_rebooked_waitlisted_member_joins_queue_at_tail(client: TestClient) -> None:
+    staff = _user_headers("manager")
+    first_id = _member(client, staff, "09120000051")
+    waiting_id = _member(client, staff, "09120000052")
+    later_id = _member(client, staff, "09120000053")
+    first = _member_headers(first_id)
+    waiting = _member_headers(waiting_id)
+    later = _member_headers(later_id)
+    class_id = _create_class(client, staff, capacity=1)
+
+    assert _book(client, staff, class_id, first_id)["status"] == "confirmed"
+    assert _book(client, staff, class_id, waiting_id)["status"] == "waitlisted"
+    assert (
+        client.post(
+            "/api/v1/classes/cancel",
+            json={"class_id": class_id, "member_id": first_id},
+            headers=first,
+        ).status_code
+        == 200
+    )
+    assert _book(client, staff, class_id, later_id)["status"] == "waitlisted"
+
+    rebooked = client.post(
+        "/api/v1/classes/book",
+        json={"class_id": class_id, "member_id": first_id},
+        headers=first,
+    )
+    assert rebooked.status_code == 200, rebooked.text
+    assert rebooked.json()["status"] == "waitlisted"
+
+    # لغو نفر تأییدشده باید C را جلوتر از A بفرستد؛ رزرو مجدد نباید با id قدیمی صف را دور بزند.
+    cancelled = client.post(
+        "/api/v1/classes/cancel",
+        json={"class_id": class_id, "member_id": waiting_id},
+        headers=waiting,
+    )
+    assert cancelled.status_code == 200, cancelled.text
+    later_view = client.get("/api/v1/classes", headers=later).json()[0]
+    first_view = client.get("/api/v1/classes", headers=first).json()[0]
+    assert later_view["member_booking_status"] == "confirmed"
+    assert first_view["member_booking_status"] == "waitlisted"
 
 
 def test_cancelling_confirmed_booking_promotes_waitlist_and_refreshes_status(

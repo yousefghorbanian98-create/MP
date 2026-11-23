@@ -9,7 +9,7 @@ from fastapi import APIRouter, Depends, File, Query, Request, UploadFile
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field
 
-from app.deps import CurrentUser, DbSession, require_permission
+from app.deps import CurrentUser, DbSession, require_permission, require_roles
 from app.errors import ApiError, NotFoundError
 from app.ids import MAX_SAFE_ID, Id
 from app.security.grants import require_grant
@@ -171,9 +171,13 @@ def fail_payment(payment_id: int, db: DbSession):
     "/{payment_id}/refund",
     response_model=PaymentOut,
     summary="بازگشت وجه از درگاه (M110)",
+    dependencies=[
+        Depends(require_roles("manager", "admin")),
+        Depends(require_grant("finance.write")),
+    ],
 )
-def refund_payment_endpoint(payment_id: int, db: DbSession):
-    return service.refund_payment(db, payment_id)
+def refund_payment_endpoint(payment_id: int, db: DbSession, user: CurrentUser):
+    return service.refund_payment(db, payment_id, actor=user)
 
 
 @router.get("", response_model=list[PaymentOut], summary="لیست پرداخت‌ها (US-403)")

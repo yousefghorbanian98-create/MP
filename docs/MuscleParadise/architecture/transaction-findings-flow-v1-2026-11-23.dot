@@ -1,0 +1,61 @@
+digraph TransactionFindings {
+  graph [
+    rankdir=TB, bgcolor="#0B1220", pad="0.34", nodesep="0.27", ranksep="0.60",
+    splines=ortho, compound=true, newrank=true, dpi=180,
+    fontname="DejaVu Sans", fontsize=23, fontcolor="#EEF4FC",
+    label="جریان‌های تراکنشی راستی‌آزمایی‌شده · قبل و بعد از اصلاح\nTestClient + SQLite موقت + دادهٔ مصنوعی؛ نه بانک/استقرار production",
+    labelloc="t", labeljust="c"
+  ];
+  node [shape=box, style="rounded,filled", fontname="DejaVu Sans", fontsize=12,
+        color="#49627D", fillcolor="#15243A", fontcolor="#EEF4FC",
+        penwidth=1.2, margin="0.16,0.10"];
+  edge [fontname="DejaVu Sans", fontsize=9, color="#8296AD", fontcolor="#DCE6F1",
+        penwidth=1.0, arrowsize=0.62];
+
+  subgraph cluster_checkout {
+    label="A · POST /shop/checkout — آنلاین در config پیش‌فرض بسته؛ سناریوی پول با feature flag روشن آزموده شد";
+    color="#6CAAF8"; fontcolor="#6CAAF8"; style="rounded"; penwidth=1.5;
+    request [label="درخواست checkout\nسبد و قیمت از DB؛ روش wallet یا درگاه", color="#6CAAF8"];
+    gate [label="Shop feature gate\nپیش‌فرض خاموش → 409 و توقف\nآزمون سناریوی مالی: flag روشن", fillcolor="#30271A", color="#FFC56E"];
+    savepoint [label="یک SAVEPOINT برای عملیات checkout\nOrder + OrderItems + کسر stock\nبدون commit میانی", fillcolor="#15243A", color="#6CAAF8"];
+    wallet [label="wallet_pay(commit=False)\nموجودی دوباره بررسی می‌شود", fillcolor="#211D39", color="#B99AFB"];
+    enough [shape=diamond, label="اعتبار کافی؟", fillcolor="#211D39", color="#B99AFB"];
+    rollback [label="خیر → HTTP 400\nSAVEPOINT rollback\nسبد باقی می‌ماند؛ Order/Payment/debit=0\nstock و موجودی کیف‌پول بدون تغییر", fillcolor="#142B38", color="#51D6C2"];
+    commit [label="بله → یک Payment از نوع wallet و paid\nWalletTransaction debit + LedgerEntry\nOrder paid و سبد پاک می‌شود\nیک commit نهایی", fillcolor="#142B38", color="#51D6C2"];
+    oldbug [label="یافتهٔ پیش از اصلاح (بازتولیدشده)\ncreate_payment.commit() قبل از wallet_pay؛\nناکافی → 400 ولی Order/Payment/کاهش stock باقی می‌ماند\nهمچنین پرداخت موفق یک Payment pending یتیم می‌ساخت", fillcolor="#301B2A", color="#FF7887", fontcolor="#FFE8EC"];
+    regression [label="Regression tests پس از اصلاح\nناکافی: هیچ side effect؛ موفق: فقط یک Payment paid\nM59 shop suite + TestClient", fillcolor="#142B38", color="#51D6C2"];
+    request -> gate -> savepoint -> wallet -> enough;
+    enough -> rollback [label="خیر", color="#7BE0A2"];
+    enough -> commit [label="بله", color="#7BE0A2"];
+    oldbug -> regression [label="resolved", color="#7BE0A2"];
+  }
+
+  subgraph cluster_classes {
+    label="B · رزرو کلاس پس از لغو";
+    color="#B99AFB"; fontcolor="#B99AFB"; style="rounded"; penwidth=1.5;
+    unique [label="UniqueConstraint(class_id, member_id)\nیک ردیف برای زوج کلاس/عضو", fillcolor="#30271A", color="#FFC56E"];
+    cancelled [label="قبلاً cancelled؟\nاگر بله: همان ردیف دوباره فعال می‌شود؛\ncreated_at برای نوبت جدید تازه می‌شود", color="#6CAAF8"];
+    capacity [label="محاسبهٔ ظرفیت فعال\nconfirmed → رزرو قطعی\nظرفیت پر → waitlisted", fillcolor="#15243A", color="#6CAAF8"];
+    fifo [label="ارتقای waitlist با created_at سپس id\nرزرو مجدد به انتهای صف می‌رود؛\nشناسهٔ قدیمی صف را دور نمی‌زند", fillcolor="#142B38", color="#51D6C2"];
+    oldclass [label="پیش از اصلاح: book → INSERT دوم → 409\nپس از اصلاح: لغو و رزرو مجدد هر دو 200\nتست جداگانه FIFO لیست انتظار را قفل می‌کند", fillcolor="#142B38", color="#51D6C2"];
+    unique -> cancelled -> capacity -> fifo;
+    cancelled -> oldclass [style=dashed, color="#8296AD", arrowhead=none];
+  }
+
+  subgraph cluster_refund {
+    label="C · POST /payments/{id}/refund — مسیر حساس پولی";
+    color="#FFC56E"; fontcolor="#FFC56E"; style="rounded"; penwidth=1.5;
+    broad [label="پیش از اصلاح\nCasbin: reception روی /payments/* مجاز\nroute بدون grant/role guard", fillcolor="#301B2A", color="#FF7887", fontcolor="#FFE8EC"];
+    guard [label="پس از اصلاح: DENY برای reception\nroute: manager/admin + finance.write\nsuper_admin مجاز", fillcolor="#30271A", color="#FFC56E"];
+    denied [label="reception → 403\nmanager بدون grant → 403 permission_required", fillcolor="#142B38", color="#51D6C2"];
+    allowed [label="manager دارای finance.write\nrefund صندباکس + AuditLog با actor id\nهر دو در یک commit؛ تکرار → already_refunded", fillcolor="#142B38", color="#51D6C2"];
+    broad -> guard [label="hardening", color="#7BE0A2"];
+    guard -> denied;
+    guard -> allowed;
+  }
+
+  note [shape=note, label="نتیجهٔ این اجراها فقط برای کد و دادهٔ آزمایشی است.\nخرید online خاموش می‌ماند پیش‌فرض؛\nاستقرار عمومی، درگاه زنده و E2E دستگاه آزموده نشده‌اند.", fillcolor="#15243A", color="#8296AD"];
+  rollback -> note [style=dotted, arrowhead=none];
+  fifo -> note [style=dotted, arrowhead=none];
+  allowed -> note [style=dotted, arrowhead=none];
+}

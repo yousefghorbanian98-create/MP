@@ -30,6 +30,8 @@ MATRIX = [
     ("coach", "/api/v1/nutrition/plans", "POST", True),
     ("reception", "/api/v1/members", "POST", True),
     ("reception", "/api/v1/payments/1/verify", "POST", True),
+    ("reception", "/api/v1/payments/1/refund", "POST", False),
+    ("manager", "/api/v1/payments/1/refund", "POST", True),
     ("reception", "/api/v1/payments/wallet/charge", "POST", True),
     ("reception", "/api/v1/face/checkin", "POST", True),
     ("reception", "/api/v1/programs/2/approve", "POST", False),
