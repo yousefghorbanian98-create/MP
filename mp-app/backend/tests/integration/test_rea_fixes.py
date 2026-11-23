@@ -54,15 +54,15 @@ def test_super_admin_not_locked_out_by_require_roles(client) -> None:
     # گزارش‌ها (require_roles admin/coach)
     res = client.get("/api/v1/population/paths", headers=h)
     assert res.status_code == 200, res.text
-    # گیت جمعیتی (قبلاً manager/admin/coach)
-    res = client.post("/api/v1/population/gate-check?path=adult", headers=h)
+    # قرارداد بدنهٔ JSON با Flutter
+    res = client.post("/api/v1/population/gate-check", json={"path": "adult"}, headers=h)
     assert res.status_code == 200, res.text
 
 
 def test_member_intake_flow_not_blocked(client) -> None:
     """باگ ۲ — عضو باید بتواند فرم ورودی خودش را کامل کند (gate-check + intake/next)."""
     h = _headers("member")
-    res = client.post("/api/v1/population/gate-check?path=adult", headers=h)
+    res = client.post("/api/v1/population/gate-check", json={"path": "adult"}, headers=h)
     assert res.status_code == 200, res.text
     res = client.post(
         "/api/v1/population/intake/next",

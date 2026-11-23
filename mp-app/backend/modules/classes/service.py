@@ -93,19 +93,36 @@ def cancel(db: Session, *, class_id: int, member_id: int, user=None) -> ClassBoo
     )
     if b is None or b.status == "cancelled":
         raise NotFoundError("رزروی یافت نشد")
+    freed_confirmed_seat = b.status == "confirmed"
     b.status = "cancelled"
-    # ارتقای نفر اول لیست انتظار
-    next_waiting = (
-        db.execute(
-            select(ClassBooking)
-            .where(ClassBooking.class_id == class_id, ClassBooking.status == "waitlisted")
-            .order_by(ClassBooking.created_at.asc(), ClassBooking.id.asc())
+    # Only a confirmed booking frees a seat. Recheck capacity before promotion so
+    # legacy over-capacity data cannot be made worse by a cancellation.
+    if freed_confirmed_seat:
+        db.flush()
+        cls = db.get(GymClass, class_id)
+        confirmed = (
+            db.execute(
+                select(func.count())
+                .select_from(ClassBooking)
+                .where(ClassBooking.class_id == class_id, ClassBooking.status == "confirmed")
+            ).scalar()
+            or 0
         )
-        .scalars()
-        .first()
-    )
-    if next_waiting is not None:
-        next_waiting.status = "confirmed"
+        if cls is not None and confirmed < cls.capacity:
+            next_waiting = (
+                db.execute(
+                    select(ClassBooking)
+                    .where(
+                        ClassBooking.class_id == class_id,
+                        ClassBooking.status == "waitlisted",
+                    )
+                    .order_by(ClassBooking.created_at.asc(), ClassBooking.id.asc())
+                )
+                .scalars()
+                .first()
+            )
+            if next_waiting is not None:
+                next_waiting.status = "confirmed"
     db.commit()
     db.refresh(b)
     return b

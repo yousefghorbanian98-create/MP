@@ -231,3 +231,33 @@ def test_cancelling_confirmed_booking_promotes_waitlist_and_refreshes_status(
     assert waiting_view["confirmed"] == 1
     assert waiting_view["waitlisted"] == 0
     assert waiting_view["seats_left"] == 0
+
+
+def test_cancelling_waitlisted_booking_does_not_overbook_class(client: TestClient) -> None:
+    staff = _user_headers("manager")
+    confirmed_id = _member(client, staff, "09120000061")
+    cancelled_id = _member(client, staff, "09120000062")
+    next_waiting_id = _member(client, staff, "09120000063")
+    confirmed = _member_headers(confirmed_id)
+    cancelled = _member_headers(cancelled_id)
+    next_waiting = _member_headers(next_waiting_id)
+    class_id = _create_class(client, staff, capacity=1)
+
+    assert _book(client, staff, class_id, confirmed_id)["status"] == "confirmed"
+    assert _book(client, staff, class_id, cancelled_id)["status"] == "waitlisted"
+    assert _book(client, staff, class_id, next_waiting_id)["status"] == "waitlisted"
+
+    response = client.post(
+        "/api/v1/classes/cancel",
+        json={"class_id": class_id, "member_id": cancelled_id},
+        headers=cancelled,
+    )
+    assert response.status_code == 200, response.text
+
+    confirmed_view = client.get("/api/v1/classes", headers=confirmed).json()[0]
+    next_waiting_view = client.get("/api/v1/classes", headers=next_waiting).json()[0]
+    assert confirmed_view["confirmed"] == 1
+    assert confirmed_view["seats_left"] == 0
+    assert next_waiting_view["member_booking_status"] == "waitlisted"
+    assert next_waiting_view["confirmed"] == 1
+    assert next_waiting_view["waitlisted"] == 1

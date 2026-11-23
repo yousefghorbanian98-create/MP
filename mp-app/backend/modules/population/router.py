@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from app.deps import require_permission
 from modules.population.gates import POPULATION_PATHS, assert_generation_allowed
@@ -15,6 +15,10 @@ router = APIRouter(
     # M43-c3 (D-004): casbin تنها مرجع مجوز — نقش‌ها در security/rbac.py
     dependencies=[Depends(require_permission())],
 )
+
+
+class GateCheckIn(BaseModel):
+    path: str = Field(min_length=1, max_length=80)
 
 
 class IntakeIn(BaseModel):
@@ -29,8 +33,8 @@ def paths():
 
 
 @router.post("/gate-check", summary="گیت صریح تولید — توقف خودکار برای مسیر غیرفعال")
-def gate_check(path: str):
-    return assert_generation_allowed(path)
+def gate_check(payload: GateCheckIn):
+    return assert_generation_allowed(payload.path)
 
 
 @router.post("/intake/next", summary="سؤال‌های تکمیلی پویا (هدف‌محور)")
