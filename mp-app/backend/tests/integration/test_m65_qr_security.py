@@ -61,6 +61,42 @@ def _checkin_count(member_id: int) -> int:
         )
 
 
+def test_face_checkin_fails_closed_without_verified_biometric_proof(client, auth):
+    """Consent/enrollment do not make an unverified method=face claim a match."""
+    import base64
+
+    staff = auth("reception")
+    member, member_headers = _member(client, staff)
+    _activate_membership(client, staff, member["id"])
+
+    payload = {"member_id": member["id"], "method": "face"}
+    without_consent = client.post("/api/v1/face/checkin", json=payload, headers=member_headers)
+    assert without_consent.status_code == 409, without_consent.text
+    assert without_consent.json()["error"]["code"] == "face_checkin_unavailable"
+    assert _checkin_count(member["id"]) == 0
+
+    consent = client.post(
+        "/api/v1/face/consent", json={"member_id": member["id"]}, headers=member_headers
+    )
+    assert consent.status_code == 200, consent.text
+    enrollment = client.post(
+        "/api/v1/face/enroll",
+        json={
+            "member_id": member["id"],
+            "embedding_b64": base64.b64encode(bytes([8]) * 128).decode(),
+        },
+        headers=member_headers,
+    )
+    assert enrollment.status_code == 200, enrollment.text
+
+    with_consent_and_template = client.post(
+        "/api/v1/face/checkin", json=payload, headers=member_headers
+    )
+    assert with_consent_and_template.status_code == 409, with_consent_and_template.text
+    assert with_consent_and_template.json()["error"]["code"] == "face_checkin_unavailable"
+    assert _checkin_count(member["id"]) == 0
+
+
 @pytest.mark.parametrize("membership_state", ["missing", "expired"])
 def test_qr_does_not_grant_entry_without_active_membership(client, auth, membership_state):
     """QR نباید قاعدهٔ membership در `service.check_in` را دور بزند."""
@@ -95,7 +131,7 @@ def test_qr_does_not_grant_entry_without_active_membership(client, auth, members
 def test_member_cannot_redeem_another_members_qr(client, auth):
     staff = auth("reception")
     member_a, headers_a = _member(client, staff)
-    member_b, headers_b = _member(client, staff)
+    _, headers_b = _member(client, staff)
     _activate_membership(client, staff, member_a["id"])
     token_a = _qr(client, headers_a)
 
@@ -149,7 +185,7 @@ def test_expired_qr_token_is_rejected(client, auth):
 def test_qr_token_cannot_be_used_as_a_staff_access_token(client, auth):
     """QR subject is a member ID, not a User ID or a normal access-token subject."""
     manager = auth("manager")
-    member, member_headers = _member(client, manager)
+    _, member_headers = _member(client, manager)
     token = _qr(client, member_headers)
 
     result = client.get("/api/v1/admin/flags", headers={"Authorization": f"Bearer {token}"})

@@ -1453,22 +1453,6 @@
         },
         {
           "method": "POST",
-          "path": "/api/v1/face/checkin",
-          "in_contract": true,
-          "guards": [
-            "permission"
-          ],
-          "roles": [
-            "member",
-            "coach",
-            "reception",
-            "manager",
-            "admin",
-            "super_admin"
-          ]
-        },
-        {
-          "method": "POST",
           "path": "/api/v1/face/consent",
           "in_contract": true,
           "guards": [

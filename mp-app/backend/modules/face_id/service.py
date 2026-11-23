@@ -7,7 +7,7 @@ from datetime import UTC, datetime
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.errors import ForbiddenError, NotFoundError
+from app.errors import ConflictError, ForbiddenError, NotFoundError
 from db.models import BiometricConsent, CheckIn, FaceTemplate, Member, Membership
 
 
@@ -201,6 +201,13 @@ def _check_in(
     from app.security.ownership import ensure_member_scope
 
     ensure_member_scope(db, user, member_id)
+    if method == "face":
+        # The endpoint accepts no verified probe or liveness evidence. Never record
+        # an account-authenticated request as a successful biometric match.
+        raise ConflictError(
+            "تطبیق چهره در این مسیر فعال نیست؛ برای چک‌این از QR یک‌بارمصرف استفاده کنید",
+            code="face_checkin_unavailable",
+        )
     member = db.get(Member, member_id)
     if member is None:
         raise NotFoundError("عضو یافت نشد")

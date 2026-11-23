@@ -1,15 +1,9 @@
-/// M61 / D1+D2 — تب «چهره» در اپ عضو.
+/// M61 / D1+D2 — consent display and fail-closed face attendance.
 ///
-/// دو باگ اثبات‌شده با curl زنده:
-///   D1: دکمهٔ «ثبت چهره» → `POST /face/enroll` با نقش member همیشه ۴۰۳
-///       (rbac فقط DELETE داشت). حالا مسیر باز شد، ولی بدون رضایت هم ۴۰۳ است؛
-///       پس UI باید **قبل از کلیک** بداند و راه رضایت را نشان دهد.
-///   D2: دکمهٔ «چک‌این» بدنهٔ `{member_id, image_base64}` می‌فرستاد به مسیری
-///       که اسکیمایش `{member_id, method}` است → ۴۲۲ «Field required»، یعنی
-///       این تب هیچ‌وقت کار نکرده بود.
-///
-/// این تست شکل درخواست‌ها و گیت رضایت را قفل می‌کند، چون آن دو تنها چیزی
-/// هستند که می‌شود بدون دستگاه واقعی سنجید.
+/// The API has no verified face probe/liveness input. `method=face` used to
+/// record an account-authenticated request as a face match, so the UI must not
+/// offer that action. Consent remains explicit for template enrollment; signed
+/// QR is the supported attendance flow.
 library;
 
 import 'dart:convert';
@@ -95,10 +89,9 @@ void main() {
       expect(
         client.calls.contains('GET /members/me/face-consent'),
         isTrue,
-        reason:
-            'UI باید بداند رضایت دارد یا نه، نه اینکه بعد از کلیک ۴۰۳ بخورد',
+        reason: 'UI باید وضعیت رضایت را پیش از ارائهٔ گزینهٔ ثبت قالب بداند',
       );
-      expect(find.textContaining('رضایت بیومتریک'), findsOneWidget);
+      expect(find.textContaining('قالب بیومتریک'), findsOneWidget);
       expect(find.text('رضایت می‌دهم'), findsOneWidget);
       expect(
         find.text('چک‌این'),
@@ -128,29 +121,23 @@ void main() {
     );
   });
 
-  testWidgets('چک‌این با روش face و بدون image_base64 فرستاده می‌شود (D2)', (
+  testWidgets('با وجود رضایت و template، روش face از UI فراخوانی نمی‌شود', (
     tester,
   ) async {
-    // consent: true → دکمهٔ چک‌این رندر می‌شود
     final client = _FakeClient(consent: true, enrolled: true);
     await tester.pumpWidget(_wrap(client));
     await _openFaceTab(tester);
 
-    await tester.tap(find.text('چک‌این'));
-    await tester.pumpAndSettle();
-
-    final checkin =
-        client.bodies.where((b) => b['path'] == '/face/checkin').toList();
-    expect(checkin, isNotEmpty, reason: 'دکمه باید درخواست را واقعاً بفرستد');
     expect(
-      checkin.single['method'],
-      'face',
-      reason: 'schema سرور: {member_id, method} — نبودِ method همان ۴۲۲ بود',
+      client.calls.where((call) => call == 'POST /face/checkin'),
+      isEmpty,
+      reason: 'تا نبودن تطبیق/اثبات سمت سرور، ادعای face نباید ارسال شود',
     );
     expect(
-      checkin.single.containsKey('image_base64'),
-      isFalse,
-      reason: 'سرور این فیلد را نمی‌پذیرد؛ فرستادنش نشانهٔ باگ قدیمی است',
+      find.textContaining('QR یک‌بارمصرف'),
+      findsOneWidget,
+      reason: 'کاربر باید به مسیر حضور پشتیبانی‌شده هدایت شود',
     );
+    expect(find.text('چک‌این'), findsNothing);
   });
 }
