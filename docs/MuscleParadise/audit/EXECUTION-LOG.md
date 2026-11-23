@@ -751,3 +751,36 @@ WP: 0.4 · F: F‑07 · شاهد: `evidence/after/wp04/` · تصمیم: AD‑11 
 - **باز (از P‑A):** مصرف API منطقه (D‑23)؛ WP 4.1 PARTIAL؛ WP 4.2 DEFERRED؛ WP 4.7 PARTIAL (BLOCKED-ENV)؛ F‑30 OPEN؛ `mp-money-float-cast`؛ گام ruff lint غیرمسدودکننده؛ WP 0.2 BLOCKED؛ WP 1.1/1.2/1.4 PARTIAL.
 - **توقف:** طبق دستور، P‑B شروع نشد تا داوری عددی ممیز.
 
+
+## P‑B — P‑2 درایور قطعیِ UI · پین تاریخ‌های پیش‌فرض P‑A (P‑B‑1)
+
+- **مجوز:** `handoff/MP-BUILDER-PB-AUTHORIZATION-2026-11-22.txt` (ref `arena/2cde32d6-chat2db`) ⇒ `10449` بایت، `920bedd313a56d0b08ac72e88657597865625377e39b5f376a541e85e8461889  /tmp/PB-AUTH.txt` (با انتظار یکسان). محدوده: فقط P‑2؛ ≤۲ کامیت + ۱ بخش LOG + ۱ push؛ بدون PR و merge؛ بدون وابستگی تازه؛ `.github/`، `.semgrep/`، lockfile، requirements و ruleset دست‌نخورده.
+- **شاخه:** `arena/ff32c436-mp`. کامیت‌های P‑A (`eafb335`، `b3e2b29`) روی `origin` بودند ولی شاخهٔ محلی روی `35d4b35` مانده بود؛ با `git reset --mixed origin/arena/ff32c436-mp` (بدون force، بدون تغییر worktree، بدون حذف) به `b3e2b29` همگام شد. محتوای `clock.ts` و `clock.test.ts` در worktree با نسخهٔ کامیت‌شده `cmp` یکسان بود.
+- **قرمز (red‑first) — سه فایل تست پیش از موتور:** `scripts/agent_drive.mjs` موقتاً کنار رفت؛ `npx vitest run tests/driver` ⇒ `Error: Failed to resolve import "../../scripts/agent_drive.mjs"` در `cli.test.tsx`، `driver.test.tsx`، `pins.test.tsx`؛ `Test Files  3 failed (3)`، `Tests  no tests`، rc 1 (`/tmp/drv_red.log`).
+- **قرمز دوم — فیکسچر:** پاسخ `{}` برای مسیرهای فروشگاه/تغذیه ⇒ `TypeError: products.filter is not a function` و `Cannot read properties of undefined (reading 'length')`؛ ۷ تست قرمز (`/tmp/drv_green1.log`). رفع: شکل‌های کمینه از فیکسچرهای تست‌های موجود (`expensesPage`، `nutritionPage`، `shopPage`).
+- **سبز:** `npx vitest run tests/driver` ⇒ `Test Files  2 passed | 1 skipped (3)`، `Tests  17 passed | 1 skipped (18)`، rc 0 (CLI skip عمدی است وقتی `MP_DRIVE_ARGV` تنظیم نشده).
+- **C1 — تجزیهٔ فرمان:** `parseArgv` افعال `render|clock|type|tap|state|snapshot` را با آرگومان ثابت می‌خواند؛ فعل ناشناخته ⇒ `DRV-001`.
+- **C5 — خطاهای شناسه‌دار:** `DRV-002` (صفحهٔ ناشناخته)، `DRV-003` (برچسب/دکمهٔ ناموجود)، `DRV-004` (ساعت نامعتبر یا نسبیِ بدون ساعت قبلی)، `DRV-005` (کنش پیش از render). هر خطا `step`، `message`، `hint` دارد.
+- **C2 — قطعیّت:** دو اجرای CLI با ورودی یکسان `clock 2026-03-20T20:30:00Z render Expenses state`:
+  - `sha256sum` اجرای ۱ = `4e2aa2b68d54dadce4aa973b9967d652715df3d882428aba07e42b2b7fdac2a7`
+  - `sha256sum` اجرای ۲ = `4e2aa2b68d54dadce4aa973b9967d652715df3d882428aba07e42b2b7fdac2a7` (یکسان)
+  - تست موازی در `driver.test.tsx` هم دو اجرا را بایت‌به‌بایت مقایسه می‌کند ⇒ سبز.
+- **C4 — خروجی:** کلیدهای `state` مرتب‌اند (تست سبز)؛ `snapshot` متن DOM می‌نویسد و تست «بدون NUL» دارد.
+- **C6 — زمان:** `npm run -s drive -- …` ⇒ ۳ تا ۴ ثانیه (هدف ≤۳۰ ثانیه).
+- **C8 — دو صفحه:** `Shop` (فرم‌دار، فهرست محصول از `/shop/products`) و `Expenses` (جدولی، `/expenses?from=…&to=…`).
+- **P‑B‑1 — پین چهار پنل (ساعت `2026-03-20T20:30:00Z` ⇒ `2026-03-21`؛ `20:00:00Z` ⇒ `2026-03-20`):**
+  - Nutrition: `GET …/food-logs/member/7/daily?date=2026-03-21` (و `2026-03-20` برای ۲۰:۰۰Z) ✔
+  - PeriodReportPanel: `…/finance/reports/period?kind=month&anchor=2026-03-21` ✔
+  - Expenses: `…/expenses?from=2026-02-19&to=2026-03-21` ✔
+  - AdaptiveNutritionPanel: POST `/nutrition/weight-logs` با `logged_for_date=2026-03-21` ✔
+  - **کنترل منفی:** بدون `clock` ⇒ `date=2026-11-23` (ساعت واقعی sandbox)؛ پس پین‌ها به ساعت درایور وابسته‌اند و بی‌معنا سبز نیستند.
+  - **مستقل از منطقهٔ دستگاه:** `TZ=UTC`، `TZ=America/Los_Angeles`، `TZ=Pacific/Kiritimati` ⇒ هر سه `Tests 4 passed (4)`.
+- **lint / tsc:** `npm run lint` ⇒ rc 0، خروجی خالی (۰/۰) پس از رفع `no-undef` با `/* global */` در خود فایل (بدون تغییر `eslint.config.mjs`) و `no-control-regex`؛ `npx tsc -b` ⇒ rc 0.
+- **تست‌های حوزه:** `tests/driver` + `clock` + nutritionPage + shopPage + periodReportPanel + expensesPage + adaptivePanel ⇒ `Test Files  8 passed | 1 skipped (9)`، `Tests  58 passed | 1 skipped (59)`، rc 0.
+- **کل studio (`npm test`):** rc 0، `Test Files  49 passed | 2 skipped (51)`، `Tests  323 passed | 10 skipped (333)`.
+- **INVENTORY:** `/home/user/venv-mp` دوباره ساخته شد (`pip install -c mp-app/backend/requirements.txt -e 'mp-app/backend[dev]'` ⇒ rc 0، `pip check` ⇒ `No broken requirements found.`، Python 3.11.2). `python scripts/build_audit_inventory.py` ⇒ rc 0؛ `--check` ⇒ rc 0 (`فهرست‌ها هم‌خوان‌اند`)؛ `/api/v1` ⇒ **166** ردیف. تغییر INVENTORY: ۴ فایل جدید (۱۳۵۴ ⇒ ۱۳۵۸)، `package.json` ۵۱ ⇒ ۵۲ خط؛ CHECKLIST بدون تغییر.
+- **package.json (تنها تغییر):** `+    "drive": "node scripts/agent_drive.mjs",` — بدون وابستگی و بدون تغییر lockfile (`git diff 35d4b35 HEAD -- '*package-lock.json' '*requirements.txt'` ⇒ خالی).
+- **کامیت‌ها:** `b2810f1` (کد + تست + `package.json`، ۵ فایل، `+403`)؛ کامیت دوم (این بخش، INVENTORY). `git diff --stat main...HEAD` ⇒ `24 files changed, 619 insertions(+), 63 deletions(-)` (شامل P‑A).
+- **تصمیم‌ها (بدون D‑n جدید؛ D‑25 برای carry‑over منطقهٔ فروشگاه رزرو است):** (۱) موتور در `scripts/agent_drive.mjs` ⇒ تست‌ها با `../../scripts/agent_drive.mjs` وارد می‌شوند؛ ماژول‌های UI با `import()` پویا تا `node` مستقیم فقط CLI را اجرا کند. (۲) CLI از طریق `vitest run tests/driver/cli.test.tsx` با `MP_DRIVE_ARGV`/`MP_DRIVE_OUT` ⇒ هیچ runner جدید. (۳) پاسخ‌های fetch فیکسچرهای کمینه‌اند، نه بک‌اند زنده؛ درایور ادعای پوشش API واقعی نمی‌کند. (۴) `/* global */` در فایل به‌جای تغییر eslint config (خارج از محدوده).
+- **تخطی‌ها / اشتباه‌های ثبت‌شده:** (الف) اجرای قرمز اول ادعا شده بود «موتور وجود ندارد»، اما در واقع `node_modules` نبود و خطای پیکربندی vitest بود؛ با `npm ci` (rc 0) و اجرای قرمز مجدد با موتور کنار رفته، قرمزِ معتبر تکرار شد. (ب) `/home/user/venv-mp` دوباره نبود و بازسازی شد. (ج) هیچ آستانه، تست، skip، job، ruleset یا وابستگی تغییر نکرد.
+- **باز (از P‑B):** پوشش API واقعی برای درایور (فعلاً فیکسچر)؛ کنترل‌های P‑C (`mp-money-float-cast`، setClock guard، shop timezone bootstrap یا D‑25، ۶ ردیف قدیمی دفترچه، F‑23)؛ F‑11 و F‑30 OPEN. P‑C شروع نشد تا دستور داور.

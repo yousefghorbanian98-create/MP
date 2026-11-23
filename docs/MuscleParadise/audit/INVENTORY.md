@@ -7,12 +7,12 @@
 
 ## ۱. خلاصهٔ تعداد فایل
 
-- کل فایل‌های ترک‌شده: **1354** (خطوط متنی: 305935)
+- کل فایل‌های ترک‌شده: **1358** (خطوط متنی: 306342)
 
 | ناحیه | تعداد فایل | خطوط متنی |
 |---|---|---|
 | CI/CD | 6 | 1399 |
-| استودیو (React) | 124 | 26444 |
+| استودیو (React) | 128 | 26847 |
 | اسکریپت و ابزار | 19 | 7364 |
 | اپ عضو (Flutter) | 114 | 19320 |
 | بک‌اند (FastAPI) | 560 | 129494 |
@@ -20,7 +20,7 @@
 | زیرساخت و کانتینر | 15 | 597 |
 | سایر mp-app | 4 | 239 |
 | شواهد QA | 40 | 1626 |
-| مستندات | 319 | 109598 |
+| مستندات | 319 | 109602 |
 | گزارش‌های عامل | 141 | 8325 |
 
 ## ۲. عملیات API (از `app.openapi()`، مرجع اصلی)
@@ -379,12 +379,13 @@
 | استودیو (React) | `mp-app/studio/index.html` | 20 | 927 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/nginx.conf` | 26 | 808 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/package-lock.json` | 8535 | 297511 | NOT-REVIEWED |
-| استودیو (React) | `mp-app/studio/package.json` | 51 | 1397 | NOT-REVIEWED |
+| استودیو (React) | `mp-app/studio/package.json` | 52 | 1442 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/postcss.config.js` | 6 | 81 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/public/icon-192.png` | — | 2771 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/public/icon-512.png` | — | 7938 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/public/manifest.webmanifest` | — | 692 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/public/sw.js` | 55 | 1800 | NOT-REVIEWED |
+| استودیو (React) | `mp-app/studio/scripts/agent_drive.mjs` | 245 | 9882 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/src/App.tsx` | 90 | 3229 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/src/auth/AuthContext.tsx` | 104 | 3361 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/src/components/AdaptiveNutritionPanel.tsx` | 199 | 7971 | NOT-REVIEWED |
@@ -458,6 +459,9 @@
 | استودیو (React) | `mp-app/studio/tests/dashboard.test.tsx` | 76 | 2885 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/tests/design-tokens.test.ts` | 63 | 2307 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/tests/deviceSessions.test.tsx` | 127 | 4908 | NOT-REVIEWED |
+| استودیو (React) | `mp-app/studio/tests/driver/cli.test.tsx` | 10 | 625 | NOT-REVIEWED |
+| استودیو (React) | `mp-app/studio/tests/driver/driver.test.tsx` | 98 | 4218 | NOT-REVIEWED |
+| استودیو (React) | `mp-app/studio/tests/driver/pins.test.tsx` | 49 | 2510 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/tests/exerciseLibrary.test.tsx` | 146 | 6021 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/tests/expenseReceipt.test.tsx` | 129 | 5136 | NOT-REVIEWED |
 | استودیو (React) | `mp-app/studio/tests/expensesPage.test.tsx` | 233 | 9328 | NOT-REVIEWED |
@@ -1355,7 +1359,7 @@
 | مستندات | `docs/MuscleParadise/audit/DECISIONS.md` | 481 | 76690 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/EXECUTION-LOG.md` | 753 | 119428 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/FINN-AUDIT-LOOP.md` | 88 | 13891 | NOT-REVIEWED |
-| مستندات | `docs/MuscleParadise/audit/INVENTORY.md` | 1721 | 164719 | NOT-REVIEWED |
+| مستندات | `docs/MuscleParadise/audit/INVENTORY.md` | 1725 | 165113 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/MICRO-LOOPS.md` | 83 | 6853 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/evidence/after/backend-coverage.xml` | 12153 | 430390 | NOT-REVIEWED |
 | مستندات | `docs/MuscleParadise/audit/evidence/after/bandit.json` | 3064 | 84377 | NOT-REVIEWED |
