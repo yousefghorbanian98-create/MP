@@ -1,0 +1,96 @@
+digraph FinnLoopMicrotaskFlowV1 {
+  graph [
+    rankdir=TB, bgcolor="#0B0F14", pad="0.32", nodesep="0.30", ranksep="0.38",
+    splines=polyline, compound=true, newrank=true, concentrate=false,
+    dpi=150, fontname="DejaVu Sans", fontsize=23, fontcolor="#F3F6F8",
+    label="Muscle Paradise · الگوی میکرولوپ با Finn-loop\nهر زیرکار، در هر لایه، یک‌بار از هر ۹ حوزه می‌گذرد؛ PASS آن پیش‌نیاز زیرکار وابستهٔ بعدی است",
+    labelloc="t", labeljust="c"
+  ];
+  node [shape=box, style="rounded,filled", fontname="DejaVu Sans", fontsize=10,
+        color="#426174", fillcolor="#13222B", fontcolor="#F3F6F8",
+        penwidth=1.2, margin="0.14,0.09"];
+  edge [fontname="DejaVu Sans", fontsize=8, color="#7F98A5", fontcolor="#D6E2E8",
+        penwidth=1.0, arrowsize=0.65];
+
+  subgraph cluster_inputs {
+    label="۱ · ورودی: فلوچارت نهایی → محدوده و dependencyها";
+    color="#5EA8D2"; fontcolor="#8CCCF0"; style="rounded";
+
+    final_flow [label="فلوچارت یکپارچهٔ نهایی\n۶۶ گره · ۷۴ یال\ncurrent / gap / target را از هم جدا نگه دار",
+      color="#6AB7E8", fillcolor="#172739"];
+    coverage [label="Traceability کامل\n۳۱ سطح UI\n۱۶۳ operation / ۱۴۱ path template\nبه issue-familyها نگاشت می‌شوند؛ نه ۱۶۳ PR",
+      color="#6AB7E8", fillcolor="#172739"];
+    status_class [label="وضعیت هر جزء\nCURRENT-VERIFY · GAP\nCONDITIONAL · TARGET · DECISION",
+      color="#6AB7E8", fillcolor="#172739"];
+    owner_decisions [label="تصمیم‌های باز D-01…D-11\nاگر پاسخ لازم نیست/نیامده: BLOCKED\nایجنت حدس نمی‌زند",
+      color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9",
+      style="rounded,dashed,filled"];
+    { rank=same; final_flow; coverage; status_class; owner_decisions; }
+
+    scope_map [label="Parent layer → dependency DAG\nهر task فقط یک outcome قابل‌مشاهده و قابل‌آزمون",
+      color="#8E79D6", fillcolor="#211D38"];
+    issue [label="Finn-style issue\nیک issue → یک PR\nProblem · AC-N · NG-N · files · tests · verification · budget",
+      color="#8E79D6", fillcolor="#211D38"];
+
+    final_flow -> scope_map;
+    coverage -> scope_map;
+    status_class -> scope_map;
+    owner_decisions -> issue [style=dashed, color="#E9B85C", label="پیش‌شرط / blocker"];
+    scope_map -> issue;
+  }
+
+  subgraph cluster_loop {
+    label="۲ · یک چرخهٔ مستقل برای همین یک زیرکار؛ همهٔ ۹ gate در هر بار تکرار می‌شوند";
+    color="#51D6A0"; fontcolor="#51D6A0"; style="rounded";
+
+    g1 [label="۱ · مشخصات و خردکردن\nAC / NG · parent · dependency\nمعیار خروج قابل‌مشاهده",
+      color="#51D6A0", fillcolor="#132B22"];
+    spec_approval [label="تأیید spec توسط مالک\nFinn `agent-ready`\nقبل از build؛ gate انسانی ۷",
+      color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9"];
+    g2 [label="۲ · محیط ایزوله\nworktree/container مجزا\nبدون secret و production data",
+      color="#6AB7E8", fillcolor="#172739"];
+    g3 [label="۳ · کنترل فرمان/تغییر\nallowlist ابزار و مسیرها\ndiff فقط در scope؛ کار عامل اینجاست",
+      color="#6AB7E8", fillcolor="#172739"];
+    g4 [label="۴ · CI / آزمون / امنیت\nتست‌های واقعی پروژه و scanها\nروی همان revision",
+      color="#6AB7E8", fillcolor="#172739"];
+    g5 [label="۵ · حفاظت شاخه\nPR + required checks\nبدون bypass یا merge عامل",
+      color="#6AB7E8", fillcolor="#172739"];
+    g6 [label="۶ · ردپا / attestation\ntask ID · base/head SHA\nCI run · reviewer · log پالایش‌شده",
+      color="#6AB7E8", fillcolor="#172739"];
+    g7 [label="۷ · تأیید انسانی\nمالک شواهد و scope را بازبینی کند\nتصمیم/ریسک نامعلوم → توقف",
+      color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9"];
+    g8 [label="۸ · سقف زمان/تلاش/هزینه\nسقف قبل از شروع؛ پایش پیوسته\nعبور از حد = hard stop",
+      color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9"];
+    g9 [label="۹ · Red-team عامل\nprompt injection · scope escape\nsecret/tool abuse · privacy leakage",
+      color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9"];
+    gate_result [shape=diamond, label="هر ۹ gate\nPASS و evidence کامل؟",
+      color="#51D6A0", fillcolor="#132B22", width=1.55, height=1.0];
+
+    g1 -> spec_approval -> g2 -> g3 -> g4 -> g5 -> g6 -> g7 -> g8 -> g9 -> gate_result;
+  }
+
+  issue -> g1 [lhead=cluster_loop, label="شروع همین task"];
+
+  human_merge [label="Human merge\nفقط پس از PASS و بررسی head SHA",
+    color="#51D6A0", fillcolor="#132B22", penwidth=1.7];
+  done [label="DONE\nثبت شواهد همان commit\nبازکردن فقط dependency بعدی",
+    color="#51D6A0", fillcolor="#132B22", penwidth=1.7];
+  stop [label="FAIL / BLOCKED / UNKNOWN\nهمین task متوقف؛ task بعدی قفل\nتست اجرا‌نشده ≠ PASS",
+    color="#F08A93", fillcolor="#321C24", fontcolor="#FFE3E6", penwidth=1.7];
+  retry [label="اگر قابل‌اصلاح و زیر سقف باشد:\nاصلاح محدود در همان issue\nhead SHA تازه → شروع دوباره از gate ۱",
+    color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9"];
+  owner_stop [label="اگر ابهام/تصمیم/بودجه باقی است:\nارجاع به مالک/متخصص\nبدون retry نامحدود",
+    color="#F08A93", fillcolor="#321C24", fontcolor="#FFE3E6"];
+  { rank=same; human_merge; stop; }
+  { rank=same; done; retry; owner_stop; }
+
+  gate_result -> human_merge [label="بله", color="#51D6A0", fontcolor="#51D6A0"];
+  human_merge -> done [color="#51D6A0"];
+  gate_result -> stop [label="خیر / نامعلوم", color="#F08A93", fontcolor="#F08A93"];
+  stop -> retry [label="فقط با سقف retry مصوب", color="#E9B85C", fontcolor="#FFE9B9"];
+  stop -> owner_stop [label="نیازمند تصمیم", color="#F08A93", fontcolor="#F08A93"];
+
+  footnote [shape=note, label="وضعیت این تصویر: پیش‌نویس روش کار؛ Finn-loop نصب/اجرا نشده و issue واقعی در Linear ساخته نشده است.\nتمام ۹ حوزه به هر زیرکار تعلق دارند؛ بودجه پیوسته اعمال می‌شود؛ merge همیشه انسانی است.",
+    color="#52657A", fillcolor="#111820", fontcolor="#C6D2DF"];
+  done -> footnote [style=dotted, arrowhead=none, color="#52657A"];
+}
