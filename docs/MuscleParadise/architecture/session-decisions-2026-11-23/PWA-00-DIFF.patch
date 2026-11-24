@@ -1,0 +1,281 @@
+diff --git a/docs/MuscleParadise/adr/README.md b/docs/MuscleParadise/adr/README.md
+index 241317b..2f07479 100644
+--- a/docs/MuscleParadise/adr/README.md
++++ b/docs/MuscleParadise/adr/README.md
+@@ -9,6 +9,7 @@
+ | [ADR-003](003-rules-engine-over-llm.md) | پذیرفته | اعداد تمرین از موتور قواعد قطعی؛ LLM فقط برای توضیح، با بازبینی مربی |
+ | [ADR-004](004-yunet-sface-face-recognition.md) | پذیرفته | انتخاب YuNet/SFace برای face recognition؛ ریسک‌ها و fallback در سند |
+ | [ADR-005](005-n8n-boundary.md) | پذیرفته | مرز n8n محدود و غیرمحصولی؛ وضعیت integration را از ADR بخوان |
++| [ADR-006](006-shared-react-pwa.md) | پذیرفته، دامنه‌محدود | جهت PWA مشترک React روی Studio؛ baseline انتشار D-01/D-10 باز می‌ماند |
+ 
+ ## قانون تغییر تصمیم
+ 
+diff --git a/docs/MuscleParadise/adr/006-shared-react-pwa.md b/docs/MuscleParadise/adr/006-shared-react-pwa.md
+new file mode 100644
+index 0000000..4193580
+--- /dev/null
++++ b/docs/MuscleParadise/adr/006-shared-react-pwa.md
+@@ -0,0 +1,55 @@
++# ADR-006 — PWA مشترک React بر پایهٔ Studio
++
++> وضعیت: **Accepted — دامنه‌محدود** | تاریخ: 2026-11-23 | مالک تصمیم: مالک پروژه، بر مبنای دستور صریح همین درخواست (نام شخصی در مخزن ثبت نشده) | مرتبط: `PWA-00` در بستهٔ handoff v2.0.0، `D-01`، `D-10`
++
++## زمینه و مسئله
++
++محصول مسیر React موجود در `mp-app/studio/` و کلاینت Flutter/Android عضو دارد. اسناد انتشار فعلی Android برای عضو و پنل وب برای کارکنان را baseline انتشار اول ثبت کرده‌اند؛ برنامهٔ کلان 2026-11-23 نیز تعارض آن baseline با هدف PWA مشترک را حل‌نشده دانسته است. دستور صریح مالک در این درخواست جهت رابط کاربری را تعیین می‌کند: PWA مشترک React با گسترش Studio موجود، نه اپ React دوم.
++
++این ADR فقط جهت پلتفرم رابط کاربری را ثبت می‌کند. انتخاب کلاینت انتشار اول و معیارهای دقیق پذیرش انتشار همچنان در `D-01` و `D-10` باز می‌مانند. وجود manifest، Service Worker یا صفحات فعلی به‌تنهایی تکمیل PWA مشترک، parity عضو/کارکنان، نصب‌پذیری واقعی یا QA انتشار را اثبات نمی‌کند.
++
++## معیارهای تصمیم
++
++- استفاده از Studio React موجود و پرهیز از ایجاد محصول/ریشهٔ React دوم؛
++- حفظ Flutter/Android و سابقهٔ آن‌ها، مستندات و تست‌ها، گیت‌های CI، workflow فعلی Flutter Web و Electron؛
++- جداسازی جهت UI از تصمیم‌های اختیار/داده/عملیات؛
++- ثبت روشن موارد حل‌نشدهٔ baseline انتشار، بدون بازکردن دوبارهٔ جهت قطعی React.
++
++## گزینه‌های بررسی‌شده
++
++1. **ساخت اپ React جداگانه برای عضو:** رد می‌شود؛ با جهت یک PWA مشترک و گسترش Studio سازگار نیست.
++2. **گسترش `mp-app/studio/` به PWA مشترک React:** انتخاب‌شده برای مسیر UI؛ صفحات کارکنان در همین محصول می‌مانند و تجربه‌های عضو تدریجی به آن افزوده می‌شوند.
++3. **جایگزینی یا خاموش‌کردن Flutter/Android یا Flutter Web:** انتخاب نشده و مجاز نیست؛ حفظ کد و گیت‌های موجود صریحاً لازم است.
++
++## تصمیم
++
++1. مسیر هدف UI، **یک PWA مشترک React بر پایهٔ `mp-app/studio/` موجود** است؛ اپ React دوم مانند `mp-app/pwa-member/` ساخته نمی‌شود.
++2. `mp-app/client/` و مسیر Flutter/Android، تاریخچه، مستندات، تست‌ها و گیت‌های CI حفظ می‌شوند. workflow فعلی Flutter Web در `.github/workflows/web.yml` بی‌تصمیم خاموش یا با React جایگزین نمی‌شود. فایل‌ها و بسته‌بندی Electron نیز حفظ می‌شوند.
++3. این تصمیم فقط جهت UI را مشخص می‌کند و مجوز تغییر نقش‌ها یا grants، دیتابیس یا tenant، پرداخت، نشست یا سیاست آفلاین/cache نیست. هر یک، تصمیم و کارت جداگانه می‌خواهد.
++4. دو موضوع عمداً باز می‌مانند:
++   - **D-01:** جایگاه PWA در baseline انتشار اول نسبت به Android عضو + Studio کارکنان؛
++   - **D-10:** جریان‌های انتشار، نقش‌ها/دستگاه‌ها/مرورگرها، زبان و RTL و حداقل شواهد پذیرش.
++
++جهت React در بندهای ۱ و ۲ تصمیم‌گرفته‌شده است و برای تأیید دوباره مطرح نمی‌شود. بازبودن D-01 و D-10 فقط به دامنه و معیار انتشار مربوط است.
++
++## پیامدها
++
++- ✅ سرمایه‌گذاری روی یک پوستهٔ React مشترک و حفظ تجربه‌های فعلی کارکنان؛ امکان انتقال تدریجی قابلیت‌های عضو.
++- ✅ حذف ریسک ایجاد اپ React دوم و حفظ هم‌زمان مسیرهای native و workflowهایشان.
++- ⚠️ تا تعیین D-01 نباید از این ADR نتیجه گرفت که PWA جایگزین Android عضو در انتشار اول شده یا انتشار اول را پوشش می‌دهد.
++- ⚠️ تکمیل routeها، نشست، نقش/مالکیت، API، نصب/Service Worker، accessibility، parity و آزمون دستگاه شواهد و کارت‌های جداگانه می‌خواهند.
++- 🔒 هیچ مجوزی برای تغییر backend، نقش/grant، DB/tenant، پرداخت، storage نشست، offline write/cache، deploy یا release صادر نمی‌شود.
++
++## پیاده‌سازی و راستی‌آزمایی
++
++- **ریشهٔ هدف:** `mp-app/studio/`؛ این ADR تغییر کد محصول نیست.
++- **آثار محفوظ:** `mp-app/client/`، Android/Flutter، اسناد و تست‌هایشان، workflowهای Flutter/Android و `.github/workflows/web.yml`، نیز `mp-app/studio/electron/`.
++- **تغییر محصول در این کارت:** `NOT_RUN`؛ ادعای PWA مشترکِ پیاده‌شده یا انتشارشده وجود ندارد.
++- **راستی‌آزمایی همین تغییر مستنداتی:** نتیجه‌ها و SHAهای واقعی در [شواهد PWA-00](../architecture/session-decisions-2026-11-23/PWA-00-EVIDENCE.fa.md) ثبت می‌شوند. گیت مستندات، QA/runtime محصول محسوب نمی‌شود.
++
++## ارتباط با تصمیم‌های دیگر
++
++- **Supersedes:** هیچ ADR پذیرفته‌شده‌ای.
++- **Superseded by:** ندارد.
++- **منابع جاری برای تطبیق:** `../TODO-CLOUD-FINANCE-ACCESS.md`، `../RELEASE-CHECKLIST.md` و `../architecture/ai-autonomous-production-plan-v1-2026-11-23.md`.
++- این ADR متن baseline انتشار موجود را بی‌صدا بازنویسی یا supersede نمی‌کند؛ پاسخ‌های D-01 و D-10 باید با تصمیم انسانی جدا ثبت شوند.
+diff --git a/docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-CONTRACT.fa.md b/docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-CONTRACT.fa.md
+new file mode 100644
+index 0000000..d495660
+--- /dev/null
++++ b/docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-CONTRACT.fa.md
+@@ -0,0 +1,94 @@
++# قرارداد PWA-00 — ثبت تصمیم پلتفرم
++
++**Parent:** `PWA-00` · **عنوان اصلی:** ثبت تصمیم پلتفرم · **نسخهٔ منبع:** Arena handoff v2.0.0
++**وضعیت اجرا:** `BLOCKED` برای `AGENT-READY`؛ مستندات کارت تهیه شده‌اند، اما گیت بازبین مستقل G9 و بررسی حفاظت شاخه G5 تکمیل نشده است.
++**مخزن/شاخه:** `yousefghorbanian98-create/MP` / `arena/5e0f64cf-mp`
++**Base SHA:** `c46e792657e361cd09799c896c47149b4a5c4d86`
++
++## دامنه و خروجی
++
++خروجی همین کارت یک ADR دامنه‌محدود و رکورد شواهد مستنداتی است. **هیچ کد محصولی، dependency، manifest، Service Worker، API، DB یا workflow محصولی تغییر نمی‌کند.** هیچ تغییر ازقبل‌موجودی پاک، جابه‌جا، stage یا بازنویسی نمی‌شود.
++
++### مسیرهای مجاز این کارت
++
++- ایجاد: `docs/MuscleParadise/adr/006-shared-react-pwa.md`
++- به‌روزرسانی رجیستری ADR برای پیوند به ADR-006: `docs/MuscleParadise/adr/README.md` (پیش از تغییر بررسی شد و نسبت به HEAD محلی diff نداشت)
++- ایجاد قرارداد: همین فایل
++- ایجاد شواهد: `docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-EVIDENCE.fa.md`
++- ایجاد diff پالایش‌شدهٔ همین فایل‌ها: `docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-DIFF.patch`
++
++هر مسیر خارج این فهرست، از جمله کد و گیت‌های محصول، خارج از مجوز این کارت است. شاخه عوض نمی‌شود. commit/push/PR/merge/deploy مجاز نیست.
++
++## معیار پذیرش اصلی (عین منبع)
++
++> ثبت شود: مسیر جدید PWA با React است؛ Flutter/Android و سابقهٔ آن حفظ می‌شود. این تصمیم فقط مسیر رابط کاربری را عوض می‌کند؛ نقش‌ها، دیتابیس، پرداخت و آفلاین‌بودن را خودکار عوض نمی‌کند.
++
++### تکمیل قابل‌آزمون در همین برش مستنداتی
++
++- **AC-1:** ADR-006 جهت PWA مشترک React روی `mp-app/studio/` و عدم ساخت اپ React دوم را ثبت کند.
++- **AC-2:** حفظ Flutter/Android، تاریخچه، مستندات/تست‌ها/گیت‌های آن‌ها، workflow فعلی Flutter Web و Electron را صریح ثبت کند؛ هیچ‌یک در این diff حذف یا خاموش نشود.
++- **AC-3:** ADR تصریح کند نقش/grant، DB/tenant، پرداخت، نشست و سیاست آفلاین/cache با این تصمیم تغییر نمی‌کنند.
++- **AC-4:** جایگاه PWA در انتشار اول و جزئیات پذیرش در `D-01`/`D-10` باز بماند؛ جهت React دوباره محل سؤال نشود.
++- **AC-5:** رجیستری ADR به سند تازه پیوند داشته باشد؛ ADR، قرارداد و شواهد برای checkout جاری قابل‌پیوند و بدون trailing whitespace باشند.
++
++## محدودیت‌ها و non-goals
++
++- بدون تغییر کد محصول، آزمون runtime، نصب ابزار، اجرای Finn، E2E پنج سفر، device/staging یا دسترسی به دادهٔ تولیدی.
++- بدون تغییر نقش/grant، DB/tenant، پرداخت، نشست، offline/cache یا جزئیات release؛ هیچ‌کدام را با `N/A` نمی‌بندیم.
++- حفظ کامل آثار دیگران و همهٔ فایل‌های خارج allowlist؛ محتوای مسیر رسید خصوصی [ردشده] خوانده یا دست‌کاری نمی‌شود.
++- بدون commit، push، merge، deploy یا استفاده از سرویس/فراخوان پولی.
++
++## تصمیم‌های مرتبط و وابستگی
++
++- `D-01` و `D-10` در مرجع PWA-00 مرتبط‌اند؛ React/Studio مشترک و حفظ native از دستور جاری روشن است. baseline انتشار اول و معیارهای دقیق پذیرش انتشار همچنان باز می‌مانند.
++- تغییرات کارت به تصمیم‌های D-03 و دیگر تصمیم‌های role/DB/payment/session/offline گسترش نمی‌یابند.
++- اجرای سفرهای E2E، Finn runtime و QA محصول وابستهٔ این گزارش/ثبت ADR نیستند.
++
++## فرمان‌های مجاز/راستی‌آزمایی
++
++- شناسایی هویت checkout: `git branch --show-current`, `git rev-parse HEAD`.
++- گیت مستندات جاری: `python3 scripts/docs_gate.py`.
++- بررسی whitespace برای تغییر رجیستری موجود: `git diff --check -- docs/MuscleParadise/adr/README.md`؛ فایل‌های تازه نیز با بررسی ایستای whitespace/لینک کنترل می‌شوند.
++- محاسبهٔ SHA-256 روی فایل‌های مجاز و diff پالایش‌شده.
++- هیچ فرمان تست/build محصول، شبکه، install، DB/API یا تغییر Git دوردست مجاز نیست.
++
++## بودجهٔ مصوب برای این کارت
++
++- حداکثر **۹۰ دقیقه** wall-clock.
++- حداکثر **۳ تلاش کل**: یک تلاش اولیه + حداکثر دو retry برای همان خطا/راهبرد.
++- هزینه و فراخوان خارجی/مدل بدون مجوز: **۰**.
++- مصرف واقعی و شمارهٔ تلاش در [شواهد PWA-00](PWA-00-EVIDENCE.fa.md) ثبت می‌شود. با رسیدن به سقف یا هر تغییر خارج از allowlist، توقف و گزارش مانع؛ اثر خارجی مبهم blind-retry نمی‌شود.
++
++## نه گیت Finn — قرارداد و نتیجهٔ نهایی همین کارت
++
++وضعیت هر سطر یکی از `PASS / FAIL / UNKNOWN / NOT_RUN` است. `PASS` فقط برای شاهد همین SHA/patch است؛ گیت باز را با `N/A` یا ادعای متنی نمی‌بندیم.
++
++| گیت | شرط این کارت | نتیجهٔ فعلی |
++|---|---|---|
++| G1 — مشخصات و خردسازی | source AC بالا، ACهای قابل‌آزمون، NG، D-01/D-10 و خروجی مستنداتی روشن باشند. | `PASS` — این قرارداد و ADR-006؛ جزئیات انتشار عمداً بازند. |
++| G2 — ایزوله‌سازی | checkout/شاخه/base ثبت؛ ویرایش‌های همین کارت در allowlist بمانند؛ هیچ منبع خصوصی/runtime لمس نشود. این scope-path check معادل sandbox عمومی نیست. | `PASS` — فقط فایل‌های مجاز این کارت نوشته/ویرایش شدند؛ checkout از قبل dirty است و ادعایی دربارهٔ محدودبودن کل diff به این کارت نداریم؛ رسیدها باز نشده‌اند. |
++| G3 — ابزار/اثر | فقط فرمان‌های محلی مستنداتی و hashing؛ no install/network/destructive/Git write. | `PASS` — فرمان‌های واقعی در evidence؛ هیچ اثر خارجی انجام نشد. |
++| G4 — آزمون/امنیت | docs gate و whitespace/link checks برای مستندات؛ QA محصول خارج scope و جداگانه `NOT_RUN`. | `PASS` فقط برای گیت مستندات؛ همهٔ تست‌های محصول `NOT_RUN`. |
++| G5 — حفاظت شاخه | rule/required-check/reviewer policy واقعی برای PR مقصد و همین branch تأیید شود؛ no bypass. | `NOT_RUN` — PR/commit مجاز نیست و protection همین کارت با PR واقعی بررسی نشده است. |
++| G6 — شواهد/provenance | base/head، فایل‌های مجاز، فرمان‌ها/خروجی‌ها و هش دقیق diff ثبت شود؛ هیچ داده/secret خصوصی در artifact نیاید. | `PASS` — جزئیات و هش‌ها در evidence/final handoff. |
++| G7 — انسان | تأیید انسانیِ دامنهٔ همین ADR روشن باشد؛ D-01/D-10 و مجوز merge/release جدا بمانند. | `PASS` برای scope محدود — دستور همین درخواست؛ D-01/D-10، merge و release تأیید نشده‌اند. |
++| G8 — بودجه/توقف | سقف ۹۰ دقیقه/۳ تلاش و هزینهٔ خارجی صفر، پیش از اجرا مشخص باشد و مصرف ثبت شود. | `UNKNOWN` — سقف/هزینه صریحاً تصویب شد؛ تلاش‌ها قابل‌شمارش‌اند، اما stopwatch محیط زمان کل wall-clock را ثبت نکرده است؛ PASS ادعا نمی‌شود. |
++| G9 — خصمانه و بازبینی مستقل | شخص مستقل از نویسنده، هویت/نقش و روش review روی SHA دقیق تعیین شود؛ findings ثبت شود. | `NOT_RUN` — reviewer واقعی در این نشست/مخزن تعیین یا فراهم نشده؛ مانع `AGENT-READY`. |
++
++## پنج گیت دامنه‌ای
++
++تا وقتی review/تأیید متناسب انجام نشده، هیچ‌کدام را `N/A` نمی‌نامیم؛ این کارت کد محصول ندارد اما مرزهای زیر باید صریح بمانند.
++
++| گیت | دامنهٔ این کارت | نتیجهٔ فعلی |
++|---|---|---|
++| security | جهت UI ثبت می‌شود؛ هیچ policy، auth، role یا server enforcement تغییر نمی‌کند. | `NOT_RUN` — review امنیتی مستقل انجام نشده. |
++| privacy | دادهٔ عضو/رسید/health/token خوانده یا وارد سند نشده؛ retention/cache policy تغییر نمی‌کند. | `NOT_RUN` — تأیید حریم خصوصی مستقل انجام نشده. |
++| finance | رفتار پرداخت/کیف‌پول/checkout تغییر نمی‌کند؛ هیچ پول واقعی. | `NOT_RUN` — گیت مالی مستقل انجام نشده. |
++| legal | dependency/license/egress/محتوای ثالث تغییر نمی‌کند. | `NOT_RUN` — بررسی حقوقی مستقل انجام نشده. |
++| product | مسیر React مشترک تأیید مالک دارد؛ baseline انتشار، سفرها/دستگاه‌ها و minimum evidence در D-01/D-10 باز است. | `NOT_RUN` — تصمیم جهت ثبت شده؛ پذیرش release تکمیل نشده. |
++
++## بازبین مستقل — blocker ثبت‌شده
++
++- **هویت بازبین:** `UNASSIGNED / NOT_RUN`. در این checkout فایل `CODEOWNERS` یا assignment بازبین برای این تغییر پیدا نشد؛ ابزار delegation/review مستقل در نشست Arena در دسترس نیست. دستور `AGENTS.md` نیز می‌گوید فایل role/checklist متنی اجرای subagent محسوب نمی‌شود.
++- **روش لازم:** پس از تعیین یک انسانِ مستقل از نویسنده، همان شخص ADR، قرارداد، گیت‌های مستندات و `PWA-00-DIFF.patch` را روی base SHA و patch SHA دقیق بازبینی کند؛ AC/NG، حفظ native، بازماندن D-01/D-10 و نبود scope creep را خصمانه بررسی و نام/نقش/زمینه، SHA مرورشده، یافته‌ها و نتیجه را در evidence ثبت کند.
++- تا تعیین و تأیید این شخص و اجرای review واقعی، G9 `NOT_RUN` می‌ماند و کارت `AGENT-READY` یا `DONE` نیست. خودبازبینی نویسنده مستقل محسوب نمی‌شود.
+diff --git a/docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-EVIDENCE.fa.md b/docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-EVIDENCE.fa.md
+new file mode 100644
+index 0000000..4bad343
+--- /dev/null
++++ b/docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-EVIDENCE.fa.md
+@@ -0,0 +1,102 @@
++# شواهد PWA-00 — ADR ثبت تصمیم پلتفرم
++
++**نتیجه:** مستندات دامنه‌محدود نوشته شده‌اند؛ کارت `DONE` یا `AGENT-READY` نیست. وضعیت گیت‌های باز، G5=`NOT_RUN`، G8=`UNKNOWN` و G9=`NOT_RUN` است. هیچ QA محصولی ادعا نمی‌شود.
++
++## ۱. Provenance و scope
++
++- **محصول/مخزن:** `yousefghorbanian98-create/MP`
++- **شاخه:** `arena/5e0f64cf-mp`
++- **Base و HEAD تأییدشده در شروع این کار:** `c46e792657e361cd09799c896c47149b4a5c4d86`
++- **منبع برنامه:** PWA Arena handoff v2.0.0؛ ZIP SHA-256: `ab63be429ba8aff30eaebbd6e5d2978eca46c78cf2efb3ac4b4283a3d4a6863e`
++- **آثار همین کارت:** `docs/MuscleParadise/adr/006-shared-react-pwa.md`، ورودی متناظر در `docs/MuscleParadise/adr/README.md`، `PWA-00-CONTRACT.fa.md`، این فایل و `PWA-00-DIFF.patch`.
++- Checkout پیش از کار dirty بود. مسیرهای تغییرات قبلی در این گزارش بازنشر نشده‌اند؛ فقط فایل رجیستری ADR پیش از تغییر بررسی شد و نسبت به HEAD diff نداشت. در این کار هیچ مسیر خارج allowlist نوشته/ویرایش نشد.
++- مسیر رسید خصوصی [ردشده]، secret، token یا دادهٔ عضو باز/خوانده/کپی/دست‌کاری نشد. هیچ install، شبکه، DB/API، محصول، Finn runtime، E2E/device، commit/push/PR/merge/deploy یا فراخوان خارجی انجام نشد.
++
++## ۲. فرمان‌های واقعاً اجراشده و خروجی
++
++| فرمان/مشاهده | نتیجهٔ واقعی | مرز |
++|---|---|---|
++| `git branch --show-current` | `arena/5e0f64cf-mp` | شاخه عوض نشد. |
++| `git rev-parse HEAD` | `c46e792657e361cd09799c896c47149b4a5c4d86` | HEAD عوض نشد؛ چیزی commit نشد. |
++| inventory نام فایل‌های `docs/MuscleParadise/adr/` و `architecture/session-decisions-2026-11-23/` | ADRهای موجود تا `005`؛ نام‌های `006-shared-react-pwa.md`، `PWA-00-CONTRACT.fa.md` و `PWA-00-EVIDENCE.fa.md` پیش از ایجاد وجود نداشتند. | از overwrite/شمارهٔ تکراری جلوگیری شد. |
++| `git diff --quiet HEAD -- docs/MuscleParadise/adr/README.md` پیش از ویرایش | exit 0 | رجیستری پیش از این کارت diff نداشت. |
++| جست‌وجوی `CODEOWNERS` با حذف `.git`، `node_modules`، `artifacts` و مسیر رسید خصوصی | خروجی خالی | فایل CODEOWNERS در مسیرهای باقیمانده پیدا نشد؛ reviewer از این راه تعیین نشد. |
++| `python3 scripts/docs_gate.py` (دو اجرا؛ دومی پس از ایجاد همهٔ فایل‌ها) | هر دو exit 0؛ `Documentation gate passed: 19 Markdown files, 323 local links, 15 Mermaid diagram block(s), handoff headings, README entrypoints, SVG XML.` | گیت مستندات مخزن؛ نه تست PWA. اجرای نهایی نیز پس از وجود ADR، قرارداد و شواهد انجام شد؛ فایل‌های جدید session-decision در فهرست اسکن ثابت خود اسکریپت نیستند و جداگانه کنترل شدند. |
++| `git diff --check -- docs/MuscleParadise/adr/README.md` | exit 0، بدون خروجی در اجرای نهایی | فقط تغییر رجیستری مجاز را بررسی کرد. |
++| بررسی ایستای لینک/whitespace فایل‌های جدید — اجرای اولیه | exit 1: ADR به فایل `PWA-00-EVIDENCE.fa.md` پیوند داشت که آن لحظه هنوز ساخته نشده بود؛ whitespace فایل‌های تازه پیش از retry normalize شد. | خطا فقط به مقصدِ هنوز ایجادنشده مربوط بود؛ خطای محصول/کد نبود. یک retry ثبت شد. |
++| ممیزی redaction روی patch اولیه | exit 1: ممیزی ایستا یک ارجاع کاملِ خصوصیِ رسید را در متن همین قرارداد/شواهد یافت؛ هیچ محتوای رسید یا فایل خصوصی باز نشده بود. | هر دو سند با placeholder ردشده اصلاح و diff تولیدشدهٔ همین کارت refresh شد؛ هش patch نهایی پایین/در handoff ارائه می‌شود. |
++| بررسی ایستای لینک/whitespace فایل‌های جدید — retry نهایی | exit 0؛ هر سه فایل جدید newline نهایی، بدون whitespace انتهایی و با همهٔ لینک‌های محلی موجود. | این بررسی بعد از ایجاد ADR، قرارداد و evidence اجرا شد؛ کد دقیق پایین همین بخش آمده است. |
++| ممیزی redaction پس از اصلاح | exit 0 در ساخت diff نهایی؛ هیچ مسیر خصوصیِ بدون redaction یا محتوای رسید در patch نیست. | فقط متن ساخته‌شدهٔ این کارت بررسی شد؛ رسیدها باز نشدند. |
++
++### فرمان دقیق بررسی نهایی فایل‌های تازه
++
++```bash
++python3 - <<'PY'
++from pathlib import Path
++import re
++files=[
++ Path('docs/MuscleParadise/adr/006-shared-react-pwa.md'),
++ Path('docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-CONTRACT.fa.md'),
++ Path('docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-EVIDENCE.fa.md'),
++]
++for path in files:
++    text=path.read_text(encoding='utf-8')
++    assert text.endswith('\n'), f'{path}: missing final newline'
++    for n,line in enumerate(text.splitlines(),1):
++        assert line.rstrip()==line, f'{path}:{n}: trailing whitespace'
++    for target in re.findall(r'\[[^\]]*\]\(([^)]+)\)',text):
++        if re.match(r'^[a-zA-Z][a-zA-Z0-9+.-]*:',target) or target.startswith('#'):
++            continue
++        p=(path.parent/target.split('#',1)[0]).resolve()
++        assert p.exists(), f'{path}: broken local link {target}'
++    print(f'{path}: whitespace/newline/local-links OK')
++print('DOCS_LINK_WHITESPACE=PASS (3 new Markdown files)')
++PY
++```
++
++## ۳. تلاش، بودجه و اثر بیرونی
++
++- سقف مصوب مالک: ۹۰ دقیقه، سه تلاش کل (اولیه + حداکثر دو retry)، هزینه و فراخوان خارجی بدون مجوز صفر.
++- شمارندهٔ همین کارت: تلاش اولیه + retry پس از ارجاع به فایل شواهدِ هنوز ساخته‌نشده + retry پس از یافتن ارجاع خصوصیِ بدون redaction در متن خودمان = **۳ از ۳ تلاش**. خطاها اصلاح و بررسی نهایی redaction موفق شد؛ سقف مصرف شده و retry دیگری انجام نمی‌شود.
++- هزینه/فراخوان خارجی: **۰**؛ install، network، Git remote و فرآیند طولانی اجرا نشد.
++- **wall-clock دقیق:** محیط ابزار stopwatch قابل استناد برای زمان کل این تعامل نداد؛ ثانیهٔ دقیق شروع/پایان ثبت نشده است. cap شکسته یا نزدیک‌شدن به آن مشاهده نشد، اما نتیجهٔ gate G8 برای زمان مصرف‌شده `UNKNOWN` می‌ماند؛ صرف تصویب سقف، شاهد زمان مصرف نیست.
++
++## ۴. نتیجهٔ ۹ گیت Finn
++
++| Gate | نتیجه | شاهد/مانع |
++|---|---|---|
++| G1 — مشخصات/خردسازی | `PASS` | متن اصلی PWA-00، ACهای مستنداتی و NGها در [قرارداد](PWA-00-CONTRACT.fa.md) و [ADR-006](../../adr/006-shared-react-pwa.md) آمده‌اند؛ D-01/D-10 صریحاً بازند. |
++| G2 — ایزوله‌سازی | `PASS` | ویرایش‌های همین کارت محدود به allowlist مستندات بودند؛ checkout قبلاً dirty بود و این PASS ادعای ایزوله‌بودن کل workspace نیست. هیچ receipt/runtime لمس نشد. |
++| G3 — ابزار/اثر | `PASS` | فرمان‌های محلی مستنداتی/هش؛ no install, network, destructive command, commit یا remote effect. |
++| G4 — تست/امنیت | `PASS` فقط برای مستندات | docs gate و بررسی‌های مستنداتی؛ همهٔ تست‌های محصول، authorization، E2E و security runtime `NOT_RUN`. |
++| G5 — حفاظت شاخه | `NOT_RUN` | هیچ PR/commit مجاز نبود؛ required checks/branch-protection برای PR واقعی بررسی نشدند. |
++| G6 — شواهد/provenance | `PASS` | base SHA، مسیرها، فرمان‌ها، نتایج و patch محدود در این فایل و `PWA-00-DIFF.patch` ثبت می‌شوند؛ هش patch در handoff نهایی ارائه می‌شود. |
++| G7 — تأیید انسانی | `PASS` برای همین scope محدود | درخواست صریح مالک مسیر ADR، بودجه و non-goals را مجاز کرده است؛ این تأیید D-01/D-10، release یا merge نیست. |
++| G8 — بودجه/توقف | `UNKNOWN` | سقف و هزینه تصویب شده‌اند؛ شمار تلاش قابل‌شمارش است، اما wall-clock دقیق ثبت نشده. ادعای `PASS` نمی‌شود. |
++| G9 — خصمانه/بازبینی مستقل | `NOT_RUN` | هویت بازبین مستقل تعیین نشده؛ مانع صریح `AGENT-READY` است. خودبازبینی انجام‌شده/مستقل نام‌گذاری نشده است. |
++
++## ۵. نتیجهٔ پنج گیت دامنه‌ای
++
++| گیت | نتیجه | علت/حدود |
++|---|---|---|
++| Security | `NOT_RUN` | تغییر auth، role یا enforcement نداریم؛ review امنیتی مستقل نشده است. |
++| Privacy | `NOT_RUN` | دادهٔ واقعی/رسید خوانده نشده؛ review حریم خصوصی مستقلی انجام نشده است. |
++| Finance | `NOT_RUN` | رفتار پرداخت/checkout تغییر نکرده؛ بازبینی مالی مستقل انجام نشده است. |
++| Legal | `NOT_RUN` | dependency/مجوز/egress جدیدی وارد نشده؛ review حقوقی مستقل انجام نشده است. |
++| Product | `NOT_RUN` | جهت React ثبت شده، اما D-01/D-10 و پذیرش انتشار باز است؛ QA/پذیرش محصول اجرا نشده است. |
++
++هیچ گیت دامنه‌ای با `N/A` بسته نشده؛ نبود تغییر محصول به‌تنهایی جای تأیید لازم نیست.
++
++## ۶. بازبینی مستقل واقعی
++
++- **هویت:** `UNASSIGNED`؛ شخص/حساب مستقل و در دسترس برای این diff معرفی یا تأیید نشده است. CODEOWNERS یافت نشد و در نشست فعلی ابزار delegation/reviewer واقعی موجود نیست. فایل‌های role متنی در `AGENTS.md` به‌عنوان subagent محسوب نمی‌شوند.
++- **روش بازبینی پس از تعیین شخص:** بازبین انسانی غیر از نویسنده، `PWA-00-DIFF.patch` را نسبت به base SHA بالا بخواند؛ source AC، محدودهٔ مجاز، حفظ native، عدم تغییر role/DB/payment/session/offline، بازماندن D-01/D-10، خروجی docs gate و موارد NOT_RUN را بررسی کند. نام/نقش/شناسه، SHA دقیق patch مرورشده، تاریخ، یافته‌ها و نتیجه باید ثبت شوند.
++- **نتیجه:** review مستقل `NOT_RUN`; گیت G9 باز است. بنابراین کارت `AGENT-READY` و `DONE` نیست.
++
++## ۷. موارد اجرا‌نشده
++
++- تست/build/lint/typecheck/CI محصول، API authorization، E2E، device، نصب PWA، cache/offline/update، staging، security/privacy/finance/legal/product review.
++- پنج سفر انتهابه‌انتها؛ اجرای آن‌ها بعداً downstream است و پیش‌شرط تحویل این سندها نبود.
++- branch protection در زمینهٔ PR واقعی، بازبین انسانی مستقل، تصمیم release D-01/D-10، commit/push/merge/deploy.
++
++`NOT_RUN`ها و `UNKNOWN`های بالا قبولی نیستند. قرارداد/ADR/شواهد برای بررسی تحویل می‌شوند؛ approval انسانی و تکمیل گیت‌های لازم هنوز شرط‌های بازند.
