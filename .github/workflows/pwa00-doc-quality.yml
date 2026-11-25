@@ -52,6 +52,7 @@ jobs:
           CREATE_LOG_FILE: true
           LOG_FILE: super-linter.log
           ENABLE_GITHUB_PULL_REQUEST_SUMMARY_COMMENT: false
+          MULTI_STATUS: false
       - name: Expose scoped Super-Linter diagnostics on failure
         if: failure()
         continue-on-error: true
