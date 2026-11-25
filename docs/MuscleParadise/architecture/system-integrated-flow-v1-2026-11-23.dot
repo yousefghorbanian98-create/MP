@@ -62,8 +62,8 @@ digraph MuscleParadiseIntegratedSystemV1 {
   ui_contract [label="قرارداد تعامل UI\nintent → component → owner state\nاعتبارسنجی فرم · pending · جلوگیری از ارسال دوباره\nموفقیت فقط پس از پاسخ معتبر؛ پنهان‌کردن کنترل ≠ مجوز سرور", color="#6AB7E8", fillcolor="#172739"];
   api_client [label="کلاینت‌های API\nFlutter API client · Studio `sessionFetch`\nBearer / refresh · JSON و multipart فیش", color="#6AB7E8", fillcolor="#172739"];
   ingress [label="FastAPI `/api/v1`\nCORS allowlist · X-Request-ID · metrics\nID floor · validation/error handlers · rate-limit", color="#8E79D6", fillcolor="#211D38"];
-  session_gate [label="هویت / نشست\nOTP request → verify → access/refresh\nrestore · refresh · logout · revoke", color="#8E79D6", fillcolor="#211D38"];
-  authz_gate [label="مجوز سروری برای هر درخواست\nrole + permission/grant + ownership/scope\ndeny by default؛ UI gate فقط UX است", color="#8E79D6", fillcolor="#211D38"];
+  session_gate [label="گیت bearer برای routeهای محافظت‌شده\nاعتبارسنجی access token و وضعیت نشست\nOTP request/verify از این گیت عبور نمی‌کنند", color="#8E79D6", fillcolor="#211D38"];
+  authz_gate [label="مجوز سروری برای routeهای محافظت‌شده\nrole + permission/grant + ownership/scope\ndeny by default؛ UI gate فقط UX است", color="#8E79D6", fillcolor="#211D38"];
   deny_path [label="رد امن\n401 unauthenticated · 403 denied\nبه route محافظت‌شده وارد نشود", color="#F08A93", fillcolor="#321C24", fontcolor="#FFE3E6"];
   response_rules [label="پاسخ → حالت درست UI\n2xx معتبر: refresh/invalidate؛ 422: فیلد/ورودی محفوظ\n409: reconcile · 429: Retry-After\ntimeoutِ write: نتیجه را بررسی کن؛ موفقیت جعلی نده", color="#6AB7E8", fillcolor="#172739"];
   ux_member_auth -> ui_contract;
@@ -75,25 +75,31 @@ digraph MuscleParadiseIntegratedSystemV1 {
   ux_staff_program -> ui_contract;
   ux_staff_finance -> ui_contract;
   ux_staff_admin -> ui_contract;
-  ui_contract -> api_client -> ingress -> session_gate -> authz_gate;
+  ui_contract -> api_client -> ingress;
+  ingress -> session_gate [label="فقط endpointهای bearer-protected"];
+  session_gate -> authz_gate;
   { rank=same; authz_gate; deny_path; }
   authz_gate -> deny_path [label="scope / grant رد", color="#F08A93"];
-  session_gate -> deny_path [label="نشست نامعتبر", color="#F08A93"];
+  session_gate -> deny_path [label="Bearer نامعتبر/غایب", color="#F08A93"];
   ingress -> response_rules [style=dotted, color="#6AB7E8", label="۲xx / ۴xx / ۵xx"];
 
   subgraph cluster_routes {
     label="۴ · خانواده‌های route جاری · فهرست کامل ۱۶۳ operation در catalog"; color="#8E79D6"; fontcolor="#C2B7F0"; style="rounded";
-    route_identity [label="هویت / عضو\n`/auth/*` · `/members/*`", color="#B99AFB", fillcolor="#211D38"];
+    route_auth_public [label="OTP عمومی / anonymous\nPOST `/auth/otp/request`\nPOST `/auth/otp/verify`\nبدون Bearer؛ rate limit فعال", color="#6AB7E8", fillcolor="#172739"];
+    route_auth_token [label="نشست با credential در body\nPOST `/auth/refresh` · POST `/auth/logout`\nبدون AuthenticatedUser؛ refresh token بررسی می‌شود", color="#6AB7E8", fillcolor="#172739"];
+    route_identity [label="هویت / عضو محافظت‌شده\n`/auth/phone-change/*` · `/auth/sessions*`\n`/auth/logout-all` · `/members/*`", color="#B99AFB", fillcolor="#211D38"];
     route_training [label="Intake / تمرین / بازخورد\n`/population/*` · `/ai/program/*`\n`/programs/*` · `/library/exercises/*`", color="#B99AFB", fillcolor="#211D38"];
     route_assessment [label="ارزیابی / سنجش\n`/assessments/*` · `/axis-assessments/*`\n`/ai/suggest-weight`", color="#B99AFB", fillcolor="#211D38"];
     route_attendance [label="کلاس / حضور\n`/classes/*` · `/face/*`\n`/members/me/checkins`", color="#B99AFB", fillcolor="#211D38"];
     route_nutrition [label="تغذیه\n`/ai/nutrition/*` · `/nutrition/*`", color="#B99AFB", fillcolor="#211D38"];
     route_finance [label="پرداخت / هزینه / فروشگاه / گزارش\n`/payments/*` · `/expenses/*`\n`/finance/*` · `/shop/*`", color="#B99AFB", fillcolor="#211D38"];
     route_comms [label="گفت‌وگو / اعلان / مدیر / عملیات\n`/chat/*` · `/notifications/*` · `/admin/*`\n`/health` · `/metrics` · `/updates/*`", color="#B99AFB", fillcolor="#211D38"];
-    { rank=same; route_identity; route_training; route_assessment; route_attendance; route_nutrition; route_finance; route_comms; }
-    route_identity -> route_training -> route_assessment -> route_attendance -> route_nutrition -> route_finance -> route_comms [style=invis, weight=30];
+    { rank=same; route_auth_public; route_auth_token; route_identity; route_training; route_assessment; route_attendance; route_nutrition; route_finance; route_comms; }
+    route_auth_public -> route_auth_token -> route_identity -> route_training -> route_assessment -> route_attendance -> route_nutrition -> route_finance -> route_comms [style=invis, weight=30];
   }
-  authz_gate -> route_identity [label="اجازه"];
+  ingress -> route_auth_public [style=dashed, color="#6AB7E8", label="anonymous · OTP"];
+  ingress -> route_auth_token [style=dashed, color="#6AB7E8", label="credential in body"];
+  authz_gate -> route_identity [label="احراز + نقش/دامنه"];
   authz_gate -> route_training [label="اجازه"];
   authz_gate -> route_assessment [label="اجازه"];
   authz_gate -> route_attendance [label="اجازه"];
@@ -113,6 +119,8 @@ digraph MuscleParadiseIntegratedSystemV1 {
     { rank=same; svc_identity; svc_training; svc_assessment; svc_attendance; svc_nutrition; svc_finance; svc_comms; }
     svc_identity -> svc_training -> svc_assessment -> svc_attendance -> svc_nutrition -> svc_finance -> svc_comms [style=invis, weight=30];
   }
+  route_auth_public -> svc_identity [label="OTP request/verify"];
+  route_auth_token -> svc_identity [label="اعتبارسنجی refresh token"];
   route_identity -> svc_identity;
   route_training -> svc_training;
   route_assessment -> svc_assessment;
