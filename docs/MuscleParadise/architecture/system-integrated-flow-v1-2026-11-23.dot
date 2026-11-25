@@ -1,0 +1,213 @@
+digraph MuscleParadiseIntegratedSystemV1 {
+  graph [
+    rankdir=TB, bgcolor="#0B0F14", pad="0.30", nodesep="0.28", ranksep="0.44",
+    splines=polyline, compound=true, newrank=true, concentrate=true, dpi=150,
+    fontname="DejaVu Sans", fontsize=24, fontcolor="#F3F6F8",
+    label="Muscle Paradise · نقشهٔ یکپارچهٔ سامانه\nکاربر → اپ و UI → قرارداد/API و دسترسی → route/service → داده و عملیات\nخط پیوسته = وضعیت قابل‌ردیابی | کهربایی خط‌چین = هدف/تصمیم باز | نمودار به‌تنهایی شاهد E2E نیست",
+    labelloc="t", labeljust="c"
+  ];
+  node [shape=box, style="rounded,filled", fontname="DejaVu Sans", fontsize=11,
+        color="#426174", fillcolor="#13222B", fontcolor="#F3F6F8",
+        penwidth=1.2, margin="0.13,0.08"];
+  edge [fontname="DejaVu Sans", fontsize=8, color="#7F98A5", fontcolor="#D6E2E8",
+        penwidth=0.85, arrowsize=0.60];
+
+  subgraph cluster_roles {
+    label="۱ · نقش‌ها و بازیگران جاری"; color="#5EA8D2"; fontcolor="#8CCCF0"; style="rounded";
+    member [label="عضو / ورزشکار\nrole جاری: `member`", color="#51D6A0", fillcolor="#132B22"];
+    staff [label="کادر / مدیر\n`coach · reception · manager\nadmin · super_admin`", color="#51D6A0", fillcolor="#132B22"];
+    kiosk_operator [label="پذیرش / دستگاه اسکن\nمحیط فیزیکی جدا از اپ عضو", color="#6AB7E8", fillcolor="#172739"];
+    { rank=same; member; staff; kiosk_operator; }
+    member -> staff -> kiosk_operator [style=invis, weight=30];
+  }
+
+  subgraph cluster_apps {
+    label="۲ · سطح محصول و کلاینت‌های موجود"; color="#5EA8D2"; fontcolor="#8CCCF0"; style="rounded";
+    client_app [label="MP Client · Flutter / Android\nاپ عضو · RTL · API client\nقفل دستگاه برای ارائهٔ QR محلی", color="#51D6A0", fillcolor="#132B22", URL="member-studio-dataflow-v1-2026-11-23.md", target="_blank"];
+    studio_app [label="MP Studio · React / TypeScript / Vite\nپنل وب کادر · OTP/session\nنقش/مجوز + توکن‌های UI · reduced motion", color="#51D6A0", fillcolor="#132B22", URL="member-studio-dataflow-v1-2026-11-23.md", target="_blank"];
+    kiosk_ui [label="اسکن/حضور پذیرش\nدستگاه و استقرار باید جدا آزموده شوند", color="#6AB7E8", fillcolor="#172739"];
+    { rank=same; client_app; studio_app; kiosk_ui; }
+    client_app -> studio_app -> kiosk_ui [style=invis, weight=30];
+  }
+  member -> client_app;
+  staff -> studio_app;
+  kiosk_operator -> kiosk_ui;
+  staff -> kiosk_ui [label="نقش پذیرش"];
+
+  subgraph cluster_ux {
+    label="۳ · صفحه‌ها و intentهای اصلی در UI"; color="#5EA8D2"; fontcolor="#8CCCF0"; style="rounded";
+    ux_member_auth [label="عضو · OTP / نشست / پروفایل\nRestore و خروج؛ پروفایل از `/members/me`"];
+    ux_member_training [label="عضو · خانه / Intake / امروز / بازخورد\nثبت تیک تمرین محلی؛ feedback درخواست جدا", URL="member-studio-dataflow-v1-2026-11-23.md", target="_blank"];
+    ux_member_health [label="عضو · ارزیابی / پیشرفت / تغذیه\nدادهٔ ناموجود ≠ صفر؛ plan ≠ food log", URL="member-studio-dataflow-v1-2026-11-23.md", target="_blank"];
+    ux_member_attendance [label="عضو · کلاس / رزرو / QR\nظرفیت و صف؛ QR کوتاه‌عمر برای اسکن", URL="member-studio-dataflow-v1-2026-11-23.md", target="_blank"];
+    ux_member_money [label="عضو · کیف‌پول / پرداخت / فروشگاه / چت\nنسخهٔ اول: پرداخت دستی؛ فروشگاه نمایشی", URL="member-studio-dataflow-v1-2026-11-23.md", target="_blank"];
+    ux_staff_ops [label="Studio · Dashboard / Members / Analytics\nKPI و feed از API؛ انتخاب عضو مشترک", URL="member-studio-dataflow-v1-2026-11-23.md", target="_blank"];
+    ux_staff_program [label="Studio · Programs / Assessment / Nutrition\nصف و بازبینی؛ رد برنامه فعلاً `window.prompt`", URL="member-studio-dataflow-v1-2026-11-23.md", target="_blank"];
+    ux_staff_finance [label="Studio · Finance / Expenses\nفیش، مجوز خواندن/نوشتن، گزارش دوره‌ای", URL="transaction-findings-flow-v1-2026-11-23.svg", target="_blank"];
+    ux_staff_admin [label="Studio · Settings / CheckIn / Chat / Shop\nنقش و grant · flag · session · audit", URL="member-studio-dataflow-v1-2026-11-23.md", target="_blank"];
+    { rank=same; ux_member_auth; ux_member_training; ux_member_health; ux_member_attendance; ux_member_money; ux_staff_ops; ux_staff_program; ux_staff_finance; ux_staff_admin; }
+    ux_member_auth -> ux_member_training -> ux_member_health -> ux_member_attendance -> ux_member_money -> ux_staff_ops -> ux_staff_program -> ux_staff_finance -> ux_staff_admin [style=invis, weight=30];
+  }
+  client_app -> ux_member_auth;
+  client_app -> ux_member_training;
+  client_app -> ux_member_health;
+  client_app -> ux_member_attendance;
+  client_app -> ux_member_money;
+  studio_app -> ux_staff_ops;
+  studio_app -> ux_staff_program;
+  studio_app -> ux_staff_finance;
+  studio_app -> ux_staff_admin;
+  kiosk_ui -> ux_staff_admin [label="اسکن QR / ثبت حضور"];
+
+  ui_contract [label="قرارداد تعامل UI\nintent → component → owner state\nاعتبارسنجی فرم · pending · جلوگیری از ارسال دوباره\nموفقیت فقط پس از پاسخ معتبر؛ پنهان‌کردن کنترل ≠ مجوز سرور", color="#6AB7E8", fillcolor="#172739"];
+  api_client [label="کلاینت‌های API\nFlutter API client · Studio `sessionFetch`\nBearer / refresh · JSON و multipart فیش", color="#6AB7E8", fillcolor="#172739"];
+  ingress [label="FastAPI `/api/v1`\nCORS allowlist · X-Request-ID · metrics\nID floor · validation/error handlers · rate-limit", color="#8E79D6", fillcolor="#211D38"];
+  session_gate [label="هویت / نشست\nOTP request → verify → access/refresh\nrestore · refresh · logout · revoke", color="#8E79D6", fillcolor="#211D38"];
+  authz_gate [label="مجوز سروری برای هر درخواست\nrole + permission/grant + ownership/scope\ndeny by default؛ UI gate فقط UX است", color="#8E79D6", fillcolor="#211D38"];
+  deny_path [label="رد امن\n401 unauthenticated · 403 denied\nبه route محافظت‌شده وارد نشود", color="#F08A93", fillcolor="#321C24", fontcolor="#FFE3E6"];
+  response_rules [label="پاسخ → حالت درست UI\n2xx معتبر: refresh/invalidate؛ 422: فیلد/ورودی محفوظ\n409: reconcile · 429: Retry-After\ntimeoutِ write: نتیجه را بررسی کن؛ موفقیت جعلی نده", color="#6AB7E8", fillcolor="#172739"];
+  ux_member_auth -> ui_contract;
+  ux_member_training -> ui_contract;
+  ux_member_health -> ui_contract;
+  ux_member_attendance -> ui_contract;
+  ux_member_money -> ui_contract;
+  ux_staff_ops -> ui_contract;
+  ux_staff_program -> ui_contract;
+  ux_staff_finance -> ui_contract;
+  ux_staff_admin -> ui_contract;
+  ui_contract -> api_client -> ingress -> session_gate -> authz_gate;
+  { rank=same; authz_gate; deny_path; }
+  authz_gate -> deny_path [label="scope / grant رد", color="#F08A93"];
+  session_gate -> deny_path [label="نشست نامعتبر", color="#F08A93"];
+  ingress -> response_rules [style=dotted, color="#6AB7E8", label="۲xx / ۴xx / ۵xx"];
+
+  subgraph cluster_routes {
+    label="۴ · خانواده‌های route جاری · فهرست کامل ۱۶۳ operation در catalog"; color="#8E79D6"; fontcolor="#C2B7F0"; style="rounded";
+    route_identity [label="هویت / عضو\n`/auth/*` · `/members/*`", color="#B99AFB", fillcolor="#211D38"];
+    route_training [label="Intake / تمرین / بازخورد\n`/population/*` · `/ai/program/*`\n`/programs/*` · `/library/exercises/*`", color="#B99AFB", fillcolor="#211D38"];
+    route_assessment [label="ارزیابی / سنجش\n`/assessments/*` · `/axis-assessments/*`\n`/ai/suggest-weight`", color="#B99AFB", fillcolor="#211D38"];
+    route_attendance [label="کلاس / حضور\n`/classes/*` · `/face/*`\n`/members/me/checkins`", color="#B99AFB", fillcolor="#211D38"];
+    route_nutrition [label="تغذیه\n`/ai/nutrition/*` · `/nutrition/*`", color="#B99AFB", fillcolor="#211D38"];
+    route_finance [label="پرداخت / هزینه / فروشگاه / گزارش\n`/payments/*` · `/expenses/*`\n`/finance/*` · `/shop/*`", color="#B99AFB", fillcolor="#211D38"];
+    route_comms [label="گفت‌وگو / اعلان / مدیر / عملیات\n`/chat/*` · `/notifications/*` · `/admin/*`\n`/health` · `/metrics` · `/updates/*`", color="#B99AFB", fillcolor="#211D38"];
+    { rank=same; route_identity; route_training; route_assessment; route_attendance; route_nutrition; route_finance; route_comms; }
+    route_identity -> route_training -> route_assessment -> route_attendance -> route_nutrition -> route_finance -> route_comms [style=invis, weight=30];
+  }
+  authz_gate -> route_identity [label="اجازه"];
+  authz_gate -> route_training [label="اجازه"];
+  authz_gate -> route_assessment [label="اجازه"];
+  authz_gate -> route_attendance [label="اجازه"];
+  authz_gate -> route_nutrition [label="اجازه"];
+  authz_gate -> route_finance [label="اجازه"];
+  authz_gate -> route_comms [label="اجازه"];
+
+  subgraph cluster_services {
+    label="۵ · FastAPI router → service در modular monolith؛ منطق دامنه و مرز شواهد"; color="#B99AFB"; fontcolor="#C2B7F0"; style="rounded";
+    svc_identity [label="auth · membership · privacy\nOTP/SMS محیطی؛ session؛ member scope", color="#B99AFB", fillcolor="#211D38"];
+    svc_training [label="population · ai_engine · programs · exercises\n`gate-check` JSON؛ موتور قطعی → draft\nblocked/unknown هنوز ممکن است draft/نمایش شود", color="#F08A93", fillcolor="#321C24", fontcolor="#FFE3E6"];
+    svc_assessment [label="assessment · axis_assessment\nJP7/Axis و دادهٔ خام؛ نتیجهٔ مشتق/پزشکی ادعا نشود", color="#B99AFB", fillcolor="#211D38"];
+    svc_attendance [label="classes · face_id\nconfirmed / waitlist / cancel / rebook\nQR → check-in؛ `method=face` فعلاً 409", color="#B99AFB", fillcolor="#211D38"];
+    svc_nutrition [label="nutrition · ai_engine\nهدف کالری/ماکرو؛ MealItem و FoodLog جدا", color="#B99AFB", fillcolor="#211D38"];
+    svc_finance [label="payments · expenses · reports · shop\nکارت‌به‌کارت + فیش + بازبینی انسانی\nrefund: `finance.write` + actor/audit\ncheckout عضو خاموش؛ سود ناقص = نامعلوم", color="#B99AFB", fillcolor="#211D38"];
+    svc_comms [label="chat · notifications · outbox · admin\nاعلان داخلی ≠ push؛ runtime worker اثبات‌نشده", color="#B99AFB", fillcolor="#211D38"];
+    { rank=same; svc_identity; svc_training; svc_assessment; svc_attendance; svc_nutrition; svc_finance; svc_comms; }
+    svc_identity -> svc_training -> svc_assessment -> svc_attendance -> svc_nutrition -> svc_finance -> svc_comms [style=invis, weight=30];
+  }
+  route_identity -> svc_identity;
+  route_training -> svc_training;
+  route_assessment -> svc_assessment;
+  route_attendance -> svc_attendance;
+  route_nutrition -> svc_nutrition;
+  route_finance -> svc_finance;
+  route_comms -> svc_comms;
+
+  subgraph cluster_data {
+    label="۶ · مدل‌های پایدار/فایل؛ نقشهٔ مفهومی است نه ERD کامل"; color="#51D6A0"; fontcolor="#51D6A0"; style="rounded";
+    data_identity [label="User · OtpCode · RefreshToken\nPhoneChangeChallenge · AdminPermission\nMember · Membership", color="#51D6A0", fillcolor="#132B22"];
+    data_training [label="WorkoutProgram → ProgramWeek\n→ ProgramExercise · Exercise · SetFeedback", color="#51D6A0", fillcolor="#132B22"];
+    data_assessment [label="AxisAssessment/Score · FieldTestResult\nJacksonPollockMeasurement (دادهٔ خام)", color="#51D6A0", fillcolor="#132B22"];
+    data_attendance [label="GymClass · ClassBooking\nCheckIn · BiometricConsent · FaceTemplate", color="#51D6A0", fillcolor="#132B22"];
+    data_nutrition [label="NutritionPlan · MealItem\nFoodLog · BodyWeightLog", color="#51D6A0", fillcolor="#132B22"];
+    data_finance [label="Payment · WalletTransaction · LedgerEntry\nExpense · ExpenseRevision · ReportRun\nProduct/cart/order models", color="#51D6A0", fillcolor="#132B22"];
+    data_comms [label="Conversation · Message · Notification\nOutboxEvent · InboxMessage\nAuditLog · FeatureFlag · grants", color="#51D6A0", fillcolor="#132B22"];
+    { rank=same; data_identity; data_training; data_assessment; data_attendance; data_nutrition; data_finance; data_comms; }
+    data_identity -> data_training -> data_assessment -> data_attendance -> data_nutrition -> data_finance -> data_comms [style=invis, weight=30];
+  }
+  svc_identity -> data_identity;
+  svc_training -> data_training;
+  svc_assessment -> data_assessment;
+  svc_attendance -> data_attendance;
+  svc_nutrition -> data_nutrition;
+  svc_finance -> data_finance;
+  svc_comms -> data_comms;
+
+  sqlite_store [label="SQLAlchemy · SQLite پیش‌فرض در snapshot\nدادهٔ دامنه؛ PostgreSQL فقط هدف مهاجرتِ مشروط", color="#51D6A0", fillcolor="#132B22"];
+  private_store [label="فایل خصوصی فیش/مدرک\nخارج از static؛ دسترسی کنترل‌شده\nمحتوای رسیدها در این کار باز نشده", color="#6AB7E8", fillcolor="#172739"];
+  runtime_jobs [label="Valkey/cache و APScheduler/outbox\nتعریف/تست کد ≠ worker فعال در startup\nتک‌اجرا، retry، monitor و backup باید ثابت شوند", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9"];
+  { rank=same; sqlite_store; private_store; runtime_jobs; }
+  sqlite_store -> private_store -> runtime_jobs [style=invis, weight=20];
+  data_identity -> sqlite_store;
+  data_training -> sqlite_store;
+  data_assessment -> sqlite_store;
+  data_attendance -> sqlite_store;
+  data_nutrition -> sqlite_store;
+  data_finance -> sqlite_store;
+  data_comms -> sqlite_store;
+  svc_finance -> private_store [label="فیش/مدرک مجاز"];
+  svc_comms -> runtime_jobs [style=dashed, color="#E9B85C"];
+
+  subgraph cluster_integrations {
+    label="۷ · سرویس پیرامونی و عملیات؛ پیکربندی/استقرار تعیین‌کننده است"; color="#6AB7E8"; fontcolor="#8CCCF0"; style="rounded";
+    sms [label="SMS provider\nپیش‌فرض dev؛ provider واقعی به secret/config نیاز دارد", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9"];
+    bank [label="منبع بانکی مستقل / تأیید انسانی\nتصویر فیش ≠ اثبات واریز؛ gateway زنده فرض نشده", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9"];
+    ai_optional [label="Ollama / AI اختیاری\nمسیر runtime وابسته به config؛ مرجع safety نیست", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9"];
+    operations [label="عملیات و مشاهده‌پذیری\nhealth · metrics · proxy/Compose\nproduction/restore/device E2E اثبات نشده", color="#6AB7E8", fillcolor="#172739"];
+    { rank=same; sms; bank; ai_optional; operations; }
+    sms -> bank -> ai_optional -> operations [style=invis, weight=20];
+  }
+  svc_identity -> sms [style=dashed, color="#E9B85C", label="ارسال OTP وابسته به env"];
+  svc_finance -> bank [style=dashed, color="#E9B85C", label="تطبیق انسانی"];
+  svc_training -> ai_optional [style=dashed, color="#E9B85C", label="اگر runtime پیکربندی شود"];
+  sqlite_store -> operations [style=dashed, color="#6AB7E8", label="استقرار و backup وابسته به محیط"];
+
+  subgraph cluster_owner_open {
+    label="تصمیم‌های مصوب محصول / جزئیات باز برای تأیید مالک"; color="#E9B85C"; fontcolor="#FFE2A3"; style="rounded,dashed";
+    confirmed_platform [label="انتشار اول طبق TODO مالک\nAndroid عضو + پنل وب کارکنان\nسرور محلی باشگاه + ورودی HTTPS؛\nدامنه/میزبانی/restore هنوز باید آزموده شود", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9", style="rounded,dashed,filled", URL="../TODO-CLOUD-FINANCE-ACCESS.md", target="_blank"];
+    pwa_target [label="PWA یکپارچه / access target\nطرح آینده، نه رابط جاری\nبدون تصمیم مهاجرت/حذف Android و Studio", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9", style="rounded,dashed,filled", URL="muscle-paradise-final-pwa-access-flow-v1-2026-11-23.md", target="_blank"];
+    role_target [label="مدل نقش هدف سه‌گانه در طرح قدیمی\nدر برابر شش role جاری؛ migration/route matrix\nو سیاست grant هنوز باید تکمیل شود", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9", style="rounded,dashed,filled"];
+    privacy_decision [label="عکس پیشرفت بدن\nتصمیم مالک: عضو مدت نگهداری را انتخاب کند\nTODO انتشار اول: ذخیرهٔ این عکس خارج از scope\nاین‌ها هم‌معنی/اجراشده نیستند", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9", style="rounded,dashed,filled"];
+    { rank=same; confirmed_platform; pwa_target; role_target; privacy_decision; }
+    confirmed_platform -> pwa_target -> role_target -> privacy_decision [style=invis, weight=20];
+  }
+  pwa_target -> client_app [style=dashed, color="#E9B85C", label="مهاجرت تصویب نشده", constraint=false];
+  role_target -> authz_gate [style=dashed, color="#E9B85C", label="policy/gap؛ نه route migration کامل", constraint=false];
+
+  subgraph cluster_future_program {
+    label="هدف آیندهٔ برنامه‌ساز / source routing / PDF؛ تمام این زنجیره طرح است"; color="#E9B85C"; fontcolor="#FFE2A3"; style="rounded,dashed";
+    q_forms [label="Q01–Q11 عضو + C01–C11 مربی\nsource/date/unknown/consent\nsnapshot ورودی نسخه‌دار", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9", style="rounded,dashed,filled"];
+    source_gate [label="Question Router → Source Registry\nمجوز · schema · کیفیت · provenance\nفقط source تأییدشده به planner", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9", style="rounded,dashed,filled"];
+    composer [label="ProgramComposer + safety gate\nهدف/تجهیزات/مهارت/ریکاوری/شواهد\nunknown/red flag → stop یا بازبینی مربی", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9", style="rounded,dashed,filled"];
+    versioned_program [label="ApprovedProgramVersion تغییرناپذیر\nversion + content hash\nاپ و PDF از همان شناسه", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9", style="rounded,dashed,filled"];
+    private_pdf_qr [label="PDF خصوصی کامل + QR نسخه‌دار در صفحهٔ آخر\nQR فقط reference قابل‌ابطال است؛\nبا QR حضور باشگاه فرق دارد", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9", style="rounded,dashed,filled", URL="athlete-jp7-program-qr-flow-v6-2026-11-23.svg", target="_blank"];
+    cycle_metrics [label="Planned vs performed + سنجش قابل‌مقایسه\nscorecard جزءبه‌جزء؛ بدون ادعای causality\nچرخهٔ بعد پس از تأیید مربی", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9", style="rounded,dashed,filled"];
+    { rank=same; q_forms; source_gate; composer; versioned_program; private_pdf_qr; cycle_metrics; }
+    q_forms -> source_gate -> composer -> versioned_program -> private_pdf_qr -> cycle_metrics -> q_forms [style=dashed, color="#E9B85C", label="چرخهٔ هدف"];
+  }
+  composer -> svc_training [style=dashed, color="#E9B85C", label="پس از طراحی/تأیید/پیاده‌سازی جدا", constraint=false];
+
+  subgraph cluster_legend {
+    label="راهنمای وضعیت شواهد"; color="#52657A"; fontcolor="#C6D2DF"; style="rounded,dashed";
+    legend_current [label="کد/قرارداد جاری قابل‌ردیابی", color="#51D6A0", fillcolor="#132B22"];
+    legend_conditional [label="وابسته به config یا بدون E2E / production proof", color="#6AB7E8", fillcolor="#172739"];
+    legend_gap [label="گپ/رفتار ناقص یا endpoint مسدود", color="#F08A93", fillcolor="#321C24", fontcolor="#FFE3E6"];
+    legend_target [label="طرح/هدف/تصمیمی که نباید اجراشده فرض شود", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9", style="rounded,dashed,filled"];
+    { rank=same; legend_current; legend_conditional; legend_gap; legend_target; }
+    legend_current -> legend_conditional -> legend_gap -> legend_target [style=invis, weight=20];
+  }
+
+  route_catalog [label="پیوست مکانیکی API\n۱۶۳ operation · ۱۴۱ path template\nmethod · guards · scopes · roles", color="#6AB7E8", fillcolor="#172739", URL="../../../mp-app/backend/api/routes.json", target="_blank"];
+  references [label="نقشه‌های جزئی‌تر موجود\nClient · Studio · UI/UX · Transactions\nچرخهٔ ورزشکار/JP7/QR", color="#6AB7E8", fillcolor="#172739", URL="README.md", target="_blank"];
+  { rank=same; route_catalog; references; }
+  route_catalog -> references [style=invis, weight=15];
+  route_catalog -> route_identity [style=dotted, color="#6AB7E8", arrowhead=none, constraint=false];
+}
