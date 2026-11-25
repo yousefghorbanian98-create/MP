@@ -77,10 +77,14 @@ jobs:
               message = f"cannot read copied Super-Linter log: {type(exc).__name__}: {exc}"
               print("::warning title=Super-Linter diagnostics::" + message.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A"))
               sys.exit(0)
-          matches = [line for line in lines if any(term in line.lower() for term in ("error", "failed", "fatal", "markdownlint", "config", "no files"))]
-          for line in (matches or lines[-30:])[-30:]:
-              safe = line.strip().replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
-              print(f"::error title=Super-Linter diagnostic::{safe}")
+          failure_terms = ("[error]", "[fatal]", "traceback", "exception", "failed", "failure", "invalid", "cannot", "unable", "not found", "no files")
+          salient = [i for i, line in enumerate(lines) if any(term in line.lower() for term in failure_terms)]
+          tail = range(max(0, len(lines) - 35), len(lines))
+          selected = sorted(set(tail) | set(salient[-20:]))
+          for i in selected:
+              entry = f"[{i + 1}/{len(lines)}] {lines[i]}".strip()
+              safe = entry.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")[:1800]
+              print(f"::notice title=Super-Linter diagnostic::{safe}")
           PY
 
   reviewdog:
