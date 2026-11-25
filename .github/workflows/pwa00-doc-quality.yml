@@ -55,18 +55,26 @@ jobs:
         if: failure()
         continue-on-error: true
         run: |
-          python3 - <<'PY'
+          set -euo pipefail
+          source_log="super-linter.log"
+          readable_log="${RUNNER_TEMP}/pwa00-super-linter.log"
+          if [[ ! -e "$source_log" ]]; then
+            echo "::warning title=Super-Linter diagnostics::super-linter.log was not produced"
+            exit 0
+          fi
+          if ! sudo -n install -m 0644 -- "$source_log" "$readable_log"; then
+            echo "::warning title=Super-Linter diagnostics::could not copy the permission-restricted Super-Linter log"
+            exit 0
+          fi
+          python3 - "$readable_log" <<'PY'
           from pathlib import Path
           import sys
 
-          report = Path("super-linter.log")
-          if not report.is_file():
-              print("::warning title=Super-Linter diagnostics::super-linter.log was not produced")
-              sys.exit(0)
+          report = Path(sys.argv[1])
           try:
               lines = report.read_text(encoding="utf-8", errors="replace").splitlines()
-          except Exception as exc:
-              message = f"cannot read Super-Linter log: {type(exc).__name__}: {exc}"
+          except OSError as exc:
+              message = f"cannot read copied Super-Linter log: {type(exc).__name__}: {exc}"
               print("::warning title=Super-Linter diagnostics::" + message.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A"))
               sys.exit(0)
           matches = [line for line in lines if any(term in line.lower() for term in ("error", "failed", "fatal", "markdownlint", "config", "no files"))]
