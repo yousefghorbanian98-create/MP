@@ -49,6 +49,7 @@ jobs:
           LINTER_RULES_PATH: .
           MARKDOWN_CONFIG_FILE: .markdownlint.json
           LOG_LEVEL: DEBUG
+          CREATE_LOG_FILE: true
           LOG_FILE: super-linter.log
       - name: Expose scoped Super-Linter diagnostics on failure
         if: failure()
