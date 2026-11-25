@@ -77,14 +77,25 @@ jobs:
               message = f"cannot read copied Super-Linter log: {type(exc).__name__}: {exc}"
               print("::warning title=Super-Linter diagnostics::" + message.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A"))
               sys.exit(0)
-          failure_terms = ("[error]", "[fatal]", "traceback", "exception", "failed", "failure", "invalid", "cannot", "unable", "not found", "no files")
-          salient = [i for i, line in enumerate(lines) if any(term in line.lower() for term in failure_terms)]
-          tail = range(max(0, len(lines) - 35), len(lines))
-          selected = sorted(set(tail) | set(salient[-20:]))
-          for i in selected:
-              entry = f"[{i + 1}/{len(lines)}] {lines[i]}".strip()
-              safe = entry.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")[:1800]
-              print(f"::notice title=Super-Linter diagnostic::{safe}")
+          import re
+
+          severe = re.compile(r"\[(?:ERROR|FATAL|WARN(?:ING)?)\]|\b(?:ERROR|FATAL|CRITICAL)\b|Traceback|Exception|failed to|not found|No files", re.IGNORECASE)
+          marked = [i for i, line in enumerate(lines) if severe.search(line) or "[MARKDOWN]" in line or "markdownlint" in line.lower()]
+          selected = set(range(min(20, len(lines)))) | set(range(max(0, len(lines) - 45), len(lines)))
+          for i in marked:
+              selected.update(range(max(0, i - 1), min(len(lines), i + 2)))
+          entries = []
+          budget = 42000
+          used = 0
+          for i in sorted(selected):
+              entry = f"[{i + 1}/{len(lines)}] {lines[i]}".strip()[:700]
+              safe = entry.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+              if used + len(safe) + 3 > budget:
+                  continue
+              entries.append(safe)
+              used += len(safe) + 3
+          details = "%0A".join(entries) or "No diagnostic lines were available"
+          print(f"::notice title=Super-Linter diagnostic excerpt::{details}")
           PY
 
   reviewdog:
