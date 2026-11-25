@@ -1,0 +1,93 @@
+# Scoped CI checks for PWA-00 documents. Diagnostics only: no automatic file edits,
+# commits, or PR review comments. Reviewdog reports Markdown findings as GitHub Check annotations.
+name: pwa00-doc-quality
+
+on:
+  pull_request:
+    paths:
+      - ".markdownlint.json"
+      - ".github/workflows/pwa00-doc-quality.yml"
+      - "docs/MuscleParadise/adr/README.md"
+      - "docs/MuscleParadise/adr/006-shared-react-pwa.md"
+      - "docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-CONTRACT.fa.md"
+      - "docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-EVIDENCE.fa.md"
+      - "docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-DIFF.patch"
+
+permissions:
+  contents: read
+
+jobs:
+  super-linter:
+    name: Super-Linter (PWA-00 Markdown only)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Lint the four PWA-00 Markdown files
+        uses: super-linter/super-linter@2da136927bd4a73596db63044b504547c62cb854 # v9.0.0
+        env:
+          DEFAULT_BRANCH: main
+          VALIDATE_ALL_CODEBASE: false
+          VALIDATE_MARKDOWN: true
+          VALIDATE_MARKDOWN_PRETTIER: false
+          VALIDATE_NATURAL_LANGUAGE: false
+          FILTER_REGEX_INCLUDE: '^docs/MuscleParadise/(adr/(README|006-shared-react-pwa)\.md|architecture/session-decisions-2026-11-23/PWA-00-(CONTRACT|EVIDENCE)\.fa\.md)$'
+          LINTER_RULES_PATH: /
+          MARKDOWN_CONFIG_FILE: .markdownlint.json
+
+  reviewdog:
+    name: Reviewdog (Markdown findings as check annotations)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+      checks: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Run markdownlint through Reviewdog
+        uses: reviewdog/action-markdownlint@3667398db9118d7e78f7a63d10e26ce454ba5f58 # v0.26.2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: github-check
+          filter_mode: added
+          fail_on_error: true
+          markdownlint_flags: >-
+            docs/MuscleParadise/adr/README.md
+            docs/MuscleParadise/adr/006-shared-react-pwa.md
+            docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-CONTRACT.fa.md
+            docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-EVIDENCE.fa.md
+
+  pwa00-patch:
+    name: PWA-00 patch applies cleanly and matches source docs
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Check the filtered patch against its pinned base
+        env:
+          PATCH_BASE: c46e792657e361cd09799c896c47149b4a5c4d86
+          PATCH_FILE: docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-DIFF.patch
+        run: |
+          set -euo pipefail
+          scratch=$(mktemp -d)
+          trap 'rm -rf "$scratch"' EXIT
+          git archive "$PATCH_BASE" docs/MuscleParadise/adr/README.md | tar -x -C "$scratch"
+          (cd "$scratch" && git apply --check --whitespace=error-all "$GITHUB_WORKSPACE/$PATCH_FILE")
+          (cd "$scratch" && git apply --whitespace=error-all "$GITHUB_WORKSPACE/$PATCH_FILE")
+          for path in \
+            docs/MuscleParadise/adr/README.md \
+            docs/MuscleParadise/adr/006-shared-react-pwa.md \
+            docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-CONTRACT.fa.md \
+            docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-EVIDENCE.fa.md; do
+            cmp "$scratch/$path" "$GITHUB_WORKSPACE/$path"
+          done
