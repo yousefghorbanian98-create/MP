@@ -3,6 +3,15 @@
 name: pwa00-doc-quality
 
 on:
+  push:
+    paths:
+      - ".markdownlint.json"
+      - ".github/workflows/pwa00-doc-quality.yml"
+      - "docs/MuscleParadise/adr/README.md"
+      - "docs/MuscleParadise/adr/006-shared-react-pwa.md"
+      - "docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-CONTRACT.fa.md"
+      - "docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-EVIDENCE.fa.md"
+      - "docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-DIFF.patch"
   pull_request:
     paths:
       - ".markdownlint.json"
@@ -36,6 +45,7 @@ jobs:
           VALIDATE_MARKDOWN_PRETTIER: false
           VALIDATE_NATURAL_LANGUAGE: false
           FILTER_REGEX_INCLUDE: '^docs/MuscleParadise/(adr/(README|006-shared-react-pwa)\.md|architecture/session-decisions-2026-11-23/PWA-00-(CONTRACT|EVIDENCE)\.fa\.md)$'
+          STRIP_DEFAULT_WORKSPACE_FOR_REGEX: true
           LINTER_RULES_PATH: .
           MARKDOWN_CONFIG_FILE: .markdownlint.json
 

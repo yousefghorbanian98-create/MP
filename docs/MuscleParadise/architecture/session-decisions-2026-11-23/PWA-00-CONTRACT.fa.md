@@ -1,7 +1,7 @@
 # قرارداد PWA-00 — ثبت تصمیم پلتفرم
 
 **Parent:** `PWA-00` · **عنوان اصلی:** ثبت تصمیم پلتفرم · **نسخهٔ منبع:** Arena handoff v2.0.0
-**وضعیت اجرا:** `BLOCKED` برای `AGENT-READY`؛ بازبینی مستقلِ نسخهٔ قبلی `CHANGES_REQUESTED` بود. برای نسخهٔ اصلاح‌شده G9 هنوز `NOT_RUN` و G5 هنوز `NOT_RUN` است: PR #25 به `main` باز شد، اما حفاظت شاخه و سیاست required-check/reviewer به‌علت دسترسی ناقص تأیید نشده‌اند. نتیجهٔ بازبینی قبلی به هش تازه منتقل نمی‌شود.
+**وضعیت اجرا:** `BLOCKED` برای `AGENT-READY`؛ بازبینی مستقلِ نسخهٔ قبلی `CHANGES_REQUESTED` بود. برای نسخهٔ اصلاح‌شده G9 هنوز `NOT_RUN` و G5 نیز `NOT_RUN` است: PR #25 به `main` باز شد و سپس، چون diff شاخه تغییرات قدیمی خارج از allowlist را هم دربر می‌گرفت، بدون merge بسته شد. حفاظت شاخه و سیاست required-check/reviewer تأیید نشده‌اند؛ نتیجهٔ بازبینی قبلی به هش تازه منتقل نمی‌شود.
 **مخزن/شاخه:** `yousefghorbanian98-create/MP` / `arena/5e0f64cf-mp`
 **Patch base SHA:** `c46e792657e361cd09799c896c47149b4a5c4d86` (والد artifact اولیه)
 **Branch creation base:** `35d4b35184b4148c658b415bd009fc076bf24e00` (merge-base شاخهٔ جاری با مبنای اعلام‌شده)
@@ -19,7 +19,7 @@
 - ایجاد diff پالایش‌شدهٔ همین فایل‌ها: `docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-DIFF.patch`
 - **مجوز تکمیلیِ درخواست بعدی کاربر (ابزار مستندات، جدا از artifact PWA-00):** `.markdownlint.json` و `.github/workflows/pwa00-doc-quality.yml`. این دو فایل فقط lint/review مستندات را پیکربندی می‌کنند و داخل `PWA-00-DIFF.patch` نیستند.
 
-هر مسیر خارج این فهرست، از جمله کد و گیت‌های محصول، خارج از مجوز این کارت است. دو فایل tooling بالا فقط به درخواست تکمیلی کاربر مجازند؛ workflow مستقل و PR-scoped شامل lint، Check annotation و آزمون read-only برای اعمال patch است؛ auto-fix/commit یا PR review comment ندارد. پیش از مجوز بعدی کاربر هیچ Git write انجام نشد؛ سپس کاربر صریحاً commit/push همین هفت مسیر روی شاخهٔ جاری و بازکردن PR #25 به `main` را مجاز کرد. merge و deploy همچنان مجاز نیستند. شاخه عوض نشده است.
+هر مسیر خارج این فهرست، از جمله کد و گیت‌های محصول، خارج از مجوز این کارت است. دو فایل tooling بالا فقط به درخواست تکمیلی کاربر مجازند؛ workflow مستقل با path filter برای push و pull_request شامل lint، Check annotation و آزمون read-only patch است؛ auto-fix/commit یا PR review comment ندارد. پیش از مجوز بعدی کاربر هیچ Git write انجام نشد؛ سپس کاربر صریحاً commit/push همین هفت مسیر روی شاخهٔ جاری و بازکردن PR #25 به `main` را مجاز کرد. PR #25 به‌دلیل diff خارج از allowlist بسته شد تا از merge ناخواسته جلوگیری شود؛ هیچ merge/deploy انجام نشده و شاخه عوض نشده است.
 
 ## معیار پذیرش اصلی (عین منبع)
 
@@ -38,7 +38,7 @@
 - بدون تغییر کد محصول، آزمون runtime محصول، اجرای Finn، E2E پنج سفر، device/staging یا دسترسی به دادهٔ تولیدی.
 - بدون تغییر نقش/grant، DB/tenant، پرداخت، نشست، offline/cache یا جزئیات release؛ هیچ‌کدام را با `N/A` نمی‌بندیم.
 - حفظ کامل آثار دیگران و همهٔ فایل‌های خارج allowlist؛ محتوای مسیر رسید خصوصی [ردشده] خوانده یا دست‌کاری نمی‌شود.
-- merge و deploy خارج از مجوزند. تنها استثنا برای Git write، مجوز صریح بعدی کاربر برای commit/push هفت مسیر allowlist و ایجاد PR #25 به `main` است؛ این استثنا را به کد محصول یا مسیرهای دیگر گسترش نمی‌دهیم.
+- merge و deploy خارج از مجوزند. تنها استثنا برای Git write، مجوز صریح بعدی کاربر برای commit/push هفت مسیر allowlist و ایجاد PR #25 به `main` بود؛ PR بعداً به‌دلیل diff شاخهٔ خارج از scope بسته شد. این استثنا را به کد محصول یا مسیرهای دیگر گسترش نمی‌دهیم.
 
 ## تصمیم‌های مرتبط و وابستگی
 
@@ -78,8 +78,8 @@
 | G1 — مشخصات و خردسازی | source AC بالا، ACهای قابل‌آزمون، NG، D-01/D-10 و خروجی مستنداتی روشن باشند. | `PASS` — این قرارداد و ADR-006؛ جزئیات انتشار عمداً بازند. |
 | G2 — ایزوله‌سازی | checkout/شاخه/base ثبت؛ ویرایش‌های همین کارت در allowlist بمانند؛ هیچ منبع خصوصی/runtime لمس نشود. این scope-path check معادل sandbox عمومی نیست. | `PASS` محدود به مسیرهای artifact و مرحلهٔ اصلاح؛ وضعیت مجاز پیش/پس و اثرانگشت همین مرحله ثبت می‌شود. گزارش مستقل فقط چهار مسیر patch قبلی را تأیید کرد و حفظ همهٔ تغییرات قدیمی worktree را مستقلاً تصدیق نکرد؛ ادعای sandbox عمومی نداریم. |
 | G3 — ابزار/اثر | فرمان‌های محلی مستنداتی/hash؛ GitHub network/write فقط با مجوز صریح، برای هفت مسیر allowlist، شاخهٔ جاری و PR #25؛ بدون تغییر محصول، مسیر دیگر، merge یا deploy. | `PASS` محدود — مرحلهٔ محلی طبق scope انجام شد؛ بعدتر کاربر commit/push و PR #25 را صریحاً مجاز کرد و فقط همان هفت مسیر روی شاخهٔ جاری منتشر شد. merge/deploy انجام نشده؛ جزئیات در evidence است. |
-| G4 — آزمون/امنیت | docs gate و whitespace/link checks برای مستندات؛ QA محصول خارج scope و جداگانه `NOT_RUN`. | `PASS` فقط برای بررسی‌های محلی مستندات. اجرای GitHub اولیهٔ Super-Linter و Reviewdog شکست خورد؛ اصلاح‌شده و اجرای مجدد لازم است. تست‌های محصول خارج از این گیت/معیار پذیرش هستند. |
-| G5 — حفاظت شاخه | rule/required-check/reviewer policy واقعی برای PR مقصد و همین branch تأیید شود؛ no bypass. | `NOT_RUN` — PR #25 به `main` باز است؛ فهرست ruleset یک مورد فعال با نام `Main` را نشان داد، اما خواندن branch-protection با `403` رد شد و اثر دقیق required-check/reviewer policy برای PR تأیید نشده است. از این شواهد PASS نتیجه نمی‌شود؛ merge انجام نمی‌شود. |
+| G4 — آزمون/امنیت | docs gate و whitespace/link checks برای مستندات؛ QA محصول خارج scope و جداگانه `NOT_RUN`. | `PASS` فقط برای بررسی‌های محلی مستندات. اجرای اول Super-Linter و Reviewdog شکست خورد؛ در اجرای دوم Reviewdog و patch check موفق و Super-Linter ناموفق ماند. اصلاح regex و اجرای push-triggered بعدی در انتظار است؛ تست محصول خارج از معیار Product محدود است. |
+| G5 — حفاظت شاخه | rule/required-check/reviewer policy واقعی برای PR مقصد و همین branch تأیید شود؛ no bypass. | `NOT_RUN` — PR #25 به `main` باز شده و سپس بسته شد چون diff شاخه شامل تغییرات خارج از allowlist بود. فهرست ruleset یک مورد فعال با نام `Main` را نشان داد، اما خواندن branch-protection با `403` رد شد و اثر دقیق required-check/reviewer policy تأیید نشده است. از این شواهد PASS نتیجه نمی‌شود. |
 | G6 — شواهد/provenance | base/head، فایل‌های مجاز، فرمان‌ها/خروجی‌ها و هش دقیق diff ثبت شود؛ هیچ داده/secret خصوصی در artifact نیاید. | `PASS` — جزئیات و هش‌ها در evidence/final handoff. |
 | G7 — نظارت انسانی شخصی | دستور مالک برای scope همین ADR روشن باشد؛ کاربر می‌تواند نظارت شخصیِ اضافه را برای همین چرخه waive کند. | `PASS` فقط بر پایهٔ دستور صریح قبلی مالک برای تصمیم محدود؛ بنا بر پیام تازه، نظارت شخصیِ اضافه در این چرخه skip شد. این waiver مجوز release یا merge نیست؛ `D-01`/`D-10` باز می‌مانند. |
 | G8 — بودجه/توقف | سقف ۹۰ دقیقه/۳ تلاش و هزینهٔ خارجی صفر، پیش از اجرا مشخص باشد و مصرف ثبت شود. | `UNKNOWN` — سقف/هزینه صریحاً تصویب شد؛ تلاش‌ها قابل‌شمارش‌اند، اما stopwatch محیط زمان کل wall-clock را ثبت نکرده است؛ PASS ادعا نمی‌شود. |
