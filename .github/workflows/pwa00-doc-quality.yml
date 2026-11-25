@@ -53,6 +53,7 @@ jobs:
           LOG_FILE: super-linter.log
       - name: Expose scoped Super-Linter diagnostics on failure
         if: failure()
+        continue-on-error: true
         run: |
           python3 - <<'PY'
           from pathlib import Path
@@ -62,7 +63,12 @@ jobs:
           if not report.is_file():
               print("::warning title=Super-Linter diagnostics::super-linter.log was not produced")
               sys.exit(0)
-          lines = report.read_text(encoding="utf-8", errors="replace").splitlines()
+          try:
+              lines = report.read_text(encoding="utf-8", errors="replace").splitlines()
+          except Exception as exc:
+              message = f"cannot read Super-Linter log: {type(exc).__name__}: {exc}"
+              print("::warning title=Super-Linter diagnostics::" + message.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A"))
+              sys.exit(0)
           matches = [line for line in lines if any(term in line.lower() for term in ("error", "failed", "fatal", "markdownlint", "config", "no files"))]
           for line in (matches or lines[-30:])[-30:]:
               safe = line.strip().replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
