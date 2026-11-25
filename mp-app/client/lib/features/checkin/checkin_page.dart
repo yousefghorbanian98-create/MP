@@ -1,4 +1,4 @@
-/// چک‌این واقعی — QR امضاشده + چهره (ثبت/چک‌این از API) (M32).
+/// حضور عضو — QR یک‌بارمصرف امضاشده؛ چک‌این چهره تا اثبات سمت‌سرور غیرفعال است.
 library;
 
 import 'dart:async';
@@ -9,7 +9,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:local_auth/local_auth.dart';
 
-import '../../core/api_client.dart';
 import '../../core/session.dart';
 import '../../core/theme.dart';
 import '../../shared/widgets/glass_card.dart';
@@ -67,7 +66,6 @@ class _CheckInPageState extends ConsumerState<CheckInPage>
   late final TabController _tabs = TabController(length: 3, vsync: this);
   String? _faceMessage;
   bool _busy = false;
-  int _historyVersion = 0;
   bool _qrUnlocked = false;
   bool _qrAuthenticating = false;
   String? _qrError;
@@ -130,52 +128,9 @@ class _CheckInPageState extends ConsumerState<CheckInPage>
     super.dispose();
   }
 
-  // M61/D1+D2 — دو واقعیتی که این صفحه تا امروز پنهان می‌کرد:
-  //   ۱) `POST /face/enroll` ورودی‌اش `embedding_b64` است (خروجی مدل چهره)، نه
-  //      تصویر خام. ساخت این embedding در کلاینت نیست، پس دکمهٔ «ثبت چهره» در
-  //      اپ **نمی‌توانست** کار کند — یا ۴۰۳ می‌گرفت (rbac) یا در بهترین حالت
-  //      ورودی بی‌معنا می‌فرستاد. قاعدهٔ R3: هر دکمه‌ای که کاربر واقعاً نمی‌تواند
-  //      انجامش دهد باید حذف شود، نه اینکه پیام خطا نشان دهد.
-  //   ۲) ثبت چهره از کیوسک/پذیرش انجام می‌شود؛ اپ فقط رضایت و چک‌این دارد.
-
-  Future<void> _faceCheckIn() async {
-    setState(() {
-      _busy = true;
-      _faceMessage = null;
-    });
-    try {
-      final api = ref.read(apiClientProvider);
-      final auth = ref.read(authProvider);
-      final memberId = auth.memberId;
-      if (memberId == null)
-        throw ApiException('عضو یافت نشد — دوباره وارد شوید');
-      final r = Map<String, dynamic>.from(
-        await api.post('/face/checkin', {
-          'member_id': memberId,
-          'method': 'face',
-        }) as Map,
-      );
-      final denied = r['result'] == 'denied';
-      setState(() {
-        _faceMessage = denied
-            ? 'ورود ثبت نشد: ${_denialLabel(r['denial_reason'] as String?)}'
-            : '✅ ورود ثبت شد';
-        _historyVersion += 1;
-      });
-      ref.invalidate(qrTokenProvider);
-      ref.invalidate(memberCheckInHistoryProvider(0));
-    } catch (e) {
-      setState(() => _faceMessage = '⚠ $e');
-    } finally {
-      if (mounted) setState(() => _busy = false);
-    }
-  }
-
-  static String _denialLabel(String? reason) => switch (reason) {
-        'membership_expired' => 'اشتراک فعال ندارید یا منقضی شده است',
-        null => 'دلیل نامعلوم',
-        _ => reason,
-      };
+  // Face enrollment/matching has no verified server-side probe or liveness flow.
+  // Do not turn an authenticated account request into a method=face check-in;
+  // the signed, one-time QR flow is the supported attendance path.
 
   Future<void> _grantConsent() async {
     setState(() => _busy = true);
@@ -289,8 +244,9 @@ class _CheckInPageState extends ConsumerState<CheckInPage>
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          'ورود شما ثبت می‌شود. تشخیص چهره در این نسخه انجام نمی‌شود؛ '
-                          'هویت شما با حساب واردشده تأیید می‌شود.',
+                          'تطبیق چهره و بررسی زنده‌بودن در سرور این نسخه پیاده نشده است؛ '
+                          'چک‌این با این روش غیرفعال است. برای ثبت حضور، QR یک‌بارمصرف را '
+                          'از برگهٔ QR نمایش دهید تا پذیرش اسکن کند.',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: MpColors.textSecondary,
@@ -319,7 +275,8 @@ class _CheckInPageState extends ConsumerState<CheckInPage>
                               return Column(
                                 children: [
                                   Text(
-                                    'برای استفاده از ورود با چهره، ابتدا باید رضایت بیومتریک بدهید.',
+                                    'رضایت برای ثبت قالب بیومتریک لازم است؛ '
+                                    'این رضایت چک‌این با چهره را فعال نمی‌کند.',
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       color: MpColors.accent,
@@ -356,14 +313,11 @@ class _CheckInPageState extends ConsumerState<CheckInPage>
                             }
                             return Column(
                               children: [
-                                FilledButton.icon(
-                                  onPressed: _busy ? null : _faceCheckIn,
-                                  icon: const Icon(Icons.login),
-                                  label: const Text('چک‌این'),
-                                ),
-                                const SizedBox(height: 10),
                                 Text(
-                                  'ثبت چهره در باشگاه و توسط پذیرش انجام می‌شود.',
+                                  c['enrolled'] == true
+                                      ? 'رضایت فعال است و قالب چهره ثبت شده.'
+                                      : 'رضایت فعال است؛ ثبت قالب چهره در باشگاه '
+                                          'و توسط پذیرش انجام می‌شود.',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     color: MpColors.textSecondary,
@@ -391,7 +345,7 @@ class _CheckInPageState extends ConsumerState<CheckInPage>
                     ),
                   ),
                 ),
-                MemberCheckInHistoryPage(key: ValueKey(_historyVersion)),
+                const MemberCheckInHistoryPage(),
               ],
             ),
           ),

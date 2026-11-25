@@ -209,10 +209,14 @@ const ROUTE_EXCEPTIONS: Record<string, Exception> = {
   },
   // چهره
   "/api/v1/face/enroll": {
-    why: "اپ چک‌این embedding چهره را نمی‌سازد؛ ثبت فعلی به جریان کیوسک/پذیرش وابسته است",
+    why: "ساخت embedding و تطبیق معتبر سمت سرور پیاده نیست؛ مسیر ثبت چهره در اپ فعال نیست",
     evidence: null,
-    external: "TODO: ابزار ثبت چهره برای کارکنان/کیوسک؛ مسیر کاربر در client/lib/features/checkin/checkin_page.dart حذف شده",
-    fileEvidence: "mp-app/client/lib/features/checkin/checkin_page.dart",
+    external: "TODO: ابزار امن ثبت چهره برای کارکنان/کیوسک؛ تا طراحی رضایت، کنترل دسترسی و چرخهٔ حذف تکمیل نشود، مصرف‌کننده‌ای ادعا نمی‌شود",
+  },
+  "/api/v1/face/checkin": {
+    why: "چک‌این چهره بدون probe معتبر و liveness باید fail-closed بماند؛ API با 409 رد می‌کند",
+    evidence: null,
+    external: "TODO: فقط پس از طراحی و پیاده‌سازی تطبیق و liveness سمت سرور، با آزمون حریم خصوصی و دستگاهی فعال شود",
   },
   "/api/v1/face/enroll/{member_id}": {
     why: "حذف template چهره در Studio/mobile UI ندارد؛ صرفاً endpoint حریم خصوصی است",

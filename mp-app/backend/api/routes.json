@@ -3141,19 +3141,17 @@
     "payments"
    ],
    "guards": [
-    "permission"
+    "grant:finance.write",
+    "permission",
+    "roles"
    ],
    "scopes": [],
    "roles": [
-    "reception",
     "manager",
     "admin",
     "super_admin"
    ],
    "always_roles": [
-    "reception",
-    "manager",
-    "admin",
     "super_admin"
    ],
    "anonymous": "never"

@@ -1,0 +1,111 @@
+digraph StudioDataflow {
+  graph [
+    rankdir=LR, bgcolor="#0B1220", pad="0.34", nodesep="0.27", ranksep="0.62",
+    splines=ortho, compound=true, newrank=true, dpi=180,
+    fontname="DejaVu Sans", fontsize=23, fontcolor="#EEF4FC",
+    label="جریان پنل Studio · صفحه/پنل → API واقعی → سرویس → مدل‌های پایدار\nنقشهٔ کد مصرف‌شده؛ هر endpoint به‌صورت زنده جداگانه در این مرور اجرا نشده است",
+    labelloc="t", labeljust="c"
+  ];
+  node [shape=box, style="rounded,filled", fontname="DejaVu Sans", fontsize=12,
+        color="#49627D", fillcolor="#15243A", fontcolor="#EEF4FC",
+        penwidth=1.2, margin="0.15,0.10"];
+  edge [fontname="DejaVu Sans", fontsize=9, color="#8296AD", fontcolor="#DCE6F1",
+        penwidth=1.0, arrowsize=0.62];
+
+  subgraph cluster_ui {
+    label="۱ · Studio Web (React/TypeScript)";
+    color="#6CAAF8"; fontcolor="#6CAAF8"; style="rounded"; penwidth=1.4;
+    members_ui [label="Dashboard / Members / TopBar\nKPI · حضور · عضو · پروفایل", color="#6CAAF8"];
+    checkins_ui [label="Check-in feed\nفهرست ورودهای ثبت‌شده", color="#6CAAF8"];
+    programs_ui [label="Programs\nفهرست · تأیید / رد", color="#6CAAF8"];
+    bodycomp_ui [label="JP7 Trend / Segmental\nروند خام · محیط اندام", color="#6CAAF8"];
+    nutrition_ui [label="Nutrition / Food Library\nثبت خوراک · جست‌وجوی غذا", color="#6CAAF8"];
+    adaptive_ui [label="Adaptive Nutrition\nگزارش روند وزن · ثبت وزن", color="#6CAAF8"];
+    reminders_ui [label="Reminders Panel\nنمایش + materialize اعلان", fillcolor="#30271A", color="#FFC56E"];
+    expenses_ui [label="Expenses / Period Report\nثبت، اصلاح، فیش، سود/زیان", color="#6CAAF8"];
+    finance_ui [label="Finance / Receipt Queue\nپرداخت، CSV، بازبینی فیش", color="#6CAAF8"];
+    shop_ui [label="Shop Admin\nکاتالوگ · قیمت · تغییرات", color="#6CAAF8"];
+  }
+
+  shared_guard [label="مرز مشترک درخواست\nsessionFetch + Bearer → get_current_user / Casbin\nمجوزهای نهایی route-specific هستند؛ grant را فقط مسیرهای دارای guard می‌گیرند", fillcolor="#30271A", color="#FFC56E", fontcolor="#FFF0CE"];
+
+  subgraph cluster_api {
+    label="۲ · endpointهای Studio که به کد متصل‌اند";
+    color="#6CAAF8"; fontcolor="#6CAAF8"; style="rounded"; penwidth=1.4;
+    admin_api [label="/admin/kpis · /admin/attendance\n/admin/members-summary · /admin/checkins\n/members/me"];
+    programs_api [label="/programs · /programs/{id}/approve|reject"];
+    assessment_api [label="/assessments/jp7/member/{id}/trend\n/assessments/limb/member/{id}/report"];
+    nutrition_api [label="/nutrition/foods · /food-logs\n/plans · /member/{id}/adaptive\n/weight-logs"];
+    reminders_api [label="GET /notifications/reminders/member/{id}\nخواندن دارد؛ side effect ثبت اعلان"];
+    expenses_api [label="/expenses · /expenses/{id}/receipt"];
+    finance_api [label="/finance/reports/period\n/payments/finance/* · /payments/*/approve"];
+    shop_api [label="/shop/products · /prices · /gateways\n/change-requests · /orders"];
+  }
+
+  subgraph cluster_service {
+    label="۳ · روتر → منطق سرویس / گزارش";
+    color="#B99AFB"; fontcolor="#B99AFB"; style="rounded"; penwidth=1.4;
+    admin_service [label="admin.analytics + membership\nخلاصهٔ عضو / حضور / پروفایل"];
+    programs_service [label="programs.service\nصف گردش وضعیت + audit"];
+    assessment_service [label="assessment.service\nJP7 / limb"];
+    nutrition_service [label="nutrition.service\nfood logs / weight / adaptive"];
+    reminders_service [label="notification.service\nقرائت منابع + ساخت اعلان\nمهار تکرار: همان kind در ۲۴ ساعت"];
+    expenses_service [label="expenses.service + receipts\nویرایش با دلیل / حذف نرم / فایل خصوصی"];
+    finance_service [label="reports.period + payments.finance\nبازهٔ تهران/جلالی + جمع مالی"];
+    shop_service [label="shop.service\nقیمت از DB · تغییرات مالکانه\nخرید آنلاین بسته در تنظیم پیش‌فرض"];
+  }
+
+  subgraph cluster_db {
+    label="۴ · دادهٔ SQLAlchemy";
+    color="#51D6C2"; fontcolor="#51D6C2"; style="rounded"; penwidth=1.4;
+    member_db [label="User · Member · Membership\nCheckIn · KPI source", color="#51D6C2"];
+    program_db [label="WorkoutProgram · ProgramWeek\nProgramExercise · AuditLog", color="#51D6C2"];
+    assessment_db [label="JacksonPollockMeasurement\nLimbMeasurement", color="#51D6C2"];
+    nutrition_db [label="NutritionPlan · MealItem\nFoodItem · FoodLog · BodyWeightLog", color="#51D6C2"];
+    reminder_db [label="Membership · SetFeedback · Payment\nAssessment* → Notification (insert)", fillcolor="#142B38", color="#FFC56E"];
+    expense_db [label="Expense · ExpenseRevision\nExpenseReceipt (private path/hash)", color="#51D6C2"];
+    finance_db [label="Payment · Expense · ReportRun\nAuditLog", color="#51D6C2"];
+    shop_db [label="Product · ProductVariant · PriceBook\nChangeRequest · CartItem · Order/Item", color="#51D6C2"];
+  }
+
+  members_ui -> admin_api [label="member summary / me / KPI"];
+  checkins_ui -> admin_api [label="GET /admin/checkins"];
+  programs_ui -> programs_api [label="GET + approve/reject"];
+  bodycomp_ui -> assessment_api [label="GET trends/reports"];
+  nutrition_ui -> nutrition_api [label="search / food log"];
+  adaptive_ui -> nutrition_api [label="adaptive report / weight log"];
+  reminders_ui -> reminders_api [label="GET; may write"];
+  expenses_ui -> expenses_api [label="CRUD / receipt"];
+  expenses_ui -> finance_api [label="period report"];
+  finance_ui -> finance_api [label="summary / CSV / receipt review"];
+  shop_ui -> shop_api [label="catalog / price / change request"];
+
+  admin_api -> admin_service;
+  programs_api -> programs_service;
+  assessment_api -> assessment_service;
+  nutrition_api -> nutrition_service;
+  reminders_api -> reminders_service;
+  expenses_api -> expenses_service;
+  finance_api -> finance_service;
+  shop_api -> shop_service;
+
+  admin_service -> member_db;
+  programs_service -> program_db;
+  assessment_service -> assessment_db;
+  nutrition_service -> nutrition_db;
+  reminders_service -> reminder_db [label="reads + writes"];
+  expenses_service -> expense_db;
+  finance_service -> finance_db;
+  finance_service -> expense_db [label="period aggregates"];
+  shop_service -> shop_db;
+
+  shared_guard -> admin_api [style=dashed, color="#FFC56E", arrowhead=none];
+  shared_guard -> programs_api [style=dashed, color="#FFC56E", arrowhead=none];
+  shared_guard -> assessment_api [style=dashed, color="#FFC56E", arrowhead=none];
+  shared_guard -> nutrition_api [style=dashed, color="#FFC56E", arrowhead=none];
+  shared_guard -> reminders_api [style=dashed, color="#FFC56E", arrowhead=none];
+  shared_guard -> expenses_api [style=dashed, color="#FFC56E", arrowhead=none];
+  shared_guard -> finance_api [style=dashed, color="#FFC56E", arrowhead=none];
+  shared_guard -> shop_api [style=dashed, color="#FFC56E", arrowhead=none];
+  members_ui -> shared_guard [style=dashed, color="#FFC56E", label="نشست فعال"];
+}

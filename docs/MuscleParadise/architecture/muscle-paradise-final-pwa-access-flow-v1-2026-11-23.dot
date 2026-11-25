@@ -1,0 +1,77 @@
+digraph MuscleParadiseFinalPwaAccessFlow {
+  graph [
+    rankdir=TB, bgcolor="#0B1220", pad="0.36", nodesep="0.50", ranksep="0.64",
+    splines=ortho, newrank=true, dpi=180,
+    fontname="DejaVu Sans", fontsize=23, fontcolor="#EEF4FC",
+    label="Muscle Paradise · فلوچارت نهاییِ تصمیمات فعلی دربارهٔ PWA و دسترسی‌ها\nهدف محصول بر اساس خواستهٔ مالک؛ هنوز در کد پیاده‌سازی نشده است",
+    labelloc="t", labeljust="c"
+  ];
+  node [shape=box, style="rounded,filled", fontname="DejaVu Sans", fontsize=14,
+        color="#49627D", fillcolor="#15243A", fontcolor="#EEF4FC",
+        penwidth=1.2, margin="0.18,0.12"];
+  edge [fontname="DejaVu Sans", fontsize=10, color="#8296AD", fontcolor="#DCE6F1",
+        penwidth=1.05, arrowsize=0.70];
+
+  current [label="وضع فعلی در مخزن\nعضو: Flutter / Android جدا · کارکنان: Studio وب/PWA\nنقش‌ها: member, coach, reception, manager, admin, super_admin\nService Worker فعلی APIهای /api/ را cache نمی‌کند", color="#6CAAF8", fillcolor="#17283D"];
+
+  target_pwa [label="هدف: یک PWA برای عضو و همهٔ کارکنان\nنمای رابط بر اساس نقش و مجوز؛ سرور مرجع دسترسی\nهدف محصول؛ هنوز یکپارچه/پیاده‌سازی نشده", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+  android_kept [label="Flutter / Android حفظ می‌شود\nفعلاً توسعه داده نمی‌شود؛ حذف نمی‌شود\nبرای احتمال توسعهٔ آینده", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+  { rank=same; target_pwa; android_kept; }
+
+  role_super [label="super_admin\nمالک؛ تنها صاحب اختیار مدیریت دسترسی", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+  role_admin [label="admin\nهمهٔ کارکنانِ انتخاب‌شده توسط مالک", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+  role_member [label="member\nعضو عادی؛ نقش مستقل از admin", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+  job_label [label="coach / reception / manager\nعنوان کار یا الگوی شروع مجوز؛ نه نقش امنیتی\nبه‌تنهایی هیچ دسترسی‌ای ایجاد نمی‌کند", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+  domain_terms [label="مفاهیم دامنه را حفظ کنید\nمثل coach_id، تخصیص مربی و coach_fee\n«عضو» = member؛ client نقش امنیتی نیست", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+  { rank=same; role_super; role_admin; role_member; }
+
+  owner_pick [label="مالک کاربر هدف را انتخاب می‌کند", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+  owner_grant [label="اعطا/لغو نقش admin\nو انتخاب مجوزهای صریح همان فرد:\nmembers.read · checkin.write · programs.edit · finance.read/write", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+  owner_guard [label="سرور: فقط super_admin مجاز\nپیش‌فرض ممنوع؛ super_admin از واگذاری عادی مستثنا", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+  grants_audit [label="ذخیرهٔ role + allowlist مجوزها\nهمراه grantor، زمان، انقضا/لغو و AuditLog", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+  admin_attempt [label="admin تلاش می‌کند خودش/دیگری را\nارتقا دهد یا مجوز واگذار کند", color="#FF7887", fillcolor="#301B2A", fontcolor="#FFE8EC"];
+  admin_denied [label="رد در سرور · 403\nادمین اختیار واگذاری ندارد", color="#FF7887", fillcolor="#301B2A", fontcolor="#FFE8EC"];
+
+  request [label="عمل کاربر در PWA\nمثلاً برنامه، چک‌این یا امور مالی", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+  api_policy [label="API و نشست معتبر → policy سمت سرور\nrole + مجوز دقیق + scope/مالکیت رکورد\ndefault deny؛ مخفی‌کردن دکمه کافی نیست", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+  check_owner [label="super_admin\nمسیر مالک", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+  check_admin [label="admin\nمجوز صریح + دامنهٔ مجاز\nمثلاً فقط پروندهٔ تخصیص‌یافته", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+  check_member [label="member\nفقط داده و عملیاتِ خودش", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+  allowed [label="اجازهٔ عملیات\nو ممیزی لازم", color="#51D6C2", fillcolor="#142B32"];
+  denied [label="رد 401/403\nمجوز/مالکیت نامعتبر یا خارج از scope", color="#FF7887", fillcolor="#301B2A", fontcolor="#FFE8EC"];
+  { rank=same; check_owner; check_admin; check_member; }
+  { rank=same; allowed; denied; }
+
+  network_note [label="آنلاین/آفلاین: انتخاب دقیق دامنه هنوز باز است\nپیشنهاد فاز اول Online-first؛ آفلاینِ محدود فقط برای اطلاعات کم‌حساس و فقط‌خواندنی، در صورت تصویب\nتغییر نقش/مجوز، امور مالی و ثبت‌های حساس در پیشنهاد فعلی آنلاین می‌مانند؛ آفلاین کامل نیازمند sync و حل تعارض است", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+
+  current -> target_pwa [style=dashed, color="#FFC56E", label="تغییر جهت محصول؛ نه حذف فایل‌ها"];
+  current -> role_admin [style=dashed, color="#FFC56E", label="coach/reception/manager → admin\nبدون دسترسی خودکار", constraint=false];
+  target_pwa -> android_kept [style=dashed, color="#FFC56E", arrowhead=none];
+  target_pwa -> role_super [style=dashed, color="#FFC56E", label="نقش حساب"];
+  target_pwa -> role_admin [style=dashed, color="#FFC56E", label="نقش حساب"];
+  target_pwa -> role_member [style=dashed, color="#FFC56E", label="نقش حساب"];
+  role_admin -> job_label [style=dashed, color="#FFC56E", label="کارکرد، نه زیرنقش"];
+  job_label -> domain_terms [style=dashed, color="#FFC56E"];
+
+  role_super -> owner_pick [style=dashed, color="#FFC56E", label="تنها مجاز"];
+  owner_pick -> owner_grant [style=dashed, color="#FFC56E"];
+  owner_grant -> owner_guard [style=dashed, color="#FFC56E"];
+  owner_guard -> grants_audit [style=dashed, color="#FFC56E", label="مجاز"];
+  role_admin -> admin_attempt [style=dashed, color="#FFC56E", constraint=false];
+  admin_attempt -> admin_denied [color="#FF7887"];
+
+  target_pwa -> request [style=dashed, color="#FFC56E", label="درخواست سرویس"];
+  request -> api_policy [style=dashed, color="#FFC56E"];
+  api_policy -> check_owner [style=dashed, color="#FFC56E", label="role=super_admin"];
+  api_policy -> check_admin [style=dashed, color="#FFC56E", label="role=admin"];
+  api_policy -> check_member [style=dashed, color="#FFC56E", label="role=member"];
+  grants_audit -> api_policy [style=dashed, color="#FFC56E", label="خواندن grantهای معتبر", constraint=false];
+  check_owner -> allowed [style=dashed, color="#FFC56E", label="مجاز"];
+  check_admin -> allowed [style=dashed, color="#FFC56E", label="مجوز + scope درست"];
+  check_member -> allowed [style=dashed, color="#FFC56E", label="مالکیت داده"];
+  check_admin -> denied [color="#FF7887", label="مجوز ندارد"];
+  check_member -> denied [color="#FF7887", label="دادهٔ دیگری"];
+  api_policy -> denied [color="#FF7887", label="هویت نامعتبر"];
+  denied -> network_note [style=invis, weight=10];
+  allowed -> network_note [style=invis, weight=10];
+}

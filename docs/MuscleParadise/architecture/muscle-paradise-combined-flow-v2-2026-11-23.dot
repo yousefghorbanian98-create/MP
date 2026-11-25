@@ -1,0 +1,277 @@
+digraph MuscleParadiseCombinedFlowV2 {
+  graph [
+    rankdir=TB, bgcolor="#0B1220", pad="0.38", nodesep="0.25", ranksep="0.58",
+    splines=ortho, compound=true, newrank=true, dpi=180,
+    fontname="DejaVu Sans", fontsize=25, fontcolor="#EEF4FC",
+    label="نقشهٔ یکپارچهٔ کل برنامهٔ Muscle Paradise\nمسیرهای موجود عضو و کادر + چرخهٔ طراحی‌شدهٔ برنامهٔ تمرین + داده، تراکنش، Backend و اتصال‌ها",
+    labelloc="t", labeljust="c"
+  ];
+  node [shape=box, style="rounded,filled", fontname="DejaVu Sans", fontsize=14,
+        color="#49627D", fillcolor="#15243A", fontcolor="#EEF4FC",
+        penwidth=1.2, margin="0.15,0.10"];
+  edge [fontname="DejaVu Sans", fontsize=10, color="#8296AD", fontcolor="#DCE6F1",
+        penwidth=1.0, arrowsize=0.62];
+
+  subgraph cluster_legend {
+    label="راهنما"; color="#52657A"; fontcolor="#C6D2DF"; style="rounded,dashed";
+    l_code [label="کد/ماژول موجود", color="#51D6C2", fillcolor="#142B32"];
+    l_test [label="سناریوی آزموده‌شده در محیط توسعه", color="#6CAAF8", fillcolor="#17283D"];
+    l_target [label="طرح پیشنهادی؛ هنوز runtime نیست", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    l_gap [label="گیر/شکاف یا stop فعلی", color="#FF7887", fillcolor="#301B2A", fontcolor="#FFE8EC"];
+  }
+
+  subgraph cluster_people_clients {
+    label="۱ · نقش‌ها و رابط‌های برنامه"; color="#6CAAF8"; fontcolor="#6CAAF8"; style="rounded"; penwidth=1.4;
+    member [label="عضو / ورزشکار", color="#6CAAF8"];
+    coach [label="مربی", color="#6CAAF8"];
+    reception [label="پذیرش", color="#6CAAF8"];
+    manager [label="مدیر / مدیرکل", color="#6CAAF8"];
+    kiosk [label="کیوسک / اسکنر QR", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE"];
+    flutter [label="MP Client · Flutter\nاپ عضو", color="#6CAAF8"];
+    studio [label="MP Studio · React / TypeScript\nپنل وب کادر", color="#6CAAF8"];
+    gate_ui [label="رابط حضور در باشگاه\nQR فعال؛ چک‌این چهره غیرفعال", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE"];
+  }
+
+  subgraph cluster_api_access {
+    label="۲ · API، ورود و مجوز"; color="#FFC56E"; fontcolor="#FFC56E"; style="rounded"; penwidth=1.4;
+    api [label="FastAPI REST `/api/v1`\nrouter → service → database", color="#B99AFB", fillcolor="#211D39"];
+    otp [label="OTP request / verify\nAccess + Refresh token", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE"];
+    guard [label="CurrentUser / Bearer\nrequire_roles + permission/grant\nowner / member scope", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE"];
+    auth_deny [label="رد درخواست\n401 / 403", color="#FF7887", fillcolor="#301B2A", fontcolor="#FFE8EC"];
+  }
+
+  subgraph cluster_member_runtime {
+    label="۳ · تجربه و سرویس‌های موجود عضو"; color="#6CAAF8"; fontcolor="#6CAAF8"; style="rounded"; penwidth=1.4;
+    profile_member [label="پروفایل / اشتراک\nMember · Membership", color="#51D6C2", fillcolor="#142B32"];
+    member_assess [label="ارزیابی و پیشرفت\nAxis · Field Test · JP7 raw", color="#51D6C2", fillcolor="#142B32"];
+    nutrition_now [label="تغذیهٔ فعلی\nکالری/ماکرو به شکل draft؛\nmeals خالی؛ FoodLog جدا", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE"];
+    classes_flow [label="کلاس‌ها\nظرفیت → رزرو/صف → لغو\nrebook همان ردیف با زمان تازه", color="#6CAAF8"];
+    attendance_flow [label="حضور QR\nتوکن → اسکن → CheckIn\nQR حضور ≠ QR برنامه", color="#6CAAF8"];
+    payment_flow [label="کیف‌پول / پرداخت / رسید\nنقدی و بازبینی انسانی\nدرگاه وابسته به تنظیم", color="#51D6C2", fillcolor="#142B32"];
+    shop_flow [label="فروشگاه\nکاتالوگ → سبد → checkout\nخرید آنلاین پیش‌فرض خاموش", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE"];
+    comms_flow [label="اعلان و گفت‌وگو\nInbox · Outbox · Chat", color="#51D6C2", fillcolor="#142B32"];
+    today_gap [label="شکاف UI امروز\nروز/هفته محدود؛ تیک انجام تمرین\nدر مسیر مرورشده فقط محلی است", color="#FF7887", fillcolor="#301B2A", fontcolor="#FFE8EC"];
+  }
+
+  subgraph cluster_current_training {
+    label="۴ · برنامهٔ تمرین: مسیر فعلی کد"; color="#B99AFB"; fontcolor="#B99AFB"; style="rounded"; penwidth=1.4;
+    intake [label="فرم Intake عضو\nهدف · سطح · تعداد روز · قیدها", color="#6CAAF8"];
+    gate_check [label="`POST /population/gate-check`\nJSON body: `GateCheckIn(path)`", color="#B99AFB", fillcolor="#211D39"];
+    gate_contract [label="قرارداد Flutter/backend همسو\nTestClient: body {path} → 200 (adult)", color="#6CAAF8"];
+    population_hold [label="مسیر ناشناخته/غیرفعال\nتوقف خودکار (E05)", color="#FF7887", fillcolor="#301B2A", fontcolor="#FFE8EC"];
+    direct_api [label="`POST /ai/program/generate`\nمسیر مصرف‌شده از Intake؛ خروجی قواعد\nپیش‌نویس (نیازمند تأیید کادر)", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE"];
+    rule_engine [label="موتور قطعی قواعد فعلی\ngoal / level / days / weeks / constraints\nExercise ID + pattern", color="#B99AFB", fillcolor="#211D39"];
+    safety_map [label="exercise_id + pattern → taxonomy ایمنی\nنگاشت کاتالوگ؛ شناسهٔ ناشناخته = بازبینی", color="#6CAAF8"];
+    safety [shape=diamond, label="Safety flags\nclear / unknown / blocked", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", margin="0.12,0.05"];
+    safety_gap [label="گپ مصرفی باقی‌مانده\nblocked/unknown هنوز draft می‌شود؛\nIntake نتیجه را پیش از تأیید نمایش می‌دهد", color="#FF7887", fillcolor="#301B2A", fontcolor="#FFE8EC"];
+    draft_now [label="ذخیرهٔ WorkoutProgram\nWeek → Exercise؛ status=draft", color="#51D6C2", fillcolor="#142B32"];
+    coach_queue [label="Studio: صف approve / reject\nممیزی تغییر وضعیت", color="#6CAAF8"];
+    approve_now [shape=diamond, label="مربی تأیید می‌کند؟", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", margin="0.12,0.05"];
+    publish_now [label="نمایش / نسخهٔ تأییدشده\nفیلتر وضعیت و نام حرکت نیازمند تکمیل", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE"];
+  }
+
+  subgraph cluster_future_program_cycle {
+    label="۵ · چرخهٔ یکپارچهٔ آیندهٔ ورزشکار و برنامه (طرح؛ نه قابلیت runtime)";
+    color="#FFC56E"; fontcolor="#FFC56E"; style="rounded,dashed"; penwidth=1.4;
+    athlete_form [label="Q01–Q11 عضو + C01–C11 مربی\nهدف · زمان/تجهیزات · سابقه · سنجش · ریسک\nپاسخ unknown و منبع/تاریخ حفظ شود", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    consent_gate [shape=diamond, label="هویت، رضایت، scope\nو داده معتبر؟", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled", margin="0.12,0.05"];
+    hold [label="STOP / بازبینی مربی\nپاسخ ناقص، تعارض، red flag،\nمحدودیت/جمعیت نامعلوم", color="#FF7887", fillcolor="#301B2A", fontcolor="#FFE8EC", style="rounded,dashed,filled"];
+    question_router [label="Question Router\nهر سؤال → DB خصوصی / منبع مستقل\nشناسه، نسخه، provenance", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    private_data [label="دادهٔ خصوصی عضو\nProfile / Assessment / ProgramVersion\nlogs و اندازه‌گیری‌ها", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    source_registry [label="Source Registry\nکاتالوگ حرکت · evidence · calculator\nهر source_id/namespace جدا", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    source_gate [label="License / schema / quality\nو approval gate", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    approved_catalog [label="ExerciseCatalog approved\nحرکت canonical + gear + skill\nvariant و رسانه با provenance", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    load_evidence [label="Versioned rules + training-load\nOpenAthlete/library/evidence\nفقط روی دادهٔ مجاز همان فرد", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    nutrition_separate [label="Nutrition namespace جدا\nFood / Meal / Allergy / Logs\nبه planner تمرین قاطی نشود", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    compose [label="ProgramComposer\nقید سخت + هدف + تجهیزات + ریکاوری\nهر انتخاب با reason/source/version", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    future_safety [shape=diamond, label="گیت ایمنی نسخه‌دار\nclear؟", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled", margin="0.12,0.05"];
+    future_review [label="C11 مربی\nبازبینی / تغییر با دلیل / امضا", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    version [label="ApprovedProgramVersion\nimmutable + content hash\nیک ID برای اپ و PDF", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    pdf_qr [label="PDF کامل خصوصی\nQR یکتا فقط صفحهٔ آخر\nQR resolve می‌کند؛ PDF داخل QR نیست", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    member_cycle [label="اپ عضو / اجرای جلسه\nلاگ planned vs performed\nست، بار، effort، adherence", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    compare [shape=diamond, label="سنجش/لاگ قابل‌مقایسه\nو کافی است؟", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled", margin="0.12,0.05"];
+    scorecards [label="روند/scorecard هر جزء\nفقط metric معتبر؛ JP7 خام\n≠ رشد موضعی عضله", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    next_version [label="چرخهٔ بعد n+1\nنسخهٔ قبلی حفظ می‌شود", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    jp7_raw [label="JP7/C02: مربی raw readings\nmm + site + protocol + کیفیت", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    jp7_gate [shape=diamond, label="site / equation / جمعیت\nو consent approved؟", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled", margin="0.12,0.05"];
+    jp7_compute [label="پس از approval: محاسبهٔ نسخه‌دار\nمشتق و تاریخچهٔ جدا از raw", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    jp7_locked [label="کد فعلی: مشتق JP7 قفل\n`calf`/`midaxillary` mismatch؛\nفعلاً خام فقط", color="#FF7887", fillcolor="#301B2A", fontcolor="#FFE8EC", style="rounded,dashed,filled"];
+    qr_native [label="QR برنامهٔ داخلی\nlogin + owner check → resolve ProgramVersion\nبدون OCR", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    pdf_import [label="PDF بیرونی/قدیمی\nprivate upload + hash → text extraction\nOCR فقط صفحهٔ اسکن‌شده → ImportCandidate", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    coach_import [label="مربی فایل/حرکت/دوز را تأیید کند\nLegacyProgramVersion immutable", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+  }
+
+  subgraph cluster_club_money {
+    label="۶ · گردش‌های عملیاتی باشگاه و تراکنش‌ها"; color="#B99AFB"; fontcolor="#B99AFB"; style="rounded"; penwidth=1.4;
+    membership [label="ثبت عضو / تمدید\nPayment → Membership", color="#51D6C2", fillcolor="#142B32"];
+    class_capacity [shape=diamond, label="ظرفیت کلاس\nجا دارد؟", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", margin="0.12,0.05"];
+    booking [label="رزرو تأییدشده", color="#51D6C2", fillcolor="#142B32"];
+    waitlist_entry [label="ظرفیت پر → waitlist", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE"];
+    class_cancel [label="لغو رزرو → cancelled\nrebook: همان ردیف، زمان تازه", color="#6CAAF8"];
+    cancel_promotion_gate [shape=diamond, label="پس از لغو confirmed\nظرفیت آزاد است؟", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", margin="0.12,0.05"];
+    waitlist_available [shape=diamond, label="رزرو waitlisted\nوجود دارد؟", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", margin="0.12,0.05"];
+    waitlist_promote [label="نفر اول FIFO → confirmed", color="#6CAAF8"];
+    cancel_no_promotion [label="لغو waitlisted / بدون جا\nیا صف خالی → بدون ارتقا", color="#6CAAF8"];
+    qr_checkin [label="QR یک‌بارمصرف حضور\nاعتبارسنجی → CheckIn", color="#51D6C2", fillcolor="#142B32"];
+    biometric [label="Face check-in غیرفعال\nبدون probe/liveness معتبر؛ method=face → 409\nمسیر حضور فعال: QR امضاشده", color="#FF7887", fillcolor="#301B2A", fontcolor="#FFE8EC"];
+    shop_switch [shape=diamond, label="Shop online فعال؟\nپیش‌فرض خیر", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", margin="0.12,0.05"];
+    shop_denied [label="خاموش: fail closed\nCheckout رد می‌شود", color="#FF7887", fillcolor="#301B2A", fontcolor="#FFE8EC"];
+    wallet_check [shape=diamond, label="در مسیر wallet\nموجودی کافی؟", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", margin="0.12,0.05"];
+    no_side_effects [label="ناموفق: بدون order/payment/debit؛\nstock و balance ثابت؛ cart باقی", color="#6CAAF8"];
+    atomic_checkout [label="موفق: Order + Payment paid + debit\n+ stock/cart در commit اتمیک", color="#6CAAF8"];
+    refund_access [shape=diamond, label="Manager/admin + finance.write\nیا super_admin؟", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", margin="0.12,0.05"];
+    refund_deny [label="پذیرش / بدون grant → 403", color="#FF7887", fillcolor="#301B2A", fontcolor="#FFE8EC"];
+    refund_audit [label="Refund + AuditLog(actor)\nدر یک commit؛ sandbox تستی", color="#6CAAF8"];
+    staff_admin [label="Studio ops\nKPI / finance reports / Expense+receipt\nshop admin / campaign / feature flags", color="#6CAAF8"];
+    comms_jobs [label="Notification / Outbox / Chat\nScheduler و SMS وابسته به runtime", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE"];
+  }
+
+  subgraph cluster_backend_data {
+    label="۷ · Backend، ذخیره‌سازی و اتصال‌ها"; color="#51D6C2"; fontcolor="#51D6C2"; style="rounded"; penwidth=1.4;
+    routers [label="FastAPI routers + Pydantic schemas", color="#B99AFB", fillcolor="#211D39"];
+    services [label="Modular-monolith services\nauth · membership · programs/assessment\nnutrition · classes/face_id · payments/shop\nexpenses/reports/admin · notify/chat/privacy", color="#B99AFB", fillcolor="#211D39"];
+    database [label="SQLAlchemy → SQLite (default config)\nMembers · plans · assessments · payments/ledger\nclasses/check-ins · shop/orders · nutrition\naudit/consent · notifications/messages", color="#51D6C2", fillcolor="#142B32"];
+    private_store [label="رسید/فایل خصوصی\nخارج از static; access کنترل‌شده", color="#51D6C2", fillcolor="#142B32"];
+    optional_services [label="Valkey/cache · APScheduler\nSMS · payment gateway · Ollama text\nهمه وابسته به تنظیم/اثبات runtime", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE"];
+    source_stores [label="Source registries جدا\nlocal/private data + approved catalog\npublic/external data وارد DB نشده", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+  }
+
+  // نقش‌ها و مسیر ورود
+  member -> flutter;
+  coach -> studio;
+  reception -> studio;
+  manager -> studio;
+  kiosk -> gate_ui [style=dashed, color="#FFC56E"];
+  flutter -> api [label="HTTPS/JSON"];
+  studio -> api [label="HTTPS/JSON"];
+  gate_ui -> api [style=dashed, color="#FFC56E", label="attendance route"];
+  api -> routers;
+  api -> otp [label="ورود"];
+  otp -> guard [label="نشست/token"];
+  routers -> guard [label="درخواست احرازشده"];
+  guard -> auth_deny [label="رد"];
+  guard -> profile_member [label="member"];
+  guard -> coach_queue [label="coach"];
+  guard -> membership [label="reception"];
+  guard -> staff_admin [label="manager/admin"];
+
+  // عضو
+  profile_member -> member_assess;
+  profile_member -> nutrition_now;
+  profile_member -> classes_flow;
+  profile_member -> attendance_flow;
+  profile_member -> payment_flow;
+  profile_member -> shop_flow;
+  profile_member -> comms_flow;
+  profile_member -> intake;
+  profile_member -> athlete_form [style=dashed, color="#FFC56E", label="Q01–Q11 · طرح چرخهٔ کامل"];
+  coach -> athlete_form [style=dashed, color="#FFC56E", label="C01–C11 · طرح مربی"];
+  member_assess -> jp7_raw [style=dashed, color="#FFC56E", label="طرح C02"];
+  member_assess -> today_gap [style=dashed, color="#FF7887"];
+  intake -> gate_check [label="JSON body: {path}"];
+  gate_check -> gate_contract [label="مسیر مجاز"];
+  gate_check -> population_hold [label="unknown / gated", color="#FF7887"];
+  gate_contract -> direct_api [label="ادامهٔ Intake"];
+  direct_api -> rule_engine;
+  rule_engine -> safety_map;
+  safety_map -> safety;
+  safety -> safety_gap [label="blocked/unknown", color="#FF7887"];
+  safety -> draft_now [label="نتیجه در safety_flags؛ status=draft"];
+  safety_gap -> draft_now [style=dashed, color="#FF7887", label="هنوز مانع ذخیره نیست"];
+  draft_now -> coach_queue;
+  coach_queue -> approve_now;
+  approve_now -> publish_now [label="بله"];
+  approve_now -> coach_queue [label="نه: اصلاح/رد", style=dashed, color="#FFC56E"];
+  publish_now -> today_gap;
+
+  // چرخهٔ پیشنهادیِ جامع برنامه‌سازی، داده و منبع
+  athlete_form -> consent_gate [style=dashed, color="#FFC56E"];
+  consent_gate -> hold [label="خیر/نامعلوم", style=dashed, color="#FFC56E"];
+  consent_gate -> question_router [label="بله", style=dashed, color="#FFC56E"];
+  question_router -> private_data [style=dashed, color="#FFC56E", label="DB خصوصی"];
+  question_router -> source_registry [style=dashed, color="#FFC56E", label="source_id"];
+  source_registry -> source_gate [style=dashed, color="#FFC56E"];
+  source_gate -> approved_catalog [style=dashed, color="#FFC56E", label="مجوز + quality + review"];
+  source_gate -> hold [style=dashed, color="#FFC56E", label="نامعتبر/بدون مجوز"];
+  private_data -> load_evidence [style=dashed, color="#FFC56E", label="history/logs؛ فردی"];
+  approved_catalog -> compose [style=dashed, color="#FFC56E"];
+  load_evidence -> compose [style=dashed, color="#FFC56E"];
+  nutrition_separate -> compose [style=dashed, color="#FFC56E", label="فقط خروجی معتبر/اختیاری"];
+  question_router -> nutrition_separate [style=dashed, color="#FFC56E", label="Q07 namespace جدا"];
+  compose -> future_safety [style=dashed, color="#FFC56E"];
+  future_safety -> hold [label="نه/unknown", style=dashed, color="#FFC56E"];
+  future_safety -> future_review [label="clear در scope", style=dashed, color="#FFC56E"];
+  future_review -> version [label="تأیید مربی", style=dashed, color="#FFC56E"];
+  future_review -> hold [label="رد/اصلاح", style=dashed, color="#FFC56E"];
+  version -> pdf_qr [style=dashed, color="#FFC56E"];
+  version -> member_cycle [style=dashed, color="#FFC56E", label="همان Version ID"];
+  pdf_qr -> member_cycle [style=dashed, color="#FFC56E", label="PDF کامل خصوصی"];
+  member_cycle -> compare [style=dashed, color="#FFC56E"];
+  compare -> hold [label="کمبود/عدم قیاس", style=dashed, color="#FFC56E"];
+  compare -> scorecards [label="قابل قیاس", style=dashed, color="#FFC56E"];
+  scorecards -> next_version [style=dashed, color="#FFC56E"];
+  next_version -> athlete_form [style=dashed, color="#FFC56E", label="چرخه بعد"];
+  jp7_raw -> jp7_gate [style=dashed, color="#FFC56E"];
+  jp7_gate -> jp7_locked [label="نه: وضعیت فعلی", style=dashed, color="#FF7887"];
+  jp7_gate -> jp7_compute [label="بله: در طرح هدف", style=dashed, color="#FFC56E"];
+  jp7_compute -> private_data [style=dashed, color="#FFC56E"];
+  qr_native -> version [style=dashed, color="#FFC56E", label="احراز هویت + مالکیت؛ بدون OCR"];
+  pdf_import -> coach_import [style=dashed, color="#FFC56E"];
+  coach_import -> compose [style=dashed, color="#FFC56E", label="LegacyProgramVersion تأییدشده"];
+  pdf_qr -> qr_native [style=dashed, color="#FFC56E", label="اسکن QR برنامه"];
+
+  // رزرو کلاس / حضور
+  classes_flow -> class_capacity;
+  class_capacity -> booking [label="بله"];
+  class_capacity -> waitlist_entry [label="خیر"];
+  booking -> class_cancel [label="لغو رزرو confirmed"];
+  waitlist_entry -> class_cancel [label="لغو رزرو waitlisted"];
+  class_cancel -> cancel_promotion_gate [label="رزرو قبلی confirmed"];
+  class_cancel -> cancel_no_promotion [label="رزرو قبلی waitlisted"];
+  class_cancel -> class_capacity [label="rebook: زمان تازه + بررسی دوبارهٔ ظرفیت"];
+  cancel_promotion_gate -> waitlist_available [label="بله"];
+  cancel_promotion_gate -> cancel_no_promotion [label="خیر: جا نیست"];
+  waitlist_available -> waitlist_promote [label="بله: نفر اول FIFO"];
+  waitlist_available -> cancel_no_promotion [label="خیر: صف خالی"];
+  waitlist_promote -> booking [label="status=confirmed"];
+  attendance_flow -> qr_checkin;
+  gate_ui -> qr_checkin [style=dashed, color="#FFC56E"];
+  attendance_flow -> biometric [style=dashed, color="#FFC56E"];
+  biometric -> qr_checkin [style=dashed, color="#FFC56E", label="fallback"];
+  reception -> qr_checkin [style=dashed, color="#FFC56E", label="اسکن/حضور"];
+
+  // پرداخت/فروشگاه و مدیریت مالی
+  payment_flow -> membership;
+  shop_flow -> shop_switch;
+  shop_switch -> shop_denied [label="خاموش"];
+  shop_switch -> wallet_check [label="روشن"];
+  wallet_check -> no_side_effects [label="ناکافی"];
+  wallet_check -> atomic_checkout [label="کافی"];
+  manager -> refund_access [style=dashed, color="#FFC56E", label="درخواست refund"];
+  refund_access -> refund_deny [label="رد"];
+  refund_access -> refund_audit [label="مجاز"];
+  staff_admin -> refund_access [style=dashed, color="#FFC56E"];
+  staff_admin -> comms_jobs;
+  staff_admin -> privacy_audit [style=dashed, color="#FFC56E"];
+  privacy_audit [label="Consent / AuditLog / grants\nدسترسی حساس و پیگیری عملیات", color="#B99AFB", fillcolor="#211D39"];
+
+  // Backend و داده: همهٔ گردش‌های runtime به سرویس و ذخیره‌سازی می‌رسند
+  profile_member -> services [style=dashed, color="#8296AD"];
+  member_assess -> services [style=dashed, color="#8296AD"];
+  nutrition_now -> services [style=dashed, color="#8296AD"];
+  classes_flow -> services [style=dashed, color="#8296AD"];
+  attendance_flow -> services [style=dashed, color="#8296AD"];
+  payment_flow -> services [style=dashed, color="#8296AD"];
+  shop_flow -> services [style=dashed, color="#8296AD"];
+  comms_flow -> services [style=dashed, color="#8296AD"];
+  staff_admin -> services [style=dashed, color="#8296AD"];
+  services -> database;
+  payment_flow -> private_store [style=dashed, color="#8296AD", label="رسید"];
+  staff_admin -> private_store [style=dashed, color="#8296AD", label="Expense receipt"];
+  services -> optional_services [style=dashed, color="#FFC56E"];
+  question_router -> source_stores [style=dashed, color="#FFC56E"];
+  source_registry -> source_stores [style=dashed, color="#FFC56E"];
+
+  { rank=same; member; coach; reception; manager; kiosk; }
+  { rank=same; flutter; studio; gate_ui; }
+}

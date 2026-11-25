@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from datetime import UTC, datetime
+
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
@@ -62,8 +64,15 @@ def book(db: Session, *, class_id: int, member_id: int, user=None) -> ClassBooki
         or 0
     )
     status = "confirmed" if confirmed < cls.capacity else "waitlisted"
-    b = ClassBooking(class_id=class_id, member_id=member_id, status=status, branch_id=1)
-    db.add(b)
+    if existing is not None:
+        # یک ردیف یکتا برای زوج کلاس/عضو داریم؛ پس رزرو لغوشده را دوباره فعال
+        # می‌کنیم و زمان آغاز عضویت فعلی در صف را تازه می‌سازیم.
+        b = existing
+        b.status = status
+        b.created_at = datetime.now(UTC)
+    else:
+        b = ClassBooking(class_id=class_id, member_id=member_id, status=status, branch_id=1)
+        db.add(b)
     db.commit()
     db.refresh(b)
     return b
@@ -84,19 +93,36 @@ def cancel(db: Session, *, class_id: int, member_id: int, user=None) -> ClassBoo
     )
     if b is None or b.status == "cancelled":
         raise NotFoundError("رزروی یافت نشد")
+    freed_confirmed_seat = b.status == "confirmed"
     b.status = "cancelled"
-    # ارتقای نفر اول لیست انتظار
-    next_waiting = (
-        db.execute(
-            select(ClassBooking)
-            .where(ClassBooking.class_id == class_id, ClassBooking.status == "waitlisted")
-            .order_by(ClassBooking.id.asc())
+    # Only a confirmed booking frees a seat. Recheck capacity before promotion so
+    # legacy over-capacity data cannot be made worse by a cancellation.
+    if freed_confirmed_seat:
+        db.flush()
+        cls = db.get(GymClass, class_id)
+        confirmed = (
+            db.execute(
+                select(func.count())
+                .select_from(ClassBooking)
+                .where(ClassBooking.class_id == class_id, ClassBooking.status == "confirmed")
+            ).scalar()
+            or 0
         )
-        .scalars()
-        .first()
-    )
-    if next_waiting is not None:
-        next_waiting.status = "confirmed"
+        if cls is not None and confirmed < cls.capacity:
+            next_waiting = (
+                db.execute(
+                    select(ClassBooking)
+                    .where(
+                        ClassBooking.class_id == class_id,
+                        ClassBooking.status == "waitlisted",
+                    )
+                    .order_by(ClassBooking.created_at.asc(), ClassBooking.id.asc())
+                )
+                .scalars()
+                .first()
+            )
+            if next_waiting is not None:
+                next_waiting.status = "confirmed"
     db.commit()
     db.refresh(b)
     return b

@@ -1,0 +1,124 @@
+digraph MuscleParadiseWorldClassTarget {
+  graph [
+    rankdir=TB, bgcolor="#0B1220", pad="0.36", nodesep="0.36", ranksep="0.68",
+    splines=ortho, compound=true, newrank=true, dpi=180,
+    fontname="DejaVu Sans", fontsize=23, fontcolor="#EEF4FC",
+    label="Muscle Paradise · معماری هدفِ بهینه و قابل‌رشد\nپیشنهاد مرحله‌ای برای وضعیت فعلی پروژه؛ اجزای کهربایی هنوز تصمیم/پیاده‌سازی کامل نشده‌اند",
+    labelloc="t", labeljust="c"
+  ];
+  node [shape=box, style="rounded,filled", fontname="DejaVu Sans", fontsize=13,
+        color="#49627D", fillcolor="#15243A", fontcolor="#EEF4FC",
+        penwidth=1.2, margin="0.16,0.11"];
+  edge [fontname="DejaVu Sans", fontsize=9, color="#8296AD", fontcolor="#DCE6F1",
+        penwidth=1.0, arrowsize=0.66];
+
+  subgraph cluster_legend {
+    label="راهنما"; color="#52657A"; fontcolor="#C6D2DF"; style="rounded,dashed";
+    current_key [label="موجود در مخزن / مسیر فعلی", color="#6CAAF8", fillcolor="#17283D"];
+    target_key [label="هدف یا پیشنهاد مرحله‌ای", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    risk_key [label="گیت ایمنی / توقف", color="#FF7887", fillcolor="#301B2A", fontcolor="#FFE8EC"];
+  }
+
+  subgraph cluster_product {
+    label="۱ · تجربهٔ محصول و مرز عمومی"; color="#6CAAF8"; fontcolor="#6CAAF8"; style="rounded"; penwidth=1.4;
+    owner [label="مالک\nsuper_admin", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    staff [label="کارکنان انتخاب‌شده\nنقش امنیتی: admin", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    member [label="عضو عادی\nنقش جدا: member", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    pwa [label="یک PWA مشترک برای عضو و کارکنان\nReact/Vite موجود؛ یکپارچه‌سازی عضو هدف آینده است", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    mobile_retained [label="Flutter / Android\nحفظ شود؛ فعلاً خارج از توسعهٔ جاری", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    caddy [label="Caddy · ورودی عمومی واحد\nTLS/HTTPS و هدرهای امنیتی موجود\nفقط 80/443 از اینترنت", color="#6CAAF8"];
+    { rank=same; owner; staff; member; }
+    owner -> pwa [style=dashed, color="#FFC56E"];
+    staff -> pwa [style=dashed, color="#FFC56E"];
+    member -> pwa [style=dashed, color="#FFC56E"];
+    pwa -> caddy [style=dashed, color="#FFC56E", label="HTTPS · API نسبی"];
+    mobile_retained -> pwa [style=dotted, color="#FFC56E", arrowhead=none, label="آینده؛ حذف نمی‌شود"];
+  }
+
+  subgraph cluster_application {
+    label="۲ · برنامهٔ سرور — Modular Monolith؛ نه microservices فعلاً"; color="#B99AFB"; fontcolor="#B99AFB"; style="rounded"; penwidth=1.4;
+    static_pwa [label="Studio وب موجود؛ میزبانی PWA مشترک هدف\nreuse همین container هنوز تصمیم قطعی نیست", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    api [label="FastAPI · یک backend modular monolith\nrouter → service → data; image در GHCR", color="#6CAAF8"];
+    authz [label="گیت امنیتی سمت سرور\nsuper_admin / admin / member\nمجوز per-user + scope + default deny", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    grants [label="فقط super_admin\nاعطا/لغو نقش و مجوز + audit", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    no_escalation [label="DENY: admin حق اعطا، ارتقا یا واگذاری ندارد", color="#FF7887", fillcolor="#301B2A", fontcolor="#FFE8EC"];
+    domains [label="ماژول‌های دامنه در همان backend\nعضویت · تمرین · کلاس/حضور · پرداخت · اعلان", color="#6CAAF8"];
+    scope_note [label="coach / reception / manager\nعنوان کار یا الگوی مجوز؛ نه نقش و نه حق ضمنی\nmember فقط دادهٔ خودش؛ admin فقط مجوزهای اعطاشده + scope", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    ollama_current [label="Ollama در infra Compose موجود\nپورت میزبان منتشر نیست؛ مصرف end-to-end تأیید نشده", color="#6CAAF8"];
+    job_dispatch [label="صف/Outbox پایدار فقط در صورت نیاز\nretry + idempotency؛ فناوری نیازمند ADR", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    optional_worker [label="Worker جدا فقط در صورت نیاز واقعی\nکارهای کند / زمان‌بندی‌شده\nOllama با سقف منابع و خارج از مسیر حیاتی", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    caddy -> static_pwa [label="/ · static UI"];
+    caddy -> api [label="/api/*"];
+    api -> authz;
+    authz -> grants [style=dashed, color="#FFC56E", label="مسیر مالک"];
+    authz -> no_escalation [style=dashed, color="#FF7887", label="رد صریح"];
+    authz -> domains [label="پس از مجوز و scope"];
+    domains -> scope_note [style=dotted, color="#FFC56E", arrowhead=none];
+    ollama_current -> optional_worker [style=dotted, color="#FFC56E", label="اول مسیر مصرف‌کننده را تأیید کن"];
+    api -> job_dispatch [style=dashed, color="#FFC56E", label="فقط اگر کار async لازم شد"];
+    job_dispatch -> optional_worker [style=dashed, color="#FFC56E"];
+  }
+
+  subgraph cluster_data {
+    label="۳ · داده، cache و بازیابی"; color="#51D6C2"; fontcolor="#51D6C2"; style="rounded"; penwidth=1.4;
+    sqlite_now [label="SQLite · پیش‌فرض Compose فعلی\nمناسب توسعه/بار محدود؛ نه هدف نهایی مقیاس", color="#6CAAF8"];
+    postgres_target [label="PostgreSQL · فقط اگر بار / HA / چند replica نیاز بدهد\nهدف مشروط؛ مهاجرت و آزمون هنوز لازم است", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    valkey [label="Valkey · موجود برای cache\nhealthcheck و fallback؛ مرجع مالی/دامنه نباشد", color="#6CAAF8"];
+    object_store [label="Object storage خصوصی (S3-compatible)\nاختیاری برای media/فایل‌های بزرگ\nنسخه‌بندی، رمزگذاری و retention", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    backup [label="Backup موجود: archive محلی SQLite + cron Restic\nمسیر source/repository نیازمند تأیید\nهدف: off-site رمز‌شده + retention + restore drill", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    pgbackup [label="اگر PostgreSQL self-host شد:\npgBackRest یا backup مدیریت‌شده؛\nفقط یکی را مرجع کنید و restore بیازمایید", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    domains -> sqlite_now [color="#6CAAF8", label="وضع فعلی"];
+    sqlite_now -> postgres_target [style=dashed, color="#FFC56E", label="مهاجرت پس از ADR"];
+    domains -> valkey [color="#6CAAF8", label="cache غیرمرجع"];
+    domains -> object_store [style=dashed, color="#FFC56E", label="در صورت نیاز"];
+    sqlite_now -> backup [style=dashed, color="#FFC56E"];
+    postgres_target -> pgbackup [style=dashed, color="#FFC56E"];
+    object_store -> backup [style=dashed, color="#FFC56E"];
+  }
+
+  subgraph cluster_delivery {
+    label="۴ · مهندسی انتشار و زنجیرهٔ تأمین"; color="#6CAAF8"; fontcolor="#6CAAF8"; style="rounded"; penwidth=1.4;
+    pr [label="Pull Request / تغییر کد", color="#6CAAF8"];
+    ci_now [label="GitHub Actions موجود\nتست Backend/Studio/Flutter · secret scan\nSemgrep · docs · contract/E2E", color="#6CAAF8"];
+    secure_ci [label="افزوده شود مرحله‌ای\nTrivy + Scorecard؛ Renovate PRهای کنترل‌شده", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    artifact [label="Build image immutable با digest\nSBOM با Syft/Trivy · امضا/verify با Cosign", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    ghcr [label="GHCR موجود\nartifact واحد و شناسهٔ قابل‌ردیابی", color="#6CAAF8"];
+    staging [label="Staging · health/readiness\nsmoke + migration compatibility\nتأیید انسانی برای production", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    prod [label="Production · Compose/Dokploy فعلی\nrollback برنامه/DB جداگانه طراحی شود", color="#6CAAF8"];
+    pr -> ci_now;
+    ci_now -> secure_ci [style=dashed, color="#FFC56E"];
+    secure_ci -> artifact [style=dashed, color="#FFC56E"];
+    artifact -> ghcr [style=dashed, color="#FFC56E"];
+    ghcr -> staging;
+    staging -> prod [style=dashed, color="#FFC56E", label="protected approval"];
+  }
+
+  subgraph cluster_platform {
+    label="۵ · IaC، پیکربندی و اسرار"; color="#FFC56E"; fontcolor="#FFC56E"; style="rounded,dashed"; penwidth=1.4;
+    tofu [label="OpenTofu · بعد از انتخاب provider\nVM/network/storage/DNS؛ state امن و remote", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    ansible [label="Ansible موجود\nbootstrap/hardening میزبان", color="#6CAAF8"];
+    compose [label="Docker Compose موجود\nیک نسخهٔ canonical + dev/prod overlays", color="#6CAAF8"];
+    secrets [label="GitHub protected environments / host secret store\nSOPS فقط اگر config رمز‌شده در Git لازم شد\nهرگز plaintext secret در مخزن", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    tofu -> ansible [style=dashed, color="#FFC56E"];
+    ansible -> compose;
+    compose -> prod;
+    secrets -> compose [style=dashed, color="#FFC56E", label="inject at deploy"];
+  }
+
+  subgraph cluster_observability {
+    label="۶ · عملیات و مشاهده‌پذیری"; color="#51D6C2"; fontcolor="#51D6C2"; style="rounded"; penwidth=1.4;
+    prometheus [label="Prometheus + چهار alert فعلی\nPrometheus به loopback محدود", color="#6CAAF8"];
+    otel [label="OpenTelemetry Collector\nافزوده شود فقط برای نیاز واقعی به traces/logs", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    grafana [label="Grafana اختیاری برای داشبورد\nمجوز AGPL-3.0-only را بررسی کنید", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    alerts [label="گیت عملیاتی\nSLO/SLI · هشدار بیرونی · runbook\nrestore drill · incident response", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+    api -> prometheus [style=dashed, color="#FFC56E", label="metrics"];
+    valkey -> prometheus [style=dashed, color="#FFC56E"];
+    api -> otel [style=dashed, color="#FFC56E", label="optional telemetry"];
+    otel -> grafana [style=dashed, color="#FFC56E"];
+    prometheus -> alerts [style=dashed, color="#FFC56E"];
+    grafana -> alerts [style=dashed, color="#FFC56E"];
+  }
+
+  offline [label="PWA / شبکه: پیشنهاد Online-first\nService Worker فقط پوسته و دارایی کم‌حساس؛ نه API/مالی/مجوز\nآفلاین نوشتنی تا طراحی sync، تعارض و لغو دسترسی اجرا نشود", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", style="rounded,dashed,filled"];
+  pwa -> offline [style=dotted, color="#FFC56E", arrowhead=none];
+}

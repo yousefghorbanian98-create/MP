@@ -1,0 +1,122 @@
+digraph MuscleParadiseOverviewFlow {
+  graph [
+    rankdir=TB, bgcolor="#0B1220", pad="0.35", nodesep="0.30", ranksep="0.62",
+    splines=ortho, compound=true, dpi=180,
+    fontname="DejaVu Sans", fontsize=24, fontcolor="#EEF4FC",
+    label="نمای کلی فلوچارت Muscle Paradise\nنقش‌ها → ورود و مجوز → گردش‌های عضو و کادر → سرویس‌ها → داده و وابستگی‌ها",
+    labelloc="t", labeljust="c"
+  ];
+  node [shape=box, style="rounded,filled", fontname="DejaVu Sans", fontsize=14,
+        color="#49627D", fillcolor="#15243A", fontcolor="#EEF4FC",
+        penwidth=1.25, margin="0.18,0.12"];
+  edge [fontname="DejaVu Sans", fontsize=10, color="#8296AD", fontcolor="#DCE6F1",
+        penwidth=1.1, arrowsize=0.68];
+
+  subgraph cluster_people {
+    label="۱ · بازیگران"; color="#6CAAF8"; fontcolor="#6CAAF8"; style="rounded"; penwidth=1.4;
+    member [label="عضو / ورزشکار", color="#6CAAF8"];
+    coach [label="مربی", color="#6CAAF8"];
+    reception [label="پذیرش", color="#6CAAF8"];
+    manager [label="مدیر / مدیرکل", color="#6CAAF8"];
+    kiosk [label="کیوسک / اسکن QR", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE"];
+  }
+
+  subgraph cluster_clients {
+    label="۲ · رابط کاربری"; color="#6CAAF8"; fontcolor="#6CAAF8"; style="rounded"; penwidth=1.4;
+    client [label="MP Client\nFlutter · عضو", color="#6CAAF8"];
+    studio [label="MP Studio\nReact / TypeScript · کادر", color="#6CAAF8"];
+    kiosk_ui [label="رابط حضور\nQR؛ چهره/دستگاه شرطی", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE"];
+  }
+
+  subgraph cluster_access {
+    label="۳ · API، ورود و کنترل دسترسی"; color="#FFC56E"; fontcolor="#FFC56E"; style="rounded"; penwidth=1.4;
+    api [label="FastAPI `/api/v1`\nREST router → service", color="#B99AFB", fillcolor="#211D39"];
+    otp [label="OTP request / verify\nورود با شمارهٔ تلفن", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE"];
+    token [label="Access / Refresh\nنشست احرازشده", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE"];
+    authz [shape=diamond, label="نقش + grant/permission\n+ مالکیت رکورد مجاز؟", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE", margin="0.18,0.10"];
+    deny [label="رد درخواست\n401 / 403", color="#FF7887", fillcolor="#301B2A", fontcolor="#FFE8EC"];
+  }
+
+  subgraph cluster_workflows {
+    label="۴ · گردش‌های اصلی محصول"; color="#B99AFB"; fontcolor="#B99AFB"; style="rounded"; penwidth=1.4;
+    member_flow [label="عضو\nپروفایل و اشتراک · ارزیابی/برنامهٔ تمرین\nتغذیه و ثبت خوراک · کلاس و حضور\nکیف‌پول/پرداخت · فروشگاه · اعلان و گفت‌وگو", color="#6CAAF8"];
+    coach_flow [label="مربی\nانتخاب عضو · ارزیابی/روند سنجش\nبرنامهٔ draft → بازبینی/تأیید/رد", color="#6CAAF8"];
+    reception_flow [label="پذیرش\nثبت عضو و تمدید · دریافت/بررسی پرداخت\nحضور دستی یا QR", color="#6CAAF8"];
+    manager_flow [label="مدیر\nKPI/گزارش مالی · هزینه و فیش خصوصی\nدسترسی و audit · کاتالوگ فروشگاه\nrefund با نقش و `finance.write`", color="#6CAAF8"];
+    training_gap [label="گیر مهم فعلی\nفرم Intake در gate-check با 422 متوقف می‌شود؛\nبرنامهٔ direct API، اثبات E2E فرم نیست", color="#FF7887", fillcolor="#301B2A", fontcolor="#FFE8EC"];
+    transaction_gap [label="ویژگی‌های شرطی / محدودیت‌ها\nخرید آنلاین خاموش به‌صورت پیش‌فرض؛\nJP7 مشتق قفل؛ چهره و بانک زنده آزموده نشده", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE"];
+  }
+
+  subgraph cluster_services {
+    label="۵ · ماژول‌های Backend"; color="#B99AFB"; fontcolor="#B99AFB"; style="rounded"; penwidth=1.4;
+    identity [label="auth · membership · privacy", color="#B99AFB", fillcolor="#211D39"];
+    training [label="assessment / axis · programs\nai_engine · nutrition · exercises/content", color="#B99AFB", fillcolor="#211D39"];
+    club [label="classes · face_id · check-in", color="#B99AFB", fillcolor="#211D39"];
+    money [label="payments · shop\nexpenses · reporting / reports", color="#B99AFB", fillcolor="#211D39"];
+    ops [label="admin · notification / outbox\nchat · updates", color="#B99AFB", fillcolor="#211D39"];
+  }
+
+  subgraph cluster_data {
+    label="۶ · دادهٔ پایدار"; color="#51D6C2"; fontcolor="#51D6C2"; style="rounded"; penwidth=1.4;
+    db [label="SQLAlchemy / SQLite پیش‌فرض\nعضو/اشتراک · سنجش/برنامه · پرداخت/دفتر\nکلاس/حضور · تغذیه · سفارش/هزینه\nاعلان/پیام · audit/consent", color="#51D6C2", fillcolor="#142B32"];
+    files [label="فایل خصوصی رسیدها\nخارج از مسیر static", color="#51D6C2", fillcolor="#142B32"];
+    cache [label="Cache: Valkey\nیا fallback حافظه", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE"];
+  }
+
+  subgraph cluster_optional {
+    label="۷ · شرطی / نیازمند اثبات جداگانه"; color="#FFC56E"; fontcolor="#FFC56E"; style="rounded,dashed"; penwidth=1.2;
+    sms [label="SMS provider\nOTP / یادآوری", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE"];
+    gateway [label="درگاه بانکی\nتست sandbox ≠ بانک زنده", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE"];
+    scheduler [label="Scheduler / jobهای پس‌زمینه\nruntime باید تأیید شود", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE"];
+    device [label="گیت چهره/دستگاه واقعی\nتست نشده در این ممیزی", color="#FFC56E", fillcolor="#30271A", fontcolor="#FFF0CE"];
+  }
+
+  member -> client;
+  coach -> studio;
+  reception -> studio;
+  manager -> studio;
+  kiosk -> kiosk_ui [style=dashed, color="#FFC56E"];
+  client -> api;
+  studio -> api;
+  kiosk_ui -> api [style=dashed, color="#FFC56E", label="attendance route"];
+  api -> otp [label="مسیر ورود"];
+  otp -> token;
+  token -> authz;
+  api -> authz [label="درخواست‌های پس از ورود"];
+  authz -> deny [label="خیر", color="#FF7887"];
+  authz -> member_flow [label="بله · member"];
+  authz -> coach_flow [label="بله · coach"];
+  authz -> reception_flow [label="بله · reception"];
+  authz -> manager_flow [label="بله · manager/admin"];
+  kiosk_ui -> reception_flow [style=dashed, color="#FFC56E", label="اسکن/حضور"];
+
+  member_flow -> identity;
+  member_flow -> training;
+  member_flow -> club;
+  member_flow -> money;
+  member_flow -> ops;
+  coach_flow -> training;
+  coach_flow -> ops;
+  reception_flow -> identity;
+  reception_flow -> money;
+  reception_flow -> club;
+  manager_flow -> money;
+  manager_flow -> ops;
+  manager_flow -> identity;
+  member_flow -> training_gap [style=dashed, color="#FF7887"];
+  member_flow -> transaction_gap [style=dashed, color="#FFC56E"];
+  manager_flow -> transaction_gap [style=dashed, color="#FFC56E"];
+
+  identity -> db;
+  training -> db;
+  club -> db;
+  money -> db;
+  ops -> db;
+  money -> files;
+  training -> cache [style=dashed, color="#FFC56E"];
+  ops -> cache [style=dashed, color="#FFC56E"];
+  otp -> sms [style=dashed, color="#FFC56E"];
+  ops -> scheduler [style=dashed, color="#FFC56E"];
+  money -> gateway [style=dashed, color="#FFC56E"];
+  club -> device [style=dashed, color="#FFC56E"];
+}

@@ -2,7 +2,16 @@
 
 > این فایل **خلاصهٔ جاری برای ادامهٔ کار** است، نه آرشیو گفتگو و نه منبع نهایی وضعیت محصول. پیش از فشرده‌سازی context یا پایان هر کار معنادار، همین snapshot را جایگزین/به‌روز کن؛ تاریخچه را با انباشت transcript طولانی نکن.
 
-## snapshot جاری — نشست ۲۰۲۶-۱۱-۱۹
+## snapshot جاری — نشست ۲۰۲۶-۱۱-۲۳
+
+- **شاخه و پایه:** `arena/5e0f64cf-mp`؛ HEAD هنگام شروع `35d4b35184b4148c658b415bd009fc076bf24e00`. تغییرات فقط در همین شاخه‌اند؛ commit، push و deploy انجام نشده.
+- **دامنهٔ تأییدشده:** هم‌راستاسازی fail-closed متغیرهای proxy/metrics در Compose `deploy` با `infra`، template محیطی، آزمون رگرسیون و مستند استقرار. Testcontainers، ZAP، worker، تنظیم مقصد backup خارج‌میزبان و rollout/rollback عملیاتی در این برش نیستند.
+- **پیاده‌سازی:** `mp-app/deploy/docker-compose.yml` اکنون `MP_TRUSTED_PROXIES` و `MP_METRICS_TOKEN` را برای backend اجباری می‌کند و همان token را به Prometheus می‌دهد. `mp-app/backend/.env.example` فقط placeholder خالی (بدون secret/IP واقعی) دارد؛ `DEPLOYMENT.md` و `tests/regression/test_production_ops.py` الزام/برابری token و fail-fast بودن دو متغیر را پوشش می‌دهند.
+- **شواهد محلی:** `pytest --confcutdir=tests/regression tests/regression/test_production_ops.py -q` → **22 passed**؛ Ruff check/format فایل تست سبز؛ `python3 scripts/docs_gate.py` → **18 Markdown، 276 پیوند، 15 بلوک Mermaid**؛ `git diff --check` سبز. اجرای عادی pytest در sandbox به علت نبود SQLAlchemy در `tests/conftest.py` متوقف شد؛ full backend suite اجرا نشده. Docker CLI موجود نیست؛ `docker compose config` و deployment واقعی اجرا نشد.
+- **اقدام اپراتوری پیش از استقرار:** `.env` همان stack را با توکن metrics تصادفیِ قوی و IP/CIDR دقیق proxy بیرونی تکمیل کنید؛ مقدار نمونه یا credential در Git قرار نگیرد. بدون این دو، Compose عمداً بالا نمی‌آید.
+- **باقی‌ماندهٔ Production:** وجود/اثر handler واقعی outbox worker، backup/restore خارج‌میزبان، و rollout/rollback Dokploy هنوز به تصمیم/credential و تمرین در محیط مجاز نیاز دارند؛ انجام‌نشده‌اند و نباید PASS تلقی شوند.
+
+## snapshot تاریخی — نشست ۲۰۲۶-۱۱-۱۹
 
 - **شاخه/SHA آغاز:** `arena/a72fbc61-mp` / `28eea71776793098c05c6d3100ab69bc543c98ba`؛ workspace در شروع clean و SHA برابر `origin/main` بود. remote branch مختص این نشست هنوز ایجاد نشده بود. PRهای #3/#4/#5 در GitHub ادغام شده‌اند؛ PR4 payment lookup/QR gate و PR5 README architecture SVG در source حاضرند.
 - **CI baseline همان SHA:** [run 44541693998](https://github.com/yousefghorbanian98-create/MP/actions/runs/44541693998) سبز، ۸ job شامل backend, studio, client, client-pinned/Android debug, docs, live-contract, e2e-api و secret-scan.

@@ -222,6 +222,9 @@ DENIES: list[tuple[str, str, str]] = [
     # TestClient: هر سه ۲۰۰. پذیرش برای گرفتن پول به `/payments` نیاز دارد،
     # نه به گزارش درآمد. (`manager` و بالاتر مجاز می‌مانند.)
     ("reception", "/api/v1/payments/finance/*", "*"),
+    # allow کلی `/payments/*` برای پذیرش شامل refund هم می‌شد؛ بازپرداخت را فقط
+    # مدیر/ادمینِ دارای `finance.write` (یا مالک) انجام دهد.
+    ("reception", "/api/v1/payments/*/refund", "POST"),
     # نوشتن کاتالوگ/درگاه/قیمت هرگز از مسیر member — لایهٔ دوم بعد از ensure_owner
     ("member", "/api/v1/shop/products", "POST"),
     ("member", "/api/v1/shop/products/*", "PATCH"),

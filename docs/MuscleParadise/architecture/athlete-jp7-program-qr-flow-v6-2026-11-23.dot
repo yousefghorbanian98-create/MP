@@ -1,0 +1,112 @@
+digraph AthleteJP7ProgramQR {
+  graph [
+    rankdir=TB, bgcolor="#0B1220", pad="0.34", nodesep="0.28", ranksep="0.54",
+    splines=ortho, compound=true, newrank=true, dpi=180,
+    fontname="DejaVu Sans", fontsize=25, fontcolor="#EEF4FC",
+    label="فلوچارت نهایی · نسخهٔ ساخت‌یافتهٔ برنامه → QR صفحهٔ آخر → سنجش تازه → نمودارها → برنامهٔ بعد",
+    labelloc="t", labeljust="c"
+  ];
+  node [shape=box, style="rounded,filled", fontname="DejaVu Sans", fontsize=13,
+        color="#49627D", fillcolor="#15243A", fontcolor="#EEF4FC",
+        penwidth=1.25, margin="0.18,0.11"];
+  edge [fontname="DejaVu Sans", fontsize=10, color="#8296AD", fontcolor="#DCE6F1",
+        penwidth=1.05, arrowsize=0.65];
+
+  subgraph cluster_previous {
+    label="۱ · بازیابی برنامهٔ قبلی؛ مسیر مستقیم برای برنامه‌های Muscle Paradise، مسیر واردسازی برای فایل بیرونی/قدیمی";
+    color="#6CAAF8"; fontcolor="#6CAAF8"; style="rounded"; penwidth=1.5;
+    entry [label="ورودی برنامهٔ قبلی\nاسکن QR صفحهٔ آخر / انتخاب از تاریخچه / بارگذاری PDF", fillcolor="#211D39", color="#B99AFB", fontsize=14];
+    qrref [label="QR هر athlete + ProgramVersion یکتا\nopaque revocable reference؛ بدون محتوای PDF/دادهٔ سلامت", fillcolor="#15243A", color="#6CAAF8"];
+    capacity [label="QR استاندارد ظرفیت PDF چندصفحه‌ای را ندارد\nreference نسخه را پیدا می‌کند؛ resolver پس از دسترسی مجاز\nهمهٔ صفحه‌ها و دادهٔ canonical را برمی‌گرداند", fillcolor="#30271A", color="#FFC56E"];
+    auth [label="۲ · احراز هویت + role/ownership check\nreference فعال؟ member/version درست؟ hash بایگانی سالم؟", fillcolor="#30271A", color="#FFC56E"];
+    native [label="۳A · نسخهٔ داخلی پیدا شد\nبارگذاری مستقیم ProgramVersion canonical data + PDF کامل\nبدون OCR؛ PDF فقط render دادهٔ ساخت‌یافته است", fillcolor="#142B38", color="#51D6C2", fontsize=14];
+    external [label="۳B · نسخهٔ داخلی پیدا نشد / PDF بیرونی یا قدیمی\nفایل اصلی → private quarantine + file hash + ACL\nفایل اصلی immutable حفظ شود", fillcolor="#211D39", color="#B99AFB"];
+    extract [label="استخراج کم‌خطر\nPDF دیجیتال: text/layout extraction اول\nصفحهٔ اسکن‌شده: OCR فقط همان صفحه؛ page+bbox+raw text+confidence حفظ شود", fillcolor="#15243A", color="#6CAAF8"];
+    candidate [label="ImportCandidate، نه برنامهٔ اجرایی\nتبدیل جدول‌ها به week/session/movement/dose\nنگاشت نام حرکت به canonical ID؛ مبهم/ناموجود = unknown، بدون حدس", fillcolor="#30271A", color="#FFC56E"];
+    coachimport [label="بازبینی مربی کنار صفحهٔ اصلی\nتأیید/اصلاح athlete، هدف، site/unit/date، movement، set×rep/load/progression\nconfidence به‌تنهایی تأیید نیست", fillcolor="#30271A", color="#FFC56E"];
+    legacy [label="LegacyProgramVersion ساخت‌یافته و تغییرناپذیر\nsource PDF/hash + import/schema version + field provenance + reviewer\nفقط بعد از تأیید وارد مقایسه شود", fillcolor="#142B38", color="#51D6C2"];
+    prior [label="۴ · برنامهٔ قبلیِ resolve‌شده برای همان عضو\nکل محتوا/صفحه‌ها + canonical plan tree + program_version_id\nplanned dose از actual performance جدا", fillcolor="#142B38", color="#51D6C2", fontsize=14];
+    {rank=same; native; external;}
+    entry -> qrref [label="اگر QR داخلی موجود است"];
+    entry -> auth [label="انتخاب رکورد داخلی / upload خارجی"];
+    qrref -> capacity -> auth;
+    auth -> native [label="version/hash معتبر"];
+    auth -> external [label="unlinked / legacy / invalid reference"];
+    external -> extract -> candidate -> coachimport -> legacy;
+    native -> prior;
+    legacy -> prior;
+  }
+
+  subgraph cluster_newdata {
+    label="۵ · سنجش و دادهٔ تازه برای همان athlete_id؛ QR فقط برنامهٔ قبلی را resolve می‌کند";
+    color="#6CAAF8"; fontcolor="#6CAAF8"; style="rounded"; penwidth=1.5;
+    coach [label="مربی مجاز\nورودی تازه را ثبت و به عضو/چرخهٔ احراز‌شده پیوند می‌دهد", fillcolor="#211D39", color="#B99AFB"];
+    raw [label="C02 · قرائت خام ۷ site به mm + repeats\nchest · midaxillary · triceps · subscapular\nabdomen · suprailiac · thigh\nتاریخ، ارزیاب، caliper، protocol/site-map", fillcolor="#15243A", color="#6CAAF8"];
+    context [label="سن/category صریح و معتبر + وزن هم‌روز/دور کمر در صورت نیاز\nraw measurement به همان athlete_id متصل؛ consent و quality ثبت شود", fillcolor="#15243A", color="#6CAAF8"];
+    logs [label="Actual training logs نسخهٔ قبلی\nبار/تکرار/RPE-RIR · ست انجام‌شده و adherence\nدرد/توقف · substitution · missed sessions · recovery\nscan یا planned plan = performed محسوب نمی‌شود", fillcolor="#142B38", color="#51D6C2"];
+    {rank=same; raw; context; logs;}
+    coach -> raw; coach -> context;
+  }
+  prior -> coach [label="نسخهٔ قبلی + member context"];
+
+  validate [label="۶ · Quality / Validation Gate\nsite-set و واحد درست؟ عدد finite/مجاز؟ تکرارها و metadata کامل؟\nپروتکل، ابزار، consent، category و کیفیت pass؟\nfail → raw-only / needs review / re-measure", fillcolor="#30271A", color="#FFC56E", fontsize=14];
+  raw -> validate; context -> validate;
+
+  subgraph cluster_equation {
+    label="۷ · محاسبه فقط با Equation Registry تأییدشده و جمعیت قابل‌اعمال";
+    color="#B99AFB"; fontcolor="#B99AFB"; style="rounded"; penwidth=1.5;
+    sum7 [label="sum7_mm = Σ همان ۷ site\nraw values، repeats و protocol کنار نتیجه حفظ شوند", fillcolor="#211D39", color="#B99AFB"];
+    male [label="JP7-M · Jackson–Pollock 1978\nDb = 1.112 − 0.00043499×Σ7\n+ 0.00000055×Σ7² − 0.00028826×age", fillcolor="#15243A", color="#6CAAF8"];
+    female [label="JP7-F · Jackson–Pollock, Ward 1980\nDb = 1.0970 − 0.00046971×Σ7\n+ 0.00000056×Σ7² − 0.00012828×age", fillcolor="#15243A", color="#B99AFB"];
+    siri [label="Siri 1961 · conversion_id جدا\nbody_fat_pct = 495 / Db − 450", fillcolor="#30271A", color="#FFC56E"];
+    {rank=same; male; female;}
+    sum7 -> male [label="category approved only"];
+    sum7 -> female [label="category approved only"];
+    male -> siri; female -> siri;
+  }
+  validate -> sum7 [label="pass only", color="#7BE0A2"];
+
+  snapshot [label="۸ · Immutable Measurement/Derived Snapshot\nraw+repeats+sum7; Db/%fat فقط اگر equation approved\nfat/FFM فقط با وزن معتبر هم‌روز؛ provenance/version/assessor حفظ شود", fillcolor="#142B38", color="#51D6C2", fontsize=14];
+  siri -> snapshot;
+  sum7 -> snapshot [label="raw-only path", style=dashed, color="#51D6C2"];
+  compare [label="۹ · Comparability Gate با history همان عضو\nsame sites/unit/protocol/tool/category/equation + quality؟\nبله: delta + uncertainty؛ خیر: not comparable / re-measure\nبرنامه و baseline قبلی overwrite نشوند", fillcolor="#30271A", color="#FFC56E", fontsize=14];
+  snapshot -> compare;
+  prior -> compare [label="prior assessment + plan", color="#51D6C2", constraint=false];
+
+  subgraph cluster_charts {
+    label="۱۰ · نمودارهای جدا؛ شاخص بدن با عملکرد عضله یکی نیست";
+    color="#51D6C2"; fontcolor="#51D6C2"; style="rounded"; penwidth=1.5;
+    fatchart [label="چربی/ترکیب بدن\nΣ7، وزن، دورکمر جدا؛ %fat/fat-mass فقط با معادلهٔ معتبر\nuncertainty + comparability status کنار نمودار", fillcolor="#142B38", color="#51D6C2"];
+    musclechart [label="پیشرفت هر گروه عضلانی\nحرکات مرجع: بار×تکرار در effort مشابه + actual volume/adherence/recovery\nمحیط اندام فقط proxy؛ JP7 رشد موضعی را نمی‌سنجد\nکمبود داده → insufficient / review", fillcolor="#142B38", color="#51D6C2"];
+    {rank=same; fatchart; musclechart;}
+  }
+  compare -> fatchart; compare -> musclechart;
+  logs -> musclechart [label="actual performance"];
+
+  subgraph cluster_planner {
+    label="۱۱ · ساختار تازهٔ برنامه بر اساس روند معتبر، اجرای واقعی و scorecard هر عضله";
+    color="#7BE0A2"; fontcolor="#7BE0A2"; style="rounded"; penwidth=1.5;
+    intake [label="هدف/محدودیت جدید + preference + schedule + equipment\nتأیید/اصلاح دادهٔ قبلی", fillcolor="#15243A", color="#6CAAF8"];
+    catalog [label="Exercise Catalog approved\nعضله/الگو/مهارت/equipment/substitute + provenance", fillcolor="#30271A", color="#FFC56E"];
+    safety [label="Safety / referral gate\nred flag/restriction → hold؛ trend مجوز ایمنی نیست", fillcolor="#301B2A", color="#FF7887"];
+    scorecard [label="Per-muscle scorecard\nimproved/stable/declined/insufficient بر معیارهای همسان\nدلیل حفظ/تغییر هر حرکت و dose؛ rotation اجباری نیست", fillcolor="#142B38", color="#51D6C2"];
+    composer [label="ProgramComposer\nprior canonical plan + measurements/charts + actual logs + goals\n→ ساختار و حرکت‌های پیشنهادی n+1 با before→after reason", fillcolor="#17352F", color="#7BE0A2", fontsize=14];
+    {rank=same; intake; catalog; safety;}
+    fatchart -> scorecard; musclechart -> scorecard; logs -> scorecard;
+    intake -> scorecard; catalog -> composer; scorecard -> composer;
+    safety -> composer [label="pass only", color="#7BE0A2"];
+  }
+
+  coachreview [label="۱۲ · مربی نمودار، دوز، حرکت‌های هر عضله و تغییر ساختار را بازبینی/تأیید می‌کند", fillcolor="#30271A", color="#FFC56E", fontsize=14];
+  version [label="۱۳ · ProgramVersion n+1 immutable\ncanonical structured data + schema/rule/catalog version + content hash", fillcolor="#17352F", color="#7BE0A2", fontsize=14];
+  pdf [label="PDF کامل از canonical ProgramVersion render می‌شود\nهمهٔ صفحه‌ها به همان version/hash تعلق دارند", fillcolor="#211D39", color="#B99AFB"];
+  finalqr [label="یک QR برای athlete + ProgramVersion\nدر انتهای صفحهٔ آخر؛ opaque revocable reference\nاسکن → resolver → نسخهٔ ساخت‌یافته + PDF کامل", fillcolor="#15243A", color="#6CAAF8", fontsize=14];
+  composer -> coachreview; coachreview -> version [label="approve"];
+  version -> pdf -> finalqr;
+  finalqr -> entry [label="چرخهٔ بعد / import مستقیم همان نسخه", color="#6CAAF8", constraint=false];
+
+  blocked [label="STOP / REVIEW\ninvalid site/protocol · low repeat quality · equation locked/out-of-scope\nincomparable data · unresolved import field · insufficient muscle metric\nred flag · unauthorized/revoked reference", fillcolor="#301B2A", color="#FF7887"];
+  validate -> blocked [label="fail", color="#FF7887"];
+  compare -> blocked [label="incomparable/insufficient", color="#FF7887", constraint=false];
+  coachimport -> blocked [label="unresolved/coach rejects import", color="#FF7887", constraint=false];
+}

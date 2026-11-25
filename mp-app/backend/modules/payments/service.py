@@ -24,6 +24,7 @@ def create_payment(
     plan_key: str | None = None,
     idempotency_key: str | None = None,
     coupon_code: str | None = None,
+    commit: bool = True,
 ) -> Payment:
     from sqlalchemy import select
 
@@ -64,8 +65,10 @@ def create_payment(
         discount_rial=discount_rial,
     )
     db.add(payment)
-    db.commit()
-    db.refresh(payment)
+    db.flush()
+    if commit:
+        db.commit()
+        db.refresh(payment)
     return payment
 
 
@@ -348,7 +351,7 @@ def fail_payment(db: Session, payment_id: int) -> Payment:
     return payment
 
 
-def refund_payment(db: Session, payment_id: int) -> Payment:
+def refund_payment(db: Session, payment_id: int, *, actor=None) -> Payment:
     """بازگشت وجه از درگاه (M110) — فقط پرداخت درگاهیِ تأییدشده، و فقط یک بار.
 
     سه تصمیم که عمداً گرفته شده:
@@ -387,13 +390,11 @@ def refund_payment(db: Session, payment_id: int) -> Payment:
     # QF-10: زمان بازگشت برای سبد دوره. اگر بانک بگوید «قبلاً برگشت خورده»،
     # زمان واقعی را نمی‌دانیم؛ `datetime.now` نزدیک‌ترین شاهد است، نه ادعای دقیق.
     payment.refunded_at = datetime.now(UTC)
-    db.commit()
-    db.refresh(payment)
     from modules.admin.service import audit
 
     audit(
         db,
-        None,
+        getattr(actor, "id", None),
         "payment_refunded",
         "payment",
         payment.id,
@@ -402,7 +403,11 @@ def refund_payment(db: Session, payment_id: int) -> Payment:
             "refund_ref": result.reference_id,
             "already": result.already,
         },
+        commit=False,
     )
+    # Audit event and local refund status are committed together for attribution.
+    db.commit()
+    db.refresh(payment)
     return payment
 
 
@@ -539,9 +544,19 @@ def wallet_ledger(
 
 
 def wallet_pay(
-    db: Session, member_id: int, amount_rial: int, description: str = "", user=None
+    db: Session,
+    member_id: int,
+    amount_rial: int,
+    description: str = "",
+    user=None,
+    *,
+    commit: bool = True,
 ) -> Payment:
-    """پرداخت از کیف‌پول — اتمیک: بررسی موجودی + بدهکاری + پرداخت paid در یک تراکنش."""
+    """پرداخت از کیف‌پول — اتمیک: بررسی موجودی + بدهکاری + پرداخت paid در یک تراکنش.
+
+    `commit=False` را checkout فروشگاه می‌گیرد تا سفارش، موجودی، بدهکاری، دفتر
+    و پرداخت همگی زیر یک commit نهایی بمانند.
+    """
     from app.security.ownership import ensure_member_scope
 
     ensure_member_scope(db, user, member_id)
@@ -585,9 +600,20 @@ def wallet_pay(
         created_by_user_id=getattr(user, "id", None),
         note=description or "پرداخت از کیف‌پول",
     )
-    db.commit()
-    db.refresh(payment)
     from modules.admin.service import audit
 
-    audit(db, None, "wallet_spent", "payment", payment.id, {"amount_rial": amount_rial})
+    if commit:
+        db.commit()
+        db.refresh(payment)
+        audit(db, None, "wallet_spent", "payment", payment.id, {"amount_rial": amount_rial})
+    else:
+        audit(
+            db,
+            None,
+            "wallet_spent",
+            "payment",
+            payment.id,
+            {"amount_rial": amount_rial},
+            commit=False,
+        )
     return payment

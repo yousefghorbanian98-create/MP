@@ -1,0 +1,189 @@
+# Scoped CI checks for PWA-00 documents. Diagnostics only: no automatic file edits,
+# commits, or PR review comments. Reviewdog reports Markdown findings as GitHub Check annotations.
+name: pwa00-doc-quality
+
+on:
+  push:
+    paths:
+      - ".markdownlint.json"
+      - ".github/workflows/pwa00-doc-quality.yml"
+      - "docs/MuscleParadise/adr/README.md"
+      - "docs/MuscleParadise/adr/006-shared-react-pwa.md"
+      - "docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-CONTRACT.fa.md"
+      - "docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-EVIDENCE.fa.md"
+      - "docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-DIFF.patch"
+  pull_request:
+    paths:
+      - ".markdownlint.json"
+      - ".github/workflows/pwa00-doc-quality.yml"
+      - "docs/MuscleParadise/adr/README.md"
+      - "docs/MuscleParadise/adr/006-shared-react-pwa.md"
+      - "docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-CONTRACT.fa.md"
+      - "docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-EVIDENCE.fa.md"
+      - "docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-DIFF.patch"
+
+permissions:
+  contents: read
+
+jobs:
+  super-linter:
+    name: Super-Linter (PWA-00 Markdown only)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Lint the four PWA-00 Markdown files
+        uses: super-linter/super-linter@2da136927bd4a73596db63044b504547c62cb854 # v9.0.0
+        env:
+          DEFAULT_BRANCH: main
+          VALIDATE_ALL_CODEBASE: false
+          VALIDATE_MARKDOWN: true
+          FILTER_REGEX_INCLUDE: '^docs/MuscleParadise/(adr/(README|006-shared-react-pwa)\.md|architecture/session-decisions-2026-11-23/PWA-00-(CONTRACT|EVIDENCE)\.fa\.md)$'
+          STRIP_DEFAULT_WORKSPACE_FOR_REGEX: true
+          LINTER_RULES_PATH: .
+          MARKDOWN_CONFIG_FILE: .markdownlint.json
+          LOG_LEVEL: INFO
+          CREATE_LOG_FILE: true
+          LOG_FILE: super-linter.log
+          ENABLE_GITHUB_PULL_REQUEST_SUMMARY_COMMENT: false
+          ENABLE_GITHUB_ACTIONS_STEP_SUMMARY: false
+          MULTI_STATUS: false
+      - name: Expose scoped Super-Linter diagnostics on failure
+        if: failure()
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          source_log="super-linter.log"
+          readable_log="${RUNNER_TEMP}/pwa00-super-linter.log"
+          if [[ ! -e "$source_log" ]]; then
+            echo "::warning title=Super-Linter diagnostics::super-linter.log was not produced"
+            exit 0
+          fi
+          if ! sudo -n install -m 0644 -- "$source_log" "$readable_log"; then
+            echo "::warning title=Super-Linter diagnostics::could not copy the permission-restricted Super-Linter log"
+            exit 0
+          fi
+          python3 - "$readable_log" <<'PY'
+          from pathlib import Path
+          import sys
+
+          report = Path(sys.argv[1])
+          try:
+              lines = report.read_text(encoding="utf-8", errors="replace").splitlines()
+          except OSError as exc:
+              message = f"cannot read copied Super-Linter log: {type(exc).__name__}: {exc}"
+              print("::warning title=Super-Linter diagnostics::" + message.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A"))
+              sys.exit(0)
+          import re
+
+          severe = re.compile(r"\[(?:ERROR|FATAL|WARN(?:ING)?)\]|\b(?:ERROR|FATAL|CRITICAL)\b|Traceback|Exception|failed to|not found|No files", re.IGNORECASE)
+
+          def encode_entry(index):
+              entry = f"[{index + 1}/{len(lines)}] {lines[index]}".strip()[:900]
+              return entry.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+
+          def chunks_for(indices):
+              chunks = []
+              current = []
+              used = 0
+              for index in indices:
+                  entry = encode_entry(index)
+                  if current and used + len(entry) + 3 > 3500:
+                      chunks.append("%0A".join(current))
+                      current = []
+                      used = 0
+                  current.append(entry)
+                  used += len(entry) + 3
+              if current:
+                  chunks.append("%0A".join(current))
+              return chunks
+
+          all_indices = list(range(len(lines)))
+          chunks = chunks_for(all_indices)
+          if len(chunks) > 10:
+              selected = set(range(min(20, len(lines))))
+              selected.update(range(max(0, len(lines) - 30), len(lines)))
+              for i, line in enumerate(lines):
+                  if severe.search(line) or "[MARKDOWN]" in line or "markdownlint" in line.lower():
+                      selected.update(range(max(0, i - 1), min(len(lines), i + 2)))
+              chunks = chunks_for(sorted(selected))
+          if len(chunks) > 10:
+              selected = {i for i, line in enumerate(lines) if severe.search(line) or "[MARKDOWN]" in line or "markdownlint" in line.lower()}
+              chunks = chunks_for(sorted(selected))
+          if len(chunks) > 10:
+              chunks = chunks[-10:]
+          if not chunks:
+              chunks = ["No diagnostic lines were available"]
+          for i, chunk in enumerate(chunks, start=1):
+              print(f"::notice title=Super-Linter log excerpt {i}/{len(chunks)}::{chunk}")
+          PY
+
+  reviewdog:
+    name: Reviewdog (Markdown findings as check annotations)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+      checks: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Set up Reviewdog CLI
+        uses: reviewdog/action-setup@d8edfce3dd5e1ec6978745e801f9c50b5ef80252 # v1.4.0
+        with:
+          reviewdog_version: v0.21.3
+      - name: Install scoped markdownlint CLI
+        run: npm install --no-save --no-audit --no-fund --prefix "$RUNNER_TEMP/pwa00-tools" markdownlint-cli@0.50.1
+      - name: Run markdownlint through Reviewdog
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          "$RUNNER_TEMP/pwa00-tools/node_modules/.bin/markdownlint" --config .markdownlint.json \
+            docs/MuscleParadise/adr/README.md \
+            docs/MuscleParadise/adr/006-shared-react-pwa.md \
+            docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-CONTRACT.fa.md \
+            docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-EVIDENCE.fa.md 2>&1 | \
+            reviewdog \
+              -efm="%f:%l:%c %m" \
+              -efm="%f:%l %m" \
+              -name="markdownlint" \
+              -reporter="github-check" \
+              -filter-mode="added" \
+              -level="error" \
+              -fail-level="error"
+
+  pwa00-patch:
+    name: PWA-00 patch applies cleanly and matches source docs
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Check the filtered patch against its pinned base
+        env:
+          PATCH_BASE: c46e792657e361cd09799c896c47149b4a5c4d86
+          PATCH_FILE: docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-DIFF.patch
+        run: |
+          set -euo pipefail
+          scratch=$(mktemp -d)
+          trap 'rm -rf "$scratch"' EXIT
+          git archive "$PATCH_BASE" docs/MuscleParadise/adr/README.md | tar -x -C "$scratch"
+          (cd "$scratch" && git apply --check --whitespace=error-all "$GITHUB_WORKSPACE/$PATCH_FILE")
+          (cd "$scratch" && git apply --whitespace=error-all "$GITHUB_WORKSPACE/$PATCH_FILE")
+          for path in \
+            docs/MuscleParadise/adr/README.md \
+            docs/MuscleParadise/adr/006-shared-react-pwa.md \
+            docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-CONTRACT.fa.md \
+            docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-EVIDENCE.fa.md; do
+            cmp "$scratch/$path" "$GITHUB_WORKSPACE/$path"
+          done

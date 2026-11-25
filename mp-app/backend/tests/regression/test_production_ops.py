@@ -116,9 +116,13 @@ def test_production_compose_is_fail_closed_and_valkey_backed(compose_path: Path)
         "MP_CORS_ORIGINS",
         "MP_SMS_PROVIDER",
         "MP_PAYMENT_GATEWAY",
+        "MP_METRICS_TOKEN",
+        "MP_TRUSTED_PROXIES",
     ):
         assert ":?" in environment[required], f"{compose_path}: {required} must be required"
     assert environment["MP_VALKEY_URL"] == "redis://valkey:6379/0"
+    prometheus_environment = services["prometheus"]["environment"]
+    assert prometheus_environment["MP_METRICS_TOKEN"] == environment["MP_METRICS_TOKEN"]
     assert ":?" in backend["image"] and "IMAGE_OWNER" in backend["image"]
     assert ":?" in backend["image"] and "IMAGE_TAG" in backend["image"]
     assert services["studio"]["image"] == backend["image"].replace("mp-backend", "mp-studio")
@@ -140,6 +144,13 @@ def test_production_compose_is_fail_closed_and_valkey_backed(compose_path: Path)
     assert not services["valkey"].get("ports")
     assert "noeviction" in services["valkey"]["command"]
     assert services["prometheus"]["ports"][0].startswith("127.0.0.1:")
+
+
+def test_production_environment_template_leaves_proxy_and_metrics_values_unset() -> None:
+    template = (BACKEND / ".env.example").read_text(encoding="utf-8").splitlines()
+    for name in ("MP_TRUSTED_PROXIES", "MP_METRICS_TOKEN"):
+        assignments = [line for line in template if line.startswith(f"{name}=")]
+        assert assignments == [f"{name}="]
 
 
 @pytest.mark.parametrize(

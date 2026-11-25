@@ -54,6 +54,8 @@ CORE_MARKDOWN_FILES = (
     # ۲۰۲۶-۱۱-۱۹ (فاز ۱): نقشهٔ سطح تعامل از کد ساخته می‌شود؛ همان هم باید
     # فاصلهٔ اضافه و لینک مرده نداشته باشد.
     Path("docs/MuscleParadise/architecture/interaction-map-2026-11-19.md"),
+    # برنامهٔ کلان محصول تا production/AI autonomy: لینک‌ها و وضعیت‌های آن نیز تحت گیت‌اند.
+    Path("docs/MuscleParadise/architecture/ai-autonomous-production-plan-v1-2026-11-23.md"),
 )
 MARKDOWN_FILES = (*CORE_MARKDOWN_FILES, *_module_docs())
 SVG_FILES = (

@@ -1,0 +1,130 @@
+digraph SourceRegistryTree {
+  graph [
+    rankdir=LR, bgcolor="#0B1220", pad="0.35", nodesep="0.15", ranksep="0.75",
+    splines=ortho, compound=true, newrank=true, dpi=180,
+    fontname="DejaVu Sans", fontsize=24, fontcolor="#EEF4FC",
+    label="درخت Source Registry: هر لینک/دیتاست/کتابخانه یک source_id مستقل دارد",
+    labelloc="t", labeljust="c"
+  ];
+  node [shape=box, style="rounded,filled", fontname="DejaVu Sans", fontsize=10.5,
+        color="#49627D", fillcolor="#15243A", fontcolor="#EEF4FC",
+        penwidth=1.0, margin="0.12,0.08"];
+  edge [fontname="DejaVu Sans", fontsize=9, color="#71859D", fontcolor="#DCE6F1",
+        penwidth=0.9, arrowsize=0.55];
+
+  root [label="Source Registry\nsource_id + type + URL\nversion/hash + schema + license + status", shape=box3d,
+        fillcolor="#142B38", color="#51D6C2", fontsize=15];
+
+  subgraph cluster_movement {
+    label="L4 · Exercise / Movement catalogs — raw store جدا برای هر منبع";
+    color="#FFC56E"; fontcolor="#FFC56E"; style="rounded";
+    L_MOV [label="Catalog read model\nفقط after review", fillcolor="#30271A", color="#FFC56E"];
+    EX01 [label="EX01 · free-exercise-db\nJSON dataset · Q02/Q06/Q09"];
+    EX02 [label="EX02 · wrkout/exercises.json\nJSON dataset · Q02/Q06/Q09"];
+    EX03 [label="EX03 · Open ExerciseDB\nP/S/T + gear · Q02/Q06"];
+    EX04 [label="EX04 · Longhaul exercises\nstrength/cardio/flexibility · Q06/Q08"];
+    EX05 [label="EX05 · Workout.cool\nplatform + exercise catalog · Q06/C10"];
+    WGER_EX [label="WGER-EX · wger API/backend\nexercise schema · Q06/Q09/C10"];
+    WGER_APP [label="WGER-APP · Flutter client\nAPI adapter/client · not a DB"];
+    EX09 [label="EX09 · hasaneyldrm dataset\ntext candidate; imagery blocked pending rights"];
+    EX10 [label="EX10 · RepDB dataset\nattribution/paid-tier gate"];
+    {rank=same; EX01; EX02; EX03; EX04; EX05; WGER_EX; WGER_APP; EX09; EX10;}
+    L_MOV -> EX01; L_MOV -> EX02; L_MOV -> EX03; L_MOV -> EX04; L_MOV -> EX05;
+    L_MOV -> WGER_EX; L_MOV -> WGER_APP; L_MOV -> EX09; L_MOV -> EX10;
+  }
+
+  subgraph cluster_biomech {
+    label="L5 · Biomechanics / Rehab — compute, data و reference جدا";
+    color="#FF7887"; fontcolor="#FF7887"; style="rounded";
+    L_BIO [label="Coach/clinician reviewed\nbenchmark/read model", fillcolor="#301B2A", color="#FF7887"];
+    BIO01 [label="BIO01 · OpenSim Core\nbiomech engine · C04/C08"];
+    BIO02 [label="BIO02 · OpenCap Core\nmarkerless capture · consent gate"];
+    BIO03 [label="BIO03 · Pose2Sim\n2D→3D compute · validation gate"];
+    BIO05 [label="BIO05 · UI-PRMD\nDOI + PMC dataset/paper"];
+    BIO06_CODE [label="BIO06-CODE · IntelliRehabDS\nrepo/loader"];
+    BIO06_DATA [label="BIO06-DATA · Zenodo 4610859\n2,589-record dataset"];
+    BIO07 [label="BIO07 · Rehab posture correction\nresearch code/model"];
+    BIO08 [label="BIO08 · Easeur exercise KB\nAPI/taxonomy candidate"];
+    BIO09A [label="BIO09-A · Awesome Biomechanics\nlink index, not a database"];
+    BIO09B [label="BIO09-B · Rehab Agent Stack\nrepo license/review gate"];
+    BIO10 [label="BIO10 · PhysiotherapyExercises\nweb content; terms/API gate"];
+    BIO11 [label="BIO11 · Physiopedia\narticle/asset license per page"];
+    {rank=same; BIO01; BIO02; BIO03; BIO05; BIO06_CODE; BIO06_DATA; BIO07; BIO08; BIO09A; BIO09B; BIO10; BIO11;}
+    L_BIO -> BIO01; L_BIO -> BIO02; L_BIO -> BIO03; L_BIO -> BIO05;
+    L_BIO -> BIO06_CODE; L_BIO -> BIO06_DATA; L_BIO -> BIO07; L_BIO -> BIO08;
+    L_BIO -> BIO09A; L_BIO -> BIO09B; L_BIO -> BIO10; L_BIO -> BIO11;
+  }
+
+  subgraph cluster_performance {
+    label="L6/L10 · Performance & Training Science — code calculator ≠ athlete DB";
+    color="#6CAAF8"; fontcolor="#6CAAF8"; style="rounded";
+    L_PERF [label="OpenAthlete + training-load\nversioned metrics/rules", fillcolor="#142B38", color="#51D6C2"];
+    TL01 [label="TL01 · training-load\nSession-RPE / TRIMP / EWMA"];
+    TL02_GC [label="TL02-GC · GoldenCheetah\nlicense mismatch review"];
+    TL02_SW [label="TL02-SWEAT · sweatpy\nPython physiology library"];
+    TL02_OD [label="TL02-OPEN · OpenData\nlicense/source snapshot gate"];
+    TL03_W [label="TL03-WHIPPR\nR · CPET/gas exchange"];
+    TL03_L [label="TL03-LACTATER\nR · lactate thresholds"];
+    TL04 [label="TL04 · PhysUSP\nenergy system calculator"];
+    TL05 [label="TL05 · OpenAthlete\nCTL/ATL/TSB/HRV etc."];
+    TL06 [label="TL06 · makerundev\nFIT/GPX/TCX processing"];
+    TL07_C [label="TL07-COMP · Compendium repo\nMET activity dataset"];
+    TL07_T [label="TL07-TRAINCALC\nMET JSON/CSV dataset"];
+    TL07_O [label="TL07-OFFICIAL · 2024 Compendium\nactivity MET reference"];
+    TL08_GH [label="TL08-GH · OpenPowerlifting mirror\npublic competition records"];
+    TL08_GL [label="TL08-GL · primary GitLab\nCC0 claim; pin snapshot"];
+    {rank=same; TL01; TL02_GC; TL02_SW; TL02_OD; TL03_W; TL03_L; TL04; TL05; TL06; TL07_C; TL07_T; TL07_O; TL08_GH; TL08_GL;}
+    L_PERF -> TL01; L_PERF -> TL02_GC; L_PERF -> TL02_SW; L_PERF -> TL02_OD;
+    L_PERF -> TL03_W; L_PERF -> TL03_L; L_PERF -> TL04; L_PERF -> TL05; L_PERF -> TL06;
+    L_PERF -> TL07_C; L_PERF -> TL07_T; L_PERF -> TL07_O; L_PERF -> TL08_GH; L_PERF -> TL08_GL;
+  }
+
+  subgraph cluster_evidence {
+    label="L7 · Evidence / Education — citation/review, نه prescription DB";
+    color="#B99AFB"; fontcolor="#B99AFB"; style="rounded";
+    L_EDU [label="Evidence Registry\nreview + citation + scope", fillcolor="#211D39", color="#B99AFB"];
+    EDU01 [label="EDU01 · OTEP\nCC BY-NC · non-commercial"];
+    EDU02 [label="EDU02 · Medicine LibreTexts\nlicense per book/page"];
+    EDU03P [label="EDU03-PHYS · IntechOpen\nexercise physiology books"];
+    EDU03R [label="EDU03-REHAB · IntechOpen\nrehab books"];
+    EDU03S [label="EDU03-SPORTS · SportsScience\ncurated hub / license gate"];
+    {rank=same; EDU01; EDU02; EDU03P; EDU03R; EDU03S;}
+    L_EDU -> EDU01; L_EDU -> EDU02; L_EDU -> EDU03P; L_EDU -> EDU03R; L_EDU -> EDU03S;
+  }
+
+  subgraph cluster_nutrition {
+    label="L8 · Nutrition — مستقل از training planner؛ کمبود منبع غذایی آشکار";
+    color="#FFC56E"; fontcolor="#FFC56E"; style="rounded";
+    L_NUT [label="NutritionFood / Meal namespace\noptional; source rights gate", fillcolor="#30271A", color="#FFC56E"];
+    NUT01 [label="NUT01 · wger nutrition/foods\nseparate namespace from wger exercise"];
+    NUTGAP [label="NUT-GAP · nutrient composition DB\nnot supplied; no silent MET fallback", fillcolor="#301B2A", color="#FF7887"];
+    {rank=same; NUT01; NUTGAP;}
+    L_NUT -> NUT01; L_NUT -> NUTGAP;
+  }
+
+  subgraph cluster_anatomy {
+    label="L9 · Anatomy / Media — display data جدا از exercise prescription";
+    color="#B99AFB"; fontcolor="#B99AFB"; style="rounded";
+    L_MEDIA [label="Anatomy & Media Read Model\nasset rights per file", fillcolor="#211D39", color="#B99AFB"];
+    AN01 [label="AN01 · Anatome\nSVG muscle maps/heatmap"];
+    VIS01 [label="VIS01 · giavinh79 body-highlighter\nReact UI component"];
+    VIS02 [label="VIS02 · MichaelMjc body-highlighter\nseparate fork/source"];
+    BIO04 [label="BIO04 · Kimorel\nrehab animation / sample data"];
+    {rank=same; AN01; VIS01; VIS02; BIO04;}
+    L_MEDIA -> AN01; L_MEDIA -> VIS01; L_MEDIA -> VIS02; L_MEDIA -> BIO04;
+  }
+
+  subgraph cluster_docs {
+    label="L12 · PDF / Typeface — renderer-only";
+    color="#6CAAF8"; fontcolor="#6CAAF8"; style="rounded";
+    L_DOC [label="Versioned RTL PDF Render\ntemplate + private ACL", fillcolor="#15243A", color="#6CAAF8"];
+    PDF01_GH [label="PDF01-GH · Typst GitHub\nrenderer source"];
+    PDF01_PY [label="PDF01-PYPI · Python typst\nbinding/package metadata separate"];
+    PDF02 [label="PDF02 · Vazirmatn\nOFL font family"];
+    {rank=same; PDF01_GH; PDF01_PY; PDF02;}
+    L_DOC -> PDF01_GH; L_DOC -> PDF01_PY; L_DOC -> PDF02;
+  }
+
+  root -> L_MOV; root -> L_BIO; root -> L_PERF; root -> L_EDU;
+  root -> L_NUT; root -> L_MEDIA; root -> L_DOC;
+}

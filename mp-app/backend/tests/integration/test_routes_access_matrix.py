@@ -74,13 +74,14 @@ def _expected_access() -> dict[tuple[str, str], dict]:
     for prefix, route in _walk(create_app().routes):
         path = prefix + route.path
         guards = _guards(route.dependant)
+        role_sets = mod.guard_role_sets(route.dependant)
         sample = re.sub(r"\{[^}]+\}", "1", path)
         for method in sorted(route.methods):
             scopes = declared_scopes(method, path)
             access[(method, path)] = {
                 "guards": guards,
                 "scopes": sorted(scopes),
-                **mod.effective_access(guards, scopes, method, sample),
+                **mod.effective_access(guards, scopes, method, sample, role_sets=role_sets),
             }
     return access
 
