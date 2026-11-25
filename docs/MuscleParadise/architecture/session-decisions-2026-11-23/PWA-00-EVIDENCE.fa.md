@@ -15,7 +15,7 @@
 - **منبع برنامه:** PWA Arena handoff v2.0.0؛ ZIP SHA-256: `ab63be429ba8aff30eaebbd6e5d2978eca46c78cf2efb3ac4b4283a3d4a6863e`
 - **آثار همین کارت:** `docs/MuscleParadise/adr/006-shared-react-pwa.md`، ورودی متناظر در `docs/MuscleParadise/adr/README.md`، `PWA-00-CONTRACT.fa.md`، این فایل و `PWA-00-DIFF.patch`.
 - Checkout پیش از کار dirty بود. مسیرهای تغییرات قبلی در این گزارش بازنشر نشده‌اند؛ فقط فایل رجیستری ADR پیش از تغییر بررسی شد و نسبت به HEAD diff نداشت. در این کار هیچ مسیر خارج allowlist نوشته/ویرایش نشد.
-- مسیر رسید خصوصی [ردشده]، secret، token یا دادهٔ عضو باز/خوانده/کپی/دست‌کاری نشد. هیچ install، شبکه، DB/API، محصول، Finn runtime، E2E/device، commit/push/PR/merge/deploy یا فراخوان خارجی انجام نشد.
+- در مرحلهٔ اولیهٔ محدود، مسیر رسید خصوصی [ردشده]، secret، token یا دادهٔ عضو باز/خوانده/کپی/دست‌کاری نشد و هیچ install، شبکه، DB/API محصول، Finn runtime، E2E/device یا Git write انجام نشد. GitHub commit/push/PR بعدتر فقط با مجوز صریح کاربر در بخش ۱۱ انجام شد؛ merge/deploy و فراخوان API محصول انجام نشد.
 
 ### منبع بازبینی و دامنهٔ این رسیدگی
 
@@ -80,9 +80,9 @@ PY
 |---|---|---|
 | G1 — مشخصات/خردسازی | `PASS` | متن اصلی PWA-00، ACهای مستنداتی و NGها در [قرارداد](PWA-00-CONTRACT.fa.md) و [ADR-006](../../adr/006-shared-react-pwa.md) آمده‌اند؛ D-01/D-10 صریحاً بازند. |
 | G2 — ایزوله‌سازی | `PASS` | ویرایش‌های همین کارت محدود به allowlist مستندات بودند؛ checkout قبلاً dirty بود و این PASS ادعای ایزوله‌بودن کل workspace نیست. هیچ receipt/runtime لمس نشد. |
-| G3 — ابزار/اثر | `PASS` | فرمان‌های محلی مستنداتی/هش؛ no install, network, destructive command, commit یا remote effect. |
-| G4 — تست/امنیت | `PASS` فقط برای مستندات | docs gate و بررسی‌های مستنداتی؛ همهٔ تست‌های محصول، authorization، E2E و security runtime `NOT_RUN`. |
-| G5 — حفاظت شاخه | `NOT_RUN` | در خواندن قبلی API، یک ruleset فعال با نام `Main` در سطح repo دیده شد؛ خواندن branch-protection با `403 Resource not accessible by integration` رد شد. مقصد PR مشخص نیست؛ از `protected=true` یا نام ruleset PASS نتیجه نمی‌شود. هیچ PR/commit ساخته نشد. |
+| G3 — ابزار/اثر | `PASS` محدود | مرحلهٔ محلی مستنداتی محدود ماند؛ commit/push هفت مسیر allowlist و PR #25 بعدتر با مجوز صریح کاربر انجام شد. هیچ کد محصولی، مسیر دیگر، merge یا deploy تغییر نکرد. |
+| G4 — تست/امنیت | `PASS` فقط برای بررسی محلی مستندات | docs gate و whitespace/link checks محلی موفق‌اند؛ اولین اجرای GitHub Super-Linter/Reviewdog شکست خورد و اصلاح/اجرای مجدد در بخش ۱۱ ثبت است. تست محصول، authorization، E2E و security runtime `NOT_RUN`. |
+| G5 — حفاظت شاخه | `NOT_RUN` | در خواندن قبلی API، یک ruleset فعال با نام `Main` دیده شد؛ GET مربوط به branch-protection با `403 Resource not accessible by integration` رد شد. اکنون PR #25 به `main` باز است، اما effect واقعی required-check/reviewer policy برای آن تأیید نشده؛ از نام ruleset یا PR موجود PASS نتیجه نمی‌شود. |
 | G6 — شواهد/provenance | `PASS` | base SHA، مسیرها، فرمان‌ها، نتایج و patch محدود در این فایل و `PWA-00-DIFF.patch` ثبت می‌شوند؛ هش patch در handoff نهایی ارائه می‌شود. |
 | G7 — نظارت انسانی شخصی | `PASS` برای دستور scope محدود | مالک تصمیم را قبلاً صریحاً تعیین کرده؛ پیام تازهٔ کاربر نظارت انسانیِ اضافه را برای همین چرخه skip می‌کند. این به معنی approval برای release یا merge نیست. |
 | G8 — بودجه/توقف | `UNKNOWN` | سقف و هزینه تصویب شده‌اند؛ شمار تلاش قابل‌شمارش است، اما wall-clock دقیق ثبت نشده. ادعای `PASS` نمی‌شود. |
@@ -113,7 +113,7 @@ PY
 
 - تست/build/lint/typecheck/CI محصول، API authorization، E2E، device، نصب PWA، cache/offline/update، staging، security/privacy/finance/legal و review پذیرش انتشار/QA کل محصول.
 - پنج سفر انتهابه‌انتها؛ اجرای آن‌ها بعداً downstream است و پیش‌شرط تحویل این سندها نبود.
-- branch protection در زمینهٔ PR واقعی، بازبینی مستقل روی هش نهایی، تصمیم release D-01/D-10، commit/push/merge/deploy.
+- تأیید branch protection/required-check/reviewer policy برای PR #25، بازبینی مستقل روی patch تازه، تصمیم release D-01/D-10، merge/deploy. Commit/push/PR با مجوز صریح کاربر انجام شده‌اند و دیگر در فهرست موارد اجرا‌نشده نیستند.
 
 `NOT_RUN`ها و `UNKNOWN`های بالا قبولی نیستند. قرارداد/ADR/شواهد برای بررسی تحویل می‌شوند؛ approval انسانی و تکمیل گیت‌های لازم هنوز شرط‌های بازند.
 
@@ -144,22 +144,31 @@ PY
 - منبع/نسخهٔ پین‌شده: `super-linter/super-linter@2da136927bd4a73596db63044b504547c62cb854` (`v9.0.0`، MIT).
 - راهنمای رسمی می‌گوید اجرای بیرون GitHub Actions به OCI-compatible container runtime مانند Docker نیاز دارد. در این sandbox نه `docker`، نه `podman`، نه executable `super-linter` و نه Docker socket موجود بود.
 - اجرای مستند `docker run ... super-linter:v9.0.0` با exit `127` و پیام `docker: command not found` متوقف شد. بنابراین **خود Super-Linter در sandbox اجرا نشده**.
-- به‌درخواست کاربر، pinned workflow محدود به چهار Markdown هدف افزوده شد. اجرای GitHub Actions هنوز انجام نشده چون این branch تغییرات را push/PR نکرده‌ایم؛ workflow ممکن است تنها روی PR آینده check annotations بسازد و هیچ source file را خودکار تغییر یا commit نمی‌کند.
+- به‌درخواست کاربر، pinned workflow محدود به چهار Markdown هدف افزوده شد. تا پایان این مرحلهٔ محلی GitHub Actions اجرا نشده بود؛ بعدتر، با مجوز صریح کاربر، PR #25 ساخته شد و اجرای نخست workflow در بخش ۱۱ ثبت شده است. workflow هیچ source file را خودکار تغییر یا commit نمی‌کند.
 
 ### مرحلهٔ دوم — امکان اجرای Reviewdog و رفع مشکل قالب‌بندی
 
 - metadata نسخهٔ CLI از GitHub API خوانده شد: `reviewdog v0.21.3`. دریافت binary از release و بار دوم از API با `Accept: application/octet-stream` هر دو با EOF هنگام redirect به `release-assets.githubusercontent.com` شکست خوردند؛ این host در egress مجاز sandbox نیست و Go هم نصب نبود. پس **خود Reviewdog CLI در sandbox اجرا نشده**.
-- workflow از action رسمی پین‌شدهٔ `reviewdog/action-markdownlint@3667398db9118d7e78f7a63d10e26ce454ba5f58` (`v0.26.2`) استفاده می‌کند؛ reporter برابر `github-check` است، نه PR comment. خود action هنوز روی GitHub اجرا نشده است.
+- workflow اولیه از `reviewdog/action-markdownlint@3667398db9118d7e78f7a63d10e26ce454ba5f58` (`v0.26.2`) و reporter=`github-check` استفاده می‌کرد؛ در اجرای نخست PR #25، build خود action با خطای Docker شکست خورد. برای حذف وابستگی به Docker action، در اصلاح بعدی از `reviewdog/action-setup` پین‌شده و CLI مستقیم استفاده می‌شود؛ نتیجهٔ اجرای بعدی جداگانه ثبت خواهد شد.
 - چون دو runtime فوق اینجا در دسترس نبودند، برای همان قاعدهٔ MD009، `markdownlint-cli@0.50.1` به‌صورت ephemeral در `/tmp` اجرا شد (هیچ dependency به پروژه اضافه نشد). اجرای اولیه خط ۶ قرارداد را با `MD009/no-trailing-spaces` و دو فاصلهٔ پایانی پیدا کرد؛ `markdownlint --fix` آن را برداشت و اجرای دوباره برای هر چهار سند exit `0` داد.
 - `python3 scripts/docs_gate.py` موفق شد؛ `git diff --check` برای README موفق بود؛ YAML workflow با parser مستقل `yaml@2` parse شد؛ بررسی ایستای دامنهٔ Product برای Studio/PWA واحد، حفظ Flutter/Android و Flutter Web/Electron، عدم تغییر حوزه‌های خارج scope و بازماندن D-01/D-10 موفق شد.
-- **مرز نتیجه:** رفع فاصله و lint محلی تأیید شده‌اند؛ Super-Linter و Reviewdog به‌عنوان executable/action در این sandbox اجرا نشده‌اند. اجرای workflow در GitHub و بازبینی مستقل G9 روی patch تازه همچنان `NOT_RUN` هستند. این مرحله هیچ commit، push، PR یا تغییر محصولی نداشت.
+- **مرز نتیجه در آن مرحله:** رفع فاصله و lint محلی تأیید شده بودند؛ Super-Linter و Reviewdog به‌عنوان executable در sandbox اجرا نشدند. اجرای workflow در GitHub پیش از commit/push/PR انجام نشده بود. بعدتر، run نخست GitHub در PR #25 انجام شد و نتیجه/اصلاحش در بخش ۱۱ ثبت است؛ G9 مستقل روی patch تازه همچنان `NOT_RUN` است. آن مرحله هیچ commit، push، PR یا تغییر محصولی نداشت.
 
 ## ۱۰. درخواست کاربر برای skip نظارت انسانی شخصی
 
 - **ثبت صریح درخواست:** کاربر خواست نظارت شخصی او به‌عنوان انسان در چرخهٔ مستنداتی PWA-00 نادیده گرفته و skip شود. این مرحلهٔ اضافهٔ sign-off حذف شد؛ G7 برای همین scope بر پایهٔ دستور روشن قبلی `PASS` می‌ماند. هیچ تأیید انسانی برای release یا merge از این waiver استنباط نمی‌شود.
 - **T0 پیش از اولین فرمان این مرحله:** `2026-11-25T09:48:11Z`؛ اندازه‌گیری با اختلاف epoch (`date -u +%s`). branch=`arena/5e0f64cf-mp`، HEAD=`c00f454a7ae145ad72693f4be13f2dce34fdfb35`، branch-base merge=`35d4b35184b4148c658b415bd009fc076bf24e00`.
 - **فیلتر پیش از کار:** SHA-256 manifest هفت مسیر مجاز/پیگیری‌شده=`6435d6414a9152937bf54a99691f2bd62e3c7520805f555b91c1ef83c64ea0f9`؛ مسیرهای خارج scope بازنشر نشدند.
-- **مرز skip:** G9 مستقل روی patch نهایی، G5 با دسترسی branch-protection ناقص/مقصد PR نامشخص، G8 تاریخی `UNKNOWN` و چهار گیت دامنه‌ای `NOT_RUN` با این درخواست به قبولی تبدیل نمی‌شوند. `D-01`/`D-10` باز می‌مانند و فقط وابستگی‌های واقعی را متوقف می‌کنند.
-- **وضعیت چرخه:** بررسی‌های محلی مستندات/tooling در مرحلهٔ قبل موفق شدند؛ workflowهای GitHub اجرا نشده‌اند و branch push/PR/merge نشده است. بنابراین مرحلهٔ شخصیِ نظارت skip شد، اما کارت به‌دلیل گیت‌های مستقل/دسترسی باز `DONE` یا `AGENT-READY` اعلام نمی‌شود.
-- **ثبت مانع قالب‌بندی در همین مرحله:** `git apply --check --whitespace=error-all` ابتدا یک خط خالیِ اضافه در انتهای evidence یافت. `.markdownlint.json` به `MD047` گسترش یافت؛ بااین‌حال `markdownlint --fix` خط انتهاییِ دوم را برنداشت، پس بایت‌های فایل جداگانه بررسی و انتهای سند به دقیقاً یک LF نرمال شد. نتیجهٔ lint و بازسازی/اعمال نهایی patch در handoff همین مرحله گزارش می‌شود. Super-Linter/Reviewdog خودشان در sandbox اجرا نشدند؛ workflow آن‌ها فقط روی PR آینده قابل اجراست.
-- **check پچ در workflow:** به workflow مستقل، job سوم `pwa00-patch` با `contents: read`، `persist-credentials: false` و checkout کامل تاریخچه افزوده شد؛ این job از base ثابت `c46e792657e361cd09799c896c47149b4a5c4d86` archive می‌گیرد، patch چهارمسیره را با `git apply --check --whitespace=error-all` می‌سنجد، اعمال می‌کند و هر چهار خروجی را با source files مقایسه می‌کند. این job هنوز روی GitHub اجرا نشده؛ نتیجهٔ آزمون معادل محلی در handoff ثبت می‌شود.
+- **مرز skip در پایان T0:** G9 مستقل روی patch نهایی، G5 با شواهد ناقص branch-protection، G8 تاریخی `UNKNOWN` و چهار گیت دامنه‌ای `NOT_RUN` با waiver شخصی به قبولی تبدیل نمی‌شوند. در آن زمان مقصد PR هنوز تعیین نشده بود؛ بعدتر PR #25 به `main` باز شد، اما G5 همچنان `NOT_RUN` است. `D-01`/`D-10` باز می‌مانند.
+- **وضعیت چرخه در پایان مرحلهٔ محلی:** بررسی‌های محلی مستندات/tooling موفق شدند؛ در آن لحظه workflowهای GitHub هنوز اجرا نشده و branch push/PR نشده بود. این وضعیت با مجوز بعدی کاربر تغییر کرد و run نخست در بخش ۱۱ ثبت شده است. مرحلهٔ شخصیِ نظارت skip شد؛ کارت همچنان `BLOCKED` برای `AGENT-READY` است.
+- **ثبت مانع قالب‌بندی در همین مرحله:** `git apply --check --whitespace=error-all` ابتدا یک خط خالیِ اضافه در انتهای evidence یافت. `.markdownlint.json` به `MD047` گسترش یافت؛ `markdownlint --fix` خط انتهایی دوم را برنداشت، پس فایل به دقیقاً یک LF نرمال شد و lint/patch check نهایی موفق شدند. Super-Linter/Reviewdog خودشان در sandbox اجرا نشدند.
+- **check پچ در workflow:** job سوم `pwa00-patch` با `contents: read`، `persist-credentials: false` و checkout کامل تاریخچه افزوده شد؛ از base ثابت `c46e792657e361cd09799c896c47149b4a5c4d86` archive می‌گیرد، patch چهارمسیره را با `git apply --check --whitespace=error-all` می‌سنجد، اعمال می‌کند و هر چهار خروجی را با source files مقایسه می‌کند. این job در run نخست PR #25 با نتیجهٔ `success` اجرا شد؛ شناسه در بخش ۱۱ است.
+
+## ۱۱. commit/push/PR مجازشده و اولین اجرای GitHub Actions
+
+- **مجوز:** پس از تکمیل مرحلهٔ محلی، کاربر صریحاً commit/push روی شاخهٔ جاری و بازکردن PR به `main` را مجاز کرد؛ merge/deploy مجاز نشد. commit=`ba3d9388f30d261f149b2192a3def701ea2bc1c9` فقط هفت مسیر allowlist را دارد؛ push روی `arena/5e0f64cf-mp` موفق شد. PR #25 با مقصد `main` باز و باز است.
+- **workflow مستندات:** run=`45594442532`، event=`pull_request`، SHA=`ba3d9388f30d261f149b2192a3def701ea2bc1c9`. job `PWA-00 patch applies cleanly and matches source docs` موفق شد. jobهای Reviewdog و Super-Linter شکست خوردند؛ در نتیجهٔ checkها، Reviewdog پیش از اجرای linter در مرحلهٔ ساخت Docker action با exit code 1 متوقف شد؛ مرحلهٔ lint در Super-Linter نیز failure داد و check annotation نداشت.
+- **محدودیت لاگ:** `gh run view --log-failed` هنگام redirect به `results-receiver.actions.githubusercontent.com` با EOF شکست خورد. بنابراین علت ریشه‌ای failureها از log قابل‌تأیید نیست؛ به‌ویژه علت Super-Linter را PASS یا به یک عامل مشخص نسبت نمی‌دهیم.
+- **اصلاح workflow در پیگیری بعدی:** مستندات رسمی Super-Linter v9 مسیر ریشهٔ مخزن را `LINTER_RULES_PATH: .` نشان می‌دهند؛ مقدار `/` به `.` اصلاح شد، بدون ادعای اثبات علت failure قبلی. Reviewdog از Docker-based `action-markdownlint` به composite `reviewdog/action-setup@d8edfce3dd5e1ec6978745e801f9c50b5ef80252` (`v1.4.0`) با CLI=`v0.21.3` و `markdownlint-cli@0.50.1` در `$RUNNER_TEMP` تغییر می‌کند؛ خروجی با errorformat به reporter=`github-check` می‌رود، بدون PR review comment یا دسترسی نوشتن به source files. نتیجهٔ اجرای مجدد پس از push در handoff ثبت می‌شود.
+- **اجرای workflow اصلی مخزن:** PR به‌طور خودکار `mp-ci` run=`45594442621` را نیز فعال کرد. هنگام ثبت این بخش، run هنوز `in_progress` بود؛ `studio`، `client-flutter`، `live-contract`، `secret-scan` و `Documentation links and handoff` موفق شده بودند؛ `backend` و Android debug compile هنوز در حال اجرا بودند. این وضعیت به معنی پذیرش انتشار یا بستن Product gate نیست.
+- **گیت‌های باقی‌مانده:** PR destination اکنون `main` معلوم است، اما G5=`NOT_RUN` به‌علت تأییدنشدن protection/required-check/reviewer policy (پاسخ 403 قبلی). G9 برای patch SHA تازه همچنان `NOT_RUN` و نیازمند بازبینی واقعاً مستقل است؛ G8 تاریخی=`UNKNOWN` می‌ماند. هیچ merge/deploy انجام نشده است.

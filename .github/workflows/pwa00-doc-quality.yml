@@ -36,7 +36,7 @@ jobs:
           VALIDATE_MARKDOWN_PRETTIER: false
           VALIDATE_NATURAL_LANGUAGE: false
           FILTER_REGEX_INCLUDE: '^docs/MuscleParadise/(adr/(README|006-shared-react-pwa)\.md|architecture/session-decisions-2026-11-23/PWA-00-(CONTRACT|EVIDENCE)\.fa\.md)$'
-          LINTER_RULES_PATH: /
+          LINTER_RULES_PATH: .
           MARKDOWN_CONFIG_FILE: .markdownlint.json
 
   reviewdog:
@@ -49,19 +49,32 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          fetch-depth: 0
           persist-credentials: false
-      - name: Run markdownlint through Reviewdog
-        uses: reviewdog/action-markdownlint@3667398db9118d7e78f7a63d10e26ce454ba5f58 # v0.26.2
+      - name: Set up Reviewdog CLI
+        uses: reviewdog/action-setup@d8edfce3dd5e1ec6978745e801f9c50b5ef80252 # v1.4.0
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          reporter: github-check
-          filter_mode: added
-          fail_on_error: true
-          markdownlint_flags: >-
-            docs/MuscleParadise/adr/README.md
-            docs/MuscleParadise/adr/006-shared-react-pwa.md
-            docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-CONTRACT.fa.md
-            docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-EVIDENCE.fa.md
+          reviewdog_version: v0.21.3
+      - name: Install scoped markdownlint CLI
+        run: npm install --no-save --no-audit --no-fund --prefix "$RUNNER_TEMP/pwa00-tools" markdownlint-cli@0.50.1
+      - name: Run markdownlint through Reviewdog
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          "$RUNNER_TEMP/pwa00-tools/node_modules/.bin/markdownlint" --config .markdownlint.json \
+            docs/MuscleParadise/adr/README.md \
+            docs/MuscleParadise/adr/006-shared-react-pwa.md \
+            docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-CONTRACT.fa.md \
+            docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-EVIDENCE.fa.md 2>&1 | \
+            reviewdog \
+              -efm="%f:%l:%c %m" \
+              -efm="%f:%l %m" \
+              -name="markdownlint" \
+              -reporter="github-check" \
+              -filter-mode="added" \
+              -level="error" \
+              -fail-level="error"
 
   pwa00-patch:
     name: PWA-00 patch applies cleanly and matches source docs
