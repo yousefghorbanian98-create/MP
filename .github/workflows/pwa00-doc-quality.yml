@@ -48,6 +48,25 @@ jobs:
           STRIP_DEFAULT_WORKSPACE_FOR_REGEX: true
           LINTER_RULES_PATH: .
           MARKDOWN_CONFIG_FILE: .markdownlint.json
+          LOG_LEVEL: DEBUG
+          LOG_FILE: super-linter.log
+      - name: Expose scoped Super-Linter diagnostics on failure
+        if: failure()
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import sys
+
+          report = Path("super-linter.log")
+          if not report.is_file():
+              print("::warning title=Super-Linter diagnostics::super-linter.log was not produced")
+              sys.exit(0)
+          lines = report.read_text(encoding="utf-8", errors="replace").splitlines()
+          matches = [line for line in lines if any(term in line.lower() for term in ("error", "failed", "fatal", "markdownlint", "config", "no files"))]
+          for line in (matches or lines[-30:])[-30:]:
+              safe = line.strip().replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+              print(f"::error title=Super-Linter diagnostic::{safe}")
+          PY
 
   reviewdog:
     name: Reviewdog (Markdown findings as check annotations)
