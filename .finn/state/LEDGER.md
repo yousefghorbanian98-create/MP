@@ -193,3 +193,10 @@ REA روی OpenAPI، SQLite ساختگی و bundle Studio اجرا شد، اما
 ## ۳۵. حذف ECC و انتقال skill مربوط به REA (۲۰۲۶-۱۱-۱۹)
 
 کل `.claude/` (۹۳۱ فایل tracked: ۷۱ agent، ۹۸ command، ۶۳۰ فایل skill، ۱۲۲ rule، ۹ hook)، `LICENSE-ECC` و `.finn/ecc-commit.txt` حذف شدند؛ `install-toolchain.sh` فقط REA را نصب می‌کند. skill مربوط به REA به `tools/rea-skill/reverse-engineer-anything/` منتقل شد تا با حذف `.claude` از دست نرود. بنر «ECC حذف شد» به اسناد عملیاتی اضافه و NOTICE به‌روز شد. هیچ کد محصولی تغییر نکرد.
+
+## ۳۶. Motion browser evidence — emulation به معنی دستگاه واقعی نیست (۲۰۲۶-۱۱-۲۳)
+
+- Chromium headless با fixture کاملاً synthetic برای VisualConcepts lab و route Studio/CheckIn شاهد useful می‌دهد، اما `emulateMedia` فقط browser preference را شبیه‌سازی می‌کند؛ آن را OS/device/screen-reader یا acceptance کل PWA ننام.
+- هر screenshot را با route، viewport، fixture/data class، hash و محدودیت ذکر کن؛ «یک viewport» به معنی visual sign-off نیست.
+- اجرای ۱۰/۱۰ route assertion و ۱۳/۱۳ lab assertion، به‌علاوهٔ unit/lint/build سبز، `MK-PWA-01-FU-01`, `MK-PWA-02` یا `O3-08` را از `PARTIAL` بالا نمی‌برد: CI روی همان dirty SHA، reviewer مستقل، OS/device و AT همچنان gate جدا هستند.
+- برای Codespace، انتقال صرفاً با allowlist/patch روی SHA دقیق؛ هرگز `git add -A` در worktree‌ای با ۲۶۳ path untracked نزن و receiptهای `mp-app/backend/var/receipts/` را باز/کپی/stage نکن.

@@ -1,6 +1,17 @@
 # FINN State — وضعیت جاری لوپ
 
-> هشدار انتقال ۲۰۲۶-۱۱-۱۸: بخش‌های زیر snapshot تاریخی‌اند. وضعیت و نصب جاری را از `docs/MuscleParadise/SESSION_HANDOFF.md` و `docs/MuscleParadise/BUILDER-START-AND-REPOWISE.md` و با بررسی Git و CI همان SHA بگیرید. QF و QA مستقل هنوز اجرا نشده‌اند؛ policy پرداخت صرفاً جدا و بدون اتصال است.
+> هشدار انتقال ۲۰۲۶-۱۱-۱۸: بخش‌های بعدی قدیمی snapshot هستند و branch/toolchain/status آن‌ها جاری فرض نشود. وضعیت تازهٔ Motion/PWA در این بخش و [handoff](../../docs/MuscleParadise/SESSION_HANDOFF.md) آمده؛ کارهای قدیمی M63–M99، M100–M106 و M107+ فقط پس از تطبیق با TODO و گیت‌های جاری ادامه یابند.
+
+## Snapshot جاری — Motion/PWA evidence (۲۰۲۶-۱۱-۲۳)
+
+- **منبع evidence:** branch `arena/5e0f64cf-mp`, checkout زمان تست `HEAD=d92817f4151ebbafb25425b7b28776a4cc1180dc`, base=`35d4b35184b4148c658b415bd009fc076bf24e00`. Snapshot پیش از checkpoint handoff با `git status --porcelain=v1 -uall`: ۶۲ tracked changes، ۲۶۳ untracked (۷۰ private receipt و ۱۹۳ مورد دیگر)، index خالی. Receiptها نباید باز/کپی/stage شوند؛ بخش بزرگی از untrackedها reference/extraction داخل `artifacts/` است.
+- Scope فعال این پیگیری: `MK-PWA-01-FU-01`, `MK-PWA-02`, `O3-08`. Studio روی همان dirty tree: `npm test -- --reporter=dot` = ۵۰ فایل (۲ skip)، ۳۴۵ PASS/۱۰ SKIP، صفر fail؛ `npm run lint` و `npm run build` exit 0 (Vite 5.4.21/۴۰۴۵ modules). هشدارهای JSDOM/React `act(...)` ثبت‌شده‌اند، skipها PASS نیستند.
+- Browser evidence synthetic: VisualConcepts lab ۱۳/۱۳ و route اصلی `Studio → CheckIn` با token/API fixture ساختگی ۱۰/۱۰ assertions در Chromium headless؛ reduced-motion فقط browser-emulated. Screenshot ۱۴۴۰×۱۰۰۰ در `artifacts/motion-availability-qa-2026-11-23/studio-checkin-reduced.png`, SHA-256=`03ca06c83a9034eaeb7465da2b201a8c748fc82a56308dfce5fa03fb13e35f4b`.
+- وضعیت loopها همچنان `PARTIAL`: browser/OS/device فیزیکی، screen reader/AT، independent G9 review، CI روی source دقیق dirty، routeهای کامل و گیت‌های PWA install/SW/offline/update/security/privacy/finance/legal/medical و release Go/No-Go بازند. به‌تنهایی از این شاهد status canonical یا parent PWA ارتقا پیدا نمی‌کند.
+- فهرست قابل‌اجرا/بیرونی و بستهٔ انتقال در `docs/MuscleParadise/architecture/motion-pwa-availability-matrix-2026-11-23.fa.md`. Docs gate `python3 scripts/docs_gate.py`: ۲۲ Markdown، ۳۱۶ لینک محلی، ۱۲ Mermaid؛ `git diff --check` exit 0.
+- `gh` پیش از این checkpoint دو PR (#25/#26) را merged و دو run `mp-ci` روی همان SHA `d92817f...` موفق نشان داد؛ این CI، uncommitted tree را نسنجد. `origin/main` tree-identical به `d92817f` است ولی merge-commit ref جلوتر است؛ `main` محلی عقب‌مانده بود (`main...HEAD = 0 36` پیش از checkpoint). برای status remote از GitHub استفاده شود.
+- پس از این snapshot، commit انتخابیِ **فقط مستندات/evidence** با پیام `docs(motion): hand off reduced-motion availability evidence` روی همین شاخه ساخته شد (۷ path allowlist: state/ledger، Architecture README، دو handoff/crosswalk، docs gate و screenshot synthetic). هیچ source محصول یا receipt در آن نیست. بعد از commit: ۵۸ tracked changes و ۲۶۰ untracked path (۷۰ private receipt و ۱۹۰ مورد دیگر)، stage صفر؛ source changes/TODO/SESSION_HANDOFF dirty باقی‌اند.
+- گام بعدی: push/PR فقط همین commit به همین شاخه؛ Codespace/CI برای source dirty را فقط پس از allowlist و انتقال patch روی SHA دقیق اجرا کن. reviewer و device/OS خارج از Codespace لازم‌اند. تا رفع وابستگی‌ها `PARTIAL/UNKNOWN` بماند. مستندات/evidence commit را با status محصول یا merge منطق runtime اشتباه نگیر.
 
 ## حذف ECC — ۲۰۲۶-۱۱-۱۹ (جاری)
 
