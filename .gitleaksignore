@@ -19,6 +19,10 @@ c6f29449e8a55e0ed1204847357313ca0dd7a9cb:mp-app/client/android/keystore/keystore
 # Generated REA evidence/fingerprint metadata (not a credential); exact CI fingerprint.
 6f236a87c5bd67a8dd498507db4dd75a16fd1f00:docs/MuscleParadise/REPORT-QF-00-BASELINE-2026-11-19.md:generic-api-key:81
 
+# Public ZIP SHA-256 and Git blob integrity metadata in the reviewed handoff note;
+# exact historical commit/path/rule/line only, not a credential or broad exemption.
+9dde696c30f972056dddacb718b60c8377f91168:docs/MuscleParadise/architecture/mp-ui-ux-motion-kit-v1.1.0-review.fa.md:generic-api-key:9
+
 # AD-23 (WP secret-scan): hashed_secret entries (40-hex SHA1 digests, is_verified=false) in
 # evidence/before/detect-secrets.json. Hashes, not credentials. Exact fingerprints only.
 839500de55bfd08ac0826dc1a795837bdff54c35:docs/MuscleParadise/audit/evidence/before/detect-secrets.json:generic-api-key:136

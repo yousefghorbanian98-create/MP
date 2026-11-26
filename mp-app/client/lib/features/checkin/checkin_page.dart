@@ -251,7 +251,8 @@ class _CheckInPageState extends ConsumerState<CheckInPage>
                         const SizedBox(height: 6),
                         Text(
                           'تطبیق چهره و بررسی زنده‌بودن در سرور این نسخه پیاده نشده است؛ '
-                          'چک‌این با این روش غیرفعال است. صفحهٔ پذیرش Studio در این نسخه '
+                          'چک‌این با این روش غیرفعال است. برای حضور، QR یک‌بارمصرف در تب '
+                          '«QR ورود» مسیر پشتیبانی‌شدهٔ عضو است. صفحهٔ پذیرش Studio در این نسخه '
                           'رابط اسکن QR ندارد؛ از پذیرش دربارهٔ روش ثبت حضور جایگزین بپرسید.',
                           textAlign: TextAlign.center,
                           style: TextStyle(

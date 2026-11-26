@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Test exact retired signing exceptions and the real scanner using fake data.
+"""Test exact Gitleaks exceptions and the real scanner using synthetic data.
 
 Requires Gitleaks 8.30.1 (set GITLEAKS to its path). No project files, private
 keys, or live credentials are used by the fixture. All temporary Git objects
@@ -24,6 +24,11 @@ EXPECTED = {
     f"{HISTORICAL_COMMIT}:{SIGNING_PATH}:generic-api-key:2",
     f"{HISTORICAL_COMMIT}:{SIGNING_PATH}:generic-api-key:4",
 }
+PUBLIC_INTEGRITY_METADATA = (
+    "9dde696c30f972056dddacb718b60c8377f91168:"
+    "docs/MuscleParadise/architecture/"
+    "mp-ui-ux-motion-kit-v1.1.0-review.fa.md:generic-api-key:9"
+)
 
 
 def run(args: list[str], *, env: dict[str, str], data: bytes | None = None) -> bytes:
@@ -43,6 +48,8 @@ def main() -> None:
         raise AssertionError("Every ignore must be an exact commit/path/rule/line fingerprint")
     if {line for line in lines if HISTORICAL_COMMIT in line or SIGNING_PATH in line} != EXPECTED:
         raise AssertionError("Retired-key exceptions differ from the two reviewed findings")
+    if lines.count(PUBLIC_INTEGRITY_METADATA) != 1:
+        raise AssertionError("Public integrity-metadata exception must remain exact")
 
     scanner = os.environ.get("GITLEAKS") or shutil.which("gitleaks")
     if not scanner:
