@@ -32,7 +32,8 @@ void main() {
     await tester.pump(const Duration(milliseconds: 500));
     expect(find.byType(QrImageView), findsOneWidget);
     expect(find.text('QR یک‌بارمصرف برای پذیرش'), findsOneWidget);
-    expect(find.text('نمایش QR به‌تنهایی حضور را ثبت نمی‌کند.'), findsOneWidget);
+    expect(
+        find.text('نمایش QR به‌تنهایی حضور را ثبت نمی‌کند.'), findsOneWidget);
     expect(find.text('برای ورود نشان دهید'), findsNothing);
     expect(fetched, 1);
     await tester.pump(const Duration(seconds: 30));

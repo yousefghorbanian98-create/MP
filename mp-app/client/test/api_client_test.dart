@@ -110,7 +110,8 @@ void main() {
       expect(
         () => ApiClient(
           httpClient: MockClient((_) async => http.Response('', 200)),
-          baseUrl: 'http://api.example.com/api/v1', // nosemgrep: mp-dart-plaintext-http — منفی: باید رد شود
+          baseUrl:
+              'http://api.example.com/api/v1', // nosemgrep: mp-dart-plaintext-http — منفی: باید رد شود
         ),
         throwsA(isA<InsecureBaseUrlError>()),
       );
