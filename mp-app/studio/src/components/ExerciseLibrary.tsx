@@ -80,7 +80,7 @@ export function ExerciseLibrary() {
       <div className="flex flex-wrap gap-2">
         <button
           onClick={() => setGroup(null)}
-          className={`rounded-full px-3 py-1 text-xs ${group === null ? "bg-accent text-white" : "bg-surface/70 text-ink-dim"}`}
+          className={`rounded-full px-3 py-1 text-xs ${group === null ? "bg-accent text-bg" : "bg-surface/70 text-ink-dim"}`}
         >
           همه ({loading ? "…" : fa(rows.length)})
         </button>
@@ -88,7 +88,7 @@ export function ExerciseLibrary() {
           <button
             key={g}
             onClick={() => setGroup(g === group ? null : g)}
-            className={`rounded-full px-3 py-1 text-xs ${g === group ? "bg-accent text-white" : "bg-surface/70 text-ink-dim"}`}
+            className={`rounded-full px-3 py-1 text-xs ${g === group ? "bg-accent text-bg" : "bg-surface/70 text-ink-dim"}`}
           >
             {MUSCLE_LABELS[g] ?? g} ({fa(n)})
           </button>

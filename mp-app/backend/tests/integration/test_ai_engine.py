@@ -86,6 +86,40 @@ def test_program_generate_draft_and_g8(client):
     assert any("knee" in (n or "") for n in names)
 
 
+def test_generated_knee_injury_is_resolved_and_flagged(client: TestClient) -> None:
+    """The real rules-engine output must be screened by its catalog movement IDs."""
+    import json
+
+    h = _staff(client)
+    mid = _member(client, h)
+    response = client.post(
+        "/api/v1/ai/program/generate",
+        json={
+            "member_id": mid,
+            "goal": "hypertrophy",
+            "level": "beginner",
+            "days_per_week": 3,
+            "weeks_count": 1,
+            "constraints": ["knee_injury"],
+        },
+        headers=h,
+    )
+
+    assert response.status_code == 200, response.text
+    body = response.json()
+    exercise_ids = {
+        exercise["exercise_id"] for week in body["weeks"] for exercise in week["exercises"]
+    }
+    assert 1 in exercise_ids  # engine catalog ID 1 is back squat
+    flags = json.loads(body["safety_flags"])
+    assert flags["status"] == "blocked"
+    assert flags["safe_to_generate"] is False
+    assert any(
+        item["constraint"] == "knee_injury" and "squat" in item["blocked_exercises"]
+        for item in flags["blocked"]
+    )
+
+
 def test_nutrition_generate_draft(client):
     h = _staff(client)
     mid = _member(client, h)

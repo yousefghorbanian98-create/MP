@@ -217,7 +217,7 @@ export function PaymentPanel() {
             <button
               onClick={() => void confirmManual()}
               disabled={busy}
-              className="rounded-lg bg-emerald-600 px-4 py-2 text-xs text-white disabled:opacity-50"
+              className="rounded-lg bg-primary px-4 py-2 text-xs text-bg transition-colors hover:bg-primary-light disabled:opacity-50"
             >
               تأیید دریافت نقدی/کارت‌خوان
             </button>

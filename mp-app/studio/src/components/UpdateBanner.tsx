@@ -2,18 +2,27 @@
  * بنر به‌روزرسانی بدون نصب مجدد (M20) — نوار پایین با انیمیشن ورود.
  */
 import { AnimatePresence, motion } from "framer-motion";
+import { useMotionPreset } from "../lib/motion";
 import { useUpdateCheck } from "../lib/update";
 
 export function UpdateBanner({ current }: { current: string }) {
+  const motionPreset = useMotionPreset();
   const { manifest, apply } = useUpdateCheck(current, "web");
   return (
     <AnimatePresence>
       {manifest && (
         <motion.div
-          initial={{ y: 64, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 64, opacity: 0 }}
-          transition={{ type: "spring", stiffness: 260, damping: 24 }}
+          {...(motionPreset.reduced ? motionPreset.fade : motionPreset.rise)}
+          exit={
+            motionPreset.reduced
+              ? { opacity: 0, transition: motionPreset.fade.transition }
+              : { y: 64, opacity: 0 }
+          }
+          transition={
+            motionPreset.reduced
+              ? motionPreset.fade.transition
+              : { type: "spring", stiffness: 260, damping: 24 }
+          }
           className="fixed bottom-4 inset-x-4 z-50 mx-auto max-w-md rounded-2xl border border-emerald-500/30 bg-gray-900/90 p-4 shadow-2xl backdrop-blur"
         >
           <div className="flex items-center gap-3">
@@ -26,7 +35,7 @@ export function UpdateBanner({ current }: { current: string }) {
             </div>
             <button
               onClick={apply}
-              className="rounded-xl bg-emerald-500 px-4 py-2 text-sm font-bold text-white transition hover:bg-emerald-400 active:scale-95"
+              className="rounded-xl bg-primary px-4 py-2 text-sm font-bold text-bg transition hover:bg-primary-light active:scale-95 motion-reduce:active:transform-none"
             >
               به‌روزرسانی
             </button>

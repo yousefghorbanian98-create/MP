@@ -66,8 +66,8 @@ export function Members() {
               key={t.key}
               onClick={() => setGenderFilter(t.key)}
               className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-colors ${
-                genderFilter === t.key
-                  ? "bg-primary text-white"
+genderFilter === t.key
+                ? "bg-primary text-bg"
                   : "bg-surface/70 text-ink-dim hover:text-ink"
               }`}
             >
@@ -84,8 +84,16 @@ export function Members() {
           <motion.div
             key={member.member_id}
             {...motionPreset.slide}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ type: "spring", stiffness: 260, damping: 24 }}
+            exit={
+              motionPreset.reduced
+                ? { opacity: 0, transition: motionPreset.fade.transition }
+                : { opacity: 0, x: -20 }
+            }
+            transition={
+              motionPreset.reduced
+                ? motionPreset.fade.transition
+                : { type: "spring", stiffness: 260, damping: 24 }
+            }
             className="glass-card p-5"
           >
             <div className="flex items-center gap-3">
@@ -200,9 +208,8 @@ export function Members() {
         ) : (
           <motion.div
             key="empty"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            {...motionPreset.fade}
+            exit={{ opacity: 0, transition: motionPreset.fade.transition }}
             className="glass-card flex flex-col items-center justify-center p-10 text-center"
           >
             <div className="mb-3 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-2xl">👤</div>

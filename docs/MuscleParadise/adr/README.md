@@ -9,7 +9,8 @@
 | [ADR-003](003-rules-engine-over-llm.md) | پذیرفته | اعداد تمرین از موتور قواعد قطعی؛ LLM فقط برای توضیح، با بازبینی مربی |
 | [ADR-004](004-yunet-sface-face-recognition.md) | پذیرفته | انتخاب YuNet/SFace برای face recognition؛ ریسک‌ها و fallback در سند |
 | [ADR-005](005-n8n-boundary.md) | پذیرفته | مرز n8n محدود و غیرمحصولی؛ وضعیت integration را از ADR بخوان |
-| [ADR-006](006-shared-react-pwa.md) | پذیرفته، دامنه‌محدود | جهت PWA مشترک React روی Studio؛ baseline انتشار D-01/D-10 باز می‌ماند |
+| [ADR-006](006-shared-react-pwa.md) | پذیرفته، دامنه‌محدود | جهت PWA مشترک React روی Studio؛ baseline انتشار در ADR-007 روشن شده است |
+| [ADR-007](007-pwa-primary-release.md) | پذیرفته، دامنه‌محدود | PWA مشترک عضو/کادر رابط اصلی انتشار اول؛ حفظ Flutter/Android؛ پیاده‌سازی و Go/No-Go همچنان باز |
 
 ## قانون تغییر تصمیم
 

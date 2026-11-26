@@ -193,7 +193,7 @@ class _CheckInPageState extends ConsumerState<CheckInPage>
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 const Text(
-                                  'برای ورود نشان دهید',
+                                  'QR یک‌بارمصرف برای پذیرش',
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
@@ -212,6 +212,12 @@ class _CheckInPageState extends ConsumerState<CheckInPage>
                                       curve: Curves.easeOutBack,
                                     )
                                     .fadeIn(),
+                                const SizedBox(height: 12),
+                                const Text(
+                                  'نمایش QR به‌تنهایی حضور را ثبت نمی‌کند.',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontSize: 12, height: 1.5),
+                                ),
                                 const SizedBox(height: 12),
                                 Text(
                                   'عضو شمارهٔ ${t['member_id']}',
@@ -245,8 +251,9 @@ class _CheckInPageState extends ConsumerState<CheckInPage>
                         const SizedBox(height: 6),
                         Text(
                           'تطبیق چهره و بررسی زنده‌بودن در سرور این نسخه پیاده نشده است؛ '
-                          'چک‌این با این روش غیرفعال است. برای ثبت حضور، QR یک‌بارمصرف را '
-                          'از برگهٔ QR نمایش دهید تا پذیرش اسکن کند.',
+                          'چک‌این با این روش غیرفعال است. برای حضور، QR یک‌بارمصرف در تب '
+                          '«QR ورود» مسیر پشتیبانی‌شدهٔ عضو است. صفحهٔ پذیرش Studio در این نسخه '
+                          'رابط اسکن QR ندارد؛ از پذیرش دربارهٔ روش ثبت حضور جایگزین بپرسید.',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: MpColors.textSecondary,

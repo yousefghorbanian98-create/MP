@@ -2,9 +2,13 @@ import { Alert, Segmented, Spin } from "antd";
 import { useEffect, useState } from "react";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { fetchPeriodReport, type PeriodReport } from "../lib/api";
+import { today } from "../lib/clock";
+import { colorWithAlpha, designTokens } from "../lib/designTokens";
 import { JalaliDateField } from "./ui/JalaliDateField";
 import { fa } from "../lib/useApi";
-import { today } from "../lib/clock";
+import { useMotionPreset } from "../lib/motion";
+
+const { color, typography, radius } = designTokens;
 
 /**
  * گزارش سود/زیان دوره‌ای (QF-10) — هفته، ماه یا سال به تقویم جلالی تهران.
@@ -26,6 +30,7 @@ const KIND_OPTIONS = [
 const todayIso = (): string => today();
 
 export function PeriodReportPanel() {
+  const motionPreset = useMotionPreset();
   const [kind, setKind] = useState<Kind>("month");
   const [anchor, setAnchor] = useState<string>(todayIso());
   const [report, setReport] = useState<PeriodReport | null>(null);
@@ -52,7 +57,10 @@ export function PeriodReportPanel() {
         { name: "دریافتی", value: report.received_rial },
         { name: "بازگشت", value: report.refunds_rial },
         { name: "هزینه", value: report.expenses_rial },
-        { name: "سود", value: report.profit_rial },
+        {
+          name: report.complete ? "سود خالص" : "سود نامعلوم",
+          value: report.complete ? report.profit_rial : null,
+        },
       ]
     : [];
 
@@ -98,17 +106,52 @@ export function PeriodReportPanel() {
             </div>
             <div>
               <dt className="text-ink-dim">سود خالص</dt>
-              <dd>{fa(report.profit_rial)} ریال</dd>
+              <dd>{report.complete ? `${fa(report.profit_rial)} ریال` : "نامعلوم"}</dd>
             </div>
           </dl>
-          <div className="h-56" dir="ltr">
+          <div
+            className="h-56"
+            dir="ltr"
+            role="img"
+            aria-label={
+              report.complete
+                ? "نمودار مبالغ دوره: دریافتی، بازگشت، هزینه و سود خالص"
+                : "نمودار مبالغ دوره: دریافتی، بازگشت و هزینه؛ سود نامعلوم به‌دلیل بازگشت بدون تاریخ"
+            }
+          >
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chart} margin={{ top: 8, right: 8, left: -10, bottom: 0 }}>
-                <CartesianGrid stroke="rgba(0,184,106,0.08)" vertical={false} />
-                <XAxis dataKey="name" tick={{ fill: "#9CA3AF", fontSize: 11 }} />
-                <YAxis tick={{ fill: "#9CA3AF", fontSize: 11 }} allowDecimals={false} />
-                <Tooltip />
-                <Bar dataKey="value" fill="#00B86A" />
+                <CartesianGrid stroke={colorWithAlpha(color.primary, 0.08)} vertical={false} />
+                <XAxis
+                  dataKey="name"
+                  tick={{ fill: color.textSecondary, fontSize: typography.caption }}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <YAxis
+                  tick={{ fill: color.textSecondary, fontSize: typography.caption }}
+                  axisLine={false}
+                  tickLine={false}
+                  allowDecimals={false}
+                  tickFormatter={(value) => fa(Number(value))}
+                />
+                <Tooltip
+                  isAnimationActive={!motionPreset.reduced}
+                  contentStyle={{
+                    background: color.surface,
+                    border: `1px solid ${color.border}`,
+                    borderRadius: radius.md,
+                    color: color.textPrimary,
+                    direction: "rtl",
+                    fontFamily: typography.fontFamily,
+                  }}
+                  formatter={(value) => [`${fa(Number(value))} ریال`, "مبلغ"]}
+                />
+                <Bar
+                  dataKey="value"
+                  fill={color.primary}
+                  isAnimationActive={!motionPreset.reduced}
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>

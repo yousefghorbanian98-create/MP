@@ -76,12 +76,15 @@ describe("PeriodReportPanel (QF-10)", () => {
     expect(screen.getByText(/۱۵۰/)).toBeTruthy();
   }, 30000);
 
-  it("warns instead of claiming a final profit when a refund has no date", async () => {
+  it("marks profit unknown and omits its value and bar when a refund has no date", async () => {
     stub({ ...base, undated_refunds_count: 2, complete: false });
     render(<PeriodReportPanel />);
     await waitFor(() => expect(screen.getByText(/سود این دوره قطعی نیست/)).toBeTruthy(), {
       timeout: 20000,
     });
+    expect(screen.getByText("نامعلوم")).toBeTruthy();
+    expect(screen.queryByText(/۱۵۰ ریال/)).toBeNull();
+    expect(screen.getByRole("img", { name: /سود نامعلوم/ })).toBeTruthy();
   }, 30000);
 
   it("shows the server error and does not display zero profit", async () => {

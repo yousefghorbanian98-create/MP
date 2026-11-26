@@ -25,9 +25,10 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-import xml.etree.ElementTree as ET
 from collections import defaultdict
 from pathlib import Path
+
+from defusedxml import ElementTree as SafeElementTree
 
 # آستانهٔ هر دایرکتوری (درصد خطوط). منبع: بریف WP 0.4 / F‑07.
 THRESHOLDS: dict[str, float] = {
@@ -55,9 +56,8 @@ def bucket_of(filename: str) -> str:
 
 def aggregate(xml_path: Path) -> dict[str, dict[str, int]]:
     """{دایرکتوری: {'lines': n, 'covered': m}} از خطوط هر فایل در coverage XML."""
-    # ورودی، XML تولیدشدهٔ همین پایپ‌لاین coverage است (نه داده‌ی غیرقابل‌اعتماد)؛
-    # defusedxml وابستگی جدیدی می‌آورد که برای این کار لازم نیست.
-    tree = ET.parse(xml_path)  # noqa: S314  # nosec B314 — ورودی: coverage.xml محلی/CI
+    # Coverage XML is CI-generated, but parse defensively in case an artifact is replaced.
+    tree = SafeElementTree.parse(xml_path)
     totals: dict[str, dict[str, int]] = defaultdict(lambda: {"lines": 0, "covered": 0})
     for cls in tree.iter("class"):
         filename = cls.get("filename") or ""

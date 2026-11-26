@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import itertools
+from concurrent.futures import ThreadPoolExecutor
+from threading import Event, Lock
 
 import pytest
 from fastapi.testclient import TestClient
@@ -261,3 +263,62 @@ def test_cancelling_waitlisted_booking_does_not_overbook_class(client: TestClien
     assert next_waiting_view["member_booking_status"] == "waitlisted"
     assert next_waiting_view["confirmed"] == 1
     assert next_waiting_view["waitlisted"] == 1
+
+
+def test_parallel_bookings_cannot_claim_the_same_last_seat(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Hold the first class lock while a second session competes for capacity."""
+    staff = _user_headers("manager")
+    first_id = _member(client, staff, "09120000071")
+    second_id = _member(client, staff, "09120000072")
+    class_id = _create_class(client, staff, capacity=1)
+
+    from db.models import Member
+    from modules.classes import service as class_service
+
+    original_lock = class_service._lock_class
+    first_lock_acquired = Event()
+    second_lock_attempted = Event()
+    release_first = Event()
+    counter_lock = Lock()
+    lock_calls = 0
+
+    def hold_first_lock(db, locked_class_id):
+        nonlocal lock_calls
+        with counter_lock:
+            lock_calls += 1
+            call_number = lock_calls
+        if call_number == 2:
+            second_lock_attempted.set()
+        cls = original_lock(db, locked_class_id)
+        if call_number == 1:
+            first_lock_acquired.set()
+            if not release_first.wait(timeout=10):
+                raise AssertionError("test failed to release the first class lock")
+        return cls
+
+    monkeypatch.setattr(class_service, "_lock_class", hold_first_lock)
+
+    def book(member_id: int) -> str:
+        with get_session_factory()() as db:
+            db.get(Member, member_id)  # mimic the request's earlier read-only auth/scope queries
+            return class_service.book(db, class_id=class_id, member_id=member_id, user=None).status
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        first = pool.submit(book, first_id)
+        try:
+            assert first_lock_acquired.wait(timeout=5), "first booking never acquired its lock"
+            second = pool.submit(book, second_id)
+            assert second_lock_attempted.wait(timeout=5), "second booking never tried the lock"
+            assert not second.done(), "second booking passed the held class lock"
+        finally:
+            release_first.set()
+        assert first.result(timeout=10) == "confirmed"
+        assert second.result(timeout=10) == "waitlisted"
+
+    classes = client.get("/api/v1/classes", headers=staff).json()
+    booked_class = next(item for item in classes if item["id"] == class_id)
+    assert booked_class["confirmed"] == 1
+    assert booked_class["waitlisted"] == 1
+    assert booked_class["seats_left"] == 0

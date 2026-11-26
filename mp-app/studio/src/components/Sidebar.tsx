@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { canSeePage, parseRole } from "../lib/roleNav";
 import { useAppStore, type PageId } from "../stores/appStore";
 import { useAuth } from "../auth/AuthContext";
+import { useMotionPreset } from "../lib/motion";
 
 const items: { id: PageId; label: string; icon: string }[] = [
   { id: "dashboard", label: "داشبورد", icon: "◈" },
@@ -34,6 +35,7 @@ const NEEDS_ROLE = new Set<PageId>(["finance", "expenses", "settings"]);
 export function Sidebar() {
   const { page, setPage } = useAppStore();
   const { signOut } = useAuth();
+  const motionPreset = useMotionPreset();
   const role = parseRole();
   // بدون نقش قابل‌تشخیص، منو را پنهان نمی‌کنیم: کاربر تازه‌وارد باید بفهمد
   // باید وارد شود، نه اینکه با یک ستون خالی روبه‌رو شود. اما داده‌های حساس
@@ -68,9 +70,13 @@ export function Sidebar() {
             >
               {active && (
                 <motion.span
-                  layoutId="nav-pill"
+                  layoutId={motionPreset.reduced ? undefined : "nav-pill"}
                   className="absolute inset-0 rounded-xl bg-primary/20 ring-1 ring-primary/40"
-                  transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                  transition={
+                    motionPreset.reduced
+                      ? { duration: 0 }
+                      : { type: "spring", stiffness: 380, damping: 32 }
+                  }
                 />
               )}
               <span className="relative z-10 text-base">{item.icon}</span>
@@ -83,7 +89,7 @@ export function Sidebar() {
       <div className="mt-auto">
         <div className="glass-card p-3 text-xs text-ink-dim">
           <div className="mb-1 flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-primary animate-pulse-soft" />
+            <span className="h-2 w-2 rounded-full bg-primary animate-pulse-soft motion-reduce:animate-none" />
             <span>سیستم فعال — گیت ورود متصل</span>
           </div>
           <p>نسخهٔ ۱.۰ · ساخت M06</p>

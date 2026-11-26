@@ -234,9 +234,10 @@ const ROUTE_EXCEPTIONS: Record<string, Exception> = {
     external: "TODO: S4 — پس‌گرفتن رضایت",
   },
   "/api/v1/face/checkin-qr": {
-    why: "اسکنر QR (کیوسک/پذیرش) ساخته نشده — TODO: S5",
+    why: "API بک‌اند وجود دارد، اما Studio/Flutter رابط اسکن QR پذیرش ندارد — TODO: S5",
     evidence: null,
-    external: "TODO: S5 — اسکنر کیوسک",
+    external: "TODO: S5 — رابط اسکن کیوسک/پذیرش؛ endpoint بک‌اند جداگانه پیاده و آزموده شده است",
+    fileEvidence: "mp-app/backend/tests/integration/test_m65_qr_security.py",
   },
   "/api/v1/face/checkins/{checkin_id}/exit": {
     why: "ثبت خروج از کیوسک — TODO: S5",

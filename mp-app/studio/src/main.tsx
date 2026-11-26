@@ -1,9 +1,10 @@
 import { StyleProvider } from "@ant-design/cssinjs";
-import { ConfigProvider, theme as antdTheme, type ThemeConfig } from "antd";
+import { ConfigProvider } from "antd";
 import faIR from "antd/locale/fa_IR";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
+import { mpTheme } from "./lib/designTokens";
 import "./styles/index.css";
 
 /**
@@ -17,24 +18,9 @@ import "./styles/index.css";
  *   • `direction="rtl"` + `locale={faIR}`: خودِ کامپوننت‌ها (صفحه‌بندی جدول،
  *     متن «بستن» دیالوگ، فرم‌ها) فارسی و راست‌به‌چپ می‌شوند؛ ترجمهٔ دستی
  *     نوشته نمی‌شود.
- *   • `darkAlgorithm` + توکن‌های برند: رنگ‌ها با پوستهٔ فعلی هم‌خوان می‌مانند.
+ *   • تم از `mp-app/shared/design-tokens.json` می‌آید تا سطح‌ها، متن و مرزهای
+ *     Ant Design با پوستهٔ Tailwind یک منبع رنگ داشته باشند.
  */
-const mpTheme: ThemeConfig = {
-  algorithm: antdTheme.darkAlgorithm,
-  token: {
-    colorPrimary: "#00B86A",
-    colorInfo: "#38BDF8",
-    colorSuccess: "#34D399",
-    colorError: "#F87171",
-    colorWarning: "#FBBF24",
-    colorBgBase: "#0B0F14",
-    colorBgContainer: "#111827",
-    colorBorder: "rgba(0, 184, 106, 0.24)",
-    colorTextBase: "#F3F6F8",
-    borderRadius: 12,
-    fontFamily: "'Vazirmatn Variable', Vazirmatn, system-ui, sans-serif",
-  },
-};
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

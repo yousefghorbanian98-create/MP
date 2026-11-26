@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { fa } from "../lib/useApi";
+import { useMotionPreset } from "../lib/motion";
 
 /**
  * کارت KPI (M45-c1) — از دادهٔ واقعی `/admin/kpis`.
@@ -21,12 +22,17 @@ export function KpiCard({
   hint?: string;
   index: number;
 }) {
+  const motionPreset = useMotionPreset();
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 18 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.08, type: "spring", stiffness: 240, damping: 22 }}
-      whileHover={{ y: -4, transition: { duration: 0.2 } }}
+      {...motionPreset.rise}
+      transition={{ ...motionPreset.rise.transition, delay: motionPreset.stagger(index) }}
+      whileHover={
+        motionPreset.hover.whileHover
+          ? { ...motionPreset.hover.whileHover, transition: { duration: 0.2 } }
+          : undefined
+      }
       className="glass-card-hover relative overflow-hidden p-5"
     >
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-l from-transparent via-primary/40 to-transparent" />

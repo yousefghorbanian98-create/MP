@@ -17,12 +17,6 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --mp-bg: #0b0f14;
-  --mp-primary: #00b86a;
-  --mp-accent: #ffd700;
-}
-
 html,
 body,
 #root {
@@ -53,7 +47,7 @@ body {
 
 @layer components {
   .glass-card {
-    @apply rounded-card border border-primary/15 bg-surface/60 shadow-glass backdrop-blur-xl;
+    @apply rounded-card border border-brand-border bg-surface/60 shadow-glass backdrop-blur-xl;
   }
   .glass-card-hover {
     @apply glass-card transition-all duration-300 hover:border-primary/35 hover:shadow-glow;
@@ -74,7 +68,7 @@ body {
     @apply pill bg-ink-dim/15 text-ink-dim;
   }
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white shadow-glow transition-all duration-200 hover:bg-primary-light hover:shadow-glow active:scale-[0.98];
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-bg shadow-glow transition-all duration-200 hover:bg-primary-light hover:shadow-glow active:scale-[0.98];
   }
   .btn-ghost {
     @apply inline-flex items-center justify-center gap-2 rounded-xl border border-primary/20 px-4 py-2 text-sm text-ink-dim transition-all duration-200 hover:border-primary/45 hover:text-ink;
@@ -87,25 +81,48 @@ body {
   }
 }
 
+/*
+ * Reduced-motion baseline for CSS/Tailwind and third-party CSS transitions.
+ * Framer Motion's JavaScript-driven transforms also use useMotionPreset; this
+ * media rule alone is not treated as a complete motion solution.
+ */
+@media (prefers-reduced-motion: reduce) {
+  html:focus-within {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-delay: 0ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .btn-primary:active {
+    transform: none !important;
+  }
+}
+
 
 /* ---------- تم تاریک برای تقویم جلالی (react-multi-date-picker) ---------- */
 /* کتابخانه استایل پایه را خودش تزریق می‌کند؛ اینجا فقط رنگ‌ها هم‌خوان پوسته می‌شوند. */
 .mp-jalali-picker .rmdp-wrapper,
 .rmdp-wrapper {
-  background-color: #111827;
-  color: #f3f6f8;
-  border: 1px solid rgba(0, 184, 106, 0.28);
-  box-shadow: 0 8px 32px rgba(2, 6, 12, 0.45);
+  @apply border border-brand-border bg-surface text-ink shadow-glass;
 }
 
 .rmdp-wrapper .rmdp-day span,
 .rmdp-wrapper .rmdp-week-day,
 .rmdp-wrapper .rmdp-header-values {
-  color: #f3f6f8;
+  @apply text-ink;
 }
 
 .rmdp-wrapper .rmdp-arrow {
-  border-color: #00b86a;
+  @apply border-primary;
 }
 
 .rmdp-wrapper .rmdp-day.rmdp-today span {
@@ -114,8 +131,7 @@ body {
 }
 
 .rmdp-wrapper .rmdp-day.rmdp-selected span:not(.highlight) {
-  background-color: #00b86a;
-  color: #04120b;
+  @apply bg-primary text-bg;
 }
 
 .rmdp-wrapper .rmdp-arrow-container:hover {

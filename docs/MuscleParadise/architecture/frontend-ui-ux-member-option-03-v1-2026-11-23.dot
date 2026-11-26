@@ -1,0 +1,96 @@
+digraph MPFrontendMemberOption03 {
+  graph [rankdir=TB, newrank=true, bgcolor="#0B0F14", pad="0.34", nodesep="0.42", ranksep="0.54", splines=ortho, compound=true, dpi=170,
+    fontname="DejaVu Sans", fontsize=22, fontcolor="#F3F6F8",
+    label="جریان عضو — Option 03 · LAB\nFlutter/Android فعلی · مسیرهای قابل‌ردیابی و گپ‌های تجربه\nقرمز = رفتار فعلیِ ناقص/گپ؛ خط‌چین کهربایی = گیت/هدف؛ موفقیت فقط با پاسخ معتبر",
+    labelloc="t", labeljust="c"];
+  node [shape=box, style="rounded,filled", fontname="DejaVu Sans", fontsize=11, color="#426174", fillcolor="#13222B", fontcolor="#F3F6F8", penwidth=1.2, margin="0.16,0.10"];
+  edge [fontname="DejaVu Sans", fontsize=8.5, color="#7F98A5", fontcolor="#D6E2E8", penwidth=0.95, arrowsize=0.64];
+
+  launch [label="اجرای اپ / deep link\nFlutter · Material 3 · RTL · Vazirmatn", color="#51D6A0", fillcolor="#132B22"];
+  otp [label="ورود عضو: OTP\n`POST /auth/otp/request`\n→ `POST /auth/otp/verify`", color="#51D6A0", fillcolor="#132B22"];
+  session [shape=diamond, label="نشست معتبر؟", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9"];
+  auth_error [label="خطای کد/نشست/شبکه\nورودی حفظ + راه‌حل/تلاش مجدد\nبدون ورود به shell", color="#F08A93", fillcolor="#321C24", fontcolor="#FFE3E6"];
+  shell [label="AppShell · ۵ تب\nخانه · برنامه · توانایی‌ها\nپیشرفت · پروفایل", color="#51D6A0", fillcolor="#132B22"];
+  home [label="HomePage / route hub\nاشتراک · اعلان · جست‌وجو\nQuick Check-in · مسیرهای بخش‌ها", color="#51D6A0", fillcolor="#132B22"];
+  launch -> otp -> session;
+  session -> shell [label="بله"];
+  session -> auth_error [label="خیر", color="#F08A93"];
+  auth_error -> otp [label="درخواست دوباره", color="#F08A93"];
+  shell -> home;
+
+  subgraph cluster_program {
+    label="A · ساخت برنامه → safety → Today"; color="#8E79D6"; fontcolor="#C2B7F0"; style="rounded"; penwidth=1.2;
+    intake [label="Intake · ۳ گام\nهدف/سطح → دادهٔ پایه → محدودیت\nفرم حفظ‌شونده + validation", color="#51D6A0", fillcolor="#132B22"];
+    gate [label="`POST /population/gate-check`\nرد/unknown: توقف و خطای روشن", color="#6AB7E8", fillcolor="#172739"];
+    save [label="`PUT /members/me`\nقیدهای Intake جدا از profile persistence", color="#6AB7E8", fillcolor="#172739"];
+    generate [label="`POST /ai/program/generate`\nrule-based · goal/level/days/weeks\nnutrition target اختیاری و جدا", color="#6AB7E8", fillcolor="#172739"];
+    safety [shape=diamond, label="`status=approved`\nو safety=clear؟", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9"];
+    approved [label="برنامهٔ مجاز\nهدف: فقط نسخهٔ approved برای عضو", color="#51D6A0", fillcolor="#132B22"];
+    blocked [label="blocked / needs_review / draft\nتوقف امن؛ نیازمند اصلاح/بازبینی مربی\nبدون CTA شروع تمرین", color="#F08A93", fillcolor="#321C24", fontcolor="#FFE3E6"];
+    draft_gap [label="گپ جاری: Intake ممکن است پاسخ draft\nرا مستقیم در ProgramResult نمایش دهد؛\nگیت approved/clear باید enforce شود", color="#F08A93", fillcolor="#321C24", fontcolor="#FFE3E6"];
+    today_get [label="`GET /programs/member/{id}`\nفقط برنامهٔ عضو + approved\nروز استراحت = empty state", color="#6AB7E8", fillcolor="#172739"];
+    today_view [label="TodayPage\nloading skeleton · empty · retry\nمنبع پیشرفت از پاسخ برنامه", color="#51D6A0", fillcolor="#132B22"];
+    local_tick [label="تیک حرکت / progress\nفعلاً `Set<int>` محلی؛ persist/API ندارد\nبه‌سرور-ثبت‌شده نمایش نده", color="#F08A93", fillcolor="#321C24", fontcolor="#FFE3E6"];
+    feedback [label="بازخورد ست\nوزنه · تکرار · RIR · soreness\n`POST /programs/set-feedback`", color="#51D6A0", fillcolor="#132B22"];
+    network [shape=diamond, label="نتیجهٔ معتبر/\nقطع شبکهٔ قطعی؟", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9"];
+    feedback_ok [label="2xx + schema معتبر\nrefresh readiness؛ دلیل تغییر از سرور", color="#51D6A0", fillcolor="#132B22"];
+    outbox [label="صف محلیِ owner-scoped\npending · retry · failed\nconflict · synced", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9"];
+    sync [label="Sync / retry دستی\nتعارض حفظ شود؛ outcome نامعلوم\nبدون ارسال دوبارهٔ کور", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9"];
+    intake -> gate -> save -> generate -> safety;
+    safety -> approved [label="بله"];
+    safety -> blocked [label="خیر", color="#F08A93"];
+    generate -> draft_gap [label="رفتار فعلی قابل‌مشاهده", color="#F08A93"];
+    approved -> today_get -> today_view;
+    today_view -> local_tick [label="toggle محلی", color="#F08A93"];
+    today_view -> feedback;
+    feedback -> network;
+    network -> feedback_ok [label="2xx"];
+    network -> outbox [label="offline قطعی", color="#E9B85C"];
+    outbox -> sync -> feedback_ok [label="پس از پاسخ sync", color="#E9B85C", style=dashed];
+  }
+
+  subgraph cluster_booking {
+    label="B · رزرو کلاس و حضور"; color="#5EA8D2"; fontcolor="#8CCCF0"; style="rounded"; penwidth=1.2;
+    classes [label="Classes\n`GET /classes`\n`POST /classes/book`\n`POST /classes/cancel`", color="#6AB7E8", fillcolor="#172739"];
+    booking_result [label="confirmed / waitlisted / cancelled\nفقط از پاسخ سرور؛ سپس refetch", color="#51D6A0", fillcolor="#132B22"];
+    qr [label="QR یک‌بارمصرف\nbiometric unlock → `GET /face/qr-token`\nعمر 30s؛ با background مخفی/باطل", color="#51D6A0", fillcolor="#132B22"];
+    scan [label="پذیرش اسکن می‌کند\n`POST /face/checkin-qr`\nثبت حضور فقط پس از پاسخ", color="#6AB7E8", fillcolor="#172739"];
+    face [label="چهره: UI توضیحی/غیرفعال\nconsent ≠ match/liveness\n`method=face` → 409 fail-closed", color="#F08A93", fillcolor="#321C24", fontcolor="#FFE3E6"];
+    classes -> booking_result;
+    qr -> scan;
+    face -> scan [style=invis];
+  }
+
+  subgraph cluster_other {
+    label="C · مسیرهای مکمل و endpointهای اصلی"; color="#5EA8D2"; fontcolor="#8CCCF0"; style="rounded"; penwidth=1.2;
+    { rank=same;
+      membership [label="خانه / اشتراک / اعلان\n`GET memberships`; notifications\nunknown ≠ active/zero", color="#6AB7E8", fillcolor="#172739"];
+      progress [label="توانایی‌ها / پیشرفت / JP7\nassessment + trend API\nمنبع/زمان/واحد؛ علمی/حریم بازبینی شود", color="#6AB7E8", fillcolor="#172739"];
+      nutrition [label="تغذیه / وزن\nfood log + weight log endpoints\nmacro target فعلی ≠ meal plan", color="#6AB7E8", fillcolor="#172739"];
+      wallet [label="کیف‌پول / فروشگاه\nwallet/payment/receipt read\nShop عضو view-only تا تصمیم تازه", color="#6AB7E8", fillcolor="#172739"];
+      chat_profile [label="چت / پروفایل\nmessages + member profile\nphone change: request → verify → confirm", color="#6AB7E8", fillcolor="#172739"];
+      search_gap [label="گپ خانه: search field\nhandler/query واقعی تأیید نشده؛\nwire به search API یا حذف/غیرفعال", color="#F08A93", fillcolor="#321C24", fontcolor="#FFE3E6"];
+    }
+  }
+
+  subgraph cluster_states {
+    label="قرارداد مشترک تجربه"; color="#E9B85C"; fontcolor="#FFE2A3"; style="rounded"; penwidth=1.1;
+    states [label="هر صفحه: loading · empty · error · offline\n401/403/422/409 جدا؛ preserve input\nqueued ≠ synced · متن فارسی · focus/keyboard", color="#6AB7E8", fillcolor="#172739"];
+  }
+
+  home -> intake [label="ساخت برنامه"];
+  home -> classes [label="کلاس‌ها"];
+  home -> qr [label="Quick Check-in"];
+  home -> membership [label="بخش‌های دیگر"];
+  home -> search_gap [label="جست‌وجو", color="#F08A93"];
+  feedback_ok -> states;
+  blocked -> states;
+  booking_result -> states;
+  scan -> states;
+  face -> states;
+  membership -> states;
+  progress -> states;
+  nutrition -> states;
+  wallet -> states;
+  chat_profile -> states;
+}

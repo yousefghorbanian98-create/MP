@@ -6,6 +6,7 @@ COPY mp-app/studio/ ./
 RUN npm ci && npm run build
 
 FROM nginx:1.27-alpine
-COPY mp-app/studio/nginx.conf /etc/nginx/conf.d/default.conf
+# The official entrypoint renders STUDIO_TRUSTED_PROXY into this Nginx template.
+COPY mp-app/studio/nginx.conf /etc/nginx/templates/default.conf.template
 COPY --from=build /src/dist /usr/share/nginx/html
 EXPOSE 80

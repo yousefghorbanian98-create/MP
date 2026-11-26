@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { API_BASE, AuthError, ForbiddenError } from "../lib/api";
 import { getAccessToken, sessionFetch } from "../lib/session";
+import { useMotionPreset } from "../lib/motion";
 
 /**
  * برنامهٔ امروز (M45-c2) — از `GET /classes` واقعی.
@@ -21,6 +22,7 @@ interface ClassRow {
 }
 
 export function ScheduleTimeline() {
+  const motionPreset = useMotionPreset();
   const [rows, setRows] = useState<ClassRow[] | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -67,9 +69,8 @@ export function ScheduleTimeline() {
           {rows.slice(0, 6).map((c, i) => (
             <motion.li
               key={c.id}
-              initial={{ opacity: 0, x: 12 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.06 }}
+              {...motionPreset.slide}
+              transition={{ ...motionPreset.slide.transition, delay: motionPreset.stagger(i) }}
               className="relative"
             >
               <span className="absolute -right-[21px] top-1.5 h-2.5 w-2.5 rounded-full bg-primary shadow-glow" />

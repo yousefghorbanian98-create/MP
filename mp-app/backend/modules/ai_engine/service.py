@@ -49,6 +49,9 @@ def draft_program_with_explanation(
 
     plan = generate_program(goal, level, days_per_week, weeks_count, constraints)
     output = plan.to_engine_output()
+    # Safety screening must evaluate the same restrictions used by the engine,
+    # including intake values that have not yet been persisted on Member.
+    output["constraints"] = list(constraints or [])
     first_rule_rest = (
         plan.weeks[0].exercises[0].rest_seconds if plan.weeks and plan.weeks[0].exercises else 90
     )

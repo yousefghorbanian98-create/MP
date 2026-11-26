@@ -471,6 +471,80 @@ def readiness_report(db, *, member_id: int) -> dict:
 # ── Q7 — غربالگری ایمنی ──
 
 
+def _exercise_screening_patterns(
+    exercise: dict,
+    library_by_id: dict[int, tuple[str, dict]],
+    location: str,
+) -> tuple[list[str], str | None]:
+    """Resolve one generated exercise to both its precise and broad safety labels."""
+    movement = exercise.get("movement") or exercise.get("pattern") or ""
+    patterns = [str(movement)] if movement else []
+    raw_exercise_id = exercise.get("exercise_id")
+    if raw_exercise_id is None:
+        return patterns, None if movement else location
+
+    try:
+        exercise_id = int(raw_exercise_id)
+    except (TypeError, ValueError):
+        return patterns, str(raw_exercise_id)
+    mapped = library_by_id.get(exercise_id)
+    if mapped is None:
+        return patterns, str(raw_exercise_id)
+
+    key, catalog_entry = mapped
+    patterns.append(key)
+    if catalog_entry.get("pattern"):
+        patterns.append(str(catalog_entry["pattern"]))
+    return patterns, None
+
+
+def _screening_constraints(member: Member, engine_output: dict) -> list[str]:
+    import json
+
+    try:
+        constraints = json.loads(member.constraints or "[]")
+    except (ValueError, TypeError):
+        constraints = []
+    if not isinstance(constraints, list):
+        constraints = []
+    requested = engine_output.get("constraints", [])
+    if not isinstance(requested, list):
+        requested = []
+    return list(dict.fromkeys(str(c) for c in [*constraints, *requested] if c))
+
+
+def _collect_screening_patterns(
+    engine_output: dict, library_by_id: dict[int, tuple[str, dict]]
+) -> tuple[list[str], list[str]]:
+    patterns: list[str] = []
+    unmapped: list[str] = []
+    for week_index, week in enumerate(engine_output.get("weeks", []) or [], start=1):
+        if not isinstance(week, dict):
+            continue
+        for exercise_index, exercise in enumerate(week.get("exercises", []) or [], start=1):
+            if not isinstance(exercise, dict):
+                continue
+            resolved, missing = _exercise_screening_patterns(
+                exercise,
+                library_by_id,
+                f"week-{week_index}-exercise-{exercise_index}",
+            )
+            patterns.extend(resolved)
+            if missing:
+                unmapped.append(missing)
+    return list(dict.fromkeys(patterns)), sorted(set(unmapped))
+
+
+def _mark_unmapped_exercises(result: dict, unmapped: list[str]) -> dict:
+    if unmapped:
+        result["unmapped_exercises"] = unmapped
+        if result["status"] == "clear":
+            result["status"] = "needs_review"
+            result["headline"] = "حرکت‌هایی بدون نگاشت ایمنی هستند — نیازمند بازبینی مربی"
+            result["safe_to_generate"] = False
+    return result
+
+
 def _safety_gate(db: Session, member_id: int, engine_output: dict) -> dict:
     """بررسی ناسازگاری برنامه با محدودیت‌های پزشکی عضو.
 
@@ -479,34 +553,27 @@ def _safety_gate(db: Session, member_id: int, engine_output: dict) -> dict:
     `llm_explanation` نمی‌نشیند — آن فیلد فقط متن است؛ پرچم ایمنی جای
     جدا دارد.
     """
-    import json
-
     from engine.safety import screen
+    from engine.workout import LIBRARY
 
     member = db.get(Member, member_id)
     if member is None:
         return {"status": "unknown", "reason": "عضو یافت نشد"}
 
-    try:
-        constraints = json.loads(member.constraints or "[]")
-    except (ValueError, TypeError):
-        constraints = []
-    if not isinstance(constraints, list):
-        constraints = []
-
-    patterns: list[str] = []
-    for week in engine_output.get("weeks", []) or []:
-        for ex in week.get("exercises", []) or []:
-            name = ex.get("movement") or ex.get("pattern") or ""
-            if name:
-                patterns.append(str(name))
-
-    return screen(
-        constraints=[str(c) for c in constraints],
+    constraints = _screening_constraints(member, engine_output)
+    library_by_id = {
+        int(exercise["exercise_id"]): (key, exercise)
+        for key, exercise in LIBRARY.items()
+        if isinstance(exercise.get("exercise_id"), int)
+    }
+    patterns, unmapped = _collect_screening_patterns(engine_output, library_by_id)
+    result = screen(
+        constraints=constraints,
         planned_patterns=patterns,
         age=None,  # سن در پروفایل عضو نگه‌داری نمی‌شود؛ ادعای بی‌پشتوانه نمی‌کنیم
         has_medical_clearance=None,
     )
+    return _mark_unmapped_exercises(result, unmapped)
 
 
 # ── G7 — همگام‌سازی صف آفلاین با LWW ──

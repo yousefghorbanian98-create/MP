@@ -3,6 +3,7 @@ import type { MemberSummaryRow, MembershipStatus } from "../lib/api";
 import { fetchMembersSummary } from "../lib/api";
 import { fa, useApi } from "../lib/useApi";
 import { useAppStore } from "../stores/appStore";
+import { useMotionPreset } from "../lib/motion";
 
 /**
  * جدول اعضا (M45-c1) — داده از `/admin/members-summary`، نه از mock.
@@ -21,6 +22,7 @@ const statusPill: Record<MembershipStatus, { label: string; cls: string }> = {
 const hueOf = (id: number) => (id * 47) % 360;
 
 export function MemberTable({ onSelect }: { onSelect?: (id: number) => void }) {
+  const motionPreset = useMotionPreset();
   const genderFilter = useAppStore((s) => s.genderFilter);
   const search = useAppStore((s) => s.search);
   const { data, loading, error, needsSession, reload } = useApi(
@@ -70,10 +72,9 @@ export function MemberTable({ onSelect }: { onSelect?: (id: number) => void }) {
         {filtered.map((m: MemberSummaryRow, i) => (
           <motion.button
             key={m.member_id}
-            initial={{ opacity: 0, x: 16 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: i * 0.05, duration: 0.3 }}
-            whileHover={{ backgroundColor: "rgba(0,184,106,0.06)" }}
+            {...motionPreset.slide}
+            transition={{ ...motionPreset.slide.transition, delay: motionPreset.stagger(i) }}
+            whileHover={motionPreset.reduced ? undefined : { backgroundColor: "rgba(0,184,106,0.06)" }}
             onClick={() => onSelect?.(m.member_id)}
             className="flex w-full items-center gap-3 px-5 py-3 text-right"
           >

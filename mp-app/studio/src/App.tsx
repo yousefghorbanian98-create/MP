@@ -1,4 +1,4 @@
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { ToastViewport } from "./components/Feedback";
 import { UpdateBanner } from "./components/UpdateBanner";
 import { Sidebar } from "./components/Sidebar";
@@ -19,6 +19,7 @@ import { useAppStore } from "./stores/appStore";
 import { AuthProvider, useAuth } from "./auth/AuthContext";
 import { Login } from "./pages/Login";
 import { canSeePage, parseRole } from "./lib/roleNav";
+import { useMotionPreset } from "./lib/motion";
 
 const pages = {
   dashboard: Dashboard,
@@ -42,7 +43,7 @@ function AppContent() {
   const Page = pages[page];
   const role = parseRole();
   const pageAllowed = role !== null && canSeePage(page, role);
-  const reduced = useReducedMotion(); // احترام به prefers-reduced-motion (M07)
+  const motionPreset = useMotionPreset(); // حالت نامعلوم نیز محافظه‌کارانه reduced است
 
   if (status === "checking") {
     return <main role="status" className="flex min-h-screen items-center justify-center text-ink-dim">در حال بررسی نشست…</main>;
@@ -57,10 +58,12 @@ function AppContent() {
         <AnimatePresence mode="wait">
           <motion.div
             key={page}
-            initial={reduced ? false : { opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={reduced ? undefined : { opacity: 0, y: -10 }}
-            transition={{ duration: reduced ? 0 : 0.3, ease: "easeOut" }}
+            {...(motionPreset.reduced ? motionPreset.fade : motionPreset.rise)}
+            exit={
+              motionPreset.reduced
+                ? { opacity: 0, transition: motionPreset.fade.transition }
+                : { opacity: 0, y: -10 }
+            }
           >
             {pageAllowed ? (
               <Page />

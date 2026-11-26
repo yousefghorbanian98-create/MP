@@ -181,9 +181,39 @@ jobs:
           (cd "$scratch" && git apply --check --whitespace=error-all "$GITHUB_WORKSPACE/$PATCH_FILE")
           (cd "$scratch" && git apply --whitespace=error-all "$GITHUB_WORKSPACE/$PATCH_FILE")
           for path in \
-            docs/MuscleParadise/adr/README.md \
             docs/MuscleParadise/adr/006-shared-react-pwa.md \
             docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-CONTRACT.fa.md \
             docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-EVIDENCE.fa.md; do
             cmp "$scratch/$path" "$GITHUB_WORKSPACE/$path"
           done
+          python3 - "$scratch/docs/MuscleParadise/adr/README.md" \
+            "$GITHUB_WORKSPACE/docs/MuscleParadise/adr/README.md" <<'PY'
+          from pathlib import Path
+          import re
+          import sys
+
+          patch_registry, source_registry = map(Path, sys.argv[1:])
+          adr006 = re.compile(r"^\|\s*\[ADR-006\]\(006-shared-react-pwa\.md\)\s*\|")
+          expected_rows = [
+              line for line in patch_registry.read_text(encoding="utf-8").splitlines()
+              if line.startswith("|")
+          ]
+          source_rows = [
+              line for line in source_registry.read_text(encoding="utf-8").splitlines()
+              if line.startswith("|")
+          ]
+          for label, rows in (("patched", expected_rows), ("source", source_rows)):
+              if sum(bool(adr006.match(row)) for row in rows) != 1:
+                  raise SystemExit(f"{label} ADR registry must link to ADR-006 exactly once")
+
+          # Later ADRs may legitimately add rows or refine the registry summary.
+          # Preserve the pinned snapshot's other rows in order, while requiring the
+          # new PWA-00 document bodies themselves to remain byte-for-byte identical.
+          remaining = iter(source_rows)
+          for row in expected_rows:
+              if adr006.match(row):
+                  continue
+              if not any(candidate == row for candidate in remaining):
+                  raise SystemExit(f"source ADR registry dropped or rewrote a baseline row: {row}")
+          print("ADR-006 link and unchanged baseline registry rows verified.")
+          PY

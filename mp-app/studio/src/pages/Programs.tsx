@@ -105,7 +105,7 @@ export function Programs() {
             onClick={() => setStatus(f.key)}
             className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-colors ${
               status === f.key
-                ? "bg-primary text-white"
+                ? "bg-primary text-bg"
                 : "bg-surface/70 text-ink-dim hover:text-ink"
             }`}
           >

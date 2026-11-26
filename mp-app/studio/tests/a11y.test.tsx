@@ -174,10 +174,11 @@ describe("a11y — rule-based audit across every page (Q5)", { timeout: 30_000 }
     }
   });
 
-  it("applies prefers-reduced-motion (M07)", () => {
-    // حرکت باید محترم شمرده شود؛ بررسی وجود منطق، نه اجرای انیمیشن
-    // vitest از ریشهٔ استودیو اجرا می‌شود؛ URL در محیط jsdom بر روی http است، پس از cwd استفاده می‌کنیم.
+  it("routes app-shell motion through the fail-closed reduced-motion helper (M07)", () => {
+    // این source assertion است؛ انیمیشن یا رفتار مرورگر را اجرا/تأیید نمی‌کند.
+    // vitest از ریشهٔ استودیو اجرا می‌شود؛ از cwd برای مسیر source استفاده می‌کنیم.
     const src = readFileSync(resolve(process.cwd(), "src/App.tsx"), "utf8");
-    expect(src).toContain("useReducedMotion");
+    expect(src).toContain("useMotionPreset");
+    expect(src).not.toContain("useReducedMotion");
   });
 });

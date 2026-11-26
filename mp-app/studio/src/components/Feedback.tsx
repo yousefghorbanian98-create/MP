@@ -21,7 +21,8 @@ import {
   InfoCircleFilled,
 } from "@ant-design/icons";
 import { Modal } from "antd";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { useMotionPreset } from "../lib/motion";
 import { create } from "zustand";
 
 export type ToastKind = "success" | "error" | "info";
@@ -74,7 +75,7 @@ const KIND_ICON: Record<ToastKind, React.ReactNode> = {
 export function ToastViewport() {
   const toasts = useToastStore((s) => s.toasts);
   const dismiss = useToastStore((s) => s.dismiss);
-  const reduced = useReducedMotion();
+  const motionPreset = useMotionPreset();
 
   return (
     <div className="pointer-events-none fixed bottom-5 left-1/2 z-[70] flex w-[min(92vw,26rem)] -translate-x-1/2 flex-col gap-2">
@@ -82,13 +83,18 @@ export function ToastViewport() {
         {toasts.map((t) => (
           <motion.div
             key={t.id}
-            layout
+            layout={!motionPreset.reduced}
             role={t.kind === "error" ? "alert" : "status"}
             aria-live={t.kind === "error" ? "assertive" : "polite"}
-            initial={reduced ? false : { opacity: 0, y: 16, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={reduced ? undefined : { opacity: 0, y: 8, scale: 0.98 }}
-            transition={{ duration: reduced ? 0 : 0.22, ease: "easeOut" }}
+            {...(motionPreset.reduced ? motionPreset.fade : motionPreset.rise)}
+            exit={
+              motionPreset.reduced
+                ? { opacity: 0, transition: motionPreset.fade.transition }
+                : { opacity: 0, y: 8, scale: 0.98 }
+            }
+            transition={
+              motionPreset.reduced ? motionPreset.fade.transition : { duration: 0.22, ease: "easeOut" }
+            }
             className={`pointer-events-auto flex items-center gap-3 rounded-2xl border px-4 py-3 text-sm shadow-glow backdrop-blur ${KIND_STYLE[t.kind]}`}
           >
             <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/10 text-xs">
@@ -116,7 +122,7 @@ export function Skeleton({ className = "h-4 w-full" }: { className?: string }) {
     <div
       aria-busy="true"
       aria-hidden="true"
-      className={`animate-pulse rounded-lg bg-white/10 ${className}`}
+      className={`animate-pulse motion-reduce:animate-none rounded-lg bg-white/10 ${className}`}
     />
   );
 }

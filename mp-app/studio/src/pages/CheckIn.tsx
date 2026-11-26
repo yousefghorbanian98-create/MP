@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { DURATION, useMotionPreset } from "../lib/motion";
+import { useMotionPreset } from "../lib/motion";
 import { useState } from "react";
 import { fetchCheckinFeed } from "../lib/api";
 import { useApi } from "../lib/useApi";
@@ -49,6 +49,7 @@ export function CheckIn() {
                 />
               ) : (
                 <motion.span
+                  data-testid="scan-motion"
                   className="absolute inset-x-4 top-4 h-px bg-gradient-to-l from-transparent via-primary to-transparent shadow-[0_0_18px_rgba(0,184,106,0.8)]"
                   animate={{ y: [0, 220, 0] }}
                   transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
@@ -89,7 +90,7 @@ export function CheckIn() {
               <motion.div
                 key={f.checkin_id}
                 {...motionPreset.slide}
-                transition={{ delay: i * 0.08 }}
+                transition={{ ...motionPreset.slide.transition, delay: motionPreset.stagger(i) }}
                 className="flex items-center justify-between rounded-xl bg-surface/60 px-3 py-2.5"
               >
                 <div className="flex items-center gap-2.5">
@@ -132,16 +133,6 @@ export function CheckIn() {
             عدد قبلی (۱.۴ ثانیه / ۹۹٪) ساختگی بود و حذف شد — تا اجرای benchmark واقعی روی
             دستگاه، هیچ ادعای SLO نمی‌شود.
           </p>
-          <div className="mt-3 h-2 overflow-hidden rounded-full bg-surface">
-            <motion.div
-              initial={motionPreset.reduced ? false : { width: 0 }}
-              animate={{ width: "93%" }}
-              transition={
-                motionPreset.reduced ? { duration: DURATION.press } : { duration: DURATION.page }
-              }
-              className="h-full rounded-full bg-gradient-to-l from-primary to-accent"
-            />
-          </div>
         </div>
       </div>
     </div>

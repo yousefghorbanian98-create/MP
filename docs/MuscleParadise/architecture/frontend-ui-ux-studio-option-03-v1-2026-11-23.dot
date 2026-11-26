@@ -1,0 +1,79 @@
+digraph MPFrontendStudioOption03 {
+  graph [rankdir=TB, newrank=true, bgcolor="#0B0F14", pad="0.34", nodesep="0.42", ranksep="0.54", splines=ortho, compound=true, dpi=170,
+    fontname="DejaVu Sans", fontsize=22, fontcolor="#F3F6F8",
+    label="Studio کادر — Option 03 · LAB\nReact/Vite · نقش‌ها مسیر UI را روشن می‌کنند؛ backend هر درخواست را دوباره مجاز می‌کند\nسبز/آبی = مسیر جاری؛ قرمز = گپ/رد؛ کهربایی = گیت/رفتار نیازمند تکمیل",
+    labelloc="t", labeljust="c"];
+  node [shape=box, style="rounded,filled", fontname="DejaVu Sans", fontsize=11, color="#426174", fillcolor="#13222B", fontcolor="#F3F6F8", penwidth=1.2, margin="0.16,0.10"];
+  edge [fontname="DejaVu Sans", fontsize=8.5, color="#7F98A5", fontcolor="#D6E2E8", penwidth=0.95, arrowsize=0.64];
+
+  browser [label="Browser / Studio\nReact 18 · Vite · RTL\nAnt Design 5 + Motion", color="#51D6A0", fillcolor="#132B22"];
+  auth [label="AuthProvider\nchecking → restore `/members/me`\nیا OTP request/verify", color="#6AB7E8", fillcolor="#172739"];
+  role [shape=diamond, label="نشست معتبر؟\nrole کادر شناخته‌شده؟", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9"];
+  login [label="Login / session error\n401: یک refresh/retry\nپس از شکست: پاک‌کردن نشست", color="#F08A93", fillcolor="#321C24", fontcolor="#FFE3E6"];
+  nav [label="Sidebar / page guard\n`parseRole` + `canSeePage`\nUX-only · URL hidden ≠ secure", color="#6AB7E8", fillcolor="#172739"];
+  browser -> auth -> role;
+  role -> nav [label="staff"];
+  role -> login [label="expired / role invalid", color="#F08A93"];
+  login -> auth [label="ورود مجدد", color="#F08A93"];
+
+  subgraph cluster_programs {
+    label="A · برنامه و ایمنی"; color="#8E79D6"; fontcolor="#C2B7F0"; style="rounded"; penwidth=1.2;
+    list [label="Programs list\n`GET /programs?status=...`\nstatus + safety + version", color="#51D6A0", fillcolor="#132B22"];
+    context [label="عضو/نسخهٔ درست؟\nهمان selectedMemberId\nبرای Programs/Readiness/Volume", color="#6AB7E8", fillcolor="#172739"];
+    safe [shape=diamond, label="داده تازه؟\nsafety=clear؟", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9"];
+    approve [label="Approve\n`POST /programs/{id}/approve`\nrole + permission server-side", color="#51D6A0", fillcolor="#132B22"];
+    review [label="Hold / اصلاح / Reject\nblocked, unknown, stale → توقف\nReject با دلیل اجباری", color="#F08A93", fillcolor="#321C24", fontcolor="#FFE3E6"];
+    current_gap [label="گپ فعلی: دکمهٔ approve\nبرای draftِ safety=blocked هم می‌آید؛\nگیت UI و API باید enforce شود", color="#F08A93", fillcolor="#321C24", fontcolor="#FFE3E6"];
+    reject_modal [label="کد فعلی: `window.prompt`\nدلیل غیرخالی پیش از POST\nتبدیل به Modal در این دور deferred؛\nاول cancel/empty را با تست ایمن کنید", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9"];
+    reload [label="2xx + پاسخ معتبر\nrefetch status; 409 → تازه‌خوانی\nبدون موفقیت optimistic", color="#51D6A0", fillcolor="#132B22"];
+    list -> context -> safe;
+    safe -> approve [label="clear"];
+    safe -> review [label="blocked/stale", color="#F08A93"];
+    safe -> current_gap [label="رفتار فعلی", color="#F08A93"];
+    review -> reject_modal [label="رد با دلیل"];
+    approve -> reload;
+    reject_modal -> reload [label="پس از POST موفق"];
+  }
+
+  subgraph cluster_finance {
+    label="B · مالی، هزینه و فیش خصوصی"; color="#E9B85C"; fontcolor="#FFE2A3"; style="rounded"; penwidth=1.2;
+    finance_read [label="Finance / Expenses read\n`finance.read` + scope\nsummary · ledger · period · receipt\nincomplete refund → profit unknown / no bar", color="#6AB7E8", fillcolor="#172739"];
+    finance_write [label="Create / edit / delete\n`finance.write` + role/scope\nreason only where contract requires\nform · confirmation · pending", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9"];
+    refund [label="Refund: paid gateway tx only\nmanager/admin/super_admin + `finance.write`\nnative confirm: amount + payment ID\nno reason field in current UI", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9"];
+    upload [label="Expenses.tsx فیش هزینه\nAntD Upload → `POST /expenses/{id}/receipt`\nJPEG/PNG/WebP · یک فایل/هزینه", color="#51D6A0", fillcolor="#132B22"];
+    receipt [label="فایل خصوصی\nread: finance.read · `Cache-Control: no-store`\nخطا/409 → تازه‌خوانی", color="#6AB7E8", fillcolor="#172739"];
+    audit [label="پاسخ تأییدشده + audit\nactor ثبت‌شده سمت سرور؛ reason وابسته به عملیات\nreceipt ≠ رسید پرداخت کارت‌به‌کارت", color="#51D6A0", fillcolor="#132B22"];
+    finance_read -> finance_write;
+    finance_read -> refund;
+    finance_write -> audit [label="grant + server OK"];
+    refund -> audit [label="refund + actor audit"];
+    finance_write -> upload [label="بارگذاری فیش هزینه"];
+    upload -> receipt -> audit;
+  }
+
+  subgraph cluster_other {
+    label="C · عملیات و تنظیمات"; color="#5EA8D2"; fontcolor="#8CCCF0"; style="rounded"; penwidth=1.2;
+    ops [label="Dashboard / Members / Chat / CheckIn\nrow click → Members + same selectedMemberId\nAPI KPIs/feed; scan is visual-only; SLO unknown\nloading / empty / error", color="#6AB7E8", fillcolor="#172739"];
+    flags [label="Settings: flags\nGET → PUT → refetch\nبدون optimistic toggle", color="#51D6A0", fillcolor="#132B22"];
+    access [label="Role / grants / sessions / Audit\nsuper_admin-only grant path\nserver-side authorization پابرجاست", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9"];
+    shop [label="Shop Studio = catalog admin\nفروشگاه عضو جدا و view-only\ncart/checkout تا تصمیم تازه خاموش", color="#F08A93", fillcolor="#321C24", fontcolor="#FFE3E6"];
+    ops -> flags -> access -> shop [style=invis, weight=60];
+  }
+
+  subgraph cluster_errors {
+    label="قرارداد تمام صفحه‌ها"; color="#E9B85C"; fontcolor="#FFE2A3"; style="rounded"; penwidth=1.1;
+    states [label="GET: skeleton → data/empty/retry\nWrite: pending + duplicate guard\n401 → login · 403 → explain · 422 → field\n409 → reconcile · preserve user input", color="#6AB7E8", fillcolor="#172739"];
+  }
+
+  nav -> list [label="Programs"];
+  nav -> finance_read [label="Finance / Expenses"];
+  nav -> ops [label="Operations / Settings"];
+  reload -> states;
+  review -> states;
+  audit -> states;
+  ops -> states;
+  flags -> states;
+  access -> states;
+  shop -> states;
+  login -> states [style=dashed, color="#F08A93"];
+}

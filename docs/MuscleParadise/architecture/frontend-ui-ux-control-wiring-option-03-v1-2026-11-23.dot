@@ -1,0 +1,63 @@
+digraph MPFrontendControlWiringOption03 {
+  graph [rankdir=TB, newrank=true, bgcolor="#0B0F14", pad="0.34", nodesep="0.42", ranksep="0.56", splines=ortho, compound=true, dpi=170,
+    fontname="DejaVu Sans", fontsize=22, fontcolor="#F3F6F8",
+    label="قرارداد مشترک سیم‌کشی کنترل‌ها — Option 03 · LAB\nintent → state owner → API → مجوز/دامنه → پاسخِ قابل‌فهم\nاین نمودار الگوی طراحی است؛ response/error را با کد واقعی هر endpoint تطبیق دهید",
+    labelloc="t", labeljust="c"];
+  node [shape=box, style="rounded,filled", fontname="DejaVu Sans", fontsize=11, color="#426174", fillcolor="#13222B", fontcolor="#F3F6F8", penwidth=1.2, margin="0.16,0.10"];
+  edge [fontname="DejaVu Sans", fontsize=8.5, color="#7F98A5", fontcolor="#D6E2E8", penwidth=0.95, arrowsize=0.64];
+
+  intent [label="Intent کاربر\nدیدن · رفتن · ثبت · تغییر · حذف", color="#51D6A0", fillcolor="#132B22"];
+  component [label="کنترل موجود\nStudio: AntD Button/Form/Table/Modal/Upload\nClient: Flutter Material / Semantics", color="#6AB7E8", fillcolor="#172739"];
+  accessible [label="پیش از اجرا\nlabel + keyboard/focus + RTL\nvalidation inline · disabled reason\nهدف لمسی و reduce-motion", color="#6AB7E8", fillcolor="#172739"];
+  guard [shape=diamond, label="read/navigation\nیا write حساس؟", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9"];
+  intent -> component -> accessible -> guard;
+
+  subgraph cluster_state_owner {
+    label="۱ · مالک state"; color="#5EA8D2"; fontcolor="#8CCCF0"; style="rounded"; penwidth=1.1;
+    local [label="Local state\ninput · draft · tab/filter\nنه منبع حقیقت مالی/عضویت", color="#6AB7E8", fillcolor="#172739"];
+    query [label="Query / Provider\nGET + abort + loading\nstale / empty / cache policy", color="#6AB7E8", fillcolor="#172739"];
+    mutate [label="Mutation command\nPOST/PUT/DELETE\nvalidate → pending → submit once", color="#6AB7E8", fillcolor="#172739"];
+    pending [label="In-flight\nper-resource loading · disable duplicate\nfocus ثابت · بدون optimistic مالی/ایمنی", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9"];
+    query -> mutate [style=invis, weight=40];
+  }
+  guard -> local [label="ناوبری/فیلتر"];
+  guard -> query [label="خواندن"];
+  guard -> mutate [label="نوشتن / حذف"];
+  mutate -> pending;
+
+  subgraph cluster_server {
+    label="۲ · مرز API و تراکنش"; color="#8E79D6"; fontcolor="#C2B7F0"; style="rounded"; penwidth=1.1;
+    client [label="API client\nStudio: sessionFetch / Bearer\n401 refresh/retry یک‌بار\nFlutter: apiClientProvider", color="#6AB7E8", fillcolor="#172739"];
+    auth [label="Authentication\nOTP / access / refresh\nexpiry + rate limit", color="#8E79D6", fillcolor="#211D38"];
+    authz [label="Authorization per request\nrole + grant + record ownership/scope\nUI-hidden button امنیت نیست", color="#8E79D6", fillcolor="#211D38"];
+    domain [label="Domain service\ncanonical validation · safety/state\nrules + feature gates", color="#8E79D6", fillcolor="#211D38"];
+    tx [label="Transaction + audit\natomic commit · actor/reason\nidempotency فقط اگر API پشتیبانی کند", color="#8E79D6", fillcolor="#211D38"];
+    store [label="DB / private file / cache\nDB مرجع؛ فایل دسترسی-scoped\nledger از cache ساخته نمی‌شود", color="#8E79D6", fillcolor="#211D38"];
+    client -> auth -> authz -> domain -> tx -> store;
+  }
+  query -> client;
+  pending -> client;
+  local -> response [label="فقط state محلی؛ ادعای server-success نکن"];
+
+  subgraph cluster_responses {
+    label="۳ · نگاشت پاسخ به رفتار UI"; color="#E9B85C"; fontcolor="#FFE2A3"; style="rounded"; penwidth=1.1;
+    response [label="2xx + schema معتبر\ninvalidate/refetch → سپس «ثبت شد»\naria-live/toast و وضعیت تازه", color="#51D6A0", fillcolor="#132B22"];
+    auth_fail [label="401 / 403\n401: refresh یک‌بار → ورود\n403: توضیح مجوز؛ بدون refresh", color="#F08A93", fillcolor="#321C24", fontcolor="#FFE3E6"];
+    input_fail [label="422 / 409\n422: خطای همان فیلد + حفظ مقدار\n409: تازه‌خوانی + تصمیم انسان", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9"];
+    transient [label="429 / 5xx / timeout\nRetry-After؛ GET retry\nwrite نامعلوم → reconcile، نه retry کور", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9"];
+    offline [label="Offline\nGET: banner + stale/error\nفقط صف صریحِ feedback مجاز\nqueued ≠ synced", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9"];
+    screen [label="وضعیت صفحه\nloading · empty · error · offline · conflict\nفارسی؛ نه stack/raw code\nkeyboard + focus + reduced motion", color="#6AB7E8", fillcolor="#172739"];
+    response -> auth_fail -> input_fail -> transient -> offline -> screen [style=invis, weight=70];
+  }
+  store -> response [label="commit + valid response", color="#51D6A0"];
+  auth -> auth_fail [label="401", color="#F08A93"];
+  authz -> auth_fail [label="403", color="#F08A93"];
+  domain -> input_fail [label="422 / 409", color="#E9B85C"];
+  client -> transient [label="429 / 5xx / timeout", color="#E9B85C"];
+  client -> offline [label="network unavailable", color="#E9B85C"];
+  response -> screen;
+  auth_fail -> screen;
+  input_fail -> screen;
+  transient -> screen;
+  offline -> screen;
+}

@@ -42,6 +42,7 @@ flowchart LR
 
 | اگر می‌خواهی… | از اینجا شروع کن | مرجع تکمیلی |
 |---|---|---|
+| پروژه را از صفر بفهمی و مسیر معماری، API، داده، UI، اجرا و گیت‌هایش را دنبال کنی | [راهنمای جامع Muscle Paradise](MuscleParadise/PROJECT_GUIDE.fa.md) | [فهرست و نسخهٔ فصل‌به‌فصل](MuscleParadise/project-guide/README.md)؛ سند اصلی حدود semantic review را هم صریح می‌کند |
 | سریع بفهمی نشست قبل چه کرد و بعد چه باید کرد | [پیش‌نیاز و نصب](MuscleParadise/BUILDER-START-AND-REPOWISE.md) · [SESSION_HANDOFF](MuscleParadise/SESSION_HANDOFF.md) · [هندآف تفصیلی و نشست تازه](MuscleParadise/HANDOFF-PROJECT-2026-11-18.md) | [صف قبلی](MuscleParadise/TODO-2026-11-16.md) و [تصمیم‌های جدید](MuscleParadise/TODO-CLOUD-FINANCE-ACCESS.md) |
 | ساختار سیستم یا مرز بک‌اند را بفهمی | [Architecture Atlas](MuscleParadise/architecture/README.md) | [C4 تاریخی](MuscleParadise/architecture/c4.md) · [نقشهٔ هدف ابری/مالی](MuscleParadise/architecture/cloud-finance-access.md) · [برنامهٔ کلان تولید/AI تا آمادگی انتشار](MuscleParadise/architecture/ai-autonomous-production-plan-v1-2026-11-23.md) |
 | چرایی یک انتخاب را پیدا کنی | [فهرست ADRها](MuscleParadise/adr/README.md) | [قالب ADR](MuscleParadise/adr/TEMPLATE.md) |

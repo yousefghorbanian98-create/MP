@@ -75,11 +75,11 @@ def _schema(db_path: Path) -> dict[str, tuple[dict[str, tuple[str, bool]], set[s
         for table in tables:
             columns = {
                 row[1]: (str(row[2]).upper(), bool(row[3]))
-                for row in con.execute(f"pragma table_info('{table}')")
+                for row in con.execute("select * from pragma_table_info(?)", (table,))
             }
             indexes = {
                 row[1]
-                for row in con.execute(f"pragma index_list('{table}')")
+                for row in con.execute("select * from pragma_index_list(?)", (table,))
                 if not str(row[1]).startswith("sqlite_autoindex")
             }
             out[table] = (columns, indexes)

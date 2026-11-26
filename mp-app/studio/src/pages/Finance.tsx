@@ -103,7 +103,7 @@ export function Finance() {
       <div className="glass-card space-y-4 p-5">
         <h2 className="text-sm font-bold">گزارش مالی</h2>
         <div className="flex items-center gap-3">
-          <button onClick={fetchSummary} disabled={busy} className="focus-ring rounded-xl bg-primary px-4 py-2 text-sm text-white transition-transform hover:scale-[1.02] active:scale-95">
+          <button onClick={fetchSummary} disabled={busy} className="focus-ring rounded-xl bg-primary px-4 py-2 text-sm text-bg transition-transform hover:scale-[1.02] active:scale-95 motion-reduce:hover:transform-none motion-reduce:active:transform-none">
             خلاصهٔ مالی
           </button>
           <button onClick={downloadCsv} disabled={busy} className="focus-ring rounded-xl border border-primary/40 px-4 py-2 text-sm text-primary-light transition-colors hover:bg-primary/10">
@@ -111,7 +111,7 @@ export function Finance() {
           </button>
         </div>
         {summary && (
-          <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="grid grid-cols-3 gap-3 text-center">
+          <motion.div {...motionPreset.rise} className="grid grid-cols-3 gap-3 text-center">
             <div className="rounded-xl bg-primary/10 p-3">
               <p className="text-xs text-ink-dim">پرداخت‌شده (ریال)</p>
               <p className="text-lg font-bold">{fmt(summary.total_paid_rial)}</p>
@@ -158,12 +158,12 @@ export function Finance() {
             inputMode="decimal"
             className="focus-ring w-24 rounded-xl border border-primary/30 bg-transparent px-3 py-2 text-sm"
           />
-          <button onClick={calculateCommission} disabled={busy} className="focus-ring rounded-xl bg-primary px-4 py-2 text-sm text-white transition-transform hover:scale-[1.02] active:scale-95">
+          <button onClick={calculateCommission} disabled={busy} className="focus-ring rounded-xl bg-primary px-4 py-2 text-sm text-bg transition-transform hover:scale-[1.02] active:scale-95 motion-reduce:hover:transform-none motion-reduce:active:transform-none">
             محاسبه
           </button>
         </div>
         {commission && (
-          <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="rounded-xl bg-primary/10 p-4 text-sm leading-7">
+          <motion.div {...motionPreset.rise} className="rounded-xl bg-primary/10 p-4 text-sm leading-7">
             <p>مربی: <b>{commission.coach_name}</b> (#{commission.coach_id})</p>
             <p>پرداخت‌های منتسب: <b>{fmt(commission.attributed_payments_rial)}</b> ریال</p>
             <p>کمیسیون {fmt(commission.rate * 100)}٪: <b className="text-primary-light">{fmt(commission.commission_rial)}</b> ریال</p>
@@ -172,7 +172,7 @@ export function Finance() {
       </div>
 
       {error && (
-        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-2 text-sm text-red-400">
+        <motion.p {...motionPreset.fade} className="rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-2 text-sm text-red-400">
           ⚠ {error}
         </motion.p>
       )}

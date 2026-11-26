@@ -148,9 +148,55 @@ def test_production_compose_is_fail_closed_and_valkey_backed(compose_path: Path)
 
 def test_production_environment_template_leaves_proxy_and_metrics_values_unset() -> None:
     template = (BACKEND / ".env.example").read_text(encoding="utf-8").splitlines()
-    for name in ("MP_TRUSTED_PROXIES", "MP_METRICS_TOKEN"):
+    for name in ("MP_TRUSTED_PROXIES", "MP_METRICS_TOKEN", "STUDIO_TRUSTED_PROXY"):
         assignments = [line for line in template if line.startswith(f"{name}=")]
         assert assignments == [f"{name}="]
+
+
+@pytest.mark.parametrize(
+    ("compose_path", "proxy_service", "proxy_address"),
+    [
+        (MP / "deploy" / "docker-compose.yml", "studio", "${MP_STUDIO_IP:-172.30.0.3}"),
+        (MP / "infra" / "docker-compose.yml", "caddy", "${MP_CADDY_IP:-172.30.0.4}"),
+    ],
+)
+def test_compose_trusts_the_statically_addressed_immediate_proxy(
+    compose_path: Path, proxy_service: str, proxy_address: str
+) -> None:
+    config = _compose(compose_path)
+    network = config["networks"]["default"]
+    assert network["ipam"]["config"][0]["subnet"] == "${MP_COMPOSE_SUBNET:-172.30.0.0/24}"
+
+    services = config["services"]
+    assert (
+        services["backend"]["networks"]["default"]["ipv4_address"] == "${MP_BACKEND_IP:-172.30.0.2}"
+    )
+    assert services[proxy_service]["networks"]["default"]["ipv4_address"] == proxy_address
+    trusted = services["backend"]["environment"]["MP_TRUSTED_PROXIES"]
+    assert trusted.startswith("${MP_TRUSTED_PROXIES:?")
+    assert proxy_address.rsplit(":-", maxsplit=1)[-1].rstrip("}") in trusted
+
+
+def test_studio_nginx_sanitizes_forwarded_ip_only_from_configured_upstream() -> None:
+    compose = _compose(MP / "deploy" / "docker-compose.yml")
+    studio_environment = compose["services"]["studio"]["environment"]
+    assert studio_environment["STUDIO_TRUSTED_PROXY"].startswith("${STUDIO_TRUSTED_PROXY:?")
+    assert studio_environment["NGINX_ENVSUBST_FILTER"] == "^STUDIO_TRUSTED_PROXY$"
+    infra_studio_environment = _compose(MP / "infra" / "docker-compose.yml")["services"]["studio"][
+        "environment"
+    ]
+    assert (
+        infra_studio_environment["STUDIO_TRUSTED_PROXY"] == "${STUDIO_TRUSTED_PROXY:-127.0.0.1/32}"
+    )
+
+    nginx = (MP / "studio" / "nginx.conf").read_text(encoding="utf-8")
+    assert "set_real_ip_from ${STUDIO_TRUSTED_PROXY};" in nginx
+    assert "real_ip_header X-Forwarded-For;" in nginx
+    assert "real_ip_recursive on;" in nginx
+    assert "proxy_set_header X-Forwarded-For $remote_addr;" in nginx
+    assert "proxy_set_header X-Forwarded-For $http_x_forwarded_for;" not in nginx
+    dockerfile = (MP / "studio" / "Dockerfile").read_text(encoding="utf-8")
+    assert "/etc/nginx/templates/default.conf.template" in dockerfile
 
 
 @pytest.mark.parametrize(

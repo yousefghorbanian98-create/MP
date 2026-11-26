@@ -65,6 +65,39 @@ def check_ports(report: Report) -> None:
         report.ok("Compose exposes the backend listening port")
 
 
+def _compose_mp_env_names(compose: dict, prefix: str) -> set[str]:
+    """Return MP_* names used as container environment keys or their values.
+
+    Compose-only interpolation (for example IPAM subnet and static-IP inputs)
+    is not an application Settings field and must not be mistaken for one.
+    """
+    names: set[str] = set()
+    for service in (compose.get("services") or {}).values():
+        if not isinstance(service, dict):
+            continue
+        environment = service.get("environment") or {}
+        if isinstance(environment, dict):
+            entries = [
+                (str(key), "" if value is None else str(value))
+                for key, value in environment.items()
+            ]
+        elif isinstance(environment, list):
+            entries = []
+            for entry in environment:
+                if not isinstance(entry, str):
+                    continue
+                key, separator, value = entry.partition("=")
+                entries.append((key, value if separator else ""))
+        else:
+            continue
+
+        for key, value in entries:
+            if key.startswith(prefix):
+                names.add(key)
+            names.update(re.findall(rf"\$\{{({re.escape(prefix)}[A-Z0-9_]+)(?=[:}}?])", value))
+    return names
+
+
 def check_env_names(report: Report) -> None:
     config = _read(MP / "backend" / "app" / "config.py")
     compose_files = list((MP / "deploy").glob("docker-compose*.yml")) + list(
@@ -84,14 +117,12 @@ def check_env_names(report: Report) -> None:
     report.ok(f"env_prefix={prefix} · {len(fields)} Settings fields")
 
     for compose_file in compose_files:
-        text = "\n".join(
-            line for line in _read(compose_file).splitlines() if not line.lstrip().startswith("#")
-        )
-        invalid_keys = []
-        for key in set(re.findall(r"\bMP_[A-Z0-9_]+", text)):
-            field_name = key[len(prefix) :].lower()
-            if field_name not in fields:
-                invalid_keys.append(key)
+        compose = yaml.safe_load(_read(compose_file)) or {}
+        invalid_keys = {
+            key
+            for key in _compose_mp_env_names(compose, prefix)
+            if key[len(prefix) :].lower() not in fields
+        }
         if invalid_keys:
             for key in sorted(invalid_keys):
                 report.bad(f"{compose_file.name}: {key} has no matching Settings field")
