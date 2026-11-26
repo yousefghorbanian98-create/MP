@@ -8,6 +8,10 @@ import {
   YAxis,
 } from "recharts";
 import type { AttendancePoint } from "../lib/api";
+import { colorWithAlpha, designTokens } from "../lib/designTokens";
+import { useMotionPreset } from "../lib/motion";
+
+const { color, typography, radius } = designTokens;
 
 /**
  * نمودار حضور (M45-c1) — داده از `/admin/attendance`، نه از mock.
@@ -16,6 +20,7 @@ import type { AttendancePoint } from "../lib/api";
  * خط طلایی نمایش داده نمی‌شود تا عدد ساختگی وارد نمودار نشود.
  */
 export function AttendanceChart({ series }: { series: AttendancePoint[] }) {
+  const motionPreset = useMotionPreset();
   const data = series.map((p) => ({
     day: p.date.slice(5).replace("-", "/"),
     checkins: p.count,
@@ -27,39 +32,42 @@ export function AttendanceChart({ series }: { series: AttendancePoint[] }) {
         <AreaChart data={data} margin={{ top: 8, right: 8, left: -18, bottom: 0 }}>
           <defs>
             <linearGradient id="greenFill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#00B86A" stopOpacity={0.42} />
-              <stop offset="100%" stopColor="#00B86A" stopOpacity={0} />
+              <stop offset="0%" stopColor={color.primary} stopOpacity={0.42} />
+              <stop offset="100%" stopColor={color.primary} stopOpacity={0} />
             </linearGradient>
           </defs>
-          <CartesianGrid stroke="rgba(0,184,106,0.08)" vertical={false} />
+          <CartesianGrid stroke={colorWithAlpha(color.primary, 0.08)} vertical={false} />
           <XAxis
             dataKey="day"
-            tick={{ fill: "#9CA3AF", fontSize: 11 }}
+            tick={{ fill: color.textSecondary, fontSize: typography.caption }}
             axisLine={false}
             tickLine={false}
             reversed
           />
           <YAxis
-            tick={{ fill: "#9CA3AF", fontSize: 11 }}
+            tick={{ fill: color.textSecondary, fontSize: typography.caption }}
             axisLine={false}
             tickLine={false}
             orientation="right"
             allowDecimals={false}
           />
           <Tooltip
+            isAnimationActive={!motionPreset.reduced}
             contentStyle={{
-              background: "#111827",
-              border: "1px solid rgba(0,184,106,0.25)",
-              borderRadius: 12,
+              background: color.surface,
+              border: `1px solid ${color.border}`,
+              borderRadius: radius.md,
+              color: color.textPrimary,
               direction: "rtl",
-              fontFamily: "Vazirmatn",
+              fontFamily: typography.fontFamily,
             }}
           />
           <Area
+            isAnimationActive={!motionPreset.reduced}
             type="monotone"
             dataKey="checkins"
             name="چک‌این تأییدشده"
-            stroke="#00B86A"
+            stroke={color.primary}
             strokeWidth={2.2}
             fill="url(#greenFill)"
           />

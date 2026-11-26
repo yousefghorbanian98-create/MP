@@ -22,7 +22,7 @@
  * نه `duration` دستی در صفحه، نه `initial/animate` پراکنده.
  */
 
-import { useReducedMotion } from "framer-motion";
+import { useSyncExternalStore } from "react";
 
 /** زمان‌بندی‌ها — بیرون از کامپوننت‌ها، تا هر صفحه ریتم خودش را نسازد. */
 export const DURATION = {
@@ -119,8 +119,110 @@ export function buildPreset(reduced: boolean): MotionPreset {
   };
 }
 
-/** هوک مصرفی در کامپوننت‌ها — فقط تنظیم سیستم را می‌خواند و به منطق خالص می‌دهد. */
+const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
+type MatchMediaSource = (query: string) => MediaQueryList;
+
+interface ReducedMotionMedia {
+  source: MatchMediaSource;
+  queryList: MediaQueryList;
+}
+
+/** اگر ثبت/پاک‌سازی listener در یک پیاده‌سازی شکست بخورد، fail-closed می‌مانیم. */
+const failedSubscriptions = new WeakSet<MatchMediaSource>();
+const NOOP_UNSUBSCRIBE = (): void => undefined;
+
+function supportsChangeEvents(queryList: MediaQueryList): boolean {
+  try {
+    return (
+      (typeof queryList.addEventListener === "function" &&
+        typeof queryList.removeEventListener === "function") ||
+      (typeof queryList.addListener === "function" &&
+        typeof queryList.removeListener === "function")
+    );
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * نبودن window/matchMedia، خطای API یا نبودن API قابل پاک‌سازی، preference را
+ * نامعلوم می‌کند؛ نامعلوم را محافظه‌کارانه reduced فرض می‌کنیم.
+ */
+function readReducedMotionMedia(): ReducedMotionMedia | null {
+  try {
+    if (typeof window === "undefined") return null;
+    const source = window.matchMedia;
+    if (typeof source !== "function" || failedSubscriptions.has(source)) return null;
+
+    const queryList = source.call(window, REDUCED_MOTION_QUERY);
+    if (!queryList || !supportsChangeEvents(queryList)) return null;
+    return { source, queryList };
+  } catch {
+    return null;
+  }
+}
+
+function getReducedMotionSnapshot(): boolean {
+  const media = readReducedMotionMedia();
+  if (!media) return true;
+  try {
+    return media.queryList.matches;
+  } catch {
+    return true;
+  }
+}
+
+/** SSR/عدم دسترسی مرورگر تا hydration، نیز باید حالت محافظه‌کار داشته باشد. */
+function getServerReducedMotionSnapshot(): boolean {
+  return true;
+}
+
+function subscribeToReducedMotion(onStoreChange: () => void): () => void {
+  const media = readReducedMotionMedia();
+  if (!media) return NOOP_UNSUBSCRIBE;
+
+  const { queryList, source } = media;
+  const onChange = (): void => onStoreChange();
+
+  try {
+    if (
+      typeof queryList.addEventListener === "function" &&
+      typeof queryList.removeEventListener === "function"
+    ) {
+      queryList.addEventListener("change", onChange);
+      return () => {
+        try {
+          queryList.removeEventListener("change", onChange);
+        } catch {
+          failedSubscriptions.add(source);
+        }
+      };
+    }
+
+    queryList.addListener(onChange);
+    return () => {
+      try {
+        queryList.removeListener(onChange);
+      } catch {
+        failedSubscriptions.add(source);
+      }
+    };
+  } catch {
+    failedSubscriptions.add(source);
+    onStoreChange();
+    return NOOP_UNSUBSCRIBE;
+  }
+}
+
+/**
+ * هوک مصرفی: تغییر زندهٔ media query را subscribe می‌کند؛ محیط نامعلوم،
+ * بدون پشتیبانی، یا دارای API ناسالم به حالت reduced برمی‌گردد.
+ */
 export function useMotionPreset(): MotionPreset {
-  const reduced = useReducedMotion() ?? false;
+  const reduced = useSyncExternalStore(
+    subscribeToReducedMotion,
+    getReducedMotionSnapshot,
+    getServerReducedMotionSnapshot,
+  );
   return buildPreset(reduced);
 }

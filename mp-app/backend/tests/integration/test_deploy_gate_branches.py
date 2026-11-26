@@ -161,9 +161,49 @@ def test_missing_backend_port_is_reported_and_stops_port_check(dg, tmp_path, mon
 
 
 def test_unknown_env_name_in_compose_is_a_problem(dg, tmp_path, monkeypatch) -> None:
-    deploy = DEPLOY_COMPOSE_OK + "      MP_BOGUS_KEY: x\n"
+    deploy = DEPLOY_COMPOSE_OK.replace(
+        "      MP_SECRET_KEY: ${MP_SECRET_KEY:?required}",
+        "      MP_SECRET_KEY: ${MP_SECRET_KEY:?required}\n      MP_BOGUS_KEY: x",
+    )
     report = _run(dg, _write_tree(tmp_path, deploy=deploy), monkeypatch)
     assert any("MP_BOGUS_KEY has no matching Settings field" in p for p in report.problems)
+
+
+def test_unknown_interpolation_in_application_environment_is_a_problem(
+    dg, tmp_path, monkeypatch
+) -> None:
+    deploy = DEPLOY_COMPOSE_OK.replace("${MP_SECRET_KEY:?required}", "${MP_SECRET_KEE:?required}")
+    report = _run(dg, _write_tree(tmp_path, deploy=deploy), monkeypatch)
+    assert any("MP_SECRET_KEE has no matching Settings field" in p for p in report.problems)
+
+
+def test_compose_topology_interpolation_is_not_an_application_setting(
+    dg, tmp_path, monkeypatch
+) -> None:
+    infra = INFRA_COMPOSE_OK.replace(
+        "    healthcheck:",
+        """    networks:
+      default:
+        ipv4_address: ${MP_BACKEND_IP:-172.30.0.2}
+    healthcheck:""",
+    )
+    infra += """\
+  studio:
+    networks:
+      default:
+        ipv4_address: ${MP_STUDIO_IP:-172.30.0.3}
+  caddy:
+    networks:
+      default:
+        ipv4_address: ${MP_CADDY_IP:-172.30.0.4}
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: ${MP_COMPOSE_SUBNET:-172.30.0.0/24}
+"""
+    report = _run(dg, _write_tree(tmp_path, infra=infra), monkeypatch)
+    assert report.problems == []
 
 
 def test_missing_env_prefix_is_a_problem(dg, tmp_path, monkeypatch) -> None:

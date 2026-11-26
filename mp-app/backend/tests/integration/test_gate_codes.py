@@ -77,8 +77,8 @@ def _sandbox(gate, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, docs: dict[s
 def test_green_summary_counts_current_markdown_files_and_mermaid_blocks():
     result = _run("scripts/docs_gate.py")
     assert result.returncode == 0, result.stderr
-    assert "Documentation gate passed: 22 Markdown files" in result.stdout
-    assert "12 Mermaid diagram block(s)" in result.stdout
+    assert "Documentation gate passed: 38 Markdown files" in result.stdout
+    assert "15 Mermaid diagram block(s)" in result.stdout
 
 
 def test_green_json_is_empty_array():
@@ -89,6 +89,30 @@ def test_green_json_is_empty_array():
 
 def test_gate_codes_doc_is_in_docs_gate_scope(docs_gate):
     assert Path("docs/MuscleParadise/audit/GATE-CODES.md") in docs_gate.CORE_MARKDOWN_FILES
+
+
+def test_project_guide_and_maintained_chapters_are_in_docs_gate_scope(docs_gate):
+    expected = {
+        Path("docs/MuscleParadise/PROJECT_GUIDE.fa.md"),
+        Path("docs/MuscleParadise/project-guide/README.md"),
+        *(
+            Path("docs/MuscleParadise/project-guide") / name
+            for name in (
+                "01-project-map.md",
+                "02-backend-and-data.md",
+                "03-clients-and-workflows.md",
+                "04-development-testing-operations.md",
+                "05-security-status-glossary.md",
+            )
+        ),
+    }
+    assert expected <= set(docs_gate.CORE_MARKDOWN_FILES)
+
+
+def test_consolidated_project_guide_is_current():
+    result = _run("scripts/assemble_project_guide.py", "--check")
+    assert result.returncode == 0, result.stderr
+    assert "Project guide is current" in result.stdout
 
 
 def test_broken_link_is_doc006_in_json_with_path_line_and_suggestion(

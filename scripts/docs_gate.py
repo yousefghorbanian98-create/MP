@@ -65,6 +65,24 @@ CORE_MARKDOWN_FILES = (
     Path("docs/MuscleParadise/architecture/studio-motion-current-tree-static-crosswalk-2026-11-23.fa.md"),
     # فهرست قابل‌اجرا در sandbox و بستهٔ انتقال به Codespace؛ همین handoff نیز زیر گیت لینک است.
     Path("docs/MuscleParadise/architecture/motion-pwa-availability-matrix-2026-11-23.fa.md"),
+    # راهنمای جامع یک‌فایلی و فصل‌های منبعش؛ لینک‌ها و Mermaidها باید در CI اعتبارسنجی شوند.
+    Path("docs/MuscleParadise/PROJECT_GUIDE.fa.md"),
+    Path("docs/MuscleParadise/project-guide/README.md"),
+    Path("docs/MuscleParadise/project-guide/01-project-map.md"),
+    Path("docs/MuscleParadise/project-guide/02-backend-and-data.md"),
+    Path("docs/MuscleParadise/project-guide/03-clients-and-workflows.md"),
+    Path("docs/MuscleParadise/project-guide/04-development-testing-operations.md"),
+    Path("docs/MuscleParadise/project-guide/05-security-status-glossary.md"),
+    # منبع‌های کاری که راهنمای جامع به آن‌ها ارجاع می‌دهد؛ همین‌جا لینک‌های تو‌در‌تو نیز validate می‌شوند.
+    Path("docs/MuscleParadise/adr/007-pwa-primary-release.md"),
+    Path("docs/MuscleParadise/architecture/analysis-2026-11-23.md"),
+    Path("docs/MuscleParadise/architecture/session-decisions-2026-11-23/API-ROUTE-CATALOG.md"),
+    Path("docs/MuscleParadise/architecture/session-decisions-2026-11-23/APPROVAL-CHECKLIST.md"),
+    Path("docs/MuscleParadise/architecture/session-decisions-2026-11-23/DECISION-LOG.md"),
+    Path("docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-CONTRACT.fa.md"),
+    Path("docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-EVIDENCE.fa.md"),
+    Path("docs/MuscleParadise/architecture/session-decisions-2026-11-23/README.md"),
+    Path("docs/MuscleParadise/architecture/session-decisions-2026-11-23/WIRING-LEDGER.md"),
 )
 MARKDOWN_FILES = (*CORE_MARKDOWN_FILES, *_module_docs())
 SVG_FILES = (

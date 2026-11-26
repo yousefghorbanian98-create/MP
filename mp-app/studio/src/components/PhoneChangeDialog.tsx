@@ -176,7 +176,7 @@ export function PhoneChangeDialog({
               انصراف
             </button>
             <button
-              className="focus-ring rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+              className="focus-ring rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-bg disabled:opacity-50"
               disabled={busy}
               type="submit"
             >

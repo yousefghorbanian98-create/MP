@@ -180,6 +180,7 @@ CONSTRAINT_SWAPS: dict[str, dict[str, str]] = {
 class ExerciseSlot:
     exercise_id: int
     name: str
+    pattern: str
     day: int
     order: int
     sets: int
@@ -261,6 +262,7 @@ def generate_program(
                     ExerciseSlot(
                         exercise_id=move["exercise_id"],
                         name=move["name"],
+                        pattern=move["pattern"],
                         day=d + 1,
                         order=order,
                         sets=rule["sets"],

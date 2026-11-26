@@ -171,7 +171,7 @@ export function Shop() {
               >
                 {tab === t.id && (
                   <motion.span
-                    layoutId="shop-tab"
+                    layoutId={motionPreset.reduced ? undefined : "shop-tab"}
                     className="absolute inset-0 rounded-xl bg-primary/20 ring-1 ring-primary/40"
                     transition={
                       motionPreset.reduced
@@ -242,7 +242,7 @@ export function Shop() {
               {visible.map((p) => (
                 <motion.article
                   key={p.id}
-                  layout
+                  layout={!motionPreset.reduced}
                   {...motionPreset.rise}
                   className="glass-card group overflow-hidden"
                 >
@@ -251,7 +251,7 @@ export function Shop() {
                       src={p.image_url}
                       alt={p.title}
                       loading="lazy"
-                      className="h-40 w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+                      className="h-40 w-full object-cover transition-transform duration-300 group-hover:scale-[1.03] motion-reduce:group-hover:transform-none"
                     />
                   ) : (
                     <div className="flex h-40 items-center justify-center bg-surface/60 text-ink-dim">
@@ -284,7 +284,7 @@ export function Shop() {
                         })
                       }
                       disabled={p.stock_qty === 0}
-                      className="focus-ring w-full rounded-xl bg-primary px-3 py-2 text-sm font-medium text-white transition-transform active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-40"
+                      className="focus-ring w-full rounded-xl bg-primary px-3 py-2 text-sm font-medium text-bg transition-transform active:scale-[0.99] motion-reduce:active:transform-none disabled:cursor-not-allowed disabled:opacity-40"
                     >
                       {p.stock_qty === 0 ? "ناموجود" : "افزودن به سبد"}
                     </button>
@@ -341,7 +341,7 @@ export function Shop() {
             <button
               type="button"
               onClick={() => window.print()}
-              className="focus-ring mt-4 w-full rounded-xl bg-primary px-4 py-2 text-sm text-white"
+              className="focus-ring mt-4 w-full rounded-xl bg-primary px-4 py-2 text-sm text-bg"
             >
               چاپ
             </button>
@@ -412,7 +412,7 @@ export function Shop() {
                   <button
                     type="button"
                     onClick={() => setConfirmCheckout(true)}
-                    className="focus-ring rounded-xl bg-primary px-4 py-2 text-sm font-medium text-white"
+                    className="focus-ring rounded-xl bg-primary px-4 py-2 text-sm font-medium text-bg"
                   >
                     تسویه از کیف‌پول
                   </button>
@@ -650,7 +650,7 @@ function OwnerConsole({
           value={categoryId}
           onChange={(value) => setCategoryId(Number(value))}
         />
-        <button type="submit" className="focus-ring w-full rounded-xl bg-primary px-3 py-2 text-sm font-medium text-white">
+        <button type="submit" className="focus-ring w-full rounded-xl bg-primary px-3 py-2 text-sm font-medium text-bg">
           ساخت محصول
         </button>
         <p className="text-[11px] text-ink-dim">
@@ -695,7 +695,7 @@ function OwnerConsole({
           <InputNumber stringMode value={priceValue} onChange={(v) => setPriceValue(asText(v))} placeholder="مبلغ (ریال)" aria-label="مبلغ (ریال)" className="focus-ring rounded-xl bg-surface/70 px-3 py-2 text-sm" />
         </div>
         <Input required value={priceTitle} onChange={(e) => setPriceTitle(e.target.value)} placeholder="عنوان قیمت" aria-label="عنوان قیمت" className="focus-ring w-full rounded-xl bg-surface/70 px-3 py-2 text-sm" />
-        <button type="submit" className="focus-ring w-full rounded-xl bg-primary px-3 py-2 text-sm font-medium text-white">
+        <button type="submit" className="focus-ring w-full rounded-xl bg-primary px-3 py-2 text-sm font-medium text-bg">
           ثبت / به‌روزرسانی قیمت
         </button>
         <ul className="space-y-1 text-xs text-ink-dim">
@@ -740,7 +740,7 @@ function OwnerConsole({
           <InputNumber stringMode value={cardNumber} onChange={(v) => setCardNumber(asText(v))} placeholder="شمارهٔ کارت (۱۶ رقم)" aria-label="شمارهٔ کارت (۱۶ رقم)" className="focus-ring rounded-xl bg-surface/70 px-3 py-2 text-sm" />
           <Input value={cardHolder} onChange={(e) => setCardHolder(e.target.value)} placeholder="نام صاحب کارت" aria-label="نام صاحب کارت" className="focus-ring rounded-xl bg-surface/70 px-3 py-2 text-sm" />
         </div>
-        <button type="submit" className="focus-ring rounded-xl bg-primary px-4 py-2 text-sm font-medium text-white">
+        <button type="submit" className="focus-ring rounded-xl bg-primary px-4 py-2 text-sm font-medium text-bg">
           ثبت درگاه
         </button>
         <ul className="space-y-1 text-xs text-ink-dim">

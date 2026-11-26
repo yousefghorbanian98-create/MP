@@ -3,12 +3,15 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime
+from typing import TYPE_CHECKING
 
 from sqlalchemy import func, select
-from sqlalchemy.orm import Session
 
 from app.errors import ApiError, NotFoundError
 from db.models import ClassBooking, GymClass, Member, User
+
+if TYPE_CHECKING:
+    from sqlalchemy.orm import Session
 
 
 def member_display_name(db: Session, member_id: int) -> str | None:
@@ -35,11 +38,38 @@ def create_class(
     return c
 
 
+def _lock_class(db: Session, class_id: int) -> GymClass | None:
+    """Serialize seat-count decisions for a class across concurrent requests.
+
+    Row-locking databases use ``SELECT FOR UPDATE``. SQLite is the production
+    Compose database and ignores that clause, so acquire its writer reservation
+    before reading booking counts. The app's Python 3.11/pysqlite legacy mode
+    leaves authentication SELECTs outside a physical transaction; if a caller
+    has already opened one, a no-op write still acquires SQLite's writer lock.
+    """
+    connection = db.connection()
+    if connection.dialect.name == "sqlite":
+        raw_connection = connection.connection.driver_connection
+        if not raw_connection.in_transaction:
+            connection.exec_driver_sql("BEGIN IMMEDIATE")
+        else:
+            # A caller may have read before this service. Force the SQLite write
+            # reservation before the capacity query; this does not alter class data.
+            connection.exec_driver_sql(
+                "UPDATE gym_classes SET capacity = capacity WHERE id = ?", (class_id,)
+            )
+
+    statement = select(GymClass).where(GymClass.id == class_id).with_for_update()
+    return db.execute(statement).scalar_one_or_none()
+
+
 def book(db: Session, *, class_id: int, member_id: int, user=None) -> ClassBooking:
     from app.security.ownership import ensure_member_scope
 
     ensure_member_scope(db, user, member_id)
-    cls = db.get(GymClass, class_id)
+    # Lock before checking the count: count-then-insert without a per-class
+    # serialization point lets parallel bookings claim the same final seat.
+    cls = _lock_class(db, class_id)
     if cls is None:
         raise NotFoundError("کلاس یافت نشد")
     if db.get(Member, member_id) is None:
@@ -82,6 +112,10 @@ def cancel(db: Session, *, class_id: int, member_id: int, user=None) -> ClassBoo
     from app.security.ownership import ensure_member_scope
 
     ensure_member_scope(db, user, member_id)
+    # Cancellation and wait-list promotion participate in the same serialization
+    # protocol as booking, so one freed seat cannot be claimed/promoted twice.
+    if _lock_class(db, class_id) is None:
+        raise NotFoundError("رزروی یافت نشد")
     b = (
         db.execute(
             select(ClassBooking).where(

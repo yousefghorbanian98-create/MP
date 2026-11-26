@@ -26,8 +26,8 @@ services:
       MP_PAYMENT_GATEWAY: ${MP_PAYMENT_GATEWAY:?set manual}
       MP_PAYMENT_SANDBOX: ${MP_PAYMENT_SANDBOX:-false}
       MP_METRICS_TOKEN: ${MP_METRICS_TOKEN:?MP_METRICS_TOKEN must be set}
-      # Only the immediate reverse-proxy IP/CIDR is trusted for forwarded headers.
-      MP_TRUSTED_PROXIES: ${MP_TRUSTED_PROXIES:?set the reverse-proxy IP or CIDR}
+      # Trust only the Studio Nginx peer, whose address is pinned below.
+      MP_TRUSTED_PROXIES: ${MP_TRUSTED_PROXIES:?set to the Studio IP (default 172.30.0.3)}
       PROMETHEUS_MULTIPROC_DIR: /tmp/prometheus-multiproc
     volumes:
       - mp-data:/data
@@ -35,6 +35,9 @@ services:
       - /tmp/prometheus-multiproc
     expose:
       - "8000"
+    networks:
+      default:
+        ipv4_address: ${MP_BACKEND_IP:-172.30.0.2}
     depends_on:
       valkey:
         condition: service_healthy
@@ -50,6 +53,13 @@ services:
       dockerfile: mp-app/studio/Dockerfile
     image: ghcr.io/${IMAGE_OWNER:?set IMAGE_OWNER}/mp-studio:${IMAGE_TAG:?set IMAGE_TAG}
     restart: unless-stopped
+    environment:
+      # The external TLS proxy must be the only ingress to loopback:8080.
+      STUDIO_TRUSTED_PROXY: ${STUDIO_TRUSTED_PROXY:?set the upstream proxy IP/CIDR as seen by Studio}
+      NGINX_ENVSUBST_FILTER: "^STUDIO_TRUSTED_PROXY$"
+    networks:
+      default:
+        ipv4_address: ${MP_STUDIO_IP:-172.30.0.3}
     ports:
       - "127.0.0.1:${STUDIO_PORT:-8080}:80"
     depends_on:
@@ -128,3 +138,9 @@ volumes:
   mp-backups:
   valkey-data:
   prometheus-data:
+
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: ${MP_COMPOSE_SUBNET:-172.30.0.0/24}

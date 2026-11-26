@@ -139,10 +139,21 @@ def studio_endpoints(text: str, functions: dict[str, dict[str, str]]) -> list[di
 
 
 def studio_tests(page: str) -> list[str]:
+    """Return tests that import the page, not files that merely mention its path.
+
+    Shared source-contract tests (for example Motion helper wiring) contain a
+    path string for many pages but do not exercise those pages. Counting those
+    strings as page tests can silently shrink the untested-surface gate.
+    """
+    page_path = rf"""[^"'\n]*/pages/{re.escape(page)}(?:\.[cm]?[jt]sx?)?"""
+    static_import = re.compile(
+        rf"""(?m)^\s*import\s+(?:[^;\n]*?\s+from\s+)?['"]{page_path}['"]"""
+    )
+    dynamic_import = re.compile(rf"""\bimport\s*\(\s*['"]{page_path}['"]""")
     hits = []
     for path in sorted(TESTS_DIR.glob("*.test.*")):
         text = path.read_text(encoding="utf-8")
-        if re.search(rf"pages/{re.escape(page)}\b", text):
+        if static_import.search(text) or dynamic_import.search(text):
             hits.append(str(path.relative_to(ROOT)))
     return hits
 

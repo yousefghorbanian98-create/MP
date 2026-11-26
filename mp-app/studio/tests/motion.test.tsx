@@ -1,20 +1,102 @@
 /**
- * M60/G4 — تست reduced-motion.
+ * M60/G4 — تست قرارداد helper و مسیرهای reduced-motion.
  *
- * چرا: اندازه‌گیری نشان داد ۸ صفحه انیمیشن داشتند و هیچ‌کدام تنظیم سیستمی
- * «کاهش حرکت» را نمی‌خواندند. برای کاربر با حساسیت دهلیزی این سرگیجه است، نه
- * سلیقه. این تست سه چیز را قفل می‌کند:
+ * این تست‌ها تصمیم‌های source و یک fixture JSDOM را می‌سنجند؛ computed style،
+ * paint واقعی، مرورگر/OS یا پذیرش دسترس‌پذیری را ثابت نمی‌کنند.
  *
- *  ۱) در حالت reduced، هیچ جابه‌جایی/مقیاسی وجود ندارد (فقط فید)
- *  ۲) در حالت عادی، حرکت هست (وگرنه «تست سبز بی‌معنا» می‌شد)
- *  ۳) هیچ صفحه‌ای بدون رعایت reduced-motion باقی نمانده (گیت روی سورس)
+ *  ۱) حالت reduced جابه‌جایی/scale و stagger را حذف و fade کوتاه را حفظ می‌کند.
+ *  ۲) حالت normal دارای حرکت کنترل‌شده است.
+ *  ۳) مصرف‌کنندگان motion از helper مشترک استفاده می‌کنند و CSS media guard وجود دارد.
  */
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { renderHook } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { useState } from "react";
+import { renderToString } from "react-dom/server";
+import { act, fireEvent, render, renderHook, screen } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const { buildPreset, useMotionPreset, DURATION } = await import("../src/lib/motion");
+
+const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
+type ChangeListener = () => void;
+type ListenerMode = "modern" | "legacy";
+
+let originalMatchMedia: PropertyDescriptor | undefined;
+
+beforeEach(() => {
+  originalMatchMedia = Object.getOwnPropertyDescriptor(window, "matchMedia");
+});
+
+afterEach(() => {
+  if (originalMatchMedia) {
+    Object.defineProperty(window, "matchMedia", originalMatchMedia);
+  } else {
+    Reflect.deleteProperty(window, "matchMedia");
+  }
+});
+
+function setMatchMedia(value: unknown): void {
+  Object.defineProperty(window, "matchMedia", {
+    configurable: true,
+    writable: true,
+    value,
+  });
+}
+
+function installMatchMedia(matches: boolean, mode: ListenerMode = "modern") {
+  let currentMatches = matches;
+  const listeners = new Set<ChangeListener>();
+  const addEventListener =
+    mode === "modern"
+      ? vi.fn((_type: string, listener: ChangeListener) => listeners.add(listener))
+      : undefined;
+  const removeEventListener =
+    mode === "modern"
+      ? vi.fn((_type: string, listener: ChangeListener) => listeners.delete(listener))
+      : undefined;
+  const addListener =
+    mode === "legacy" ? vi.fn((listener: ChangeListener) => listeners.add(listener)) : undefined;
+  const removeListener =
+    mode === "legacy" ? vi.fn((listener: ChangeListener) => listeners.delete(listener)) : undefined;
+  const queryList = {
+    get matches() {
+      return currentMatches;
+    },
+    media: REDUCED_MOTION_QUERY,
+    onchange: null,
+    addEventListener,
+    removeEventListener,
+    addListener,
+    removeListener,
+  } as unknown as MediaQueryList;
+  const matchMedia = vi.fn((_query: string) => queryList);
+
+  setMatchMedia(matchMedia);
+  return {
+    queryList,
+    matchMedia,
+    listeners,
+    addEventListener,
+    removeEventListener,
+    addListener,
+    removeListener,
+    setMatches(next: boolean) {
+      currentMatches = next;
+      for (const listener of [...listeners]) listener();
+    },
+  };
+}
+
+function MotionAwareDraft() {
+  const preset = useMotionPreset();
+  const [draft, setDraft] = useState("");
+  return (
+    <>
+      <input aria-label="draft" value={draft} onChange={(event) => setDraft(event.target.value)} />
+      <output>{preset.reduced ? "reduced" : "normal"}</output>
+    </>
+  );
+}
 
 describe("buildPreset — منطق خالص حرکت", () => {
   it("با prefers-reduced-motion، هیچ y/x/scale ای باقی نمی‌ماند", () => {
@@ -61,52 +143,166 @@ describe("buildPreset — منطق خالص حرکت", () => {
     expect(DURATION.page).toBeLessThanOrEqual(0.4);
   });
 
-  it("هوک در jsdom با تنظیم سیستمی کار می‌کند (نه فقط منطق خالص)", () => {
-    // framer-motion مقدار matchMedia را در بارگذاری ماژول می‌خواند؛ این تست
-    // فقط ثابت می‌کند هوک Boolean برمی‌گرداند و کرش نمی‌کند.
-    const { result } = renderHook(() => useMotionPreset());
-    expect(typeof result.current.reduced).toBe("boolean");
-    expect(result.current.fade.animate.opacity).toBe(1);
+  it("وقتی preference نامعلوم یا API پشتیبانی‌نشده است، fail-closed می‌شود", () => {
+    const unavailableSources: unknown[] = [
+      undefined,
+      vi.fn(() => {
+        throw new Error("matchMedia unavailable");
+      }),
+      vi.fn(() => ({ matches: false, media: REDUCED_MOTION_QUERY })),
+    ];
+
+    for (const source of unavailableSources) {
+      setMatchMedia(source);
+      const { result, unmount } = renderHook(() => useMotionPreset());
+      expect(result.current.reduced).toBe(true);
+      expect(result.current.rise.initial).not.toHaveProperty("y");
+      unmount();
+    }
+  });
+
+  it("در SSR تا زمان hydration حالت محافظه‌کار را رندر می‌کند", () => {
+    const media = installMatchMedia(false);
+    const html = renderToString(<MotionAwareDraft />);
+
+    expect(html).toContain("<output>reduced</output>");
+    expect(media.matchMedia).not.toHaveBeenCalled();
+  });
+
+  it("تغییر زندهٔ preference، draft و focus را حفظ می‌کند و listener را پاک می‌کند", () => {
+    const media = installMatchMedia(false);
+    const { unmount } = render(<MotionAwareDraft />);
+    const input = screen.getByRole("textbox", { name: "draft" }) as HTMLInputElement;
+
+    fireEvent.change(input, { target: { value: "unfinished draft" } });
+    input.focus();
+    expect(screen.getByText("normal")).toBeTruthy();
+
+    act(() => media.setMatches(true));
+    expect(screen.getByText("reduced")).toBeTruthy();
+    expect(input.value).toBe("unfinished draft");
+    expect(document.activeElement).toBe(input);
+
+    act(() => media.setMatches(false));
+    expect(screen.getByText("normal")).toBeTruthy();
+    expect(input.value).toBe("unfinished draft");
+    expect(document.activeElement).toBe(input);
+    expect(media.matchMedia).toHaveBeenCalledWith(REDUCED_MOTION_QUERY);
+
+    unmount();
+    expect(media.listeners.size).toBe(0);
+    expect(media.removeEventListener).toHaveBeenCalledWith("change", expect.any(Function));
+  });
+
+  it("برای API قدیمی addListener نیز live update و cleanup دارد", () => {
+    const media = installMatchMedia(false, "legacy");
+    const { result, unmount } = renderHook(() => useMotionPreset());
+    expect(result.current.reduced).toBe(false);
+
+    act(() => media.setMatches(true));
+    expect(result.current.reduced).toBe(true);
+    unmount();
+
+    expect(media.listeners.size).toBe(0);
+    expect(media.removeListener).toHaveBeenCalledTimes(1);
+  });
+
+  it("خطای ثبت listener را نیز به حالت reduced تبدیل می‌کند", () => {
+    const addEventListener = vi.fn(() => {
+      throw new Error("listener registration failed");
+    });
+    const removeEventListener = vi.fn();
+    const queryList = {
+      matches: false,
+      media: REDUCED_MOTION_QUERY,
+      onchange: null,
+      addEventListener,
+      removeEventListener,
+    } as unknown as MediaQueryList;
+    setMatchMedia(vi.fn(() => queryList));
+
+    const { result, unmount } = renderHook(() => useMotionPreset());
+    expect(result.current.reduced).toBe(true);
+    expect(addEventListener).toHaveBeenCalledTimes(1);
+    unmount();
   });
 });
 
-describe("گیت سورس: هیچ صفحه‌ای بدون reduced-motion نمی‌ماند", () => {
-  // هر صفحهٔ انیمیشن‌دار باید از useMotionPreset استفاده کند.
-  const pages = [
-    "Analytics",
-    "CheckIn",
-    "Dashboard",
-    "Finance",
-    "Members",
-    "Programs",
-    "Settings",
-    "Shop",
+describe("گیت منبع: مصرف‌کنندگان حرکت از helper مشترک تبعیت می‌کنند", () => {
+  const consumers = [
+    ["App.tsx", "App.tsx"],
+    ["Analytics.tsx", "pages/Analytics.tsx"],
+    ["CheckIn.tsx", "pages/CheckIn.tsx"],
+    ["Dashboard.tsx", "pages/Dashboard.tsx"],
+    ["Finance.tsx", "pages/Finance.tsx"],
+    ["Members.tsx", "pages/Members.tsx"],
+    ["Programs.tsx", "pages/Programs.tsx"],
+    ["Settings.tsx", "pages/Settings.tsx"],
+    ["Shop.tsx", "pages/Shop.tsx"],
+    ["Feedback.tsx", "components/Feedback.tsx"],
+    ["KpiCard.tsx", "components/KpiCard.tsx"],
+    ["MemberTable.tsx", "components/MemberTable.tsx"],
+    ["ScheduleTimeline.tsx", "components/ScheduleTimeline.tsx"],
+    ["Sidebar.tsx", "components/Sidebar.tsx"],
+    ["TopBar.tsx", "components/TopBar.tsx"],
+    ["UpdateBanner.tsx", "components/UpdateBanner.tsx"],
+    ["AttendanceChart.tsx", "components/AttendanceChart.tsx"],
+    ["PeriodReportPanel.tsx", "components/PeriodReportPanel.tsx"],
+    ["VisualConcepts.tsx", "visual-concepts/VisualConcepts.tsx"],
   ];
 
-  for (const page of pages) {
-    it(`${page}.tsx از useMotionPreset استفاده می‌کند`, () => {
-      const src = readFileSync(join(__dirname, "..", "src", "pages", `${page}.tsx`), "utf8");
-      const hasMotion = /motion\./.test(src);
-      if (!hasMotion) return; // صفحه‌ای که انیمیشن ندارد، تعهدی هم ندارد
+  for (const [name, relativePath] of consumers) {
+    it(`${name} wires Framer Motion through useMotionPreset`, () => {
+      const src = readFileSync(join(__dirname, "..", "src", relativePath), "utf8");
       expect(src).toContain("useMotionPreset");
-      /*
-        duration دستی در صفحه ممنوع — ریتم باید از توکن بیاید.
-        دو استثنای مستند:
-          duration: 0   → خاموش‌کردن کامل انیمیشن (مثلاً اسپرینگ تب)
-          duration: 2.8 → خط اسکن چهره، که چون شرطی داخل بلوک
-                          `motionPreset.reduced ? … : …` است، در حالت reduced
-                          اصلاً رندر نمی‌شود. تست زیر همان شرط را هم بررسی می‌کند.
-      */
-      const manualDurations = src.match(/duration:\s*[0-9.]+/g) ?? [];
-      const allowed = manualDurations.filter((d) => /duration:\s*(0|2\.8)/.test(d));
-      expect(manualDurations.length, `duration دستی: ${manualDurations.join(", ")}`).toBe(
-        allowed.length,
-      );
-
-      // هر انیمیشن تکرارشونده باید مسیر reduced داشته باشد (بدترین حالت دهلیزی)
-      if (/repeat:\s*Infinity/.test(src)) {
-        expect(src, "انیمیشن بی‌پایان بدون مسیر reduced").toContain("motionPreset.reduced");
-      }
+      expect(src).not.toContain("useReducedMotion");
+      expect(src, "stagger delay باید از helper سقف‌دار بیاید").not.toMatch(/delay:\s*i\s*\*/);
     });
   }
+
+  it("VisualConcepts disables its shared-layout spring when reduced motion is active", () => {
+    const src = readFileSync(
+      join(__dirname, "..", "src", "visual-concepts", "VisualConcepts.tsx"),
+      "utf8",
+    );
+    const marker = src.match(/<motion\.span\b[\s\S]*?\/>/)?.[0] ?? "";
+
+    expect(marker).not.toBe("");
+    expect(marker).toMatch(
+      /layoutId=\{motionPreset\.reduced\s*\?\s*undefined\s*:\s*"active-direction"\}/,
+    );
+    expect(marker).toMatch(
+      /motionPreset\.reduced\s*\?\s*\{\s*duration:\s*0\s*\}\s*:\s*\{\s*type:\s*"spring"/,
+    );
+    expect(src).toMatch(/motionPreset\.reduced\s*\?\s*motionPreset\.fade\s*:\s*motionPreset\.rise/);
+    expect(src).toContain("motionPreset.hover.whileHover");
+  });
+
+  it("separate VisualConcepts lab has a delay/hover-safe reduced-motion stylesheet", () => {
+    const css = readFileSync(
+      join(__dirname, "..", "src", "visual-concepts", "visual-concepts.css"),
+      "utf8",
+    );
+    expect(css).toMatch(/@media\s*\(prefers-reduced-motion:\s*reduce\)/);
+    expect(css).toContain("animation-delay: 0ms !important;");
+    expect(css).toContain("transition-delay: 0ms !important;");
+    expect(css).toContain(".direction-choice:hover { transform: none !important; }");
+  });
+
+  it("Recharts disables chart and tooltip animation when reduced motion is active", () => {
+    for (const file of ["AttendanceChart.tsx", "PeriodReportPanel.tsx"]) {
+      const src = readFileSync(join(__dirname, "..", "src", "components", file), "utf8");
+      expect(src.match(/isAnimationActive=\{!motionPreset\.reduced\}/g)).toHaveLength(2);
+    }
+  });
+
+  it("stylesheet برای CSS animation/transition و scroll در reduced-motion guard دارد", () => {
+    const css = readFileSync(join(__dirname, "..", "src", "styles", "index.css"), "utf8");
+    expect(css).toMatch(/@media\s*\(prefers-reduced-motion:\s*reduce\)/);
+    expect(css).toContain("animation-duration: 0.01ms !important;");
+    expect(css).toContain("animation-iteration-count: 1 !important;");
+    expect(css).toContain("transition-duration: 0.01ms !important;");
+    expect(css).toContain("scroll-behavior: auto !important;");
+    expect(css).toContain(".btn-primary:active");
+  });
 });

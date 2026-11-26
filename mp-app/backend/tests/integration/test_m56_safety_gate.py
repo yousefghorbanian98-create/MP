@@ -47,6 +47,7 @@ def _program(member_id: int, movement: str):
     from db.base import get_session_factory
     from modules.programs.service import create_program_from_engine_output
 
+    exercise_id = {"squat": 1, "bench_press": 2, "row": 5}.get(movement, 1)
     with get_session_factory()() as s:
         return create_program_from_engine_output(
             s,
@@ -59,7 +60,7 @@ def _program(member_id: int, movement: str):
                         "week_number": 1,
                         "exercises": [
                             {
-                                "exercise_id": 1,
+                                "exercise_id": exercise_id,
                                 "day": 1,
                                 "order": 0,
                                 "sets": 3,
@@ -101,6 +102,40 @@ def test_safe_program_is_clear(db) -> None:
     flags = json.loads(program.safety_flags)
     assert flags["status"] == "clear"
     assert flags["safe_to_generate"] is True
+
+
+def test_unmapped_exercise_needs_review_instead_of_clear(db) -> None:
+    from db.base import get_session_factory
+    from modules.programs.service import create_program_from_engine_output
+
+    mid = _member('["knee_injury"]')
+    with get_session_factory()() as session:
+        program = create_program_from_engine_output(
+            session,
+            mid,
+            {
+                "goal": "hypertrophy",
+                "engine_version": "test",
+                "weeks": [
+                    {
+                        "week_number": 1,
+                        "exercises": [
+                            {
+                                "exercise_id": 999,
+                                "day": 1,
+                                "sets": 3,
+                                "reps": "8-12",
+                            }
+                        ],
+                    }
+                ],
+            },
+        )
+
+    flags = json.loads(program.safety_flags)
+    assert flags["status"] == "needs_review"
+    assert flags["safe_to_generate"] is False
+    assert flags["unmapped_exercises"] == ["999"]
 
 
 def test_safety_flags_always_persist_valid_json(db) -> None:

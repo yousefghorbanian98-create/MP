@@ -1,0 +1,108 @@
+digraph MPFrontendOverviewOption03 {
+  graph [rankdir=TB, newrank=true, bgcolor="#0B0F14", pad="0.32", nodesep="0.45", ranksep="0.56", splines=ortho, compound=true, dpi=170,
+    fontname="DejaVu Sans", fontsize=22, fontcolor="#F3F6F8",
+    label="نقشهٔ ارشد UI/UX و فرانت Muscle Paradise — جهت منتخب 03 · LAB\nجریان محصول از نقش و پوسته تا درخواست معتبر و وضعیت قابل‌فهم\nسبز/آبی = کد قابل‌ردیابی؛ کهربایی خط‌چین = هدف/تصمیم باز؛ قرمز = گپ مشاهده‌شده",
+    labelloc="t", labeljust="c"];
+  node [shape=box, style="rounded,filled", fontname="DejaVu Sans", fontsize=12, color="#426174", fillcolor="#13222B", fontcolor="#F3F6F8", penwidth=1.25, margin="0.16,0.10"];
+  edge [fontname="DejaVu Sans", fontsize=9, color="#7F98A5", fontcolor="#D6E2E8", penwidth=1.0, arrowsize=0.68];
+
+  subgraph cluster_roles {
+    label="۱ · نقش‌ها"; color="#5EA8D2"; fontcolor="#8CCCF0"; style="rounded"; penwidth=1.1;
+    { rank=same;
+      visitor [label="بازدیدکنندهٔ عمومی", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9"];
+      member [label="عضو / ورزشکار", color="#51D6A0", fillcolor="#132B22"];
+      staff [label="کادر: coach · reception\nmanager · admin · super_admin", color="#51D6A0", fillcolor="#132B22"];
+      kiosk_staff [label="اپراتور پذیرش", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9"];
+    }
+    visitor -> member -> staff -> kiosk_staff [style=invis, weight=80];
+  }
+
+  subgraph cluster_surfaces {
+    label="۲ · سطح محصول — مستقل از mockup بصری"; color="#5EA8D2"; fontcolor="#8CCCF0"; style="rounded"; penwidth=1.1;
+    { rank=same;
+      landing [label="Landing عمومی\nنمونهٔ بصری LAB؛ route/CTA\nنهایی هنوز تصویب نشده", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9", style="rounded,dashed,filled"];
+      flutter [label="MP Client · Flutter / Android\nپوستهٔ جاری عضو · ۵ تب", color="#51D6A0", fillcolor="#132B22"];
+      studio [label="MP Studio · React / Vite\nپوستهٔ جاری کادر", color="#51D6A0", fillcolor="#132B22"];
+      kiosk [label="صفحهٔ kiosk/scan\nدامنه و مالک دستگاه باز", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9", style="rounded,dashed,filled"];
+      pwa [label="PWA یکپارچه\nپیشنهاد قبلی؛ Android را\nجایگزین نکرده", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9", style="rounded,dashed,filled"];
+    }
+    landing -> flutter -> studio -> kiosk -> pwa [style=invis, weight=80];
+  }
+
+  subgraph cluster_entry {
+    label="۳ · نشست و ناوبری"; color="#5EA8D2"; fontcolor="#8CCCF0"; style="rounded"; penwidth=1.1;
+    { rank=same;
+      cta [label="CTA عمومی\nمقصد نیازمند تصمیم", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9", style="rounded,dashed,filled"];
+      member_auth [label="عضو: OTP → نشست\n→ AppShell / ۵ تب", color="#51D6A0", fillcolor="#132B22"];
+      staff_auth [label="Studio: OTP/restore\n→ parseRole + canSeePage\nگیت UX، نه مرز امنیت", color="#6AB7E8", fillcolor="#172739"];
+      kiosk_gate [label="QR scan فقط پس از تعیین\nrole / device / scope", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9", style="rounded,dashed,filled"];
+      pwa_gate [label="جایگزینی پلتفرم\nتصویب نشده", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9", style="rounded,dashed,filled"];
+    }
+    cta -> member_auth -> staff_auth -> kiosk_gate -> pwa_gate [style=invis, weight=80];
+  }
+
+  subgraph cluster_journeys {
+    label="۴ · جریان‌های شاخص UI"; color="#8E79D6"; fontcolor="#C2B7F0"; style="rounded"; penwidth=1.1;
+    { rank=same;
+      public_flow [label="Landing CTA\nفقط پس از تعیین مقصد\nبه ورود/محتوا می‌رود", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9", style="rounded,dashed,filled"];
+      member_flow [label="عضو: Intake → safety gate\n→ برنامهٔ مجاز → Today\nتیک امروز محلی؛ بازخورد آنلاین/صف آفلاین\nکلاس، QR، تغذیه و پروفایل", color="#51D6A0", fillcolor="#132B22"];
+      studio_flow [label="کادر: عضو/برنامه → بازبینی\n→ approve یا hold/reject\nمالی/هزینه با grant + audit\nDashboard و تنظیمات", color="#6AB7E8", fillcolor="#172739"];
+      reception_flow [label="QR کوتاه‌عمر → اسکنر\nچک‌این چهره fail-closed\n(تطبیق/liveness تأیید نشده)", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9"];
+    }
+    public_flow -> member_flow -> studio_flow -> reception_flow [style=invis, weight=80];
+  }
+
+  subgraph cluster_api {
+    label="۵ · مرز فرانت‌اند / API"; color="#8E79D6"; fontcolor="#C2B7F0"; style="rounded"; penwidth=1.1;
+    { rank=same;
+      control [label="UI control + state owner\nFlutter provider / Studio query-mutation", color="#6AB7E8", fillcolor="#172739"];
+      client [label="API clients\n`/api/v1` · Bearer/sessionFetch\nبدون source-of-truth محلی", color="#6AB7E8", fillcolor="#172739"];
+      server [label="FastAPI\nAuthentication → role/grant\n→ مالکیت و scope؛ default deny", color="#8E79D6", fillcolor="#211D38"];
+      service [label="Domain service\nsafety/state machine\ntransaction + audit", color="#8E79D6", fillcolor="#211D38"];
+      storage [label="DB / cache / فایل خصوصی\nDB مرجع داده؛ فایل با scope", color="#8E79D6", fillcolor="#211D38"];
+    }
+    control -> client -> server -> service -> storage [style=invis, weight=80];
+  }
+
+  subgraph cluster_states {
+    label="۶ · بازخورد واقعی به کاربر"; color="#E9B85C"; fontcolor="#FFE2A3"; style="rounded"; penwidth=1.1;
+    { rank=same;
+      success [label="2xx معتبر\nreload/invalidate → موفقیت", color="#51D6A0", fillcolor="#132B22"];
+      denied [label="401 / 403\nورود دوباره / پیام مجوز", color="#F08A93", fillcolor="#321C24", fontcolor="#FFE3E6"];
+      invalid [label="422 / 409\nخطای فیلد / تعارض تازه", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9"];
+      offline [label="شبکه قطع\nGET retry؛ فقط outbox مشخص\n«در صف» ≠ «ثبت در سرور»", color="#E9B85C", fillcolor="#2A2418", fontcolor="#FFE9B9"];
+      screen [label="loading · empty · error · offline\nمتن فارسی، focus، keyboard\nRTL + reduced motion", color="#6AB7E8", fillcolor="#172739"];
+    }
+    success -> denied -> invalid -> offline -> screen [style=invis, weight=80];
+  }
+
+  visitor -> landing [style=dashed, color="#E9B85C"];
+  member -> flutter;
+  staff -> studio;
+  kiosk_staff -> kiosk [style=dashed, color="#E9B85C"];
+  member -> pwa [style=dashed, color="#E9B85C", constraint=false];
+  landing -> cta [style=dashed, color="#E9B85C"];
+  flutter -> member_auth;
+  studio -> staff_auth;
+  kiosk -> kiosk_gate [style=dashed, color="#E9B85C"];
+  pwa -> pwa_gate [style=dashed, color="#E9B85C"];
+  cta -> public_flow [style=dashed, color="#E9B85C"];
+  member_auth -> member_flow;
+  staff_auth -> studio_flow;
+  kiosk_gate -> reception_flow [style=dashed, color="#E9B85C"];
+  member_flow -> control;
+  studio_flow -> control;
+  reception_flow -> server [style=dashed, color="#E9B85C"];
+  control -> client;
+  client -> server;
+  server -> service [label="auth + access OK"];
+  service -> storage;
+  storage -> success [label="commit + valid response", color="#51D6A0"];
+  server -> denied [label="401 / 403", color="#F08A93"];
+  service -> invalid [label="422 / 409", color="#E9B85C"];
+  client -> offline [label="network/timeout", color="#E9B85C"];
+  success -> screen;
+  denied -> screen;
+  invalid -> screen;
+  offline -> screen;
+}

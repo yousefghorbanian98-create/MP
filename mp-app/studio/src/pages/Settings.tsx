@@ -102,9 +102,8 @@ export function Settings() {
           return (
             <motion.div
               key={f.key}
-              initial={{ opacity: 0, x: 14 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.04 }}
+              {...motionPreset.slide}
+              transition={{ ...motionPreset.slide.transition, delay: motionPreset.stagger(i) }}
               className="flex items-center justify-between px-5 py-4"
             >
               <div>
@@ -124,8 +123,12 @@ export function Settings() {
                 aria-label={`${meta.label}: ${f.enabled ? "روشن" : "خاموش"}`}
               >
                 <motion.span
-                  layout
-                  transition={{ type: "spring", stiffness: 500, damping: 32 }}
+                  layout={!motionPreset.reduced}
+                  transition={
+                    motionPreset.reduced
+                      ? { duration: 0 }
+                      : { type: "spring", stiffness: 500, damping: 32 }
+                  }
                   className="absolute top-1 h-5 w-5 rounded-full bg-white shadow"
                   style={{ right: f.enabled ? 4 : 34 }}
                 />

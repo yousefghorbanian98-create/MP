@@ -34,6 +34,7 @@ dev = [
     "setuptools>=84.1",   # PYSEC-2026-3447 / GHSA-xmj3-9gf7-h52w
     "pytest>=8.0",
     "pytest-cov>=4.1",
+    "defusedxml>=0.7.1,<1",
     "pytest-asyncio>=0.23",
     "ruff==0.17.6",  # A1.3: اعداد گیت‌ها با 0.17.x اندازه‌گیری شده‌اند؛ bump فقط با تصمیم مالک
     "bandit>=1.7,<2",

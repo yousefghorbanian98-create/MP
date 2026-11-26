@@ -138,6 +138,11 @@ void main() {
       findsOneWidget,
       reason: 'کاربر باید به مسیر حضور پشتیبانی‌شده هدایت شود',
     );
+    expect(
+      find.textContaining('صفحهٔ پذیرش Studio در این نسخه رابط اسکن QR ندارد'),
+      findsOneWidget,
+      reason: 'نباید وانمود کنیم که اسکنر پذیرش در UI آماده است',
+    );
     expect(find.text('چک‌این'), findsNothing);
   });
 }

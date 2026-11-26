@@ -42,9 +42,7 @@
           ]
         }
       ],
-      "tests": [
-        "mp-app/studio/tests/wp15Money.test.ts"
-      ]
+      "tests": []
     },
     {
       "surface": "Assessment",
@@ -261,7 +259,9 @@
           ]
         }
       ],
-      "tests": []
+      "tests": [
+        "mp-app/studio/tests/checkInPage.test.tsx"
+      ]
     },
     {
       "surface": "Dashboard",
@@ -1168,8 +1168,7 @@
       },
       "endpoints": [],
       "tests": [
-        "mp-app/studio/tests/shopPage.test.tsx",
-        "mp-app/studio/tests/wp15Money.test.ts"
+        "mp-app/studio/tests/shopPage.test.tsx"
       ]
     },
     {

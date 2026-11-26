@@ -79,11 +79,11 @@ ALLOWED_HTTP = {
 # استثنا برای همان قانون insecure-http: تستِ سیاست شبکه **باید** یک آدرس
 # عمومی داشته باشد تا ثابت کند رد می‌شود. آدرس عمومی در تست، نقض سیاست نیست.
 ALLOWED_HTTP_LINES: dict[tuple[str, int], str] = {
-    ("test/api_client_test.dart", 91): "تست منفی سیاست شبکه — این آدرس باید رد شود",
+    ("test/api_client_test.dart", 113): "تست منفی سیاست شبکه — این آدرس باید رد شود",
 }
 
 ALLOWED_CASTS: dict[tuple[str, int], str] = {
-    ("test/api_client_test.dart", 23): (
+    ("test/api_client_test.dart", 26): (
         "تست، شکل پاسخ /members/me را تأیید می‌کند؛ mock همیشه Map برمی‌گرداند "
         "و همین ادعا موضوع تست است"
     ),

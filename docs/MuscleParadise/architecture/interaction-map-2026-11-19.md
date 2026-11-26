@@ -32,7 +32,7 @@ python3 scripts/interaction_map.py --check
 - client-feature:core
 - client-feature:intake
 - client-feature:progress
-- studio-page:CheckIn
+- studio-page:Analytics
 - studio-page:Members
 
 ## استودیو
@@ -46,7 +46,7 @@ python3 scripts/interaction_map.py --check
 | GET | `/api/v1/admin/analytics/churn-risk` | permission | manager, admin, super_admin | بله |
 | GET | `/api/v1/admin/analytics/leaderboards` | permission | manager, admin, super_admin | بله |
 
-تست: `mp-app/studio/tests/wp15Money.test.ts`
+تست: **ندارد**
 
 ### Assessment
 
@@ -83,7 +83,7 @@ python3 scripts/interaction_map.py --check
 |---|---|---|---|---|
 | GET | `/api/v1/admin/checkins` | permission | coach, reception, manager, admin, super_admin | بله |
 
-تست: **ندارد**
+تست: `mp-app/studio/tests/checkInPage.test.tsx`
 
 ### Dashboard
 
@@ -210,7 +210,7 @@ python3 scripts/interaction_map.py --check
 
 بدون فراخوانی API در این صفحه و کامپوننت‌هایش.
 
-تست: `mp-app/studio/tests/shopPage.test.tsx`، `mp-app/studio/tests/wp15Money.test.ts`
+تست: `mp-app/studio/tests/shopPage.test.tsx`
 
 ## کلاینت
 

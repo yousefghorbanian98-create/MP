@@ -51,6 +51,19 @@ def _xml(tmp_path: Path, classes: str) -> Path:
     return path
 
 
+def test_aggregate_rejects_xml_entity_expansion(tmp_path: Path) -> None:
+    from defusedxml.common import DefusedXmlException
+
+    path = tmp_path / "malicious-coverage.xml"
+    path.write_text(
+        '<!DOCTYPE coverage [<!ENTITY xxe SYSTEM "file:///etc/passwd">]><coverage>&xxe;</coverage>',
+        encoding="utf-8",
+    )
+
+    with pytest.raises(DefusedXmlException):
+        _load().aggregate(path)
+
+
 def _cls(filename: str, hits: list[int]) -> str:
     lines = "".join(f'<line number="{i + 1}" hits="{h}"/>' for i, h in enumerate(hits))
     return f'<class filename="{filename}"><lines>{lines}</lines></class>'

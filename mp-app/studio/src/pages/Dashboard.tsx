@@ -16,7 +16,7 @@ import { useAppStore } from "../stores/appStore";
  */
 export function Dashboard() {
   const motionPreset = useMotionPreset();
-  const { setPage } = useAppStore();
+  const { setPage, selectMember } = useAppStore();
   const kpis = useApi((s) => fetchKpis(undefined, s), []);
   const attendance = useApi((s) => fetchAttendance(7, undefined, s), []);
 
@@ -122,7 +122,12 @@ export function Dashboard() {
       </section>
 
       <section>
-        <MemberTable onSelect={() => setPage("members")} />
+        <MemberTable
+          onSelect={(id) => {
+            setPage("members");
+            selectMember(id);
+          }}
+        />
       </section>
     </motion.div>
   );
