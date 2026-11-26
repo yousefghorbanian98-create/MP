@@ -77,7 +77,7 @@ def _sandbox(gate, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, docs: dict[s
 def test_green_summary_counts_current_markdown_files_and_mermaid_blocks():
     result = _run("scripts/docs_gate.py")
     assert result.returncode == 0, result.stderr
-    assert "Documentation gate passed: 20 Markdown files" in result.stdout
+    assert "Documentation gate passed: 22 Markdown files" in result.stdout
     assert "12 Mermaid diagram block(s)" in result.stdout
 
 
