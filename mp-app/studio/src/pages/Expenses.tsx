@@ -12,9 +12,10 @@ import {
   type ExpenseRow,
   uploadExpenseReceipt,
 } from "../lib/api";
-import { JalaliDateField, isoFromLocal } from "../components/ui/JalaliDateField";
+import { JalaliDateField } from "../components/ui/JalaliDateField";
 import { canSeePage, parseRole } from "../lib/roleNav";
 import { fa } from "../lib/useApi";
+import { shiftIsoDay, today } from "../lib/clock";
 
 /**
  * هزینه‌های باشگاه (QF-06) — اجاره، حقوق، تجهیزات و بقیهٔ پول‌های خارج‌شده.
@@ -34,11 +35,7 @@ import { fa } from "../lib/useApi";
 const labelOf = (key: string): string =>
   EXPENSE_CATEGORIES.find((c) => c.key === key)?.label ?? key;
 
-const isoDay = (offsetDays = 0): string => {
-  const d = new Date();
-  d.setDate(d.getDate() + offsetDays);
-  return isoFromLocal(d);
-};
+const isoDay = (offsetDays = 0): string => shiftIsoDay(today(), offsetDays);
 
 export function Expenses() {
   const role = parseRole();

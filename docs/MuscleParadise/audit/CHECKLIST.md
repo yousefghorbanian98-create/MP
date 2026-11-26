@@ -77,9 +77,9 @@
 | F-02 | پیش‌فرض fail‑open محیط: `MP_ENVIRONMENT=development` + `MP_SMS_PROVIDER=dev` ⇒ `dev_code` در پاسخ | FIXED-PARTIAL | WP 1.2 (BD-3): MP_ENVIRONMENT صریح الزامی؛ dev_code فقط development+MP_ALLOW_DEV_OTP_ECHO؛ رد echo در production؛ WARNING شروع؛ گیت استاتیک deploy_gate. تست: tests/regression/test_wp12_env_failsafe.py. باقی‌مانده: گیت زنده روی استقرار BLOCKED. |
 | F-03 | قفل شدن سرور زیر بار؛ رندر `rich` روی event loop | FIXED-PARTIAL | WP 2.1 (B1، e57a992): dev با plain_traceback؛ JSON با سقف ۵۰ فریم بدون locals؛ نوشتن لاگ با صف محدود (۱۰٬۰۰۰) و نخ نویسنده (`app/logging.py`). شاهد: `tests/regression/test_wp21_logging_queue.py` (۵ passed). باز: C4 بار ۸۰ کلاینت = BLOCKED-ENV؛ C5 گیت CI برای json_logs و بودجهٔ لاگ = TODO. |
 | F-04 | اشباع استخر اتصال؛ نبودِ هیچ متریک pool؛ ناسازگاری ظرفیت‌ها | FIXED-PARTIAL | WP 2.2 (B1، b9ce7be): گیج‌های size/checkedout/overflow، histogram `mp_db_connection_held_seconds`، timeout ⇒ 503 + Retry-After: 1، `/health/ready` با پنجرهٔ ۱۰ ثانیه (`app/pool_metrics.py`). شاهد: `tests/regression/test_wp22_pool_observability.py` (۵ passed). باز: C9 حساب ظرفیت و سقف همزمانی = TODO؛ C10 بار ۲۰۰ همزمان = BLOCKED-ENV؛ C11 علت ریشه‌ای ادعا نشده؛ `mp_db_pool_wait_total` = TODO. |
-| F-05 | `SystemError` در `casbin enforce` زیر همزمانی (compile در هر درخواست) | OPEN |  |
+| F-05 | `SystemError` در `casbin enforce` زیر همزمانی (compile در هر درخواست) | FIXED | WP 2.4 (9bfc99d): RBAC decision cache + numeric-id normalisation + lock؛ ۳ فایل تست. ممیز روی main: test_wp24_rbac_decision_cache + test_wp25_silent_failures + test_wp32_error_envelope + test_wp32_default_detail ⇒ ۱۶ passed. |
 | F-06 | `/api/v1/metrics` بدون احراز هویت | FIXED | WP 1.3: /api/v1/metrics با Bearer (MP_METRICS_TOKEN) محافظت شد: بدون هدر/توکن غلط ۴۰۱، بدون توکن تنظیم‌شده ۴۰۳؛ Caddy مسیر را ۴۰۴ می‌کند؛ Prometheus با credentials؛ Compose الزام متغیر دارد. تست: tests/integration/test_wp13_metrics_auth.py. |
-| F-07 | پوشش مستند ۹۴٫۲۸٪ در برابر واقعی ۸۳٫۷۳٪ | OPEN |  |
+| F-07 | پوشش مستند ۹۴٫۲۸٪ در برابر واقعی ۸۳٫۷۳٪ | IN-PROGRESS | WP 0.4 (20c3173): per-directory coverage gate؛ subprocess coverage؛ db/scripts tests (AD-11). شکاف‌های پوشش هنوز باز است. |
 | F-08 | `logout-all` توکن‌های بدون `sid` را باطل نمی‌کند | FIXED-PARTIAL | WP 1.4 (BD-6): logout-all عدد auth_version را bump می‌کند؛ توکن بی‌sid پس از آن ۴۰۱ (قبل ۲۰۰). دو اسکریپت توکن با sid واقعی و بدون چاپ روی stdout. تست: tests/integration/test_wp14_logout_all.py. باقی‌مانده: قاعدهٔ Semgrep (WP 0.7). |
 | F-09 | پول بزرگ: `2^53`، `2^53+1`، `10^18` پذیرفته می‌شوند + coercion رشته→عدد | NOT-REPRODUCED | WP 3.5 (D‑16): روی HEAD بازتولید نشد — Rial (StrictInt + le=MAX_SAFE_RIAL) برای 2^53، 2^53+1، 10^18، رشته، float و bool رد می‌کند؛ همهٔ ورودی‌های پولی Rial‌اند. گارد سبز: tests/integration/test_wp35_contract_guards.py (9 passed)؛ جهش amount_rial:int ⇒ 1 failed. |
 | F-10 | ۳۱ خطای ESLint در استودیو (هیچ lint واقعی اجرا نمی‌شد) | FIXED | WP 0.5: eslint.config.mjs (flat) + اسکریپت lint = `eslint .` + گیت در CI. اندازه‌گیری قبل: ۴۲ خطا + ۵ هشدار (بریف: ۳۱ خطا؛ عدد دقیق با همین پیکربندی ۴۲ بود). بعد: ۰ خطا، ۰ هشدار. قاعدهٔ label-has-associated-control با controlComponents برای کنترل‌های antd تنظیم شد؛ autoFocus به فوکوس ref تبدیل شد. |
@@ -88,8 +88,8 @@
 | F-13 | guard تکراری روی یک مسیر (دو بار casbin enforce) | FIXED | WP 0.3: گارد تکراری روی review حذف شد؛ شاهد: قبل ۲ بار enforce، بعد ۱ بار (tests/integration/test_wp03_axis_single_guard.py، tests/regression/test_no_duplicate_guard.py) |
 | F-14 | `gateway-return` با شناسهٔ نامعتبر → HTTP 200 | FIXED | WP 3.3 (9024f44): پرداخت ناموجود ⇒ HTTP 404 با همان صفحه (`modules/payments/router.py`). شاهد: `tests/integration/test_wp33_gateway_return_status.py` (red 1 failed ⇒ green 6 passed). شناسه‌های -1/0/-0/INT64_MIN در HEAD قبلاً 422 بودند (بازتولید نشد؛ محافظت شده). F‑25 (۱۱ مسیر دیگر) خارج از این WP و در WP 3.5. |
 | F-15 | ۵۵ هشدار پیچیدگی (lizard) و ۴۱ بلوک ≥C (radon)؛ بدترین درجهٔ radon **F** با CC ‏۴۷ و ۴۶ | FIXED-PARTIAL | B5 (WP 4.1، پیش‌تر: `c3d28d8` و مشخصه‌یابی `8bae88c`): validate_production_configuration از F(54) به هفت اعتبارسنج خانوادگی؛ prescribe_axis_work از F(46) به ۶ مرحلهٔ کوچک (بیشترین C(13))؛ هیچ بلوک F ماند نشد؛ رفتار با golden قفل است (config: 600 نمونه؛ axis: 300 نمونه). باقی: next_transfer_state E(34)، ۱۰ بلوک D در کد محصول (شامل scripts/eval)، و هشت کلید کیت = TODO (D‑17). |
-| F-16 | ۷ محل پولِ شناور در استودیو + ۱ sentinel منفی | OPEN |  |
-| F-17 | ۴ خطای «except بی‌صدا» (از جمله در `api/v1/monitoring.py:18`) | OPEN |  |
+| F-16 | ۷ محل پولِ شناور در استودیو + ۱ sentinel منفی | FIXED | WP 4.6 (fe103a4): no member_id=-1 sentinel؛ narrow mp-ts-float-money regex. |
+| F-17 | ۴ خطای «except بی‌صدا» (از جمله در `api/v1/monitoring.py:18`) | FIXED | WP 2.5 (0afd240): silent except → log + counter؛ no-silent-except guard؛ test_wp25_silent_failures سبز. |
 | F-18 | ناسازگاری ظرفیت‌ها: ۱۶۴ handler سنکرون، threadpool=40، pool=60، 4 worker | FIXED-PARTIAL | WP 2.3 (f852675): `WEB_CONCURRENCY` پیش‌فرض ۱ در دو Dockerfile؛ بودجهٔ `workers × 60 ≤ بودجهٔ DB` در OPS-RUNBOOK §۱‑الف؛ شاهد: `tests/regression/test_b2_wp23_wp43_wp44.py`. باز (TODO، D‑14): گسترش `validate_production_configuration` با هشت کلید کیت؛ pragmaهای SQLite در `alembic/env.py`؛ rate-limit `memory://` در چند worker. |
 | F-19 | ۳ لایهٔ جداگانهٔ دسترسی به داده در استودیو + `await import()` پویا در هندلر | FIXED-PARTIAL | WP 4.3 (cf33ad8): دو `await import()` پویا در `Shop.tsx` حذف و import ایستا شد. باز (TODO): یکپارچه‌سازی سه لایهٔ دسترسی به داده (`api.ts`، `session.ts`، `adminApi.ts`) در یک لایه و code-splitting در سطح route. |
 | F-20 | ۲ export مرده در `lib/api.ts` | FIXED | WP 4.4 (cf33ad8): `updateProduct` حذف شد (BD‑2)؛ مسیر PATCH بک‌اند با استثنای مستند `TODO` در `apiCoverage` (D‑14). `getToken` از export خارج شد و فقط داخل `api.ts` می‌ماند. تأیید: `tsc --noEmit` و `eslint` exit 0. |
@@ -98,9 +98,9 @@
 | F-23 | ۱۰ دکمه بدون `onClick` (موجودی، نه لزوماً نقص) | OPEN |  |
 | F-24 | هشدارهای انباشتهٔ runtime | IN-PROGRESS | WP 0.6: HTTP_422_UNPROCESSABLE_ENTITY → HTTP_422_UNPROCESSABLE_CONTENT در app/errors.py؛ هشدار Starlette دیگر در تست خطاها نیست. هشدارهای دیگر (httpx در TestClient، asyncio_default_fixture_loop_scope) باقی‌اند. |
 | F-25 | گارد شناسه **کف** ندارد: ۱۲ endpoint با `-1`/`0`/`-0`/INT64_MIN پاسخ **۲۰۰** می‌دهند | NOT-REPRODUCED | WP 3.5 (D‑16): روی HEAD 338abb3 بازتولید نشد — ۲۶۰ درخواست با ۴ شناسهٔ بد و سه نقش: ۰ پاسخ 2xx (id_guard ⇒ 422). گارد سبز: tests/integration/test_wp35_contract_guards.py (۹ passed). شاهد جهش C2: amount_rial:int ⇒ 1 failed. |
-| F-26 | دو شکلِ متفاوت برای پاکت خطا: `{"error":…}` در برابر `{"detail":…}` | OPEN |  |
-| F-27 | پیش‌نیازِ «پروندهٔ عضو» در سبد خرید با `404 not_found` بیان می‌شود؛ سفارش به‌نیابت ممکن نیست | OPEN |  |
-| F-28 | «امروز» سه برداشت متفاوت دارد: nutrition و axis_assessment از `date.today()` (ساعت UTC کانتینر) استفاده می‌کنند؛ shop از Asia/Tehran. هر شب ۰۰:۰۰–۰۳:۳۰ تهران روز اشتباه | FIXED | الحاقیهٔ A1 — WP 3.6 (AD‑1). قبل: date.today() ×3 (axis_assessment:31، nutrition:124،182) ⇒ red: ۳ تست ناموفق (سن و اسکن و Dockerfile) روی کد قبل. بعد: app/clock.py::today_in_shop_zone؛ ENV TZ=Asia/Tehran در دو Dockerfile؛ ۵ تست regression/test_wp36_shop_today.py سبز؛ گیت after-wp36 PASS؛ pytest کامل ۱۱۵۱ passed، ۲ skipped، exit 0. مسیر nutrition با اسکن کدی و تابع مشترک پوشش داده شد نه با تست رفتاری مستقل. |
+| F-26 | دو شکلِ متفاوت برای پاکت خطا: `{"error":…}` در برابر `{"detail":…}` | FIXED | WP 3.2 (8926fcd): one error envelope برای خطاهای HTTP استارلت (404/405)؛ fastapi_default_detail ۷۰ ⇒ ۰ روی ۸۷۲ سلول. |
+| F-27 | پیش‌نیازِ «پروندهٔ عضو» در سبد خرید با `404 not_found` بیان می‌شود؛ سفارش به‌نیابت ممکن نیست | FIXED | WP 3.4 (fc402a8): member_profile_required 409 برای سبد بدون پروفایل عضو؛ ۲ فایل تست. |
+| F-28 | «امروز» سه برداشت متفاوت دارد: nutrition و axis_assessment از `date.today()` (ساعت UTC کانتینر) استفاده می‌کنند؛ shop از Asia/Tehran. هر شب ۰۰:۰۰–۰۳:۳۰ تهران روز اشتباه | FIXED | A1 / WP 3.6 (AD‑1) بک‌اند: app/clock.py::today_in_shop_zone؛ ENV TZ در Dockerfile؛ pytest ۱۱۵۱ passed. P‑A (eafb335): نیمهٔ استودیو بسته شد — src/lib/clock.ts (تنها مصرف‌کنندهٔ new Date/Date.now)؛ grep در src خارج از clock.ts = ۰ (کل ۵، همه در clock.ts)؛ ESLint no-restricted-syntax (probe: ۲ خطا)؛ npm run lint ۰/۰؛ tsc -b rc 0؛ npm test ۳۰۶ passed/۹ skipped rc 0؛ backend: date.today()=۰ و datetime.now() بی‌منطقه=۰ در app/api/modules/engine/db/jobs/security/cache. |
 | F-29 | شش خطای ارسال SMS با `log.error` بدون traceback ثبت می‌شوند (app/sms.py:66,69,72,99,102,105) — علت واقعی خطای فراهم‌کننده در لاگ نیست | FIXED | الحاقیهٔ A1 — WP 2.6. قبل: ۶ شاخهٔ except در app/sms.py با log.error و بدون traceback (red: ۶ تست exc_info ناموفق). بعد: _log_provider_failure با traceback و متن استثنای پنهان (AD‑6)؛ ۱۴ تست regression/test_wp26_sms_logging.py سبز؛ test_sms ۶۱ سبز؛ pytest کامل ۱۱۴۶ passed، ۲ skipped، exit 0. S310 سه مورد با noqa دلیل‌دار؛ TRY400 در sms=0. |
 | F-30 | receiptQueue.test.tsx ناپایدار: تست‌های آن زیر بودجهٔ پیش‌فرض ۵۰۰۰ms (بدون testTimeout) timeout می‌دهند؛ ۱۴۳ خط، ۴ تست، ۱۰ await؛ اجرای تنها ۲ failed/۲ passed و اجرای کامل exit 1 | OPEN | B5: شمارهٔ بعدیِ آزاد (بزرگ‌ترین F موجود F-29). اجرای کامل محلی exit 1 با timeout ۵۰۰۰ms؛ اجرای تنها ۲ failed/۲ passed؛ هیچ testTimeout صریح نیست؛ fetch با vi.stubGlobal. ممنوع: افزایش timeout، skip، حذف تست. اصلاح مصوب (فاز P): کاهش await های پشت‌سرهم و تنظیم interval polling. |
 
@@ -139,11 +139,11 @@
 |---|---|---|
 | blocked | OPEN | 5 |
 | findings | BLOCKED | 1 |
-| findings | FIXED | 9 |
+| findings | FIXED | 14 |
 | findings | FIXED-PARTIAL | 8 |
-| findings | IN-PROGRESS | 1 |
+| findings | IN-PROGRESS | 2 |
 | findings | NOT-REPRODUCED | 2 |
-| findings | OPEN | 9 |
+| findings | OPEN | 3 |
 | non_issues | OPEN | 14 |
 | problems | FIXED | 1 |
 | problems | IN-PROGRESS | 1 |

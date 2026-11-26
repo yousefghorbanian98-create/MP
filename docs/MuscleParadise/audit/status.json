@@ -41,7 +41,7 @@
   },
   "F-28": {
     "status": "FIXED",
-    "note": "الحاقیهٔ A1 — WP 3.6 (AD‑1). قبل: date.today() ×3 (axis_assessment:31، nutrition:124،182) ⇒ red: ۳ تست ناموفق (سن و اسکن و Dockerfile) روی کد قبل. بعد: app/clock.py::today_in_shop_zone؛ ENV TZ=Asia/Tehran در دو Dockerfile؛ ۵ تست regression/test_wp36_shop_today.py سبز؛ گیت after-wp36 PASS؛ pytest کامل ۱۱۵۱ passed، ۲ skipped، exit 0. مسیر nutrition با اسکن کدی و تابع مشترک پوشش داده شد نه با تست رفتاری مستقل."
+    "note": "A1 / WP 3.6 (AD‑1) بک‌اند: app/clock.py::today_in_shop_zone؛ ENV TZ در Dockerfile؛ pytest ۱۱۵۱ passed. P‑A (eafb335): نیمهٔ استودیو بسته شد — src/lib/clock.ts (تنها مصرف‌کنندهٔ new Date/Date.now)؛ grep در src خارج از clock.ts = ۰ (کل ۵، همه در clock.ts)؛ ESLint no-restricted-syntax (probe: ۲ خطا)؛ npm run lint ۰/۰؛ tsc -b rc 0؛ npm test ۳۰۶ passed/۹ skipped rc 0؛ backend: date.today()=۰ و datetime.now() بی‌منطقه=۰ در app/api/modules/engine/db/jobs/security/cache."
   },
   "F-29": {
     "status": "FIXED",
@@ -94,5 +94,29 @@
   "F-30": {
     "status": "OPEN",
     "note": "B5: شمارهٔ بعدیِ آزاد (بزرگ‌ترین F موجود F-29). اجرای کامل محلی exit 1 با timeout ۵۰۰۰ms؛ اجرای تنها ۲ failed/۲ passed؛ هیچ testTimeout صریح نیست؛ fetch با vi.stubGlobal. ممنوع: افزایش timeout، skip، حذف تست. اصلاح مصوب (فاز P): کاهش await های پشت‌سرهم و تنظیم interval polling."
+  },
+  "F-05": {
+    "status": "FIXED",
+    "note": "WP 2.4 (9bfc99d): RBAC decision cache + numeric-id normalisation + lock؛ ۳ فایل تست. ممیز روی main: test_wp24_rbac_decision_cache + test_wp25_silent_failures + test_wp32_error_envelope + test_wp32_default_detail ⇒ ۱۶ passed."
+  },
+  "F-07": {
+    "status": "IN-PROGRESS",
+    "note": "WP 0.4 (20c3173): per-directory coverage gate؛ subprocess coverage؛ db/scripts tests (AD-11). شکاف‌های پوشش هنوز باز است."
+  },
+  "F-16": {
+    "status": "FIXED",
+    "note": "WP 4.6 (fe103a4): no member_id=-1 sentinel؛ narrow mp-ts-float-money regex."
+  },
+  "F-17": {
+    "status": "FIXED",
+    "note": "WP 2.5 (0afd240): silent except → log + counter؛ no-silent-except guard؛ test_wp25_silent_failures سبز."
+  },
+  "F-26": {
+    "status": "FIXED",
+    "note": "WP 3.2 (8926fcd): one error envelope برای خطاهای HTTP استارلت (404/405)؛ fastapi_default_detail ۷۰ ⇒ ۰ روی ۸۷۲ سلول."
+  },
+  "F-27": {
+    "status": "FIXED",
+    "note": "WP 3.4 (fc402a8): member_profile_required 409 برای سبد بدون پروفایل عضو؛ ۲ فایل تست."
   }
 }

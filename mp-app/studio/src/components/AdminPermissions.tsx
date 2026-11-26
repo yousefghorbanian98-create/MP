@@ -20,6 +20,7 @@ import {
   type PermissionKey,
   type UserRow,
 } from "../lib/adminApi";
+import { toDate } from "../lib/clock";
 
 const STATUS_LABEL: Record<PermissionGrant["status"], { label: string; color: string }> = {
   active: { label: "فعال", color: "green" },
@@ -37,7 +38,7 @@ const EXPIRY_OPTIONS = [
 
 function formatWhen(iso: string | null): string {
   if (!iso) return "—";
-  const d = new Date(iso);
+  const d = toDate(iso);
   if (Number.isNaN(d.getTime())) return "نامشخص";
   return d.toISOString().replace("T", " ").slice(0, 16) + " UTC";
 }
