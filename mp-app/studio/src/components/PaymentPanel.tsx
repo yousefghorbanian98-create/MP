@@ -11,6 +11,7 @@ import {
 } from "../lib/api";
 import { Input, Select } from "antd";
 import { parseRial } from "../lib/money";
+import { toDate } from "../lib/clock";
 
 /**
  * Q6 — درگاه پرداخت (پذیرش).
@@ -255,7 +256,7 @@ export function PaymentPanel() {
               <p>مبلغ: {fmt(receipt.amount_rial)} ریال</p>
               <p>کد پیگیری پرداخت: {receipt.reference_id}</p>
               {receipt.status === "refunded" && <p>مرجع بازگشت: {receipt.refund_reference || "ثبت نشده توسط درگاه"}</p>}
-              {receipt.paid_at && <p>زمان: {new Date(receipt.paid_at).toLocaleString("fa-IR")}</p>}
+              {receipt.paid_at && <p>زمان: {toDate(receipt.paid_at).toLocaleString("fa-IR")}</p>}
             </div>
           )}
 

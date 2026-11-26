@@ -2,8 +2,9 @@ import { Alert, Segmented, Spin } from "antd";
 import { useEffect, useState } from "react";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { fetchPeriodReport, type PeriodReport } from "../lib/api";
-import { JalaliDateField, isoFromLocal } from "./ui/JalaliDateField";
+import { JalaliDateField } from "./ui/JalaliDateField";
 import { fa } from "../lib/useApi";
+import { today } from "../lib/clock";
 
 /**
  * گزارش سود/زیان دوره‌ای (QF-10) — هفته، ماه یا سال به تقویم جلالی تهران.
@@ -22,7 +23,7 @@ const KIND_OPTIONS = [
   { label: "سال", value: "year" },
 ];
 
-const todayIso = (): string => isoFromLocal(new Date());
+const todayIso = (): string => today();
 
 export function PeriodReportPanel() {
   const [kind, setKind] = useState<Kind>("month");

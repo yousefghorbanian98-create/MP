@@ -10,6 +10,7 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "test": "vitest run",
+    "drive": "node scripts/agent_drive.mjs",
     "lint": "eslint .",
     "electron": "electron ."
   },

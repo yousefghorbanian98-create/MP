@@ -24,6 +24,7 @@ import argparse
 import json
 import re
 import sys
+from dataclasses import asdict, dataclass
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -243,6 +244,85 @@ def build() -> dict:
     return {"surfaces": surfaces, "contract_paths": len(route_table)}
 
 
+PER_CODE_LIMIT = 20
+
+SUGGESTIONS = {
+    "MAP-001": "endpoint را به routes.json اضافه کنید، یا فراخوانی کلاینت را به مسیر موجود اصلاح کنید.",
+    "MAP-002": "python3 scripts/interaction_map.py را اجرا و نتیجه را commit کنید.",
+    "MAP-003": "تست بنویسید، یا خط مبنا را با دلیل در interaction-baseline.json به‌روز کنید.",
+}
+
+
+@dataclass(frozen=True)
+class Finding:
+    code: str
+    path: str
+    line: int | None
+    message: str
+    suggestion: str
+
+    def render(self) -> str:
+        # قالب ثابت C2: CODE path:line: پیام ← پیشنهاد (خط ناشناخته = «-»)
+        return f"{self.code} {self.path}:{self.line or '-'}: {self.message} ← {self.suggestion}"
+
+
+def print_capped(findings: list[Finding], stream) -> None:
+    """دسته‌بندی کامل بر اساس کد؛ هر دسته حداکثر PER_CODE_LIMIT سطر، بقیه «+N»."""
+    counts: dict[str, int] = {}
+    for item in findings:
+        counts[item.code] = counts.get(item.code, 0) + 1
+        if counts[item.code] <= PER_CODE_LIMIT:
+            print(item.render(), file=stream)
+    for code, total in counts.items():
+        if total > PER_CODE_LIMIT:
+            print(f"+{total - PER_CODE_LIMIT} موردِ دیگر ({code})", file=stream)
+
+
+def _rel(path: Path) -> str:
+    try:
+        return path.relative_to(ROOT).as_posix()
+    except ValueError:
+        return str(path)
+
+
+def check_findings(report: dict, untested: list[str]) -> list[Finding]:
+    """همان سه شرط گیت `--check`، با کد و مسیر. پیام‌ها همان متن قبلی‌اند."""
+    findings: list[Finding] = []
+    for surface in report["surfaces"]:
+        for row in surface["endpoints"]:
+            if not row["in_contract"]:
+                message = f"{surface['surface']} ({surface['kind']}): {row['method']} {row['path']} در routes.json نیست"
+                findings.append(Finding("MAP-001", surface["file"], None, message, SUGGESTIONS["MAP-001"]))
+    # نقشهٔ کهنه = مستند دروغ. اگر خروجی امروز با فایل روی دیسک یکی نباشد،
+    # یعنی کد عوض شده و کسی نقشه را بازتولید نکرده است.
+    fresh = render_markdown(report, *gaps(report))
+    if DOC.exists() and DOC.read_text(encoding="utf-8") != fresh:
+        findings.append(
+            Finding(
+                "MAP-002",
+                _rel(DOC),
+                None,
+                "نقشهٔ سطح تعامل کهنه است — python3 scripts/interaction_map.py را اجرا و commit کن",
+                SUGGESTIONS["MAP-002"],
+            )
+        )
+    baseline = json.loads(BASELINE.read_text(encoding="utf-8")) if BASELINE.exists() else {}
+    allowed = set(baseline.get("untested_surfaces", untested))
+    file_of = {f"{surface['kind']}:{surface['surface']}": surface["file"] for surface in report["surfaces"]}
+    for surface in untested:
+        if surface not in allowed:
+            findings.append(
+                Finding(
+                    "MAP-003",
+                    file_of.get(surface, "-"),
+                    None,
+                    f"سطح تازهٔ بی‌تست: {surface} — یا تست بنویس یا خط مبنا را با دلیل به‌روز کن",
+                    SUGGESTIONS["MAP-003"],
+                )
+            )
+    return sorted(set(findings), key=lambda f: (f.code, f.path, f.message))
+
+
 def gaps(report: dict) -> tuple[list[str], list[str]]:
     drift = [
         f"{surface['surface']} ({surface['kind']}): {row['method']} {row['path']} در routes.json نیست"
@@ -349,40 +429,34 @@ def render_markdown(report: dict, drift: list[str], untested: list[str]) -> str:
     return "\n".join(lines).rstrip() + "\n"
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true", help="گیت: رانش قرارداد و سطح بی‌تست تازه")
     parser.add_argument("--write-baseline", action="store_true", help="ثبت خط مبنا")
-    args = parser.parse_args()
+    parser.add_argument("--json", action="store_true", help="با --check: خروجی JSON تشخیص‌ها")
+    args = parser.parse_args(argv)
+    if args.json and not args.check:
+        parser.error("--json فقط همراه --check معنی دارد")
 
     report = build()
     drift, untested = gaps(report)
 
     if args.check:
-        problems = list(drift)
-        # نقشهٔ کهنه = مستند دروغ. اگر خروجی امروز با فایل روی دیسک یکی نباشد،
-        # یعنی کد عوض شده و کسی نقشه را بازتولید نکرده است.
-        fresh = render_markdown(report, drift, untested)
-        if DOC.exists() and DOC.read_text(encoding="utf-8") != fresh:
-            problems.append(
-                "نقشهٔ سطح تعامل کهنه است — python3 scripts/interaction_map.py را اجرا و commit کن"
-            )
-        baseline = json.loads(BASELINE.read_text(encoding="utf-8")) if BASELINE.exists() else {}
-        allowed = set(baseline.get("untested_surfaces", untested))
-        problems += [
-            f"سطح تازهٔ بی‌تست: {surface} — یا تست بنویس یا خط مبنا را با دلیل به‌روز کن"
-            for surface in untested
-            if surface not in allowed
-        ]
-        if problems:
-            print("Interaction map gate FAILED:")
-            for problem in problems:
-                print(f"  - {problem}")
-            return 1
-        print(
+        findings = check_findings(report, untested)
+        passed = (
             f"Interaction map gate passed: {len(report['surfaces'])} سطح، "
             f"{report['contract_paths']} مسیر قرارداد، رانش صفر."
         )
+        if args.json:
+            print(json.dumps([asdict(item) for item in findings], ensure_ascii=False, indent=2))
+            if not findings:
+                print(passed, file=sys.stderr)
+            return 1 if findings else 0
+        if findings:
+            print("Interaction map gate FAILED:")
+            print_capped(findings, sys.stdout)
+            return 1
+        print(passed)
         return 0
 
     if args.write_baseline:

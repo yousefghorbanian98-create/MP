@@ -726,3 +726,143 @@ WP: 0.4 · F: F‑07 · شاهد: `evidence/after/wp04/` · تصمیم: AD‑11 
 - **اسکریپت INVENTORY:** `build_audit_inventory.py` اکنون در حالت نوشتن تا نقطهٔ ثابت تکرار می‌کند (حداکثر ۵؛ ردیف INVENTORY خودش را ثبت می‌کند). یک بازتولید با `python3` سیستم (بدون وابستگی‌های بک‌اند) بخش «عملیات API» را به حالت ایستای کوتاه برگرداند (۱۷۱۹ ⇒ ۱۵۵۱ خط) — با diff دیده شد و **کامیت نشد**. سپس `/home/user/venv-mp` از همان دستور CI با پین‌ها ساخته شد (`pip install -c mp-app/backend/requirements.txt -e mp-app/backend[dev]`؛ `pip check`: بدون تضاد؛ **۸۴ پین، ۰ اختلاف نسخه**)، و با همان مفسر بازتولید شد: ۱۷۱۹ خط، `--check` rc 0.
 - **تخطی‌ها:** B6 در سقف ۲ کامیت است (`edc01e0` کد و کامیت مستندات). هیچ آستانه، تست، یا job تغییر نکرد؛ هیچ وابستگی ماندگاری اضافه نشد (semgrep و ruff در venvهای موقت `/tmp` با همان پین/نسخهٔ CI نصب شدند).
 - **باز (از B6):** ۱) گام ruff غیرمسدودکننده در `ci.yml`؛ ۲) `scripts/build_audit_inventory.py` (۴ یافته + format)؛ ۳) قاعدهٔ `mp-money-float-cast` هنوز `total` دارد؛ ۴) WP 4.1 PARTIAL؛ ۵) WP 4.2 DEFERRED؛ ۶) WP 4.7 load BLOCKED-ENV؛ ۷) F‑30 (receiptQueue) OPEN.
+
+## MERGE — PR #24 به main (پس از اجازهٔ ممیز؛ پروتکل `MP-MERGE-PROTOCOL-2026-11-22.txt`)
+
+- **پروتکل:** `curl … MP-MERGE-PROTOCOL-2026-11-22.txt` ⇒ `670e287015d4fbd2696181020061987ebd823cb9c52f507fcd6c2060de285c99  /tmp/MERGE-PROTOCOL.txt`، `11660` بایت (با انتظار یکسان).
+- **پیش‌سنجه‌ها (tip مورد انتظار `db28a1ea07000b34f1acf536be09a573faf8727a`):**
+  - ۱‑۱ `branches/arena/5a1e37b3-mp` ⇒ `db28a1ea07000b34f1acf536be09a573faf8727a` ؛ `pulls/24 .head.sha` ⇒ `db28a1ea07000b34f1acf536be09a573faf8727a` (یکسان).
+  - ۱‑۲ `pulls/24 [.state,.mergeable,.mergeable_state,.draft]` ⇒ `open	true	clean	false`.
+  - ۱‑۳ check-runs روی full sha ⇒ ۸ نام یکتا (هر کدام در دو موج push/PR) همه `completed/success`: backend · studio · live-contract · e2e-api · secret-scan · client-flutter · Documentation links and handoff · Client — pinned SDK · format gate · Android debug compile.
+  - ۱‑۴ `actions/runs?head_sha=…` ⇒ `45069489423 pull_request completed/success` و `45069485431 push completed/success`؛ `check-suites` ⇒ `github-actions: completed/success` ×۲. هیچ in_progress/queued/null.
+  - ۱‑۵ `git status --porcelain | grep -v '^??' | wc -l` ⇒ `0`؛ `??`: `mp-app/backend/var/receipts/` (۵۶ فایل) و `share/` (۱)؛ `compare/main...db28a1e…` ⇒ `ahead	122	0`.
+  - ۱‑۶ تأییدیهٔ ممیز با عبارت «اجازهٔ merge صادر شد» و tip موردانتظار در پیام؛ tip واقعی با مورد انتظار یکسان.
+- **merge:** `gh pr merge 24 --merge` (تنها فرمان، بدون پرچم، بدون pipe؛ کد خروج `0`؛ خروجی خام: خالی). تلاش دوم لازم نشد.
+- **پس‌سنجه‌ها:**
+  - ۳‑۱ `pulls/24 [.state,.merged,.merged_at,.merge_commit_sha]` ⇒ `closed	true	2026-11-22T21:34:50Z	35d4b35184b4148c658b415bd009fc076bf24e00`.
+  - ۳‑۲ `branches/main .commit.sha` ⇒ `35d4b35184b4148c658b415bd009fc076bf24e00`؛ `commits/<merge> [sha[0:7], parents]` ⇒ `35d4b35	662ff88+db28a1e`.
+  - ۳‑۳ شاهدها روی main: `cf33ad8 reachable` · `9024f44 reachable` · `e57a992 reachable` · `f852675 reachable` · `b9ce7be reachable`؛ `compare/main...db28a1e` ⇒ `behind` (نه ahead).
+  - ۳‑۴ CI روی main (`actions/runs?branch=main`): `45072899575` (dynamic, Graph Update: pip) `completed/success`؛ **`45072898424` (push, mp-ci) `completed/success` با هر ۸ job `success`**: Documentation links and handoff · Client — pinned SDK · format gate · Android debug compile · studio · secret-scan · live-contract · client-flutter · backend · e2e-api؛ `45072898402` (push, client-format-fix) `skipped` (شرط trigger؛ همان workflow قبلاً هم skipped بود).
+  - ۳‑۵ `contents/docs/MuscleParadise/audit/evidence?ref=main` ⇒ `after, before, bandit.json, detect-secrets.err, detect-secrets.json, lizard-warnings.txt, pip-audit.json, radon-cc.txt, radon-mi.txt, requirements-freeze.txt, vulture.txt`؛ `contents/.gitleaksignore?ref=main .size` ⇒ `60102`.
+  - ۳‑۶ شاخهٔ `arena/5a1e37b3-mp` **حذف نشد**: `branches/arena/5a1e37b3-mp .commit.sha` ⇒ `db28a1ea07000b34f1acf536be09a573faf8727a`.
+- **خطا / توقف:** هیچ خطای 403/احراز هویت یا CI قرمز روی main رخ نداد؛ هیچ revert یا force-push انجام نشد.
+- **یادداشت:** پس از merge، `compare main...db28a1e` از `ahead 122` به `behind` تغییر کرد (انتظار پروتکل: `identical` یا `behind`).
+
+## باز پذیرفته‌شده پس از MERGE (همان‌طور که در دفترِ کل ثبت است)
+
+- **WP 4.1** ⇒ PARTIAL (`prescribe_axis_work` F46⇒C13 در B5؛ باقی: `next_transfer_state` E34، ۱۰ بلوک D، هشت کلید کیت TODO؛ D‑17، D‑20).
+- **WP 4.2** ⇒ DEFERRED (baseline جهش ۵۷٫۸٪ در برابر ≥۸۰٪؛ وابستگی تازه؛ D‑19).
+- **WP 4.7** ⇒ PARTIAL؛ بار پله‌ای/ترکیبی **BLOCKED-ENV** (بدون Docker/Postgres در سندباکس)؛ نیمهٔ semgrep انجام شد (`edc01e0`).
+- **F‑30** (receiptQueue ناپایدار) ⇒ OPEN (D‑18).
+- **مثبت کاذب نهفته:** `mp-money-float-cast` هنوز `total` برهنه دارد و `float(delta.total_seconds())` را می‌گیرد (امروز در مخزن ۰ مورد؛ blocker نیست)؛ اصلاح در فاز P-3 با کنترل مثبت اجباری. عمداً دست نخورد.
+- **گام ruff lint:** `ci.yml` «Lint (ruff) — غیرمسدودکننده» هنوز `continue-on-error` دارد (خارج از WP 0.7).
+- **WP 0.2** ⇒ BLOCKED (AD‑10؛ ۱٬۱۴۱ سلول، ۵۹۲ drift). **WP 1.1 / 1.2 / 1.4** ⇒ PARTIAL (اندازه‌گیری‌ها در ردیف‌های لوپ).
+
+
+## P‑A — P‑1 ساعت یکتای استودیو (نیمهٔ استودیوییِ F‑28) · D‑23 · D‑24
+
+- **پلن:** `curl -sL … MP-PRODUCTION-PLAN-P-2026-11-22.md` ⇒ `23829` بایت، `f525a5143ebe8a3a607012788be0275b2cd12db4352f55e67464f78f767f32fc  /tmp/PLAN-P.md` (با انتظار یکسان).
+- **شاخه:** `arena/ff32c436-mp` از `35d4b35` (= main). شاخهٔ `arena/5a1e37b3-mp` دست‌نخورده. PR تازه ساخته نشد.
+- **پیش‌فرض‌های پلن (سنجیده):** `ls src/lib/clock.ts` ⇒ `No such file`؛ `grep -rnE "new Date\(|Date\.now\(" src | wc -l` ⇒ `11` در ۱۱ فایل؛ `eslint.config.mjs` بدون قاعدهٔ `no-restricted-syntax`.
+- **پایهٔ lint پیش از تغییر:** `npm ci` (از lock) ⇒ rc 0؛ `npm run lint` ⇒ rc 0، خروجی خالی (۰ خطا، ۰ هشدار).
+- **قرمز (red‑first):** `tests/clock.test.ts` پیش از `src/lib/clock.ts` ⇒ `Error: Failed to resolve import "../src/lib/clock"`؛ `Test Files  1 failed (1)`؛ `Tests  no tests`؛ rc 1.
+- **سبز پس از پیاده‌سازی:** `npx vitest run tests/clock.test.ts` ⇒ `Test Files  1 passed (1)`، `Tests  7 passed (7)`، rc 0. شامل C5 (`2026-03-20T20:30:00Z` ⇒ `2026-03-21`؛ `20:00Z` ⇒ `2026-03-20`؛ `23:50Z` ⇒ `2026-03-22`).
+- **C4 — probe قاعدهٔ ESLint:** فایل موقت `src/__clock_probe.ts` با `new Date()` و `Date.now()` ⇒ `npx eslint` ⇒ `2 problems (2 errors, 0 warnings)` با `no-restricted-syntax`، rc 1؛ فایل پس از سنجش حذف شد (`ls` ⇒ No such file).
+- **C3 — مهاجرت ۱۱ محل:** `grep -rE "new Date\(|Date\.now\(" src | wc -l` ⇒ `5` (همه در `src/lib/clock.ts`)؛ `… | grep -v "lib/clock.ts" | wc -l` ⇒ **`0`**.
+- **lint/tsc پس از تغییر:** `npm run lint` ⇒ rc 0، خروجی خالی (۰/۰)؛ `npx tsc -b` ⇒ rc 0.
+- **تست‌های حوزهٔ تغییر:** ۱۵ فایل (clock، adaptivePanel، adminPermissions، deviceSessions، paymentPanel، periodReportPanel، jalaliDate، chatPage، expensesPage، nutritionPage، nutritionNoMemberSentinel، programsPage، readinessPanel، expenseReceipt، session) ⇒ `Test Files  15 passed (15)`، `Tests  93 passed (93)`، rc 0.
+- **build (همان گام CI):** `npm run build` ⇒ rc 0، `✓ built in 11.85s`؛ سپس `rm -rf dist` (پیش از commit).
+- **کل studio (`npm test`، همان گام CI):** rc 0، `Test Files  47 passed | 1 skipped (48)`، `Tests  306 passed | 9 skipped (315)`، ۱۷۴ ثانیه. (`receiptQueue` این بار سبز شد؛ F‑30 همچنان OPEN، بدون افزایش timeout یا skip.)
+- **بک‌اند (سنجهٔ F‑28):** `grep -rn "date\.today()"` در پوشه‌های محصول ⇒ خالی؛ `grep -rnE "datetime\.now\(\)"` ⇒ خالی.
+- **بدون وابستگی تازه:** `git diff 35d4b35 HEAD -- '*package.json' '*package-lock.json' '*requirements.txt'` ⇒ خالی؛ `git diff 35d4b35 HEAD -- mp-app/studio/package.json | wc -l` ⇒ `0`.
+- **commit 1:** `eafb335` — `git show --stat HEAD` ⇒ `14 files changed, 145 insertions(+), 30 deletions(-)` (clock.ts و clock.test.ts جدید؛ eslint.config.mjs؛ ۱۱ فایل مصرف‌کننده).
+- **commit 2 (این سند، status، تصمیم‌ها، INVENTORY/CHECKLIST):** INVENTORY آخرین گام، با venv کامل (`/home/user/venv-mp`، `pip install -c requirements.txt -e mp-app/backend[dev]`، `pip check` ⇒ بدون تضاد، fastapi 0.165.0، Python 3.11.2).
+- **تغییرات مدیریتی:** F‑28 در `status.json` از FIXED به FIXED با شاهد نیمهٔ استودیو به‌روز شد؛ D‑23 (منبع منطقه = ثابت، نه API) و D‑24 (چهار «امروز» از محلی دستگاه به تهران).
+- **تخطی‌ها:** هیچ (۲ کامیت، ۱ بخش LOG، ۱ push). هیچ jobِ CI، ruleset، آستانه، تست یا skip تغییر نکرد. بسته‌های P‑2 و بعد شروع نشدند.
+- **بندِ ۶ پیام ممیز (`mp-money-float-cast`):** طبق دستور قبلی و ترتیب پلن (P‑3 = P‑C)، در P‑A دست نخورد؛ در بستهٔ P‑C با کنترل مثبت اجباری انجام می‌شود.
+- **باز (از P‑A):** مصرف API منطقه (D‑23)؛ WP 4.1 PARTIAL؛ WP 4.2 DEFERRED؛ WP 4.7 PARTIAL (BLOCKED-ENV)؛ F‑30 OPEN؛ `mp-money-float-cast`؛ گام ruff lint غیرمسدودکننده؛ WP 0.2 BLOCKED؛ WP 1.1/1.2/1.4 PARTIAL.
+- **توقف:** طبق دستور، P‑B شروع نشد تا داوری عددی ممیز.
+
+
+## P‑B — P‑2 درایور قطعیِ UI · پین تاریخ‌های پیش‌فرض P‑A (P‑B‑1)
+
+- **مجوز:** `handoff/MP-BUILDER-PB-AUTHORIZATION-2026-11-22.txt` (ref `arena/2cde32d6-chat2db`) ⇒ `10449` بایت، `920bedd313a56d0b08ac72e88657597865625377e39b5f376a541e85e8461889  /tmp/PB-AUTH.txt` (با انتظار یکسان). محدوده: فقط P‑2؛ ≤۲ کامیت + ۱ بخش LOG + ۱ push؛ بدون PR و merge؛ بدون وابستگی تازه؛ `.github/`، `.semgrep/`، lockfile، requirements و ruleset دست‌نخورده.
+- **شاخه:** `arena/ff32c436-mp`. کامیت‌های P‑A (`eafb335`، `b3e2b29`) روی `origin` بودند ولی شاخهٔ محلی روی `35d4b35` مانده بود؛ با `git reset --mixed origin/arena/ff32c436-mp` (بدون force، بدون تغییر worktree، بدون حذف) به `b3e2b29` همگام شد. محتوای `clock.ts` و `clock.test.ts` در worktree با نسخهٔ کامیت‌شده `cmp` یکسان بود.
+- **قرمز (red‑first) — سه فایل تست پیش از موتور:** `scripts/agent_drive.mjs` موقتاً کنار رفت؛ `npx vitest run tests/driver` ⇒ `Error: Failed to resolve import "../../scripts/agent_drive.mjs"` در `cli.test.tsx`، `driver.test.tsx`، `pins.test.tsx`؛ `Test Files  3 failed (3)`، `Tests  no tests`، rc 1 (`/tmp/drv_red.log`).
+- **قرمز دوم — فیکسچر:** پاسخ `{}` برای مسیرهای فروشگاه/تغذیه ⇒ `TypeError: products.filter is not a function` و `Cannot read properties of undefined (reading 'length')`؛ ۷ تست قرمز (`/tmp/drv_green1.log`). رفع: شکل‌های کمینه از فیکسچرهای تست‌های موجود (`expensesPage`، `nutritionPage`، `shopPage`).
+- **سبز:** `npx vitest run tests/driver` ⇒ `Test Files  2 passed | 1 skipped (3)`، `Tests  17 passed | 1 skipped (18)`، rc 0 (CLI skip عمدی است وقتی `MP_DRIVE_ARGV` تنظیم نشده).
+- **C1 — تجزیهٔ فرمان:** `parseArgv` افعال `render|clock|type|tap|state|snapshot` را با آرگومان ثابت می‌خواند؛ فعل ناشناخته ⇒ `DRV-001`.
+- **C5 — خطاهای شناسه‌دار:** `DRV-002` (صفحهٔ ناشناخته)، `DRV-003` (برچسب/دکمهٔ ناموجود)، `DRV-004` (ساعت نامعتبر یا نسبیِ بدون ساعت قبلی)، `DRV-005` (کنش پیش از render). هر خطا `step`، `message`، `hint` دارد.
+- **C2 — قطعیّت:** دو اجرای CLI با ورودی یکسان `clock 2026-03-20T20:30:00Z render Expenses state`:
+  - `sha256sum` اجرای ۱ = `4e2aa2b68d54dadce4aa973b9967d652715df3d882428aba07e42b2b7fdac2a7`
+  - `sha256sum` اجرای ۲ = `4e2aa2b68d54dadce4aa973b9967d652715df3d882428aba07e42b2b7fdac2a7` (یکسان)
+  - تست موازی در `driver.test.tsx` هم دو اجرا را بایت‌به‌بایت مقایسه می‌کند ⇒ سبز.
+- **C4 — خروجی:** کلیدهای `state` مرتب‌اند (تست سبز)؛ `snapshot` متن DOM می‌نویسد و تست «بدون NUL» دارد.
+- **C6 — زمان:** `npm run -s drive -- …` ⇒ ۳ تا ۴ ثانیه (هدف ≤۳۰ ثانیه).
+- **C8 — دو صفحه:** `Shop` (فرم‌دار، فهرست محصول از `/shop/products`) و `Expenses` (جدولی، `/expenses?from=…&to=…`).
+- **P‑B‑1 — پین چهار پنل (ساعت `2026-03-20T20:30:00Z` ⇒ `2026-03-21`؛ `20:00:00Z` ⇒ `2026-03-20`):**
+  - Nutrition: `GET …/food-logs/member/7/daily?date=2026-03-21` (و `2026-03-20` برای ۲۰:۰۰Z) ✔
+  - PeriodReportPanel: `…/finance/reports/period?kind=month&anchor=2026-03-21` ✔
+  - Expenses: `…/expenses?from=2026-02-19&to=2026-03-21` ✔
+  - AdaptiveNutritionPanel: POST `/nutrition/weight-logs` با `logged_for_date=2026-03-21` ✔
+  - **کنترل منفی:** بدون `clock` ⇒ `date=2026-11-23` (ساعت واقعی sandbox)؛ پس پین‌ها به ساعت درایور وابسته‌اند و بی‌معنا سبز نیستند.
+  - **مستقل از منطقهٔ دستگاه:** `TZ=UTC`، `TZ=America/Los_Angeles`، `TZ=Pacific/Kiritimati` ⇒ هر سه `Tests 4 passed (4)`.
+- **lint / tsc:** `npm run lint` ⇒ rc 0، خروجی خالی (۰/۰) پس از رفع `no-undef` با `/* global */` در خود فایل (بدون تغییر `eslint.config.mjs`) و `no-control-regex`؛ `npx tsc -b` ⇒ rc 0.
+- **تست‌های حوزه:** `tests/driver` + `clock` + nutritionPage + shopPage + periodReportPanel + expensesPage + adaptivePanel ⇒ `Test Files  8 passed | 1 skipped (9)`، `Tests  58 passed | 1 skipped (59)`، rc 0.
+- **کل studio (`npm test`):** rc 0، `Test Files  49 passed | 2 skipped (51)`، `Tests  323 passed | 10 skipped (333)`.
+- **INVENTORY:** `/home/user/venv-mp` دوباره ساخته شد (`pip install -c mp-app/backend/requirements.txt -e 'mp-app/backend[dev]'` ⇒ rc 0، `pip check` ⇒ `No broken requirements found.`، Python 3.11.2). `python scripts/build_audit_inventory.py` ⇒ rc 0؛ `--check` ⇒ rc 0 (`فهرست‌ها هم‌خوان‌اند`)؛ `/api/v1` ⇒ **166** ردیف. تغییر INVENTORY: ۴ فایل جدید (۱۳۵۴ ⇒ ۱۳۵۸)، `package.json` ۵۱ ⇒ ۵۲ خط؛ CHECKLIST بدون تغییر.
+- **package.json (تنها تغییر):** `+    "drive": "node scripts/agent_drive.mjs",` — بدون وابستگی و بدون تغییر lockfile (`git diff 35d4b35 HEAD -- '*package-lock.json' '*requirements.txt'` ⇒ خالی).
+- **کامیت‌ها:** `b2810f1` (کد + تست + `package.json`، ۵ فایل، `+403`)؛ کامیت دوم (این بخش، INVENTORY). `git diff --stat main...HEAD` ⇒ `24 files changed, 619 insertions(+), 63 deletions(-)` (شامل P‑A).
+- **تصمیم‌ها (بدون D‑n جدید؛ D‑25 برای carry‑over منطقهٔ فروشگاه رزرو است):** (۱) موتور در `scripts/agent_drive.mjs` ⇒ تست‌ها با `../../scripts/agent_drive.mjs` وارد می‌شوند؛ ماژول‌های UI با `import()` پویا تا `node` مستقیم فقط CLI را اجرا کند. (۲) CLI از طریق `vitest run tests/driver/cli.test.tsx` با `MP_DRIVE_ARGV`/`MP_DRIVE_OUT` ⇒ هیچ runner جدید. (۳) پاسخ‌های fetch فیکسچرهای کمینه‌اند، نه بک‌اند زنده؛ درایور ادعای پوشش API واقعی نمی‌کند. (۴) `/* global */` در فایل به‌جای تغییر eslint config (خارج از محدوده).
+- **تخطی‌ها / اشتباه‌های ثبت‌شده:** (الف) اجرای قرمز اول ادعا شده بود «موتور وجود ندارد»، اما در واقع `node_modules` نبود و خطای پیکربندی vitest بود؛ با `npm ci` (rc 0) و اجرای قرمز مجدد با موتور کنار رفته، قرمزِ معتبر تکرار شد. (ب) `/home/user/venv-mp` دوباره نبود و بازسازی شد. (ج) هیچ آستانه، تست، skip، job، ruleset یا وابستگی تغییر نکرد.
+- **باز (از P‑B):** پوشش API واقعی برای درایور (فعلاً فیکسچر)؛ کنترل‌های P‑C (`mp-money-float-cast`، setClock guard، shop timezone bootstrap یا D‑25، ۶ ردیف قدیمی دفترچه، F‑23)؛ F‑11 و F‑30 OPEN. P‑C شروع نشد تا دستور داور.
+
+## P‑C — کدهای پایدار گیت‌ها (P‑3 کدگذاری) · بستن carry‑over های P‑B
+
+- **مجوز:** `handoff/MP-BUILDER-PC-AUTHORIZATION-2026-11-23.txt` (ref `arena/2cde32d6-chat2db`) ⇒ `21160` بایت، `4d56279c92451142057d8aa6289aa4e7b30c100e2ed0a3269e79ffd5e0474b55  /tmp/PC-AUTH.txt` (با انتظار یکسان). محدوده: `scripts/docs_gate.py`، `scripts/interaction_map.py`، `GATE-CODES.md` (تازه)، `test_gate_codes.py` (تازه)، شش کلید در `status.json`، این بخش، و بازتولید INVENTORY/CHECKLIST. ممنوع (مطلق): `.github/**`، `.semgrep/**`، lockfile، requirements، eslint.config، ruleset، کد محصول، `agent_drive.mjs`، `clock.ts`، وابستگی تازه، PR، merge، force-push، amend.
+- **شاخه و پایه:** HEAD = `6ff2685` (تأیید). `git fetch origin` ⇒ شاخهٔ محلی همگام؛ هیچ `reset` لازم نشد.
+- **محیط:** `/home/user/venv-mp` موجود بود (`fastapi 0.165.0`، Python `3.11.2`). clone محلی در ابتدا **shallow** بود (۵ کامیت)؛ برای سنجش شش SHA شاهد `git fetch origin --unshallow` ⇒ ۲۷۲ کامیت. این تغییرِ کلون محلی است و روی شاخه اثری ندارد.
+- **شاهدهای status (سنجیده):** `git cat-file -t` برای `9bfc99d`، `20c3173`، `fe103a4`، `0afd240`، `8926fcd`، `fc402a8` ⇒ همه `commit`؛ پیام‌ها با مجوز یکی؛ همه اجداد HEAD.
+- **baseline پیش از تغییر (C4، خروجی خام + sort + sha256):**
+  - `python3 scripts/docs_gate.py` ⇒ rc 0؛ `Documentation gate passed: 18 Markdown files, 276 local links, 15 Mermaid diagram block(s), …`؛ sorted-sha `1730e4d9b55c800ae48adad3…` ✔
+  - `python3 scripts/interaction_map.py --check` ⇒ rc 0؛ `Interaction map gate passed: 31 سطح، 163 مسیر قرارداد، رانش صفر.`؛ sorted-sha `29261bdef03b3369718ccf79…` ✔ (`--check` فقط؛ نقشه درجا نوشته نشد)
+  - `python3 scripts/repo_hygiene_gate.py` ⇒ rc 0؛ sorted-sha `e7635353f6757cbc756c4d26…` ✔
+- **قرمز (red‑first، C8):** `mp-app/backend/tests/integration/test_gate_codes.py` پیش از هر تغییرِ اسکریپت نوشته شد. `cd mp-app/backend && python -m pytest tests/integration/test_gate_codes.py -q` ⇒ **`10 failed`، `1 warning`** (خروجی: `/tmp/pc/red.log`). دلیل‌های محتوایی: خلاصهٔ `18 Markdown files` به‌جای ۱۹؛ `--json` ناشناخته؛ نبودِ کدهای DOC/MAP؛ نبودِ `GATE-CODES.md`؛ تست ساختگیِ `--check` بدون `MAP-002`. قرمزِ ناشی از node_modules/venv نبود؛ محیط سالم بود.
+- **دو باگِ خودِ تست (کشف‌شده در سبز، اصلاح‌شده در تست نه در گیت):**
+  - `dataclasses` در پایتون ۳٫۱۱ `sys.modules[__module__]` لازم دارد؛ بارگذاری با `spec_from_file_location` باید ماژول را ثبت کند ⇒ `sys.modules[name] = module` در `_load`.
+  - `resolve_local_target` گام‌های لینک را نسبت به **cwd** حل می‌کند، نه `ROOT`. CI از ریشهٔ ریپو اجرا می‌کند، پس درست است؛ نمونهٔ آزمایشی باید `chdir` به `tmp_path` شود (`monkeypatch.chdir`). **این رفتارِ گیت تغییر نکرد** (C4 معنی را ثابت می‌خواهد). یادداشت برای P‑C بعدی: حل لینک نسبت به `ROOT` امن‌تر است؛ فعلاً ثبت، نه اصلاح.
+- **سبز:** `10 passed, 1 warning` (هشدار از `fastapi/testclient` و استارلت، بی‌ربط). `ruff check --select E,F,W,I,N,UP,B,SIM,DTZ,TRY400,S --ignore E501 tests/integration/test_gate_codes.py` ⇒ rc 0 پس از تغییرِ چهار نام تابع به حروف کوچک (N802)؛ `ruff format --check` ⇒ rc 0 (`ruff 0.17.6` همان نسخهٔ سنجاق‌شده).
+- **C1 — کدهای پایدار:** `DOC-001…DOC-009` در `docs_gate.py` (جدول `SUGGESTIONS` + کلاس `Finding`)؛ `MAP-001…MAP-003` در `interaction_map.py`؛ `DRV-001…DRV-005` فقط در `GATE-CODES.md` ثبت شد و `agent_drive.mjs` دست نخورد.
+- **C2 — قالب واحد:** `CODE path:line: پیام ← پیشنهاد` (خط ناشناخته = `-`). نمونهٔ واقعیِ خروجیِ `interaction_map.py --check` با نقشهٔ کهنهٔ موقت (مسیر خارج از ریپو، نوشته‌نشده):
+  ```text
+  Interaction map gate FAILED:
+  MAP-002 /tmp/…/stale.md:-: نقشهٔ سطح تعامل کهنه است — python3 scripts/interaction_map.py را اجرا و commit کن ← python3 scripts/interaction_map.py را اجرا و نتیجه را commit کنید.
+  ```
+  و از `docs_gate` با ۲۵ لینک شکسته (cap):
+  ```text
+  DOC-006 bad.md:1: broken local link: m0.md ← مسیر را اصلاح کنید یا فایل مقصد را بسازید.
+  … (۲۰ سطر DOC-006) …
+  +5 موردِ دیگر (DOC-006)
+  ```
+- **C3 — دسته‌بندی کامل + سقف ۲۰:** گیت در اولین خطا نمی‌ایستد؛ `print_capped` هر کد را تا ۲۰ سطر چاپ و بقیه را `+N موردِ دیگر (CODE)` می‌نویسد (سنجیده: ۲۰ سطر + `+5`).
+- **C4 — معنی ثابت (خروجیِ sort و diff پیش/پس):**
+  - `docs_gate`: تنها اختلاف یک سطر خلاصه است: `18 Markdown files, 276 local links` ⇒ `19 Markdown files, 280 local links`. `15 Mermaid diagram block(s)` ثابت. ⇒ `N = 280 − 276 = 4` (چهار لینک محلی در `GATE-CODES.md`).
+  - `interaction_map --check`: `diff` تهی؛ sorted-sha پیش و پس `29261bdef03b3369718ccf79…` یکسان.
+  - `repo_hygiene_gate`: sorted-sha پیش و پس `e7635353f6757cbc756c4d26…` یکسان.
+- **C5 — exit codes:** `docs_gate` سبز ⇒ rc 0؛ قرمزِ ساختگی (کپیِ موقتِ اسکریپت در `/tmp`، سند خراب) ⇒ rc 1. `interaction_map --check` سبز ⇒ rc 0؛ قرمز ⇒ rc 1 (تست). مسیرهای `--write-baseline` و نوشتن نقشه بدون تغییر ماندند (کد نوشتن در خط‌های اصلی دست نخورد).
+- **C6 — `--json`:** `docs_gate --json` و `interaction_map --check --json` روی stdout فقط آرایهٔ JSON با کلیدهای `code/path/line/message/suggestion` (همه، بدون سقف). در حالت سبز آرایهٔ خالی و خلاصه روی **stderr**؛ `--json` بدون `--check` در نقشه با `parser.error` رد می‌شود. این تصمیم در `GATE-CODES.md` هم آمده است.
+- **C7 — دامنهٔ docs_gate:** `Path("docs/MuscleParadise/audit/GATE-CODES.md")` به `CORE_MARKDOWN_FILES` افزوده شد؛ `len(MARKDOWN_FILES)` از ۱۸ به ۱۹ رفت. Mermaid ۱۵ ماند (جدول کد بلوک Mermaid ندارد). لینک‌های `GATE-CODES.md` زنده‌اند (گیت سبز است).
+- **C8 — نقشهٔ تغییر در `docs_gate`:** `fail()` به `report()` و `Finding` تبدیل شد؛ شرط‌ها و متن پیام‌ها بدون تغییرند؛ DOC-001 تا DOC-009 به ترتیبِ قبلیِ بررسی‌ها نسبت داده شد.
+- **C9 — ترتیب بازتولید:** این بخش **پیش از** بازتولیدِ INVENTORY/CHECKLIST نوشته شد؛ بازتولید آخرین گام پیش از commit است (CO‑1). شمارهٔ نهاییِ INVENTORY در خلاصهٔ گزارش آمده، نه در این بخش، تا بخش ناهم‌خوان نشود. **تلهٔ سنجیده:** `python3 scripts/build_audit_inventory.py --check` با پایتون سیستمی ⇒ rc 1 با «کهنه: INVENTORY.md» حتی وقتی فایل درست است (بخش API از OpenAPI می‌آید و فقط با venv کامل است)؛ با `/home/user/venv-mp/bin/python` ⇒ rc 0. سنجش همیشه با venv.
+- **C10 — بودجه:** کامیت ۱ = `b7ed4ae` (کد + GATE-CODES + تست، ۴ فایل)؛ کامیت ۲ = این بخش + `status.json` + CHECKLIST + INVENTORY. ۱ push. هیچ PR، هیچ merge، هیچ amend.
+- **status.json — شش کلید تازه (ASCII-hyphen؛ قبلاً غایب بودند و CHECKLIST آن‌ها را OPEN نشان می‌داد):**
+  - `F-05` ⇒ FIXED · شاهد `9bfc99d`
+  - `F-07` ⇒ IN-PROGRESS · شاهد `20c3173`
+  - `F-16` ⇒ FIXED · شاهد `fe103a4`
+  - `F-17` ⇒ FIXED · شاهد `0afd240`
+  - `F-26` ⇒ FIXED · شاهد `8926fcd`
+  - `F-27` ⇒ FIXED · شاهد `fc402a8`
+  - **F‑11 و F‑30 دست نخورده و OPEN‌اند.** **F‑23 مبهم است؛ تصمیم داده نشد و دست نخورد.**
+- **اصلاحیهٔ P‑B (CO‑2):** `git diff --shortstat main...HEAD` روی tip پیش از متن نهایی بخش P‑B گرفته شده بود و `24 files changed, 619 insertions(+), 63 deletions(-)` نشان می‌داد. مقدار درست روی `6ff2685` **`24 files changed, 657 insertions(+), 64 deletions(-)`** است (علت: بازتولید و گرفتن diff stat پیش از نشستن متن نهایی بخش LOG انجام شده بود؛ ردیف EXECUTION-LOG در INVENTORY آن کامیت ۷۵۳ سطر نشان می‌داد). INVENTORY آن کامیت هم کهنه بود؛ در این بسته بازتولید شد (CO‑1). کامیت‌های P‑B amend نشدند.
+- **تخطی‌ها / تصمیم‌های ثبت‌شده:** (۱) فقط دو اصلاح در خودِ تست (sys.modules و chdir)؛ گیت تغییر معنایی نکرد. (۲) `ruff` روی تست: N802 و قالب‌بندی همان فایل اصلاح شد. (۳) `--json` خلاصه را روی stderr می‌گذارد (توضیح داده‌شده). (۴) خط‌های بدون شماره با `-` نشان داده می‌شوند. (۵) رفتار حل لینک نسبت به cwd ثبت شد، نه تغییر کرد. (۶) هیچ کد محصول، `.github/`، `.semgrep/`، lockfile، requirements، eslint، ruleset، `agent_drive.mjs`، `clock.ts` یا وابستگی تغییر نکرد.
+- **باز (از P‑C):** F‑11 OPEN؛ F‑30 OPEN؛ F‑23 مبهم (نیاز به تصمیم)؛ `mp-money-float-cast` تنگ‌سازی‌نشده (P‑F؛ مجوز نیست)؛ گاردِ setClock (P‑D؛ مجوز نیست)؛ `bootstrap` منطقهٔ فروشگاه/D‑25 (P‑F؛ مجوز نیست)؛ حل لینک نسبت به `ROOT` (یادداشت بالا)؛ شش کلید حالا ثبت شده‌اند؛ WP 4.1 PARTIAL؛ WP 4.2 DEFERRED؛ WP 4.7 PARTIAL (BLOCKED-ENV)؛ WP 0.2 BLOCKED؛ WP 1.1/1.2/1.4 PARTIAL.

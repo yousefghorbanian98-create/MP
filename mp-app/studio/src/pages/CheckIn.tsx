@@ -3,6 +3,7 @@ import { DURATION, useMotionPreset } from "../lib/motion";
 import { useState } from "react";
 import { fetchCheckinFeed } from "../lib/api";
 import { useApi } from "../lib/useApi";
+import { toDate } from "../lib/clock";
 
 /**
  * نمای زندهٔ چک‌این (M45-c2) — جریان ورودها از `GET /admin/checkins`.
@@ -106,7 +107,7 @@ export function CheckIn() {
                 <div className="text-left">
                   <p className="text-xs text-ink-dim">
                     {f.checked_in_at
-                      ? new Date(f.checked_in_at).toLocaleTimeString("fa-IR", {
+                      ? toDate(f.checked_in_at).toLocaleTimeString("fa-IR", {
                           hour: "2-digit",
                           minute: "2-digit",
                         })
