@@ -61,6 +61,10 @@ CORE_MARKDOWN_FILES = (
     Path("docs/MuscleParadise/audit/GATE-CODES.md"),
     # برنامهٔ کلان محصول تا production/AI autonomy: لینک‌ها و وضعیت‌های آن نیز تحت گیت‌اند.
     Path("docs/MuscleParadise/architecture/ai-autonomous-production-plan-v1-2026-11-23.md"),
+    # Crosswalk ایستای reduced-motionِ درخت جاری؛ لینک‌ها و Markdown آن نیز validate شوند.
+    Path("docs/MuscleParadise/architecture/studio-motion-current-tree-static-crosswalk-2026-11-23.fa.md"),
+    # فهرست قابل‌اجرا در sandbox و بستهٔ انتقال به Codespace؛ همین handoff نیز زیر گیت لینک است.
+    Path("docs/MuscleParadise/architecture/motion-pwa-availability-matrix-2026-11-23.fa.md"),
 )
 MARKDOWN_FILES = (*CORE_MARKDOWN_FILES, *_module_docs())
 SVG_FILES = (
