@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { canSeePage, parseRole } from "../lib/roleNav";
-import { useAppStore, type PageId } from "../stores/appStore";
+import type { PageId } from "../stores/appStore";
+import { navigateToPage, parseStudioRoute, useStudioLocation } from "../lib/navigation";
 import { useAuth } from "../auth/AuthContext";
 import { useMotionPreset } from "../lib/motion";
 
@@ -33,7 +34,8 @@ const NEEDS_ROLE = new Set<PageId>(["finance", "expenses", "settings"]);
  * ۴۰۳ می‌گرفتند — یعنی منو دکمهٔ دکوراتیو بود.
  */
 export function Sidebar() {
-  const { page, setPage } = useAppStore();
+  const route = parseStudioRoute(useStudioLocation());
+  const page = route.type === "staff" ? route.page : "dashboard";
   const { signOut } = useAuth();
   const motionPreset = useMotionPreset();
   const role = parseRole();
@@ -63,7 +65,7 @@ export function Sidebar() {
           return (
             <button
               key={item.id}
-              onClick={() => setPage(item.id)}
+              onClick={() => navigateToPage(item.id)}
               className={`focus-ring relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors duration-200 ${
                 active ? "text-white" : "text-ink-dim hover:bg-surface/70 hover:text-ink"
               }`}

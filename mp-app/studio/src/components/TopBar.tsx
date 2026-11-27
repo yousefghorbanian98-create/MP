@@ -13,6 +13,7 @@ import { useAuth } from "../auth/AuthContext";
 import { PhoneChangeDialog } from "./PhoneChangeDialog";
 import { fetchMe, type Me } from "../lib/api";
 import { useAppStore } from "../stores/appStore";
+import { parseStudioRoute, useStudioLocation } from "../lib/navigation";
 import { useMotionPreset } from "../lib/motion";
 
 const titles: Record<string, { title: string; sub: string }> = {
@@ -42,7 +43,10 @@ const ROLE_FA: Record<string, string> = {
 const SEARCH_PAGES = new Set(["members"]);
 
 export function TopBar() {
-  const { page, search, setSearch } = useAppStore();
+  const route = parseStudioRoute(useStudioLocation());
+  const page = route.type === "staff" ? route.page : "dashboard";
+  const search = useAppStore((state) => state.search);
+  const setSearch = useAppStore((state) => state.setSearch);
   const { signOut } = useAuth();
   const [me, setMe] = useState<Me | null>(null);
   const [meError, setMeError] = useState<string | null>(null);

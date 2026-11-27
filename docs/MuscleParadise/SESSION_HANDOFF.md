@@ -2,9 +2,23 @@
 
 > این فایل **خلاصهٔ جاری برای ادامهٔ کار** است، نه آرشیو گفتگو و نه منبع نهایی وضعیت محصول. پیش از فشرده‌سازی context یا پایان هر کار معنادار، همین snapshot را جایگزین/به‌روز کن؛ تاریخچه را با انباشت transcript طولانی نکن.
 
-## وضعیت جاری — baseline PWA، backlog canonical و Motion evidence (تاریخ مرجع: ۲۰۲۶-۱۱-۲۳)
+## وضعیت جاری — CI سبز برای PR #29 (تاریخ مرجع: ۲۰۲۶-۱۱-۲۳)
 
-> این بخش مرجع جاری است؛ بخش‌های پایین‌تر تاریخچه‌اند و وضعیت دیگری از branch/SHA را توصیف می‌کنند. تاریخ ثبت از تاریخ مورد اعتماد Arena گرفته شده؛ ساعت container ناسازگار است و در پایین مشخص شده.
+> این نتیجه به SHA منتشرشدهٔ مشخص‌شده محدود است؛ خلاصهٔ وضعیت CI را در PR برای جدیدترین head دوباره بررسی کن.
+
+- **شاخه و PR:** شاخهٔ جاری `arena/5e0f64cf-mp` است. PR #29 به `main` باز است: https://github.com/yousefghorbanian98-create/MP/pull/29. آخرین head منتشرشده‌ای که query شد `640fb7e35636569502eec00489fee396d4e6af6a` بود؛ وضعیت `OPEN / CLEAN / MERGEABLE` بود. PR ادغام نشده است.
+- **هم‌ترازی main:** `origin/main`=`9226e4570cd0cc17834a580cb21d2c0fd7001ade` در ancestry شاخه قرار دارد؛ sync با merge عادی انجام شد، بدون rewrite یا force-push. tree آن نسبت به merge-base قبلی `67539e7d35495cec154fb277df12e33c8c5f4d99` تفاوتی نداشت.
+- **CI روی SHA `640fb7e`:** `mp-ci` run `45916977572` و `pwa00-doc-quality` run `45916977586` هر دو completed/success بودند؛ jobهای backend، Studio، Flutter/Android، E2E API، live-contract، docs/handoff، secret scan، filtered PWA patch، Super-Linter و Reviewdog/markdownlint همگی سبز شدند. CodeRabbit نیز PASS بود. این شاهد به همان SHA محدود است؛ status checkهای head جدید را در PR ببین.
+- **علت interaction-map:** `scripts/interaction_map.py --check` report تولیدی کهنه را پیدا کرد؛ صفحهٔ Login در source تست جدید داشت اما Markdown/JSON نقشه به‌روز نشده بود. اجرای `python3 scripts/interaction_map.py` دو artifact را تازه کرد؛ گیت اکنون ۳۱ سطح، ۱۶۳ مسیر و رانش صفر گزارش می‌کند.
+- **علت backend CI:** همان نقشهٔ کهنه باعث شکست `tests/integration/test_gate_codes.py::test_green_check_json_is_empty_array_and_exit_0` شده بود. اجرای کامل `bash scripts/coverage_run.sh` روی candidate (archive از `HEAD` به‌علاوهٔ diff tracked اصلاحات) **۱۳۳۶ passed، ۲ skipped، ۰ failed** در ۲۹۳٫۸۷ ثانیه داد؛ همهٔ آستانه‌های coverage پاس شدند (۲ هشدار). `test_gate_codes.py` هدفمند: **۱۲ passed**.
+- **علت PWA-00 patch gate:** `PWA-00-DIFF.patch` با متن نهایی چهار source docs همگام نبود. از pinned base `c46e792657e361cd09799c896c47149b4a5c4d86` دوباره ساخته شد؛ `git apply --check --whitespace=error-all`، apply واقعی، `cmp` سه سند و guard رجیستری ADR-006 محلی PASS شدند؛ CI patch gate نیز روی SHA ثبت‌شده PASS بود.
+- **گیت‌های مستندات محلی:** `python3 scripts/docs_gate.py` ⇒ ۳۸ Markdown، ۵۴۷ لینک محلی، ۱۵ Mermaid PASS؛ `python3 scripts/assemble_project_guide.py --check`, `git diff --check` و `python3 scripts/interaction_map.py --check` PASS. Studio lint/build و suite سه‌شاردی (۳۶۲ passed، ۱۰ skipped) و backend هدفمند ۲۹ passed، validation قبلی شاخه‌اند.
+- **حفظ worktree:** ۲۷۴ مسیر untracked محفوظ‌اند؛ نام/محتوایشان بازبینی یا stage نشده، خصوصاً receiptها. تغییرات status کنونی فقط در مستندات tracked است؛ `git add -A` نکن.
+- **مرز release/ادامه:** release همچنان `NO-GO`؛ browser/device acceptance، runtime واقعی Nginx/API/direct-refresh، reviewer مستقل و SMS واقعی انجام نشده‌اند. PR را merge نکن؛ پیش از هر اقدام بعدی، head/check status واقعی GitHub را دوباره query کن و untrackedها را حفظ کن.
+
+## Snapshot پیشین — Motion crosswalk، baseline PWA و شواهد browser emulation
+
+> این snapshot پیش از پیگیری محلی PWA ثبت شده است؛ branch/SHA و آزمون‌های آن به همان زمان محدودند و به وضعیت جاری بالای این handoff تعمیم داده نشوند. محتوای تاریخی Motion حفظ شده تا evidence قبلی از بین نرود.
 
 - **شاخه/حدود:** `arena/5e0f64cf-mp`, `HEAD=d92817f4151ebbafb25425b7b28776a4cc1180dc`; worktree dirty، stage صفر. diffهای نامرتبط و receiptهای private دست‌نخورده‌اند. در این کار stage/commit/push/PR/merge/release/deploy انجام نشد.
 - **تصمیم محصول ثبت‌شده، نه بازبینی دوباره:** OQ-01/ADR-007، PWA مشترک React برای عضو و کادر را baseline انتشار اول ثبت می‌کند؛ Flutter/Android حفظ می‌شوند. در این پیگیری OQ-01 دوباره بازبینی/تصویب نشد. این baseline خودش مجوز انتشار یا پذیرش محصول نیست. مرجع: [ADR-007](adr/007-pwa-primary-release.md)، [پرسش‌نامه](architecture/owner-decision-questionnaire-2026-11-23.fa.md)، [دفتر تصمیم](architecture/session-decisions-2026-11-23/DECISION-LOG.md)، [TODO و backlog کامل](TODO-2026-11-16.md#pwa-ui-ux-full-backlog-2026-11-23).

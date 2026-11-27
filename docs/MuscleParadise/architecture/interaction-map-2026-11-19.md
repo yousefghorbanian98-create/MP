@@ -139,7 +139,7 @@ python3 scripts/interaction_map.py --check
 
 بدون فراخوانی API در این صفحه و کامپوننت‌هایش.
 
-تست: **ندارد**
+تست: `mp-app/studio/tests/login.test.tsx`
 
 ### Members
 

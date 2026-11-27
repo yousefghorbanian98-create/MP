@@ -667,7 +667,9 @@
         "modals": 0
       },
       "endpoints": [],
-      "tests": []
+      "tests": [
+        "mp-app/studio/tests/login.test.tsx"
+      ]
     },
     {
       "surface": "Members",

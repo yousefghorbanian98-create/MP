@@ -112,6 +112,7 @@ async function renderAuthenticatedApp() {
 }
 
 beforeEach(() => {
+  window.history.replaceState({}, "", "/staff/dashboard");
   localStorage.setItem("mp_token", staffToken());
   localStorage.setItem("mp_refresh", "test-refresh");
   useAppStore.setState({ selectedMemberId: 1 });
@@ -139,6 +140,7 @@ describe("a11y — rule-based audit across every page (Q5)", { timeout: 30_000 }
 
   for (const page of pages) {
     it(`${page}: no blocking accessibility defects`, async () => {
+      window.history.replaceState({}, "", `/staff/${page}`);
       useAppStore.setState({ page });
       const { container } = await renderAuthenticatedApp();
       expect(audit(container)).toEqual([]);
@@ -146,12 +148,14 @@ describe("a11y — rule-based audit across every page (Q5)", { timeout: 30_000 }
   }
 
   it("every page has exactly one h1", async () => {
+    window.history.replaceState({}, "", "/staff/dashboard");
     useAppStore.setState({ page: "dashboard" });
     const { container } = await renderAuthenticatedApp();
     expect(container.querySelectorAll("h1").length).toBe(1);
   });
 
   it("headings never skip a level", async () => {
+    window.history.replaceState({}, "", "/staff/members");
     useAppStore.setState({ page: "members" });
     const { container } = await renderAuthenticatedApp();
     const levels = Array.from(container.querySelectorAll("h1,h2,h3,h4,h5,h6")).map((h) =>
@@ -165,6 +169,7 @@ describe("a11y — rule-based audit across every page (Q5)", { timeout: 30_000 }
   });
 
   it("the sidebar navigation is reachable as buttons with names", async () => {
+    window.history.replaceState({}, "", "/staff/dashboard");
     useAppStore.setState({ page: "dashboard" });
     const { container } = await renderAuthenticatedApp();
     const navButtons = Array.from(container.querySelectorAll("nav button, aside button"));

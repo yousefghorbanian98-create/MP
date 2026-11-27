@@ -27,7 +27,7 @@
 
 > 🚧 **وضعیت:** توسعه فعال است؛ این صفحه ادعای آمادگی انتشار یا استقرار production نمی‌کند. سبز بودن CI فقط به commit و گیت‌هایی مربوط است که همان اجرا پوشش داده است؛ جایگزین QA دستگاه، اتصال واقعی سرویس‌های بیرونی، آزمون بازیابی پشتیبان یا تأیید انتشار نیست.
 >
-> 🧭 **جهت PWA:** یک PWA مشترک React بر پایهٔ `mp-app/studio/` در نظر گرفته شده است، نه اپ React دوم. این تصمیم Flutter/Android، Flutter Web یا Electron را حذف نمی‌کند؛ جایگاه در baseline انتشار (`D-01`) و معیارهای پذیرش انتشار (`D-10`) همچنان باز است. جزئیات در [ADR-006](docs/MuscleParadise/adr/006-shared-react-pwa.md).
+> 🧭 **baseline انتشار:** طبق [ADR-007](docs/MuscleParadise/adr/007-pwa-primary-release.md)، PWA مشترک React بر پایهٔ `mp-app/studio/` رابط اصلی انتشار اول برای عضو و کادر است؛ اپ React دوم ساخته نمی‌شود. Flutter/Android، Flutter Web و Electron حفظ می‌شوند. این انتخاب محصول، پیاده‌سازی/parity PWA یا پذیرش انتشار را ثابت نمی‌کند؛ گیت‌های D-10/QA و Go/No-Go همچنان جدا و بازند. [ADR-006](docs/MuscleParadise/adr/006-shared-react-pwa.md) جهت shared React را ثبت می‌کند.
 >
 > 🔒 **مجوز:** مخزن عمومی است، اما نرم‌افزار اختصاصی است؛ مشاهدهٔ کد به‌تنهایی مجوز استفاده، کپی یا بازتوزیع نمی‌دهد. [LICENSE](LICENSE) را بخوانید.
 
@@ -65,9 +65,9 @@
 
 **جهت‌های معماری که باید از هم تفکیک بمانند:**
 
-- PWA مشترک React بر پایهٔ Studio پذیرفته شده؛ اپ React دوم ساخته نمی‌شود. این جهت به‌تنهایی به معنی پیاده‌سازی یا انتشار PWA نیست.
-- Flutter/Android، مسیر Flutter Web و Electron حفظ می‌شوند؛ هیچ‌کدام با نمودار هدف کنار گذاشته نمی‌شوند.
-- `D-01` دربارهٔ baseline انتشار و `D-10` دربارهٔ معیارهای پذیرش انتشار باز هستند. PWA تصمیم‌های نقش/grant، پایگاه‌داده/tenant، پرداخت، نشست یا offline/cache را خودبه‌خود تعیین نمی‌کند.
+- PWA مشترک React بر پایهٔ Studio طبق ADR-007 کلاینت اصلی انتشار اول برای عضو و کادر است؛ این تصمیم به‌تنهایی به معنی پیاده‌سازی، parity یا انتشار PWA نیست.
+- Flutter/Android، مسیر Flutter Web و Electron حفظ می‌شوند؛ هیچ‌کدام با baseline PWA حذف یا خاموش نمی‌شوند.
+- `D-01` از نظر baseline کلاینت با ADR-007 پاسخ داده شده است؛ `D-10` و تمام معیارهای acceptance/Go-No-Go همچنان گیت‌اند. PWA تصمیم‌های نقش/grant، پایگاه‌داده/tenant، پرداخت، نشست یا offline/cache را خودبه‌خود تعیین نمی‌کند.
 
 برای مرزها و محدودیت‌های هر نقشه، [Architecture Atlas](docs/MuscleParadise/architecture/README.md) و [تحلیل شواهد جاری](docs/MuscleParadise/architecture/analysis-2026-11-23.md) را ببینید.
 
@@ -129,7 +129,7 @@ flutter run --dart-define=MP_API=http://10.0.2.2:8000/api/v1
 |---|---|
 | راهنمای مخزن و فهرست مستندات | [AGENTS.md](AGENTS.md) · [نقشهٔ مستندات](docs/README.md) · [هندآف نشست](docs/MuscleParadise/SESSION_HANDOFF.md) (خلاصهٔ نشست است؛ وضعیت را با TODO و کد جاری تطبیق دهید) |
 | فلوچارت و نقشه‌های معماری | [فلوچارت یکپارچه](docs/MuscleParadise/architecture/system-integrated-flow-v1-2026-11-23.svg) · [منبع DOT](docs/MuscleParadise/architecture/system-integrated-flow-v1-2026-11-23.dot) · [Architecture Atlas](docs/MuscleParadise/architecture/README.md) |
-| تصمیم‌ها و دامنهٔ PWA | [ADR index](docs/MuscleParadise/adr/README.md) · [ADR-006](docs/MuscleParadise/adr/006-shared-react-pwa.md) |
+| تصمیم‌ها و دامنهٔ PWA | [ADR index](docs/MuscleParadise/adr/README.md) · [ADR-007 (baseline انتشار)](docs/MuscleParadise/adr/007-pwa-primary-release.md) · [ADR-006 (جهت PWA مشترک)](docs/MuscleParadise/adr/006-shared-react-pwa.md) |
 | API و ساختار محصول | [Backend](mp-app/backend/README.md) · [فهرست routeهای API](mp-app/backend/api/routes.json) · [Client](mp-app/client/README.md) · [Studio](mp-app/studio/README.md) |
 | وضعیت کار و آمادگی انتشار | [TODO جاری](docs/MuscleParadise/TODO-CLOUD-FINANCE-ACCESS.md) · [چک‌لیست انتشار](docs/MuscleParadise/RELEASE-CHECKLIST.md) · [Deployment](docs/MuscleParadise/DEPLOYMENT.md) · [Ops runbook](docs/MuscleParadise/OPS-RUNBOOK.md) |
 | حریم خصوصی و تاریخچه | [نگهداری داده](docs/MuscleParadise/DATA-RETENTION.md) · [CHANGELOG](docs/MuscleParadise/CHANGELOG.md) |
@@ -142,5 +142,5 @@ Muscle Paradise نرم‌افزار اختصاصی است. مشاهدهٔ عمو
 <details>
   <summary><strong>English overview</strong></summary>
   <br />
-  Muscle Paradise is a Persian-first gym operations platform with a Flutter member client, a React/TypeScript studio (including an existing Electron package), and a versioned FastAPI modular backend. The shared React PWA direction extends the existing Studio; Flutter/Android, Flutter Web, and Electron remain in scope. Release baseline and acceptance gates D-01 and D-10 are still open. This repository is actively developed and is not presented as production-ready. See <a href="docs/MuscleParadise/architecture/system-integrated-flow-v1-2026-11-23.svg">the integrated flowchart</a> and <a href="LICENSE">LICENSE</a>.
+  Muscle Paradise is a Persian-first gym operations platform with a Flutter member client, a React/TypeScript Studio (including an existing Electron package), and a versioned FastAPI modular backend. Per ADR-007, a shared React PWA based on Studio is the primary first-release client for members and staff; Flutter/Android, Flutter Web, and Electron are preserved. This product decision does not claim PWA implementation, parity, QA, or release readiness; acceptance and Go/No-Go gates remain open. This repository is actively developed and is not presented as production-ready. See <a href="docs/MuscleParadise/architecture/system-integrated-flow-v1-2026-11-23.svg">the integrated flowchart</a> and <a href="LICENSE">LICENSE</a>.
 </details>

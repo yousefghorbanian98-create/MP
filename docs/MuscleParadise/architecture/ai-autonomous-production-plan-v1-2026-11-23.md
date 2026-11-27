@@ -1,6 +1,6 @@
 # برنامهٔ تولید، اتوماسیون هوشمند و آمادگی انتشار Muscle Paradise
 
-> **وضعیت:** پیش‌نویس مشورتی برای تأیید مالک؛ نه ADR پذیرفته‌شده، نه backlog میکرولوپ‌ها و نه مجوز پیاده‌سازی/استقرار. این سند مسیر کلان را طراحی می‌کند؛ پس از تأیید، می‌توان آن را طبق ۱۳ لایه به loopها و سپس micro-taskها تبدیل کرد.
+> **وضعیت:** نقشهٔ مشورتی، نه ADR و نه مجوز پیاده‌سازی/استقرار. پاسخ‌های OQ-01…OQ-10 اکنون در [پرسش‌نامهٔ مالک](owner-decision-questionnaire-2026-11-23.fa.md) و [ADR-007](../adr/007-pwa-primary-release.md) ثبت شده‌اند؛ این نقشه با آن baselineها هم‌راستا شده است. صف واقعی کار در TODOهای جاری قرار دارد؛ این سند یا پیش‌نویس Finn-loop، issue backlog اجرایی نیست و ۱۳ لایهٔ بالا به‌تنهایی مجوز اجرا نمی‌دهد.
 >
 > **دامنهٔ این کار:** طراحی برنامه با تکیه بر جریان‌ها و معماری همین مخزن و پروژه‌های متن‌باز GitHub. در این مرحله کد محصول، dependencyها، workflowها، زیرساخت یا داده تغییر نمی‌کند؛ هیچ پروژه‌ای نصب/اجرا نمی‌شود.
 
@@ -46,8 +46,8 @@
 | حوزه | آنچه اکنون در مخزن دیده می‌شود | پیامد برای برنامه |
 |---|---|---|
 | معماری برنامه | FastAPI به‌صورت modular monolith، Studio وب و Flutter/Android عضو | همین سادگی حفظ شود؛ microservices/Kubernetes هدف پیش‌فرض نیست. فایل‌های Android/Flutter حذف یا بازنویسی نشوند. |
-| رابط/مسیر انتشار | TODO محصول، Android عضو + Studio وب را مسیر انتشار اول می‌داند؛ فلوچارت PWA یک رابط مشترک را به‌عنوان هدف طراحی ترسیم می‌کند. PWA هنوز پیاده نشده است. | تعارض صریح و حل‌نشده است؛ هیچ سندی صرفاً به‌خاطر جدیدتر بودن، تصمیم انتشار را supersede نمی‌کند. مالک باید در G0 با ADR دامنهٔ انتشار را انتخاب کند؛ Flutter/Android تا آن زمان حفظ می‌شود. |
-| دسترسی | کد فعلی نقش‌های `member`, `coach`, `reception`, `manager`, `admin`, `super_admin` را می‌شناسد. | فلوچارت مقصد مدل `super_admin/admin/member` و اعطای نقش/مجوز ریز فقط توسط `super_admin` را ترسیم می‌کند. این مهاجرت تصمیم و نگاشت owner-signed می‌خواهد؛ `admin` نباید خودش یا دیگری را ارتقا دهد/مجوز بدهد و حق موجودی نباید خودکار گسترش یابد. |
+| رابط/مسیر انتشار | تصمیم جاری [ADR-007](../adr/007-pwa-primary-release.md) و OQ-01: یک PWA مشترک React روی Studio، رابط اصلی انتشار اول برای عضو و کادر است؛ Flutter/Android حفظ می‌شود. کد مشاهده‌شده هنوز صفحات کادر در Studio و مسیر عضو در Flutter دارد؛ parity عضو/کادر و پذیرش PWA اثبات نشده است. | انتخاب scope جاری است، نه پیاده‌سازی یا release approval. اسناد Android+Studio فقط از جهت baseline کلاینت قدیمی‌اند؛ باقی‌ماندن native در مخزن/CI الزامی است. گیت‌های دقیق پذیرش همچنان بازند. |
+| دسترسی | OQ-03/ADR-007 شش نقش فعلی `member`, `coach`, `reception`, `manager`, `admin`, `super_admin` و تک‌باشگاه را حفظ می‌کند. | مدل سه‌نقشیِ نمودار مقصد، پیشنهاد/تصویر قدیمی است و تصمیم جاری یا مجوز مهاجرت نیست. role/grant change انجام نشود؛ ماتریس دقیق route×action×ownership و آزمون deny/revoke هنوز لازم است؛ اعطای نقش/grant مطابق سیاست موجود فقط از مسیر مجاز `super_admin` است. |
 | جریان محصول | مستندات، عضویت، تمرین، تغذیه، ارزیابی، کلاس/QR، چت و مسیرهای مالی/فروشگاه را پوشش می‌دهند؛ خود نمودارها محدودیت شاهد را تصریح می‌کنند. | هر دامنه به «جریان قابل‌آزمون» تبدیل شود؛ نمایش صفحه به‌تنهایی تکمیل نیست. محاسبهٔ پزشکی یا تصمیم مالی خودکار از مدل زبانی پذیرفته نیست. |
 | خرید و پول | تصمیم محصول در TODO، فروشگاه نمایش‌محور/خرید حضوری و کارت‌به‌کارت با تطبیق انسانی را می‌خواهد؛ کارت‌به‌کارت فقط وقتی سرور محلی زنده/باشگاه باز است؛ سند Full Cloud قدیمی‌تر دربارهٔ درگاه متعارض است. | مبنای این طرح TODO محصول است: checkout آنلاین هدف انتشار اول نیست و فیش/تطبیق انسانی باید امن و تراکنشی باشد. وضعیت ساعات/آنلاین از سرور بیاید؛ خارج از آن درخواست غیرفعال و پیام واضح نمایش داده شود. پیش از تغییر/انتشار، سند درگاه باید با ADR صریحاً supersede یا به تصمیم جاری پیوند بخورد؛ mock یا sandbox در production راه‌حل نیست. |
 | دادهٔ حساس | حوزه‌های حساب، مالی و سلامت/ارزیابی در محصول هستند؛ عکس پیشرفت بدن خارج از محدودهٔ تصمیم مالک است. | دادهٔ واقعی فقط پس از سیاست دسترسی، حداقل‌سازی، retention، حذف، audit و بررسی حقوقی؛ اطلاعات حساس وارد prompt، log یا telemetry نشود. |
@@ -95,7 +95,7 @@
 
 ### مرزها
 
-- **Client:** انتخاب نهایی انتشار در G0 است؛ TODO محصول Android عضو + Studio وب را می‌گوید و فلوچارت PWA یک مقصد طراحی جدا را نشان می‌دهد. هیچ‌کدام از نمودار به‌تنهایی تصمیم release نمی‌شود؛ Flutter/Android حفظ می‌شود.
+- **Client:** baseline کلاینت اصلی انتشار اول طبق ADR-007، PWA مشترک React برای عضو و کادر بر پایهٔ Studio است؛ انتخاب در G0 دوباره باز نمی‌شود. Flutter/Android و گیت‌های آن حفظ می‌شوند، اما کلاینت اصلی انتشار نیستند. این تصمیم با توجه به کد فعلی (صفحات کارکنان در Studio و مسیر عضو در Flutter) پیاده‌سازی/parity یا release را ثابت نمی‌کند؛ گیت‌های QA و Go/No-Go جدا می‌مانند.
 - **Ingress و میزبان محصول:** مبنای ثبت‌شدهٔ TODO یک سرور محلیِ باشگاه با ورودی HTTPS ارزان از طریق VPS کوچک یا تونل است؛ topology دقیق، مالکیت و دسترس‌پذیری باید آزموده شود. Full Cloud گزینهٔ متفاوت و قدیمی‌تر است، نه پیش‌فرض این طرح. Caddy/TLS یا proxy تأییدشده فقط مسیرهای عمومی لازم را عرضه کند؛ metrics و admin/data services عمومی نشوند.
 - **Application:** یک FastAPI modular monolith، policy/ownership server-side، transaction service، domain modules و event/outbox فقط در صورت نیاز واقعی.
 - **Storage:** DB مرجع در توپولوژی مصوب، Valkey cache، فایل‌های private و backup جدا. SQLite فعلی است؛ PostgreSQL فقط با trigger، ADR و آزمون مهاجرت. پایداری مالی/مجوز روی cache تنها نباشد.
@@ -129,11 +129,11 @@
 
 | فاز | هدف و تحویل | گیت خروج / توقف |
 |---:|---|---|
-| **G0 · تثبیت دامنه** | تصمیم جاری TODO را با طرح PWA متعارض روشن کن: baseline مستند Android عضو + Studio وب است؛ PWA فقط در صورت تصویب صریح جای آن را می‌گیرد. topology ثبت‌شده سرور محلی باشگاه + ورودی HTTPS ارزان baseline است؛ Full Cloud فقط با تصمیم تازه. نقش‌ها، تک‌باشگاه یا multi-tenant، خرید حضوری/کارت‌به‌کارت، offline boundaries و فهرست «همهٔ قابلیت‌های اصلی» نیز تثبیت شوند. | مالک تصمیم می‌گیرد آیا baselineهای فعلی را تأیید/تغییر می‌دهد؛ ADR و اسناد متعارض صریحاً link/supersede شوند. بدون آن، release scope و اجرای عامل روی محصول شروع نمی‌شود. Android/Flutter محفوظ. |
+| **G0 · تثبیت دامنه** | baselineهای ثبت‌شده را در اسناد به‌هم پیوند بده: PWA مشترک عضو/کادر طبق ADR-007؛ تک‌باشگاه و شش نقش؛ SQLite فعلی؛ سرور محلی باشگاه + HTTPS؛ کارت‌به‌کارت با تطبیق انسانی و فروشگاه نمایش‌محور؛ بدون inference بیرونی. baselineهای قبلاً پاسخ‌داده‌شده دوباره از مالک پرسیده نشوند. فهرست موارد باز را محدود به جزئیات اجرا نگه‌دار: host/operator/budget/backup، آستانهٔ DB، policy نشست/offline، role×permission matrix، مرورگر/device دقیق، ساعات/قرارداد عملیاتی پرداخت و نیاز push/reviewer. | برای هر مورد باز، owner، evidence و گام کشف ثبت شود؛ اگر تصمیم یا reviewer لازم است تا رسیدنش `UNKNOWN/BLOCKED` بماند. هم‌راستایی ADR/اسناد شرط نظم مستنداتی است، نه گیت محصول یا مجوز اجرای production. Flutter/Android و CI آن‌ها محفوظ‌اند. |
 | **G1 · baseline و راهبری** | inventory از flows، route/roles, schema, CI, Compose, ingress/deploy/runbooks, backup, gaps؛ snapshot شاخه و worktree را non-destructive ثبت و evidence را به commit/diff hash/environment وصل کن. تصمیم‌های DB/Compose/ingress/inference/داده ثبت شوند. | برای هر جریان: current/target/unknown و آزمون مشخص؛ هر `UNKNOWN` صاحب و گام کشف دارد. هیچ PASS از نقشهٔ قدیمی یا تغییرات uncommitted بدون بازاجرای گیت‌ها صادر نمی‌شود. |
 | **G2 · سیاست AI و محیط ایزوله** | تعیین انواع کار مجاز/ممنوع، GitHub token scope، sandbox، egress، سقف زمان/هزینه/درخواست، kill switch و دفاع prompt injection؛ POC فقط با fixture ساختگی و بدون inference بیرونی. | Agent نه secret/production/branch protection/نقش محصول را می‌خواند و نه تغییر می‌دهد؛ prompt injection و egress-denied به توقف امن ختم شوند. اگر مدل محلی/مصوب موجود نیست، POC `BLOCKED` می‌ماند و هزینه/اثر sandbox اندازه‌گیری می‌شود. |
-| **G3 · POC task-to-PR کم‌ریسک** | یک مورد مستند/آزمون کوچک به task graph → agent → branch → targeted tests → reviewer → draft PR؛ system logs/evidence بدون کد حساس. | دو run پیاپی قابل‌بازتولید، تست regression ثابت، retry محدود، تغییر test gate ممنوع؛ اگر نتیجه تصادفی/هزینه نامعلوم است `BLOCKED`. هنوز auto-merge و deployment ندارد. |
-| **G4 · هویت، API و مجوز محصول** | inventory تمام routeها با actor/permission/scope؛ پیاده‌سازی نگاشت نقشِ تصویب‌شده در G0 (اگر مدل سه‌نقشی انتخاب شد، مهاجرت از roleهای فعلی) و صفحهٔ owner grant؛ ممیزی endpointهای حساس. | `admin` نمی‌تواند grant/role تغییر دهد؛ عضو به دادهٔ دیگری دسترسی ندارد؛ تست منفی direct API، expiry/revoke و عدم ارتقای خود/دیگری پوشش دارد. هیچ role mapping اجرا نمی‌شود تا مالک آن را تأیید کند. |
+| **G3 · POC محلی task-to-diff کم‌ریسک** | یک مورد مستند/آزمون کوچک روی fixture به task graph → runner ایزوله → patch در worktree جاری → targeted tests → ثبت evidence پالایش‌شده؛ بدون خروج کد/داده و بدون commit/push/PR. | دو run پیاپی قابل‌بازتولید، regression ثابت و retry محدود لازم است؛ تغییر test gate ممنوع. این محیط فاقد inference مصوب و sandbox runner ارزیابی‌شده است، پس بخش وابسته به agent/model `BLOCKED` می‌ماند. Draft PR یا هر عملیات Git بیرونی مجوز جدا می‌خواهد. |
+| **G4 · هویت، API و مجوز محصول** | inventory تمام routeها با actor/permission/scope بر مبنای شش نقش و تک‌باشگاهِ جاری؛ نگاشت سه‌نقشی یا migration نقش انجام نشود. ماتریس grantها و endpointهای حساس با کد/قرارداد جاری تطبیق داده شوند. | `admin` نمی‌تواند grant/role تغییر دهد؛ عضو به دادهٔ دیگری دسترسی ندارد؛ تست منفی direct API، expiry/revoke و عدم ارتقای خود/دیگری پوشش دارد. نقش‌ها مصوب‌اند، اما route×action×ownership، denyهای کامل و شواهد endpointی هنوز باید ممیزی/آزموده شوند.
 | **G5 · vertical slice محصول** | جریان‌های انتخاب‌شدهٔ عضو/کادر بر مبنای نمودارها، هرکدام از UI تا DB/صندوق/خروجی؛ ترتیب اولیه پس از G0: ورود/عضویت → تمرین/ارزیابی/تغذیه → QR/کلاس → پیام/اعلان → مالی دستی/گزارش → فروشگاهِ نمایش‌محور. کنترل‌های UI مطابق Q11 از کتابخانهٔ OSS موجود باشند. | برای هر جریان ماتریس پذیرشِ قابل‌مشاهدهٔ مالک، خطا/قطع شبکه و role matrix؛ همهٔ قابلیت‌های اصلی در scope یا `BLOCKED` با دلیل. جریان هدف با رفتار runtime یا client تصمیم‌نگرفته اشتباه نشود. |
 | **G6 · DB، topology و بازیابی** | ADR SQLite-vs-PostgreSQL با load/concurrency؛ topology سرور محلی + HTTPS ingress در برابر Full Cloud؛ Compose مرجع و مسئولیت Ansible/Dokploy؛ migration فقط با trigger؛ مسیر backup از DB/private files تا مقصد خارج میزبان. | migration/rollback روی scratch، restore واقعی روی میزبان جدا، retention و RPO/RTO مصوب؛ config نهایی با env ساختگی validate شود؛ بدون credential یا دادهٔ production. |
 | **G7 · سخت‌سازی و زنجیرهٔ تأمین** | container hardening به‌ازای سرویس، Trivy و dependency policy، image یک‌بار ساخته‌شده، Syft SBOM و Cosign verification، Renovate PR-only. | digest از build تا staging ثابت، scan result با مالک/استثنا، signature verification در deploy؛ هیچ یافتهٔ بحرانی/بالا بدون تصمیم امنیتی و deadline. |
@@ -157,7 +157,7 @@
 |---|---|---|
 | **A0 — Analyze** | فقط خواندن، inventory، plan و gap report. | مجاز پس از تصویب scope و رعایت حفاظت داده. |
 | **A1 — Test** | تست روی fixture، lint/build و گزارش، بدون تغییر مخزن. | مرحلهٔ نخست POC؛ no secret/no production. |
-| **A2 — Draft** | تغییر در worktree/branch محدود، targeted tests و ساخت draft PR. | هدف پایلوت اصلی؛ هیچ merge خودکار. |
+| **A2 — Local Draft** | تغییر محدود در worktree/شاخهٔ فعال، targeted tests و ثبت evidence؛ بدون commit، push، PR یا merge. | سقف اختیار جاری طبق OQ-05 همین کار محلی است. هر مجوز branch/PR یا merge باید جداگانه و صریح داده شود. |
 | **A3 — Low-risk merge** | merge فقط برای طبقات تغییر کم‌خطر، protected branch، review مستقل، تمام gates سبز و rollback مشخص. | هنوز فعال نشده؛ نیازمند تصمیم جداگانه و شواهد چند run پیاپی. |
 | **A4 — Staging** | deploy staging با دادهٔ مصنوعی، readiness و rollback خودکار در failure طبق مجوز محدود. | پس از G6/G7؛ secrets staging با کمترین privilege و مجوز صریح. |
 | **A5 — Production** | انتشار production طبق سیاست pre-authorized/owner approval، با digest و rollback. | این طرح مجوز production خودکار نمی‌دهد. پرداخت/DB destructive/RBAC/privacy/high-risk همیشه gate جداگانه دارند. |
@@ -213,8 +213,8 @@
 
 | ریسک | اثر | کنترل لازم پیش از عبور از gate |
 |---|---|---|
-| تعارض PWA با تصمیم Android+Studio در TODO | دو client/UX متفاوت و کار دوباره | baseline Android+Studio حفظ؛ ADR مالک در G0 اگر می‌خواهد PWA را جایگزین کند؛ Flutter محفوظ. |
-| نقش‌های شش‌گانهٔ موجود با مدل سه‌گانه | privilege escalation، شکستن مسیر staff | ماتریس role/permission، migration mapping و منفی‌تست تمام routeها؛ `super_admin` فقط grant. |
+| اسناد تاریخی Android+Studio با baseline PWA در ADR-007 | دوگانگی scope و کار تکراری در برداشت‌های بعدی | PWA مشترک عضو/کادر baseline کلاینت اصلی انتشار اول است؛ متن‌های Android+Studio فقط برای همین baseline تاریخی‌اند. Flutter/Android و CI آن‌ها حفظ می‌شود؛ implementation/parity/QA PWA هنوز اثبات نشده است. |
+| نمودار نقش سه‌گانه با تصمیم جاری شش‌نقشی | privilege escalation، حذف ناخواستهٔ مسیر staff یا فرض مجوز | شش role و تک‌باشگاه حفظ شوند؛ مدل سه‌نقشی نمودار فقط historical/target-only است. نقش/grant migration نکنید؛ route×permission×ownership matrix و تست منفی لازم است؛ `super_admin` تنها نقش واگذارکنندهٔ مجاز طبق سیاست جاری است. |
 | AI prompt injection از issue/README/کد | اجرای دستور خصمانه، نشت یا تغییر policy | محتوای repo ورودی غیرقابل‌اعتماد است؛ policy از بیرون sandbox، tool allowlist، no secret، egress controls، reviewer readonly. |
 | self-heal بی‌پایان/تضعیف تست | هزینهٔ نامحدود و کیفیت ظاهری | سقف retry/time/request، deterministic gates، fail-closed، stop/quarantine و ممنوعیت تضعیف گیت. |
 | AI مدل/وابستگی بی‌مجوز | ریسک حقوقی/هزینه/داده | license per code/data/model/asset؛ no external inference/data egress بدون تصمیم. |
@@ -239,30 +239,31 @@
 | اپراتور/DevOps | میزبان، secret delivery، backup/restore، monitor/alert، staging و incident. تا تعیین نام/دسترسی، این مسئولیت `UNASSIGNED` است. |
 | متخصص حقوق/مالی | privacy/retention، منشأ و مجوز داده، تعریف حسابداری و الزامات مالی. AI code review جایگزینش نیست. |
 
-### تصمیم‌هایی که پیش از گیت G0 باید ثبت شوند
+### تصمیم‌های ثبت‌شده و جزئیات باز برای گیت G0
 
-1. **Client scope:** TODO محصول Android عضو + Studio وب را مسیر انتشار اول می‌داند؛ فلوچارت PWA مشترک یک طراحی هدف متعارض است. آیا baseline فعلی را تأیید می‌کنید یا آن را با ADR به PWA تغییر می‌دهید؟ هیچ فایل Flutter حذف نمی‌شود.
-2. **Topology و ingress:** TODO محصول سرور محلی باشگاه + ورودی HTTPS ارزان را می‌گوید؛ طرح Full Cloud قدیمی‌تر است. آیا همین baseline جاری است؟ اگر VPS/tunnel/روش دیگری انتخاب می‌شود، مالکیت، میزبان، راه‌اندازی و بودجه باید مشخص شوند.
-3. **Payment source of truth:** TODO جاری کارت‌به‌کارت با تطبیق انسانی و فروشگاه نمایش‌محور/خرید حضوری را می‌گوید؛ سند Full Cloud هنوز Zarinpal را مطرح می‌کند. آیا متن قدیمی رسماً supersede و مسیر درگاه برای انتشار اول بسته بماند؟
-4. **Data topology:** یک باشگاه/نصب مستقل baseline است؛ آیا multi-tenant واقعاً نزدیک‌مدت است؟ تا پاسخ مثبت، tenant architecture/DB مشترک اضافه نشود.
-5. **Database trigger:** حداکثر load/concurrency، write contention، availability/restore expectations؛ معیار انتخاب SQLite/PG و صاحب ADR.
-6. **Autonomy ceiling:** کدام تغییرها تا A2 (draft PR) می‌مانند و آیا بعداً A3 low-risk merge مجاز است؟ production همچنان gate جدا دارد.
-7. **Model policy:** گیت‌های قطعی بدون API مدل اجرا می‌شوند و inference بیرونی پیش‌فرض ممنوع است. آیا برای پایلوت عامل، مدل محلیِ موجود/مجاز کافی است یا می‌خواهید provider بیرونی را با بودجه و مرز داده جداگانه تأیید کنید؟
-8. **Operator & resilience:** میزبان/ingress و backup خارج‌میزبان، بودجه، on-call، RPO/RTO، ساعات پشتیبانی، uptime objective و probe مستقل.
-9. **Security/privacy:** route/data/role matrix نهایی، retention و purge، notice/consent و مقررات حوزهٔ خدمت؛ متخصص/مالک تأیید.
-10. **Scope of «همهٔ قابلیت‌های اصلی»:** feature flows دقیق از نمودارها، نسخهٔ زبان/RTL، دستگاه‌ها و این‌که client منتخب و notification push کدام در انتشار اول لازم‌اند.
+پاسخ‌های مالک در [دفتر OQ-01…OQ-10](owner-decision-questionnaire-2026-11-23.fa.md) و [ADR-007](../adr/007-pwa-primary-release.md) مرجع‌اند. جدول زیر گزینه‌های قبلاً پاسخ‌داده‌شده را دوباره باز نمی‌کند؛ فقط وضعیت اجرا و باقیماندهٔ کشف را نشان می‌دهد.
+
+| موضوع | baseline ثبت‌شده | باقیماندهٔ واقعی و شاهد لازم |
+|---|---|---|
+| کلاینت انتشار اول | PWA مشترک React عضو/کادر روی Studio؛ Flutter/Android حفظ می‌شود. | نسخه/دستگاه هدف و اجرای سفرها؛ انتخاب کلاینت دوباره باز نیست، اما parity/QA اثبات نشده است. |
+| باشگاه و نقش‌ها | تک‌باشگاه و شش نقش جاری؛ تغییر role/grant بدون تصمیم جدا ممنوع. | ماتریس کامل route×action×permission×ownership و تست direct API, revoke, expiry؛ نمودار سه‌نقشی تاریخی است. |
+| DB | SQLite فعلاً. | بار و همزمانی و trigger عددی benchmark نشده؛ تا trigger/ADR، PostgreSQL و migration تولیدی انتخاب نشده‌اند. |
+| میزبان و resilience | سرور محلی باشگاه + ورودی HTTPS. | میزبان/دامنه/ingress، اپراتور، بودجه، staging، backup خارجی، restore، RPO/RTO و پاسخ‌گویی هنوز تعیین یا آزموده نشده‌اند. |
+| پرداخت و قابلیت حساس | کارت‌به‌کارت با تطبیق انسانی، فروشگاه نمایش‌محور، QR بدون face، راهنمای غیرپزشکی، بدون عکس پیشرفت بدن در انتشار اول. | ساعات/قرارداد عملیاتی از سرور، تطبیق بانکی و reviewer، privacy/legal review و دستگاه QR؛ live merchant برای انتشار اول هدف نیست. |
+| AI و اختیار Git | بدون API/inference بیرونی یا خروج کد/داده؛ کار محلی کد/تست/docs روی شاخهٔ فعال مجاز، بدون commit/push/PR/merge/release/deploy. | هر قابلیت وابسته به مدل تا مدل محلی مجاز و موجود `BLOCKED`; sandbox/evidence باید محلی و پالایش‌شده بماند. |
+| پذیرش و اعلان | همهٔ جریان‌های اصلی پیش از release؛ Android Chrome عضو و Chrome/Edge دسکتاپ کادر اهداف کلی‌اند. | نسخه‌ها و مدل‌های دقیق، screen reader/device QA، push/provider و reviewer مستقل مشخص/موجود نیستند؛ gateهای وابسته `UNKNOWN/BLOCKED` می‌مانند. |
 
 ## ۱۳. چک‌لیست تأیید همین برنامه
 
 با تأیید این سند، فقط اجازهٔ **تبدیل macro-plan به ۱۳ لایه و loop plan** را می‌گیریم؛ خودبه‌خود مجوز نصب ابزار، تغییر محصول، push/merge، استفاده از مدل بیرونی، خرید، مهاجرت داده یا deploy صادر نمی‌شود.
 
 - [ ] اصل معماری modular monolith و الزام تکمیل همهٔ قابلیت‌های اصلی پیش از انتشار واقعی را می‌پذیرم.
-- [ ] مسیر انتشار Android عضو + Studio وب (طبق TODO) مبنا بماند؛ یا PWA مشترک با ADR مالک آن را جایگزین کند. فایل‌های Flutter/Android حذف نمی‌شوند.
+- [ ] مبنای انتشار اول همان PWA مشترک React عضو/کادر طبق ADR-007 باشد؛ Flutter/Android و CI آن حفظ شوند. این پذیرش macro-plan ادعای تکمیل PWA یا Go/No-Go نیست.
 - [ ] سرور محلی باشگاه + ورودی HTTPS ارزان (طبق TODO) مبنا بماند؛ Full Cloud یا تغییر ingress نیازمند تصمیم و بودجهٔ جداست.
-- [ ] مدل نقش هدف `super_admin/admin/member` و owner-only grants را با نگاشت/مهاجرت امن از نقش‌های فعلی می‌پذیرم؛ یا قبل از تبدیل plan اصلاحش می‌کنم.
+- [ ] تک‌باشگاه و شش نقش موجود را حفظ می‌کنم؛ هیچ مهاجرتی به مدل سه‌نقشی انجام نمی‌دهم. ماتریس مجوز و مالکیتِ کامل هنوز نیازمند inventory، تست و گیت‌های جداست.
 - [ ] فروشگاه نمایش‌محور/خرید حضوری و کارت‌به‌کارت با تطبیق انسانی مبنا بماند؛ سند قدیمی Zarinpal با تصمیم جدید به‌صورت ADR/مستند رسمی هم‌راستا شود.
 - [ ] هیچ inference/API بیرونی پیش‌فرض نیست؛ مدل محلی هم فقط با مجوز weights، سخت‌افزار و تصمیم جدا به کار می‌رود.
-- [ ] اختیار اولیهٔ عامل A0–A2 و draft PR باشد؛ auto-merge/deploy فقط با policy و مجوز جدا بررسی شود.
+- [ ] اختیار اجرا در حد کار محلی روی همین شاخه و worktree با تست/evidence بماند؛ commit/push/PR/merge/release/deploy یا استفاده از inference بیرونی نیازمند مجوز جداگانه است.
 - [ ] پس از تأیید این macro-plan، آن را در مرحلهٔ بعد به ساختار ۱۳ لایه و micro-loopها تبدیل کنیم؛ این checkbox مجوز نصب ابزار، کدنویسی یا deployment نیست.
 
 **فعلاً هیچ checklistی علامت‌خورده نیست.** پس از پاسخ/تأیید، نسخهٔ بعدی باید با تصمیم‌ها به‌روزرسانی و سپس تنها آن نسخه به loop plan تبدیل شود.

@@ -7,6 +7,7 @@ import { ScheduleTimeline } from "../components/ScheduleTimeline";
 import { fetchAttendance, fetchKpis } from "../lib/api";
 import { fa, useApi } from "../lib/useApi";
 import { useAppStore } from "../stores/appStore";
+import { navigateToPage } from "../lib/navigation";
 
 /**
  * داشبورد (M45-c1) — KPI از `/admin/kpis`، حضور از `/admin/attendance`.
@@ -16,7 +17,7 @@ import { useAppStore } from "../stores/appStore";
  */
 export function Dashboard() {
   const motionPreset = useMotionPreset();
-  const { setPage, selectMember } = useAppStore();
+  const { selectMember } = useAppStore();
   const kpis = useApi((s) => fetchKpis(undefined, s), []);
   const attendance = useApi((s) => fetchAttendance(7, undefined, s), []);
 
@@ -124,7 +125,7 @@ export function Dashboard() {
       <section>
         <MemberTable
           onSelect={(id) => {
-            setPage("members");
+            navigateToPage("members");
             selectMember(id);
           }}
         />

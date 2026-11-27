@@ -5,6 +5,7 @@ import { MemberTable } from "../components/MemberTable";
 import { generateProgram, fetchAssessmentHistory, fetchAssessmentMatrix, fetchMembersSummary } from "../lib/api";
 import { fa, useApi } from "../lib/useApi";
 import { useAppStore } from "../stores/appStore";
+import { navigateToPage } from "../lib/navigation";
 
 /** اعضا + پنل جزئیات با ورود/خروج انیمیشنی (AnimatePresence). */
 const genderTabs = [
@@ -15,8 +16,7 @@ const genderTabs = [
 
 export function Members() {
   const motionPreset = useMotionPreset();
-  const { selectedMemberId, selectMember, genderFilter, setGenderFilter, setPage } =
-    useAppStore();
+  const { selectedMemberId, selectMember, genderFilter, setGenderFilter } = useAppStore();
   const [busy, setBusy] = useState(false);
   const [genMsg, setGenMsg] = useState<string | null>(null);
   const [genError, setGenError] = useState<string | null>(null);
@@ -186,7 +186,7 @@ genderFilter === t.key
                   {busy ? "در حال ساخت…" : "ساخت برنامه از موتور قواعد"}
                 </button>
                 <button
-                  onClick={() => setPage("programs")}
+                  onClick={() => navigateToPage("programs")}
                   className="btn-ghost flex-1"
                   title="ثبت ارزیابی در صفحهٔ برنامه‌ها و ارزیابی انجام می‌شود"
                 >

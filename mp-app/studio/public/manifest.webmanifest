@@ -1,7 +1,7 @@
 {
-  "name": "Muscle Paradise — مربی و مدیریت",
-  "short_name": "MP Studio",
-  "description": "پنل مربی و مدیر باشگاه — تمرین، تغذیه، ارزیابی و چت",
+  "name": "Muscle Paradise — باشگاه",
+  "short_name": "Muscle Paradise",
+  "description": "برنامهٔ مشترک عضو و کادر باشگاه Muscle Paradise",
   "lang": "fa",
   "dir": "rtl",
   "start_url": "/",

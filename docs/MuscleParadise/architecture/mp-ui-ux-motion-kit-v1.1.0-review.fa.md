@@ -113,7 +113,7 @@
 | **صرفاً provenance/سند/ابزار validation؛ نه backlog قابلیت Android** | `references/*`, `package*.json`, `tsconfig`, `scripts/*.py`, logs و `tests/*` به‌جز harness به‌عنوان test fixture | برای audit و reproducibility باقی بمانند؛ به backlog feature پلتفرمی منتقل نشوند. |
 | **Native فعلی که باید حفظ شود** | `mp-app/client/`, Android/Kotlin/Gradle و M98/M104–M106 فعلی در TODO | statusهای ثبت‌شده تغییر نمی‌کنند. kit فاقد recipe Flutter/Dart/Kotlin است؛ از `motion.ts` یا CSS به native کپی انجام نشود. |
 
-`README`/`SOURCE_PLAN` خودِ کیت مسیر مشترک React را **پیشنهاد** می‌کند، اما صف جاری MP هنوز تعارض Android عضو + Studio وب در برابر هدف PWA و تصمیم‌های محصول را ثبت کرده است. بنابراین هیچ‌یک از این محتوا به‌تنهایی مبنای انتخاب release baseline یا خاموش‌کردن Flutter/Android نیست.
+در زمان این بازبینی، `README`/`SOURCE_PLAN` کیت مسیر مشترک React را **پیشنهاد** می‌کرد و صف MP تعارض Android عضو + Studio وب را حل‌نشده ثبت کرده بود. تصمیم بعدی OQ-01/ADR-007 اکنون PWA مشترک React عضو/کادر را baseline کلاینت اصلی انتشار اول می‌کند؛ Flutter/Android حفظ می‌شود. محتوای این kit همچنان صرفاً reference/proposal است و به‌تنهایی مبنای implementation, QA یا خاموش‌کردن native نیست.
 
 ## ۶. شاهدهای package و حدودشان
 

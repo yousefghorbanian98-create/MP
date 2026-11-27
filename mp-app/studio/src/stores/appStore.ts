@@ -7,19 +7,22 @@ import { create } from "zustand";
  * دادهٔ ساختگی نشان می‌داد. از M45، داده فقط از API می‌آید و این استور
  * محدود به انتخاب صفحه/جست‌وجو/فیلتر است.
  */
-export type PageId =
-  | "dashboard"
-  | "members"
-  | "programs"
-  | "nutrition"
-  | "assessment"
-  | "chat"
-  | "checkin"
-  | "finance"
-  | "expenses"
-  | "analytics"
-  | "settings"
-  | "shop";
+export const PAGE_IDS = [
+  "dashboard",
+  "members",
+  "programs",
+  "nutrition",
+  "assessment",
+  "chat",
+  "checkin",
+  "finance",
+  "expenses",
+  "analytics",
+  "settings",
+  "shop",
+] as const;
+
+export type PageId = (typeof PAGE_IDS)[number];
 
 interface AppState {
   page: PageId;
