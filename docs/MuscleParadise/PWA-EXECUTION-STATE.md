@@ -3,8 +3,8 @@
 CURRENT_BRANCH=arena/5e0f64cf-mp
 REMOTE_HAS_MY_COMMIT=yes
 MAIN_HEAD=352781043ad2ba202d8b3b459df1ce7e3d914ef7
-BRANCH_AHEAD_OF_MAIN=10
-LAST_KNOWN_EVIDENCE=evidence/2026-11-27/INV-02, INV-03, SEC-01, SEC-01/pr-30-checks-review.md (on branch) / evidence/m60 (on main)
+BRANCH_AHEAD_OF_MAIN=11
+LAST_KNOWN_EVIDENCE=evidence/2026-11-27/INV-02, INV-03, SEC-01/pr-30-checks-3e49232.txt, WEB-01, WEB-02, WEB-03-11 (on branch) / evidence/m60 (on main)
 
 > **نوع سند:** دفتر اجراییِ افزایشی؛ نه ADR، نه مرجع مستقل برای تعریف acceptance، و نه ادعای QA/release. شناسه‌ها و معیارهای هر کارت از tracker و backlog canonical پیروی می‌کنند.
 > **تاریخ مرجع:** ۲۰۲۶-۱۱-۲۳ UTC. این تاریخ با timestampهای GitHub آینده‌نما که در handoff ثبت شده‌اند تعارض دارد؛ آن تعارض حل‌نشده باقی می‌ماند.
@@ -27,8 +27,8 @@ LAST_KNOWN_EVIDENCE=evidence/2026-11-27/INV-02, INV-03, SEC-01, SEC-01/pr-30-che
 - **SEC-01 negative و full pytest:** سه TestClient integration تست منفی عضو A→B در `members`, `assessments`, `payments`, `chat`, `checkin` را پاس کردند (`3 passed/0 failed`, یک warning). کل suite در `mp-app/backend` روی `claimed_sha=tested_sha=f06f2a95305082e01e33b157396f0dfc0128613d` اجرا شد: `1336 passed, 2 skipped, 2 warnings`, exit `0`. گزارش‌ها در [`SEC-01`](../../evidence/2026-11-27/SEC-01/role-server-slice-v2.md) هستند. SEC-01 فقط `PARTIAL` است؛ ماتریس static جای test HTTP برای تمام route×role/resource را نمی‌گیرد و checkbox باز می‌ماند.
 - **سابقه و گاردریل:** slice قدیمی `90 passed/2 warnings` در `evidence/2026-11-23/SEC-01/` مربوط به اجرای ثبت‌شده در `2026-11-23 UTC` روی SHA=`352781043ad2ba202d8b3b459df1ce7e3d914ef7` است؛ آن شاهد از run فعلی جداست. هیچ role/grant/API/DB/Flutter/native source تغییر نکرد. `PWA-01=PROPOSED/NOT_RUN`, checkboxهای INV/SEC باز و release `NO-GO` هستند.
 - **گیت‌های مستندات:** `python3 scripts/docs_gate.py` پس از ثبت و stage خروجی‌ها PASS شد: ۳۸ Markdown، ۶۰۶ local links، ۱۵ Mermaid؛ `git diff --check` و `git diff --cached --check` نیز PASS. transcript در `evidence/2026-11-27/SEC-01/docs-gate.txt` و `diff-check.txt` است. این گیت‌ها فقط کیفیت مستندات را می‌سنجند، نه acceptance محصول.
-- **PR #30 و CI:** draft به `main` باز است. CI اولیه روی head=`6593cb4bc7f42c9ada4ca7e499fe60124bf00703` برابر `10 pass / 2 fail` بود. بررسی annotationها و بازتولید نشان داد پنج Gitleaks finding روی `meta.sources` و digestهای واقعی SHA-256 بودند؛ استثناهای صرفاً exact همراه assert در تست policy افزوده شد. PWA-00 check نیز به‌خاطر دو backlink DOC-05 در source که در patch نبود شکست خورد؛ patch از base pin‌شده دوباره ساخته و اجرای کامل مرحلهٔ workflow محلی PASS شد. این اصلاحات هنوز نیازمند CI تازه روی commit بعدی‌اند؛ failureهای SHA قدیمی را retroactively سبز حساب نکنید. حدود بررسی در `evidence/2026-11-27/SEC-01/pr-30-checks-review.md`; PR ادغام نشده.
-- **گام بعدی:** پس از push، `gh pr checks` را روی head SHA جدید تا پایان دنبال کنید؛ فقط با نتیجهٔ تازه ادامهٔ صف `WEB-01…WEB-11` را طبق acceptance پیش ببرید. browser/OS/device/reviewer خارج از محیط `BLOCKED/NOT_RUN`، `PWA-01=PROPOSED/NOT_RUN` و release=`NO-GO` می‌مانند.
+- **PR #30 و CI:** آخرین head آزموده‌شده هنگام ثبت این snapshot=`3e49232d2118e8212a4d1ddea20fc982da5cd13a`. `gh pr checks 30` روی همان SHA `12 pass / 0 fail / 0 pending` داد؛ `mp-ci` pull_request=`45998409658`, push=`45998396424`, و `pwa00-doc-quality`=`45998409713` همگی `completed/success`. Gitleaks تست fixture synthetic و full-history scan هر دو pass؛ PWA-00 patch/apply/cmp نیز pass. CI اولیه روی `6593cb4...` `10/2` بود و علت/اصلاح مستند در `evidence/2026-11-27/SEC-01/pr-30-checks-review.md`; خلاصهٔ اجرا در `pr-30-checks-3e49232.txt`. تغییرات snapshot بعد از این head evidence/docs-only هستند و CI برای commit بعدی باید جداگانه بررسی شود؛ PR draft و ادغام‌نشده است.
+- **گام بعدی:** مرور source/unit برای `WEB-01…WEB-11` ثبت شد، اما هیچ parent پذیرفته نشده و checkboxها بازند. تکمیل فقط با browser/OS/device و review مستقل برای معیارهای کارت ممکن است؛ تا نبود آن‌ها runtime gates=`BLOCKED/NOT_RUN` می‌مانند. صرف green CI status را بالا نمی‌برد؛ `PWA-01=PROPOSED/NOT_RUN`, crosswalkها `PARTIAL/NOT_ACCEPTED`, SEC-01 حداکثر `PARTIAL` و release=`NO-GO` باقی می‌مانند.
 
 ## Snapshot پیشین — بازنشانی اجرا پس از بررسی remote (۲۰۲۶-۱۱-۲۳ UTC)
 
@@ -50,7 +50,7 @@ LAST_KNOWN_EVIDENCE=evidence/2026-11-27/INV-02, INV-03, SEC-01, SEC-01/pr-30-che
 | 6 | `INV-03` — crosswalk کارکنان | `PARTIAL — static route/API/role inventory / NOT_ACCEPTED` | Script rerun: ۱۲ Studio page، ۵۹ endpoint shape، map ۳۱ surface/۱۶۳ operation، state field ندارد و `members`/`analytics` test ref ندارند؛ DB owner/error/persistence و action behavior هنوز ناقص. شاهد جاری `../../evidence/2026-11-23/INV-03/staff-crosswalk-static-rerun.txt`; checkbox باز. |
 | 7 | `INV-04…INV-09` — وضعیت چهارگانه و inventory/acceptance باقی‌مانده | `INV-04/05/06 PARTIAL — scoped slices verified; full cards open` | `../../evidence/2026-11-23/INV-04/member-status-slice.txt`; `../../evidence/2026-11-23/INV-05/dashboard-current-cycle-test.txt`; `../../evidence/2026-11-23/INV-06/dashboard-actor-data-slice.txt` (۳۴ backend tests/۲ warnings). Staff/data surfaces و field-level ownership gaps بازند؛ همهٔ checkboxes باز؛ next independent `INV-07` CI baseline capture for exact candidate. |
 | 8 | `SEC-01…SEC-10` | `NOT_STARTED` در این چرخه | fixture و source محلی فقط؛ policy/independent review بیرونی جدا می‌ماند. |
-| 9 | `WEB-01…WEB-11` | `NOT_STARTED` در این چرخه | اجرای browser روی build واقعی لازم است؛ emulation یا screenshot جای دستگاه/OS نیست. |
+| 9 | `WEB-01…WEB-11` | `PARTIAL/NOT_ACCEPTED` review slices؛ همهٔ checkboxes باز | مرورهای ترتیبی [WEB-01](../../evidence/2026-11-27/WEB-01/runtime-boundary-review.md)، [WEB-02](../../evidence/2026-11-27/WEB-02/deep-link-review.md) و [WEB-03…11](../../evidence/2026-11-27/WEB-03-11/queue-review.md). Electron/browser/Nginx runtime و device/OS/reviewer غایب، بنابراین parentها هنوز پذیرفته نیستند. |
 | 10 | `MEM-01…MEM-16`, `STAFF-01…STAFF-08`, `QA-01…QA-09` | `NOT_STARTED` در این چرخه | هر مورد طبق acceptance و گیت وابستگی خودش. |
 | 11 | `OPS-01…OPS-14`, `PRIV-01/02` | `NOT_STARTED` در این چرخه | محیط/اپراتور/مقصد واقعی یا reviewer غایب ⇒ `BLOCKED/UNKNOWN`، نه PASS. |
 
