@@ -1,21 +1,21 @@
 {
   "meta": {
     "kind": "staff",
-    "sha": "7399142fd10f5efcf2fefc3e65359f2f868dd9b0",
+    "sha": "07cb5434bfbbd6bc5e5c95c87c6c238475972854",
     "branch": "arena/3c08bfbd-mp",
     "tracked_dirty": false,
     "untracked": 0,
     "sources": {
-      "backend/api/routes.json": "sha256:7f0333dfb92a5bb56514b7e003cc78370fc7e8fabe3a9a8b5342ccaab9a84cf8",
-      "backend/security/rbac.py": "sha256:a8740f75b33e864e1a3990f4d77e2fa781f0c2105c133d9892a41ce63fdf9d2c",
-      "studio/src/lib/roleNav.ts": "sha256:650ff74343af6e25010f6a07bab4de477d2ffefcee94be3923a200ed05d53220",
-      "studio/src/lib/api.ts": "sha256:77e368e3743431bef553a82cd06e8f8414ad833ea99b161b794a8548ea1021eb",
-      "studio/src/lib/adminApi.ts": "sha256:612cbd1e89a78301545f67c88264519a7c492d148ef44779050f50cc1327f2ce",
-      "studio/src/lib/navigation.ts": "sha256:6f9b434207f6fdbfb6701355e323ceaac2f3d10d2d2e505a820ae32752f206b6"
+      "backend/api/routes.json": "sha256_b64:fwMz37kqW7VlFLfgA8x4Nw_H6Pq-OpqLU0LMqrmoTPg",
+      "backend/security/rbac.py": "sha256_b64:qHQPdbM-hk4aOZD0134vp4HwwhBcEz2YkqQc5j_fnSw",
+      "studio/src/lib/roleNav.ts": "sha256_b64:ZQ_3Q0OvbiUBD2oHurTeR30v_vzulL45I6IA7QXVMiA",
+      "studio/src/lib/api.ts": "sha256_b64:nwYQEuCviS1-QrVNh1jJsHsMONJoo_6g1OSMCNI_K2w",
+      "studio/src/lib/adminApi.ts": "sha256_b64:YSy9HomngwFUX2fIgmRRmnxJLRSO9Ed5BQ9QzBMn8s4",
+      "studio/src/lib/navigation.ts": "sha256_b64:b5tDQgf2_b-2cBNV4yPOqsLz0Q0tLlBaggrjJ1LyBrY"
     },
     "site_kinds": {
       "template-base": 28,
-      "helper": 59,
+      "helper": 60,
       "literal": 0
     },
     "dynamic_sites": 0,
@@ -193,6 +193,7 @@
       ],
       "apis_used": [
         "/api/v1/programs",
+        "/api/v1/programs/sync/set-feedback",
         "/api/v1/programs/{program_id}"
       ],
       "apis_total": 10,
@@ -202,10 +203,10 @@
       "tests": [
         "apiCoverage.test.ts",
         "locustfile_full.py",
+        "setFeedback.test.tsx",
         "test_axis_assessment_api.py",
         "test_battle.py",
-        "test_e2e_adaptive_loop.py",
-        "test_e2e_dataflow.py"
+        "test_e2e_adaptive_loop.py"
       ],
       "uncovered_dynamic": [],
       "status": "PARTIAL_REVIEW",

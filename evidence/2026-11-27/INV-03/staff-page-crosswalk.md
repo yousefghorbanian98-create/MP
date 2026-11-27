@@ -4,14 +4,14 @@
 > رفع می‌کند (تمپلیت `${base}`, alias نقش‌ها, مسیرهای پویا) — طبق یافته‌های
 > `review.md` خودِ اجرای قبلی. هیچ ردیفی CURRENT نمی‌شود.
 
-- SHA: `7399142fd10f5efcf2fefc3e65359f2f868dd9b0` · branch: `arena/3c08bfbd-mp` · tracked-dirty: `False` · untracked: `0`
-- `backend/api/routes.json` → `sha256:7f0333dfb92a5bb56514b7e003cc78370fc7e8fabe3a9a8b5342ccaab9a84cf8`
-- `backend/security/rbac.py` → `sha256:a8740f75b33e864e1a3990f4d77e2fa781f0c2105c133d9892a41ce63fdf9d2c`
-- `studio/src/lib/roleNav.ts` → `sha256:650ff74343af6e25010f6a07bab4de477d2ffefcee94be3923a200ed05d53220`
-- `studio/src/lib/api.ts` → `sha256:77e368e3743431bef553a82cd06e8f8414ad833ea99b161b794a8548ea1021eb`
-- `studio/src/lib/adminApi.ts` → `sha256:612cbd1e89a78301545f67c88264519a7c492d148ef44779050f50cc1327f2ce`
-- `studio/src/lib/navigation.ts` → `sha256:6f9b434207f6fdbfb6701355e323ceaac2f3d10d2d2e505a820ae32752f206b6`
-- call-site: `{'template-base': 28, 'helper': 59, 'literal': 0}` · پویا: **0**
+- SHA: `07cb5434bfbbd6bc5e5c95c87c6c238475972854` · branch: `arena/3c08bfbd-mp` · tracked-dirty: `False` · untracked: `0`
+- `backend/api/routes.json` → `sha256_b64:fwMz37kqW7VlFLfgA8x4Nw_H6Pq-OpqLU0LMqrmoTPg`
+- `backend/security/rbac.py` → `sha256_b64:qHQPdbM-hk4aOZD0134vp4HwwhBcEz2YkqQc5j_fnSw`
+- `studio/src/lib/roleNav.ts` → `sha256_b64:ZQ_3Q0OvbiUBD2oHurTeR30v_vzulL45I6IA7QXVMiA`
+- `studio/src/lib/api.ts` → `sha256_b64:nwYQEuCviS1-QrVNh1jJsHsMONJoo_6g1OSMCNI_K2w`
+- `studio/src/lib/adminApi.ts` → `sha256_b64:YSy9HomngwFUX2fIgmRRmnxJLRSO9Ed5BQ9QzBMn8s4`
+- `studio/src/lib/navigation.ts` → `sha256_b64:b5tDQgf2_b-2cBNV4yPOqsLz0Q0tLlBaggrjJ1LyBrY`
+- call-site: `{'template-base': 28, 'helper': 60, 'literal': 0}` · پویا: **0**
 - شمارش: `PARTIAL_REVIEW=12`
 
 | وضعیت | معنا |
@@ -26,7 +26,7 @@
 |---|---|---|---|---|---|---|---|---|---|
 | 1 | `dashboard` | 1 فایل | `/staff/dashboard` | super_admin, admin, manager, coach, reception, member | 3 / 4 | `api.ts` | — | `a11y.test.tsx`<br>`api.test.ts`<br>`authFlow.test.tsx`<br>`liveContract.test.ts` | **PARTIAL_REVIEW** |
 | 2 | `members` | 1 فایل | `/staff/members` | super_admin, admin, manager, coach, reception | 4 / 11 | `AuthContext.tsx`<br>`api.ts` | — | `a11y.test.tsx`<br>`api.test.ts`<br>`apiCoverage.test.ts`<br>`authFlow.test.tsx` | **PARTIAL_REVIEW** |
-| 3 | `programs` | 1 فایل | `/staff/programs` | super_admin, admin, manager, coach, member | 2 / 10 | `api.ts` | — | `apiCoverage.test.ts`<br>`locustfile_full.py`<br>`test_axis_assessment_api.py`<br>`test_battle.py` | **PARTIAL_REVIEW** |
+| 3 | `programs` | 1 فایل | `/staff/programs` | super_admin, admin, manager, coach, member | 3 / 10 | `api.ts` | — | `apiCoverage.test.ts`<br>`locustfile_full.py`<br>`setFeedback.test.tsx`<br>`test_axis_assessment_api.py` | **PARTIAL_REVIEW** |
 | 4 | `nutrition` | 1 فایل | `/staff/nutrition` | super_admin, admin, manager, coach, member | 3 / 9 | `api.ts` | — | `test_e2e_adaptive_loop.py`<br>`test_m49_adaptive_nutrition.py`<br>`test_m49_food_logging.py`<br>`test_m78_adaptive_nutrition_client.py` | **PARTIAL_REVIEW** |
 | 5 | `assessment` | 1 فایل | `/staff/assessment` | super_admin, admin, manager, coach, member | 3 / 8 | `api.ts` | — | `apiCoverage.test.ts`<br>`test_ai_kpis.py`<br>`test_api_contract.py`<br>`test_battle.py` | **PARTIAL_REVIEW** |
 | 6 | `chat` | 1 فایل | `/staff/chat` | super_admin, admin, manager, coach, reception, member | 1 / 3 | `api.ts` | — | `a11y.test.tsx`<br>`test_e2e_adaptive_loop.py`<br>`test_m51_chat.py` | **PARTIAL_REVIEW** |

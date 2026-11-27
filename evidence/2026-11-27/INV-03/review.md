@@ -37,3 +37,7 @@
 ## الحاقیهٔ دوم — بازتولید پس از MEM-04 (HEAD `7399142fd10f`)
 
 تغییر `studio/src/lib/api.ts` در MEM-04 digest ثبت‌شده را کهنه کرد؛ artifact روی درخت تمیز بازتولید شد و `sha256:77e368e37434…` ثبت شد. شمارش‌ها بدون تغییر (`PARTIAL_REVIEW=12`). شاهد: [`crosswalk-regen.txt`](../MEM-04/crosswalk-regen.txt).
+
+## الحاقیهٔ سوم — بازتولید با قالب digest تازه (HEAD `07cb543`)
+
+MEM-05 تابع `syncSetFeedback` را به `studio/src/lib/api.ts` اضافه کرد ⇒ digest ثبت‌شده کهنه شد و گیت دقیقاً همان یک منبع را قرمز کرد. بازتولید روی درخت تمیز انجام شد و قالب digest از `sha256:<hex>` به `sha256_b64:<44 base64url>` تغییر کرد (دلیل اصلی، بستن ریشهٔ finding گیتلکس بدون افزودن خط ignore تازه است؛ جزئیات: `../MEM-03/secret-scan-root-fix.txt`). شمارش‌ها بدون تغییر.
