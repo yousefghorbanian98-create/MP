@@ -1,0 +1,16 @@
+PR #30 check snapshot — head e06a71659517f2ee222be674ab2be7a8fd368c9a — 2026-11-27 UTC
+
+Remote status:
+- `gh pr view 30`: OPEN, draft=true, head branch `arena/5e0f64cf-mp`, head SHA `e06a71659517f2ee222be674ab2be7a8fd368c9a`.
+- `gh pr checks 30 --watch --interval 10` completed with exit 1.
+- Failed jobs: `backend` and `Documentation links and handoff`.
+- Failed steps: backend `Test (pytest + per-directory coverage gate)`; docs `Interaction map gate (contract drift + stale map)`.
+- Passed main jobs: `studio`, `live-contract`, `secret-scan`, `client-flutter`, and `Client — pinned SDK · format gate · Android debug compile`. `e2e-api` was skipped, not passed.
+- Supplemental PWA-00 checks passed: patch applies, Reviewdog, Super-Linter, markdownlint.
+- Check annotations only said `Process completed with exit code 1` (backend: 2 annotations; docs: 1). `gh run view 46019589885 --log-failed` could not retrieve the log; the action-log download returned `EOF`. Signed download URL omitted.
+
+Local diagnostic on the same committed source:
+- `python3 scripts/interaction_map.py --check` initially failed only with `MAP-002` (generated interaction map stale). After running the generator, `python3 scripts/interaction_map.py --check` passed: 32 surfaces, 163 contract routes, 0 drift, 6 existing untested surfaces. The generated Markdown/JSON were modified locally for the scoped follow-up.
+- CI's backend command is `bash scripts/coverage_run.sh`. Local reproduction on this checkout exited 0: **1338 passed, 2 skipped, 2 warnings; 91% total coverage**. Sanitized transcript: `backend-ci-coverage-repro.txt`. The remote job's detailed log was unavailable, so the remote failure cause remains unknown; local pass does not overwrite the remote fail.
+
+PR #30 remains draft and must not be merged. No checks are described as passing for the failed backend/docs jobs on this SHA.

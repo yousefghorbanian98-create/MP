@@ -672,6 +672,58 @@
       ]
     },
     {
+      "surface": "MemberAccount",
+      "kind": "studio-page",
+      "file": "mp-app/studio/src/pages/MemberAccount.tsx",
+      "components": [],
+      "controls": {
+        "buttons": 2,
+        "inputs": 0,
+        "numbers": 0,
+        "selects": 0,
+        "modals": 0
+      },
+      "endpoints": [
+        {
+          "function": "fetchMemberMemberships",
+          "method": "GET",
+          "path": "/api/v1/members/*/memberships",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "fetchMe",
+          "method": "GET",
+          "path": "/api/v1/members/me",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        }
+      ],
+      "tests": [
+        "mp-app/studio/tests/memberAccountPage.test.tsx"
+      ]
+    },
+    {
       "surface": "Members",
       "kind": "studio-page",
       "file": "mp-app/studio/src/pages/Members.tsx",

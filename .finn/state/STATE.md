@@ -16,11 +16,16 @@ TEST_CHANGED=Studio api/auth/navigation/member-account tests; backend test_m46_w
 BROWSER_AVAILABLE=no — libnspr4.so/libnss3.so missing (apt/npm verified)
 BROWSER_ALTERNATIVE=live-contract (CI job) + backend TestClient flow
 LIVE_CONTRACT=PASS — 1 file; 9 passed; local synthetic API; raw log evidence/2026-11-27/MEM-01/live-contract.raw.txt
-PENDING_PUSH=no
-PUSHED=cdc989b198737e1d2235eaf570fb023e9306e264 روی arena/5e0f64cf-mp (MEM-01 + stage-slice tooling; branch and evidence API verified)
+PENDING_PUSH=yes (interaction-map refresh and CI result record pending)
+PUSHED=e06a71659517f2ee222be674ab2be7a8fd368c9a روی arena/5e0f64cf-mp (MEM-01 + stage-slice state; GitHub API verified)
 MEM01_COMMIT_ALLOWLISTED_COUNT=40
 STAGE_SLICE_COMMIT_ALLOWLISTED_COUNT=10
-INDEX_ALLOWLISTED_COUNT=0 (no pending paths from either allowlist; 60 unrelated staged paths remain untouched)
+INDEX_ALLOWLISTED_COUNT=10 (current staged paths from 10-file INTERACTION-MAP-FIX allowlist; 60 unrelated staged paths remain; total index=70)
+INTERACTION_MAP_FIX_ALLOWLISTED_COUNT=10
+PR30_CHECKS=FAIL at e06a716: backend + Documentation links/handoff; live-contract, studio, secret-scan, client-flutter, pinned client pass; e2e-api skipped; PR stays OPEN/DRAFT
+INTERACTION_MAP_LOCAL=PASS after generator refresh — 32 surfaces; 163 contract routes; 0 drift; 6 existing untested surfaces
+BACKEND_CI_LOCAL_REPRO=PASS — 1338 passed; 2 skipped; 2 warnings; total coverage 91%; GitHub run log retrieval ended with EOF, root cause unknown
+DOCS_GATE_LOCAL=PASS — 38 Markdown; 608 local links; 15 Mermaid after map regeneration
 BROWSER_RUN_THIS_CYCLE=no — no Chromium/browser/device assertions in this cycle.
 LOOP_STALLED=no
 
@@ -28,7 +33,7 @@ LOOP_STALLED=no
 - Synthetic Studio focused run: **5 files / 33 passed**; full Studio: **54 files passed, 2 skipped; 379 passed, 10 skipped**. Build/typecheck passed (Vite 5.4.21, 4048 modules); selected Studio ESLint passed. Backend TestClient/temporary SQLite tests for whoami + ownership: **9 passed, 1 Starlette/httpx warning**; touched backend test Ruff passed. Existing JSDOM `getComputedStyle`, React `act(...)`, Recharts warnings persist; skips are not passes. Details: `evidence/2026-11-23/MEM-01/member-account-slice.md` and its neighboring result logs.
 - Component/Auth/App fetch calls are mocked in Studio tests; backend TestClient is a separate synthetic test. No live Studio→backend account session, production member data, SMS, browser, physical Android/OS, screen-reader/manual review, independent reviewer or full PWA journey was tested. Browser/device acceptance remains unknown; headless library failure is not a product result.
 - The earlier shell-only statement “no profile/membership API” is historical and superseded by the account slice; `MEM-01` remains partial. Account/history work overlaps `MEM-02/PWA-31`, now recorded `PARTIAL/NOT_ACCEPTED`; its canonical checkbox remains open. Continue `MEM-02…MEM-16`, then `STAFF-01`, by canonical acceptance.
-- MEM-01 source/tests/evidence/docs were committed with exactly 40 allowlisted paths as `a7aa5b715de3da021934152b75e17ef67f6f19a5`. The exact-path staging helper, its 5 safety tests, and text allowlists were committed as `cdc989b198737e1d2235eaf570fb023e9306e264`; both commits were pushed to `arena/5e0f64cf-mp`. GitHub API confirmed branch SHA `cdc989b198737e1d2235eaf570fb023e9306e264` and the remote evidence directory (15 entries). The helper staged only listed paths: 4 changed paths in the MEM-01 allowlist, then 10 changed paths in the 11-line tooling allowlist; 60 unrelated staged entries were preserved. `PENDING_PUSH=no`; this is not a merge. Untracked/private receipts were not opened, copied, deleted, or staged; PR #30 must remain draft and unmerged.
+- MEM-01 source/tests/evidence/docs were committed with exactly 40 allowlisted paths as `a7aa5b715de3da021934152b75e17ef67f6f19a5`. The exact-path staging helper, its 5 safety tests, and text allowlists were committed as `cdc989b198737e1d2235eaf570fb023e9306e264`; final state record `e06a71659517f2ee222be674ab2be7a8fd368c9a` was also pushed to `arena/5e0f64cf-mp`. GitHub API confirmed e06a716 on the remote branch and confirmed the evidence directory (15 entries). The helper staged only allowlisted paths; 60 unrelated staged entries were preserved. `gh pr checks 30` on e06a716 completed with backend and Documentation links/handoff failing; `live-contract`, Studio, secret-scan, Flutter/client checks passed and `e2e-api` skipped. The doc failure was reproduced locally as stale generated interaction-map output, refreshed locally (32 surfaces, 163 contract routes, zero drift); the backend coverage workflow reproduced locally at 1338 passed, 2 skipped, 2 warnings, 91% coverage, but the GitHub backend log download returned EOF, so the remote failure's root cause is unknown. These CI findings and the map refresh remain in a narrowly scoped follow-up; `PENDING_PUSH=yes`. This is not a merge. Untracked/private receipts were not opened, copied, deleted, or staged; PR #30 must remain draft and unmerged.
 
 ## Historical run snapshot — PWA / SEC-01 / WEB / INV (مرجع Arena: ۲۰۲۶-۱۱-۲۳ UTC)
 

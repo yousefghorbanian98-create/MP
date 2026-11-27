@@ -17,7 +17,7 @@ python3 scripts/interaction_map.py --check
 | سنجه | مقدار |
 |---|---|
 | مسیر قرارداد API | 163 |
-| صفحهٔ استودیو | 13 |
+| صفحهٔ استودیو | 14 |
 | ویژگی کلاینت | 18 |
 | endpoint یکتای استفاده‌شده | 94 |
 | سطح بی‌تست | 6 |
@@ -140,6 +140,17 @@ python3 scripts/interaction_map.py --check
 بدون فراخوانی API در این صفحه و کامپوننت‌هایش.
 
 تست: `mp-app/studio/tests/login.test.tsx`
+
+### MemberAccount
+
+دکمه 2 · ورودی 0 · عدد 0 · انتخاب 0 · دیالوگ 0
+
+| متد | مسیر | guard | نقش‌ها | در قرارداد |
+|---|---|---|---|---|
+| GET | `/api/v1/members/*/memberships` | permission | member, coach, reception, manager, admin, super_admin | بله |
+| GET | `/api/v1/members/me` | permission | member, coach, reception, manager, admin, super_admin | بله |
+
+تست: `mp-app/studio/tests/memberAccountPage.test.tsx`
 
 ### Members
 
@@ -276,12 +287,12 @@ python3 scripts/interaction_map.py --check
 
 | نقش | تعداد endpoint | نمونهٔ سطح‌ها |
 |---|---|---|
-| admin | 102 | Analytics، Assessment، Chat، CheckIn، Dashboard، Expenses |
-| coach | 72 | Assessment، Chat، CheckIn، Dashboard، Members، Nutrition |
-| manager | 102 | Analytics، Assessment، Chat، CheckIn، Dashboard، Expenses |
-| member | 75 | Assessment، Chat، Finance، Members، Nutrition، Programs |
-| reception | 48 | Assessment، CheckIn، Dashboard، Finance، Members، Programs |
-| super_admin | 109 | Analytics، Assessment، Chat، CheckIn، Dashboard، Expenses |
+| admin | 104 | Analytics، Assessment، Chat، CheckIn، Dashboard، Expenses |
+| coach | 74 | Assessment، Chat، CheckIn، Dashboard، MemberAccount، Members |
+| manager | 104 | Analytics، Assessment، Chat، CheckIn، Dashboard، Expenses |
+| member | 77 | Assessment، Chat، Finance، MemberAccount، Members، Nutrition |
+| reception | 50 | Assessment، CheckIn، Dashboard، Finance، MemberAccount، Members |
+| super_admin | 111 | Analytics، Assessment، Chat، CheckIn، Dashboard، Expenses |
 
 ## محدودیت صریح
 
