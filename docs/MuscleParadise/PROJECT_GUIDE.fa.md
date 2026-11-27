@@ -174,7 +174,7 @@ MP/
 
 #### وضعیت PWA: تصمیم پذیرفته‌شده ≠ قابلیت کامل
 
-[ADR-007](adr/007-pwa-primary-release.md) baseline انتشار اول را PWA مشترک انتخاب می‌کند و صریحاً `NO-GO` می‌گذارد تا جریان‌های اصلی و گیت‌های امنیت، حریم، عملیات و دستگاه با شواهد همان artifact پذیرفته شوند. در snapshot کد فعلی، `studio/src/App.tsx` هنوز UI دوازده صفحهٔ کارکنان را تعریف می‌کند؛ صفحات عضو در Flutter هستند. پس تصمیم PWA را به‌عنوان **تصمیم محصول** ثبت کنید، ولی PWA مشترک عضو/کادر را **پیاده‌شده یا آمادهٔ انتشار** ننویسید.
+[ADR-007](adr/007-pwa-primary-release.md) baseline انتشار اول را PWA مشترک انتخاب می‌کند و صریحاً `NO-GO` می‌گذارد تا جریان‌های اصلی و گیت‌های امنیت، حریم، عملیات و دستگاه با شواهد همان artifact پذیرفته شوند. در snapshot کد فعلی، `studio/src/App.tsx` هنوز UI دوازده صفحهٔ کارکنان را تعریف می‌کند؛ صفحات عضو در Flutter هستند. پس تصمیم PWA را به‌عنوان **تصمیم محصول** ثبت کنید، ولی PWA مشترک عضو/کادر را **پیاده‌شده یا آمادهٔ انتشار** ننویسید. acceptance/IDها در [backlog canonical](TODO-2026-11-16.md#pwa-ui-ux-full-backlog-2026-11-23)، گیت‌ها در [tracker اجرایی](TODO-PWA-RELEASE-2026-11-23.fa.md) و وضعیت بین‌چرخه‌ای در [دفتر اجرا](PWA-EXECUTION-STATE.md) است.
 
 ### ۱.۷ منابعی که نباید با هم اشتباه شوند
 
@@ -761,7 +761,7 @@ python scripts/backup.py restore "$ARCHIVE" \\
 - rate-limit store مشترک، pool DB، worker heartbeat، outbox pending/dead letter و log correlation باید با deployment واقعی سنجیده شوند.
 - production secrets، HTTPS CORS origins، `MP_TRUSTED_PROXIES`, Valkey reachable، SMS واقعیِ approved، payment mode سازگار با تصمیم مالک، DB/migration/backup و registry/image pin باید پیش از هر استفاده از دادهٔ واقعی تأیید شوند.
 - OTP dev echo در production ممنوع است؛ code/token/secret را در report/console/chat/screenshot نیاورید.
-- Android debug compile در CI signed release نیست. `RELEASE-CHECKLIST.md` گیت‌هایی دربارهٔ signing key تاریخی، Gitleaks history، manifest/API، backup, staging و ops دارد؛ `ADR-007` می‌گوید تا تکمیل flowها و گیت‌ها NO-GO.
+- Android debug compile در CI signed release نیست. `RELEASE-CHECKLIST.md` گیت‌هایی دربارهٔ signing key تاریخی، Gitleaks history، manifest/API، backup, staging و ops دارد؛ `ADR-007` می‌گوید تا تکمیل flowها و گیت‌ها NO-GO. صف اجرایی جاری PWA در [tracker](TODO-PWA-RELEASE-2026-11-23.fa.md) و [دفتر وضعیت loopها](PWA-EXECUTION-STATE.md) ثبت می‌شود؛ گیت‌های device/production را از روی checklist یا screenshot بسته تلقی نکنید.
 
 ### ۴.۶ کارهایی که این سند/نوبت انجام نداده است
 
@@ -921,7 +921,7 @@ ADR-007 وضعیت `NO-GO` انتشار را تا تکمیل جریان‌های
 
 | موضوع | اختلاف مشاهده‌شده | روش برخورد |
 |---|---|---|
-| Baseline PWA | root `README.md`, `ADR-007`, ADR index و TODO جاری PWA مشترک عضو/کادر را کلاینت اصلی انتشار اول می‌دانند؛ ADR-006 با clarification تاریخ‌دار جهت قبلی و وضعیت D-01/D-10 را جدا می‌کند. | `D-01` از نظر baseline کلاینت با ADR-007 پاسخ دارد؛ `D-10`/Go-No-Go همچنان باز است. PWA عضو هنوز پیاده‌سازی/parity/QA نشده؛ Flutter/Android حفظ می‌شود. |
+| Baseline PWA | root `README.md`, `ADR-007`, ADR index و TODO جاری PWA مشترک عضو/کادر را کلاینت اصلی انتشار اول می‌دانند؛ ADR-006 با clarification تاریخ‌دار جهت قبلی و وضعیت D-01/D-10 را جدا می‌کند. | `D-01` از نظر baseline کلاینت با ADR-007 پاسخ دارد؛ `D-10`/Go-No-Go همچنان باز است. PWA عضو هنوز پیاده‌سازی/parity/QA نشده؛ Flutter/Android حفظ می‌شود. status و پذیرش را در [backlog canonical](TODO-2026-11-16.md#pwa-ui-ux-full-backlog-2026-11-23)، [tracker](TODO-PWA-RELEASE-2026-11-23.fa.md) و [دفتر اجرا](PWA-EXECUTION-STATE.md) دنبال کنید. |
 | PWA و نقش هدف | بخشی از `architecture/README.md`/نقشه‌های قدیمی دربارهٔ PWA اجرا‌نشده، نقش target سه‌گانه و baseline قدیمی است؛ ADR-007 و پاسخ مالک شش role و baseline جدیدتر را می‌گویند. | آن صفحات را snapshot/هدف بخوانید؛ role source جاری و ADR-007 را برای تصمیم جاری دنبال کنید. |
 | پرداخت production | `docs/MuscleParadise/DEPLOYMENT.md` و `OPS-RUNBOOK.md` هنوز نمونهٔ `MP_PAYMENT_GATEWAY=zarinpal`/merchant می‌گویند؛ `app/config.py` فعلی فقط `manual`, `mock`, `sandbox` را قبول می‌کند و production mock/sandbox را رد و `manual + sandbox=true` را هم رد می‌کند؛ `.env.example` manual/false دارد. | این یک conflict اجرایی است: دستور Zarinpal در وضعیت source فعلی config validation را پاس نمی‌کند. **قبل از deploy، owner و maintainer باید تصمیم/کد/runbook را همسو کنند.** این مستندسازی integration واقعی را فعال یا آزموده نمی‌کند. |
 | Quickstart env | root README فرمان `uvicorn` را بدون `MP_ENVIRONMENT` می‌آورد؛ `app/main.py` اجرای ضمنی را رد می‌کند مگر محیط صریح یا override تست. | از command این guide که `MP_ENVIRONMENT=development` صریح دارد استفاده کنید؛ `MP_ALLOW_IMPLICIT_DEV` را برای dev نگذارید. |

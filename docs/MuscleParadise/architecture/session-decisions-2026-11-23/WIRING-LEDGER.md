@@ -1,6 +1,8 @@
 # دفتر wiring و سفرهای محصول — snapshot 2026-11-23
 
-> سند همراه [نقشهٔ یکپارچه](../system-integrated-flow-v1-2026-11-23.md) است. «مسیر کد» با «رفتار همه‌جانبهٔ آزموده‌شده» یکی نیست. برچسب `CODE` یعنی source قابل ردیابی؛ `TEST-REPORTED` یعنی همان سناریو در [گزارش تحلیل](../analysis-2026-11-23.md) آمده ولی در این نشست دوباره اجرا نشده؛ `DESIGN` یعنی قرارداد/طرح UI؛ `GAP` یعنی رفتار ناقص/مسدود؛ `OPEN` یعنی runtime/device/production هنوز اثبات نشده است.
+> سند همراه [نقشهٔ یکپارچه](../system-integrated-flow-v1-2026-11-23.md) است. «مسیر کد» با «رفتار همه‌جانبهٔ آزموده‌شده» یکی نیست. برچسب `CODE` یعنی source قابل ردیابی؛ `TEST-REPORTED` یعنی همان سناریو در [گزارش تحلیل](../analysis-2026-11-23.md) آمده ولی در آن نشست دوباره اجرا نشده؛ `DESIGN` یعنی قرارداد/طرح UI؛ `GAP` یعنی رفتار ناقص/مسدود؛ `OPEN` یعنی runtime/device/production هنوز اثبات نشده است.
+>
+> **ردیابی canonical PWA (الحاقیهٔ DOC-05):** جهت پلتفرم را [ADR-007](../../adr/007-pwa-primary-release.md)، معیارهای محصول را [backlog canonical](../../TODO-2026-11-16.md#pwa-ui-ux-full-backlog-2026-11-23)، وضعیت را [tracker](../../TODO-PWA-RELEASE-2026-11-23.fa.md) و کار محلی را [دفتر اجرا](../../PWA-EXECUTION-STATE.md) تعیین می‌کنند. این دفتر/نمودار wiring یک snapshot code-map است، نه پذیرش parity یا PWA E2E.
 
 ## ۱. سطح‌های UI و مسیرهای کلاینت
 

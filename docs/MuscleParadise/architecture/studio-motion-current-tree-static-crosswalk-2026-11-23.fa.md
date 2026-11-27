@@ -2,7 +2,9 @@
 
 **تاریخ مرجع ثبت:** ۲۰۲۶-۱۱-۲۳ UTC (مرجع Arena) · **شاخه:** `arena/5e0f64cf-mp` · **HEAD:** `d92817f4151ebbafb25425b7b28776a4cc1180dc` · **base:** `35d4b35184b4148c658b415bd009fc076bf24e00`
 
-> این سند دو snapshot را از هم جدا می‌کند: بخش‌های ۱–۷ inventory ایستای پیش از patch محدود بعدی‌اند؛ بخش ۸ اصلاحات source/test و fingerprint نهایی worktree را ثبت می‌کند. «جاری» در جدول‌های قبلی یعنی همان snapshot بررسی‌شده، نه کد پس از بخش ۸. این گزارش تأیید مستقل نیست و هیچ‌یک از ۵۰ parent canonical، browser/device gate، دسترس‌پذیری محصول، release یا Go/No-Go را PASS نمی‌کند. source helper نسبت به فایل inventory تاریخی `studio-motion-mk-pwa-01-inventory-2026-11-23.fa.md` (که در این checkpoint منتشر نشده) drift کرده؛ hashهای آن را به این دو snapshot تعمیم نده. تاریخ ساعت container با مرجع Arena اختلاف داشت؛ wall-clock دقیق اجرای ابزارها `CHRONOLOGY_UNKNOWN` است.
+> این سند دو snapshot را از هم جدا می‌کند: بخش‌های ۱–۷ inventory ایستای پیش از patch محدود بعدی‌اند؛ بخش ۸ اصلاحات source/test و fingerprint نهایی worktree را ثبت می‌کند. «جاری» در جدول‌های قبلی یعنی همان snapshot بررسی‌شده، نه کد پس از بخش ۸. این گزارش تأیید مستقل نیست و هیچ‌یک از ۵۰ parent canonical، browser/device gate، دسترس‌پذیری محصول، release یا Go/No-Go را PASS نمی‌کند. source helper نسبت به فایل inventory تاریخی `studio-motion-mk-pwa-01-inventory-2026-11-23.fa.md` (که در آن checkpoint منتشر نشده) drift کرده؛ hashهای آن را به این دو snapshot تعمیم نده. تاریخ ساعت container با مرجع Arena اختلاف داشت؛ wall-clock دقیق اجرای ابزارها `CHRONOLOGY_UNKNOWN` است.
+>
+> **ردیابی canonical (الحاقیهٔ DOC-05):** تصمیم پلتفرم در [ADR-007](../adr/007-pwa-primary-release.md)، پذیرش در [backlog canonical](../TODO-2026-11-16.md#pwa-ui-ux-full-backlog-2026-11-23)، صف/گیت‌ها در [tracker](../TODO-PWA-RELEASE-2026-11-23.fa.md) و status این checkout در [دفتر اجرا](../PWA-EXECUTION-STATE.md) است. hashها و حکم `CURRENT/GAP` در بدنه به snapshotی که صریحاً ثبت شده محدودند؛ این سند را بدون scan تازه به HEAD فعلی نسبت نده.
 
 ## ۱. محدوده و هویت snapshot
 
