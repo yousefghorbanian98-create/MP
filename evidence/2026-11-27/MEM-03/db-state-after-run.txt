@@ -1,0 +1,8 @@
+users (id, phone, auth_version, role):
+  1, 09120000005, 0, member
+  2, 09120000104, 2, member
+refresh rows (id, user_id, revoked):
+  1, 2, True
+  2, 2, True
+phone-change challenges (user_id, old_phone, new_phone, old_verified, completed, old_attempts, new_attempts):
+  2, 09120000004, 09120000104, True, True, 2, 2

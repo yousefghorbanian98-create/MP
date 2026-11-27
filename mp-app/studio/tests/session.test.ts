@@ -3,10 +3,13 @@ import {
   ACCESS_TOKEN_KEY,
   REFRESH_TOKEN_KEY,
   SESSION_EXPIRED_EVENT,
+  captureSessionGuard,
   clearSession,
+  clearSessionForAccount,
   logoutSession,
   sessionFetch,
   storeTokenPair,
+  tokenSubject,
 } from "../src/lib/session";
 
 function reply(status: number, body: unknown): Response {
@@ -380,5 +383,59 @@ describe("Studio session transport (M67)", () => {
     expect(response.status).toBe(401);
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(authorization(fetchMock.mock.calls[0])).toBeNull();
+  });
+});
+
+/** A token with a real `sub`, matching what the server signs for a session. */
+function jwtFor(userId: number, role = "member"): string {
+  const payload = btoa(JSON.stringify({ sub: String(userId), role }));
+  return `header.${payload}.signature`;
+}
+
+describe("phone-change session guard (MEM-03)", () => {
+  it("reads the account id from the token payload, never from the role", () => {
+    expect(tokenSubject(jwtFor(41))).toBe("41");
+    expect(tokenSubject("not-a-jwt")).toBeNull();
+    expect(tokenSubject(null)).toBeNull();
+  });
+
+  it("does not end the session of a different account that signed in while confirm was in flight", () => {
+    storeTokenPair({ access_token: jwtFor(41), refresh_token: "member-41-refresh" });
+    const guard = captureSessionGuard();
+    expect(guard.account).toBe("41");
+
+    // A late confirm response arrives after another account took over this browser.
+    storeTokenPair({ access_token: jwtFor(52), refresh_token: "other-52-refresh" });
+
+    expect(clearSessionForAccount(guard)).toBe("different-account");
+    expect(localStorage.getItem(ACCESS_TOKEN_KEY)).toBe(jwtFor(52));
+    expect(localStorage.getItem(REFRESH_TOKEN_KEY)).toBe("other-52-refresh");
+  });
+
+  it("ends the guarded session when the same account is still signed in", () => {
+    storeTokenPair({ access_token: jwtFor(41), refresh_token: "member-41-refresh" });
+    const guard = captureSessionGuard();
+
+    expect(clearSessionForAccount(guard)).toBe("ended");
+    expect(localStorage.getItem(ACCESS_TOKEN_KEY)).toBeNull();
+    expect(localStorage.getItem(REFRESH_TOKEN_KEY)).toBeNull();
+  });
+
+  it("reports an already signed-out browser instead of claiming a session ended", () => {
+    const guard = captureSessionGuard();
+    expect(guard.account).toBeNull();
+
+    expect(clearSessionForAccount(guard)).toBe("signed-out");
+  });
+
+  it("fails closed when the current token cannot be read as an account", () => {
+    storeTokenPair({ access_token: jwtFor(41), refresh_token: "member-41-refresh" });
+    const guard = captureSessionGuard();
+
+    // A tampered/opaque token must not be treated as "the same account".
+    localStorage.setItem(ACCESS_TOKEN_KEY, "opaque-access");
+
+    expect(clearSessionForAccount(guard)).toBe("different-account");
+    expect(localStorage.getItem(ACCESS_TOKEN_KEY)).toBe("opaque-access");
   });
 });

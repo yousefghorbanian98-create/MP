@@ -2,7 +2,30 @@
 
 > این فایل **خلاصهٔ جاری برای ادامهٔ کار** است، نه آرشیو گفتگو و نه منبع نهایی وضعیت محصول. پیش از فشرده‌سازی context یا پایان هر کار معنادار، همین snapshot را جایگزین/به‌روز کن؛ تاریخچه را با انباشت transcript طولانی نکن.
 
-## وضعیت جاری — MEM-01 live member-account contract و identity-negative (UTC 2026-11-27)
+## وضعیت جاری — MEM-03 / PWA-32 تغییر شماره، نشست دستگاه و پاسخ دیررس (UTC 2026-11-27)
+
+```text
+CURRENT_BRANCH=arena/3c08bfbd-mp
+BRANCH_BASE=ebebef3ad153277f0223c2011efc4f9a9c855654 (main؛ PR #30 در 2026-11-27T16:49:20Z MERGE شد)
+STATE_LAST_UPDATED=2026-11-27T17:10:00Z
+EVIDENCE_DATE_DIRS=2026-11-23, 2026-11-27
+NOTE: یادداشت‌های «PR #30 باز/مرج نشود» در بخش‌های پایین‌تر تاریخی‌اند؛ وضعیت فعلی MERGED است.
+MEM-03/PWA-32=PARTIAL/NOT_ACCEPTED؛ checkbox canonical باز
+MEMBER_SURFACE=تغییر شماره + نشست‌های دستگاه + logout-all در خانهٔ عضو (نه فقط shell کارکنان)
+LATE_CONFIRM_GUARD=PASS محلی با تست واحد؛ نشست حساب دیگر پاک/revoke نمی‌شود
+LIVE_PHONE_CHANGE=PASS محلی: ۱ فایل/۱ تست روی API واقعی + SQLite synthetic + DevSmsProvider
+CI_THIS_SLICE=اجرا نشده؛ نتیجهٔ محلی جای CI همان SHA را نمی‌گیرد
+REAL_SMS/DEVICE/BROWSER=اجرا نشده؛ release=NO-GO
+```
+
+- قرارداد backend از قبل کامل بود؛ endpoint فرضی ساخته نشد. شکاف واقعی سمت محصول بود: `MemberShell` هیچ ورودی تغییر شماره یا مدیریت نشست نداشت و `POST /auth/logout-all` مصرف‌کنندهٔ UI نداشت (در گیت api-coverage با TODO مستثنا بود). اکنون کارت `MemberSecurity` فهرست نشست‌های همان حساب را از `GET /auth/sessions` می‌خواند و «خروج از همهٔ دستگاه‌ها» فقط با تأیید ۲۰۰ سرور انجام‌شده اعلام می‌شود؛ در خطا نشست محلی حفظ و خطای قابل‌تلاش نشان داده می‌شود.
+- ریسک پاسخ دیررس: `confirm` موفق که پس از ورود حساب دیگر در همان مرورگر برسد، پیش‌تر `signOut()` را روی نشست تازه اجرا می‌کرد و refresh token آن حساب را هم سمت سرور revoke می‌کرد. `PhoneChangeDialog` اکنون پیش از ارسال `confirm` یک `SessionGuard` (شناسهٔ حساب از `sub` توکن) می‌گیرد و `clearSessionForAccount` فقط در حالت `ended` دست به storage می‌زند؛ `different-account` و `signed-out` هیچ تغییری نمی‌دهند و ادعای خروج هم نمی‌کنند.
+- شواهد آزمون محلی: Studio focused **۶ فایل/۴۲ pass**؛ full **۵۵ فایل pass، ۴ skip؛ ۳۹۲ pass، ۱۵ skip**؛ `tsc -b`/`eslint .`/`npm run build` پاس؛ backend مرتبط (`test_m82_phone_change`، `test_wp14_logout_all`، `test_phase4_identity_session`) **۱۸ pass/۱ warning**. قرارداد زندهٔ تازه `tests/liveContractPhoneChange.test.ts` روی Uvicorn محلی **۱/۱ pass**؛ DB مصنوعی شمارهٔ عوض‌شده، `auth_version=2` و دو refresh revoked را نشان داد. جزئیات و logهای خام: [`MEM-03 current run`](../../evidence/2026-11-27/MEM-03/current-run.md).
+- CI: job «live-contract» اکنون `MP_ALLOW_DEV_OTP_ECHO=true` را فقط برای سرور synthetic همان job می‌دهد و یک step جدا برای phone-change/logout-all دارد (آخرین مصرف‌کنندهٔ حساب fixture، چون شماره‌اش را عوض می‌کند). این workflow هنوز اجرا نشده است.
+- محدودیت‌ها: SMS/provider و دستگاه واقعی، مرورگر/صفحه‌خوان، بازبینی انسانی و CI این شاخه اجرا نشده‌اند؛ تست‌های UI با jsdom و `fetch` stub‌شده‌اند. داده‌های شمارهٔ قدیم/جدید در `phone_change_challenges` بدون مسیر retention پیدا شدند؛ این پرسش **policy حریم خصوصی** است و به‌عنوان نتیجهٔ compliance ثبت نمی‌شود.
+- بعدی: اجرای CI همین شاخه و ثبت نتیجهٔ متصل به SHA؛ سپس ارزیابی MEM-04 فقط از کد و شاهد همان SHA. `MEM-01`، `MEM-02/PWA-30/31`، `INV-02/03` و `SEC-01` partial می‌مانند؛ `PWA-01=PROPOSED/NOT_RUN`؛ release=`NO-GO`.
+
+## Snapshot پیشین — MEM-01 live member-account contract و identity-negative (UTC 2026-11-27)
 
 ```text
 CURRENT_BRANCH=arena/5e0f64cf-mp

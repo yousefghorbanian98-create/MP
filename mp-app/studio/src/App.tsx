@@ -20,6 +20,7 @@ import { useAppStore, type PageId } from "./stores/appStore";
 import { AuthProvider, useAuth } from "./auth/AuthContext";
 import { Login } from "./pages/Login";
 import { MemberAccount } from "./pages/MemberAccount";
+import { MemberSecurity } from "./components/MemberSecurity";
 import { canSeePage, parseRole } from "./lib/roleNav";
 import {
   canonicalRouteHref,
@@ -214,8 +215,9 @@ function MemberShell({ page, onSignOut }: { page: MemberPage; onSignOut: () => v
         <section className="glass-card min-h-48 p-5" aria-labelledby="member-page-title">
           <h2 id="member-page-title" className="text-lg font-bold">{title}</h2>
           {page === "home" ? (
-            <div className="mt-4">
+            <div className="mt-4 space-y-6">
               <MemberAccount />
+              <MemberSecurity />
             </div>
           ) : (
             <p role="status" className="mt-3 max-w-2xl text-sm leading-7 text-ink-dim">
@@ -223,6 +225,7 @@ function MemberShell({ page, onSignOut }: { page: MemberPage; onSignOut: () => v
             </p>
           )}
         </section>
+        <ToastViewport />
       </div>
     </main>
   );

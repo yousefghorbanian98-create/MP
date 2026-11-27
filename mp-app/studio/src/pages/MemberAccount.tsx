@@ -1,3 +1,7 @@
+import { useState } from "react";
+import { useAuth } from "../auth/AuthContext";
+import { PhoneChangeDialog } from "../components/PhoneChangeDialog";
+import { toast } from "../components/Feedback";
 import { fetchMe, fetchMemberMemberships, type MemberMembership } from "../lib/api";
 import {
   formatMemberConstraints,
@@ -47,6 +51,8 @@ function RequestState({
 
 export function MemberAccount() {
   const profile = useApi((signal) => fetchMe(undefined, signal), []);
+  const { finishPhoneChange } = useAuth();
+  const [phoneChangeOpen, setPhoneChangeOpen] = useState(false);
 
   if (profile.loading || profile.error) {
     return (
@@ -102,7 +108,16 @@ export function MemberAccount() {
           </div>
           <div>
             <dt className="text-xs text-ink-dim">شمارهٔ همراه</dt>
-            <dd className="mt-1 text-sm" dir="ltr">{profile.data.phone || "شماره ثبت نشده"}</dd>
+            <dd className="mt-1 flex flex-wrap items-center gap-2 text-sm">
+              <span dir="ltr">{profile.data.phone || "شماره ثبت نشده"}</span>
+              <button
+                type="button"
+                className="focus-ring rounded-lg border border-primary/20 px-2 py-1 text-xs text-primary-light hover:bg-surface"
+                onClick={() => setPhoneChangeOpen(true)}
+              >
+                تغییر شماره
+              </button>
+            </dd>
           </div>
           <div>
             <dt className="text-xs text-ink-dim">هدف ثبت‌شده</dt>
@@ -133,6 +148,21 @@ export function MemberAccount() {
         </dl>
       </section>
       <MemberMembershipHistory memberId={profile.data.id} />
+      {phoneChangeOpen && (
+        <PhoneChangeDialog
+          currentPhone={profile.data.phone}
+          onClose={() => setPhoneChangeOpen(false)}
+          onCompleted={async (_phone, guard) => {
+            setPhoneChangeOpen(false);
+            const outcome = await finishPhoneChange(guard);
+            if (outcome === "different-account") {
+              toast.info(
+                "شمارهٔ حساب قبلی تغییر کرد؛ این مرورگر اکنون با حساب دیگری وارد شده و نشست آن دست‌نخورده ماند.",
+              );
+            }
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -83,6 +83,57 @@ export function clearSession(): void {
   localStorage.removeItem(REFRESH_TOKEN_KEY);
 }
 
+/** شناسهٔ حساب (`sub`) از payload توکن — فقط تفکیک نشست؛ مجوز همیشه سمت سرور است. */
+export function tokenSubject(token: string | null): string | null {
+  if (!token) return null;
+  try {
+    const payload = token.split(".")[1];
+    if (!payload) return null;
+    const json = JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/"))) as {
+      sub?: unknown;
+    };
+    if (typeof json?.sub === "string" && json.sub !== "") return json.sub;
+    if (typeof json?.sub === "number" && Number.isFinite(json.sub)) return String(json.sub);
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Recognises the account that owned the browser session when a privileged step
+ * (phone change) started. The confirm response can arrive after the browser has
+ * moved on to a different account, and only this identity check keeps that late
+ * callback from clearing or revoking the wrong session.
+ */
+export interface SessionGuard {
+  readonly account: string | null;
+}
+
+export type SessionEndOutcome = "ended" | "different-account" | "signed-out";
+
+export function captureSessionGuard(): SessionGuard {
+  return { account: tokenSubject(getAccessToken()) };
+}
+
+function hasStoredSession(): boolean {
+  return Boolean(getAccessToken() || getRefreshToken());
+}
+
+/**
+ * Ends the local session only when it still belongs to the guarded account.
+ * `different-account` is a refusal, not a failure: another account now owns this
+ * browser and its credentials must stay untouched. An unreadable token fails
+ * closed the same way; the next 401 then ends that dead session normally.
+ */
+export function clearSessionForAccount(guard: SessionGuard): SessionEndOutcome {
+  const current = captureSessionGuard();
+  if (!hasStoredSession()) return "signed-out";
+  if (current.account === null || current.account !== guard.account) return "different-account";
+  clearSession();
+  return "ended";
+}
+
 function sessionExpired(): void {
   if (typeof window !== "undefined") window.dispatchEvent(new Event(SESSION_EXPIRED_EVENT));
 }

@@ -1,0 +1,12 @@
+
+ RUN  v3.2.7 /home/user/MP/mp-app/studio
+
+ ✓ tests/liveContractPhoneChange.test.ts (1 test) 406ms
+   ✓ phone change live contract (MEM-03) > changes the login number only through both OTP proofs and revokes every session  404ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  17:02:45
+   Duration  1.33s (transform 141ms, setup 32ms, collect 121ms, tests 406ms, environment 402ms, prepare 189ms)
+
+EXIT=0

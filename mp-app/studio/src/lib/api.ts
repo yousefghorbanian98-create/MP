@@ -1603,6 +1603,15 @@ export function fetchSessions(token = getToken(), signal?: AbortSignal) {
   return getJson<DeviceSession[]>("/auth/sessions", token, signal);
 }
 
+/**
+ * خروج از همهٔ دستگاه‌ها (US-404). سرور نسخهٔ auth حساب را bump می‌کند، پس
+ * **همهٔ** توکن‌های این حساب از جمله نشست همین مرورگر بی‌اعتبار می‌شوند؛ UI
+ * پس از پاسخ موفق باید نشست محلی را هم پاک کند.
+ */
+export function logoutAllSessions(token = getToken()) {
+  return sendJson<{ status: string }>("POST", "/auth/logout-all", undefined, token);
+}
+
 /** ابطال یک نشست/دستگاه. نشست کاربر دیگر از دید سرور ۴۰۴ است. */
 export function revokeSession(sessionId: number, token = getToken()) {
   return sendJson<{ status: string; session_id: number }>(

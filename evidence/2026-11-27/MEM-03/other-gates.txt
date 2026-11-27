@@ -1,0 +1,8 @@
+Project guide is current: docs/MuscleParadise/PROJECT_GUIDE.fa.md.
+GUIDE_EXIT=0
+Interaction map gate FAILED:
+MAP-002 docs/MuscleParadise/architecture/interaction-map-2026-11-19.md:-: نقشهٔ سطح تعامل کهنه است — python3 scripts/interaction_map.py را اجرا و commit کن ← python3 scripts/interaction_map.py را اجرا و نتیجه را commit کنید.
+MAP_EXIT=1
+Repository hygiene gate passed: index ignored, no tracked .claude/, no agent-tool git hook.
+HYGIENE_EXIT=0
+DIFFCHECK_EXIT=0

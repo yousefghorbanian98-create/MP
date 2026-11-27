@@ -1,0 +1,25 @@
+    at commitPassiveMountEffects_complete (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24917:7) [90mundefined[39m
+
+stderr | tests/phoneChange.test.tsx > M82 phone-change dialog > reports the guard of the account that sent confirm even when the reply arrives late
+Error: Not implemented: window.getComputedStyle(elt, pseudoElt)
+    at module.exports (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at window.getComputedStyle (/home/user/MP/mp-app/studio/node_modules/jsdom/lib/jsdom/browser/Window.js:895:7)
+    at measureScrollbarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:35:32)
+    at getTargetScrollBarSize (/home/user/MP/mp-app/studio/node_modules/rc-util/lib/getScrollBarSize.js:83:10)
+    at /home/user/MP/mp-app/studio/node_modules/@rc-component/portal/lib/useScrollLocker.js:27:72
+    at /home/user/MP/mp-app/studio/node_modules/rc-util/lib/hooks/useLayoutEffect.js:18:12
+    at commitHookEffectListMount (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/home/user/MP/mp-app/studio/node_modules/react-dom/cjs/react-dom.development.js:24917:7) [90mundefined[39m
+
+ ✓ tests/phoneChange.test.tsx (2 tests) 508ms
+   ✓ M82 phone-change dialog > verifies the old phone before the new one and does not refresh for a wrong OTP  392ms
+ ✓ tests/session.test.ts (21 tests) 232ms
+
+ Test Files  6 passed (6)
+      Tests  42 passed (42)
+   Start at  17:02:20
+   Duration  15.48s (transform 744ms, setup 34ms, collect 8.06s, tests 3.65s, environment 2.34s, prepare 534ms)
+

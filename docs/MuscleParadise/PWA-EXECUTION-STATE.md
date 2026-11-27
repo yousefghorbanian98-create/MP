@@ -1,10 +1,10 @@
 # وضعیت اجرای PWA — دفتر چرخه‌ها و شواهد
 
-CURRENT_BRANCH=arena/5e0f64cf-mp
-REMOTE_HAS_MY_COMMIT=yes
-MAIN_HEAD=352781043ad2ba202d8b3b459df1ce7e3d914ef7
-BRANCH_AHEAD_OF_MAIN=11
-LAST_KNOWN_EVIDENCE=evidence/2026-11-23/MEM-01/member-account-slice.md (dirty source; HEAD baseline 5828c94); evidence/2026-11-27/INV-02-v2, INV-03-v2, INV-02-v3, INV-03-v3, CROSSWALK-v2-v3-comparison.md, SEC-01/current-run.md, WEB-02…11/browser-*.txt, WEB-browser-run-summary.md are separate/historical and do not validate the new member code; PR #30 logs remain separate
+CURRENT_BRANCH=arena/3c08bfbd-mp
+MAIN_HEAD=ebebef3ad153277f0223c2011efc4f9a9c855654 (PR #30 MERGED 2026-11-27T16:49:20Z)
+PR30=MERGED — the older OPEN/DRAFT statements below are history, not current state
+BRANCH_BASE=ebebef3ad153277f0223c2011efc4f9a9c855654
+LAST_KNOWN_EVIDENCE=evidence/2026-11-27/MEM-03/current-run.md (local worktree on arena/3c08bfbd-mp; local test/live-contract passes only, no CI run for this slice); evidence/2026-11-23/MEM-01/member-account-slice.md, evidence/2026-11-27/INV-02-v2, INV-03-v2, INV-02-v3, INV-03-v3, CROSSWALK-v2-v3-comparison.md, SEC-01/current-run.md, WEB-02…11/browser-*.txt, WEB-browser-run-summary.md are separate/historical
 
 > **نوع سند:** دفتر اجراییِ افزایشی؛ نه ADR، نه مرجع مستقل برای تعریف acceptance، و نه ادعای QA/release. شناسه‌ها و معیارهای هر کارت از tracker و backlog canonical پیروی می‌کنند.
 > **تاریخ مرجع:** ۲۰۲۶-۱۱-۲۳ UTC. این تاریخ با timestampهای GitHub آینده‌نما که در handoff ثبت شده‌اند تعارض دارد؛ آن تعارض حل‌نشده باقی می‌ماند.
@@ -17,6 +17,27 @@ LAST_KNOWN_EVIDENCE=evidence/2026-11-23/MEM-01/member-account-slice.md (dirty so
 - **شواهد:** مسیرهای پالایش‌شدهٔ `../../evidence/<تاریخ-مرجع>/<ID>/`؛ تاریخ مرجع پوشه را با marker زمان واقعی اجرا (و محدودیت‌های آن) جدا ثبت کنید؛ هر نتیجه فقط به همان command، toolchain، checkout و SHA/worktree fingerprint تعلق دارد.
 
 در تعارض، تصمیم scope با ADR/تصمیم مالک، متن acceptance با کارت canonical، رفتار با کد و تست همان مسیر، و status اجرایی با آخرین شاهد پالایش‌شده تعیین می‌شود. Snapshotهای تاریخی، دیاگرام‌ها، screenshotها، artifact package، mock، skipped test و CI روی SHA دیگر acceptance محصول را ثابت نمی‌کنند.
+
+## Latest continuation — MEM-03 / PWA-32 phone change, device sessions and late-response guard
+
+```text
+CURRENT_BRANCH=arena/3c08bfbd-mp
+BRANCH_BASE=ebebef3ad153277f0223c2011efc4f9a9c855654 (merged PR #30)
+STATE_LAST_UPDATED=2026-11-27T17:10:00Z
+EVIDENCE_DATE_DIRS=2026-11-23, 2026-11-27
+MEM-03/PWA-32=PARTIAL/NOT_ACCEPTED (canonical checkbox open)
+PRODUCT_SURFACE=member home now exposes phone change, own device sessions and logout-all
+LATE_RESPONSE_GUARD=covered by unit tests; a late confirm reply can no longer clear/revoke another account's session
+LIVE_PHONE_CHANGE_CONTRACT=PASS locally: 1 file / 1 test against synthetic Uvicorn + SQLite with DevSmsProvider echo
+CI_WORKFLOW=updated (dev-only OTP echo for the synthetic job + new live phone-change/logout-all step); NOT yet run for this branch
+REAL_SMS/DEVICE/BROWSER/NOT_RUN; release=NO-GO
+```
+
+- Scope review first: the backend contract was already complete (`/auth/phone-change/*`, `/auth/sessions`, `/auth/logout-all`), so no endpoint was invented. The real gaps were member-facing (no phone-change entry or device management in `MemberShell`, and `logout-all` had no UI consumer) plus one untested client race.
+- The race: a successful `confirm` reply arriving after another account signed in on the same browser used to call `signOut()`, which cleared that newer session and revoked its refresh token server-side. `PhoneChangeDialog` now captures a `SessionGuard` (account id from the token `sub`, which is not an authorization decision) before sending `confirm`; `clearSessionForAccount` returns `ended`, `different-account`, or `signed-out`, and only `ended` touches storage.
+- Evidence: [`MEM-03 current run`](../../evidence/2026-11-27/MEM-03/current-run.md) with raw files `studio-focused-tests.txt` (6 files / 42 tests), `studio-full-tests.txt` (55 files pass / 4 skip; 392 pass / 15 skip), `studio-gates.txt` (tsc/eslint/build), `backend-focused-tests.txt` (18 passed), `live-contract-phone-change.raw.txt`, `api-request-log.txt`, `db-state-after-run.txt`.
+- Limits: every HTTP result came from a local synthetic API with the development SMS provider; no real SMS, device, browser, screen-reader or human review was performed, and CI has not run for this branch. The live suite mutates the synthetic fixture's login number, so it must be the last consumer of that account in a job.
+- `MEM-01`, `MEM-02`/`PWA-30/31` stay `PARTIAL/NOT_ACCEPTED`; `INV-02/03`, `SEC-01` remain partial; `PWA-01=PROPOSED/NOT_RUN`; release=`NO-GO`. Next: run CI on this branch, then judge MEM-04 only from code and evidence on that SHA.
 
 ## Latest continuation — MEM-01 live member-account contract and identity-negative
 

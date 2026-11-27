@@ -394,8 +394,14 @@ jobs:
       - name: Seed + run API
         # برنامه بدون MP_ENVIRONMENT صریح بالا نمی‌آید (ccf44ce، WP 1.1/1.2): این job
         # محیط توسعه را صریح می‌دهد، نه پیش‌فرض ضمنی. سرور همچنان اعتبارسنجی می‌شود.
+        #
+        # MP_ALLOW_DEV_OTP_ECHO فقط برای همین سرور synthetic روی 127.0.0.1 است تا
+        # قرارداد واقعی phone-change با کدِ همان پیامکِ DevSmsProvider آزموده شود؛
+        # بدون آن هیچ راهی برای اثبات مرحلهٔ OTP جز mock وجود ندارد. در production
+        # config این ترکیب را رد می‌کند (app/config.py) و هیچ SMS واقعی ارسال نمی‌شود.
         env:
           MP_ENVIRONMENT: development
+          MP_ALLOW_DEV_OTP_ECHO: "true"
         run: |
           cd mp-app/backend
           python - <<'EOF'
@@ -526,6 +532,12 @@ jobs:
           PY
           )
           MP_API_BASE=http://127.0.0.1:8000 MP_MEMBER_TOKEN="$MEMBER_TOKEN" npm test -- tests/liveContractMember.test.ts
+      - name: Live phone-change + logout-all contract (Studio TS client × real API)
+        # آخرین مصرف‌کنندهٔ حساب synthetic است: confirm شمارهٔ ورود همان عضو را عوض
+        # می‌کند و همهٔ نشست‌هایش را می‌بندد. به همین دلیل بعد از قرارداد حساب عضو
+        # اجرا می‌شود و DB هر ران تازه ساخته می‌شود.
+        working-directory: mp-app/studio
+        run: MP_API_BASE=http://127.0.0.1:8000 npm test -- tests/liveContractPhoneChange.test.ts
 
   e2e-api:
     runs-on: ubuntu-latest

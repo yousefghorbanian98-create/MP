@@ -261,11 +261,6 @@ const ROUTE_EXCEPTIONS: Record<string, Exception> = {
     why: "اپ Dart خروج را با ارسال refresh token انجام می‌دهد",
     evidence: "/auth/logout",
   },
-  "/api/v1/auth/logout-all": {
-    why: "ابطال همهٔ نشست‌ها از پنل امنیتی — UI ندارد، TODO",
-    evidence: null,
-    external: "TODO: پنل امنیتی",
-  },
   // اعلان و جمعیت
   "/api/v1/notifications": {
     why: "مسیر ارسال دستی اعلان در Studio/mobile فراخوانی نمی‌شود؛ پنل موجود فقط یادآوری‌ها را می‌خواند",
