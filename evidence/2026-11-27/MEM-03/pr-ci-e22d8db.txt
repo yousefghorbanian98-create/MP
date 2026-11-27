@@ -36,3 +36,15 @@ SHA-256 source digests inside the merged crosswalk evidence JSON, not credential
 Root cause, limits and the three possible fixes are in pr-ci-a5e4517.txt.
 The Android debug compile failure did not reproduce on rerun; it was transient infra
 and is not attributed to this change.
+
+follow-up (docs-only commit, same tree for code/tests):
+run_id=46043582882
+head_sha=3170b6a80029102dafbc28128f2997ee0df5b3f7
+  success	Documentation links and handoff
+  failure	secret-scan
+  success	studio
+  success	backend
+  success	Client — pinned SDK · format gate · Android debug compile
+  success	live-contract
+  success	client-flutter
+  success	e2e-api
