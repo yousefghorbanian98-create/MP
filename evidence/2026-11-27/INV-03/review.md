@@ -33,3 +33,7 @@
 - محدودیت‌ها بدون تغییر: مجوز/مالکیت و رفتار خطا/ماندگاری اثبات نشده، `dynamic_sites=0`، `INV-03=PARTIAL/NOT_ACCEPTED`، checkbox باز، release `NO-GO`.
 
 شاهد عددی: [`digest-gate-after.txt`](../MEM-03/digest-gate-after.txt).
+
+## الحاقیهٔ دوم — بازتولید پس از MEM-04 (HEAD `7399142fd10f`)
+
+تغییر `studio/src/lib/api.ts` در MEM-04 digest ثبت‌شده را کهنه کرد؛ artifact روی درخت تمیز بازتولید شد و `sha256:77e368e37434…` ثبت شد. شمارش‌ها بدون تغییر (`PARTIAL_REVIEW=12`). شاهد: [`crosswalk-regen.txt`](../MEM-04/crosswalk-regen.txt).

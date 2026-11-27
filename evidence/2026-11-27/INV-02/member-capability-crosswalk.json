@@ -1,7 +1,7 @@
 {
   "meta": {
     "kind": "member",
-    "sha": "9ea9a24a622104408df2de632e3977aa3dcad3ba",
+    "sha": "7399142fd10f5efcf2fefc3e65359f2f868dd9b0",
     "branch": "arena/3c08bfbd-mp",
     "tracked_dirty": false,
     "untracked": 0,
@@ -9,13 +9,13 @@
       "backend/api/routes.json": "sha256:7f0333dfb92a5bb56514b7e003cc78370fc7e8fabe3a9a8b5342ccaab9a84cf8",
       "backend/security/rbac.py": "sha256:a8740f75b33e864e1a3990f4d77e2fa781f0c2105c133d9892a41ce63fdf9d2c",
       "studio/src/lib/roleNav.ts": "sha256:650ff74343af6e25010f6a07bab4de477d2ffefcee94be3923a200ed05d53220",
-      "studio/src/lib/api.ts": "sha256:ca62f4a37a2835d4c6453ea26440c527fb04f14e1e0152ae7e379d80992ed20c",
+      "studio/src/lib/api.ts": "sha256:77e368e3743431bef553a82cd06e8f8414ad833ea99b161b794a8548ea1021eb",
       "studio/src/lib/adminApi.ts": "sha256:612cbd1e89a78301545f67c88264519a7c492d148ef44779050f50cc1327f2ce",
       "studio/src/lib/navigation.ts": "sha256:6f9b434207f6fdbfb6701355e323ceaac2f3d10d2d2e505a820ae32752f206b6"
     },
     "site_kinds": {
       "template-base": 28,
-      "helper": 58,
+      "helper": 59,
       "literal": 0
     },
     "dynamic_sites": 0,

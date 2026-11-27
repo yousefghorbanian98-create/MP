@@ -33,3 +33,7 @@
 - محدودیت‌های بالا (اثبات‌نشدن مجوز/مالکیت، `dynamic_sites=0`، تفکیک دستی مصرف‌کننده) بدون تغییرند: `INV-02=PARTIAL/NOT_ACCEPTED`، checkbox باز، `PWA-01=PROPOSED/NOT_RUN`، release `NO-GO`.
 
 شاهد عددی همین بازتولید: [`digest-gate-after.txt`](../MEM-03/digest-gate-after.txt).
+
+## الحاقیهٔ دوم — بازتولید پس از MEM-04 (HEAD `7399142fd10f`)
+
+MEM-04 تابع `fetchMemberPrograms` را به `studio/src/lib/api.ts` اضافه کرد و digest همان یک منبع کهنه شد؛ قاعدهٔ «digest ≠ HEAD ⇒ بازتولید روی درخت تمیز» اعمال و artifact بازتولید شد. شمارش‌ها بدون تغییر (`PARTIAL_REVIEW=14`، `GAP=3`). شاهد: [`crosswalk-regen.txt`](../MEM-04/crosswalk-regen.txt).
