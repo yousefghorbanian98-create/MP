@@ -1,0 +1,23 @@
+# Exact file-level allowlist for the MEM-05 slice, the client-job flake triage and the
+# STALE-artifact reporting change. One repository-relative path per line; no globs.
+.finn/state/STATE.md
+.github/workflows/ci.yml
+docs/MuscleParadise/PWA-EXECUTION-STATE.md
+docs/MuscleParadise/SESSION_HANDOFF.md
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md
+evidence/2026-11-27/CI-FLAKE/client-job-triage.txt
+evidence/2026-11-27/MEM-05/backend-idempotency.txt
+evidence/2026-11-27/MEM-05/current-run.md
+evidence/2026-11-27/MEM-05/guard-mutation-test.txt
+evidence/2026-11-27/MEM-05/studio-full-tests.txt
+evidence/2026-11-27/MEM-05/studio-gates.txt
+evidence/2026-11-27/MEM-05/studio-set-feedback-tests.txt
+mp-app/backend/tests/integration/test_mem05_set_feedback_idempotency.py
+mp-app/studio/src/components/MemberTodayProgram.tsx
+mp-app/studio/src/components/SetFeedbackForm.tsx
+mp-app/studio/src/lib/api.ts
+mp-app/studio/src/lib/feedbackQueue.ts
+mp-app/studio/tests/setFeedback.test.tsx
+scripts/allowlists/MEM-05.txt
+scripts/crosswalk_v2.py
+scripts/verify_crosswalk_digests.py

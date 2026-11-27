@@ -1,12 +1,18 @@
+import { act, renderHook, waitFor } from "@testing-library/react";
+import { createElement, type ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { AuthProvider, useAuth } from "../src/auth/AuthContext";
 import {
   ACCESS_TOKEN_KEY,
   REFRESH_TOKEN_KEY,
   SESSION_EXPIRED_EVENT,
+  captureSessionGuard,
   clearSession,
+  clearSessionForAccount,
   logoutSession,
   sessionFetch,
   storeTokenPair,
+  tokenSubject,
 } from "../src/lib/session";
 
 function reply(status: number, body: unknown): Response {
@@ -380,5 +386,141 @@ describe("Studio session transport (M67)", () => {
     expect(response.status).toBe(401);
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(authorization(fetchMock.mock.calls[0])).toBeNull();
+  });
+});
+
+/** A token with a real `sub`, matching what the server signs for a session. */
+function jwtFor(userId: number, role = "member"): string {
+  const payload = btoa(JSON.stringify({ sub: String(userId), role }));
+  return `header.${payload}.signature`;
+}
+
+describe("phone-change session guard (MEM-03)", () => {
+  it("reads the account id from the token payload, never from the role", () => {
+    expect(tokenSubject(jwtFor(41))).toBe("41");
+    expect(tokenSubject("not-a-jwt")).toBeNull();
+    expect(tokenSubject(null)).toBeNull();
+  });
+
+  it("does not end the session of a different account that signed in while confirm was in flight", () => {
+    storeTokenPair({ access_token: jwtFor(41), refresh_token: "member-41-refresh" });
+    const guard = captureSessionGuard();
+    expect(guard.account).toBe("41");
+
+    // A late confirm response arrives after another account took over this browser.
+    storeTokenPair({ access_token: jwtFor(52), refresh_token: "other-52-refresh" });
+
+    expect(clearSessionForAccount(guard)).toBe("different-account");
+    expect(localStorage.getItem(ACCESS_TOKEN_KEY)).toBe(jwtFor(52));
+    expect(localStorage.getItem(REFRESH_TOKEN_KEY)).toBe("other-52-refresh");
+  });
+
+  it("ends the guarded session when the same account is still signed in", () => {
+    storeTokenPair({ access_token: jwtFor(41), refresh_token: "member-41-refresh" });
+    const guard = captureSessionGuard();
+
+    expect(clearSessionForAccount(guard)).toBe("ended");
+    expect(localStorage.getItem(ACCESS_TOKEN_KEY)).toBeNull();
+    expect(localStorage.getItem(REFRESH_TOKEN_KEY)).toBeNull();
+  });
+
+  it("reports an already signed-out browser instead of claiming a session ended", () => {
+    const guard = captureSessionGuard();
+    expect(guard.account).toBeNull();
+
+    expect(clearSessionForAccount(guard)).toBe("signed-out");
+  });
+
+  it("fails closed when the current token cannot be read as an account", () => {
+    storeTokenPair({ access_token: jwtFor(41), refresh_token: "member-41-refresh" });
+    const guard = captureSessionGuard();
+
+    // A tampered/opaque token must not be treated as "the same account".
+    localStorage.setItem(ACCESS_TOKEN_KEY, "opaque-access");
+
+    expect(clearSessionForAccount(guard)).toBe("different-account");
+    expect(localStorage.getItem(ACCESS_TOKEN_KEY)).toBe("opaque-access");
+  });
+});
+
+describe("AuthContext.finishPhoneChange decision point (MEM-03)", () => {
+  interface AuthCall {
+    path: string;
+    body: string | null;
+  }
+
+  function stubAuthApi() {
+    const calls: AuthCall[] = [];
+    const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const path = new URL(String(input), window.location.href).pathname;
+      calls.push({ path, body: init?.body === undefined ? null : String(init.body) });
+      if (path === "/api/v1/members/me") return reply(200, { role: "member" });
+      if (path === "/api/v1/auth/logout") return reply(200, { status: "logged_out" });
+      throw new Error(`unexpected request: ${path}`);
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    return calls;
+  }
+
+  function wrapper({ children }: { children: ReactNode }) {
+    return createElement(AuthProvider, null, children);
+  }
+
+  async function mountAuth() {
+    const hook = renderHook(() => useAuth(), { wrapper });
+    await waitFor(() => expect(hook.result.current.status).not.toBe("checking"));
+    return hook;
+  }
+
+  it("leaves a different account's session untouched and never calls /auth/logout", async () => {
+    // Account 52 now owns this browser; the phone change belonged to account 41.
+    storeTokenPair({ access_token: jwtFor(52), refresh_token: "other-52-refresh" });
+    const calls = stubAuthApi();
+    const { result } = await mountAuth();
+
+    let outcome: string | undefined;
+    await act(async () => {
+      outcome = await result.current.finishPhoneChange({ account: "41" });
+    });
+
+    expect(outcome).toBe("different-account");
+    expect(localStorage.getItem(ACCESS_TOKEN_KEY)).toBe(jwtFor(52));
+    expect(localStorage.getItem(REFRESH_TOKEN_KEY)).toBe("other-52-refresh");
+    // The order of the guard and the revocation call is the invariant: moving
+    // logoutSession above the guard would revoke account 52's token server-side.
+    expect(calls.some((call) => call.path === "/api/v1/auth/logout")).toBe(false);
+    expect(result.current.status).toBe("authenticated");
+  });
+
+  it("ends the guarded session, revokes its own refresh token, and reports signed-out", async () => {
+    storeTokenPair({ access_token: jwtFor(41), refresh_token: "member-41-refresh" });
+    const calls = stubAuthApi();
+    const { result } = await mountAuth();
+
+    let outcome: string | undefined;
+    await act(async () => {
+      outcome = await result.current.finishPhoneChange({ account: "41" });
+    });
+
+    expect(outcome).toBe("ended");
+    expect(localStorage.getItem(ACCESS_TOKEN_KEY)).toBeNull();
+    expect(localStorage.getItem(REFRESH_TOKEN_KEY)).toBeNull();
+    const logout = calls.find((call) => call.path === "/api/v1/auth/logout");
+    expect(logout, "confirm باید نشست را ببندد و revocation را best-effort بفرستد").toBeDefined();
+    expect(JSON.parse(String(logout?.body))).toEqual({ refresh_token: "member-41-refresh" });
+    expect(result.current.status).toBe("unauthenticated");
+  });
+
+  it("does nothing when the browser is already signed out", async () => {
+    const calls = stubAuthApi();
+    const { result } = await mountAuth();
+
+    let outcome: string | undefined;
+    await act(async () => {
+      outcome = await result.current.finishPhoneChange({ account: "41" });
+    });
+
+    expect(outcome).toBe("signed-out");
+    expect(calls.some((call) => call.path === "/api/v1/auth/logout")).toBe(false);
   });
 });

@@ -12,7 +12,7 @@
 ## خروجی خام — بدون ویرایش
 
 - [Markdown تولیدشده](staff-page-crosswalk.md) · SHA-256: `93ff6d1650d6ae74ac35dbd737a4f39eb47687979128800f28073aee14125dfc`
-- [JSON تولیدشده](staff-page-crosswalk.json) · SHA-256: `3cd9cd2d8646542c66feab0e6f63b9012952468a2db63865e8426e0c7c8cf22c`
+- [JSON تولیدشده](staff-page-crosswalk.STALE.json) · SHA-256: `3cd9cd2d8646542c66feab0e6f63b9012952468a2db63865e8426e0c7c8cf22c`
 - شمارش اسکریپت: ۱۲ `PAGE_IDS`، ۱۲ route، ۱۴۱ مسیر API طبق loader، ۸ rule نقش parse‌شده، `PARTIAL_REVIEW=11` و `GAP=1`. این شمارش‌ها خروجی regex/static هستند، نه پوشش QA.
 
 ## یافته‌های منبعی
@@ -38,3 +38,8 @@ Markdown/JSON خام برای `analytics` می‌گوید `apis_used=0` و `GAP`
 - test-referenceهای گزارش‌شده فقط نام مسیر در فایل هستند؛ هیچ test در این بازبینی اجرا نشد. فایل‌های خام برای حفظ provenance تغییر داده نشده‌اند؛ این یادداشت false-negativeهای قطعی parser را جدا می‌کند.
 
 `INV-03` حداکثر `PARTIAL / NOT_ACCEPTED` است و checkbox باز می‌ماند. `PWA-01=PROPOSED/NOT_RUN`؛ release `NO-GO`. پس از ثبت همین crosswalkها، گام مستقل بعدی `SEC-01` است؛ ماتریس نهایی باید شش نقش + ناشناس، route/action/data owner و deny-case سمت سرور را پوشش دهد.
+
+> **نام‌گذاری STALE (۲۰۲۶-۱۱-۲۷):** این دو artifact با generator نسخهٔ v1 و روی
+> commit دیگری ساخته شده‌اند و digestهایشان با HEAD نمی‌خواند؛ طبق قاعدهٔ STATE،
+> نامشان `STALE` گرفت و از گیت `scripts/verify_crosswalk_digests.py` خارج شدند.
+> محتوا byte-for-byte دست‌نخورده است؛ نسخهٔ جاری `INV-0X/` است.

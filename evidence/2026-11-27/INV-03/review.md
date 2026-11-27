@@ -24,3 +24,20 @@
 - مسیرهای پویا باید `DYNAMIC_UNCOVERED` باشند، نه GAP کاذب یا PASS؛ این run چنین برچسبی صادر نکرد (`dynamic_sites=0`). این محدودیت ثبت شده و پوشش تلقی نمی‌شود.
 
 `INV-03=PARTIAL/NOT_ACCEPTED`; checkbox باز، `PWA-01=PROPOSED/NOT_RUN`, و release `NO-GO` باقی است.
+
+## الحاقیهٔ بازتولید — ۲۰۲۶-۱۱-۲۷ UTC (HEAD `9ea9a24a622104408df2de632e3977aa3dcad3ba`)
+
+- artifact روی **درخت تمیز** بازتولید شد (`tracked_dirty=False`، `untracked=0`)؛ digestها با پیشوند `sha256:`.
+- دو منبع کهنه (`studio/src/lib/api.ts`، `studio/src/lib/navigation.ts`) به‌روز شدند؛ علت، تغییر همین فایل‌ها در commit‌های همین شاخه بود، نه تغییر artifact.
+- شمارش بدون تغییر: `PARTIAL_REVIEW=12`. ستون اشارهٔ تست حداکثر ۴ نام الفبایی است؛ نبودِ یک نام در ستون به معنی نبود فایل نیست.
+- محدودیت‌ها بدون تغییر: مجوز/مالکیت و رفتار خطا/ماندگاری اثبات نشده، `dynamic_sites=0`، `INV-03=PARTIAL/NOT_ACCEPTED`، checkbox باز، release `NO-GO`.
+
+شاهد عددی: [`digest-gate-after.txt`](../MEM-03/digest-gate-after.txt).
+
+## الحاقیهٔ دوم — بازتولید پس از MEM-04 (HEAD `7399142fd10f`)
+
+تغییر `studio/src/lib/api.ts` در MEM-04 digest ثبت‌شده را کهنه کرد؛ artifact روی درخت تمیز بازتولید شد و `sha256:77e368e37434…` ثبت شد. شمارش‌ها بدون تغییر (`PARTIAL_REVIEW=12`). شاهد: [`crosswalk-regen.txt`](../MEM-04/crosswalk-regen.txt).
+
+## الحاقیهٔ سوم — بازتولید با قالب digest تازه (HEAD `07cb543`)
+
+MEM-05 تابع `syncSetFeedback` را به `studio/src/lib/api.ts` اضافه کرد ⇒ digest ثبت‌شده کهنه شد و گیت دقیقاً همان یک منبع را قرمز کرد. بازتولید روی درخت تمیز انجام شد و قالب digest از `sha256:<hex>` به `sha256_b64:<44 base64url>` تغییر کرد (دلیل اصلی، بستن ریشهٔ finding گیتلکس بدون افزودن خط ignore تازه است؛ جزئیات: `../MEM-03/secret-scan-root-fix.txt`). شمارش‌ها بدون تغییر.

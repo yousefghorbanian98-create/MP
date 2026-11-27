@@ -1,0 +1,8 @@
+ ↓ tests/liveContractMember.test.ts (4 tests | 4 skipped)
+ ↓ tests/driver/cli.test.tsx (1 test | 1 skipped)
+
+ Test Files  55 passed | 4 skipped (59)
+      Tests  392 passed | 15 skipped (407)
+   Start at  17:03:01
+   Duration  200.93s (transform 1.86s, setup 331ms, collect 46.52s, tests 118.63s, environment 23.46s, prepare 4.49s)
+

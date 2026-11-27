@@ -12,7 +12,7 @@
 ## خروجی خام — بدون ویرایش
 
 - [Markdown تولیدشده](member-capability-crosswalk.md) · SHA-256: `b659f6ba01b463af25b5ed38c5995cbc0688b735d50d0af885301266f12c6c6a`
-- [JSON تولیدشده](member-capability-crosswalk.json) · SHA-256: `8ec8f4d046fde7122c45a6889f09817e32c16d330c1932b884b3701e8b6ed5f0`
+- [JSON تولیدشده](member-capability-crosswalk.STALE.json) · SHA-256: `8ec8f4d046fde7122c45a6889f09817e32c16d330c1932b884b3701e8b6ed5f0`
 - همان اجرای خام: ۱۷ feature directory از Flutter، ۱۴۱ مسیر یکتای API طبق loader اسکریپت، ۴۷ مسیر call-site شناخته‌شده توسط الگوهای اسکریپت؛ `PARTIAL_REVIEW=13` و `GAP=4`. این‌ها شمارش اسکریپت‌اند؛ ۴۷ را کل call-siteهای ممکن یا تست-reference را اجرای تست تلقی نکنید.
 
 ## مقایسهٔ GAPها با source همان SHA
@@ -31,3 +31,8 @@
 3. status/count خام عمداً در فایل‌های generated تغییر داده نشده‌اند؛ یافته‌های بالا تفسیر بازبین‌اند و محصول را نمی‌پذیرند.
 
 `INV-02` حداکثر `PARTIAL / NOT_ACCEPTED` می‌ماند؛ checkbox آن باز و `PWA-01=PROPOSED/NOT_RUN` است. هیچ status پذیرش یا release ارتقا نیافته؛ release همچنان `NO-GO` است. گام مستقل بعدی طبق صف، `SEC-01` است؛ ماتریس نقش/ownership و تست منفی سمت سرور باید جداگانه انجام شود.
+
+> **نام‌گذاری STALE (۲۰۲۶-۱۱-۲۷):** این دو artifact با generator نسخهٔ v1 و روی
+> commit دیگری ساخته شده‌اند و digestهایشان با HEAD نمی‌خواند؛ طبق قاعدهٔ STATE،
+> نامشان `STALE` گرفت و از گیت `scripts/verify_crosswalk_digests.py` خارج شدند.
+> محتوا byte-for-byte دست‌نخورده است؛ نسخهٔ جاری `INV-0X/` است.

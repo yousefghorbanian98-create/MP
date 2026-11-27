@@ -1,21 +1,21 @@
 {
   "meta": {
     "kind": "member",
-    "sha": "f06f2a95305082e01e33b157396f0dfc0128613d",
-    "branch": "arena/5e0f64cf-mp",
-    "tracked_dirty": true,
-    "untracked": 145,
+    "sha": "07cb5434bfbbd6bc5e5c95c87c6c238475972854",
+    "branch": "arena/3c08bfbd-mp",
+    "tracked_dirty": false,
+    "untracked": 0,
     "sources": {
-      "backend/api/routes.json": "7f0333dfb92a5bb56514b7e003cc78370fc7e8fabe3a9a8b5342ccaab9a84cf8",
-      "backend/security/rbac.py": "a8740f75b33e864e1a3990f4d77e2fa781f0c2105c133d9892a41ce63fdf9d2c",
-      "studio/src/lib/roleNav.ts": "650ff74343af6e25010f6a07bab4de477d2ffefcee94be3923a200ed05d53220",
-      "studio/src/lib/api.ts": "f5e977948640587ac5a9c0816c401b63246f4613de77504accfd563b1950af28",
-      "studio/src/lib/adminApi.ts": "612cbd1e89a78301545f67c88264519a7c492d148ef44779050f50cc1327f2ce",
-      "studio/src/lib/navigation.ts": "71fa84e7d3d0ca190e3a79ab91cb43beff7d2b8743ccc71a598b6a3722b73172"
+      "backend/api/routes.json": "sha256_b64:fwMz37kqW7VlFLfgA8x4Nw_H6Pq-OpqLU0LMqrmoTPg",
+      "backend/security/rbac.py": "sha256_b64:qHQPdbM-hk4aOZD0134vp4HwwhBcEz2YkqQc5j_fnSw",
+      "studio/src/lib/roleNav.ts": "sha256_b64:ZQ_3Q0OvbiUBD2oHurTeR30v_vzulL45I6IA7QXVMiA",
+      "studio/src/lib/api.ts": "sha256_b64:nwYQEuCviS1-QrVNh1jJsHsMONJoo_6g1OSMCNI_K2w",
+      "studio/src/lib/adminApi.ts": "sha256_b64:YSy9HomngwFUX2fIgmRRmnxJLRSO9Ed5BQ9QzBMn8s4",
+      "studio/src/lib/navigation.ts": "sha256_b64:b5tDQgf2_b-2cBNV4yPOqsLz0Q0tLlBaggrjJ1LyBrY"
     },
     "site_kinds": {
       "template-base": 28,
-      "helper": 57,
+      "helper": 60,
       "literal": 0
     },
     "dynamic_sites": 0,
@@ -163,8 +163,8 @@
         "apiCoverage.test.ts",
         "authFlow.test.tsx",
         "deviceSessions.test.tsx",
-        "locustfile.py",
-        "locustfile_full.py"
+        "liveContractPhoneChange.test.ts",
+        "locustfile.py"
       ],
       "uncovered_dynamic": [],
       "status": "PARTIAL_REVIEW",
@@ -298,6 +298,7 @@
       "roles": null,
       "apis_used": [
         "/api/v1/programs",
+        "/api/v1/programs/sync/set-feedback",
         "/api/v1/programs/{program_id}"
       ],
       "apis_total": 10,
@@ -307,10 +308,10 @@
       "tests": [
         "apiCoverage.test.ts",
         "locustfile_full.py",
+        "setFeedback.test.tsx",
         "test_axis_assessment_api.py",
         "test_battle.py",
-        "test_e2e_adaptive_loop.py",
-        "test_e2e_dataflow.py"
+        "test_e2e_adaptive_loop.py"
       ],
       "uncovered_dynamic": [],
       "status": "PARTIAL_REVIEW",
@@ -333,11 +334,11 @@
       ],
       "tests": [
         "a11y.test.tsx",
+        "api.test.ts",
         "authFlow.test.tsx",
-        "locustfile_full.py",
-        "pwa.test.ts",
-        "test_e2e_dataflow.py",
-        "test_m46_whoami.py"
+        "liveContractMember.test.ts",
+        "liveContractPhoneChange.test.ts",
+        "locustfile_full.py"
       ],
       "uncovered_dynamic": [],
       "status": "PARTIAL_REVIEW",
@@ -430,11 +431,11 @@
       ],
       "tests": [
         "a11y.test.tsx",
+        "api.test.ts",
         "authFlow.test.tsx",
-        "locustfile_full.py",
-        "phoneChange.test.tsx",
-        "pwa.test.ts",
-        "session.test.ts"
+        "liveContractMember.test.ts",
+        "liveContractPhoneChange.test.ts",
+        "locustfile_full.py"
       ],
       "uncovered_dynamic": [],
       "status": "PARTIAL_REVIEW",
@@ -494,8 +495,8 @@
         "apiCoverage.test.ts",
         "authFlow.test.tsx",
         "deviceSessions.test.tsx",
-        "locustfile.py",
-        "locustfile_full.py"
+        "liveContractPhoneChange.test.ts",
+        "locustfile.py"
       ],
       "uncovered_dynamic": [],
       "status": "PARTIAL_REVIEW",

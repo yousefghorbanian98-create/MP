@@ -281,6 +281,17 @@ describe("Studio OTP authentication flow (M67)", () => {
         });
       }
       if (url.pathname === "/api/v1/members/17/memberships") return reply(200, []);
+      // MEM-04: the today page reads the real program contract; this member has none.
+      if (url.pathname === "/api/v1/programs/member/17") return reply(200, []);
+      if (url.pathname === "/api/v1/programs/member/17/readiness") {
+        return reply(200, {
+          member_id: 17,
+          program_id: null,
+          readiness: null,
+          reason: "برای این عضو هیچ برنامه‌ای ثبت نشده — آمادگی سنجیده نمی‌شود",
+          rule_version: "readiness-1.4.0",
+        });
+      }
       return reply(200, {});
     });
     vi.stubGlobal("fetch", fetchMock);

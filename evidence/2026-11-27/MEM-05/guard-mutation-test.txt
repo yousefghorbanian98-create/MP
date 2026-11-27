@@ -1,0 +1,14 @@
+# MEM-05 — آیا تست‌ها واقعاً invariant را می‌گیرند؟ (mutation)
+# دستور هر مورد: (cd mp-app/studio && npx vitest run tests/setFeedback.test.tsx -t "ambiguous timeout")
+
+## mutation ۱ — حذف abort در سقف مهلت (setTimeout بدون abort)
+× set feedback write (MEM-05 / PWA-34) > treats an ambiguous timeout as an explicit failure and retries with the same idempotency key 1384ms
+→ Unable to find role="alert"
+Tests  1 failed | 3 skipped (4)
+
+# فایل پس از mutation به نسخهٔ اصلی برگشت (git diff آن خالی/بدون تغییر است)
+
+## mutation ۲ — ساخت کلید تازه در هر تلاش (نقض idempotency)
+× set feedback write (MEM-05 / PWA-34) > treats an ambiguous timeout as an explicit failure and retries with the same idempotency key 508ms
+→ expected 'set-611aedb5-f8c7-4c9e-ab14-3e0dfdd95…' to be 'set-0e951720-347c-4208-86d9-20e24e329…' // Object.is equality
+Tests  1 failed | 3 skipped (4)

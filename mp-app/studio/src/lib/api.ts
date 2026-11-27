@@ -615,15 +615,26 @@ export async function generateProgram(
 
 // ── گردش تأیید برنامه (US-203) ──
 
-async function postJson<T>(path: string, body: unknown, token: string | null): Promise<T> {
+async function postJson<T>(
+  path: string,
+  body: unknown,
+  token: string | null,
+  signal?: AbortSignal,
+): Promise<T> {
   let resp: Response;
   try {
     resp = await sessionFetch(`${API_BASE}${path}`, {
       method: "POST",
       headers: { ...authHeaders(token), "Content-Type": "application/json" },
       body: JSON.stringify(body),
+      signal,
     });
-  } catch {
+  } catch (err) {
+    // MEM-05: «پاسخ نداد» با «اتصال برقرار نشد» یکی نیست. Abort یعنی مهلت
+    // تمام شد و نتیجه نامعلوم است؛ UI باید آن را شکست صریح بداند، نه موفقیت.
+    if (err instanceof DOMException && err.name === "AbortError") {
+      throw new ApiError("زمان پاسخ سرور گذشت — ثبت نشد", 0);
+    }
     throw new ApiError("اتصال به سرور برقرار نشد", 0);
   }
   if (resp.status === 401 || resp.status === 403) await throwAuthOrForbidden(resp);
@@ -1064,6 +1075,98 @@ export interface ReadinessReport {
 
 export function fetchReadiness(memberId: number, token = getToken(), signal?: AbortSignal) {
   return getJson<ReadinessReport>(`/programs/member/${memberId}/readiness`, token, signal);
+}
+
+// ── MEM-04 / PWA-33 — برنامهٔ عضو از قرارداد واقعی (GET /programs/member/{member_id}) ──
+//
+// شکل پاسخ همان `ProgramOut` بک‌اند است. نکتهٔ صادقانه: این قرارداد «شمارهٔ نسخهٔ
+// عددی» و «تاریخ شروع/پایان برنامه» ندارد؛ تنها نسخهٔ موجود `engine_version` است
+// و تنها تاریخ، `approved_at`. پس UI هم چیزی از خودش نمی‌سازد.
+
+export interface MemberProgramExercise {
+  id: number;
+  exercise_id: number;
+  day: number;
+  order: number;
+  sets: number;
+  reps: string;
+  load_pct: number;
+  rest_seconds: number;
+  notes: string;
+}
+
+export interface MemberProgramWeek {
+  id: number;
+  week_number: number;
+  focus: string;
+  exercises: MemberProgramExercise[];
+}
+
+export interface MemberProgram {
+  id: number;
+  member_id: number;
+  coach_id: number | null;
+  status: "draft" | "approved" | "rejected" | string;
+  goal: string;
+  engine_version: string;
+  llm_explanation: string;
+  reject_reason: string;
+  approved_at: string | null;
+  approved_by: number | null;
+  /** Q7 — JSON غربالگری ایمنی؛ «{}» یعنی غربالگری نشده، نه بی‌خطر. */
+  safety_flags?: string;
+  weeks: MemberProgramWeek[];
+}
+
+export function fetchMemberPrograms(memberId: number, token = getToken(), signal?: AbortSignal) {
+  return getJson<MemberProgram[]>(`/programs/member/${memberId}`, token, signal);
+}
+
+// ── MEM-05 / PWA-34 — ثبت بازخورد ست با کلید idempotent موجود ──
+//
+// دو قرارداد در backend هست و تفاوتشان مهم است:
+//   • `POST /programs/set-feedback` هیچ کلید idempotency/شمارهٔ نسخه ندارد و هر
+//     ردیف را append می‌کند ⇒ ارسال دوباره = رکورد تکراری. برای نوشتن استفاده نمی‌شود.
+//   • `POST /programs/sync/set-feedback` کلید `device_id:client_id` + `updated_at`
+//     دارد و LWW اعمال می‌کند ⇒ همان نوشتهٔ دوباره «unchanged» می‌شود، نه رکورد تازه.
+// این helper فقط دومی را صدا می‌زند.
+
+export interface SetFeedbackSyncItem {
+  client_id: string;
+  device_id: string;
+  updated_at: string;
+  program_id: number | null;
+  movement_id: string;
+  weight: number;
+  target_reps: number;
+  reps_done: number;
+  rir?: number | null;
+  soreness?: number | null;
+  notes?: string;
+}
+
+export interface SetFeedbackSyncResult {
+  member_id: number;
+  counts: Record<string, number>;
+  results: Array<{ entity_key: string; action: string; winner: string }>;
+  applied_keys: string[];
+  unchanged_keys: string[];
+  note?: string;
+  rule_version: string;
+}
+
+export function syncSetFeedback(
+  memberId: number,
+  items: SetFeedbackSyncItem[],
+  token = getToken(),
+  signal?: AbortSignal,
+) {
+  return postJson<SetFeedbackSyncResult>(
+    "/programs/sync/set-feedback",
+    { member_id: memberId, items },
+    token,
+    signal,
+  );
 }
 
 // ── G8 — چت مربی–شاگرد ──
@@ -1601,6 +1704,15 @@ export interface DeviceSession {
 
 export function fetchSessions(token = getToken(), signal?: AbortSignal) {
   return getJson<DeviceSession[]>("/auth/sessions", token, signal);
+}
+
+/**
+ * خروج از همهٔ دستگاه‌ها (US-404). سرور نسخهٔ auth حساب را bump می‌کند، پس
+ * **همهٔ** توکن‌های این حساب از جمله نشست همین مرورگر بی‌اعتبار می‌شوند؛ UI
+ * پس از پاسخ موفق باید نشست محلی را هم پاک کند.
+ */
+export function logoutAllSessions(token = getToken()) {
+  return sendJson<{ status: string }>("POST", "/auth/logout-all", undefined, token);
 }
 
 /** ابطال یک نشست/دستگاه. نشست کاربر دیگر از دید سرور ۴۰۴ است. */

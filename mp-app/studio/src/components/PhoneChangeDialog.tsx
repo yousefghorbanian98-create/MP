@@ -1,15 +1,21 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Modal } from "antd";
 import {
+  captureSessionGuard,
   confirmPhoneChange,
   requestPhoneChange,
   verifyOldPhoneChange,
+  type SessionGuard,
 } from "../lib/session";
 
 interface PhoneChangeDialogProps {
   currentPhone?: string;
   onClose: () => void;
-  onCompleted: (phone: string) => void | Promise<void>;
+  /**
+   * `guard` شناسهٔ حسابِ نشستی است که `confirm` زیر آن فرستاده شد؛ صاحب UI با آن
+   * تصمیم می‌گیرد آیا هنوز همان نشست را ببندد یا پاسخ دیررس به حساب دیگری رسیده.
+   */
+  onCompleted: (phone: string, guard: SessionGuard) => void | Promise<void>;
 }
 
 type PhoneChangeStep = "request" | "verify-current" | "verify-new";
@@ -77,9 +83,12 @@ export function PhoneChangeDialog({
         const normalizedCode = asciiDigits(code.trim());
         if (!/^\d{6}$/.test(normalizedCode)) throw new Error("کد باید شش رقم باشد");
         if (!challengeId) throw new Error("درخواست تغییر شماره معتبر نیست؛ دوباره آغاز کنید");
+        // Captured before the request: a late reply must not end a session that
+        // another account opened in this browser while `confirm` was in flight.
+        const guard = captureSessionGuard();
         const result = await confirmPhoneChange(challengeId, normalizedCode);
         if (result.status !== "phone_changed") throw new Error("تغییر شماره از سوی سرور تأیید نشد");
-        await onCompleted(result.phone);
+        await onCompleted(result.phone, guard);
       }
     } catch (caught) {
       setError((caught as Error).message ?? String(caught));

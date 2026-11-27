@@ -2,6 +2,70 @@
 
 > هشدار انتقال ۲۰۲۶-۱۱-۱۸: بخش‌های بعدی قدیمی snapshot هستند و branch/toolchain/status آن‌ها جاری فرض نشود. وضعیت تازهٔ Motion/PWA در این بخش و [handoff](../../docs/MuscleParadise/SESSION_HANDOFF.md) آمده؛ کارهای قدیمی M63–M99، M100–M106 و M107+ فقط پس از تطبیق با TODO و گیت‌های جاری ادامه یابند.
 
+## Current follow-up — MEM-05 / PWA-34 + تریاژ flake + گزارش STALE (2026-11-27 UTC)
+
+STATE_LAST_UPDATED=2026-11-27T22:20:00Z
+CURRENT_BRANCH=arena/3c08bfbd-mp
+MEM-05/PWA-34=PARTIAL/NOT_ACCEPTED — BLOCKED نیست
+MEM05_IDEMPOTENCY=NO برای `POST /programs/set-feedback` (schemas.py:103-106، service.py:183-197؛ تکرار = ردیف تازه) · YES برای `POST /programs/sync/set-feedback` (router.py:134-143، service.py:584-700، db/models/programs.py:113-116)
+CODE_CHANGED=mp-app/studio/src/lib/{api.ts,feedbackQueue.ts}; mp-app/studio/src/components/{SetFeedbackForm.tsx,MemberTodayProgram.tsx}; scripts/{crosswalk_v2.py,verify_crosswalk_digests.py}; .github/workflows/ci.yml
+TEST_CHANGED=mp-app/studio/tests/setFeedback.test.tsx (تازه); mp-app/backend/tests/integration/test_mem05_set_feedback_idempotency.py (تازه)
+LOCAL_GATES=pytest ۱۴ pass؛ vitest ۵۷ فایل pass/۴ skip و ۴۰۳ تست pass/۱۵ skip؛ tsc/eslint/build پاک؛ interaction map pass
+CLIENT_JOB_FLAKY=yes — دو شکست تاریخی: e22d8db (تلاش اول) و 107968d event=push (run 46055611570، job 140697239420)؛ سومین push پس از hardening (6e69767، run 46071739713) **سبز** بود. علت ریشه‌ای اثبات‌نشده (لاگ job از API در دسترس نیست)؛ hardening: cache + org.gradle.daemon=false + -Xmx3g/-XX:MaxMetaspaceSize=1g + artifact «client-android-build-log»
+SECRET_SCAN_ROOT_FIX=base64 — قالب digest از `sha256:<hex>` به `sha256_b64:<44 base64url>` تغییر کرد. ادعای قبلی («پیشوند hex ریشه را بست») **نادرست** بود و اصلاح شد.
+GITLEAKSIGNORE_LINES=۱۰ (ثابت؛ خطوط به commitهای ebebef3/6593cb4b گره خورده‌اند و حذفشان یافته‌های تاریخی را برمی‌گرداند)
+STALE_ARTIFACTS=گیت حالا `*.STALE.json` را بازرسی می‌کند: tracked_dirty=true ⇒ خطا؛ digestها فقط گزارش می‌شوند (`STALE <path> recorded=… actual=…`)؛ خلاصه در GITHUB_STEP_SUMMARY
+CI_REPORTING_RULE=هر گزارش باید هم `gh pr checks 31` و هم `gh run list --branch arena/3c08bfbd-mp --limit 5` را نشان دهد
+RELEASE=NO-GO
+
+## Current follow-up — MEM-04 / PWA-33 برنامهٔ امروز عضو (2026-11-27 UTC)
+
+STATE_LAST_UPDATED=2026-11-27T19:05:00Z
+CURRENT_BRANCH=arena/3c08bfbd-mp
+MEM-04/PWA-33=PARTIAL/NOT_ACCEPTED — سطح واقعی وصل شد، پذیرش نه
+MEM04_ROUTE_ACCESS=member=yes (api/routes.json:3369-3385؛ modules/programs/router.py:31-37؛ app/security/ownership.py:23-29)
+CODE_CHANGED=mp-app/studio/src/lib/api.ts; mp-app/studio/src/components/MemberTodayProgram.tsx; mp-app/studio/src/App.tsx
+TEST_CHANGED=mp-app/studio/tests/memberTodayProgram.test.tsx (تازه); memberAccountPage.test.tsx; authFlow.test.tsx; mp-app/backend/tests/integration/test_mem04_member_program_access.py (تازه)
+NUMBERS_SOURCED=هر عدد برچسب منبع دارد؛ بدون محاسبهٔ سمت کلاینت؛ KPI/کالری/ادعای پزشکی ساخته نشد
+ACCESS_PROOF=۳ تست تازه: عضو A روی /programs/member/B، /readiness، /volume، /programs/{id} → ۴۰۳
+LOCAL_GATES=Studio ۴ تست تازه، کل ۳۹۹ pass/۱۵ skip، tsc/eslint/build پاک؛ backend ۹ pass؛ interaction map pass
+EVIDENCE=evidence/2026-11-27/MEM-04/{current-run.md,route-access.txt,backend-access-tests.txt,studio-*.txt}
+TODO_AFTER_THIS=بازتولید INV-02/INV-03 روی درخت تمیز (چون api.ts تغییر کرد) — قاعدهٔ digest/HEAD بدون استثنا
+CI_27EF138=PASS — هر ۱۲ check سبز (secret-scan و Documentation links/handoff هم سبز)؛ ران‌ها: 46054318564/46054323525/46054323556
+CI_E0C9104=success — هر سه ران روی e0c9104 هم success (شامل secret-scan)
+REVIEWER/DEVICE=NOT_RUN؛ release=NO-GO
+
+## Current follow-up — MEM-03 fixes: digest gate، شاهد secret-scan بدون راز، تست guard (2026-11-27 UTC)
+
+STATE_LAST_UPDATED=2026-11-27T18:50:00Z
+EVIDENCE_DATE_DIRS=2026-11-23, 2026-11-27
+CURRENT_BRANCH=arena/3c08bfbd-mp
+BRANCH_BASE=ebebef3ad153277f0223c2011efc4f9a9c855654 (PR #30 merged)
+MEM-03/PWA-32=PARTIAL/NOT_ACCEPTED — این دور فقط شکاف‌های ابزار/شاهد را می‌بندد، نه پذیرش محصول
+RELEASE=NO-GO
+
+### قواعد جاری STATE (لازم‌الاجرا، بدون استثنا)
+
+1. **قاعدهٔ digest/HEAD:** هر artifactی که digest یا SHA ثبت‌شده‌اش با HEAD جاری یکی نیست، یا باید روی **درخت تمیز** بازتولید شود یا «`STALE`» در نامش بیاید. هیچ artifact کهنه‌ای با همان نام قبلی نمی‌ماند.
+2. **قاعدهٔ درخت تمیز:** تولید digest فقط روی درخت تمیز. اگر worktree dirty است اول commit، بعد تولید؛ digest درخت dirty ممنوع است (`scripts/crosswalk_v2.py` در این حالت `exit 4` می‌دهد).
+3. **قاعدهٔ secret-scan:** فقط دو مسیر مجاز است — (i) شکل digest در generator طوری عوض شود که rule دیگر match نکند (**قالب جاری `sha256_b64:<44 base64url>`**؛ پیشوند `sha256:<hex>` این کار را نمی‌کرد و ادعای قبلی اصلاح شد)، و/یا (ii) خط fingerprint **دقیق** به‌ازای هر یافته در `.gitleaksignore` با ارجاع شاهد. allowlist بر اساس rule یا path ممنوع. تعداد خطوط افزوده = تعداد یافته‌ها.
+4. **قاعدهٔ خروجی redacted:** از اسکن راز فقط `File`, `RuleID`, `Line`, `Commit`, `Fingerprint` منتشر می‌شود؛ هیچ مقدار secret در doc/evidence/گزارش نوشته نمی‌شود.
+
+### نتیجهٔ همین دور
+
+CROSSWALK_DIGEST_GATE=افزوده شد (`scripts/verify_crosswalk_digests.py`؛ در job `docs` CI اجرا می‌شود) — پیش از بازتولید روی `d71dbe0` قرمز (۶ خطا/۲ artifact)، پس از بازتولید روی درخت تمیز در `9ea9a24` **PASS**
+CROSSWALK_STALE=v1 artifact‌های `INV-02-v1`/`INV-03-v1` با `git mv` به `*.STALE.{md,json}` تغییر نام دادند؛ v1 بازتولیدشدنی byte-for-byte نبود (generator v1 در repo نیست)
+STALE_REASON=digest ثبت‌شده `f06f2a953050…` و دو منبع `api.ts`/`navigation.ts` از آن زمان تغییر کرده‌اند؛ وضعیت `dirty` هم با کلید تازه `tracked_dirty` ناسازگار است
+SECRET_SCAN_FIX=دو مسیر مجاز، بدون allowlist بر اساس rule/path: پیشوند `sha256:` در generator (artifact آینده) + **۵** خط fingerprint دقیق تازه برای `ebebef3…` (۵ خط `6593cb4b…` از قبل بود؛ fingerprint به commit وابسته است)؛ مجموع ۵۲۱ خط؛ ارجاع: `evidence/2026-11-27/MEM-03/secret-scan-redacted.txt`
+SECRET_SCAN_ARTIFACT=job `secret-scan` حالا `Fingerprint` را چاپ و `/tmp/gitleaks-findings.json` را به‌عنوان artifact آپلود می‌کند
+GITLEAKS_POLICY_TEST=PASS — assertهای `scripts/test_retired_signing_scan.py` روی ۵۲۱ خط `.gitleaksignore` (اسکن واقعی gitleaks در این sandbox `NOT_RUN`: دانلود release ناموفق)
+FINISH_PHONE_CHANGE_TEST=افزوده شد (۳ تست در `mp-app/studio/tests/session.test.ts`) و با mutation سنجیده شد: جابه‌جایی `logoutSession` به بالای guard دو تست را قرمز می‌کند
+STUDIO_TESTS=24/24 در فایل؛ کل مجموعه ۵۵ فایل passed / ۴ skip؛ ۳۹۵ pass / ۱۵ skip؛ `tsc -b`, `eslint .`, `npm run build` پاک
+PR31=draft، merge نشود
+CROSSWALK_REGEN=PASS — `INV-02` (14/3) و `INV-03` (12) روی درخت تمیز در `9ea9a24` بازتولید شدند؛ `tracked_dirty=false`, `untracked=0`, digestها `sha256:`؛ شاهد: `evidence/2026-11-27/MEM-03/digest-gate-after.txt`
+CROSSWALK_REGEN_NOTE=هر دو artifact باید در یک وضعیت تمیز تولید شوند؛ نوشتن artifact اول در جای نهایی درخت را dirty می‌کند و اجرای دوم را می‌بندد، پس خروجی ابتدا در /tmp ساخته و بعد کپی می‌شود
+NEXT=CI همین شاخه و `gh pr checks 31`؛ سپس تصمیم مالک دربارهٔ پنجرهٔ retention (ADR-008) و ارزیابی MEM-04 فقط از کد همان SHA
+
 ## Current follow-up — MEM-01 live member-account contract and identity-negative (2026-11-27 UTC)
 
 STATE_LAST_UPDATED=2026-11-27T15:41:18Z

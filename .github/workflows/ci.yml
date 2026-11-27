@@ -68,28 +68,58 @@ jobs:
                   .replace(",", "%2C")
               )
 
+          # The scanner report also carries the matched value. This step reduces it to
+          # the fields needed to write an exact `.gitleaksignore` fingerprint
+          # (commit/path/rule/line), so a reviewer never has to ask for the job log —
+          # and never sees a secret value. Same data goes to the step summary and to
+          # the artifact uploaded below.
           summary = ["### Gitleaks scan (redacted metadata)"]
           summary.append(f"Potential findings: {len(findings)}. Secret values are never included.")
-          for finding in findings[:40]:
+          metadata = []
+          for finding in findings[:200]:
               path = finding.get("File", "unknown path")
               rule = finding.get("RuleID", "unknown rule")
               line = finding.get("StartLine", 0)
-              commit = str(finding.get("Commit", ""))[:12]
-              message = f"Potential secret match ({rule}); value withheld; commit {commit or 'unknown'}."
+              commit = str(finding.get("Commit", ""))
+              fingerprint = finding.get("Fingerprint", "")
+              metadata.append(
+                  {
+                      "file": path,
+                      "rule": rule,
+                      "line": line,
+                      "commit": commit,
+                      "fingerprint": fingerprint,
+                  }
+              )
+              message = (
+                  f"Potential secret match ({rule}); value withheld; commit {commit[:12] or 'unknown'}."
+              )
               print(
                   f"::error file={escape_command_value(path)},line={line},title=Gitleaks finding::"
                   f"{escape_command_value(message)}"
               )
-              summary.append(f"- `{path}:{line}` — `{rule}`; commit `{commit or 'unknown'}` (value withheld).")
+              summary.append(f"- `{path}:{line}` — `{rule}`; commit `{commit[:12] or 'unknown'}` (value withheld).")
+              if fingerprint:
+                  summary.append(f"  - fingerprint: `{escape_command_value(fingerprint)}`")
           if not report.is_file():
               summary.append("No JSON report was produced; inspect the scanner step output after checking access restrictions.")
               print("::error::Gitleaks failed without a readable JSON report; no secret values were emitted by this summary.")
+          with open("/tmp/gitleaks-findings.json", "w", encoding="utf-8") as stream:
+              json.dump({"findings": metadata}, stream, ensure_ascii=False, indent=2)
           summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
           if summary_path:
               with open(summary_path, "a", encoding="utf-8") as stream:
                   stream.write("\n".join(summary) + "\n")
           PY
           exit "$scan_status"
+      - name: Publish redacted finding metadata (artifact)
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        with:
+          name: gitleaks-findings-metadata
+          path: /tmp/gitleaks-findings.json
+          if-no-files-found: warn
+          retention-days: 14
 
   docs:
     name: Documentation links and handoff
@@ -108,6 +138,8 @@ jobs:
           node-version: "22"
       - name: Interaction map gate (contract drift + stale map)
         run: python3 scripts/interaction_map.py --check
+      - name: Crosswalk digest gate (artifact claims must match this checkout)
+        run: python3 scripts/verify_crosswalk_digests.py
       - name: Mermaid syntax gate (official parser, headless — no browser)
         run: cd tools/mermaid-check && npm ci --no-audit --no-fund && node check.mjs
       - name: Repository hygiene (no tool index, no .claude/, no agent git hook)
@@ -394,8 +426,14 @@ jobs:
       - name: Seed + run API
         # برنامه بدون MP_ENVIRONMENT صریح بالا نمی‌آید (ccf44ce، WP 1.1/1.2): این job
         # محیط توسعه را صریح می‌دهد، نه پیش‌فرض ضمنی. سرور همچنان اعتبارسنجی می‌شود.
+        #
+        # MP_ALLOW_DEV_OTP_ECHO فقط برای همین سرور synthetic روی 127.0.0.1 است تا
+        # قرارداد واقعی phone-change با کدِ همان پیامکِ DevSmsProvider آزموده شود؛
+        # بدون آن هیچ راهی برای اثبات مرحلهٔ OTP جز mock وجود ندارد. در production
+        # config این ترکیب را رد می‌کند (app/config.py) و هیچ SMS واقعی ارسال نمی‌شود.
         env:
           MP_ENVIRONMENT: development
+          MP_ALLOW_DEV_OTP_ECHO: "true"
         run: |
           cd mp-app/backend
           python - <<'EOF'
@@ -526,6 +564,12 @@ jobs:
           PY
           )
           MP_API_BASE=http://127.0.0.1:8000 MP_MEMBER_TOKEN="$MEMBER_TOKEN" npm test -- tests/liveContractMember.test.ts
+      - name: Live phone-change + logout-all contract (Studio TS client × real API)
+        # آخرین مصرف‌کنندهٔ حساب synthetic است: confirm شمارهٔ ورود همان عضو را عوض
+        # می‌کند و همهٔ نشست‌هایش را می‌بندد. به همین دلیل بعد از قرارداد حساب عضو
+        # اجرا می‌شود و DB هر ران تازه ساخته می‌شود.
+        working-directory: mp-app/studio
+        run: MP_API_BASE=http://127.0.0.1:8000 npm test -- tests/liveContractPhoneChange.test.ts
 
   e2e-api:
     runs-on: ubuntu-latest
@@ -594,6 +638,30 @@ jobs:
                   )
           print("Pinned SDK matches the devcontainer.")
           PY
+      - name: Cache Gradle home (AGP/Kotlin downloads are the flaky half)
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830  # v4.3.0
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('mp-app/client/android/gradle/wrapper/gradle-wrapper.properties', 'mp-app/client/pubspec.lock') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
+      - name: Bound Gradle for CI (no daemon, smaller heap)
+        working-directory: mp-app/client/android
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/client-pinned
+          # این job سه بار در «Android debug compile» ناموفق شد (e22d8db تلاش اول،
+          # 107968d روی event=push) و لاگ job از API قابل‌دانلود نبود. دو فرضیهٔ
+          # محتمل: حافظه (8G heap + 4G metaspace + daemon/Kotlin daemon روی runner
+          # 16GB) و دانلود artifactهای Gradle/AGP. هر دو این‌جا محدود می‌شوند و
+          # لاگ کامل build به artifact می‌رود تا اجرای بعدی قابل‌تشخیص باشد.
+          sed -i 's|^org.gradle.jvmargs=.*|org.gradle.jvmargs=-Xmx3g -XX:MaxMetaspaceSize=1g -XX:+HeapDumpOnOutOfMemoryError|' gradle.properties
+          grep -q '^org.gradle.daemon=' gradle.properties || echo 'org.gradle.daemon=false' >> gradle.properties
+          grep -q '^kotlin.daemon.jvmargs=' gradle.properties || echo 'kotlin.daemon.jvmargs=-Xmx1536m' >> gradle.properties
+          grep -E '^(org.gradle.jvmargs|org.gradle.daemon|kotlin.daemon.jvmargs)=' gradle.properties \
+            | tee /tmp/client-pinned/gradle-ci.properties
       - name: flutter pub get
         working-directory: mp-app/client
         run: flutter pub get
@@ -614,9 +682,19 @@ jobs:
           exit "$status"
       - name: Android debug compile (شاهد Kotlin/Gradle برای M87)
         working-directory: mp-app/client
+        timeout-minutes: 20
         run: |
           set -o pipefail
-          flutter build apk --debug 2>&1 | tail -25
+          mkdir -p /tmp/client-pinned
+          # قبلاً `| tail -25` تنها شاهدِ شکست را می‌بلعید و چون لاگ job از API
+          # قابل‌دانلود نبود (EOF روی blob storage)، علت هر بار گم می‌شد. اکنون
+          # لاگ کامل در فایل می‌ماند و به‌عنوان artifact آپلود می‌شود.
+          if ! flutter build apk --debug > /tmp/client-pinned/android-build.log 2>&1; then
+            echo "::error title=android debug compile::flutter build apk --debug failed — full log is attached as artifact client-android-build-log"
+            tail -n 80 /tmp/client-pinned/android-build.log >&2 || true
+            exit 1
+          fi
+          tail -n 5 /tmp/client-pinned/android-build.log
           APK=build/app/outputs/flutter-apk/app-debug.apk
           test -f "$APK" || { echo "expected $APK after a successful debug build" >&2; exit 1; }
           du -m "$APK" | tee /tmp/client-pinned/apk-size.txt
@@ -692,3 +770,11 @@ jobs:
               with open(summary_path, "a", encoding="utf-8") as stream:
                   stream.write(f"### Client pinned witness\n\n{message}\n")
           PY
+      - name: Publish the Android build log (always)
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        with:
+          name: client-android-build-log
+          path: /tmp/client-pinned/
+          if-no-files-found: ignore
+          retention-days: 14

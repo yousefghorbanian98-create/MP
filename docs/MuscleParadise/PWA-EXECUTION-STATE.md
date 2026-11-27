@@ -1,10 +1,10 @@
 # وضعیت اجرای PWA — دفتر چرخه‌ها و شواهد
 
-CURRENT_BRANCH=arena/5e0f64cf-mp
-REMOTE_HAS_MY_COMMIT=yes
-MAIN_HEAD=352781043ad2ba202d8b3b459df1ce7e3d914ef7
-BRANCH_AHEAD_OF_MAIN=11
-LAST_KNOWN_EVIDENCE=evidence/2026-11-23/MEM-01/member-account-slice.md (dirty source; HEAD baseline 5828c94); evidence/2026-11-27/INV-02-v2, INV-03-v2, INV-02-v3, INV-03-v3, CROSSWALK-v2-v3-comparison.md, SEC-01/current-run.md, WEB-02…11/browser-*.txt, WEB-browser-run-summary.md are separate/historical and do not validate the new member code; PR #30 logs remain separate
+CURRENT_BRANCH=arena/3c08bfbd-mp
+MAIN_HEAD=ebebef3ad153277f0223c2011efc4f9a9c855654 (PR #30 MERGED 2026-11-27T16:49:20Z)
+PR30=MERGED — the older OPEN/DRAFT statements below are history, not current state
+BRANCH_BASE=ebebef3ad153277f0223c2011efc4f9a9c855654
+LAST_KNOWN_EVIDENCE=evidence/2026-11-27/MEM-03/current-run.md و فایل‌های همین پوشه: digest-gate-before.txt، secret-scan-redacted.txt، guard-mutation-test.txt، gitleaks-policy-test.txt (local worktree on arena/3c08bfbd-mp; local test/live-contract passes only); evidence/2026-11-23/MEM-01/member-account-slice.md, evidence/2026-11-27/INV-02-v2, INV-03-v2, INV-02-v3, INV-03-v3, CROSSWALK-v2-v3-comparison.md, SEC-01/current-run.md, WEB-02…11/browser-*.txt, WEB-browser-run-summary.md are separate/historical
 
 > **نوع سند:** دفتر اجراییِ افزایشی؛ نه ADR، نه مرجع مستقل برای تعریف acceptance، و نه ادعای QA/release. شناسه‌ها و معیارهای هر کارت از tracker و backlog canonical پیروی می‌کنند.
 > **تاریخ مرجع:** ۲۰۲۶-۱۱-۲۳ UTC. این تاریخ با timestampهای GitHub آینده‌نما که در handoff ثبت شده‌اند تعارض دارد؛ آن تعارض حل‌نشده باقی می‌ماند.
@@ -17,6 +17,85 @@ LAST_KNOWN_EVIDENCE=evidence/2026-11-23/MEM-01/member-account-slice.md (dirty so
 - **شواهد:** مسیرهای پالایش‌شدهٔ `../../evidence/<تاریخ-مرجع>/<ID>/`؛ تاریخ مرجع پوشه را با marker زمان واقعی اجرا (و محدودیت‌های آن) جدا ثبت کنید؛ هر نتیجه فقط به همان command، toolchain، checkout و SHA/worktree fingerprint تعلق دارد.
 
 در تعارض، تصمیم scope با ADR/تصمیم مالک، متن acceptance با کارت canonical، رفتار با کد و تست همان مسیر، و status اجرایی با آخرین شاهد پالایش‌شده تعیین می‌شود. Snapshotهای تاریخی، دیاگرام‌ها، screenshotها، artifact package، mock، skipped test و CI روی SHA دیگر acceptance محصول را ثابت نمی‌کنند.
+
+## Latest continuation — MEM-05 / PWA-34 set feedback, CI flake triage, STALE reporting
+
+```text
+CURRENT_BRANCH=arena/3c08bfbd-mp
+MEM-05/PWA-34=PARTIAL/NOT_ACCEPTED (canonical checkbox open) — NOT blocked: an idempotent contract already existed
+MEM05_IDEMPOTENCY=NO for POST /programs/set-feedback (no key/version; duplicates on retry) · YES for POST /programs/sync/set-feedback (device_id:client_id + updated_at, LWW)
+WRITE_PATH=UI writes only to /programs/sync/set-feedback; the keyless endpoint is never called
+SERVER_TRUTH=after a write the page re-reads readiness/feedback counts from the API (no local counting)
+TIMEOUT=abort ⇒ explicit «ثبت نشد»; retry reuses the same client_id/updated_at
+CLIENT_JOB_FLAKY=yes — two historical failures (e22d8db attempt 1, 107968d event=push); the first push after hardening (6e69767) was green; root cause NOT proven (job log unreachable); job hardened (cache + no-daemon + bounded heap + full build-log artifact)
+STALE_ARTIFACTS=now inspected, not ignored: tracked_dirty=true ⇒ error; digests reported as `STALE <path> recorded=… actual=…`; summary line «N artifact بررسی شد، M STALE (گزارش‌شده)»
+CORRECTION_2026-11-27=ادعای قبلی «پیشوند sha256: ریشهٔ finding گیتلکس را بست» نادرست بود؛ آنچه finding را بست خطوط fingerprint بود
+CI_6E69767=pass on BOTH levels — PR 12/12 and the push run 46071739713 all success (secret-scan 17s with the same 10 ignore lines)
+RELEASE=NO-GO
+```
+
+- **اصلاح صریح ادعای قبلی:** در گزارش پیشین نوشته شده بود پیشوند `sha256:` «الگوی key/value را می‌شکند تا artifact آینده match نشود». تست مالک نشان داد قاعدهٔ `generic-api-key` مقدار `sha256:<64-hex>` را هم match می‌کند؛ تنها چیزی که finding را بست خطوط fingerprint در `.gitleaksignore` بود. ریشهٔ واقعی در این دور عوض شد: digestها اکنون `sha256_b64:<44>` هستند (base64url، نه ۶۴-hex) تا بازتولیدهای آینده **بدون** خط ignore تازه انجام شوند؛ سنجه‌ها و دلیل نگه‌داشتن ۱۰ خط تاریخی در [`secret-scan-root-fix.txt`](../../evidence/2026-11-27/MEM-03/secret-scan-root-fix.txt).
+- **ده خط fingerprint فعلی حذف نشد** و دلیلش فنی است: آن‌ها به commitهای `ebebef3…` و `6593cb4b…` گره خورده‌اند و `gitleaks git` کل تاریخ را اسکن می‌کند؛ حذفشان همان یافته‌های تاریخی را برمی‌گرداند. ادعای درست این است: «خطوط ثابت می‌مانند (۱۰) و رشد نمی‌کنند».
+- **STALE بدون بازرسی نیست:** گیت `scripts/verify_crosswalk_digests.py` فایل‌های `*.STALE.json` را داوری نمی‌کند ولی بازرسی می‌کند: `tracked_dirty=true` در آن‌ها خطاست و کهنگی با خط `STALE <path> recorded=… actual=…` گزارش می‌شود؛ خلاصه هم به `$GITHUB_STEP_SUMMARY` می‌رود. سنجش سه‌حالته (تمیز/مین digest/dirty) در [`stale-artifact-report.txt`](../../evidence/2026-11-27/MEM-03/stale-artifact-report.txt).
+- **MEM-05:** پرسش گیت با فایل/خط پاسخ گرفت (`schemas.py:103-106`, `service.py:183-197`) — مسیر بدون کلید در ارسال دوباره ردیف تازه می‌سازد (تست اجراشده: ۲ ردیف). قرارداد idempotent موجود (`router.py:134-143`, `service.py:584-700`, ستون‌های `client_id`/`device_id`/`client_updated_at` در `db/models/programs.py:113-116`) مبنای نوشتن شد. شاهد: [`MEM-05 current run`](../../evidence/2026-11-27/MEM-05/current-run.md).
+- **CI flake:** `gh pr checks` فقط سطح PR را می‌دهد؛ روی `107968d` run سطح push (`46055611570`) در `Android debug compile` شکست خورد. لاگ job از API قابل‌دانلود نبود؛ job حالا کش Gradle، `org.gradle.daemon=false`، heap محدود و artifact لاگ کامل build دارد. جزئیات و سه نمونه: [`client-job-triage.txt`](../../evidence/2026-11-27/CI-FLAKE/client-job-triage.txt).
+
+## Latest continuation — MEM-04 / PWA-33 today program on the real contract
+
+```text
+CURRENT_BRANCH=arena/3c08bfbd-mp
+STATE_LAST_UPDATED=2026-11-27T19:05:00Z
+MEM-04/PWA-33=PARTIAL/NOT_ACCEPTED (canonical checkbox open)
+MEM04_ROUTE_ACCESS=member=yes — api/routes.json:3369-3385 · modules/programs/router.py:31-37 · app/security/ownership.py:23-29
+SURFACE=/member/today now renders MemberTodayProgram on GET /programs/member/{id} + /readiness
+NUMBERS=هر عدد یک منبع مکتوب دارد؛ هیچ محاسبه‌ای در کلاینت نیست؛ KPI/کالری/ادعای پزشکی ساخته نشد
+EMPTY_STATE=بدون برنامهٔ approved → پیام تهی + شمارش در انتظار تأیید؛ readiness=null → فقط reason سرور
+AUTHORIZATION_PROOF=۳ تست تازه: عضو A روی /programs/member/B، /readiness، /volume و /programs/{id} → 403
+LOCAL_GATES=Studio ۴ تست تازه؛ کل ۳۹۹ pass/۱۵ skip؛ tsc/eslint/build پاک؛ backend ۹ pass؛ interaction map pass
+CI=پاس روی tip 27ef138 (۱۲ check، شامل secret-scan و گیت digest در job docs)؛ REVIEWER/DEVICE=NOT_RUN؛ release=NO-GO
+```
+
+- قرارداد از قبل وجود داشت و چیزی ساخته نشد: `GET /api/v1/programs/member/{member_id}`، `/readiness`، `/volume` و `GET /api/v1/programs/{program_id}`.
+- دو شکاف واقعی قرارداد که UI به‌جای حدس زدن، صریح می‌نویسد: برنامه **شمارهٔ نسخهٔ عددی** و **تاریخ شروع/پایان** ندارد؛ تنها نسخه `engine_version` و تنها تاریخ `approved_at` است. پس «امروز» از روی شمارهٔ هفته حدس زده نمی‌شود.
+- `safety_flags = "{}"` یعنی غربالگری انجام نشده، نه «بی‌خطر»؛ همین جمله روی صفحه است و برنامهٔ با فلگ غیرخالی هشدار «پیش از اجرا با مربی مرور کنید» می‌گیرد.
+- شاهد: [`MEM-04 current run`](../../evidence/2026-11-27/MEM-04/current-run.md) و [`route-access`](../../evidence/2026-11-27/MEM-04/route-access.txt).
+
+## Latest continuation — MEM-03 / PWA-32 phone change, device sessions and late-response guard
+
+```text
+CURRENT_BRANCH=arena/3c08bfbd-mp
+BRANCH_BASE=ebebef3ad153277f0223c2011efc4f9a9c855654 (merged PR #30)
+STATE_LAST_UPDATED=2026-11-27T17:10:00Z
+EVIDENCE_DATE_DIRS=2026-11-23, 2026-11-27
+MEM-03/PWA-32=PARTIAL/NOT_ACCEPTED (canonical checkbox open)
+PRODUCT_SURFACE=member home now exposes phone change, own device sessions and logout-all
+LATE_RESPONSE_GUARD=covered by unit tests; a late confirm reply can no longer clear/revoke another account's session
+LIVE_PHONE_CHANGE_CONTRACT=PASS locally: 1 file / 1 test against synthetic Uvicorn + SQLite with DevSmsProvider echo
+CI_WORKFLOW=updated (dev-only OTP echo for the synthetic job + new live phone-change/logout-all step)
+PUSHED=3170b6a80029102dafbc28128f2997ee0df5b3f7 (run 46043582882: seven green + secret-scan red); earlier e22d8db, a5e4517, 7deb122
+CI_E22D8DB=seven jobs success (studio, backend, docs, live-contract, e2e-api, client-flutter, client-pinned); secret-scan failed
+CI_A5E4517=same result; one client-pinned attempt on e22d8db failed in the Android compile step and passed on rerun (transient infra)
+SECRET_SCAN=RED/REMEDIATED-IN-CODE (run 46044835110 @d71dbe0): 5 findings، همه `generic-api-key` روی digestهای source در crosswalk JSON؛ رفع با دو مسیر مجاز — پیشوند `sha256:` در generator و ۱۰ خط fingerprint دقیق؛ نتیجهٔ CI روی SHA بعدی هنوز دیده نشده
+CROSSWALK_DIGEST_GATE=NEW: scripts/verify_crosswalk_digests.py — در job `docs`؛ پیش از بازتولید روی d71dbe0 قرمز بود (۶ خطا در ۲ artifact)، پس از بازتولید روی درخت تمیز در 9ea9a24 **PASS** (۲ artifact، ۶ منبع، tracked_dirty=false)
+CROSSWALK_STALE=v1 artifactها به `*.STALE.{md,json}` تغییر نام دادند (git mv؛ محتوا دست‌نخورده) چون v1 byte-for-byte بازتولیدشدنی نیست
+FINISH_PHONE_CHANGE_TEST=ADDED+PASS (3 tests)؛ با mutation تأیید شد که invariant را می‌گیرد
+ADR_008=PROPOSED (retention/redaction for phone_change_challenges); owner must set the window
+PR31=DRAFT/open، merge ممنوع
+REAL_SMS/DEVICE/BROWSER/NOT_RUN; release=NO-GO
+```
+
+- Scope review first: the backend contract was already complete (`/auth/phone-change/*`, `/auth/sessions`, `/auth/logout-all`), so no endpoint was invented. The real gaps were member-facing (no phone-change entry or device management in `MemberShell`, and `logout-all` had no UI consumer) plus one untested client race.
+- The race: a successful `confirm` reply arriving after another account signed in on the same browser used to call `signOut()`, which cleared that newer session and revoked its refresh token server-side. `PhoneChangeDialog` now captures a `SessionGuard` (account id from the token `sub`, which is not an authorization decision) before sending `confirm`; `clearSessionForAccount` returns `ended`, `different-account`, or `signed-out`, and only `ended` touches storage.
+- Evidence: [`MEM-03 current run`](../../evidence/2026-11-27/MEM-03/current-run.md) with raw files `studio-focused-tests.txt` (6 files / 42 tests), `studio-full-tests.txt` (55 files pass / 4 skip; 392 pass / 15 skip), `studio-gates.txt` (tsc/eslint/build), `backend-focused-tests.txt` (18 passed), `live-contract-phone-change.raw.txt`, `api-request-log.txt`, `db-state-after-run.txt`.
+- Limits: every HTTP result came from a local synthetic API with the development SMS provider; no real SMS, device, browser, screen-reader or human review was performed, and CI has not run for this branch. The live suite mutates the synthetic fixture's login number, so it must be the last consumer of that account in a job.
+- CI on `e22d8db` (and on `a5e4517`): seven jobs green, including `live-contract`, which executed the new phone-change/logout-all step; `secret-scan` was red on this branch **and equally red on main at `ebebef3`** (run `46036816362`). The five hits are 64-hex `source_digests` values in the merged crosswalk evidence JSON, i.e. file SHA-256 digests, not credentials. Raw metadata: [`pr-ci-a5e4517.txt`](../../evidence/2026-11-27/MEM-03/pr-ci-a5e4517.txt).
+- **Secret-scan fix (owner-approved, two allowed routes only):** (i) `scripts/crosswalk_v2.py` wrote every source digest as `sha256:<hex>` (**اصلاح ۲۰۲۶-۱۱-۲۷: این کار finding را نمی‌بست — قاعدهٔ `generic-api-key` مقدار `sha256:<64-hex>` را هم match می‌کند؛ قالب جاری `sha256_b64:` است**)؛ (ii) `.gitleaksignore` gained exactly **five** exact fingerprint lines for commit `ebebef3…`; the five `6593cb4b…` lines for the same findings already existed because a fingerprint is commit-scoped — both sets are anchored to [`secret-scan-redacted.txt`](../../evidence/2026-11-27/MEM-03/secret-scan-redacted.txt). Nothing was allowlisted by rule or path. The CI job now prints `Fingerprint` only and uploads `/tmp/gitleaks-findings.json` as an artifact, so the next failure is readable without log download. Only `File`/`RuleID`/`Line`/`Commit`/`Fingerprint` are ever published.
+- **Digest gate (new):** `scripts/verify_crosswalk_digests.py` runs in the `docs` job and fails when a crosswalk artifact's recorded digest differs from the current source file, or when it was generated on a dirty tree. On `d71dbe0` it is **red** — `INV-02` and `INV-03` are stale on two sources (`api.ts`, `navigation.ts`) and carry `tracked_dirty=true`. Widening vs the owner's one-file report is recorded in [`digest-gate-before.txt`](../../evidence/2026-11-27/MEM-03/digest-gate-before.txt). Regenerated on a clean tree at `9ea9a24` (the fix commit): both artifacts now record `tracked_dirty=false`, `untracked=0` and `sha256:` digests, and the gate prints `Crosswalk digest gate passed: 2 artifact`. Note the generator refuses a dirty tracked tree with `exit 4`, so the two artifacts were generated into `/tmp/cw/*` on one clean tree and copied in — writing the first artifact in place would dirty the tree and block the second run.
+- **v1 artifacts are now `*.STALE.*`:** the four `INV-02-v1`/`INV-03-v1` files were renamed with `git mv` (content byte-identical) because no v1 generator exists in the repo, so they can never be reproduced byte-for-byte; the gate therefore ignores `*.STALE.json`, and both `review.md` files say so.
+- **New guard test:** three tests in `mp-app/studio/tests/session.test.ts` cover `finishPhoneChange`'s decision point — `different-account` (storage untouched, no `/auth/logout` call), `ended` (own refresh token revoked), `signed-out`. A deliberate mutation that hoists `logoutSession` above the guard fails two of them, so the test is not vacuous: [`guard-mutation-test.txt`](../../evidence/2026-11-27/MEM-03/guard-mutation-test.txt). Studio evidence this round: 24/24 in that file, full run 55 files passed / 4 skipped (395 passed / 15 skipped), `tsc -b`, `eslint .`, `npm run build` clean.
+- **STATE rule (no exception):** any artifact whose digest/HEAD differs from current HEAD is either regenerated on a clean tree or renamed with `STALE`; digests are never produced from a dirty tree.
+- Retention of the old/new phone numbers and code hashes inside `phone_change_challenges` is now an explicit [ADR-008 proposal](adr/008-phone-change-challenge-retention.md) (`Proposed`, not implemented); the retention window stays an owner decision.
+- `MEM-01`, `MEM-02`/`PWA-30/31` stay `PARTIAL/NOT_ACCEPTED`; `INV-02/03`, `SEC-01` remain partial; `PWA-01=PROPOSED/NOT_RUN`; release=`NO-GO`. Next: run CI on this branch, then judge MEM-04 only from code and evidence on that SHA.
 
 ## Latest continuation — MEM-01 live member-account contract and identity-negative
 

@@ -1,0 +1,17 @@
+# بازتولید crosswalk پس از تغییر api.ts در MEM-04 (قاعدهٔ digest/HEAD)
+# HEAD پیش از تولید = 7399142fd10f...؛ git status --short خالی بود (درخت تمیز)
+# MEM-04 تابع fetchMemberPrograms را به api.ts اضافه کرد ⇒ digest ثبت‌شدهٔ قبلی (ca62f4a37a28…) کهنه شد
+# و gate پیش از بازتولید دقیقاً همین یک منبع را قرمز کرد:
+#   ERROR evidence/2026-11-27/INV-02/member-capability-crosswalk.json: studio/src/lib/api.ts recorded=ca62f4a37a28 actual=77e368e37434
+#   ERROR evidence/2026-11-27/INV-03/staff-page-crosswalk.json: studio/src/lib/api.ts recorded=ca62f4a37a28 actual=77e368e37434
+#   Crosswalk digest gate FAILED: 2 مشکل در 2 artifact.
+
+META evidence/2026-11-27/INV-02/member-capability-crosswalk.json: sha=7399142fd10f5efcf2fefc3e65359f2f868dd9b0 branch=arena/3c08bfbd-mp tracked_dirty=False untracked=0 counts={'PARTIAL_REVIEW': 14, 'GAP': 3}
+  api.ts -> sha256:77e368e3743431bef553a82cd06e8f8414ad833ea99b161b794a8548ea1021eb
+META evidence/2026-11-27/INV-03/staff-page-crosswalk.json: sha=7399142fd10f5efcf2fefc3e65359f2f868dd9b0 branch=arena/3c08bfbd-mp tracked_dirty=False untracked=0 counts={'PARTIAL_REVIEW': 12}
+  api.ts -> sha256:77e368e3743431bef553a82cd06e8f8414ad833ea99b161b794a8548ea1021eb
+
+CHECK evidence/2026-11-27/INV-02/member-capability-crosswalk.json
+CHECK evidence/2026-11-27/INV-03/staff-page-crosswalk.json
+Crosswalk digest gate passed: 2 artifact، همهٔ digestها با checkout برابر و tracked_dirty=false.
+EXIT=0

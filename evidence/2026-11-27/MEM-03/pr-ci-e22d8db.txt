@@ -1,0 +1,50 @@
+run_id=46041788457
+head_sha=e22d8dba5e503baa8ccf960bcefab4b28cb1f1b2
+workflow=mp-ci
+captured_at=2026-11-27T17:39:25Z
+
+first attempt (observed right after the run completed; not re-queryable afterwards
+because `gh run view` reports the latest attempt):
+  success	Documentation links and handoff
+  success	studio
+  success	client-flutter
+  success	live-contract
+  failure	secret-scan
+  success	backend
+  failure	Client — pinned SDK · format gate · Android debug compile
+  success	e2e-api
+
+Client job detail from its check-run annotation: Flutter tests 160 passed / 0 failed,
+coverage 76.6% (3404/4441), "debug apk: no apk (build step failed)", and only the
+"Android debug compile (شاهد Kotlin/Gradle برای M87)" step failed with exit code 1.
+The identical client code passed that same step ~20 minutes earlier on a5e4517, and
+the job log download returned EOF (results-receiver), as in earlier sessions.
+
+after: gh run rerun 46041788457 --failed (finished) — current state:
+  success	Documentation links and handoff
+  success	studio
+  success	client-flutter
+  success	live-contract
+  failure	secret-scan
+  success	backend
+  success	Client — pinned SDK · format gate · Android debug compile
+  success	e2e-api
+
+conclusion: on this SHA every job except `secret-scan` is green. `secret-scan` fails
+identically on main (ebebef3, run 46036816362) and its five findings are 64-hex
+SHA-256 source digests inside the merged crosswalk evidence JSON, not credentials.
+Root cause, limits and the three possible fixes are in pr-ci-a5e4517.txt.
+The Android debug compile failure did not reproduce on rerun; it was transient infra
+and is not attributed to this change.
+
+follow-up (docs-only commit, same tree for code/tests):
+run_id=46043582882
+head_sha=3170b6a80029102dafbc28128f2997ee0df5b3f7
+  success	Documentation links and handoff
+  failure	secret-scan
+  success	studio
+  success	backend
+  success	Client — pinned SDK · format gate · Android debug compile
+  success	live-contract
+  success	client-flutter
+  success	e2e-api

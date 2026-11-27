@@ -35,6 +35,7 @@
 from __future__ import annotations
 
 import argparse
+import base64
 import hashlib
 import json
 import re
@@ -102,8 +103,24 @@ def sh(*args: str, cwd: Path) -> str:
         return ""
 
 
-def sha256(path: Path) -> str | None:
-    return hashlib.sha256(path.read_bytes()).hexdigest() if path.is_file() else None
+def source_digest(path: Path) -> str | None:
+    """SHA-256 منبع به شکل base64url با پیشوند الگوریتم (`sha256_b64:<44 char>`).
+
+    چرا base64 و نه hex: پیشوند `sha256:` **ریشه را نمی‌بندد**. قاعدهٔ
+    `generic-api-key` گیتلکس مقدار hex ۶۴ رقمی را با پیشوند یا بی‌پیشوند match
+    می‌کند؛ چیزی که واقعاً finding را بست، خطوط fingerprint در `.gitleaksignore`
+    بود — و هر بازتولید، یک commit تازه و ۵ خط تازه می‌خواست (صف بی‌پایان).
+    با base64url، مقدار دیگر ۶۴-رقم hex پیوسته نیست و هیچ‌کدام از الگوهای
+    hex/high-entropy-hex را فعال نمی‌کند؛ پس بازتولید آینده **بدون** خط ignore
+    تازه انجام می‌شود.
+
+    گیت `scripts/verify_crosswalk_digests.py` هر سه شکل را می‌خواند
+    (`sha256_b64:`، `sha256:<hex>`، `<hex>`) تا artifactهای تاریخی قابل‌بررسی بمانند.
+    """
+    if not path.is_file():
+        return None
+    raw = hashlib.sha256(path.read_bytes()).digest()
+    return "sha256_b64:" + base64.urlsafe_b64encode(raw).decode("ascii").rstrip("=")
 
 
 def canon(path: str) -> str:
@@ -288,12 +305,12 @@ def build(repo: Path, kind: str) -> tuple[list[Row], dict]:
         "untracked": len([ln for ln in sh("git", "status", "--porcelain", cwd=repo).splitlines()
                           if ln.startswith("??")]),
         "sources": {
-            "backend/api/routes.json": sha256(repo / "mp-app/backend/api/routes.json"),
-            "backend/security/rbac.py": sha256(repo / "mp-app/backend/security/rbac.py"),
-            "studio/src/lib/roleNav.ts": sha256(repo / "mp-app/studio/src/lib/roleNav.ts"),
-            "studio/src/lib/api.ts": sha256(repo / "mp-app/studio/src/lib/api.ts"),
-            "studio/src/lib/adminApi.ts": sha256(repo / "mp-app/studio/src/lib/adminApi.ts"),
-            "studio/src/lib/navigation.ts": sha256(repo / "mp-app/studio/src/lib/navigation.ts"),
+            "backend/api/routes.json": source_digest(repo / "mp-app/backend/api/routes.json"),
+            "backend/security/rbac.py": source_digest(repo / "mp-app/backend/security/rbac.py"),
+            "studio/src/lib/roleNav.ts": source_digest(repo / "mp-app/studio/src/lib/roleNav.ts"),
+            "studio/src/lib/api.ts": source_digest(repo / "mp-app/studio/src/lib/api.ts"),
+            "studio/src/lib/adminApi.ts": source_digest(repo / "mp-app/studio/src/lib/adminApi.ts"),
+            "studio/src/lib/navigation.ts": source_digest(repo / "mp-app/studio/src/lib/navigation.ts"),
         },
         "site_kinds": {k: len([s for s in sites if s.kind == k]) for k, _ in CALL_PATTERNS},
         "dynamic_sites": len([s for s in sites if s.dynamic]),
@@ -383,6 +400,16 @@ def main() -> int:
     if not (repo / "mp-app/backend/api/routes.json").is_file():
         print("FATAL: از ریشهٔ مخزن MP اجرا کن.", file=sys.stderr)
         return 2
+
+    tracked_dirty = sh("git", "status", "--porcelain", "--untracked-files=no", cwd=repo)
+    if tracked_dirty:
+        print(
+            "FATAL: درخت tracked تمیز نیست؛ digest روی درخت dirty بازتولیدپذیر نیست.\n"
+            "اول commit کن، بعد crosswalk را بساز.\n"
+            + "\n".join(tracked_dirty.splitlines()[:10]),
+            file=sys.stderr,
+        )
+        return 4
 
     rows, meta = build(repo, args.kind)
     if not rows:

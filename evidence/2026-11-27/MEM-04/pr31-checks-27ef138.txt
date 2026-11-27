@@ -1,0 +1,14 @@
+# gh pr checks 31 — SHA 27ef138 (tip) ، اجرا شد در 2026-11-27
+# همهٔ ۱۲ check سبز، از جمله secret-scan و Documentation links and handoff (که گیت digest را اجرا می‌کند)
+Client — pinned SDK · format gate · Android debug compile	pass	4m45s	https://github.com/yousefghorbanian98-create/MP/actions/runs/46054323556/job/140693014037
+Documentation links and handoff	pass	13s	https://github.com/yousefghorbanian98-create/MP/actions/runs/46054323556/job/140693014070
+PWA-00 patch applies cleanly and matches source docs	pass	9s	https://github.com/yousefghorbanian98-create/MP/actions/runs/46054323525/job/140693013868
+Reviewdog (Markdown findings as check annotations)	pass	14s	https://github.com/yousefghorbanian98-create/MP/actions/runs/46054323525/job/140693013694
+Super-Linter (PWA-00 Markdown only)	pass	1m18s	https://github.com/yousefghorbanian98-create/MP/actions/runs/46054323525/job/140693013940
+backend	pass	3m47s	https://github.com/yousefghorbanian98-create/MP/actions/runs/46054323556/job/140693014090
+client-flutter	pass	1m20s	https://github.com/yousefghorbanian98-create/MP/actions/runs/46054323556/job/140693014147
+e2e-api	pass	3m38s	https://github.com/yousefghorbanian98-create/MP/actions/runs/46054318564/job/140695472792
+live-contract	pass	33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/46054323556/job/140693014031
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140693099556
+secret-scan	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/46054323556/job/140693013760
+studio	pass	1m26s	https://github.com/yousefghorbanian98-create/MP/actions/runs/46054323556/job/140693013994

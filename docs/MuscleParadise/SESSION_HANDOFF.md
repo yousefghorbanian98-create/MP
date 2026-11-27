@@ -2,7 +2,83 @@
 
 > این فایل **خلاصهٔ جاری برای ادامهٔ کار** است، نه آرشیو گفتگو و نه منبع نهایی وضعیت محصول. پیش از فشرده‌سازی context یا پایان هر کار معنادار، همین snapshot را جایگزین/به‌روز کن؛ تاریخچه را با انباشت transcript طولانی نکن.
 
-## وضعیت جاری — MEM-01 live member-account contract و identity-negative (UTC 2026-11-27)
+## وضعیت جاری — MEM-05 / PWA-34 ثبت بازخورد ست + تریاژ flake + گزارش STALE (UTC 2026-11-27)
+
+```text
+CURRENT_BRANCH=arena/3c08bfbd-mp
+MEM-05/PWA-34=PARTIAL/NOT_ACCEPTED؛ BLOCKED نیست
+MEM05_IDEMPOTENCY=set-feedback: no (کلید/نسخه ندارد؛ تکرار = ردیف تازه) · sync/set-feedback: yes (device_id:client_id + updated_at، LWW)
+WRITE_PATH=فقط /programs/sync/set-feedback؛ مسیر بدون کلید صدا زده نمی‌شود
+SERVER_TRUTH=پس از نوشتن، آمادگی/شمارش بازخورد از API دوباره خوانده می‌شود
+TIMEOUT=abort ⇒ «ثبت نشد»؛ تلاش دوباره همان client_id/updated_at
+CLIENT_JOB_FLAKY=yes — دو شکست تاریخی (e22d8db، 107968d-push)؛ اولین push پس از سخت‌سازی (6e69767) سبز شد؛ علت اثبات‌نشده
+STALE_ARTIFACTS=بازرسی می‌شوند: dirty ⇒ خطا، کهنگی ⇒ گزارش `STALE <path> recorded/actual`
+GITLEAKSIGNORE=۱۰ خط، ثابت؛ قالب تازه `sha256_b64:` جلوی صف بی‌پایان را می‌گیرد
+CI_6E69767=سبز در هر دو سطح (PR ۱۲/۱۲ · run سطح push 46071739713 success؛ secret-scan ۱۷s با همان ۱۰ خط)
+RELEASE=NO-GO
+```
+
+- **MEM-05:** پاسخ گیت با فایل/خط: `modules/programs/schemas.py:103-106` و `service.py:183-197` نشان می‌دهند `POST /programs/set-feedback` کلید/نسخه ندارد و هر ارسال را append می‌کند (آزمون: دو ارسال = ۲ ردیف). قرارداد idempotent از قبل موجود بود: `router.py:134-143` + `service.py:584-700` + ستون‌های `client_id`/`device_id`/`client_updated_at` (`db/models/programs.py:113-116`). پس mock ساخته نشد و از همان مسیر نوشتن استفاده شد.
+- **UI:** فرم ست در `/member/today`، کنترل‌ها از antd (Q11 ratchet)، `device_id` پایدار در `localStorage`، کلید `client_id` در همهٔ تلاش‌ها ثابت، و بازخوانی از API پس از ثبت.
+- **P1:** روی `107968d` دو run بود: `46055618838` (pull_request، success) و `46055611570` (push، **failure** در `Android debug compile`). لاگ job از API در دسترس نبود؛ job با کش Gradle، `--no-daemon` معادل (`org.gradle.daemon=false`)، heap کوچک‌تر و artifact «client-android-build-log» سخت‌سازی شد. `gh run list` باید همیشه در گزارش بیاید، نه فقط `gh pr checks`.
+- **P2:** ادعای قبلی دربارهٔ «بستن ریشه با پیشوند `sha256:`» **نادرست بود** و در سند اصلاح شد؛ قالب جاری `sha256_b64:<44>` است. فایل‌های `*.STALE.json` حالا بازرسی و گزارش می‌شوند (dirty ⇒ خطا).
+- شاهد: [`MEM-05 current run`](../../evidence/2026-11-27/MEM-05/current-run.md) و [`client-job-triage`](../../evidence/2026-11-27/CI-FLAKE/client-job-triage.txt). `MEM-01…05`، `INV-02/03`، `SEC-01` partial می‌مانند؛ `PWA-01=PROPOSED/NOT_RUN`؛ release=`NO-GO`.
+
+## وضعیت جاری — MEM-04 / PWA-33 برنامهٔ امروز عضو (UTC 2026-11-27)
+
+```text
+CURRENT_BRANCH=arena/3c08bfbd-mp
+MEM-04/PWA-33=PARTIAL/NOT_ACCEPTED؛ checkbox canonical باز
+MEM04_ROUTE_ACCESS=member=yes — api/routes.json:3369-3385؛ modules/programs/router.py:31-37؛ app/security/ownership.py:23-29
+SURFACE=/member/today → MemberTodayProgram روی GET /programs/member/{id} + /readiness
+NUMBERS=هر عدد با برچسب «منبع: GET …»؛ engine_version تنها نسخه، approved_at تنها تاریخ، بدون محاسبهٔ کلاینت
+EMPTY_STATE=بدون approved → پیام تهی؛ readiness=null → reason سرور؛ پاسخ غیرآرایه → fail-closed
+ACCESS_TEST=۳ تست تازه: عضو A روی دادهٔ B در هر چهار مسیر ۴۰۳
+LOCAL_GATES=Studio ۴ تست تازه/کل ۳۹۹ pass・۱۵ skip؛ tsc/eslint/build پاک؛ backend ۹ pass
+CI=پاس روی tip 27ef138 (۱۲ check؛ شامل secret-scan و گیت digest)؛ REVIEWER/DEVICE=NOT_RUN؛ release=NO-GO
+```
+
+- endpoint فرضی ساخته نشد. `GET /api/v1/programs/member/{member_id}`، `/readiness`، `/volume` و `GET /api/v1/programs/{program_id}` از قبل در `api/routes.json` بودند و نقش `member` را مجاز می‌دانستند؛ مالکیت سطری در `app/security/ownership.py:23-29` اعمال می‌شود.
+- UI فقط برنامهٔ `approved` را نشان می‌دهد؛ `draft`/`rejected` شمارش وضعیت‌اند، نه برنامه. هیچ KPI/کالری/۱RM/ادعای پزشکی ساخته نشد و هر عدد منبع مکتوب دارد.
+- محدودیت‌های قرارداد صریح نوشته شدند: برنامه شمارهٔ نسخهٔ عددی و تاریخ شروع/پایان ندارد؛ `safety_flags="{}"` یعنی غربالگری انجام نشده.
+- شاهد: [`MEM-04 current run`](../../evidence/2026-11-27/MEM-04/current-run.md) و [`route-access`](../../evidence/2026-11-27/MEM-04/route-access.txt). همچنان مرورگر/دستگاه واقعی، بازبینی انسانی و CI همین SHA اجرا نشده‌اند؛ `INV-02/03`، `SEC-01`، `MEM-01…04` partial می‌مانند و release=`NO-GO`.
+
+## وضعیت جاری — MEM-03 / PWA-32 تغییر شماره، نشست دستگاه و پاسخ دیررس (UTC 2026-11-27)
+
+```text
+CURRENT_BRANCH=arena/3c08bfbd-mp
+BRANCH_BASE=ebebef3ad153277f0223c2011efc4f9a9c855654 (main؛ PR #30 در 2026-11-27T16:49:20Z MERGE شد)
+STATE_LAST_UPDATED=2026-11-27T17:10:00Z
+EVIDENCE_DATE_DIRS=2026-11-23, 2026-11-27
+NOTE: یادداشت‌های «PR #30 باز/مرج نشود» در بخش‌های پایین‌تر تاریخی‌اند؛ وضعیت فعلی MERGED است.
+MEM-03/PWA-32=PARTIAL/NOT_ACCEPTED؛ checkbox canonical باز
+MEMBER_SURFACE=تغییر شماره + نشست‌های دستگاه + logout-all در خانهٔ عضو (نه فقط shell کارکنان)
+LATE_CONFIRM_GUARD=PASS محلی با تست واحد؛ نشست حساب دیگر پاک/revoke نمی‌شود
+LIVE_PHONE_CHANGE=PASS محلی: ۱ فایل/۱ تست روی API واقعی + SQLite synthetic + DevSmsProvider
+PUSHED=3170b6a80029102dafbc28128f2997ee0df5b3f7 روی arena/3c08bfbd-mp (commitهای قبلی: 7deb122، a5e4517، e22d8db)
+CI_3170B6A=همان نتیجه: هفت job سبز، فقط secret-scan قرمز (run 46043582882)
+CI_E22D8DB=هفت job سبز (studio، backend، docs، live-contract، e2e-api، client-flutter، client-pinned)؛ تنها secret-scan قرمز — همان شکست از قبل موجود روی main
+CI_A5E4517=همان نتیجه روی SHA قبلی؛ client-pinned در تلاش اول e22d8db یک‌بار در step کامپایل اندروید شکست و با rerun سبز شد (ناپایدار، نه ناشی از این تغییر)
+SECRET_SCAN=RED؛ رفع با دو مسیر مجاز انجام شد (بدون allowlist بر اساس rule/path): پیشوند `sha256:` در generator + ۵ خط fingerprint دقیق برای `ebebef3…` (۵ خط `6593cb4b…` از قبل بود)
+CROSSWALK_DIGEST_GATE=افزوده شد و در job `docs` اجرا می‌شود؛ روی d71dbe0 قرمز بود (۲ artifact کهنه، ۲ منبع: `api.ts`، `navigation.ts`) و پس از بازتولید روی درخت تمیز در `9ea9a24` **PASS** (۲ artifact، همهٔ ۶ منبع برابر، `tracked_dirty=false`)
+CROSSWALK_STALE=v1 artifactها با `git mv` به `*.STALE.{md,json}` تغییر نام دادند (محتوا دست‌نخورده)
+FINISH_PHONE_CHANGE_TEST=PASS (۳ تست تازه در `tests/session.test.ts`؛ با mutation تأیید شد که جابه‌جایی revocation به بالای guard دو تست را قرمز می‌کند)
+PR31=draft/open؛ merge ممنوع
+REAL_SMS/DEVICE/BROWSER=اجرا نشده؛ release=NO-GO
+```
+
+- قرارداد backend از قبل کامل بود؛ endpoint فرضی ساخته نشد. شکاف واقعی سمت محصول بود: `MemberShell` هیچ ورودی تغییر شماره یا مدیریت نشست نداشت و `POST /auth/logout-all` مصرف‌کنندهٔ UI نداشت (در گیت api-coverage با TODO مستثنا بود). اکنون کارت `MemberSecurity` فهرست نشست‌های همان حساب را از `GET /auth/sessions` می‌خواند و «خروج از همهٔ دستگاه‌ها» فقط با تأیید ۲۰۰ سرور انجام‌شده اعلام می‌شود؛ در خطا نشست محلی حفظ و خطای قابل‌تلاش نشان داده می‌شود.
+- ریسک پاسخ دیررس: `confirm` موفق که پس از ورود حساب دیگر در همان مرورگر برسد، پیش‌تر `signOut()` را روی نشست تازه اجرا می‌کرد و refresh token آن حساب را هم سمت سرور revoke می‌کرد. `PhoneChangeDialog` اکنون پیش از ارسال `confirm` یک `SessionGuard` (شناسهٔ حساب از `sub` توکن) می‌گیرد و `clearSessionForAccount` فقط در حالت `ended` دست به storage می‌زند؛ `different-account` و `signed-out` هیچ تغییری نمی‌دهند و ادعای خروج هم نمی‌کنند.
+- شواهد آزمون محلی: Studio focused **۶ فایل/۴۲ pass**؛ full **۵۵ فایل pass، ۴ skip؛ ۳۹۲ pass، ۱۵ skip**؛ `tsc -b`/`eslint .`/`npm run build` پاس؛ backend مرتبط (`test_m82_phone_change`، `test_wp14_logout_all`، `test_phase4_identity_session`) **۱۸ pass/۱ warning**. قرارداد زندهٔ تازه `tests/liveContractPhoneChange.test.ts` روی Uvicorn محلی **۱/۱ pass**؛ DB مصنوعی شمارهٔ عوض‌شده، `auth_version=2` و دو refresh revoked را نشان داد. جزئیات و logهای خام: [`MEM-03 current run`](../../evidence/2026-11-27/MEM-03/current-run.md).
+- CI: job «live-contract» اکنون `MP_ALLOW_DEV_OTP_ECHO=true` را فقط برای سرور synthetic همان job می‌دهد و یک step جدا برای phone-change/logout-all دارد (آخرین مصرف‌کنندهٔ حساب fixture، چون شماره‌اش را عوض می‌کند). این workflow هنوز اجرا نشده است.
+- محدودیت‌ها: SMS/provider و دستگاه واقعی، مرورگر/صفحه‌خوان، بازبینی انسانی و CI این شاخه اجرا نشده‌اند؛ تست‌های UI با jsdom و `fetch` stub‌شده‌اند. داده‌های شمارهٔ قدیم/جدید در `phone_change_challenges` بدون مسیر retention پیدا شدند؛ این پرسش **policy حریم خصوصی** است و به‌عنوان نتیجهٔ compliance ثبت نمی‌شود.
+- CI روی `e22d8db` (run `46041788457`) و `a5e4517` (run `46040528118`): هر هفت job سبز است، از جمله `live-contract` که step تازهٔ phone-change/logout-all را اجرا کرد؛ تنها `secret-scan` قرمز است و **همان job روی main (`ebebef3`, run `46036816362`) هم قرمز است**. پنج finding همه مقدار ۶۴-hex در نگاشت `source_digests` فایل‌های crosswalk JSON هستند (SHA-256 محتوای source، نه credential). راه‌حل — fingerprint دقیق در `.gitleaksignore`، allowlist باریک، یا تغییر شکل digest در generator — نیازمند تأیید مالک است و در این برش انجام نشد. یکی از تلاش‌ها روی e22d8db در step کامپایل اندروید شکست خورد و با `gh run rerun --failed` سبز شد (ناپایدار؛ همین کد ۲۰ دقیقه قبل سبز بود و لاگ job با EOF دانلود نشد). شاهد: [`pr-ci-a5e4517.txt`](../../evidence/2026-11-27/MEM-03/pr-ci-a5e4517.txt) و [`pr-ci-e22d8db.txt`](../../evidence/2026-11-27/MEM-03/pr-ci-e22d8db.txt). تصمیم retention نیز به‌صورت [ADR-008 (Proposed)](adr/008-phone-change-challenge-retention.md) ثبت شد و پیاده‌سازی نشد.
+- **رفع همین دور (بدون راز در شاهد):** `.github/workflows/ci.yml` در job `secret-scan` حالا فقط `File`/`RuleID`/`Line`/`Commit`/`Fingerprint` را چاپ می‌کند و `/tmp/gitleaks-findings.json` را به‌عنوان artifact آپلود می‌کند؛ `.gitleaksignore` پنج خط دقیق برای `ebebef3…` گرفت و `scripts/test_retired_signing_scan.py` حالا هر دو مجموعه (`6593cb4b…` و `ebebef3…`) را assert می‌کند. اسکن واقعی gitleaks در sandbox اجرا نشد (دانلود release شکست می‌خورد)؛ آنچه اجرا شد assert‌های policy روی همان فایل است: [`gitleaks-policy-test.txt`](../../evidence/2026-11-27/MEM-03/gitleaks-policy-test.txt) و [`secret-scan-redacted.txt`](../../evidence/2026-11-27/MEM-03/secret-scan-redacted.txt).
+- **گیت تازهٔ digest:** `scripts/verify_crosswalk_digests.py` روی artifact‌های `evidence/**/*-crosswalk.json` (به‌جز `*.STALE.json`) شرط می‌گذارد که `tracked_dirty` صریحاً `False` باشد و digest هر منبع با فایل فعلی بخواند. خروجی روی `d71dbe0`: ۶ خطا در ۲ artifact — همان دو منبع `api.ts`/`navigation.ts` (بزرگ‌تر از گزارش تک‌فایلی مالک) به‌علاوهٔ `tracked_dirty=true`: [`digest-gate-before.txt`](../../evidence/2026-11-27/MEM-03/digest-gate-before.txt). بازتولید روی درخت تمیز در commit بلافاصلهٔ بعد انجام شد (`9ea9a24`): هر دو artifact حالا `tracked_dirty=false` و digestهای `sha256:` دارند و gate پاس می‌شود؛ shاهد: [`digest-gate-after.txt`](../../evidence/2026-11-27/MEM-03/digest-gate-after.txt). نکتهٔ عملی: generator روی درخت tracked dirty با `exit 4` رد می‌کند، پس هر دو artifact روی یک درخت تمیز در `/tmp/cw/*` ساخته و سپس کپی شدند.
+- **قاعدهٔ STATE (بدون استثنا):** هر artifact که digest/HEAD آن با HEAD جاری یکی نیست، یا روی درخت تمیز بازتولید می‌شود یا `STALE` در نامش می‌آید؛ تولید digest روی درخت dirty ممنوع است و generator در این حالت `exit 4` می‌دهد.
+- بعدی: بازتولید crosswalk روی درخت تمیز و تأیید CI همان SHA، سپس ارزیابی MEM-04 فقط از کد و شاهد همان SHA. `MEM-01`، `MEM-02/PWA-30/31`، `INV-02/03` و `SEC-01` partial می‌مانند؛ `PWA-01=PROPOSED/NOT_RUN`؛ release=`NO-GO`.
+
+## Snapshot پیشین — MEM-01 live member-account contract و identity-negative (UTC 2026-11-27)
 
 ```text
 CURRENT_BRANCH=arena/5e0f64cf-mp

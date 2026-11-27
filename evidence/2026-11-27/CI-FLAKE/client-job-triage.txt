@@ -1,0 +1,66 @@
+# P1 — تریاژ ناپایداری `client-pinned` (MAIN: «ligere دو سطح» )
+
+## چرا این فایل: `gh pr checks 31` فقط سطح PR را می‌دهد و در آن، run قرمزِ event=push دیده نمی‌شود.
+
+## شاهد سطح PR (tip 107968d)
+$ gh pr checks 31   → هر ۱۲ check: pass
+
+## شاهد سطح push (همان SHA 107968d)
+$ gh run list --branch arena/3c08bfbd-mp --limit 5
+46055618881  107968d  pull_request  success   pwa00-doc-quality
+46055618838  107968d  pull_request  success   mp-ci
+46055611570  107968d  push          failure   mp-ci     ← همان چیزی که سطح PR پنهان می‌کرد
+46054323556  27ef138  pull_request  success   mp-ci
+46054323525  27ef138  pull_request  success   pwa00-doc-quality
+
+## job شکست‌خورده در run 46055611570
+$ gh api repos/.../actions/runs/46055611570/jobs
+140697239420  Client — pinned SDK · format gate · Android debug compile  failure  steps=13
+$ gh api repos/.../actions/jobs/140697239420
+started=2026-11-27T19:17:16Z  completed=2026-11-27T19:19:04Z  (108s)  runner=GitHub Actions 1000007806
+1 Set up job → success
+7 flutter test + coverage → success
+8 Android debug compile (شاهد Kotlin/Gradle برای M87) → failure
+9 dart format gate (M109 — کشنده) → skipped
+10 Publish the witness → success
+
+## چرا log گرفته نشد
+$ gh api repos/.../actions/jobs/140697239420/logs
+→ Get "https://productionresultssa1.blob.core.windows.net/actions-results/.../job-logs.txt?...":
+  خروجی خالی/شکست (همان EOF تاریخ‌دار؛ دامنهٔ blob خارج از دسترس sandbox است)
+$ gh api repos/.../actions/runs/46055611570/artifacts
+15226736514 gitleaks-findings-metadata 180
+15226287276 backend-coverage-xml 24815
+→ هیچ artifact از job کلاینت نبود؛ یعنی علت از API قابل‌خواندن نبود.
+
+## سه نمونهٔ همین ناپایداری
+1. e22d8db — تلاش اول job کلاینت در Android compile شکست، `gh run rerun --failed` سبز شد.
+2. 107968d (event=push, run 46055611570) — شکست در همان step؛ event=pull_request همان SHA سبز.
+3. (سومین نمونه در اولین push بعد از این commit ثبت می‌شود؛ اگر سبز بماند یعنی hardening کافی بود.)
+
+## دو فرضیهٔ محتمل (بر اساس چیزهایی که قابل‌دیدن بود)
+- حافظه: `mp-app/client/android/gradle.properties` مقدار `-Xmx8G -XX:MaxMetaspaceSize=4G` داشت
+  روی runner 16GB + Gradle daemon + Kotlin daemon → سقف حافظه/exit 137 محتمل است.
+- دانلود: artifactهای Gradle/AGP بدون کش در هر run و در less از ۱۰۸ ثانیه شکست.
+
+## کاری که انجام شد (`.github/workflows/ci.yml`, job `client-pinned`)
+- `Cache Gradle home` با `actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830` (SHA واقعی tag v4 از API).
+- `Bound Gradle for CI (no daemon, smaller heap)`: `sed` روی `gradle.properties` → `-Xmx3g -XX:MaxMetaspaceSize=1g`،
+  `org.gradle.daemon=false`، `kotlin.daemon.jvmargs=-Xmx1536m`؛ مقادیر در `gradle-ci.properties` ثبت می‌شوند.
+- step ساخت APK: `timeout-minutes: 20`، لاگ کامل در `/tmp/client-pinned/android-build.log`،
+  در شکست `::error::` + `tail -80` روی stderr، و `Publish the Android build log (always)` که
+  پوشهٔ `/tmp/client-pinned/` را به‌عنوان artifact `client-android-build-log` آپلود می‌کند.
+- `timeout-minutes: 30` سطح job از قبل بود و دست‌نخورده ماند.
+
+## وضعیت صادقانه
+علت ریشه‌ای **اثبات نشده** است (log در دسترس نبود). دو فرضیه محدود شد و شاهد برای اجرای بعدی
+قابل‌خواندن شد. تا سبزشدن push بعدی: `CLIENT_JOB_FLAKY=yes`.
+
+## نتیجهٔ سومین push (پس از hardening)
+- tip `6e69767`: سطح PR ۱۲/۱۲ pass و سطح push (`46071739713`) **success**؛
+  `Client — pinned SDK · format gate · Android debug compile` = pass در ۴m59s.
+- یعنی کش + `org.gradle.daemon=false` + heap محدود، برای این نمونه کافی بود؛ علت ریشه‌ای
+  همچنان **اثبات‌نشده** است و برای همین `CLIENT_JOB_FLAKY=yes` می‌ماند.
+- شاهد خام دو سطح: [`ci-6e69767-both-levels.txt`](ci-6e69767-both-levels.txt).
+  خروجی کامل لاگ APK اکنون به‌عنوان artifact `client-android-build-log` قابل‌دانلود است
+  (این push سبز بود، پس محتوایش فقط شاهد موفقیت است).

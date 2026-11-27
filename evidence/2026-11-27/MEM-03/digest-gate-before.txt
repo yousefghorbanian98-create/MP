@@ -1,0 +1,14 @@
+# scripts/verify_crosswalk_digests.py — وضعیت پیش از بازتولید
+# HEAD=d71dbe0، درخت dirty (چون همین commit درخت را تغییر می‌دهد)؛ v1 artifact‌ها با نام *.STALE.* از دامنه gate خارج شده‌اند.
+NOTE evidence/2026-11-27/INV-02/member-capability-crosswalk.json: commit f06f2a953050 در این checkout نیست (clone کم‌عمق)؛ بررسی «منابع از آن زمان تغییر نکرده» اجرا نشد.
+NOTE evidence/2026-11-27/INV-03/staff-page-crosswalk.json: commit f06f2a953050 در این checkout نیست (clone کم‌عمق)؛ بررسی «منابع از آن زمان تغییر نکرده» اجرا نشد.
+CHECK evidence/2026-11-27/INV-02/member-capability-crosswalk.json
+CHECK evidence/2026-11-27/INV-03/staff-page-crosswalk.json
+ERROR evidence/2026-11-27/INV-02/member-capability-crosswalk.json: digest روی درخت dirty است یا tracked_dirty ثبت نشده (tracked_dirty=True)
+ERROR evidence/2026-11-27/INV-02/member-capability-crosswalk.json: studio/src/lib/api.ts recorded=f5e977948640 actual=ca62f4a37a28
+ERROR evidence/2026-11-27/INV-02/member-capability-crosswalk.json: studio/src/lib/navigation.ts recorded=71fa84e7d3d0 actual=6f9b434207f6
+ERROR evidence/2026-11-27/INV-03/staff-page-crosswalk.json: digest روی درخت dirty است یا tracked_dirty ثبت نشده (tracked_dirty=True)
+ERROR evidence/2026-11-27/INV-03/staff-page-crosswalk.json: studio/src/lib/api.ts recorded=f5e977948640 actual=ca62f4a37a28
+ERROR evidence/2026-11-27/INV-03/staff-page-crosswalk.json: studio/src/lib/navigation.ts recorded=71fa84e7d3d0 actual=6f9b434207f6
+Crosswalk digest gate FAILED: 6 مشکل در 2 artifact. artifact را روی درخت تمیز بازتولید کن یا در نامش STALE بگذار.
+EXIT=1

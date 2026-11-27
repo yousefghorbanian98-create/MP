@@ -1,0 +1,24 @@
+INFO:     Started server process [2892]
+INFO:     Waiting for application startup.
+2026-11-27T17:02:42.867321Z [warning  ] effective_configuration        dev_otp_echo=True environment=development init_db_on_startup=True log_format=console rate_limit_storage=memory sms_provider=dev trusted_proxies_configured=False
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8765 (Press CTRL+C to quit)
+INFO:     127.0.0.1:47502 - "POST /api/v1/auth/otp/request HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47518 - "POST /api/v1/auth/otp/verify HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47502 - "GET /api/v1/members/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47518 - "GET /api/v1/auth/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47502 - "POST /api/v1/auth/phone-change/request HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:47518 - "POST /api/v1/auth/phone-change/request HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47502 - "POST /api/v1/auth/phone-change/verify-old HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:47518 - "POST /api/v1/auth/phone-change/verify-old HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47502 - "POST /api/v1/auth/phone-change/confirm HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:47518 - "POST /api/v1/auth/phone-change/confirm HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47502 - "GET /api/v1/members/me HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:47518 - "POST /api/v1/auth/refresh HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:47502 - "POST /api/v1/auth/otp/request HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47518 - "POST /api/v1/auth/otp/verify HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47502 - "GET /api/v1/members/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47518 - "GET /api/v1/auth/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47502 - "POST /api/v1/auth/logout-all HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47518 - "GET /api/v1/members/me HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:47502 - "GET /api/v1/auth/sessions HTTP/1.1" 401 Unauthorized

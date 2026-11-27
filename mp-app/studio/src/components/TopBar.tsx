@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../auth/AuthContext";
 import { PhoneChangeDialog } from "./PhoneChangeDialog";
 import { fetchMe, type Me } from "../lib/api";
+import { toast } from "./Feedback";
 import { useAppStore } from "../stores/appStore";
 import { parseStudioRoute, useStudioLocation } from "../lib/navigation";
 import { useMotionPreset } from "../lib/motion";
@@ -47,7 +48,7 @@ export function TopBar() {
   const page = route.type === "staff" ? route.page : "dashboard";
   const search = useAppStore((state) => state.search);
   const setSearch = useAppStore((state) => state.setSearch);
-  const { signOut } = useAuth();
+  const { finishPhoneChange } = useAuth();
   const [me, setMe] = useState<Me | null>(null);
   const [meError, setMeError] = useState<string | null>(null);
   const [phoneChangeOpen, setPhoneChangeOpen] = useState(false);
@@ -121,9 +122,14 @@ export function TopBar() {
         <PhoneChangeDialog
           currentPhone={me?.phone}
           onClose={() => setPhoneChangeOpen(false)}
-          onCompleted={async () => {
+          onCompleted={async (_phone, guard) => {
             setPhoneChangeOpen(false);
-            await signOut();
+            const outcome = await finishPhoneChange(guard);
+            if (outcome === "different-account") {
+              toast.info(
+                "شمارهٔ حساب قبلی تغییر کرد؛ این مرورگر اکنون با حساب دیگری وارد شده و نشست آن دست‌نخورده ماند.",
+              );
+            }
           }}
         />
       )}

@@ -675,13 +675,16 @@
       "surface": "MemberAccount",
       "kind": "studio-page",
       "file": "mp-app/studio/src/pages/MemberAccount.tsx",
-      "components": [],
+      "components": [
+        "mp-app/studio/src/components/Feedback.tsx",
+        "mp-app/studio/src/components/PhoneChangeDialog.tsx"
+      ],
       "controls": {
-        "buttons": 2,
+        "buttons": 7,
         "inputs": 0,
         "numbers": 0,
         "selects": 0,
-        "modals": 0
+        "modals": 2
       },
       "endpoints": [
         {

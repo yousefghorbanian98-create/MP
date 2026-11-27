@@ -1,0 +1,9 @@
+== npx tsc -b
+TSC_EXIT=0
+== npx eslint .
+ESLINT_EXIT=0
+== npm run build
+dist/assets/index-Bc4m-Stl.js                               210.09 kB │ gzip:  61.16 kB
+dist/assets/vendor-charts-B6HBj3mZ.js                       396.63 kB │ gzip: 108.82 kB
+dist/assets/vendor-antd-DDmWtWEm.js                         949.14 kB │ gzip: 299.18 kB
+✓ built in 15.85s

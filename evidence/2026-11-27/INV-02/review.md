@@ -24,3 +24,20 @@
 - قرارداد مورد انتظار `DYNAMIC_UNCOVERED` به‌جای `GAP` یا `PASS` در خروجی این نسخه تحقق نیافت: در این run هیچ dynamic call-site علامت نخورد. این شکاف به‌عنوان blocker روش ثبت می‌شود؛ نه با ویرایش خام پنهان می‌شود و نه به PASS تبدیل.
 
 `INV-02=PARTIAL/NOT_ACCEPTED`; checkbox باز، `PWA-01=PROPOSED/NOT_RUN`, و release `NO-GO` باقی است.
+
+## الحاقیهٔ بازتولید — ۲۰۲۶-۱۱-۲۷ UTC (HEAD `9ea9a24a622104408df2de632e3977aa3dcad3ba`)
+
+- artifact فقط روی **درخت تمیز** بازتولید شد (`tracked_dirty=False`، `untracked=0`). اجرای روی درخت dirty توسط generator رد می‌شود (`exit 4`).
+- digestها حالا با پیشوند `sha256:` نوشته می‌شوند. دو منبعی که در artifact قبلی کهنه بودند اکنون به‌روزند: `studio/src/lib/api.ts` و `studio/src/lib/navigation.ts`. علت کهنگی، تغییر همین دو فایل در commit‌های همین شاخه بود؛ SHA ثبت‌شدهٔ artifact قبلی (`f06f2a95…`) از شاخهٔ دیگری بود.
+- شمارش‌ها تغییر نکرد: `PARTIAL_REVIEW=14`، `GAP=3`. ستون اشارهٔ تست به‌خاطر testهای تازهٔ همین شاخه جابه‌جا شد (`api.test.ts`، `liveContractMember.test.ts`؛ call-site کمکی ۵۷→۵۸). ستون تست حداکثر ۴ نام الفبایی نشان می‌دهد، بنابراین `phoneChange.test.tsx` در ردیف `profile` دیده نمی‌شود، هرچند فایل وجود دارد — این سقفِ نمایش است، نه حذف پوشش.
+- محدودیت‌های بالا (اثبات‌نشدن مجوز/مالکیت، `dynamic_sites=0`، تفکیک دستی مصرف‌کننده) بدون تغییرند: `INV-02=PARTIAL/NOT_ACCEPTED`، checkbox باز، `PWA-01=PROPOSED/NOT_RUN`، release `NO-GO`.
+
+شاهد عددی همین بازتولید: [`digest-gate-after.txt`](../MEM-03/digest-gate-after.txt).
+
+## الحاقیهٔ دوم — بازتولید پس از MEM-04 (HEAD `7399142fd10f`)
+
+MEM-04 تابع `fetchMemberPrograms` را به `studio/src/lib/api.ts` اضافه کرد و digest همان یک منبع کهنه شد؛ قاعدهٔ «digest ≠ HEAD ⇒ بازتولید روی درخت تمیز» اعمال و artifact بازتولید شد. شمارش‌ها بدون تغییر (`PARTIAL_REVIEW=14`، `GAP=3`). شاهد: [`crosswalk-regen.txt`](../MEM-04/crosswalk-regen.txt).
+
+## الحاقیهٔ سوم — بازتولید با قالب digest تازه (HEAD `07cb543`)
+
+MEM-05 تابع `syncSetFeedback` را به `studio/src/lib/api.ts` اضافه کرد ⇒ digest ثبت‌شده کهنه شد و گیت دقیقاً همان یک منبع را قرمز کرد. بازتولید روی درخت تمیز انجام شد و قالب digest از `sha256:<hex>` به `sha256_b64:<44 base64url>` تغییر کرد (دلیل اصلی، بستن ریشهٔ finding گیتلکس بدون افزودن خط ignore تازه است؛ جزئیات: `../MEM-03/secret-scan-root-fix.txt`). شمارش‌ها بدون تغییر.

@@ -1,0 +1,40 @@
+# P2 — بازرسی artifact‌های STALE (پیش‌تر کاملاً بی‌صدا بودند)
+# HEAD پیش از این اجراها: 07cb543 (درخت تمیز پس از بازتولید crosswalk)
+# دستور: python3 scripts/verify_crosswalk_digests.py
+
+## ۱) اجرای عادی روی درخت تمیز — pass، ولی STALEها گزارش می‌شوند
+CHECK evidence/2026-11-27/INV-02/member-capability-crosswalk.json
+CHECK evidence/2026-11-27/INV-03/staff-page-crosswalk.json
+CHECK evidence/2026-11-27/INV-02-v1/member-capability-crosswalk.STALE.json (STALE — فقط گزارش، داوری نمی‌شود)
+CHECK evidence/2026-11-27/INV-03-v1/staff-page-crosswalk.STALE.json (STALE — فقط گزارش، داوری نمی‌شود)
+STALE evidence/2026-11-27/INV-02-v1/member-capability-crosswalk.STALE.json: backend/api/routes.json recorded=7f0333dfb92a actual=7f0333dfb92a
+STALE evidence/2026-11-27/INV-02-v1/member-capability-crosswalk.STALE.json: backend/security/rbac.py recorded=a8740f75b33e actual=a8740f75b33e
+STALE evidence/2026-11-27/INV-02-v1/member-capability-crosswalk.STALE.json: studio/src/lib/api.ts recorded=f5e977948640 actual=9f061012e0af  ← کهنه
+STALE evidence/2026-11-27/INV-02-v1/member-capability-crosswalk.STALE.json: studio/src/lib/navigation.ts recorded=71fa84e7d3d0 actual=6f9b434207f6  ← کهنه
+STALE evidence/2026-11-27/INV-03-v1/staff-page-crosswalk.STALE.json: backend/api/routes.json recorded=7f0333dfb92a actual=7f0333dfb92a
+STALE evidence/2026-11-27/INV-03-v1/staff-page-crosswalk.STALE.json: studio/src/lib/navigation.ts recorded=71fa84e7d3d0 actual=6f9b434207f6  ← کهنه
+STALE evidence/2026-11-27/INV-03-v1/staff-page-crosswalk.STALE.json: studio/src/lib/roleNav.ts recorded=650ff74343af actual=650ff74343af
+STALE evidence/2026-11-27/INV-03-v1/staff-page-crosswalk.STALE.json: studio/src/stores/appStore.ts recorded=bb10aa017b19 actual=bb10aa017b19
+Crosswalk digest gate passed: 2 artifact، همهٔ digestها با checkout برابر و tracked_dirty=false.
+4 artifact بررسی شد، 2 STALE (گزارش‌شده)
+EXIT=0
+
+## ۲) همان مین مالک: یک digest در یک فایل STALE عوض شد (routes.json → صفرهای جعلی)
+STALE evidence/2026-11-27/INV-02-v1/member-capability-crosswalk.STALE.json: backend/api/routes.json recorded=000000000000 actual=7f0333dfb92a  ← کهنه
+STALE evidence/2026-11-27/INV-03-v1/staff-page-crosswalk.STALE.json: backend/api/routes.json recorded=7f0333dfb92a actual=7f0333dfb92a
+Crosswalk digest gate passed: 2 artifact، همهٔ digestها با checkout برابر و tracked_dirty=false.
+4 artifact بررسی شد، 2 STALE (گزارش‌شده)
+EXIT=0
+# قبلاً این تغییر هیچ خطی چاپ نمی‌کرد؛ اکنون EXIT=0 می‌ماند (STALE داوری نمی‌شود) ولی کهنگی با «← کهنه» گزارش می‌شود
+
+## ۳) نقض قاعده: tracked_dirty=true در همان فایل STALE ⇒ خطا (نه گزارش)
+4 artifact بررسی شد، 2 STALE (گزارش‌شده)، 1 با tracked_dirty=true
+ERROR evidence/2026-11-27/INV-02-v1/member-capability-crosswalk.STALE.json: artifact کهنه هم نباید روی درخت dirty ساخته شده باشد (tracked_dirty=True)
+Crosswalk digest gate FAILED: 1 مشکل در 2 artifact. artifact را روی درخت تمیز بازتولید کن یا در نامش STALE بگذار.
+EXIT=1
+
+## ۴) بازگردانی فایل و اجرای دوباره
+Crosswalk digest gate passed: 2 artifact، همهٔ digestها با checkout برابر و tracked_dirty=false.
+4 artifact بررسی شد، 2 STALE (گزارش‌شده)
+EXIT=0
+STALE_FILE_BYTE_IDENTICAL_AFTER_RESTORE=True

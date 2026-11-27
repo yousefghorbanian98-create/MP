@@ -1,15 +1,19 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 import { roleFromToken } from "../lib/roleNav";
+import { logoutAllSessions } from "../lib/api";
 import {
   API_BASE,
   SESSION_EXPIRED_EVENT,
   clearSession,
+  clearSessionForAccount,
   getAccessToken,
   getRefreshToken,
   logoutSession,
   sessionFetch,
   storeTokenPair,
   verifyOtp,
+  type SessionEndOutcome,
+  type SessionGuard,
 } from "../lib/session";
 
 export type AuthStatus = "checking" | "authenticated" | "unauthenticated";
@@ -19,6 +23,13 @@ interface AuthContextValue {
   notice: string | null;
   signIn: (phone: string, code: string) => Promise<void>;
   signOut: () => Promise<boolean>;
+  /**
+   * پس از تغییر شماره: نشست محلی را فقط اگر هنوز به همان حساب تعلق دارد می‌بندد.
+   * پاسخ دیررسِ `confirm` نباید نشست حساب دیگری را که در این مرورگر باز شده پاک کند.
+   */
+  finishPhoneChange: (guard: SessionGuard) => Promise<SessionEndOutcome>;
+  /** خروج از همهٔ دستگاه‌ها؛ `false` یعنی سرور ابطال را تأیید نکرد و نشست محلی حفظ شد. */
+  signOutEverywhere: () => Promise<boolean>;
 }
 
 const noProvider: AuthContextValue = {
@@ -26,6 +37,8 @@ const noProvider: AuthContextValue = {
   notice: null,
   signIn: async () => undefined,
   signOut: async () => false,
+  finishPhoneChange: async () => "signed-out",
+  signOutEverywhere: async () => false,
 };
 const AuthContext = createContext<AuthContextValue>(noProvider);
 
@@ -117,7 +130,39 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return serverRevoked;
   }, []);
 
-  return <AuthContext.Provider value={{ status, notice, signIn, signOut }}>{children}</AuthContext.Provider>;
+  const finishPhoneChange = useCallback(async (guard: SessionGuard) => {
+    const refreshToken = getRefreshToken();
+    const outcome = clearSessionForAccount(guard);
+    if (outcome !== "ended") return outcome;
+    // `confirm` already revoked every refresh token server-side; this call only
+    // reports the outcome and must never delay leaving the protected screens.
+    if (refreshToken) void logoutSession(refreshToken);
+    setStatus("unauthenticated");
+    setNotice("شمارهٔ موبایل تغییر کرد و همهٔ نشست‌ها بسته شد؛ با شمارهٔ جدید وارد شوید.");
+    return outcome;
+  }, []);
+
+  const signOutEverywhere = useCallback(async () => {
+    try {
+      await logoutAllSessions();
+    } catch {
+      // The server still owns valid sessions; keeping local credentials lets the
+      // user retry instead of pretending every device was signed out.
+      return false;
+    }
+    clearSession();
+    setStatus("unauthenticated");
+    setNotice("همهٔ دستگاه‌ها از این حساب خارج شدند؛ دوباره وارد شوید.");
+    return true;
+  }, []);
+
+  return (
+    <AuthContext.Provider
+      value={{ status, notice, signIn, signOut, finishPhoneChange, signOutEverywhere }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export function useAuth(): AuthContextValue {
