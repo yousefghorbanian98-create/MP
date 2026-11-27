@@ -4,14 +4,14 @@
 > رفع می‌کند (تمپلیت `${base}`, alias نقش‌ها, مسیرهای پویا) — طبق یافته‌های
 > `review.md` خودِ اجرای قبلی. هیچ ردیفی CURRENT نمی‌شود.
 
-- SHA: `f06f2a95305082e01e33b157396f0dfc0128613d` · branch: `arena/5e0f64cf-mp` · tracked-dirty: `True` · untracked: `145`
-- `backend/api/routes.json` → `7f0333dfb92a5bb56514b7e003cc78370fc7e8fabe3a9a8b5342ccaab9a84cf8`
-- `backend/security/rbac.py` → `a8740f75b33e864e1a3990f4d77e2fa781f0c2105c133d9892a41ce63fdf9d2c`
-- `studio/src/lib/roleNav.ts` → `650ff74343af6e25010f6a07bab4de477d2ffefcee94be3923a200ed05d53220`
-- `studio/src/lib/api.ts` → `f5e977948640587ac5a9c0816c401b63246f4613de77504accfd563b1950af28`
-- `studio/src/lib/adminApi.ts` → `612cbd1e89a78301545f67c88264519a7c492d148ef44779050f50cc1327f2ce`
-- `studio/src/lib/navigation.ts` → `71fa84e7d3d0ca190e3a79ab91cb43beff7d2b8743ccc71a598b6a3722b73172`
-- call-site: `{'template-base': 28, 'helper': 57, 'literal': 0}` · پویا: **0**
+- SHA: `9ea9a24a622104408df2de632e3977aa3dcad3ba` · branch: `arena/3c08bfbd-mp` · tracked-dirty: `False` · untracked: `0`
+- `backend/api/routes.json` → `sha256:7f0333dfb92a5bb56514b7e003cc78370fc7e8fabe3a9a8b5342ccaab9a84cf8`
+- `backend/security/rbac.py` → `sha256:a8740f75b33e864e1a3990f4d77e2fa781f0c2105c133d9892a41ce63fdf9d2c`
+- `studio/src/lib/roleNav.ts` → `sha256:650ff74343af6e25010f6a07bab4de477d2ffefcee94be3923a200ed05d53220`
+- `studio/src/lib/api.ts` → `sha256:ca62f4a37a2835d4c6453ea26440c527fb04f14e1e0152ae7e379d80992ed20c`
+- `studio/src/lib/adminApi.ts` → `sha256:612cbd1e89a78301545f67c88264519a7c492d148ef44779050f50cc1327f2ce`
+- `studio/src/lib/navigation.ts` → `sha256:6f9b434207f6fdbfb6701355e323ceaac2f3d10d2d2e505a820ae32752f206b6`
+- call-site: `{'template-base': 28, 'helper': 58, 'literal': 0}` · پویا: **0**
 - شمارش: `PARTIAL_REVIEW=12`
 
 | وضعیت | معنا |
@@ -25,7 +25,7 @@
 | # | کلید | فایل | route | نقش‌ها (alias حل‌شده) | API مصرف‌شده/کل | call-site | پویای پوشش‌داده‌نشده | اشارهٔ تستی | وضعیت |
 |---|---|---|---|---|---|---|---|---|---|
 | 1 | `dashboard` | 1 فایل | `/staff/dashboard` | super_admin, admin, manager, coach, reception, member | 3 / 4 | `api.ts` | — | `a11y.test.tsx`<br>`api.test.ts`<br>`authFlow.test.tsx`<br>`liveContract.test.ts` | **PARTIAL_REVIEW** |
-| 2 | `members` | 1 فایل | `/staff/members` | super_admin, admin, manager, coach, reception | 3 / 11 | `AuthContext.tsx`<br>`api.ts` | — | `a11y.test.tsx`<br>`apiCoverage.test.ts`<br>`authFlow.test.tsx`<br>`locustfile_full.py` | **PARTIAL_REVIEW** |
+| 2 | `members` | 1 فایل | `/staff/members` | super_admin, admin, manager, coach, reception | 4 / 11 | `AuthContext.tsx`<br>`api.ts` | — | `a11y.test.tsx`<br>`api.test.ts`<br>`apiCoverage.test.ts`<br>`authFlow.test.tsx` | **PARTIAL_REVIEW** |
 | 3 | `programs` | 1 فایل | `/staff/programs` | super_admin, admin, manager, coach, member | 2 / 10 | `api.ts` | — | `apiCoverage.test.ts`<br>`locustfile_full.py`<br>`test_axis_assessment_api.py`<br>`test_battle.py` | **PARTIAL_REVIEW** |
 | 4 | `nutrition` | 1 فایل | `/staff/nutrition` | super_admin, admin, manager, coach, member | 3 / 9 | `api.ts` | — | `test_e2e_adaptive_loop.py`<br>`test_m49_adaptive_nutrition.py`<br>`test_m49_food_logging.py`<br>`test_m78_adaptive_nutrition_client.py` | **PARTIAL_REVIEW** |
 | 5 | `assessment` | 1 فایل | `/staff/assessment` | super_admin, admin, manager, coach, member | 3 / 8 | `api.ts` | — | `apiCoverage.test.ts`<br>`test_ai_kpis.py`<br>`test_api_contract.py`<br>`test_battle.py` | **PARTIAL_REVIEW** |

@@ -1,0 +1,26 @@
+# scripts/verify_crosswalk_digests.py — وضعیت پس از بازتولید روی درخت تمیز
+# درخت پیش از تولید تمیز بود: git status --short خالی؛ HEAD=9ea9a24a622104408df2de632e3977aa3dcad3ba
+# دو اجرا با generator اصلاح‌شده، هر دو روی همان درخت تمیز، خروجی ابتدا در /tmp/cw/<ID>/ و سپس کپی به evidence/
+# دستور: python3 scripts/crosswalk_v2.py --kind member --out /tmp/cw/INV-02
+#        python3 scripts/crosswalk_v2.py --kind staff  --out /tmp/cw/INV-03
+# یادداشت: اجرای دوم اگر artifact اول را در جای نهایی نوشته بودیم رد می‌شد (guard درخت dirty)،
+#          چون خود artifact یک فایل tracked است؛ به همین دلیل هر دو روی /tmp تولید و بعد کپی شدند.
+META evidence/2026-11-27/INV-02/member-capability-crosswalk.json: sha=9ea9a24a622104408df2de632e3977aa3dcad3ba branch=arena/3c08bfbd-mp tracked_dirty=False untracked=0 counts={'PARTIAL_REVIEW': 14, 'GAP': 3}
+  source backend/api/routes.json -> sha256:7f0333dfb92a5bb56514b7e003cc78370fc7e8fabe3a9a8b5342ccaab9a84cf8
+  source backend/security/rbac.py -> sha256:a8740f75b33e864e1a3990f4d77e2fa781f0c2105c133d9892a41ce63fdf9d2c
+  source studio/src/lib/roleNav.ts -> sha256:650ff74343af6e25010f6a07bab4de477d2ffefcee94be3923a200ed05d53220
+  source studio/src/lib/api.ts -> sha256:ca62f4a37a2835d4c6453ea26440c527fb04f14e1e0152ae7e379d80992ed20c
+  source studio/src/lib/adminApi.ts -> sha256:612cbd1e89a78301545f67c88264519a7c492d148ef44779050f50cc1327f2ce
+  source studio/src/lib/navigation.ts -> sha256:6f9b434207f6fdbfb6701355e323ceaac2f3d10d2d2e505a820ae32752f206b6
+META evidence/2026-11-27/INV-03/staff-page-crosswalk.json: sha=9ea9a24a622104408df2de632e3977aa3dcad3ba branch=arena/3c08bfbd-mp tracked_dirty=False untracked=0 counts={'PARTIAL_REVIEW': 12}
+  source backend/api/routes.json -> sha256:7f0333dfb92a5bb56514b7e003cc78370fc7e8fabe3a9a8b5342ccaab9a84cf8
+  source backend/security/rbac.py -> sha256:a8740f75b33e864e1a3990f4d77e2fa781f0c2105c133d9892a41ce63fdf9d2c
+  source studio/src/lib/roleNav.ts -> sha256:650ff74343af6e25010f6a07bab4de477d2ffefcee94be3923a200ed05d53220
+  source studio/src/lib/api.ts -> sha256:ca62f4a37a2835d4c6453ea26440c527fb04f14e1e0152ae7e379d80992ed20c
+  source studio/src/lib/adminApi.ts -> sha256:612cbd1e89a78301545f67c88264519a7c492d148ef44779050f50cc1327f2ce
+  source studio/src/lib/navigation.ts -> sha256:6f9b434207f6fdbfb6701355e323ceaac2f3d10d2d2e505a820ae32752f206b6
+
+CHECK evidence/2026-11-27/INV-02/member-capability-crosswalk.json
+CHECK evidence/2026-11-27/INV-03/staff-page-crosswalk.json
+Crosswalk digest gate passed: 2 artifact، همهٔ digestها با checkout برابر و tracked_dirty=false.
+EXIT=0

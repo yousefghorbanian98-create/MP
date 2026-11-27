@@ -20,7 +20,7 @@ RELEASE=NO-GO
 
 ### نتیجهٔ همین دور
 
-CROSSWALK_DIGEST_GATE=افزوده شد (`scripts/verify_crosswalk_digests.py`؛ در job `docs` CI اجرا می‌شود)
+CROSSWALK_DIGEST_GATE=افزوده شد (`scripts/verify_crosswalk_digests.py`؛ در job `docs` CI اجرا می‌شود) — پیش از بازتولید روی `d71dbe0` قرمز (۶ خطا/۲ artifact)، پس از بازتولید روی درخت تمیز در `9ea9a24` **PASS**
 CROSSWALK_STALE=v1 artifact‌های `INV-02-v1`/`INV-03-v1` با `git mv` به `*.STALE.{md,json}` تغییر نام دادند؛ v1 بازتولیدشدنی byte-for-byte نبود (generator v1 در repo نیست)
 STALE_REASON=digest ثبت‌شده `f06f2a953050…` و دو منبع `api.ts`/`navigation.ts` از آن زمان تغییر کرده‌اند؛ وضعیت `dirty` هم با کلید تازه `tracked_dirty` ناسازگار است
 SECRET_SCAN_FIX=دو مسیر مجاز، بدون allowlist بر اساس rule/path: پیشوند `sha256:` در generator (artifact آینده) + **۵** خط fingerprint دقیق تازه برای `ebebef3…` (۵ خط `6593cb4b…` از قبل بود؛ fingerprint به commit وابسته است)؛ مجموع ۵۲۱ خط؛ ارجاع: `evidence/2026-11-27/MEM-03/secret-scan-redacted.txt`
@@ -29,7 +29,9 @@ GITLEAKS_POLICY_TEST=PASS — assertهای `scripts/test_retired_signing_scan.py
 FINISH_PHONE_CHANGE_TEST=افزوده شد (۳ تست در `mp-app/studio/tests/session.test.ts`) و با mutation سنجیده شد: جابه‌جایی `logoutSession` به بالای guard دو تست را قرمز می‌کند
 STUDIO_TESTS=24/24 در فایل؛ کل مجموعه ۵۵ فایل passed / ۴ skip؛ ۳۹۵ pass / ۱۵ skip؛ `tsc -b`, `eslint .`, `npm run build` پاک
 PR31=draft، merge نشود
-NEXT_COMMIT=بازتولید `INV-02`/`INV-03` روی درخت تمیز با generator اصلاح‌شده؛ تا آن لحظه `docs` gate قرمز است و PASS ادعا نمی‌شود
+CROSSWALK_REGEN=PASS — `INV-02` (14/3) و `INV-03` (12) روی درخت تمیز در `9ea9a24` بازتولید شدند؛ `tracked_dirty=false`, `untracked=0`, digestها `sha256:`؛ شاهد: `evidence/2026-11-27/MEM-03/digest-gate-after.txt`
+CROSSWALK_REGEN_NOTE=هر دو artifact باید در یک وضعیت تمیز تولید شوند؛ نوشتن artifact اول در جای نهایی درخت را dirty می‌کند و اجرای دوم را می‌بندد، پس خروجی ابتدا در /tmp ساخته و بعد کپی می‌شود
+NEXT=CI همین شاخه و `gh pr checks 31`؛ سپس تصمیم مالک دربارهٔ پنجرهٔ retention (ADR-008) و ارزیابی MEM-04 فقط از کد همان SHA
 
 ## Current follow-up — MEM-01 live member-account contract and identity-negative (2026-11-27 UTC)
 

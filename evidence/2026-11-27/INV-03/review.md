@@ -24,3 +24,12 @@
 - مسیرهای پویا باید `DYNAMIC_UNCOVERED` باشند، نه GAP کاذب یا PASS؛ این run چنین برچسبی صادر نکرد (`dynamic_sites=0`). این محدودیت ثبت شده و پوشش تلقی نمی‌شود.
 
 `INV-03=PARTIAL/NOT_ACCEPTED`; checkbox باز، `PWA-01=PROPOSED/NOT_RUN`, و release `NO-GO` باقی است.
+
+## الحاقیهٔ بازتولید — ۲۰۲۶-۱۱-۲۷ UTC (HEAD `9ea9a24a622104408df2de632e3977aa3dcad3ba`)
+
+- artifact روی **درخت تمیز** بازتولید شد (`tracked_dirty=False`، `untracked=0`)؛ digestها با پیشوند `sha256:`.
+- دو منبع کهنه (`studio/src/lib/api.ts`، `studio/src/lib/navigation.ts`) به‌روز شدند؛ علت، تغییر همین فایل‌ها در commit‌های همین شاخه بود، نه تغییر artifact.
+- شمارش بدون تغییر: `PARTIAL_REVIEW=12`. ستون اشارهٔ تست حداکثر ۴ نام الفبایی است؛ نبودِ یک نام در ستون به معنی نبود فایل نیست.
+- محدودیت‌ها بدون تغییر: مجوز/مالکیت و رفتار خطا/ماندگاری اثبات نشده، `dynamic_sites=0`، `INV-03=PARTIAL/NOT_ACCEPTED`، checkbox باز، release `NO-GO`.
+
+شاهد عددی: [`digest-gate-after.txt`](../MEM-03/digest-gate-after.txt).
