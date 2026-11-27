@@ -1,0 +1,14 @@
+# MEM-03 — تست قرارداد fingerprint در .gitleaksignore
+# gitleaks 8.30.1 در این sandbox نصب نمی‌شود (دانلود release با SSL_ERROR_SYSCALL شکست می‌خورد)،
+# پس «اسکن واقعی» اینجا NOT_RUN است؛ آنچه اجرا شد بررسی policy روی خود فایل است.
+
+$ python3 scripts/test_retired_signing_scan.py      # از طریق importlib، فقط assert‌ها
+PASS: policy assertions (gitleaks binary NOT available here; scanner regression NOT_RUN)
+
+# assert‌های اجراشده:
+#  - هیچ خط تکراری نیست
+#  - همه خطوط با regex ^[0-9a-f]{40}:[^:]+:[a-zA-Z0-9_-]+:[1-9][0-9]*$ می‌خوانند
+#  - مجموعه fingerprints برای 6593cb4b… دقیقاً برابر EXPECTED (۵ یافته)
+#  - مجموعه جدید برای ebebef3a… دقیقاً همان ۵ یافته با commit جابه‌جا‌شده است (MERGED_CROSSWALK_COMMIT)
+#  - PUBLIC_INTEGRITY_METADATA یک بار، و HISTORICAL_COMMIT/SIGNING_PATH برابر EXPECTED قدیمی
+# تعداد خطوط .gitleaksignore: 521 (۵۱۶ قبل از این دور + ۵ خط ebebef3)

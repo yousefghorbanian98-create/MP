@@ -1,4 +1,7 @@
+import { act, renderHook, waitFor } from "@testing-library/react";
+import { createElement, type ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { AuthProvider, useAuth } from "../src/auth/AuthContext";
 import {
   ACCESS_TOKEN_KEY,
   REFRESH_TOKEN_KEY,
@@ -437,5 +440,87 @@ describe("phone-change session guard (MEM-03)", () => {
 
     expect(clearSessionForAccount(guard)).toBe("different-account");
     expect(localStorage.getItem(ACCESS_TOKEN_KEY)).toBe("opaque-access");
+  });
+});
+
+describe("AuthContext.finishPhoneChange decision point (MEM-03)", () => {
+  interface AuthCall {
+    path: string;
+    body: string | null;
+  }
+
+  function stubAuthApi() {
+    const calls: AuthCall[] = [];
+    const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const path = new URL(String(input), window.location.href).pathname;
+      calls.push({ path, body: init?.body === undefined ? null : String(init.body) });
+      if (path === "/api/v1/members/me") return reply(200, { role: "member" });
+      if (path === "/api/v1/auth/logout") return reply(200, { status: "logged_out" });
+      throw new Error(`unexpected request: ${path}`);
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    return calls;
+  }
+
+  function wrapper({ children }: { children: ReactNode }) {
+    return createElement(AuthProvider, null, children);
+  }
+
+  async function mountAuth() {
+    const hook = renderHook(() => useAuth(), { wrapper });
+    await waitFor(() => expect(hook.result.current.status).not.toBe("checking"));
+    return hook;
+  }
+
+  it("leaves a different account's session untouched and never calls /auth/logout", async () => {
+    // Account 52 now owns this browser; the phone change belonged to account 41.
+    storeTokenPair({ access_token: jwtFor(52), refresh_token: "other-52-refresh" });
+    const calls = stubAuthApi();
+    const { result } = await mountAuth();
+
+    let outcome: string | undefined;
+    await act(async () => {
+      outcome = await result.current.finishPhoneChange({ account: "41" });
+    });
+
+    expect(outcome).toBe("different-account");
+    expect(localStorage.getItem(ACCESS_TOKEN_KEY)).toBe(jwtFor(52));
+    expect(localStorage.getItem(REFRESH_TOKEN_KEY)).toBe("other-52-refresh");
+    // The order of the guard and the revocation call is the invariant: moving
+    // logoutSession above the guard would revoke account 52's token server-side.
+    expect(calls.some((call) => call.path === "/api/v1/auth/logout")).toBe(false);
+    expect(result.current.status).toBe("authenticated");
+  });
+
+  it("ends the guarded session, revokes its own refresh token, and reports signed-out", async () => {
+    storeTokenPair({ access_token: jwtFor(41), refresh_token: "member-41-refresh" });
+    const calls = stubAuthApi();
+    const { result } = await mountAuth();
+
+    let outcome: string | undefined;
+    await act(async () => {
+      outcome = await result.current.finishPhoneChange({ account: "41" });
+    });
+
+    expect(outcome).toBe("ended");
+    expect(localStorage.getItem(ACCESS_TOKEN_KEY)).toBeNull();
+    expect(localStorage.getItem(REFRESH_TOKEN_KEY)).toBeNull();
+    const logout = calls.find((call) => call.path === "/api/v1/auth/logout");
+    expect(logout, "confirm باید نشست را ببندد و revocation را best-effort بفرستد").toBeDefined();
+    expect(JSON.parse(String(logout?.body))).toEqual({ refresh_token: "member-41-refresh" });
+    expect(result.current.status).toBe("unauthenticated");
+  });
+
+  it("does nothing when the browser is already signed out", async () => {
+    const calls = stubAuthApi();
+    const { result } = await mountAuth();
+
+    let outcome: string | undefined;
+    await act(async () => {
+      outcome = await result.current.finishPhoneChange({ account: "41" });
+    });
+
+    expect(outcome).toBe("signed-out");
+    expect(calls.some((call) => call.path === "/api/v1/auth/logout")).toBe(false);
   });
 });

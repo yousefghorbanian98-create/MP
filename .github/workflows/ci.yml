@@ -68,28 +68,58 @@ jobs:
                   .replace(",", "%2C")
               )
 
+          # The scanner report also carries the matched value. This step reduces it to
+          # the fields needed to write an exact `.gitleaksignore` fingerprint
+          # (commit/path/rule/line), so a reviewer never has to ask for the job log —
+          # and never sees a secret value. Same data goes to the step summary and to
+          # the artifact uploaded below.
           summary = ["### Gitleaks scan (redacted metadata)"]
           summary.append(f"Potential findings: {len(findings)}. Secret values are never included.")
-          for finding in findings[:40]:
+          metadata = []
+          for finding in findings[:200]:
               path = finding.get("File", "unknown path")
               rule = finding.get("RuleID", "unknown rule")
               line = finding.get("StartLine", 0)
-              commit = str(finding.get("Commit", ""))[:12]
-              message = f"Potential secret match ({rule}); value withheld; commit {commit or 'unknown'}."
+              commit = str(finding.get("Commit", ""))
+              fingerprint = finding.get("Fingerprint", "")
+              metadata.append(
+                  {
+                      "file": path,
+                      "rule": rule,
+                      "line": line,
+                      "commit": commit,
+                      "fingerprint": fingerprint,
+                  }
+              )
+              message = (
+                  f"Potential secret match ({rule}); value withheld; commit {commit[:12] or 'unknown'}."
+              )
               print(
                   f"::error file={escape_command_value(path)},line={line},title=Gitleaks finding::"
                   f"{escape_command_value(message)}"
               )
-              summary.append(f"- `{path}:{line}` — `{rule}`; commit `{commit or 'unknown'}` (value withheld).")
+              summary.append(f"- `{path}:{line}` — `{rule}`; commit `{commit[:12] or 'unknown'}` (value withheld).")
+              if fingerprint:
+                  summary.append(f"  - fingerprint: `{escape_command_value(fingerprint)}`")
           if not report.is_file():
               summary.append("No JSON report was produced; inspect the scanner step output after checking access restrictions.")
               print("::error::Gitleaks failed without a readable JSON report; no secret values were emitted by this summary.")
+          with open("/tmp/gitleaks-findings.json", "w", encoding="utf-8") as stream:
+              json.dump({"findings": metadata}, stream, ensure_ascii=False, indent=2)
           summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
           if summary_path:
               with open(summary_path, "a", encoding="utf-8") as stream:
                   stream.write("\n".join(summary) + "\n")
           PY
           exit "$scan_status"
+      - name: Publish redacted finding metadata (artifact)
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        with:
+          name: gitleaks-findings-metadata
+          path: /tmp/gitleaks-findings.json
+          if-no-files-found: warn
+          retention-days: 14
 
   docs:
     name: Documentation links and handoff
@@ -108,6 +138,8 @@ jobs:
           node-version: "22"
       - name: Interaction map gate (contract drift + stale map)
         run: python3 scripts/interaction_map.py --check
+      - name: Crosswalk digest gate (artifact claims must match this checkout)
+        run: python3 scripts/verify_crosswalk_digests.py
       - name: Mermaid syntax gate (official parser, headless — no browser)
         run: cd tools/mermaid-check && npm ci --no-audit --no-fund && node check.mjs
       - name: Repository hygiene (no tool index, no .claude/, no agent git hook)

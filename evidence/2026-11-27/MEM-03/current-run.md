@@ -61,3 +61,37 @@
 1. اجرای CI همین شاخه و ثبت نتیجهٔ متصل به SHA.
 2. در صورت وجود دستگاه/مرورگر مجاز: اجرای دستی مسیر `/member` → تغییر شماره → ورود با شمارهٔ جدید و بررسی نشست‌های دستگاه روی دستگاه دوم.
 3. تصمیم مالک دربارهٔ retention/purge شماره‌های challenge.
+
+## ۷) دور اصلاحی ۲۰۲۶-۱۱-۲۷ — گیت digest، شاهد redacted اسکن راز، تست guard
+
+این بخش فقط شکاف‌های ابزار/شاهد را می‌بندد؛ وضعیت محصول همچنان `MEM-03/PWA-32=PARTIAL/NOT_ACCEPTED` و release=`NO-GO` است.
+
+### ۷.۱ گیت تازهٔ digest
+`scripts/verify_crosswalk_digests.py` اضافه شد و در job `docs` (پس از `Interaction map gate`) اجرا می‌شود. شرط‌ها:
+`evidence/**/*-crosswalk.json` به‌جز `*.STALE.json`؛ `meta.tracked_dirty is False` (کلید v1 یعنی `dirty` کافی نیست)؛ digest هر منبع در `meta.sources` با SHA-256 فایل فعلی `mp-app/<path>` برابر باشد (هر دو شکل bare-hex و `sha256:` پذیرفته می‌شود)؛
+و اگر `meta.sha` در clone موجود بود، `git diff --name-only <meta.sha> HEAD` برای همان منابع خالی باشد (در clone کم‌عمق فقط `NOTE` می‌دهد).
+
+خروجی روی `d71dbe0` پیش از بازتولید: `EXIT=1`، ۶ خطا در ۲ artifact — `INV-02` و `INV-03` هر دو روی `studio/src/lib/api.ts` (recorded `f5e977948640` / actual `ca62f4a37a28`) و `studio/src/lib/navigation.ts` (recorded `71fa84e7d3d0` / actual `6f9b434207f6`) کهنه‌اند و `tracked_dirty=True` دارند. یعنی دامنهٔ کهنگی **دو فایل** است، نه یک فایل. شاهد: [`digest-gate-before.txt`](digest-gate-before.txt).
+
+`scripts/crosswalk_v2.py` هم دو تغییر گرفت: (۱) همهٔ digestها با پیشوند `sha256:` نوشته می‌شوند تا الگوی key/value در `generic-api-key` دیگر match نشود؛ (۲) روی درخت dirty با `exit 4` متوقف می‌شود (پیش از `build()`)، چون digest درخت dirty بازتولیدپذیر نیست.
+
+### ۷.۲ شاهد redacted اسکن راز (بدون هیچ مقدار محرمانه)
+پنج یافتهٔ `generic-api-key` روی commit `ebebef3…` (و همان پنج روی `6593cb4b…`) فقط با `File`/`RuleID`/`Line`/`Commit`/`Fingerprint` ثبت شدند: [`secret-scan-redacted.txt`](secret-scan-redacted.txt).
+رفع در دو مسیر مجاز (بدون allowlist بر اساس rule یا path): پیشوند `sha256:` برای artifactهای آینده، و ۵ خط fingerprint **دقیق** تازه در `.gitleaksignore` (۵ خط `6593cb4b…` از قبل بود). `.gitleaksignore` از ۵۱۶ به ۵۲۱ خط رسید؛ `git diff --numstat` = ۵ افزوده.
+job `secret-scan` در CI حالا `Fingerprint` را در step summary چاپ می‌کند و `/tmp/gitleaks-findings.json` را به‌عنوان artifact آپلود می‌کند؛ پیش از این، لاگ job با EOF قابل دانلود نبود.
+
+### ۷.۳ تست guard برای `finishPhoneChange`
+سه تست به `mp-app/studio/tests/session.test.ts` اضافه شد: `different-account` (storage دست‌نخورده و هیچ فراخوانی `/auth/logout`)، `ended` (refresh token خودش revoke و وضعیت `unauthenticated`)، `signed-out`.
+برای اثبات غیر‌توخالی‌بودن تست، `logoutSession` عمداً به بالای guard منتقل شد: **۲ تست قرمز** شدند؛ سپس فایل بازگردانده شد و فایل دوباره `24 passed` داد. شاهد: [`guard-mutation-test.txt`](guard-mutation-test.txt).
+
+### ۷.۴ اجرای محلی این دور
+- `npx vitest run tests/session.test.ts` → ۲۴ pass.
+- `npx vitest run` (کل استودیو) → ۵۵ فایل pass / ۴ فایل skip؛ ۳۹۵ تست pass / ۱۵ skip.
+- `npx tsc -b` / `npx eslint .` / `npm run build` → پاک (exit 0).
+- `python3 scripts/docs_gate.py` → ۳۸ Markdown، ۶۱۹ لینک محلی، ۱۵ Mermaid، pass.
+- تست policy گیتلکس (`scripts/test_retired_signing_scan.py`) → assertها pass؛ **اسکن واقعی gitleaks اینجا NOT_RUN** (دانلود release با `SSL_ERROR_SYSCALL` شکست می‌خورد).
+
+### ۷.۵ محدودیت‌ها و کار باقی‌مانده
+- نتیجهٔ CI روی SHA این commit هنوز دیده نشده؛ ادعای سبزی تا آن لحظه مجاز نیست.
+- بازتولید `INV-02`/`INV-03` باید روی **درخت تمیز** و در commit بلافاصلهٔ بعد انجام شود؛ `docs` تا آن لحظه قرمز است.
+- v1 artifactها byte-for-byte بازتولیدشدنی نیستند (generator v1 در repo نیست) و به همین دلیل با `git mv` به `*.STALE.{md,json}` تغییر نام دادند.

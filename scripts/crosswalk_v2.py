@@ -102,8 +102,16 @@ def sh(*args: str, cwd: Path) -> str:
         return ""
 
 
-def sha256(path: Path) -> str | None:
-    return hashlib.sha256(path.read_bytes()).hexdigest() if path.is_file() else None
+def source_digest(path: Path) -> str | None:
+    """SHA-256 منبع با پیشوند الگوریتم (`sha256:<hex>`).
+
+    چرا پیشوند: بدون آن، کلیدهایی مثل `studio/src/lib/api.ts` در JSON شاهد، به‌همراه
+    مقدار ۶۴-رقمی hex، الگوی قاعدهٔ `generic-api-key` گیتلکس را فعال می‌کنند و هر بار
+    یک finding جعلی می‌سازند. `sha256:` هم الگوریتم را صریح می‌کند و هم رشتهٔ یکپارچهٔ
+    کلید/مقدار را می‌شکند. گیت `scripts/verify_crosswalk_digests.py` هر دو شکل را
+    می‌پذیرد تا artifactهای قدیمی قابل‌بررسی بمانند.
+    """
+    return f"sha256:{hashlib.sha256(path.read_bytes()).hexdigest()}" if path.is_file() else None
 
 
 def canon(path: str) -> str:
@@ -288,12 +296,12 @@ def build(repo: Path, kind: str) -> tuple[list[Row], dict]:
         "untracked": len([ln for ln in sh("git", "status", "--porcelain", cwd=repo).splitlines()
                           if ln.startswith("??")]),
         "sources": {
-            "backend/api/routes.json": sha256(repo / "mp-app/backend/api/routes.json"),
-            "backend/security/rbac.py": sha256(repo / "mp-app/backend/security/rbac.py"),
-            "studio/src/lib/roleNav.ts": sha256(repo / "mp-app/studio/src/lib/roleNav.ts"),
-            "studio/src/lib/api.ts": sha256(repo / "mp-app/studio/src/lib/api.ts"),
-            "studio/src/lib/adminApi.ts": sha256(repo / "mp-app/studio/src/lib/adminApi.ts"),
-            "studio/src/lib/navigation.ts": sha256(repo / "mp-app/studio/src/lib/navigation.ts"),
+            "backend/api/routes.json": source_digest(repo / "mp-app/backend/api/routes.json"),
+            "backend/security/rbac.py": source_digest(repo / "mp-app/backend/security/rbac.py"),
+            "studio/src/lib/roleNav.ts": source_digest(repo / "mp-app/studio/src/lib/roleNav.ts"),
+            "studio/src/lib/api.ts": source_digest(repo / "mp-app/studio/src/lib/api.ts"),
+            "studio/src/lib/adminApi.ts": source_digest(repo / "mp-app/studio/src/lib/adminApi.ts"),
+            "studio/src/lib/navigation.ts": source_digest(repo / "mp-app/studio/src/lib/navigation.ts"),
         },
         "site_kinds": {k: len([s for s in sites if s.kind == k]) for k, _ in CALL_PATTERNS},
         "dynamic_sites": len([s for s in sites if s.dynamic]),
@@ -383,6 +391,16 @@ def main() -> int:
     if not (repo / "mp-app/backend/api/routes.json").is_file():
         print("FATAL: از ریشهٔ مخزن MP اجرا کن.", file=sys.stderr)
         return 2
+
+    tracked_dirty = sh("git", "status", "--porcelain", "--untracked-files=no", cwd=repo)
+    if tracked_dirty:
+        print(
+            "FATAL: درخت tracked تمیز نیست؛ digest روی درخت dirty بازتولیدپذیر نیست.\n"
+            "اول commit کن، بعد crosswalk را بساز.\n"
+            + "\n".join(tracked_dirty.splitlines()[:10]),
+            file=sys.stderr,
+        )
+        return 4
 
     rows, meta = build(repo, args.kind)
     if not rows:

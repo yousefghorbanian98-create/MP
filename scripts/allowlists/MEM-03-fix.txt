@@ -1,0 +1,26 @@
+# Exact file-level allowlist for the MEM-03 fix round: digest gate, redacted secret-scan
+# evidence, the finishPhoneChange guard test, the STALE renames and the draft PR #31.
+# One repository-relative path per line; no directories and no glob patterns.
+# v1 crosswalk artifacts appear here only under their new *.STALE.* names.
+.finn/state/STATE.md
+.github/workflows/ci.yml
+.gitleaksignore
+docs/MuscleParadise/PWA-EXECUTION-STATE.md
+docs/MuscleParadise/SESSION_HANDOFF.md
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md
+evidence/2026-11-27/INV-02-v1/member-capability-crosswalk.STALE.json
+evidence/2026-11-27/INV-02-v1/member-capability-crosswalk.STALE.md
+evidence/2026-11-27/INV-02-v1/review.md
+evidence/2026-11-27/INV-03-v1/staff-page-crosswalk.STALE.json
+evidence/2026-11-27/INV-03-v1/staff-page-crosswalk.STALE.md
+evidence/2026-11-27/INV-03-v1/review.md
+evidence/2026-11-27/MEM-03/digest-gate-before.txt
+evidence/2026-11-27/MEM-03/current-run.md
+evidence/2026-11-27/MEM-03/gitleaks-policy-test.txt
+evidence/2026-11-27/MEM-03/guard-mutation-test.txt
+evidence/2026-11-27/MEM-03/secret-scan-redacted.txt
+mp-app/studio/tests/session.test.ts
+scripts/allowlists/MEM-03-fix.txt
+scripts/crosswalk_v2.py
+scripts/test_retired_signing_scan.py
+scripts/verify_crosswalk_digests.py

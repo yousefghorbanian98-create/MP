@@ -18,7 +18,11 @@ PUSHED=3170b6a80029102dafbc28128f2997ee0df5b3f7 روی arena/3c08bfbd-mp (commit
 CI_3170B6A=همان نتیجه: هفت job سبز، فقط secret-scan قرمز (run 46043582882)
 CI_E22D8DB=هفت job سبز (studio، backend، docs، live-contract، e2e-api، client-flutter، client-pinned)؛ تنها secret-scan قرمز — همان شکست از قبل موجود روی main
 CI_A5E4517=همان نتیجه روی SHA قبلی؛ client-pinned در تلاش اول e22d8db یک‌بار در step کامپایل اندروید شکست و با rerun سبز شد (ناپایدار، نه ناشی از این تغییر)
-SECRET_SCAN=BLOCKED/NEEDS_OWNER: پنج finding از نوع SHA-256 digest در evidence/crosswalk JSON؛ رفع نیازمند تأیید suppression
+SECRET_SCAN=RED؛ رفع با دو مسیر مجاز انجام شد (بدون allowlist بر اساس rule/path): پیشوند `sha256:` در generator + ۵ خط fingerprint دقیق برای `ebebef3…` (۵ خط `6593cb4b…` از قبل بود)
+CROSSWALK_DIGEST_GATE=افزوده شد و در job `docs` اجرا می‌شود؛ روی HEAD d71dbe0 قرمز (۲ artifact کهنه، ۲ منبع: `api.ts`، `navigation.ts`)؛ بازتولید فقط روی درخت تمیز، در commit بعدی
+CROSSWALK_STALE=v1 artifactها با `git mv` به `*.STALE.{md,json}` تغییر نام دادند (محتوا دست‌نخورده)
+FINISH_PHONE_CHANGE_TEST=PASS (۳ تست تازه در `tests/session.test.ts`؛ با mutation تأیید شد که جابه‌جایی revocation به بالای guard دو تست را قرمز می‌کند)
+PR31=draft/open؛ merge ممنوع
 REAL_SMS/DEVICE/BROWSER=اجرا نشده؛ release=NO-GO
 ```
 
@@ -28,7 +32,10 @@ REAL_SMS/DEVICE/BROWSER=اجرا نشده؛ release=NO-GO
 - CI: job «live-contract» اکنون `MP_ALLOW_DEV_OTP_ECHO=true` را فقط برای سرور synthetic همان job می‌دهد و یک step جدا برای phone-change/logout-all دارد (آخرین مصرف‌کنندهٔ حساب fixture، چون شماره‌اش را عوض می‌کند). این workflow هنوز اجرا نشده است.
 - محدودیت‌ها: SMS/provider و دستگاه واقعی، مرورگر/صفحه‌خوان، بازبینی انسانی و CI این شاخه اجرا نشده‌اند؛ تست‌های UI با jsdom و `fetch` stub‌شده‌اند. داده‌های شمارهٔ قدیم/جدید در `phone_change_challenges` بدون مسیر retention پیدا شدند؛ این پرسش **policy حریم خصوصی** است و به‌عنوان نتیجهٔ compliance ثبت نمی‌شود.
 - CI روی `e22d8db` (run `46041788457`) و `a5e4517` (run `46040528118`): هر هفت job سبز است، از جمله `live-contract` که step تازهٔ phone-change/logout-all را اجرا کرد؛ تنها `secret-scan` قرمز است و **همان job روی main (`ebebef3`, run `46036816362`) هم قرمز است**. پنج finding همه مقدار ۶۴-hex در نگاشت `source_digests` فایل‌های crosswalk JSON هستند (SHA-256 محتوای source، نه credential). راه‌حل — fingerprint دقیق در `.gitleaksignore`، allowlist باریک، یا تغییر شکل digest در generator — نیازمند تأیید مالک است و در این برش انجام نشد. یکی از تلاش‌ها روی e22d8db در step کامپایل اندروید شکست خورد و با `gh run rerun --failed` سبز شد (ناپایدار؛ همین کد ۲۰ دقیقه قبل سبز بود و لاگ job با EOF دانلود نشد). شاهد: [`pr-ci-a5e4517.txt`](../../evidence/2026-11-27/MEM-03/pr-ci-a5e4517.txt) و [`pr-ci-e22d8db.txt`](../../evidence/2026-11-27/MEM-03/pr-ci-e22d8db.txt). تصمیم retention نیز به‌صورت [ADR-008 (Proposed)](adr/008-phone-change-challenge-retention.md) ثبت شد و پیاده‌سازی نشد.
-- بعدی: تصمیم مالک دربارهٔ secret-scan و پنجرهٔ retention، سپس ارزیابی MEM-04 فقط از کد و شاهد همان SHA. `MEM-01`، `MEM-02/PWA-30/31`، `INV-02/03` و `SEC-01` partial می‌مانند؛ `PWA-01=PROPOSED/NOT_RUN`؛ release=`NO-GO`.
+- **رفع همین دور (بدون راز در شاهد):** `.github/workflows/ci.yml` در job `secret-scan` حالا فقط `File`/`RuleID`/`Line`/`Commit`/`Fingerprint` را چاپ می‌کند و `/tmp/gitleaks-findings.json` را به‌عنوان artifact آپلود می‌کند؛ `.gitleaksignore` پنج خط دقیق برای `ebebef3…` گرفت و `scripts/test_retired_signing_scan.py` حالا هر دو مجموعه (`6593cb4b…` و `ebebef3…`) را assert می‌کند. اسکن واقعی gitleaks در sandbox اجرا نشد (دانلود release شکست می‌خورد)؛ آنچه اجرا شد assert‌های policy روی همان فایل است: [`gitleaks-policy-test.txt`](../../evidence/2026-11-27/MEM-03/gitleaks-policy-test.txt) و [`secret-scan-redacted.txt`](../../evidence/2026-11-27/MEM-03/secret-scan-redacted.txt).
+- **گیت تازهٔ digest:** `scripts/verify_crosswalk_digests.py` روی artifact‌های `evidence/**/*-crosswalk.json` (به‌جز `*.STALE.json`) شرط می‌گذارد که `tracked_dirty` صریحاً `False` باشد و digest هر منبع با فایل فعلی بخواند. خروجی روی `d71dbe0`: ۶ خطا در ۲ artifact — همان دو منبع `api.ts`/`navigation.ts` (بزرگ‌تر از گزارش تک‌فایلی مالک) به‌علاوهٔ `tracked_dirty=true`: [`digest-gate-before.txt`](../../evidence/2026-11-27/MEM-03/digest-gate-before.txt). بازتولید روی درخت تمیز در commit بلافاصلهٔ بعد انجام می‌شود؛ تا آن لحظه `docs` عمداً قرمز است و سبز اعلام نمی‌شود.
+- **قاعدهٔ STATE (بدون استثنا):** هر artifact که digest/HEAD آن با HEAD جاری یکی نیست، یا روی درخت تمیز بازتولید می‌شود یا `STALE` در نامش می‌آید؛ تولید digest روی درخت dirty ممنوع است و generator در این حالت `exit 4` می‌دهد.
+- بعدی: بازتولید crosswalk روی درخت تمیز و تأیید CI همان SHA، سپس ارزیابی MEM-04 فقط از کد و شاهد همان SHA. `MEM-01`، `MEM-02/PWA-30/31`، `INV-02/03` و `SEC-01` partial می‌مانند؛ `PWA-01=PROPOSED/NOT_RUN`؛ release=`NO-GO`.
 
 ## Snapshot پیشین — MEM-01 live member-account contract و identity-negative (UTC 2026-11-27)
 

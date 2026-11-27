@@ -2,6 +2,35 @@
 
 > هشدار انتقال ۲۰۲۶-۱۱-۱۸: بخش‌های بعدی قدیمی snapshot هستند و branch/toolchain/status آن‌ها جاری فرض نشود. وضعیت تازهٔ Motion/PWA در این بخش و [handoff](../../docs/MuscleParadise/SESSION_HANDOFF.md) آمده؛ کارهای قدیمی M63–M99، M100–M106 و M107+ فقط پس از تطبیق با TODO و گیت‌های جاری ادامه یابند.
 
+## Current follow-up — MEM-03 fixes: digest gate، شاهد secret-scan بدون راز، تست guard (2026-11-27 UTC)
+
+STATE_LAST_UPDATED=2026-11-27T18:50:00Z
+EVIDENCE_DATE_DIRS=2026-11-23, 2026-11-27
+CURRENT_BRANCH=arena/3c08bfbd-mp
+BRANCH_BASE=ebebef3ad153277f0223c2011efc4f9a9c855654 (PR #30 merged)
+MEM-03/PWA-32=PARTIAL/NOT_ACCEPTED — این دور فقط شکاف‌های ابزار/شاهد را می‌بندد، نه پذیرش محصول
+RELEASE=NO-GO
+
+### قواعد جاری STATE (لازم‌الاجرا، بدون استثنا)
+
+1. **قاعدهٔ digest/HEAD:** هر artifactی که digest یا SHA ثبت‌شده‌اش با HEAD جاری یکی نیست، یا باید روی **درخت تمیز** بازتولید شود یا «`STALE`» در نامش بیاید. هیچ artifact کهنه‌ای با همان نام قبلی نمی‌ماند.
+2. **قاعدهٔ درخت تمیز:** تولید digest فقط روی درخت تمیز. اگر worktree dirty است اول commit، بعد تولید؛ digest درخت dirty ممنوع است (`scripts/crosswalk_v2.py` در این حالت `exit 4` می‌دهد).
+3. **قاعدهٔ secret-scan:** فقط دو مسیر مجاز است — (i) شکل digest در generator طوری عوض شود که rule دیگر match نکند (`sha256:<hex>`)، و/یا (ii) خط fingerprint **دقیق** به‌ازای هر یافته در `.gitleaksignore` با ارجاع شاهد. allowlist بر اساس rule یا path ممنوع. تعداد خطوط افزوده = تعداد یافته‌ها.
+4. **قاعدهٔ خروجی redacted:** از اسکن راز فقط `File`, `RuleID`, `Line`, `Commit`, `Fingerprint` منتشر می‌شود؛ هیچ مقدار secret در doc/evidence/گزارش نوشته نمی‌شود.
+
+### نتیجهٔ همین دور
+
+CROSSWALK_DIGEST_GATE=افزوده شد (`scripts/verify_crosswalk_digests.py`؛ در job `docs` CI اجرا می‌شود)
+CROSSWALK_STALE=v1 artifact‌های `INV-02-v1`/`INV-03-v1` با `git mv` به `*.STALE.{md,json}` تغییر نام دادند؛ v1 بازتولیدشدنی byte-for-byte نبود (generator v1 در repo نیست)
+STALE_REASON=digest ثبت‌شده `f06f2a953050…` و دو منبع `api.ts`/`navigation.ts` از آن زمان تغییر کرده‌اند؛ وضعیت `dirty` هم با کلید تازه `tracked_dirty` ناسازگار است
+SECRET_SCAN_FIX=دو مسیر مجاز، بدون allowlist بر اساس rule/path: پیشوند `sha256:` در generator (artifact آینده) + **۵** خط fingerprint دقیق تازه برای `ebebef3…` (۵ خط `6593cb4b…` از قبل بود؛ fingerprint به commit وابسته است)؛ مجموع ۵۲۱ خط؛ ارجاع: `evidence/2026-11-27/MEM-03/secret-scan-redacted.txt`
+SECRET_SCAN_ARTIFACT=job `secret-scan` حالا `Fingerprint` را چاپ و `/tmp/gitleaks-findings.json` را به‌عنوان artifact آپلود می‌کند
+GITLEAKS_POLICY_TEST=PASS — assertهای `scripts/test_retired_signing_scan.py` روی ۵۲۱ خط `.gitleaksignore` (اسکن واقعی gitleaks در این sandbox `NOT_RUN`: دانلود release ناموفق)
+FINISH_PHONE_CHANGE_TEST=افزوده شد (۳ تست در `mp-app/studio/tests/session.test.ts`) و با mutation سنجیده شد: جابه‌جایی `logoutSession` به بالای guard دو تست را قرمز می‌کند
+STUDIO_TESTS=24/24 در فایل؛ کل مجموعه ۵۵ فایل passed / ۴ skip؛ ۳۹۵ pass / ۱۵ skip؛ `tsc -b`, `eslint .`, `npm run build` پاک
+PR31=draft، merge نشود
+NEXT_COMMIT=بازتولید `INV-02`/`INV-03` روی درخت تمیز با generator اصلاح‌شده؛ تا آن لحظه `docs` gate قرمز است و PASS ادعا نمی‌شود
+
 ## Current follow-up — MEM-01 live member-account contract and identity-negative (2026-11-27 UTC)
 
 STATE_LAST_UPDATED=2026-11-27T15:41:18Z

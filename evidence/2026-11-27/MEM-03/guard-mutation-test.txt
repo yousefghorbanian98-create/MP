@@ -1,0 +1,22 @@
+# MEM-03 — اثبات اینکه تست جدید واقعاً همان invariant را می‌گیرد (mutation test)
+# دستور: npx vitest run tests/session.test.ts   (mp-app/studio، node_modules با npm ci نصب شد)
+
+## 1) کد اصلی (HEAD d71dbe0) + سه تست جدید در tests/session.test.ts
+ ✓ tests/session.test.ts (24 tests) 367ms
+ Test Files  1 passed (1)
+      Tests  24 passed (24)
+
+## 2) mutation: جابه‌جایی عمدی logoutSession به بالای guard در AuthContext.finishPhoneChange
+   × leaves a different account's session untouched and never calls /auth/logout 77ms
+   × ends the guarded session, revokes its own refresh token, and reports signed-out 56ms
+      Tests  2 failed | 22 passed (24)
+# یعنی اگر کسی revocation را قبل از guard بگذارد، refresh token حساب دیگری روی سرور باطل می‌شود
+# و تست اول قرمز می‌شود. سپس فایل با نسخه اصلی بازگردانده شد (git diff روی آن خالی است).
+
+## 3) بازگرداندن و اجرای دوباره
+ Test Files  1 passed (1)
+      Tests  24 passed (24)
+
+## 4) کل مجموعه استودیو پس از تغییر
+ Test Files  55 passed | 4 skipped (59)
+      Tests  395 passed | 15 skipped (410)

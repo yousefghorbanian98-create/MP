@@ -30,6 +30,9 @@ PUBLIC_INTEGRITY_METADATA = (
     "mp-ui-ux-motion-kit-v1.1.0-review.fa.md:generic-api-key:9"
 )
 CROSSWALK_EVIDENCE_COMMIT = "6593cb4bc7f42c9ada4ca7e499fe60124bf00703"
+# همان پنج finding پس از squash-merge PR #30 با commit تازه به main رسیدند؛
+# fingerprint به commit وابسته است، پس هر دو مجموعه باید دقیق و کامل ثبت شوند.
+MERGED_CROSSWALK_COMMIT = "ebebef3ad153277f0223c2011efc4f9a9c855654"
 CROSSWALK_HASH_FINDINGS = {
     f"{CROSSWALK_EVIDENCE_COMMIT}:evidence/2026-11-27/INV-02-v1/member-capability-crosswalk.json:generic-api-key:11",
     f"{CROSSWALK_EVIDENCE_COMMIT}:evidence/2026-11-27/INV-02/member-capability-crosswalk.json:generic-api-key:12",
@@ -60,6 +63,13 @@ def main() -> None:
         raise AssertionError("Public integrity-metadata exception must remain exact")
     if {line for line in lines if CROSSWALK_EVIDENCE_COMMIT in line} != CROSSWALK_HASH_FINDINGS:
         raise AssertionError("Crosswalk source-digest exceptions differ from the five reviewed CI findings")
+    merged_expected = {
+        line.replace(CROSSWALK_EVIDENCE_COMMIT, MERGED_CROSSWALK_COMMIT) for line in CROSSWALK_HASH_FINDINGS
+    }
+    if {line for line in lines if MERGED_CROSSWALK_COMMIT in line} != merged_expected:
+        raise AssertionError(
+            "Merged-commit digest exceptions differ from the same five reviewed findings"
+        )
 
     scanner = os.environ.get("GITLEAKS") or shutil.which("gitleaks")
     if not scanner:
