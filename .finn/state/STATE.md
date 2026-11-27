@@ -2,6 +2,22 @@
 
 > هشدار انتقال ۲۰۲۶-۱۱-۱۸: بخش‌های بعدی قدیمی snapshot هستند و branch/toolchain/status آن‌ها جاری فرض نشود. وضعیت تازهٔ Motion/PWA در این بخش و [handoff](../../docs/MuscleParadise/SESSION_HANDOFF.md) آمده؛ کارهای قدیمی M63–M99، M100–M106 و M107+ فقط پس از تطبیق با TODO و گیت‌های جاری ادامه یابند.
 
+## Current follow-up — P0 digest-gate blind spot + DOC gates + MEM-07 (2026-11-27 UTC)
+
+STATE_LAST_UPDATED=2026-11-27T23:55:00Z
+CURRENT_BRANCH=arena/3c08bfbd-mp
+BRANCH_VS_MAIN=ahead=16 behind=0 · tree_differs=yes (19 files, +941/−80) · main@7c4771f is ancestor → yes
+CORRECTION_2026-11-27B=ادعای قبلی «درخت شاخه بایت‌به‌بایت برابر main است» نادرست بود؛ آن اندازه‌گیری مربوط به لحظهٔ merge (`8f960ad`) بود، نه tip. اعداد واقعی در `BRANCH_VS_MAIN` بالا آمده و دیگر از عبارت «diff خالی» استفاده نمی‌شود.
+DIGEST_GATE_BLIND_SPOT=fixed — `inspect_stale()` حالا `expected is None` و `actual is None` را مثل `check()` به problems می‌برد؛ پیش‌تر (digest خراب + فایل غایب) `None == None` می‌شد و artifact «سالم» گزارش می‌شد (با `git rm` می‌شد گیت را بی‌صدا کرد).
+DIGEST_GATE_TESTS=scripts/tests/test_digest_gate.py · ۴ تست · 4/4 pass · با حذف دو بررسی، ۳ تست قرمز می‌شود (شاهد: evidence/2026-11-27/GATE-P0/regression-proof.txt)
+DOC_GATES_ON_PR=4 — trigger `pwa00-doc-quality.yml` از هفت مسیر PWA-00 به `docs/MuscleParadise/**`+`evidence/**`+`.finn/**` گسترش یافت؛ FILTER_REGEX_INCLUDE و reviewdog هم همان دامنه را lint می‌کنند
+DOC_GATES_EVIDENCE=پیش از اصلاح: صفر چک از این گردش‌کار روی #32 (تنها ۸ چک mp-ci). اکنون ۴ چک (Super-Linter، Reviewdog، markdownlint، PWA-00 patch) هم روی تغییرات مستندات اجرا می‌شوند
+MEM-07/PWA-36=PARTIAL/NOT_ACCEPTED — BLOCKED نیست
+MEM07_CONTRACT=unit=yes(ضمنی `_mm`) · measured_at=yes (service.py:193) · comparable=yes (data_state+trend=null+threshold) — شاهد: evidence/2026-11-27/MEM-07/contract-answer.txt
+MEM07_SLICE=MemberJp7Trend.tsx + مسیر /member/progress + ۷ تست؛ عدد پیشرفت فقط در trend_available؛ stale/insufficient/خالی ⇒ «قابل مقایسه نیست»، نه صفر؛ عکس بدن پیاده‌سازی نشد
+LOCAL_GATES=vitest 423 pass/15 skip (62 فایل · 58 pass/4 skip) · tsc/eslint پاک · interaction map 32 سطح/163 مسیر · docs_gate 38 فایل/625 لینک/15 Mermaid
+RELEASE=NO-GO
+
 ## Current follow-up — MEM-06 / PWA-35 گیت ایمنی مسیر عضو (2026-11-27 UTC)
 
 STATE_LAST_UPDATED=2026-11-27T23:05:00Z

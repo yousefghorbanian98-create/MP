@@ -7,12 +7,12 @@ const LOCATION_CHANGE_EVENT = "mp:studio-location-change";
 
 export const STAFF_PAGES: readonly PageId[] = PAGE_IDS;
 
-export type MemberPage = "home" | "today";
+export type MemberPage = "home" | "today" | "progress";
 
 export type StudioRoute =
   | { type: "home"; path: "/" }
   | { type: "login"; path: "/login"; returnTo: string | null }
-  | { type: "member"; path: "/member" | "/member/today"; page: MemberPage }
+  | { type: "member"; path: "/member" | "/member/today" | "/member/progress"; page: MemberPage }
   | { type: "staff"; path: string; page: PageId }
   | { type: "not-found"; path: string };
 
@@ -35,6 +35,7 @@ function routeForPath(pathname: string): StudioRoute {
   if (path === "/login") return { type: "login", path: "/login", returnTo: null };
   if (path === "/member") return { type: "member", path: "/member", page: "home" };
   if (path === "/member/today") return { type: "member", path: "/member/today", page: "today" };
+  if (path === "/member/progress") return { type: "member", path: "/member/progress", page: "progress" };
   if (path === "/staff") return { type: "staff", path: staffPath("dashboard"), page: "dashboard" };
 
   const match = path.match(/^\/staff\/([a-z]+)$/);

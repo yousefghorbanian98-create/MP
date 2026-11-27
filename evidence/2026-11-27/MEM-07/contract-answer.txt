@@ -1,0 +1,59 @@
+# MEM-07 — پاسخ پرسش قرارداد پیش از UI (فقط با grep -n واقعی)
+# HEAD هنگام اجرا: 8cf9995
+
+## ۱) آیا هر اندازه‌گیری «زمان» دارد؟
+$ grep -n "\"measured_at\"" mp-app/backend/modules/assessment/service.py
+193:                "measured_at": r.measured_at.isoformat() if r.measured_at else None,
+222:    if first["measured_at"] and last["measured_at"]:
+225:        d0 = datetime.fromisoformat(first["measured_at"])
+226:        d1 = datetime.fromisoformat(last["measured_at"])
+276:            "first_at": first["measured_at"],
+277:            "last_at": last["measured_at"],
+369:        "measured_at": row.measured_at.isoformat() if row.measured_at else None,
+410:            "measured_at": r.measured_at,
+
+## ۲) آیا «واحد» ئر پاسخ هست؟
+$ grep -n "_mm\|JP7_SUM_CHANGE_MM = " mp-app/backend/modules/assessment/service.py | head -n 12
+94:def jp7_body_fat(skinfolds_mm: dict, age: int, gender: str) -> float:
+100:    return _locked(skinfolds_mm, age, gender, equation_id=LOCKED_VERSION)
+106:    skinfolds_mm: dict,
+122:    clean = validate_jp7_raw(skinfolds_mm, gender)  # اعتبارسنجی خام — بدون محاسبه
+127:        skinfolds_mm=json.dumps(clean, ensure_ascii=False),
+147:JP7_SUM_CHANGE_MM = 2.0
+183:            folds = json.loads(r.skinfolds_mm)
+186:            _log.warning("JP7 row %s skipped: unreadable skinfolds_mm", r.id)
+194:                "sum_mm": round(total, 1),
+220:    delta_mm = round(last["sum_mm"] - first["sum_mm"], 1)
+228:    per_week = round(delta_mm / (days / 7), 2) if days >= 7 else None
+231:    if abs(delta_mm) < JP7_SUM_CHANGE_MM:
+
+## ۳) آیا «قابل مقایسه بودن» صریح است یا فقط سری زمانی؟
+$ grep -n "data_state\|\"trend\": None\|threshold_mm\|def jp7_trend" mp-app/backend/modules/assessment/service.py
+150:def jp7_trend(db: Session, *, member_id: int, user=None) -> dict:
+204:            "trend": None,
+211:            "data_state": "insufficient_measurements",
+292:            "threshold_mm": JP7_SUM_CHANGE_MM,
+300:        "data_state": "trend_available",
+400:            "trend": None,
+
+## ۴) ownership روی همین endpoint
+$ grep -n "ensure_member_scope" mp-app/backend/modules/assessment/service.py
+82:    from app.security.ownership import ensure_member_scope
+84:    ensure_member_scope(db, user, member_id)
+167:    from app.security.ownership import ensure_member_scope
+170:    ensure_member_scope(db, user, member_id)
+338:    from app.security.ownership import ensure_member_scope
+341:    ensure_member_scope(db, user, member_id)
+378:    from app.security.ownership import ensure_member_scope
+382:    ensure_member_scope(db, user, member_id)
+$ grep -n "member_cannot_read_another_members_trend" -A 2 mp-app/backend/tests/integration/test_m50_jp7_trend.py
+205:def test_member_cannot_read_another_members_trend(client: TestClient) -> None:
+206-    h = _staff()
+207-    mid = _member(client, h)
+208-
+
+## نتیجه
+unit=yes (ضمنی در نام فیلد: sum_mm/delta_mm/delta_mm_per_week/first_sum_mm/last_sum_mm/threshold_mm؛ کلید جدا به نام unit وجود ندارد)
+measured_at=yes (service.py:193 برای هر نقطه، و first_at/last_at/span_days برای روند)
+comparable=yes (data_state: insufficient_measurements|trend_available؛ trend=null با <2 نقطه؛ interpretation.status/threshold_mm/confidence)
+⇒ BLOCKED لازم نیست؛ UI مجاز است سری خام + عدد پیشرفت را فقط در trend_available نشان دهد.

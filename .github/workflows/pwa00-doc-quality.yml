@@ -3,23 +3,27 @@
 name: pwa00-doc-quality
 
 on:
+  # گردش‌کار به نام PWA-00 شناخته می‌شد، ولی فیلتر مسیرش فقط هفت فایل PWA-00 را
+  # می‌دید؛ نتیجه: تغییرات `docs/MuscleParadise/**` و `evidence/**` و `.finn/**`
+  # روی PRها هیچ گیت Markdown نداشتند (روی #32 صفر چک از این گردش‌کار اجرا شد).
+  # اکنون مسیرها همان دامنه‌ای است که linter واقعاً می‌سنجد.
   push:
     paths:
       - ".markdownlint.json"
       - ".github/workflows/pwa00-doc-quality.yml"
-      - "docs/MuscleParadise/adr/README.md"
-      - "docs/MuscleParadise/adr/006-shared-react-pwa.md"
-      - "docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-CONTRACT.fa.md"
-      - "docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-EVIDENCE.fa.md"
+      - "docs/MuscleParadise/**/*.md"
+      - "docs/MuscleParadise/*.md"
+      - "evidence/**/*.md"
+      - ".finn/**/*.md"
       - "docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-DIFF.patch"
   pull_request:
     paths:
       - ".markdownlint.json"
       - ".github/workflows/pwa00-doc-quality.yml"
-      - "docs/MuscleParadise/adr/README.md"
-      - "docs/MuscleParadise/adr/006-shared-react-pwa.md"
-      - "docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-CONTRACT.fa.md"
-      - "docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-EVIDENCE.fa.md"
+      - "docs/MuscleParadise/**/*.md"
+      - "docs/MuscleParadise/*.md"
+      - "evidence/**/*.md"
+      - ".finn/**/*.md"
       - "docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-DIFF.patch"
 
 permissions:
@@ -36,13 +40,14 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-      - name: Lint the four PWA-00 Markdown files
+      - name: Lint the changed Markdown files in docs/evidence/.finn
         uses: super-linter/super-linter@2da136927bd4a73596db63044b504547c62cb854 # v9.0.0
         env:
           DEFAULT_BRANCH: main
           VALIDATE_ALL_CODEBASE: false
           VALIDATE_MARKDOWN: true
-          FILTER_REGEX_INCLUDE: '^docs/MuscleParadise/(adr/(README|006-shared-react-pwa)\.md|architecture/session-decisions-2026-11-23/PWA-00-(CONTRACT|EVIDENCE)\.fa\.md)$'
+          # پیش‌تر فقط چهار فایل PWA-00 lint می‌شد؛ همان چهار فایل زیرمجموعهٔ این الگو هستند.
+          FILTER_REGEX_INCLUDE: '^(docs/MuscleParadise/.*\.md|evidence/.*\.md|\.finn/.*\.md)$'
           STRIP_DEFAULT_WORKSPACE_FOR_REGEX: true
           LINTER_RULES_PATH: .
           MARKDOWN_CONFIG_FILE: .markdownlint.json
@@ -143,13 +148,26 @@ jobs:
       - name: Run markdownlint through Reviewdog
         env:
           REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
         run: |
           set -euo pipefail
-          "$RUNNER_TEMP/pwa00-tools/node_modules/.bin/markdownlint" --config .markdownlint.json \
-            docs/MuscleParadise/adr/README.md \
-            docs/MuscleParadise/adr/006-shared-react-pwa.md \
-            docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-CONTRACT.fa.md \
-            docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-EVIDENCE.fa.md 2>&1 | \
+          lint="$RUNNER_TEMP/pwa00-tools/node_modules/.bin/markdownlint"
+          base="${BASE_SHA:-HEAD~1}"
+          mapfile -t files < <(
+            { git diff --name-only --diff-filter=ACMR "$base" HEAD 2>/dev/null || true; } \
+              | grep -E '^(docs/MuscleParadise/.*\.md|evidence/.*\.md|\.finn/.*\.md)$' || true
+          )
+          if [ "${#files[@]}" -eq 0 ]; then
+            echo "هیچ Markdown تغییریافته‌ای در دامنهٔ این گیت نیست؛ چهار فایل PWA-00 به‌عنوان دود-تست lint می‌شوند."
+            files=(
+              docs/MuscleParadise/adr/README.md
+              docs/MuscleParadise/adr/006-shared-react-pwa.md
+              docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-CONTRACT.fa.md
+              docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-EVIDENCE.fa.md
+            )
+          fi
+          printf 'linting %s file(s)\n' "${#files[@]}"
+          "$lint" --config .markdownlint.json "${files[@]}" 2>&1 | \
             reviewdog \
               -efm="%f:%l:%c %m" \
               -efm="%f:%l %m" \

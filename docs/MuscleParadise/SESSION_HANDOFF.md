@@ -2,6 +2,25 @@
 
 > این فایل **خلاصهٔ جاری برای ادامهٔ کار** است، نه آرشیو گفتگو و نه منبع نهایی وضعیت محصول. پیش از فشرده‌سازی context یا پایان هر کار معنادار، همین snapshot را جایگزین/به‌روز کن؛ تاریخچه را با انباشت transcript طولانی نکن.
 
+## وضعیت جاری — P0 گیت + گیت‌های Markdown روی PR + MEM-07 (UTC 2026-11-27)
+
+```text
+CURRENT_BRANCH=arena/3c08bfbd-mp
+BRANCH_VS_MAIN=ahead=16 behind=0 · tree_differs=yes (19 files) · main@7c4771f ancestor=yes
+DIGEST_GATE_BLIND_SPOT=fixed (۳ تست رگرسیون · 4/4 pass)
+DOC_GATES_ON_PR=4 (trigger از ۷ مسیر PWA-00 به docs/MuscleParadise/**+evidence/**+.finn/**)
+MEM-07/PWA-36=PARTIAL/NOT_ACCEPTED
+MEM07_CONTRACT=unit=yes(ضمنی) · measured_at=yes · comparable=yes
+MEM07_GATE=عدد پیشرفت فقط در trend_available؛ بقیه «قابل مقایسه نیست»
+RELEASE=NO-GO
+```
+
+- **P0:** `inspect_stale()` حالت «digest خراب + فایل غایب» را pass می‌داد (`None == None`). دو بررسی `check()` اضافه شد و `scripts/tests/test_digest_gate.py` سه حالت خواسته‌شده + حالت ترکیبی را قفل می‌کند؛ با حذف دو خط، ۳ تست قرمز می‌شود.
+- **اصلاح:** «درخت برابر main» با اعداد واقعی جایگزین شد (ahead=16، ۱۹ فایل، ancestor=yes). عبارت «diff خالی» دیگر استفاده نمی‌شود.
+- **DOC gates:** گردش‌کار PWA-00 روی PR #32 صفر چک داشت؛ اکنون trigger و فیلتر linter هر دو دامنهٔ `docs/MuscleParadise/**`، `evidence/**`، `.finn/**` را می‌پوشانند.
+- **MEM-07:** `MemberJp7Trend.tsx` روی `/member/progress`; هر عدد با واحد+تاریخ+منبع؛ `trend===null`/`stale` ⇒ هیچ عدد پیشرفتی؛ `body_fat_pct=null` ⇒ «قفل»؛ عکس بدن پیاده‌سازی نشد. ۷ تست تازه (کل vitest ۴۲۳ pass/۱۵ skip).
+- شاهد: [`MEM-07 run`](../../evidence/2026-11-27/MEM-07/current-run.md) و [`regression-proof`](../../evidence/2026-11-27/GATE-P0/regression-proof.txt).
+
 ## وضعیت جاری — MEM-06 / PWA-35 گیت ایمنی در مسیر عضو (UTC 2026-11-27)
 
 ```text

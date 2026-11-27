@@ -149,9 +149,18 @@ def inspect_stale(path: Path) -> tuple[list[str], list[str], bool]:
     for relative, recorded in sorted(sources.items()):
         actual = actual_digest(SOURCE_ROOT / relative)
         expected = recorded_hex(recorded)
+        # P0 — همان دو بررسی `check()`، وگرنه یک حالت کور می‌ماند: اگر هم digest
+        # ثبت‌شده خراب باشد و هم فایل در checkout نباشد، `None == None` می‌شود و
+        # artifact «سالم» گزارش می‌شد. هر کسی می‌توانست با `git rm` یک منبع، گیت را
+        # بی‌صدا کند. STALE یعنی «داوری نمی‌شود»، نه «بازرسی نمی‌شود».
+        if expected is None:
+            problems.append(f"{artifact}: {relative} digest نامعتبر ({recorded!r})")
+        if actual is None:
+            problems.append(f"{artifact}: {relative} در checkout نیست")
         report.append(
             f"STALE {artifact}: {relative} recorded={shorten(expected)} "
-            f"actual={shorten(actual)}{'' if actual == expected else '  ← کهنه'}"
+            f"actual={shorten(actual)}"
+            f"{'' if expected is not None and actual == expected else '  ← کهنه'}"
         )
     return problems, report, dirty_flag
 

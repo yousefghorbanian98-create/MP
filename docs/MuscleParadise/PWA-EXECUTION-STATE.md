@@ -18,6 +18,24 @@ LAST_KNOWN_EVIDENCE=evidence/2026-11-27/MEM-03/current-run.md و فایل‌ها
 
 در تعارض، تصمیم scope با ADR/تصمیم مالک، متن acceptance با کارت canonical، رفتار با کد و تست همان مسیر، و status اجرایی با آخرین شاهد پالایش‌شده تعیین می‌شود. Snapshotهای تاریخی، دیاگرام‌ها، screenshotها، artifact package، mock، skipped test و CI روی SHA دیگر acceptance محصول را ثابت نمی‌کنند.
 
+## Latest continuation — digest-gate blind spot, Markdown gates on PRs, MEM-07 member trend
+
+```text
+CURRENT_BRANCH=arena/3c08bfbd-mp
+BRANCH_VS_MAIN=ahead=16 behind=0 · tree_differs=yes (19 files) · main@7c4771f is ancestor → yes
+DIGEST_GATE_BLIND_SPOT=fixed — STALE artifact با «digest خراب + فایل غایب» دیگر pass نمی‌شود (۳ تست رگرسیون)
+DOC_GATES_ON_PR=4 — pwa00-doc-quality از هفت مسیر به docs/MuscleParadise/**+evidence/**+.finn/** گسترش یافت
+MEM-07/PWA-36=PARTIAL/NOT_ACCEPTED — unit/measured_at/comparable هر سه در قرارداد هست
+MEM07_GATE=عدد پیشرفت فقط با data_state=="trend_available" و trend!=null؛ بقیه ⇒ «قابل مقایسه نیست»، نه صفر
+RELEASE=NO-GO
+```
+
+- **P0 — حالت کور گیت:** در `inspect_stale()` اگر هم digest ثبت‌شده خراب بود و هم منبع از checkout حذف شده بود، `None == None` می‌شد و artifact «سالم» گزارش می‌شد؛ با `git rm` می‌شد گیت را بی‌صدا خاموش کرد. حالا همان دو بررسی `check()` اضافه شده و `scripts/tests/test_digest_gate.py` چهار حالت را قفل می‌کند (۴/۴ pass؛ با حذف دو خط، ۳ تست قرمز).
+- **اصلاح ادعای قبلی:** جملهٔ «درخت شاخه بایت‌به‌بایت برابر main است» نادرست بود — آن اندازه‌گیری لحظهٔ merge بود. اندازهٔ واقعی: `ahead=16 behind=0`، ۱۹ فایل تفاوت، `main@7c4771f` ancestor است. از این پس فقط با `rev-list --count` و tree SHA گزارش می‌شود.
+- **DOC gates:** `pwa00-doc-quality.yml` فقط هفت مسیر PWA-00 را trigger می‌کرد، پس تغییرات `docs/MuscleParadise/**` و `evidence/**` و `.finn/**` روی PRها هیچ گیت Markdown نداشتند. اکنون هر سه دامنه trigger هستند و `FILTER_REGEX_INCLUDE`/reviewdog هم همان دامنه را lint می‌کنند (۴ چک).
+- **MEM-07:** قرارداد با `grep -n` پاسخ گرفت: `measured_at` در `modules/assessment/service.py:193`، واحد ضمنی در نام فیلدها (`sum_mm:194`، `delta_mm:281`، `threshold_mm:292`)، و «قابل مقایسه بودن» صریح (`trend: null` + `data_state` در `204/211/300`). `MemberJp7Trend.tsx` روی مسیر تازهٔ `/member/progress` فقط در `trend_available` عدد پیشرفت می‌سازد؛ `stale`/`insufficient`/سری خالی ⇒ متن صریح «قابل مقایسه نیست» و «پیشرفت صفر نیست»؛ درصد چربی قفل «قفل» گفته می‌شود و عکس بدن نه پیاده‌سازی و نه رندر می‌شود.
+- **شاهد:** [`GATE-P0`](../../evidence/2026-11-27/GATE-P0/regression-proof.txt) · [`MEM-07 contract`](../../evidence/2026-11-27/MEM-07/contract-answer.txt) · [`MEM-07 run`](../../evidence/2026-11-27/MEM-07/current-run.md).
+
 ## Latest continuation — MEM-06 / PWA-35 safety gate on the member path
 
 ```text

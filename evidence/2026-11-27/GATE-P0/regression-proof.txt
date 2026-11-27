@@ -1,0 +1,31 @@
+# P0 — اثبات اینکه تست‌های رگرسیون باگ را می‌گیرند
+
+## ۱) با اصلاح موجود (فایل جاری)
+PASS test_both_broken_at_once_is_still_an_error
+PASS test_stale_artifact_with_corrupt_digest_fails
+PASS test_stale_artifact_with_missing_source_fails
+PASS test_stale_artifact_with_stale_digest_is_reported_but_still_passes
+4/4 passed
+EXIT=0
+
+## ۲) با حذف دو بررسی از inspect_stale (بازگشت به باگ کور)
+FAIL test_both_broken_at_once_is_still_an_error: []
+FAIL test_stale_artifact_with_corrupt_digest_fails: []
+FAIL test_stale_artifact_with_missing_source_fails: []
+PASS test_stale_artifact_with_stale_digest_is_reported_but_still_passes
+1/4 passed
+EXIT=1
+
+## ۳) بازگردانی بایت‌به‌بایت و اجرای دوباره
+file restored
+PASS test_both_broken_at_once_is_still_an_error
+PASS test_stale_artifact_with_corrupt_digest_fails
+PASS test_stale_artifact_with_missing_source_fails
+PASS test_stale_artifact_with_stale_digest_is_reported_but_still_passes
+4/4 passed
+EXIT=0
+
+## ۴) گیت واقعی روی مخزن (بدون تغییر)
+Crosswalk digest gate passed: 2 artifact، همهٔ digestها با checkout برابر و tracked_dirty=false.
+4 artifact بررسی شد، 2 STALE (گزارش‌شده)
+EXIT=0
