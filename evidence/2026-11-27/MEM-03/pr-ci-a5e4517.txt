@@ -1,0 +1,51 @@
+run_id=46040528118
+head_sha=a5e45170833c4393d7e6b220ffa883bdbb296165
+workflow=mp-ci
+conclusion=failure (secret-scan only)
+captured_at=2026-11-27T17:25:27Z
+
+jobs:
+  success	Documentation links and handoff
+  success	studio
+  success	client-flutter
+  success	live-contract
+  failure	secret-scan
+  success	backend
+  success	Client — pinned SDK · format gate · Android debug compile
+  success	e2e-api
+
+secret-scan findings (metadata only; values withheld by the workflow):
+
+main baseline run:
+  run_id=46036816362 head_sha=ebebef3ad153277f0223c2011efc4f9a9c855654
+  failure	secret-scan
+  success	Client — pinned SDK · format gate · Android debug compile
+  success	live-contract
+  success	backend
+  success	Documentation links and handoff
+  success	client-flutter
+  success	studio
+  success	e2e-api
+
+secret-scan annotations (path:line, values withheld by the workflow):
+  evidence/2026-11-27/INV-02-v1/member-capability-crosswalk.json:11  rule=generic-api-key
+  evidence/2026-11-27/INV-02/member-capability-crosswalk.json:12     rule=generic-api-key
+  evidence/2026-11-27/INV-02/member-capability-crosswalk.json:13     rule=generic-api-key
+  evidence/2026-11-27/INV-03/staff-page-crosswalk.json:12            rule=generic-api-key
+  evidence/2026-11-27/INV-03/staff-page-crosswalk.json:13            rule=generic-api-key
+
+Diagnosis (read-only inspection of the named lines, no secret values):
+  همهٔ پنج مورد، مقدار ۶۴ کاراکتری hex در نگاشت `source_digests` است؛ یعنی
+  SHA-256 محتوای فایل‌های source که `scripts/crosswalk_v2.py` تولید می‌کند —
+  نه credential. این فایل‌ها در ebebef3 (merge شدن PR #30) به main رسیدند و
+  همین job روی main هم با همان پنج مورد fail است (run 46036816362).
+  بنابراین شکست CI این شاخه در `secret-scan` از این برش نیست.
+
+Verification limits:
+  - گیتلکس محلی در دسترس نیست (دانلود release-assets از این sandbox blocked)؛
+    از این رو fingerprint دقیق فقط از annotationهای همین run گرفته شده و
+    هیچ ورودی‌ای به `.gitleaksignore` اضافه نشد.
+  - رفع پیشنهادی نیازمند تأیید مالک است: یا پنج fingerprint دقیق در
+    `.gitleaksignore` (به‌همراه دلیل)، یا allowlist باریک برای الگوی digest در
+    خروجی crosswalk، یا تغییر generator برای نوشتن digest به شکل غیرمنطبق با
+    قاعدهٔ `generic-api-key` تا مشکل در اجرای بعدی برنگردد.
