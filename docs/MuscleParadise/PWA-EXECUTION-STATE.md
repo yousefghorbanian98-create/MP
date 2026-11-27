@@ -18,7 +18,30 @@ LAST_KNOWN_EVIDENCE=evidence/2026-11-23/MEM-01/member-account-slice.md (dirty so
 
 در تعارض، تصمیم scope با ADR/تصمیم مالک، متن acceptance با کارت canonical، رفتار با کد و تست همان مسیر، و status اجرایی با آخرین شاهد پالایش‌شده تعیین می‌شود. Snapshotهای تاریخی، دیاگرام‌ها، screenshotها، artifact package، mock، skipped test و CI روی SHA دیگر acceptance محصول را ثابت نمی‌کنند.
 
-## Latest continuation — MEM-01 / member account API slice (مرجع Arena: ۲۰۲۶-۱۱-۲۳ UTC)
+## Latest continuation — MEM-01 live member-account contract and identity-negative
+
+```text
+CURRENT_BRANCH=arena/5e0f64cf-mp
+BASE_REMOTE_HEAD=9cdd96554108d8438fe906a82b233d68e21e0fd8
+STATE_LAST_UPDATED=2026-11-27T15:41:18Z
+EVIDENCE_DATE_DIRS=2026-11-23, 2026-11-27
+NOTE: reference date 2026-11-23 is the program start date, not the STATE update date.
+MEM-01=PARTIAL/NOT_ACCEPTED (canonical checkbox open)
+LIVE_MEMBER_CONTRACT=PASS locally: 1 file / 4 tests / 0 skipped against synthetic local Uvicorn + SQLite
+IDENTITY_NEGATIVE=PASS locally: 3 TestClient tests; User.id substitution and B-member read denied
+TODAY_EMPTY_STATE_TEST=PASS (honest no-mock placeholder and non-member denial only)
+CI_WORKFLOW=updated to seed isolated A/B members and execute the new live suite with a member fixture token
+PUSH/REMOTE_CI=not yet verified for this follow-up at this record timestamp
+PR30=OPEN/DRAFT/unmerged; release=NO-GO
+INDEX_GUARD=60 unrelated pre-existing staged paths preserved; no receipt/untracked paths touched
+```
+
+- `fetchMe` and `fetchMemberMemberships` were already present in `src/lib/api.ts`; that file required no product change. The new live test checks `/members/me`, role/token identity, exact self-profile field allowlist, member history via server `Member.id`, rejection of the wrong `User.id`, unknown status, and the 23:30 UTC `Asia/Tehran` Persian-calendar boundary. Synthetic raw results: [`live-contract-member.txt`](../../evidence/2026-11-27/MEM-01/live-contract-member.txt) and [`identity-negative.txt`](../../evidence/2026-11-27/MEM-01/identity-negative.txt).
+- Studio lint passed; the updated `memberAccountPage.test.tsx` passed 6/6, including the new honest no-mock `/member/today` state and non-member `AccessDenied` route test. The live member suite passed 4/4 against local Uvicorn + temporary SQLite; backend focused identity suite passed 3/3 (one existing Starlette/httpx deprecation warning). Touched-file Ruff/format and workflow YAML/shell syntax passed. Local docs gate passed 38 Markdown / 611 links / 15 Mermaid; project guide and interaction map passed (32 surfaces / 163 routes / 0 drift); `git diff --check` passed. Always verify push and GitHub CI against the exact final branch SHA; local passes do not imply remote CI.
+- `/member/today` remains the existing static no-fabrication placeholder, not a data-backed page. Its test ensures no sample program or unconnected program API is used. There is no configured support destination or Today API in this slice, so a support link and API-error/retry UI remain unimplemented; this small test is not acceptance of the Today flow.
+- Preserve `MEM-01` and `PWA-30/31` as `PARTIAL/NOT_ACCEPTED`; `INV-02/03` and `SEC-01` remain partial, `PWA-01=PROPOSED/NOT_RUN`, release=`NO-GO`. PR #30 must remain draft/unmerged. Next requested work: begin MEM-03 phone-change/OTP scope review; no such product flow is claimed complete here.
+
+## Previous continuation snapshot — MEM-01 / member account API slice (reference date: 2026-11-23 UTC; before live-identity follow-up)
 
 ```text
 CURRENT_BRANCH=arena/5e0f64cf-mp

@@ -2,7 +2,30 @@
 
 > این فایل **خلاصهٔ جاری برای ادامهٔ کار** است، نه آرشیو گفتگو و نه منبع نهایی وضعیت محصول. پیش از فشرده‌سازی context یا پایان هر کار معنادار، همین snapshot را جایگزین/به‌روز کن؛ تاریخچه را با انباشت transcript طولانی نکن.
 
-## وضعیت جاری — MEM-01 / برش حساب عضو (مرجع Arena: ۲۰۲۶-۱۱-۲۳ UTC)
+## وضعیت جاری — MEM-01 live member-account contract و identity-negative (UTC 2026-11-27)
+
+```text
+CURRENT_BRANCH=arena/5e0f64cf-mp
+BASE_REMOTE_HEAD=9cdd96554108d8438fe906a82b233d68e21e0fd8
+STATE_LAST_UPDATED=2026-11-27T15:41:18Z
+EVIDENCE_DATE_DIRS=2026-11-23, 2026-11-27
+NOTE: تاریخ مرجع 2026-11-23 تاریخ شروع برنامه است، نه تاریخ به‌روزرسانی STATE.
+MEM-01=PARTIAL/NOT_ACCEPTED؛ checkbox canonical باز
+LIVE_MEMBER=PASS محلی: ۴/۴؛ API زندهٔ محلی + SQLite synthetic؛ token چاپ/ذخیره نشد
+IDENTITY_NEGATIVE=PASS: ۳/۳؛ User.id به‌جای Member.id و دسترسی به B هر دو رد شدند
+TODAY_EMPTY_STATE_TEST=PASS: placeholder صادق/no-mock و AccessDenied برای نقش غیرعضو
+PUSH/PR_CI=فقط نتیجهٔ متصل به SHA دقیق شاخه را معتبر بدان؛ گیت محلی جای CI ریموت نیست
+PR #30=OPEN/DRAFT/unmerged؛ release=NO-GO
+INDEX=۶۰ مسیر staged نامرتبط از قبل حفظ می‌شوند؛ receipt/untrackedها دست‌نخورده
+NEXT=شروع بررسی scope کارت MEM-03؛ پیاده‌سازی OTP ادعا نشده
+```
+
+- `fetchMe` و `fetchMemberMemberships` در `src/lib/api.ts` از قبل وجود داشتند، پس API helper تغییر نکرد. workflow CI برای fixtureهای synthetic A/B و اجرای live suite با JWT عضو گسترش یافت. شواهد: [`live-contract-member.txt`](../../evidence/2026-11-27/MEM-01/live-contract-member.txt)، [`identity-negative.txt`](../../evidence/2026-11-27/MEM-01/identity-negative.txt).
+- گیت‌های محلی: `npm run lint` پاس؛ `memberAccountPage.test.tsx` برابر ۶/۶؛ live client suite برابر ۴/۴ با Uvicorn + SQLite synthetic؛ backend `test_mem01_member_identity.py` برابر ۳/۳ (یک هشدار deprecation قدیمی Starlette/httpx)؛ Ruff/format و workflow YAML/shell syntax پاس. Docs gate **۳۸ Markdown/۶۱۱ لینک/۱۵ Mermaid**، project guide و interaction map **۳۲ سطح/۱۶۳ مسیر/صفر drift** و `git diff --check` پاس؛ push و PR CI این follow-up هنوز باید تأیید شوند.
+- Today همچنان placeholder بدون API است و دادهٔ نمونه ندارد؛ test عدم نمایش mock و role denial را قفل می‌کند. مقصد پشتیبانی و endpoint معتبر برنامه در repo تنظیم نشده، پس support link و API error/retry هنوز پیاده‌سازی نشده‌اند و این مسیر accepted نیست.
+- `MEM-01`, `PWA-30/31`, `INV-02/03`, `SEC-01` partial/not accepted می‌مانند؛ `PWA-01=PROPOSED/NOT_RUN`, release=`NO-GO`. PR #30 را merge نکن؛ بعد از اتمام این برش، scope ممیزی MEM-03 تغییر شماره/OTP را شروع کن.
+
+## Snapshot قبلی — MEM-01 / برش حساب عضو (reference date: 2026-11-23 UTC; پیش از live-identity follow-up)
 
 - **Branch/source:** فقط `arena/5e0f64cf-mp`. Source/test/live-contract اجرا روی baseline `5828c94c9d875fa5a4c58740611bf800324649f8` انجام شد؛ MEM-01 دقیقاً با allowlist ۴۰ فایلی commit شد: `a7aa5b715de3da021934152b75e17ef67f6f19a5`. Stage-slice helper و allowlists با `cdc989b198737e1d2235eaf570fb023e9306e264`؛ status update `e06a71659517f2ee222be674ab2be7a8fd368c9a`؛ map/diagnostics `1afab65839b325b6a2013443f4d211f899e58c87`؛ و final state record `7833508b2c8dde4d7cb3f86754af71aa6d47815c` push شدند. Remote API تأیید کرد که 7833508 branch head است؛ مسیر `evidence/2026-11-23/MEM-01` روی remote موجود است (۱۵ entry). ۶۰ staged path نامرتبط پس از commit باقی ماندند. هیچ receipt/private یا untracked نامرتبطی باز، copy، پاک یا stage نشده است.
 - **Git status (مسیرها عمداً حذف):** MEM-01، helper و interaction-map/CI diagnostics با allowlist‌های دقیق commit/push شدند. اکنون فقط **۶۰ مسیر staged نامرتبط** از قبل باقی‌اند؛ از allowlistها چیزی staged نمانده (`INDEX_ALLOWLISTED_COUNT=0`), **۰ tracked unstaged path**, `PENDING_PUSH=no`. Untracked/receiptهای نامرتبط بررسی یا دست‌کاری نشده‌اند.

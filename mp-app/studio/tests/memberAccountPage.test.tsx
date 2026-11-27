@@ -1,5 +1,6 @@
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import App from "../src/App";
 import { MemberAccount } from "../src/pages/MemberAccount";
 import { setClock } from "../src/lib/clock";
 
@@ -9,6 +10,10 @@ function reply(status: number, body: unknown): Response {
     status,
     json: async () => body,
   } as Response;
+}
+
+function tokenFor(role: string): string {
+  return `header.${btoa(JSON.stringify({ role }))}.signature`;
 }
 
 const memberProfile = {
@@ -58,6 +63,7 @@ function installApi(handler: (path: string) => Response | Promise<Response>) {
 beforeEach(() => {
   localStorage.clear();
   localStorage.setItem("mp_token", "member-access-token");
+  window.history.replaceState({}, "", "/");
   setClock("2026-11-23T12:00:00Z");
 });
 
@@ -65,6 +71,7 @@ afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
   localStorage.clear();
+  window.history.replaceState({}, "", "/");
   setClock(null);
 });
 
@@ -151,6 +158,43 @@ describe("member account API vertical slice (MEM-01)", () => {
     render(<MemberAccount />);
 
     expect((await screen.findByRole("alert")).textContent).toContain("شناسهٔ پروفایل عضو از سرور معتبر نیست");
+    expect(calls.map((call) => call.path)).toEqual(["/api/v1/members/me"]);
+  });
+});
+
+describe("member today honest empty state (MEM-01 follow-up)", () => {
+  it("today shows an honest empty state, never mock data", async () => {
+    localStorage.setItem("mp_token", tokenFor("member"));
+    window.history.replaceState({}, "", "/member/today");
+    const { calls } = installApi((path) => {
+      if (path === "/api/v1/members/me") return reply(200, memberProfile);
+      throw new Error(`today must not call an unconnected program API: ${path}`);
+    });
+
+    render(<App />);
+
+    expect(await screen.findByRole("heading", { name: "امروز" })).toBeTruthy();
+    const emptyState = await screen.findByRole("status");
+    expect(emptyState.textContent).toContain("برنامهٔ تمرین امروز هنوز به این پوسته متصل نشده است");
+    expect(emptyState.textContent).toContain("دادهٔ تمرینی ساختگی نمایش داده نمی‌شود");
+    expect(screen.queryByText(/برنامهٔ نمونه|جلسهٔ قدرت A|تمرینِ نمونه|۴۵′/)).toBeNull();
+    expect(calls.map((call) => call.path)).toEqual(["/api/v1/members/me"]);
+  });
+
+  it("denies /member/today to a non-member role", async () => {
+    localStorage.setItem("mp_token", tokenFor("manager"));
+    window.history.replaceState({}, "", "/member/today");
+    const { calls } = installApi((path) => {
+      if (path === "/api/v1/members/me") return reply(200, { ...memberProfile, role: "manager" });
+      throw new Error(`unexpected API path: ${path}`);
+    });
+
+    render(<App />);
+
+    expect((await screen.findByRole("alert")).textContent).toContain(
+      "دسترسی به این مسیر برای نقش جاری مجاز نیست",
+    );
+    expect(screen.queryByRole("heading", { name: "امروز" })).toBeNull();
     expect(calls.map((call) => call.path)).toEqual(["/api/v1/members/me"]);
   });
 });

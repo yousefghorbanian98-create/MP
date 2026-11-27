@@ -2,7 +2,25 @@
 
 > هشدار انتقال ۲۰۲۶-۱۱-۱۸: بخش‌های بعدی قدیمی snapshot هستند و branch/toolchain/status آن‌ها جاری فرض نشود. وضعیت تازهٔ Motion/PWA در این بخش و [handoff](../../docs/MuscleParadise/SESSION_HANDOFF.md) آمده؛ کارهای قدیمی M63–M99، M100–M106 و M107+ فقط پس از تطبیق با TODO و گیت‌های جاری ادامه یابند.
 
-## Latest continuation — MEM-01 / member account API slice (Arena reference: 2026-11-23 UTC)
+## Current follow-up — MEM-01 live member-account contract and identity-negative (2026-11-27 UTC)
+
+STATE_LAST_UPDATED=2026-11-27T15:41:18Z
+EVIDENCE_DATE_DIRS=2026-11-23, 2026-11-27
+NOTE: تاریخ مرجع (2026-11-23) تاریخ شروع برنامه است، نه تاریخ STATE.
+CURRENT_BRANCH=arena/5e0f64cf-mp
+BASE_REMOTE_HEAD=9cdd96554108d8438fe906a82b233d68e21e0fd8
+MEM-01=PARTIAL/NOT_ACCEPTED — canonical checkbox remains open
+MEM02_PWA31=PARTIAL/NOT_ACCEPTED; no acceptance upgrade
+LIVE_MEMBER_CONTRACT=PASS — 1 file; 4 live local synthetic API tests; token value not recorded
+IDENTITY_NEGATIVE=PASS — 3 TestClient tests; wrong User.id and B Member.id explicitly denied
+TODAY_EMPTY_STATE_TEST=PASS — no-mock placeholder + non-member route denial; support destination/API error-retry remain unimplemented
+API_HELPERS=fetchMe/fetchMemberMemberships already existed; no API code change needed
+LOCAL_GATES=Studio lint PASS; memberAccountPage 6/6 PASS; live member contract 4/4 PASS; backend focused 3/3 PASS; Ruff/format + workflow YAML/shell syntax PASS; docs gate 38 Markdown/611 links/15 Mermaid PASS; interaction map 32 surfaces/163 routes/0 drift PASS
+INDEX_PROTECTION=60 unrelated staged paths existed before this follow-up and are preserved; receipts/untracked paths untouched
+PR30=OPEN/DRAFT/unmerged; release=NO-GO
+NEXT=begin MEM-03 scope review after this focused follow-up; no OTP/phone-change product implementation claimed
+
+## Previous continuation snapshot — MEM-01 / member account API slice (reference date: 2026-11-23 UTC; before live-identity follow-up)
 
 CURRENT_BRANCH=arena/5e0f64cf-mp
 HEAD_BEFORE_DIRTY_SOURCE_PATCH=5828c94c9d875fa5a4c58740611bf800324649f8

@@ -1,0 +1,14 @@
+# Exact-path allowlist for the MEM-01 live member-account contract follow-up.
+# Includes .github/workflows/ci.yml so GitHub actually executes the new live suite,
+# and STATE.md because this task explicitly requires updating its timestamp/date dirs.
+mp-app/studio/src/lib/api.ts
+mp-app/studio/tests/liveContractMember.test.ts
+mp-app/studio/tests/memberAccountPage.test.tsx
+mp-app/backend/tests/integration/test_mem01_member_identity.py
+evidence/2026-11-27/MEM-01/live-contract-member.txt
+evidence/2026-11-27/MEM-01/identity-negative.txt
+docs/MuscleParadise/PWA-EXECUTION-STATE.md
+docs/MuscleParadise/SESSION_HANDOFF.md
+.finn/state/STATE.md
+.github/workflows/ci.yml
+scripts/allowlists/MEM-01-live.txt
