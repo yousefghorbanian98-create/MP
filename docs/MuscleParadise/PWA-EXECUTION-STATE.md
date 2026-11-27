@@ -1,5 +1,11 @@
 # وضعیت اجرای PWA — دفتر چرخه‌ها و شواهد
 
+CURRENT_BRANCH=arena/5e0f64cf-mp
+REMOTE_HAS_MY_COMMIT=yes
+MAIN_HEAD=352781043ad2ba202d8b3b459df1ce7e3d914ef7
+BRANCH_AHEAD_OF_MAIN=8
+LAST_KNOWN_EVIDENCE=evidence/2026-11-23 (on branch) / evidence/m60 (on main)
+
 > **نوع سند:** دفتر اجراییِ افزایشی؛ نه ADR، نه مرجع مستقل برای تعریف acceptance، و نه ادعای QA/release. شناسه‌ها و معیارهای هر کارت از tracker و backlog canonical پیروی می‌کنند.
 > **تاریخ مرجع:** ۲۰۲۶-۱۱-۲۳ UTC. این تاریخ با timestampهای GitHub آینده‌نما که در handoff ثبت شده‌اند تعارض دارد؛ آن تعارض حل‌نشده باقی می‌ماند.
 
@@ -8,11 +14,20 @@
 - **تصمیم محصول:** [ADR-006](adr/006-shared-react-pwa.md) و [ADR-007](adr/007-pwa-primary-release.md)، همراه [دفتر تصمیم‌های مالک](OWNER-DECISIONS.md).
 - **پذیرش و ترتیب کارت‌ها:** [TODO اجرایی انتشار PWA](TODO-PWA-RELEASE-2026-11-23.fa.md) و [backlog canonical پنجاه parent](TODO-2026-11-16.md#pwa-ui-ux-full-backlog-2026-11-23).
 - **خلاصهٔ نشست:** [SESSION_HANDOFF](SESSION_HANDOFF.md)؛ این فایل وضعیت بین چرخه‌ها را ثبت می‌کند و جایگزین آن دو صف نمی‌شود.
-- **شواهد:** مسیرهای پالایش‌شدهٔ `../../evidence/2026-11-23/<ID>/`؛ هر نتیجه فقط به همان command، toolchain، checkout و SHA/worktree fingerprint ثبت‌شده تعلق دارد.
+- **شواهد:** مسیرهای پالایش‌شدهٔ `../../evidence/<تاریخ-مرجع>/<ID>/`؛ تاریخ مرجع پوشه را با marker زمان واقعی اجرا (و محدودیت‌های آن) جدا ثبت کنید؛ هر نتیجه فقط به همان command، toolchain، checkout و SHA/worktree fingerprint تعلق دارد.
 
 در تعارض، تصمیم scope با ADR/تصمیم مالک، متن acceptance با کارت canonical، رفتار با کد و تست همان مسیر، و status اجرایی با آخرین شاهد پالایش‌شده تعیین می‌شود. Snapshotهای تاریخی، دیاگرام‌ها، screenshotها، artifact package، mock، skipped test و CI روی SHA دیگر acceptance محصول را ثابت نمی‌کنند.
 
-## بازنشانی اجرای جاری پس از بررسی remote — ۲۰۲۶-۱۱-۲۳ UTC
+## ادامهٔ جاری — crosswalkهای INV-02/03 و برش SEC-01
+
+- **شاخه و checkpoint:** `origin/arena/5e0f64cf-mp` روی `a3fbf0195f64b8b109964d81a515d2ae6ea4bf50` و `origin/main=352781043ad2ba202d8b3b459df1ce7e3d914ef7`; remote branch commit `a3fbf01` را دارد. `git merge --no-edit origin/main` پاسخ `Already up to date` داد؛ main از قبل در ancestry شاخه است و تعارضی نبود. PR #29 squash-merged شده؛ commitهای شاخه ancestorِ main نیستند، اما محتوای محصول در main است. `BRANCH_AHEAD_OF_MAIN=8` مقدار مورد انتظار پس از commit همین checkpoint است.
+- **بازتولید crosswalk:** هر دو generator روی worktree جدا و detached از SHA تمیز `352781043ad2ba202d8b3b459df1ce7e3d914ef7` اجرا شدند. rawها بدون تغییر در [`evidence/2026-11-27/INV-02/`](../../evidence/2026-11-27/INV-02/) و [`evidence/2026-11-27/INV-03/`](../../evidence/2026-11-27/INV-03/) ثبت شده‌اند؛ `review.md` در هر پوشه false-negativeها و محدودیت‌های روش را جدا می‌کند. برچسب مسیر `2026-11-27` از marker زمان اجرا جداست؛ script `started_at` نمی‌نویسد و mtime خام فقط زمان نوشتن فایل است.
+- **نتیجهٔ خام/بازبینی:** INV-02: ۱۷ feature، ۱۴۱ API path، ۱۳ `PARTIAL_REVIEW`/۴ `GAP`; INV-03: ۱۲ صفحه و route، ۱۴۱ API path، ۱۱ `PARTIAL_REVIEW`/۱ `GAP`. مرور source نشان داد parser هر دو ابزار templateهای dynamic را جا می‌اندازد؛ در INV-02 بعضی GAPهای notifications/today فقط به نبود عضو-facing route اشاره دارند، و در INV-03 ردیف analytics call-site واقعی در `adminApi.ts` دارد. فایل‌های خام دست‌نخورده و hashشده‌اند؛ هیچ عددی به‌عنوان آزمون یا پذیرش محصول تعبیر نمی‌شود.
+- **مرز اجرا و SEC-01:** پس از crosswalkها، برش محدود server-side از [`SEC-01`](../../evidence/2026-11-23/SEC-01/role-server-slice.md) روی target `352781043ad2ba202d8b3b459df1ce7e3d914ef7` اجرا شد: پنج test file، `90 passed / 2 warnings`؛ TestClient واقعی با fixture و SQLite موقت، همراه گیت manifest و unit RBAC. این فقط چهار operation و subset نقش‌ها را پوشش می‌دهد، نه ماتریس کامل. هیچ build/CI/browser/device یا product-source test روی HEAD شاخهٔ فعلی اجرا نشد و هیچ source، role، grant، API، Flutter یا native workflow تغییر نکرد. `INV-02/03` همچنان `PARTIAL/NOT_ACCEPTED`؛ SEC-01 نیز فقط یک slice جزئی دارد و checkbox آن باز است؛ `PWA-01=PROPOSED/NOT_RUN` و release `NO-GO` باقی است.
+- **گیت مستندات این ادامه:** `python3 scripts/docs_gate.py` پاس شد: ۳۸ Markdown، ۶۰۷ local links، ۱۵ Mermaid؛ `git diff --check` نیز PASS. این فقط gate مستندات است و هیچ product status را عوض نمی‌کند.
+- ثبت جاری بالا crosswalkها و برش محدود SEC-01 را پوشش می‌دهد؛ بازنشانی/شمارش‌های بخش بعدی snapshot قبلی‌اند و وضعیت تاریخی همان checkpoint را توصیف می‌کنند، نه HEAD فعلی.
+
+## Snapshot پیشین — بازنشانی اجرا پس از بررسی remote (۲۰۲۶-۱۱-۲۳ UTC)
 
 - **شاخه/گراف مشاهده‌شده:** شاخهٔ فعال `arena/5e0f64cf-mp`؛ `HEAD=e0ae95f48bf8451bd59b972a92c55fed404e6a92`؛ `origin/arena/5e0f64cf-mp=3f26e1d6ea05920a23236b368abd4c4ee0580799`؛ `origin/main=352781043ad2ba202d8b3b459df1ce7e3d914ef7`. HEAD در هیچ remote-tracking ref مشاهده‌شده نیست؛ tip شاخهٔ مجاز و `origin/main` هر دو ancestor آن هستند؛ والدهای HEAD همان دو tip و tree آن عیناً با tree `origin/main` برابر است. این فقط اثبات ancestry/tree است، نه remote witness برای مستندات/evidence محلی.
 - **Worktree تازه:** ۲۴ tracked تغییر، همه README/docs؛ index خالی؛ ۳۰۹ untracked پیش از افزودن snapshot جاری و ۳۱۰ شامل همان snapshot؛ صفر tracked diff زیر `mp-app/`. مسیرهای untracked، به‌ویژه receiptها، عمداً در transcript منتشر نشده‌اند و دست‌نخورده می‌مانند. fingerprint و شمارش sanitized در [`INV-01/current-snapshot.txt`](../../evidence/2026-11-23/INV-01/current-snapshot.txt).
@@ -97,6 +112,7 @@ Statusهای product-parent از tracker تغییر نمی‌کنند مگر evi
 - **گیت فعلی:** `interaction_map.py --check` PASS با ۳۱ surface/۱۶۳ contract/drift صفر. اعضا و role-restricted APIs در map دیده می‌شوند، اما map برای هر صفحه state/loading/empty/error/persistence و DB-owner ندارند. `members` و `analytics` test reference ندارند؛ سایر testها فقط در scan حاضر شمرده شدند، اجرا نشدند. ۶۹ operation manifest در هیچ interaction surface ثبت نشده‌اند؛ این absence dead-code proof نیست.
 - **Revalidation چرخهٔ صفر:** `staff_crosswalk_audit.py` دوباره اجرا شد؛ ۱۲ Studio page، ۵۹ endpoint shape و manifest map ۳۱ surface/۱۶۳ operation، ۶۹ operation بدون surface (absence به‌تنهایی dead-code نیست)، `interaction_map_has_state_field=False` و دو صفحهٔ `members`/`analytics` بدون test reference. خروجی `../../evidence/2026-11-23/INV-03/staff-crosswalk-static-rerun.txt`; فقط static/source scan است.
 - **باقی‌مانده:** behavior-level actor/role→route/API/permission→model/ownership→state/error→test-ID matrix، test negative/evidence و reviewer acceptance. PWA-01 canonical/status از این static inventory تغییر نمی‌کند؛ full `INV-04…INV-09` هنوز باز است.
+- **بازتولید و بازبینی source در ادامهٔ جاری:** [`INV-02 raw + review`](../../evidence/2026-11-27/INV-02/review.md) و [`INV-03 raw + review`](../../evidence/2026-11-27/INV-03/review.md) از SHA جداشدهٔ `352781043ad2ba202d8b3b459df1ce7e3d914ef7` ثبت شدند. خروجی خام و hashها حفظ شده‌اند؛ بازبینی دستی false-negativeهای dynamic template را تشخیص داد، اما هیچ تست محصول یا مجوزی اجرا نشد. هردو کارت partial/non-accepted و checkbox باز؛ `PWA-01=PROPOSED/NOT_RUN`.
 
 ### INV-04 — برش ساختاری statusهای عضو (کل کارت باز)
 
