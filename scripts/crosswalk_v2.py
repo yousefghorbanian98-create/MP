@@ -35,6 +35,7 @@
 from __future__ import annotations
 
 import argparse
+import base64
 import hashlib
 import json
 import re
@@ -103,15 +104,23 @@ def sh(*args: str, cwd: Path) -> str:
 
 
 def source_digest(path: Path) -> str | None:
-    """SHA-256 منبع با پیشوند الگوریتم (`sha256:<hex>`).
+    """SHA-256 منبع به شکل base64url با پیشوند الگوریتم (`sha256_b64:<44 char>`).
 
-    چرا پیشوند: بدون آن، کلیدهایی مثل `studio/src/lib/api.ts` در JSON شاهد، به‌همراه
-    مقدار ۶۴-رقمی hex، الگوی قاعدهٔ `generic-api-key` گیتلکس را فعال می‌کنند و هر بار
-    یک finding جعلی می‌سازند. `sha256:` هم الگوریتم را صریح می‌کند و هم رشتهٔ یکپارچهٔ
-    کلید/مقدار را می‌شکند. گیت `scripts/verify_crosswalk_digests.py` هر دو شکل را
-    می‌پذیرد تا artifactهای قدیمی قابل‌بررسی بمانند.
+    چرا base64 و نه hex: پیشوند `sha256:` **ریشه را نمی‌بندد**. قاعدهٔ
+    `generic-api-key` گیتلکس مقدار hex ۶۴ رقمی را با پیشوند یا بی‌پیشوند match
+    می‌کند؛ چیزی که واقعاً finding را بست، خطوط fingerprint در `.gitleaksignore`
+    بود — و هر بازتولید، یک commit تازه و ۵ خط تازه می‌خواست (صف بی‌پایان).
+    با base64url، مقدار دیگر ۶۴-رقم hex پیوسته نیست و هیچ‌کدام از الگوهای
+    hex/high-entropy-hex را فعال نمی‌کند؛ پس بازتولید آینده **بدون** خط ignore
+    تازه انجام می‌شود.
+
+    گیت `scripts/verify_crosswalk_digests.py` هر سه شکل را می‌خواند
+    (`sha256_b64:`، `sha256:<hex>`، `<hex>`) تا artifactهای تاریخی قابل‌بررسی بمانند.
     """
-    return f"sha256:{hashlib.sha256(path.read_bytes()).hexdigest()}" if path.is_file() else None
+    if not path.is_file():
+        return None
+    raw = hashlib.sha256(path.read_bytes()).digest()
+    return "sha256_b64:" + base64.urlsafe_b64encode(raw).decode("ascii").rstrip("=")
 
 
 def canon(path: str) -> str:

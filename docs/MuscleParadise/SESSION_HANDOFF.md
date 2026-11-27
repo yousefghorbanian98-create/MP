@@ -2,6 +2,27 @@
 
 > این فایل **خلاصهٔ جاری برای ادامهٔ کار** است، نه آرشیو گفتگو و نه منبع نهایی وضعیت محصول. پیش از فشرده‌سازی context یا پایان هر کار معنادار، همین snapshot را جایگزین/به‌روز کن؛ تاریخچه را با انباشت transcript طولانی نکن.
 
+## وضعیت جاری — MEM-05 / PWA-34 ثبت بازخورد ست + تریاژ flake + گزارش STALE (UTC 2026-11-27)
+
+```text
+CURRENT_BRANCH=arena/3c08bfbd-mp
+MEM-05/PWA-34=PARTIAL/NOT_ACCEPTED؛ BLOCKED نیست
+MEM05_IDEMPOTENCY=set-feedback: no (کلید/نسخه ندارد؛ تکرار = ردیف تازه) · sync/set-feedback: yes (device_id:client_id + updated_at، LWW)
+WRITE_PATH=فقط /programs/sync/set-feedback؛ مسیر بدون کلید صدا زده نمی‌شود
+SERVER_TRUTH=پس از نوشتن، آمادگی/شمارش بازخورد از API دوباره خوانده می‌شود
+TIMEOUT=abort ⇒ «ثبت نشد»؛ تلاش دوباره همان client_id/updated_at
+CLIENT_JOB_FLAKY=yes — سه نمونه (e22d8db، 107968d-push)؛ علت اثبات‌نشده؛ job سخت‌سازی شد
+STALE_ARTIFACTS=بازرسی می‌شوند: dirty ⇒ خطا، کهنگی ⇒ گزارش `STALE <path> recorded/actual`
+GITLEAKSIGNORE=۱۰ خط، ثابت؛ قالب تازه `sha256_b64:` جلوی صف بی‌پایان را می‌گیرد
+RELEASE=NO-GO
+```
+
+- **MEM-05:** پاسخ گیت با فایل/خط: `modules/programs/schemas.py:103-106` و `service.py:183-197` نشان می‌دهند `POST /programs/set-feedback` کلید/نسخه ندارد و هر ارسال را append می‌کند (آزمون: دو ارسال = ۲ ردیف). قرارداد idempotent از قبل موجود بود: `router.py:134-143` + `service.py:584-700` + ستون‌های `client_id`/`device_id`/`client_updated_at` (`db/models/programs.py:113-116`). پس mock ساخته نشد و از همان مسیر نوشتن استفاده شد.
+- **UI:** فرم ست در `/member/today`، کنترل‌ها از antd (Q11 ratchet)، `device_id` پایدار در `localStorage`، کلید `client_id` در همهٔ تلاش‌ها ثابت، و بازخوانی از API پس از ثبت.
+- **P1:** روی `107968d` دو run بود: `46055618838` (pull_request، success) و `46055611570` (push، **failure** در `Android debug compile`). لاگ job از API در دسترس نبود؛ job با کش Gradle، `--no-daemon` معادل (`org.gradle.daemon=false`)، heap کوچک‌تر و artifact «client-android-build-log» سخت‌سازی شد. `gh run list` باید همیشه در گزارش بیاید، نه فقط `gh pr checks`.
+- **P2:** ادعای قبلی دربارهٔ «بستن ریشه با پیشوند `sha256:`» **نادرست بود** و در سند اصلاح شد؛ قالب جاری `sha256_b64:<44>` است. فایل‌های `*.STALE.json` حالا بازرسی و گزارش می‌شوند (dirty ⇒ خطا).
+- شاهد: [`MEM-05 current run`](../../evidence/2026-11-27/MEM-05/current-run.md) و [`client-job-triage`](../../evidence/2026-11-27/CI-FLAKE/client-job-triage.txt). `MEM-01…05`، `INV-02/03`، `SEC-01` partial می‌مانند؛ `PWA-01=PROPOSED/NOT_RUN`؛ release=`NO-GO`.
+
 ## وضعیت جاری — MEM-04 / PWA-33 برنامهٔ امروز عضو (UTC 2026-11-27)
 
 ```text

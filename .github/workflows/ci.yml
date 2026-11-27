@@ -638,6 +638,30 @@ jobs:
                   )
           print("Pinned SDK matches the devcontainer.")
           PY
+      - name: Cache Gradle home (AGP/Kotlin downloads are the flaky half)
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830  # v4.3.0
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('mp-app/client/android/gradle/wrapper/gradle-wrapper.properties', 'mp-app/client/pubspec.lock') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
+      - name: Bound Gradle for CI (no daemon, smaller heap)
+        working-directory: mp-app/client/android
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/client-pinned
+          # این job سه بار در «Android debug compile» ناموفق شد (e22d8db تلاش اول،
+          # 107968d روی event=push) و لاگ job از API قابل‌دانلود نبود. دو فرضیهٔ
+          # محتمل: حافظه (8G heap + 4G metaspace + daemon/Kotlin daemon روی runner
+          # 16GB) و دانلود artifactهای Gradle/AGP. هر دو این‌جا محدود می‌شوند و
+          # لاگ کامل build به artifact می‌رود تا اجرای بعدی قابل‌تشخیص باشد.
+          sed -i 's|^org.gradle.jvmargs=.*|org.gradle.jvmargs=-Xmx3g -XX:MaxMetaspaceSize=1g -XX:+HeapDumpOnOutOfMemoryError|' gradle.properties
+          grep -q '^org.gradle.daemon=' gradle.properties || echo 'org.gradle.daemon=false' >> gradle.properties
+          grep -q '^kotlin.daemon.jvmargs=' gradle.properties || echo 'kotlin.daemon.jvmargs=-Xmx1536m' >> gradle.properties
+          grep -E '^(org.gradle.jvmargs|org.gradle.daemon|kotlin.daemon.jvmargs)=' gradle.properties \
+            | tee /tmp/client-pinned/gradle-ci.properties
       - name: flutter pub get
         working-directory: mp-app/client
         run: flutter pub get
@@ -658,9 +682,19 @@ jobs:
           exit "$status"
       - name: Android debug compile (شاهد Kotlin/Gradle برای M87)
         working-directory: mp-app/client
+        timeout-minutes: 20
         run: |
           set -o pipefail
-          flutter build apk --debug 2>&1 | tail -25
+          mkdir -p /tmp/client-pinned
+          # قبلاً `| tail -25` تنها شاهدِ شکست را می‌بلعید و چون لاگ job از API
+          # قابل‌دانلود نبود (EOF روی blob storage)، علت هر بار گم می‌شد. اکنون
+          # لاگ کامل در فایل می‌ماند و به‌عنوان artifact آپلود می‌شود.
+          if ! flutter build apk --debug > /tmp/client-pinned/android-build.log 2>&1; then
+            echo "::error title=android debug compile::flutter build apk --debug failed — full log is attached as artifact client-android-build-log"
+            tail -n 80 /tmp/client-pinned/android-build.log >&2 || true
+            exit 1
+          fi
+          tail -n 5 /tmp/client-pinned/android-build.log
           APK=build/app/outputs/flutter-apk/app-debug.apk
           test -f "$APK" || { echo "expected $APK after a successful debug build" >&2; exit 1; }
           du -m "$APK" | tee /tmp/client-pinned/apk-size.txt
@@ -736,3 +770,11 @@ jobs:
               with open(summary_path, "a", encoding="utf-8") as stream:
                   stream.write(f"### Client pinned witness\n\n{message}\n")
           PY
+      - name: Publish the Android build log (always)
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        with:
+          name: client-android-build-log
+          path: /tmp/client-pinned/
+          if-no-files-found: ignore
+          retention-days: 14

@@ -13,6 +13,7 @@
  * - نبود برنامه/آمادگی یک حالت تهیِ صادقانه است، نه صفر و نه KPI ساختگی.
  */
 import type { MemberProgram, ReadinessReport } from "../lib/api";
+import { SetFeedbackForm } from "./SetFeedbackForm";
 import { fetchMe, fetchMemberPrograms, fetchReadiness } from "../lib/api";
 import { formatMemberDateTime } from "../lib/memberAccount";
 import { fa, useApi } from "../lib/useApi";
@@ -82,6 +83,12 @@ function ReadinessBlock({ report }: { report: ReadinessReport }) {
       {readiness.missing_signals.length > 0 ? (
         <p className="mt-1 text-xs text-ink-dim">
           سیگنال‌های غایب: {readiness.missing_signals.join("، ")}
+        </p>
+      ) : null}
+      {report.data_counts ? (
+        <p className="mt-1 text-xs text-ink-dim">
+          بازخوردهای ثبت‌شده در سرور: {fa(report.data_counts.feedback_rows)} (۷ روز اخیر:{" "}
+          {fa(report.data_counts.sets_last_7_days)})
         </p>
       ) : null}
       <SourceNote text={`${READINESS_SOURCE} · نسخهٔ قاعده: ${readiness.rule_version}`} />
@@ -204,6 +211,12 @@ export function MemberTodayProgram() {
       )}
 
       {readiness.data ? <ReadinessBlock report={readiness.data} /> : null}
+
+      <SetFeedbackForm
+        memberId={memberId ?? program.member_id}
+        program={program}
+        onRecorded={() => readiness.reload()}
+      />
       {readiness.error ? (
         <p role="alert" className="text-sm text-danger">
           آمادگی از سرور دریافت نشد؛ امتیازی نمایش داده نمی‌شود.

@@ -2,6 +2,22 @@
 
 > هشدار انتقال ۲۰۲۶-۱۱-۱۸: بخش‌های بعدی قدیمی snapshot هستند و branch/toolchain/status آن‌ها جاری فرض نشود. وضعیت تازهٔ Motion/PWA در این بخش و [handoff](../../docs/MuscleParadise/SESSION_HANDOFF.md) آمده؛ کارهای قدیمی M63–M99، M100–M106 و M107+ فقط پس از تطبیق با TODO و گیت‌های جاری ادامه یابند.
 
+## Current follow-up — MEM-05 / PWA-34 + تریاژ flake + گزارش STALE (2026-11-27 UTC)
+
+STATE_LAST_UPDATED=2026-11-27T21:40:00Z
+CURRENT_BRANCH=arena/3c08bfbd-mp
+MEM-05/PWA-34=PARTIAL/NOT_ACCEPTED — BLOCKED نیست
+MEM05_IDEMPOTENCY=NO برای `POST /programs/set-feedback` (schemas.py:103-106، service.py:183-197؛ تکرار = ردیف تازه) · YES برای `POST /programs/sync/set-feedback` (router.py:134-143، service.py:584-700، db/models/programs.py:113-116)
+CODE_CHANGED=mp-app/studio/src/lib/{api.ts,feedbackQueue.ts}; mp-app/studio/src/components/{SetFeedbackForm.tsx,MemberTodayProgram.tsx}; scripts/{crosswalk_v2.py,verify_crosswalk_digests.py}; .github/workflows/ci.yml
+TEST_CHANGED=mp-app/studio/tests/setFeedback.test.tsx (تازه); mp-app/backend/tests/integration/test_mem05_set_feedback_idempotency.py (تازه)
+LOCAL_GATES=pytest ۱۴ pass؛ vitest ۵۷ فایل pass/۴ skip و ۴۰۳ تست pass/۱۵ skip؛ tsc/eslint/build پاک؛ interaction map pass
+CLIENT_JOB_FLAKY=yes — سه نمونه: e22d8db (تلاش اول)، 107968d event=push (run 46055611570، job 140697239420)؛ علت اثبات‌نشده (لاگ job از API در دسترس نیست)؛ hardening: cache + org.gradle.daemon=false + -Xmx3g/-XX:MaxMetaspaceSize=1g + artifact «client-android-build-log»
+SECRET_SCAN_ROOT_FIX=base64 — قالب digest از `sha256:<hex>` به `sha256_b64:<44 base64url>` تغییر کرد. ادعای قبلی («پیشوند hex ریشه را بست») **نادرست** بود و اصلاح شد.
+GITLEAKSIGNORE_LINES=۱۰ (ثابت؛ خطوط به commitهای ebebef3/6593cb4b گره خورده‌اند و حذفشان یافته‌های تاریخی را برمی‌گرداند)
+STALE_ARTIFACTS=گیت حالا `*.STALE.json` را بازرسی می‌کند: tracked_dirty=true ⇒ خطا؛ digestها فقط گزارش می‌شوند (`STALE <path> recorded=… actual=…`)؛ خلاصه در GITHUB_STEP_SUMMARY
+CI_REPORTING_RULE=هر گزارش باید هم `gh pr checks 31` و هم `gh run list --branch arena/3c08bfbd-mp --limit 5` را نشان دهد
+RELEASE=NO-GO
+
 ## Current follow-up — MEM-04 / PWA-33 برنامهٔ امروز عضو (2026-11-27 UTC)
 
 STATE_LAST_UPDATED=2026-11-27T19:05:00Z
@@ -32,7 +48,7 @@ RELEASE=NO-GO
 
 1. **قاعدهٔ digest/HEAD:** هر artifactی که digest یا SHA ثبت‌شده‌اش با HEAD جاری یکی نیست، یا باید روی **درخت تمیز** بازتولید شود یا «`STALE`» در نامش بیاید. هیچ artifact کهنه‌ای با همان نام قبلی نمی‌ماند.
 2. **قاعدهٔ درخت تمیز:** تولید digest فقط روی درخت تمیز. اگر worktree dirty است اول commit، بعد تولید؛ digest درخت dirty ممنوع است (`scripts/crosswalk_v2.py` در این حالت `exit 4` می‌دهد).
-3. **قاعدهٔ secret-scan:** فقط دو مسیر مجاز است — (i) شکل digest در generator طوری عوض شود که rule دیگر match نکند (`sha256:<hex>`)، و/یا (ii) خط fingerprint **دقیق** به‌ازای هر یافته در `.gitleaksignore` با ارجاع شاهد. allowlist بر اساس rule یا path ممنوع. تعداد خطوط افزوده = تعداد یافته‌ها.
+3. **قاعدهٔ secret-scan:** فقط دو مسیر مجاز است — (i) شکل digest در generator طوری عوض شود که rule دیگر match نکند (**قالب جاری `sha256_b64:<44 base64url>`**؛ پیشوند `sha256:<hex>` این کار را نمی‌کرد و ادعای قبلی اصلاح شد)، و/یا (ii) خط fingerprint **دقیق** به‌ازای هر یافته در `.gitleaksignore` با ارجاع شاهد. allowlist بر اساس rule یا path ممنوع. تعداد خطوط افزوده = تعداد یافته‌ها.
 4. **قاعدهٔ خروجی redacted:** از اسکن راز فقط `File`, `RuleID`, `Line`, `Commit`, `Fingerprint` منتشر می‌شود؛ هیچ مقدار secret در doc/evidence/گزارش نوشته نمی‌شود.
 
 ### نتیجهٔ همین دور

@@ -615,15 +615,26 @@ export async function generateProgram(
 
 // ── گردش تأیید برنامه (US-203) ──
 
-async function postJson<T>(path: string, body: unknown, token: string | null): Promise<T> {
+async function postJson<T>(
+  path: string,
+  body: unknown,
+  token: string | null,
+  signal?: AbortSignal,
+): Promise<T> {
   let resp: Response;
   try {
     resp = await sessionFetch(`${API_BASE}${path}`, {
       method: "POST",
       headers: { ...authHeaders(token), "Content-Type": "application/json" },
       body: JSON.stringify(body),
+      signal,
     });
-  } catch {
+  } catch (err) {
+    // MEM-05: «پاسخ نداد» با «اتصال برقرار نشد» یکی نیست. Abort یعنی مهلت
+    // تمام شد و نتیجه نامعلوم است؛ UI باید آن را شکست صریح بداند، نه موفقیت.
+    if (err instanceof DOMException && err.name === "AbortError") {
+      throw new ApiError("زمان پاسخ سرور گذشت — ثبت نشد", 0);
+    }
     throw new ApiError("اتصال به سرور برقرار نشد", 0);
   }
   if (resp.status === 401 || resp.status === 403) await throwAuthOrForbidden(resp);
@@ -1109,6 +1120,53 @@ export interface MemberProgram {
 
 export function fetchMemberPrograms(memberId: number, token = getToken(), signal?: AbortSignal) {
   return getJson<MemberProgram[]>(`/programs/member/${memberId}`, token, signal);
+}
+
+// ── MEM-05 / PWA-34 — ثبت بازخورد ست با کلید idempotent موجود ──
+//
+// دو قرارداد در backend هست و تفاوتشان مهم است:
+//   • `POST /programs/set-feedback` هیچ کلید idempotency/شمارهٔ نسخه ندارد و هر
+//     ردیف را append می‌کند ⇒ ارسال دوباره = رکورد تکراری. برای نوشتن استفاده نمی‌شود.
+//   • `POST /programs/sync/set-feedback` کلید `device_id:client_id` + `updated_at`
+//     دارد و LWW اعمال می‌کند ⇒ همان نوشتهٔ دوباره «unchanged» می‌شود، نه رکورد تازه.
+// این helper فقط دومی را صدا می‌زند.
+
+export interface SetFeedbackSyncItem {
+  client_id: string;
+  device_id: string;
+  updated_at: string;
+  program_id: number | null;
+  movement_id: string;
+  weight: number;
+  target_reps: number;
+  reps_done: number;
+  rir?: number | null;
+  soreness?: number | null;
+  notes?: string;
+}
+
+export interface SetFeedbackSyncResult {
+  member_id: number;
+  counts: Record<string, number>;
+  results: Array<{ entity_key: string; action: string; winner: string }>;
+  applied_keys: string[];
+  unchanged_keys: string[];
+  note?: string;
+  rule_version: string;
+}
+
+export function syncSetFeedback(
+  memberId: number,
+  items: SetFeedbackSyncItem[],
+  token = getToken(),
+  signal?: AbortSignal,
+) {
+  return postJson<SetFeedbackSyncResult>(
+    "/programs/sync/set-feedback",
+    { member_id: memberId, items },
+    token,
+    signal,
+  );
 }
 
 // ── G8 — چت مربی–شاگرد ──
