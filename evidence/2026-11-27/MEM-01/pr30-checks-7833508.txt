@@ -1,0 +1,7 @@
+PR #30 final check snapshot — head 7833508b2c8dde4d7cb3f86754af71aa6d47815c — 2026-11-27 UTC
+
+- `gh pr view 30`: OPEN, `isDraft=true`, head branch `arena/5e0f64cf-mp`, head SHA `7833508b2c8dde4d7cb3f86754af71aa6d47815c`.
+- `gh pr checks 30 --watch --interval 10`: exit code 0; the run on this head completed successfully.
+- Main CI run `46022405642`: `backend`, `Documentation links and handoff`, `Client — pinned SDK · format gate · Android debug compile`, `client-flutter`, `live-contract`, `secret-scan`, `studio`, and `e2e-api` all passed.
+- Supplemental run `46022405588`: `PWA-00 patch applies cleanly and matches source docs`, `Reviewdog`, and `Super-Linter` passed. `markdownlint` passed.
+- The earlier failure on e06a716 is retained separately in `pr30-checks-e06a716.txt`; the interaction-map refresh was included before this passing run. PR #30 remains draft and was not merged.

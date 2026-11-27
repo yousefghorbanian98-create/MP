@@ -17,15 +17,16 @@ BROWSER_AVAILABLE=no — libnspr4.so/libnss3.so missing (apt/npm verified)
 BROWSER_ALTERNATIVE=live-contract (CI job) + backend TestClient flow
 LIVE_CONTRACT=PASS — 1 file; 9 passed; local synthetic API; raw log evidence/2026-11-27/MEM-01/live-contract.raw.txt
 PENDING_PUSH=no
-PUSHED=1afab65839b325b6a2013443f4d211f899e58c87 روی arena/5e0f64cf-mp (interaction-map refresh + PR diagnostics; GitHub API verified)
+PUSHED=7833508b2c8dde4d7cb3f86754af71aa6d47815c روی arena/5e0f64cf-mp (remote branch and evidence API verified)
 MEM01_COMMIT_ALLOWLISTED_COUNT=40
 STAGE_SLICE_COMMIT_ALLOWLISTED_COUNT=10
 INTERACTION_MAP_FIX_ALLOWLISTED_COUNT=10
 INDEX_ALLOWLISTED_COUNT=0 (no changed path from the allowlists remains staged; 60 unrelated staged paths remain untouched)
-PR30_CHECKS_LAST_COMPLETED=FAIL at e06a716: backend + Documentation links/handoff; other listed jobs pass; e2e-api skipped; new head checks pending
+PR30_CHECKS_E06=FAIL: backend + Documentation links/handoff; other listed jobs pass; e2e-api skipped; failure detail constrained by log-download EOF
+PR30_CHECKS_7833508=PASS: backend, docs, Studio, live-contract, secret-scan, client-flutter, pinned client, e2e-api; supplemental PWA-00 checks pass
 INTERACTION_MAP_LOCAL=PASS after generator refresh — 32 surfaces; 163 contract routes; 0 drift; 6 existing untested surfaces
 BACKEND_CI_LOCAL_REPRO=PASS — 1338 passed; 2 skipped; 2 warnings; total coverage 91%; GitHub run log retrieval ended with EOF, root cause unknown
-DOCS_GATE_LOCAL=PASS — 38 Markdown; 608 local links; 15 Mermaid after map regeneration
+DOCS_GATE_LOCAL=PASS — 38 Markdown; 609 local links; 15 Mermaid after final handoff/evidence update
 BROWSER_RUN_THIS_CYCLE=no — no Chromium/browser/device assertions in this cycle.
 LOOP_STALLED=no
 
@@ -33,7 +34,7 @@ LOOP_STALLED=no
 - Synthetic Studio focused run: **5 files / 33 passed**; full Studio: **54 files passed, 2 skipped; 379 passed, 10 skipped**. Build/typecheck passed (Vite 5.4.21, 4048 modules); selected Studio ESLint passed. Backend TestClient/temporary SQLite tests for whoami + ownership: **9 passed, 1 Starlette/httpx warning**; touched backend test Ruff passed. Existing JSDOM `getComputedStyle`, React `act(...)`, Recharts warnings persist; skips are not passes. Details: `evidence/2026-11-23/MEM-01/member-account-slice.md` and its neighboring result logs.
 - Component/Auth/App fetch calls are mocked in Studio tests; backend TestClient is a separate synthetic test. No live Studio→backend account session, production member data, SMS, browser, physical Android/OS, screen-reader/manual review, independent reviewer or full PWA journey was tested. Browser/device acceptance remains unknown; headless library failure is not a product result.
 - The earlier shell-only statement “no profile/membership API” is historical and superseded by the account slice; `MEM-01` remains partial. Account/history work overlaps `MEM-02/PWA-31`, now recorded `PARTIAL/NOT_ACCEPTED`; its canonical checkbox remains open. Continue `MEM-02…MEM-16`, then `STAFF-01`, by canonical acceptance.
-- MEM-01 source/tests/evidence/docs were committed with exactly 40 allowlisted paths as `a7aa5b715de3da021934152b75e17ef67f6f19a5`. The exact-path staging helper/tests/allowlists were committed as `cdc989b198737e1d2235eaf570fb023e9306e264`; final status and the refreshed interaction-map/CI diagnostics are pushed through `1afab65839b325b6a2013443f4d211f899e58c87` on `arena/5e0f64cf-mp`. GitHub API confirmed 1afab658 on the remote branch and the evidence directory (15 entries). The helper staged only allowlisted paths; 60 unrelated staged entries remain untouched. `gh pr checks 30` on e06a716 failed backend and Documentation links/handoff; local interaction-map regeneration and full backend coverage reproduction passed, but the remote backend root cause remains unknown because log retrieval returned EOF. A new PR check run is pending for 1afab658. `PENDING_PUSH=no`; this is not a merge. Untracked/private receipts were not opened, copied, deleted, or staged; PR #30 must remain draft and unmerged.
+- MEM-01 source/tests/evidence/docs were committed with exactly 40 allowlisted paths as `a7aa5b715de3da021934152b75e17ef67f6f19a5`. The exact-path staging helper/tests/allowlists were committed as `cdc989b198737e1d2235eaf570fb023e9306e264`; map refresh/CI diagnostics as `1afab65839b325b6a2013443f4d211f899e58c87`; final STATE check record was pushed through `7833508b2c8dde4d7cb3f86754af71aa6d47815c` on `arena/5e0f64cf-mp`. GitHub API confirmed 7833508 on the remote branch and the evidence directory (15 entries). The helper staged only allowlisted paths; 60 unrelated staged entries remain untouched. `gh pr checks 30` on e06a716 initially failed backend/docs; after the map refresh, `gh pr checks 30 --watch --interval 10` on 7833508 exited 0 with all main and supplemental checks passing, including backend, documentation and `e2e-api`. `PENDING_PUSH=no`; this is not a merge. Untracked/private receipts were not opened, copied, deleted, or staged; PR #30 remains OPEN/draft and unmerged.
 
 ## Historical run snapshot — PWA / SEC-01 / WEB / INV (مرجع Arena: ۲۰۲۶-۱۱-۲۳ UTC)
 
