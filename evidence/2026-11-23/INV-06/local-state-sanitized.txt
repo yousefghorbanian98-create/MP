@@ -1,0 +1,15 @@
+Sanitized local Git state; pathnames omitted intentionally (private/untracked entries are not enumerated).
+Observation date: 2026-11-27 UTC
+Branch: arena/5e0f64cf-mp
+HEAD: e0ae95f48bf8451bd59b972a92c55fed404e6a92
+Staged tracked paths: 0
+Unstaged tracked paths: 24
+Git porcelain tracked status entries: 24
+Index-status entries among tracked: 0
+Worktree-status entries among tracked: 24
+Untracked path entries (all names suppressed): 322
+Untracked path entries under mp-app (names suppressed): 117
+Tracked product-source diff paths under mp-app: 0
+Staged diff check exit: 0
+Worktree diff check exit: 0
+Commit created in this cycle: no

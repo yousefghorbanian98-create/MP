@@ -1,0 +1,7 @@
+claimed_sha=f06f2a95305082e01e33b157396f0dfc0128613d
+run_started_utc=2026-11-27T12:00:11Z
+command=/tmp/mp-backend-venv/bin/python -m pytest -q
+working_directory=mp-app/backend
+tested_sha=f06f2a95305082e01e33b157396f0dfc0128613d
+run_finished_utc=2026-11-27T12:03:20Z
+pytest_exit=0

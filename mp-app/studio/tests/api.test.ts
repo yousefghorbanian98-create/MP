@@ -7,6 +7,8 @@ import {
   fetchFinanceSummary,
   fetchKpis,
   fetchMembersSummary,
+  fetchMe,
+  fetchMemberMemberships,
 } from "../src/lib/api";
 
 const kpis = {
@@ -86,6 +88,56 @@ describe("studio api client (M45-c1)", () => {
     const data = await fetchAttendance(7, "tok");
     expect(data.total_checkins).toBe(0);
     expect(fetchMock.mock.calls[0][0]).toBe("/api/v1/admin/attendance?days=7");
+  });
+
+  it("reads the member identity contract including constraints", async () => {
+    const me = {
+      id: 17,
+      user_id: 41,
+      full_name: "عضو آزمون",
+      phone: "09120000000",
+      role: "member",
+      goal: "hypertrophy",
+      gender: "female",
+      height_cm: 165,
+      constraints: '["knee_injury"]',
+    };
+    const fetchMock = vi.fn(async (_input: RequestInfo | URL, _init?: RequestInit) => ({
+      ok: true,
+      status: 200,
+      json: async () => me,
+    }));
+    vi.stubGlobal("fetch", fetchMock);
+    const data = await fetchMe("member-token");
+    expect(data.constraints).toBe('["knee_injury"]');
+    expect(fetchMock.mock.calls[0][0]).toBe("/api/v1/members/me");
+    expect(new Headers(fetchMock.mock.calls[0][1]?.headers).get("Authorization"))
+      .toBe("Bearer member-token");
+  });
+
+  it("fetches member history for the server-provided member ID and rejects invalid IDs", async () => {
+    const rows = [{
+      id: 8,
+      member_id: 17,
+      plan_name: "ماهانه",
+      started_at: "2026-11-01T08:00:00",
+      expires_at: "2026-11-30T11:59:00",
+      status: "active",
+      price_rial: 100000,
+    }];
+    const fetchMock = vi.fn(async (_input: RequestInfo | URL, _init?: RequestInit) => ({
+      ok: true,
+      status: 200,
+      json: async () => rows,
+    }));
+    vi.stubGlobal("fetch", fetchMock);
+    const data = await fetchMemberMemberships(17, "member-token");
+    expect(data[0].member_id).toBe(17);
+    expect(fetchMock.mock.calls[0][0]).toBe("/api/v1/members/17/memberships");
+    expect(new Headers(fetchMock.mock.calls[0][1]?.headers).get("Authorization"))
+      .toBe("Bearer member-token");
+    await expect(fetchMemberMemberships(0, "member-token")).rejects.toMatchObject({ status: 400 });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
   // M60/B1 — ۴۰۳ یعنی «توکن سالم است، نقش اجازه ندارد»؛ ۴۰۱ یعنی «نشست مرده».

@@ -1,0 +1,35 @@
+PR #30 CI rerun — captured after checks completed
+head=3e49232d2118e8212a4d1ddea20fc982da5cd13a
+
+--- gh pr checks 30 ---
+Client — pinned SDK · format gate · Android debug compile	pass	5m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45998409658/job/140503545610
+Documentation links and handoff	pass	12s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45998409658/job/140503545475
+PWA-00 patch applies cleanly and matches source docs	pass	9s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45998409713/job/140503545118
+Reviewdog (Markdown findings as check annotations)	pass	14s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45998409713/job/140503545416
+Super-Linter (PWA-00 Markdown only)	pass	1m20s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45998409713/job/140503545479
+backend	pass	6m3s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45998409658/job/140503545096
+client-flutter	pass	1m18s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45998409658/job/140503545559
+e2e-api	pass	3m1s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45998409658/job/140506406318
+live-contract	pass	36s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45998409658/job/140503545547
+markdownlint	pass	1s	https://github.com/yousefghorbanian98-create/MP/runs/140503643478
+secret-scan	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45998409658/job/140503545497
+studio	pass	1m43s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45998409658/job/140503545504
+
+--- Actions runs for exact head SHA ---
+mp-ci pull_request run=45998409658 sha=3e49232d2118e8212a4d1ddea20fc982da5cd13a status=completed conclusion=success
+pwa00-doc-quality run=45998409713 sha=3e49232d2118e8212a4d1ddea20fc982da5cd13a status=completed conclusion=success
+mp-ci push run=45998396424 sha=3e49232d2118e8212a4d1ddea20fc982da5cd13a status=completed conclusion=success
+
+--- previously failing job step conclusions ---
+secret-scan: Set up job = success
+secret-scan: Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 = success
+secret-scan: Install verified Gitleaks CLI = success
+secret-scan: Verify exact signing exceptions with synthetic secrets = success
+secret-scan: Scan full Git history (redacted metadata) = success
+secret-scan: Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 = success
+secret-scan: Complete job = success
+PWA-00 patch: Set up job = success
+PWA-00 patch: Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 = success
+PWA-00 patch: Check the filtered patch against its pinned base = success
+PWA-00 patch: Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 = success
+PWA-00 patch: Complete job = success

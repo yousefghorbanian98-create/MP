@@ -1,0 +1,54 @@
+INV-06 — Dashboard actor/data/scope slice (documentation + synthetic integration tests)
+Evidence directory/baseline label: 2026-11-23 UTC (not the run date).
+Source inspection and pytest rerun: 2026-11-27 UTC.
+The raw pytest transcript retains its earlier "Reference date: 2026-11-23 UTC" header; treat it as a reference label, not an execution timestamp.
+Branch: arena/5e0f64cf-mp
+Local source HEAD: e0ae95f48bf8451bd59b972a92c55fed404e6a92
+Tracked product-source diff: 0 files; no product code, policy, schema, tenant, or database change was made in this slice.
+
+Scope of this slice
+This inventory covers the Dashboard KPI/attendance and its MemberTable summary requests only. It is not the full Dashboard surface, all staff/member screens, exports/files/jobs/events, or full INV-06 acceptance. No production database, real member data, receipt, external provider, or remote service was used.
+
+Actor → route → authorization → data source
+- GET /api/v1/admin/kpis (Dashboard.tsx; admin router _kpis): route manifest `guards=[permission]`, `roles=[manager,admin,super_admin]`, `scopes=[]`, `anonymous=never`; no per-member owner scope is declared. The router applies `Depends(require_permission())` at router level. `admin_kpis` aggregates Member, Membership, Payment, GymClass, and ClassBooking; revenue uses Payment.status=paid. Missing/zero class capacity yields `class_fill_rate=null` (unknown, not 0).
+- GET /api/v1/admin/attendance?days=7 (Dashboard.tsx; admin router attendance): route manifest `guards=[permission]`, `roles=[coach,reception,manager,admin,super_admin]`, `scopes=[]`, `anonymous=never`; no per-member owner scope is declared. `attendance_summary` aggregates CheckIn rows where result=ok inside the requested time window and returns a `rule_version`. Open sessions are counted separately; they do not get invented minutes.
+- GET /api/v1/admin/members-summary (MemberTable within Dashboard; admin router members_summary): route manifest `guards=[permission]`, `roles=[coach,reception,manager,admin,super_admin]`, `scopes=[]`, `anonymous=never`; no per-member owner scope is declared. `members_summary` reads Member, User, and Membership to show a club-wide staff list, including name/phone fields. An absent membership is status=unknown rather than expired.
+- Scope interpretation: these are club-wide staff views under the accepted single-club model, not member-self routes. The manifest has no row-owner scope for these aggregate/list APIs; that must not be confused with member ownership proof. The interaction map lists endpoint-specific roles, not a Dashboard page-level role allowlist. `Dashboard.tsx` calls `fetchKpis` unconditionally with no role gate in the component. If Dashboard is rendered for coach/reception, the KPI route manifest and current RBAC policy do not permit those roles and the request is expected to fail closed; actual role-to-page reachability and displayed error behavior were not exercised end-to-end. No permission was broadened; UI role alignment remains an explicit blocker.
+
+Tests and result
+Command from mp-app/backend:
+  /tmp/mp-backend-venv/bin/python -m pytest tests/integration/test_m45_admin_attendance.py tests/integration/test_ai_kpis.py tests/integration/test_m46_security_matrix.py -q
+Toolchain: Python 3.11.2; pytest 9.2.0.
+Result: 34 passed, 2 warnings, 10.60s; exit=0. Warnings: StarletteDeprecationWarning (`httpx` with `starlette.testclient`) and InsecureKeyLengthWarning (short synthetic HMAC key in the wrong-signature test). Raw output: dashboard-actor-data-tests.txt. Tests use temporary SQLite and synthetic actors/fixtures. Coverage includes anonymous/member denial for KPI and members-summary in the security matrix, anonymous/member denial for attendance in its route-specific tests, admin reads for KPI/members-summary, coach/manager attendance reads, a manager members-summary read, true empty-database attendance zero with `rule_version`, and KPI null-capacity behavior. This is test evidence for these listed routes only, not every advertised role × route × record combination; the coach/reception KPI behavior was not exercised from the UI.
+
+Source line references
+- mp-app/backend/modules/admin/router.py:13,66-101
+- mp-app/backend/app/deps.py:130-143 (permission guard calls route/method RBAC enforcement)
+- mp-app/backend/security/rbac.py:121,136-141,167-172 (coach/reception policy for attendance/member summary; manager/admin/super_admin broad allow)
+- mp-app/backend/modules/admin/kpis.py:10-59
+- mp-app/backend/modules/admin/analytics.py:299-415
+- docs/MuscleParadise/architecture/interaction-map.json: Dashboard surface, endpoint-specific roles (no page-level allowlist)
+- mp-app/studio/src/pages/Dashboard.tsx:13-130
+- mp-app/studio/src/components/MemberTable.tsx:28-31
+- mp-app/studio/src/lib/useApi.ts:4-63
+- tests referenced above plus mp-app/studio/tests/dashboard.test.tsx
+
+SHA-256 of the inspected sources/tests at this local HEAD
+7f0333dfb92a5bb56514b7e003cc78370fc7e8fabe3a9a8b5342ccaab9a84cf8  mp-app/backend/api/routes.json
+4232a5d9fa860e67fe0ad75786703600c359ea5a4b06354b05b4783d448c99c7  mp-app/backend/app/deps.py
+a8740f75b33e864e1a3990f4d77e2fa781f0c2105c133d9892a41ce63fdf9d2c  mp-app/backend/security/rbac.py
+016e2a4c4eff986c67713331cd084ddea532ad49dc0af33b10d3fbad6921ef03  docs/MuscleParadise/architecture/interaction-map.json
+84589464636a132e07d953533ddadca0c59c1db8ce17b4bce7b8cc55625f72eb  mp-app/backend/modules/admin/router.py
+10e0b35788452414e8916ffa4c1f36e75cee221e1f8aaa6ba677287823c9d4b2  mp-app/backend/modules/admin/kpis.py
+662b696a92c779760aa67c0541695da3d09a7b0d8320ee7dcd8e6da01ab06701  mp-app/backend/modules/admin/analytics.py
+df47d26a0e4bf60aa8324982e1026e5611375b292bf80cdf95476462c79af1d5  mp-app/backend/tests/integration/test_m45_admin_attendance.py
+85bb1328a3d00ecaa48b30a64be0844d61765e68c889a0d5a371c3684c66ca1c  mp-app/backend/tests/integration/test_ai_kpis.py
+824ed12a866712488e269bc1879c0d9f79980296130e16d966e9e10b34a25e67  mp-app/backend/tests/integration/test_m46_security_matrix.py
+7b22d7a6bdfbe8738f5505591258176237e8c85197a22b9e5a7b35b49c3c2748  mp-app/studio/src/pages/Dashboard.tsx
+b381b6535c425d8efdd3b0a5f42dee5edc682e0bd423360c8411e7962ea03824  mp-app/studio/src/components/MemberTable.tsx
+1fb12e04e864995fd3efb97d8a25d49cd8dde9694c8d720dcfaafc30fb8441ef  mp-app/studio/src/lib/useApi.ts
+5240e578c8abc4e81945332a50c56c99a6e1330a788c5a245bd3ec47e8c4653e  mp-app/studio/tests/dashboard.test.tsx
+
+Execution-environment caveat: the sanitized status snapshot records 117 untracked path entries under `mp-app` (names intentionally omitted and contents not reviewed). Tracked source/test hashes above are exact, but the effect, if any, of those untracked entries on this local test environment was not audited. These results are not clean-checkout/CI evidence or product acceptance.
+
+Current status: INV-06 = PARTIAL — one Dashboard API/actor/data slice documented with synthetic negative/positive tests; full actor/data matrix and page/field-level ownership remain open. Checkbox remains open. No security/RBAC approval, release, or production claim.

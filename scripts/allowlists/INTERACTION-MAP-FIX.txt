@@ -1,0 +1,12 @@
+# Exact file-level allowlist for regenerating the interaction map and recording PR #30 diagnostics.
+# One repository-relative path per line; no directories or patterns.
+.finn/state/STATE.md
+docs/MuscleParadise/PWA-EXECUTION-STATE.md
+docs/MuscleParadise/SESSION_HANDOFF.md
+docs/MuscleParadise/architecture/interaction-map-2026-11-19.md
+docs/MuscleParadise/architecture/interaction-map.json
+evidence/2026-11-27/MEM-01/backend-ci-coverage-repro.txt
+evidence/2026-11-27/MEM-01/current-run.md
+evidence/2026-11-27/MEM-01/docs-gate.txt
+evidence/2026-11-27/MEM-01/pr30-checks-e06a716.txt
+scripts/allowlists/INTERACTION-MAP-FIX.txt

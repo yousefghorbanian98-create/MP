@@ -1,0 +1,3 @@
+OK  kind=staff  sha=f06f2a953050  {'PARTIAL_REVIEW': 12}
+OUT /home/user/MP/evidence/2026-11-27/INV-03/staff-page-crosswalk.md
+یادآوری: PARTIAL است؛ بدون commit+push شاهد رسمی نیست.

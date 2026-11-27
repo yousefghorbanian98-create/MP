@@ -1,0 +1,13 @@
+
+> mp-studio@0.1.0 test
+> vitest run tests/liveContract.test.ts
+
+
+ RUN  v3.2.7 /home/user/MP/mp-app/studio
+
+ ✓ tests/liveContract.test.ts (9 tests) 212ms
+
+ Test Files  1 passed (1)
+      Tests  9 passed (9)
+   Start at  14:41:24
+   Duration  1.06s (transform 112ms, setup 26ms, collect 104ms, tests 212ms, environment 393ms, prepare 148ms)

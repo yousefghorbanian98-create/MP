@@ -1,0 +1,178 @@
+Reference date: 2026-11-23 UTC
+branch=arena/5e0f64cf-mp
+HEAD=e0ae95f48bf8451bd59b972a92c55fed404e6a92
+python=Python 3.11.2
+
+$ python3 evidence/2026-11-23/INV-03/staff_crosswalk_audit.py
+Read-only inventory; no product source, test, or policy was changed/run.
+HEAD_SOURCE_SHA=e0ae95f48bf8451bd59b972a92c55fed404e6a92
+INPUT_SHA256 docs/MuscleParadise/architecture/interaction-map.json 016e2a4c4eff986c67713331cd084ddea532ad49dc0af33b10d3fbad6921ef03
+INPUT_SHA256 mp-app/backend/api/routes.json 7f0333dfb92a5bb56514b7e003cc78370fc7e8fabe3a9a8b5342ccaab9a84cf8
+INPUT_SHA256 mp-app/studio/src/App.tsx baf934e2fcfe01b06612e9c2102e09c9df1ef80aa05e879d6535fc6f283e8688
+INPUT_SHA256 mp-app/studio/src/lib/roleNav.ts 650ff74343af6e25010f6a07bab4de477d2ffefcee94be3923a200ed05d53220
+INPUT_SHA256 mp-app/studio/src/lib/navigation.ts 71fa84e7d3d0ca190e3a79ab91cb43beff7d2b8743ccc71a598b6a3722b73172
+studio_staff_page_ids=12: dashboard, members, programs, nutrition, assessment, chat, checkin, finance, expenses, analytics, settings, shop
+interaction_map_surfaces=31; api_contract_operations=163; contract_paths_from_gate=163
+interaction_map_has_state_field=False
+TEST_EXISTS mp-app/studio/tests/dashboard.test.tsx True
+PAGE dashboard route=/staff/dashboard component=mp-app/studio/src/pages/Dashboard.tsx import=Dashboard roles=super_admin/admin/manager/coach/reception/member controls={'buttons': 1, 'inputs': 0, 'numbers': 0, 'selects': 0, 'modals': 0} tests=mp-app/studio/tests/dashboard.test.tsx state=UNKNOWN_NOT_MAPPED
+  API GET /api/v1/admin/attendance [UI-guard=permission; API-roles=coach,reception,manager,admin,super_admin; contract=True]
+  API GET /api/v1/admin/kpis [UI-guard=permission; API-roles=manager,admin,super_admin; contract=True]
+  API GET /api/v1/admin/members-summary [UI-guard=permission; API-roles=coach,reception,manager,admin,super_admin; contract=True]
+PAGE members route=/staff/members component=mp-app/studio/src/pages/Members.tsx import=Members roles=super_admin/admin/manager/coach/reception controls={'buttons': 4, 'inputs': 0, 'numbers': 0, 'selects': 0, 'modals': 0} tests=NONE state=UNKNOWN_NOT_MAPPED
+  API GET /api/v1/admin/members-summary [UI-guard=permission; API-roles=coach,reception,manager,admin,super_admin; contract=True]
+  API POST /api/v1/ai/program/generate [UI-guard=permission; API-roles=member,coach,manager,admin,super_admin; contract=True]
+  API GET /api/v1/axis-assessments/*/matrix [UI-guard=permission; API-roles=member,coach,manager,admin,super_admin; contract=True]
+  API GET /api/v1/axis-assessments/member/* [UI-guard=permission; API-roles=member,coach,manager,admin,super_admin; contract=True]
+TEST_EXISTS mp-app/studio/tests/programsPage.test.tsx True
+PAGE programs route=/staff/programs component=mp-app/studio/src/pages/Programs.tsx import=Programs roles=super_admin/admin/manager/coach/member controls={'buttons': 9, 'inputs': 0, 'numbers': 0, 'selects': 0, 'modals': 0} tests=mp-app/studio/tests/programsPage.test.tsx state=UNKNOWN_NOT_MAPPED
+  API POST /api/v1/ai/suggest-weight [UI-guard=permission; API-roles=member,coach,manager,admin,super_admin; contract=True]
+  API GET /api/v1/library/exercises [UI-guard=permission; API-roles=member,coach,manager,admin,super_admin; contract=True]
+  API GET /api/v1/programs [UI-guard=permission; API-roles=coach,reception,manager,admin,super_admin; contract=True]
+  API POST /api/v1/programs/*/approve [UI-guard=permission; API-roles=coach,manager,admin,super_admin; contract=True]
+  API POST /api/v1/programs/*/reject [UI-guard=permission; API-roles=coach,manager,admin,super_admin; contract=True]
+  API GET /api/v1/programs/member/*/readiness [UI-guard=permission; API-roles=member,coach,manager,admin,super_admin; contract=True]
+  API GET /api/v1/programs/member/*/volume [UI-guard=permission; API-roles=member,coach,manager,admin,super_admin; contract=True]
+TEST_EXISTS mp-app/studio/tests/nutritionNoMemberSentinel.test.tsx True
+TEST_EXISTS mp-app/studio/tests/nutritionPage.test.tsx True
+PAGE nutrition route=/staff/nutrition component=mp-app/studio/src/pages/Nutrition.tsx import=Nutrition roles=super_admin/admin/manager/coach/member controls={'buttons': 6, 'inputs': 0, 'numbers': 0, 'selects': 1, 'modals': 0} tests=mp-app/studio/tests/nutritionNoMemberSentinel.test.tsx;mp-app/studio/tests/nutritionPage.test.tsx state=UNKNOWN_NOT_MAPPED
+  API POST /api/v1/nutrition/food-logs [UI-guard=permission; API-roles=member,coach,manager,admin,super_admin; contract=True]
+  API GET /api/v1/nutrition/food-logs/member/*/daily [UI-guard=permission; API-roles=member,coach,manager,admin,super_admin; contract=True]
+  API GET /api/v1/nutrition/foods [UI-guard=permission; API-roles=member,coach,manager,admin,super_admin; contract=True]
+  API GET /api/v1/nutrition/member/*/adaptive [UI-guard=permission; API-roles=member,coach,manager,admin,super_admin; contract=True]
+  API POST /api/v1/nutrition/weight-logs [UI-guard=permission; API-roles=member,coach,manager,admin,super_admin; contract=True]
+TEST_EXISTS mp-app/studio/tests/jp7Trend.test.tsx True
+PAGE assessment route=/staff/assessment component=mp-app/studio/src/pages/Assessment.tsx import=Assessment roles=super_admin/admin/manager/coach/member controls={'buttons': 2, 'inputs': 0, 'numbers': 0, 'selects': 0, 'modals': 0} tests=mp-app/studio/tests/jp7Trend.test.tsx state=UNKNOWN_NOT_MAPPED
+  API GET /api/v1/assessments/jp7/member/*/trend [UI-guard=permission; API-roles=member,coach,manager,admin,super_admin; contract=True]
+  API POST /api/v1/assessments/limb [UI-guard=permission; API-roles=member,coach,manager,admin,super_admin; contract=True]
+  API GET /api/v1/assessments/limb/member/*/report [UI-guard=permission; API-roles=member,coach,manager,admin,super_admin; contract=True]
+  API GET /api/v1/notifications/reminders/member/* [UI-guard=permission; API-roles=member,coach,reception,manager,admin,super_admin; contract=True]
+TEST_EXISTS mp-app/studio/tests/chatPage.test.tsx True
+PAGE chat route=/staff/chat component=mp-app/studio/src/pages/Chat.tsx import=Chat roles=super_admin/admin/manager/coach/reception/member controls={'buttons': 5, 'inputs': 0, 'numbers': 0, 'selects': 0, 'modals': 0} tests=mp-app/studio/tests/chatPage.test.tsx state=UNKNOWN_NOT_MAPPED
+  API GET /api/v1/chat/conversations [UI-guard=permission; API-roles=member,coach,manager,admin,super_admin; contract=True]
+  API POST /api/v1/chat/conversations [UI-guard=permission; API-roles=member,coach,manager,admin,super_admin; contract=True]
+  API GET /api/v1/chat/conversations/*/messages [UI-guard=permission; API-roles=member,coach,manager,admin,super_admin; contract=True]
+  API POST /api/v1/chat/conversations/*/messages [UI-guard=permission; API-roles=member,coach,manager,admin,super_admin; contract=True]
+  API POST /api/v1/chat/conversations/*/read [UI-guard=permission; API-roles=member,coach,manager,admin,super_admin; contract=True]
+TEST_EXISTS mp-app/studio/tests/checkInPage.test.tsx True
+PAGE checkin route=/staff/checkin component=mp-app/studio/src/pages/CheckIn.tsx import=CheckIn roles=super_admin/admin/manager/coach/reception/member controls={'buttons': 1, 'inputs': 0, 'numbers': 0, 'selects': 0, 'modals': 0} tests=mp-app/studio/tests/checkInPage.test.tsx state=UNKNOWN_NOT_MAPPED
+  API GET /api/v1/admin/checkins [UI-guard=permission; API-roles=coach,reception,manager,admin,super_admin; contract=True]
+TEST_EXISTS mp-app/studio/tests/financePage.test.tsx True
+PAGE finance route=/staff/finance component=mp-app/studio/src/pages/Finance.tsx import=Finance roles=super_admin/admin/manager controls={'buttons': 10, 'inputs': 6, 'numbers': 1, 'selects': 2, 'modals': 2} tests=mp-app/studio/tests/financePage.test.tsx state=UNKNOWN_NOT_MAPPED
+  API GET /api/v1/finance/reports/period [UI-guard=grant:finance.read,permission; API-roles=manager,admin,super_admin; contract=True]
+  API GET /api/v1/payments [UI-guard=permission; API-roles=member,reception,manager,admin,super_admin; contract=True]
+  API POST /api/v1/payments [UI-guard=permission; API-roles=member,reception,manager,admin,super_admin; contract=True]
+  API POST /api/v1/payments/*/approve [UI-guard=grant:finance.write,permission; API-roles=reception,manager,admin,super_admin; contract=True]
+  API POST /api/v1/payments/*/fail [UI-guard=permission; API-roles=reception,manager,admin,super_admin; contract=True]
+  API GET /api/v1/payments/*/receipt [UI-guard=permission; API-roles=member,reception,manager,admin,super_admin; contract=True]
+  API POST /api/v1/payments/*/refund [UI-guard=grant:finance.write,permission,roles; API-roles=manager,admin,super_admin; contract=True]
+  API POST /api/v1/payments/*/reject [UI-guard=grant:finance.write,permission; API-roles=reception,manager,admin,super_admin; contract=True]
+  API POST /api/v1/payments/*/verify [UI-guard=grant:finance.write,permission; API-roles=reception,manager,admin,super_admin; contract=True]
+  API GET /api/v1/payments/coupons [UI-guard=grant:finance.write,permission; API-roles=member,reception,manager,admin,super_admin; contract=True]
+  API POST /api/v1/payments/coupons [UI-guard=grant:finance.write,permission; API-roles=reception,manager,admin,super_admin; contract=True]
+  API POST /api/v1/payments/finance/commission [UI-guard=permission; API-roles=manager,admin,super_admin; contract=True]
+  API GET /api/v1/payments/finance/summary [UI-guard=permission; API-roles=manager,admin,super_admin; contract=True]
+  API GET /api/v1/payments/ledger/* [UI-guard=permission; API-roles=member,reception,manager,admin,super_admin; contract=True]
+TEST_EXISTS mp-app/studio/tests/expenseReceipt.test.tsx True
+TEST_EXISTS mp-app/studio/tests/expensesPage.test.tsx True
+PAGE expenses route=/staff/expenses component=mp-app/studio/src/pages/Expenses.tsx import=Expenses roles=super_admin/admin/manager controls={'buttons': 0, 'inputs': 4, 'numbers': 2, 'selects': 1, 'modals': 2} tests=mp-app/studio/tests/expenseReceipt.test.tsx;mp-app/studio/tests/expensesPage.test.tsx state=UNKNOWN_NOT_MAPPED
+  API GET /api/v1/expenses [UI-guard=grant:finance.read,permission; API-roles=manager,admin,super_admin; contract=True]
+  API POST /api/v1/expenses [UI-guard=grant:finance.write,permission; API-roles=manager,admin,super_admin; contract=True]
+  API GET /api/v1/expenses/*/receipt [UI-guard=grant:finance.read,permission; API-roles=manager,admin,super_admin; contract=True]
+  API POST /api/v1/expenses/*/receipt [UI-guard=grant:finance.write,permission; API-roles=manager,admin,super_admin; contract=True]
+PAGE analytics route=/staff/analytics component=mp-app/studio/src/pages/Analytics.tsx import=Analytics roles=super_admin/admin/manager/coach controls={'buttons': 0, 'inputs': 0, 'numbers': 0, 'selects': 0, 'modals': 0} tests=NONE state=UNKNOWN_NOT_MAPPED
+  API GET /api/v1/admin/analytics/churn-risk [UI-guard=permission; API-roles=manager,admin,super_admin; contract=True]
+  API GET /api/v1/admin/analytics/leaderboards [UI-guard=permission; API-roles=manager,admin,super_admin; contract=True]
+TEST_EXISTS mp-app/studio/tests/settingsRole.test.tsx True
+PAGE settings route=/staff/settings component=mp-app/studio/src/pages/Settings.tsx import=Settings roles=super_admin/admin controls={'buttons': 2, 'inputs': 0, 'numbers': 0, 'selects': 4, 'modals': 0} tests=mp-app/studio/tests/settingsRole.test.tsx state=UNKNOWN_NOT_MAPPED
+  API GET /api/v1/admin/audit [UI-guard=permission; API-roles=manager,admin,super_admin; contract=True]
+  API GET /api/v1/admin/flags [UI-guard=permission; API-roles=manager,admin,super_admin; contract=True]
+  API PUT /api/v1/admin/flags [UI-guard=permission; API-roles=manager,admin,super_admin; contract=True]
+  API GET /api/v1/admin/permissions [UI-guard=permission; API-roles=super_admin; contract=True]
+  API POST /api/v1/admin/permissions [UI-guard=permission; API-roles=super_admin; contract=True]
+  API DELETE /api/v1/admin/permissions/* [UI-guard=permission; API-roles=super_admin; contract=True]
+  API GET /api/v1/admin/permissions/known [UI-guard=permission; API-roles=super_admin; contract=True]
+  API GET /api/v1/admin/users [UI-guard=permission; API-roles=super_admin; contract=True]
+  API DELETE /api/v1/admin/users/*/role [UI-guard=permission; API-roles=super_admin; contract=True]
+  API POST /api/v1/admin/users/*/role [UI-guard=permission; API-roles=super_admin; contract=True]
+  API GET /api/v1/auth/sessions [UI-guard=authenticated; API-roles=member,coach,reception,manager,admin,super_admin; contract=True]
+TEST_EXISTS mp-app/studio/tests/shopPage.test.tsx True
+PAGE shop route=/staff/shop component=mp-app/studio/src/pages/Shop.tsx import=Shop roles=super_admin/admin/manager/coach/reception/member controls={'buttons': 17, 'inputs': 9, 'numbers': 5, 'selects': 5, 'modals': 2} tests=mp-app/studio/tests/shopPage.test.tsx state=UNKNOWN_NOT_MAPPED
+staff_pages_without_test_reference=members,analytics
+staff_endpoint_shapes_referenced=59; any_interaction_surface_endpoint_shapes_referenced=94; manifest_operations_without_any_surface_reference=69
+UNMAPPED_CONTRACT_OPERATIONS (absence from interaction map only; not proof of dead code):
+  DELETE /api/v1/auth/sessions/{}
+  DELETE /api/v1/expenses/{}
+  DELETE /api/v1/face/enroll/{}
+  GET /api/v1/admin/flags/{}
+  GET /api/v1/admin/retention
+  GET /api/v1/assessments/{}
+  GET /api/v1/face/deep-status
+  GET /api/v1/finance/reports/daily/{}
+  GET /api/v1/finance/reports/schedule
+  GET /api/v1/health/ready
+  GET /api/v1/library/exercises/{}
+  GET /api/v1/members
+  GET /api/v1/members/memberships/plans
+  GET /api/v1/members/memberships/{}/invoice
+  GET /api/v1/members/{}
+  GET /api/v1/metrics
+  GET /api/v1/notifications/member/{}
+  GET /api/v1/payments/finance/export.csv
+  GET /api/v1/payments/invoice/{}
+  GET /api/v1/payments/{}/gateway-return
+  GET /api/v1/population/paths
+  GET /api/v1/programs/{}
+  GET /api/v1/reports/confidential/{}
+  GET /api/v1/shop/change-requests
+  GET /api/v1/shop/prices
+  GET /api/v1/shop/products/{}
+  GET /api/v1/shop/status
+  GET /api/v1/updates/manifest
+  GET /health
+  PATCH /api/v1/expenses/{}
+  PATCH /api/v1/members/{}
+  PATCH /api/v1/shop/cart/{}
+  PATCH /api/v1/shop/orders/{}
+  PATCH /api/v1/shop/products/{}
+  POST /api/v1/admin/retention/run
+  POST /api/v1/assessments
+  POST /api/v1/assessments/jp7
+  POST /api/v1/auth/logout-all
+  POST /api/v1/axis-assessments/{}/review
+  POST /api/v1/classes
+  POST /api/v1/classes/book
+  POST /api/v1/classes/cancel
+  POST /api/v1/face/checkin
+  POST /api/v1/face/checkin-qr
+  POST /api/v1/face/checkins/{}/exit
+  POST /api/v1/face/consent/revoke
+  POST /api/v1/face/enroll
+  POST /api/v1/finance/reports/schedule/{}/run
+  POST /api/v1/members
+  POST /api/v1/members/memberships
+  POST /api/v1/members/memberships/from-plan
+  POST /api/v1/notifications
+  POST /api/v1/notifications/{}/read
+  POST /api/v1/nutrition/plans
+  POST /api/v1/nutrition/plans/{}/approve
+  POST /api/v1/payments/ledger/{}/reverse
+  POST /api/v1/payments/wallet/charge
+  POST /api/v1/payments/wallet/pay
+  POST /api/v1/payments/{}/callback
+  POST /api/v1/payments/{}/receipt
+  POST /api/v1/payments/{}/start
+  POST /api/v1/population/intake/next
+  POST /api/v1/programs/from-engine
+  POST /api/v1/shop/change-requests
+  POST /api/v1/shop/change-requests/{}/review
+  POST /api/v1/shop/gateways
+  POST /api/v1/shop/prices
+  POST /api/v1/shop/products
+  PUT /api/v1/shop/gateways/{}
+member_role_in_page_rules=dashboard,programs,nutrition,assessment,chat,checkin,shop
+isStaffRole_excludes_member=True; member_route_placeholder_symbol_present=True
+STATE_GAP: generated map contains controls/endpoints/tests but no per-page loading/empty/error/persistence-state field; report UNKNOWN, not pass.
+LIMIT: static map/source only; no test execution, DB model/ownership audit, browser QA, or reviewer acceptance.
+
+scan_exit=0

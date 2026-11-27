@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import App from "../src/App";
 import { useAppStore } from "../src/stores/appStore";
@@ -221,7 +221,37 @@ describe("Studio OTP authentication flow (M67)", () => {
     expect(localStorage.getItem("mp_refresh")).toBe("refresh-after-load");
   });
 
-  it("rejects a member account from Studio and revokes its refresh token", async () => {
+  it("keeps restored member sessions out of staff routes", async () => {
+    localStorage.setItem("mp_token", tokenFor("member"));
+    localStorage.setItem("mp_refresh", "member-refresh");
+    window.history.replaceState({}, "", "/staff/finance");
+    const paths: string[] = [];
+    const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
+      const url = new URL(input instanceof Request ? input.url : String(input), window.location.href);
+      paths.push(url.pathname);
+      if (url.pathname === "/api/v1/members/me") {
+        return reply(200, {
+          id: 2,
+          user_id: 2,
+          full_name: "عضو آزمون",
+          phone: "09121112222",
+          role: "member",
+          goal: "",
+          gender: "male",
+          height_cm: null,
+        });
+      }
+      return reply(200, {});
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(<App />);
+    expect((await screen.findByRole("alert")).textContent).toContain("دسترسی به این مسیر برای نقش جاری مجاز نیست");
+    expect(paths).toEqual(["/api/v1/members/me"]);
+    expect(screen.queryByText("خلاصهٔ مالی")).toBeNull();
+  });
+
+  it("signs in a member to a today deep link and keeps navigation and logout coherent", async () => {
     const calls: { url: string; init?: RequestInit }[] = [];
     const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
       const url = new URL(input instanceof Request ? input.url : String(input), window.location.href);
@@ -237,24 +267,167 @@ describe("Studio OTP authentication flow (M67)", () => {
         });
       }
       if (url.pathname === "/api/v1/auth/logout") return reply(200, { status: "logged_out" });
+      if (url.pathname === "/api/v1/members/me") {
+        return reply(200, {
+          id: 17,
+          user_id: 2,
+          full_name: "عضو واقعی",
+          phone: "09121112222",
+          role: "member",
+          goal: "hypertrophy",
+          gender: "male",
+          height_cm: 180,
+          constraints: "[]",
+        });
+      }
+      if (url.pathname === "/api/v1/members/17/memberships") return reply(200, []);
       return reply(200, {});
     });
     vi.stubGlobal("fetch", fetchMock);
-    window.history.replaceState({}, "", "/member");
+    window.history.replaceState({}, "", "/member/today");
 
     render(<App />);
-    fireEvent.change(await screen.findByLabelText("شمارهٔ موبایل"), { target: { value: "09121112222" } });
+    const phone = await screen.findByLabelText("شمارهٔ موبایل");
     expect(window.location.pathname).toBe("/login");
-    expect(new URLSearchParams(window.location.search).get("returnTo")).toBe("/member");
+    expect(new URLSearchParams(window.location.search).get("returnTo")).toBe("/member/today");
+    fireEvent.change(phone, { target: { value: "09121112222" } });
     fireEvent.click(screen.getByRole("button", { name: "دریافت کد ورود" }));
     await screen.findByText(/کد آزمایشی محیط توسعه/);
     fireEvent.change(screen.getByLabelText("کد یک‌بارمصرف"), { target: { value: "111111" } });
     fireEvent.click(screen.getByRole("button", { name: "ورود امن" }));
 
-    await screen.findByText("این حساب مجاز به ورود به استودیو نیست");
+    await screen.findByRole("heading", { name: "امروز" });
+    expect(window.location.pathname).toBe("/member/today");
+    expect(screen.getByRole("main").getAttribute("dir")).toBe("rtl");
+    expect(screen.getByRole("link", { name: "امروز" }).getAttribute("aria-current")).toBe("page");
+
+    fireEvent.click(screen.getByRole("link", { name: "خانه" }));
+    await waitFor(() => expect(window.location.pathname).toBe("/member"));
+    await screen.findByRole("heading", { name: "خانهٔ عضو" });
+    expect(await screen.findByText("عضو واقعی")).toBeTruthy();
+    expect(await screen.findByText(/سابقهٔ اشتراکی در حساب شما ثبت نشده است/)).toBeTruthy();
+    expect(calls.some((call) => call.url === "/api/v1/members/17/memberships")).toBe(true);
+
+    const waitForPopState = () =>
+      new Promise<void>((resolve) => window.addEventListener("popstate", () => resolve(), { once: true }));
+    await act(async () => {
+      const popped = waitForPopState();
+      window.history.back();
+      await popped;
+    });
+    await waitFor(() => expect(window.location.pathname).toBe("/member/today"));
+    await screen.findByRole("heading", { name: "امروز" });
+    await act(async () => {
+      const popped = waitForPopState();
+      window.history.forward();
+      await popped;
+    });
+    await waitFor(() => expect(window.location.pathname).toBe("/member"));
+    await screen.findByRole("heading", { name: "خانهٔ عضو" });
+    await act(async () => {
+      const popped = waitForPopState();
+      window.history.back();
+      await popped;
+    });
+    await waitFor(() => expect(window.location.pathname).toBe("/member/today"));
+
+    fireEvent.click(screen.getByRole("button", { name: "خروج از حساب" }));
+    await screen.findByText("از حساب خارج شدید.");
+    expect(window.location.pathname).toBe("/login");
+    expect(new URLSearchParams(window.location.search).get("returnTo")).toBe("/member/today");
     expect(localStorage.getItem("mp_token")).toBeNull();
     expect(localStorage.getItem("mp_refresh")).toBeNull();
     const logout = calls.find((call) => call.url === "/api/v1/auth/logout");
     expect(JSON.parse(String(logout?.init?.body))).toEqual({ refresh_token: "member-refresh" });
+  });
+
+  it("holds a member deep link behind session restoration and returns to login on expired refresh", async () => {
+    localStorage.setItem("mp_token", tokenFor("member", "expired"));
+    localStorage.setItem("mp_refresh", "revoked-member-refresh");
+    window.history.replaceState({}, "", "/member/today");
+    const paths: string[] = [];
+    let resolveMe!: (response: Response) => void;
+    const pendingMe = new Promise<Response>((resolve) => { resolveMe = resolve; });
+    const fetchMock = vi.fn((input: RequestInfo | URL) => {
+      const url = new URL(input instanceof Request ? input.url : String(input), window.location.href);
+      paths.push(url.pathname);
+      if (url.pathname === "/api/v1/members/me") return pendingMe;
+      if (url.pathname === "/api/v1/auth/refresh") return Promise.resolve(reply(401, { error: { message: "revoked" } }));
+      return Promise.resolve(reply(200, {}));
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(<App />);
+    expect(screen.getByRole("status").textContent).toContain("در حال بررسی نشست");
+    expect(screen.queryByRole("heading", { name: "فضای عضو" })).toBeNull();
+    await act(async () => resolveMe(reply(401, { error: { message: "expired" } })));
+    await screen.findByLabelText("شمارهٔ موبایل");
+
+    expect(window.location.pathname).toBe("/login");
+    expect(new URLSearchParams(window.location.search).get("returnTo")).toBe("/member/today");
+    expect(screen.getByRole("status").textContent).toContain("نشست منقضی یا لغو شده");
+    expect(screen.queryByRole("heading", { name: "فضای عضو" })).toBeNull();
+    expect(localStorage.getItem("mp_token")).toBeNull();
+    expect(localStorage.getItem("mp_refresh")).toBeNull();
+    expect(paths).toEqual(["/api/v1/members/me", "/api/v1/auth/refresh"]);
+  });
+
+  it("shows a recoverable session-check error instead of member content when offline", async () => {
+    localStorage.setItem("mp_token", tokenFor("member", "offline"));
+    localStorage.setItem("mp_refresh", "member-refresh");
+    window.history.replaceState({}, "", "/member");
+    const fetchMock = vi.fn(async () => {
+      throw new Error("network unavailable");
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(<App />);
+    await screen.findByLabelText("شمارهٔ موبایل");
+
+    expect(window.location.pathname).toBe("/login");
+    expect(new URLSearchParams(window.location.search).get("returnTo")).toBe("/member");
+    expect(screen.getByRole("status").textContent).toContain("برای بررسی نشست به سرور دسترسی نیست");
+    expect(screen.queryByRole("heading", { name: "فضای عضو" })).toBeNull();
+    expect(localStorage.getItem("mp_token")).toBe(tokenFor("member", "offline"));
+    expect(localStorage.getItem("mp_refresh")).toBe("member-refresh");
+  });
+
+  it("fails closed and revokes a member token when /members/me reports a different role", async () => {
+    localStorage.setItem("mp_token", tokenFor("member", "stale-role"));
+    localStorage.setItem("mp_refresh", "member-refresh");
+    window.history.replaceState({}, "", "/member");
+    const calls: string[] = [];
+    const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
+      const url = new URL(input instanceof Request ? input.url : String(input), window.location.href);
+      calls.push(url.pathname);
+      if (url.pathname === "/api/v1/members/me") return reply(200, { role: "coach" });
+      return reply(200, { status: "logged_out" });
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(<App />);
+    await screen.findByLabelText("شمارهٔ موبایل");
+
+    expect(screen.getByRole("status").textContent).toContain("نقش نشست با هویت حساب در سرور هم‌خوان نیست");
+    expect(screen.queryByRole("heading", { name: "فضای عضو" })).toBeNull();
+    expect(localStorage.getItem("mp_token")).toBeNull();
+    expect(localStorage.getItem("mp_refresh")).toBeNull();
+    expect(calls).toEqual(["/api/v1/members/me", "/api/v1/auth/logout"]);
+  });
+
+  it("reports a backend session-check failure without rendering the member route", async () => {
+    localStorage.setItem("mp_token", tokenFor("member", "server-error"));
+    localStorage.setItem("mp_refresh", "member-refresh");
+    window.history.replaceState({}, "", "/member/today");
+    vi.stubGlobal("fetch", vi.fn(async () => reply(503, { detail: "unavailable" })));
+
+    render(<App />);
+    await screen.findByLabelText("شمارهٔ موبایل");
+
+    expect(window.location.pathname).toBe("/login");
+    expect(screen.getByRole("status").textContent).toContain("سرور نتوانست نشست را بررسی کند");
+    expect(screen.queryByRole("heading", { name: "فضای عضو" })).toBeNull();
+    expect(localStorage.getItem("mp_token")).toBe(tokenFor("member", "server-error"));
+    expect(localStorage.getItem("mp_refresh")).toBe("member-refresh");
   });
 });

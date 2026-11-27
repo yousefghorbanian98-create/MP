@@ -27,7 +27,7 @@
 
 > 🚧 **وضعیت:** توسعه فعال است؛ این صفحه ادعای آمادگی انتشار یا استقرار production نمی‌کند. سبز بودن CI فقط به commit و گیت‌هایی مربوط است که همان اجرا پوشش داده است؛ جایگزین QA دستگاه، اتصال واقعی سرویس‌های بیرونی، آزمون بازیابی پشتیبان یا تأیید انتشار نیست.
 >
-> 🧭 **baseline انتشار:** طبق [ADR-007](docs/MuscleParadise/adr/007-pwa-primary-release.md)، PWA مشترک React بر پایهٔ `mp-app/studio/` رابط اصلی انتشار اول برای عضو و کادر است؛ اپ React دوم ساخته نمی‌شود. Flutter/Android، Flutter Web و Electron حفظ می‌شوند. این انتخاب محصول، پیاده‌سازی/parity PWA یا پذیرش انتشار را ثابت نمی‌کند؛ گیت‌های D-10/QA و Go/No-Go همچنان جدا و بازند. [ADR-006](docs/MuscleParadise/adr/006-shared-react-pwa.md) جهت shared React را ثبت می‌کند.
+> 🧭 **baseline انتشار:** طبق [ADR-007](docs/MuscleParadise/adr/007-pwa-primary-release.md)، PWA مشترک React بر پایهٔ `mp-app/studio/` رابط اصلی انتشار اول برای عضو و کادر است؛ اپ React دوم ساخته نمی‌شود. Flutter/Android، Flutter Web و Electron حفظ می‌شوند. این انتخاب محصول، پیاده‌سازی/parity PWA یا پذیرش انتشار را ثابت نمی‌کند؛ گیت‌های D-10/QA و Go/No-Go همچنان جدا و بازند. [ADR-006](docs/MuscleParadise/adr/006-shared-react-pwa.md) جهت shared React را ثبت می‌کند. معیارهای parent در [TODO canonical](docs/MuscleParadise/TODO-2026-11-16.md#pwa-ui-ux-full-backlog-2026-11-23)، status در [tracker اجرایی](docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md) و checkpoint محلی در [دفتر اجرا](docs/MuscleParadise/PWA-EXECUTION-STATE.md) است.
 >
 > 🔒 **مجوز:** مخزن عمومی است، اما نرم‌افزار اختصاصی است؛ مشاهدهٔ کد به‌تنهایی مجوز استفاده، کپی یا بازتوزیع نمی‌دهد. [LICENSE](LICENSE) را بخوانید.
 

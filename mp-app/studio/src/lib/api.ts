@@ -545,10 +545,30 @@ export interface Me {
   goal: string;
   gender: string;
   height_cm: number | null;
+  /** JSON-encoded list of member constraints returned by `/members/me`. */
+  constraints: string;
 }
 
 export function fetchMe(token = getToken(), signal?: AbortSignal) {
   return getJson<Me>("/members/me", token, signal);
+}
+
+export interface MemberMembership {
+  id: number;
+  member_id: number;
+  plan_name: string;
+  started_at: string;
+  expires_at: string;
+  status: string;
+  price_rial: number;
+}
+
+/** Read membership history only after `/members/me` returns the signed-in member ID. */
+export async function fetchMemberMemberships(memberId: number, token = getToken(), signal?: AbortSignal) {
+  if (!Number.isSafeInteger(memberId) || memberId <= 0) {
+    throw new ApiError("شناسهٔ عضو از سرور معتبر نیست", 400);
+  }
+  return getJson<MemberMembership[]>(`/members/${memberId}/memberships`, token, signal);
 }
 
 // ── تولید برنامه از موتور قواعد (POST /ai/program/generate — G8) ──

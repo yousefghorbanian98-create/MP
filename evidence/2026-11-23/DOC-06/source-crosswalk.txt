@@ -1,0 +1,331 @@
+$ git rev-parse HEAD
+e0ae95f48bf8451bd59b972a92c55fed404e6a92
+
+$ rg -n -C 1 DOC-06 / canonical OD rows
+92-|---|---|---|
+93:| ۸ guardrail در Scope، `DOC-01…DOC-06` | رعایت scope مصوب، اصلاح سند و ساخت register تصمیم‌های باز | مالک باید فقط گزینه‌های واقعاً باز `DOC-04` را تصویب کند؛ ریز آن در بخش دوم است. |
+94-| `INV-01…INV-09` | inventory/crosswalk/evidence و test محلی/CI موجود | run runner روی candidate تغییرکرده و همان SHA؛ CI قدیمی برای فایل untracked حاضر مدرک نیست. |
+--
+131-| OD-01 | روش ذخیره/انقضا/لغو نشست، cache و مرز آفلاین | مالک برای policy؛ مهندسی برای threat-model و آزمون | `OPEN` | policy نسخه‌دار و تست revocation؛ تا آن زمان API/PII/receipt/health cache نشود و offline write حساس نداشته باشد. |
+132:| OD-02 | جزئیات ماتریس route×role×permission×ownership | مالک برای قواعد؛ مهندسی برای inventory/negative tests | `OPEN` | فهرست route/service/file/export/job و تست direct API برای شش نقش و عضو A/B؛ شش role حفظ می‌شوند، مدل سه‌نقشی اجرا نمی‌شود. |
+133-| OD-03 | host/domain/ingress دقیق، operator، budget و ساعات پاسخ | مالک/اپراتور هنوز تعیین‌نشده | `BLOCKED` | طرح topology با trusted headers/firewall/TLS و owner/operator؛ staging/host و هزینه بدون تصمیم/مجوز ساخته نشود. |
+134-| OD-04 | مدل و نسخهٔ دقیق Android Chrome / Chrome / Edge و screen reader | مالک برای pin؛ آزمون‌گر انسانی برای acceptance | `BLOCKED` | انتخاب model/OS/browser/version و گزارش فیزیکی با network/AT؛ emulation/headless جایگزین نیست. |
+135:| OD-05 | حریم/retention/اطلاع‌رسانی و reviewer مستقل | مالک برای انتصاب؛ reviewer مستقل واجد صلاحیت | `BLOCKED` | review مستند حقوقی/حریم و evidence نسخه‌دار؛ reviewer مستقل فعلاً موجود نیست، عکس پیشرفت بدن در scope انتشار اول نمی‌آید. |
+136-| OD-06 | threshold بار/همزمانی و trigger بررسی PostgreSQL | مالک برای آستانه؛ مهندسی برای benchmark | `OPEN` | workload و معیار عددی مصوب سپس benchmark روی محیط scratch؛ SQLite فعلاً مبنا و migration تولیدی ممنوع است. |
+137:| OD-07 | ساعات کار/قرارداد عملیاتی درخواست کارت‌به‌کارت | مالک/اپراتور | `OPEN` | منبع ساعت از سرور، متن حالت بسته/قطع شبکه و fixtureهای خارج ساعت؛ تطبیق بانکی واقعی نیازمند انسان/مرجع مجاز. Live merchant در scope انتشار اول نیست. |
+138-| OD-08 | نیاز push، provider، permission و مسئول تحویل | مالک/اپراتور | `OPEN` | تصمیم channel/payload غیرحساس و test device/provider واقعی؛ تا آن زمان فقط inbox را push تحویل‌شده نخوانید. |
+--
+142-- [ ] **DOC-05 — ردیابی تصمیم‌ها.** در هر سند به ADR/TODO canonical مربوط لینک دهید. دیاگرام، screenshot، package handoff یا Option 03 را «طراحی/مرجع» بنویسید، نه شاهد پیاده‌سازی. فایل‌های تاریخی را بی‌صدا حذف یا بازنویسی نکنید.
+143:- [ ] **DOC-06 — تصمیم‌های حساس را حدس نزنید.** برای نگهداری داده، مشاهده/حذف دادهٔ سلامت، تعریف سود/درآمد، تطبیق بانکی، مدت اعتبار QR و مجوزهای جزئی، فقط متن/منبع مصوب را اجرا کنید؛ اگر جزئیات لازم در سند نیست، `BLOCKED/UNKNOWN` ثبت شود.
+144-
+--
+161-
+162:**وابستگی:** DOC-01 تا DOC-06.
+163-**شاهد خروج:** crosswalk versioned و لینک‌دار + baseline commands/results روی SHA مشخص + فهرست GAPها. به‌روزرسانی وضعیت parent فقط پس از پذیرش همین شواهد.
+--
+312-
+313:1. DOC-01 تا DOC-06: هم‌راستاسازی اسناد و ثبت فقط open decisionهای واقعی؛ scopeهای ثبت‌شده را دوباره از مالک نپرسید.
+314-2. INV-01 تا INV-09: inventory/crosswalk جامع و evidence baseline؛ GAP را قبل از کدنویسی روشن کنید.
+
+$ rg -n -C 1 retention policy / review boundary
+mp-app/backend/tests/integration/test_phase8_privacy.py-8-| اجرا | `POST /admin/retention/run` فقط ردیف‌های قدیمی‌تر از سیاست را حذف می‌کند |
+mp-app/backend/tests/integration/test_phase8_privacy.py:9:| پول و دفتر | `payments`, `ledger_entries`, `expenses`, `report_runs` هرگز پاک نمی‌شوند |
+mp-app/backend/tests/integration/test_phase8_privacy.py-10-| ممیزی | هر اجرا یک ردیف `retention_run` با شمارش دارد، بدون دادهٔ شخصی |
+--
+mp-app/backend/tests/integration/test_phase8_privacy.py-17-
+mp-app/backend/tests/integration/test_phase8_privacy.py:18:# آنچه تست نمی‌کند
+mp-app/backend/tests/integration/test_phase8_privacy.py:19:- تأیید حقوقی مدت‌ها (`BLOCKED`: تصمیم مالک/وکیل) — اعداد پیش‌فرض محافظه‌کارانه‌اند.
+mp-app/backend/tests/integration/test_phase8_privacy.py-20-- حذف/بی‌هویت‌سازی دادهٔ عضو به درخواست خودش (right-to-erasure) — خارج از این لوپ.
+--
+mp-app/backend/modules/privacy/retention.py-10-2. **دست‌نزن:** `payments`, `ledger_entries`, `expenses`, `expense_revisions`,
+mp-app/backend/modules/privacy/retention.py:11:   `report_runs`, ارزیابی‌های عضو، فایل فیش‌ها. (نگهداری مالی/بالینی قاعدهٔ
+mp-app/backend/modules/privacy/retention.py:12:   جدا و تأیید حقوقی می‌خواهد → `BLOCKED`.)
+mp-app/backend/modules/privacy/retention.py-13-3. **همیشه ممیزی:** هر اجرا با شمارش ثبت می‌شود، بدون هیچ دادهٔ شخصی.
+--
+mp-app/backend/modules/privacy/retention.py-44-    },
+mp-app/backend/modules/privacy/retention.py:45:    "report_runs": {
+mp-app/backend/modules/privacy/retention.py-46-        "days": 730,
+--
+mp-app/backend/modules/privacy/retention.py-94-    }
+mp-app/backend/modules/privacy/retention.py:95:    out["report_runs"] = {
+mp-app/backend/modules/privacy/retention.py:96:        "days": POLICIES["report_runs"]["days"],
+mp-app/backend/modules/privacy/retention.py:97:        "why": POLICIES["report_runs"]["why"],
+mp-app/backend/modules/privacy/retention.py-98-        "expired": db.scalar(
+mp-app/backend/modules/privacy/retention.py:99:            select(func.count(ReportRun.id)).where(ReportRun.created_at < limits["report_runs"])
+mp-app/backend/modules/privacy/retention.py-100-        )
+--
+mp-app/backend/modules/privacy/retention.py-139-        or 0,
+mp-app/backend/modules/privacy/retention.py:140:        "report_runs": db.execute(
+mp-app/backend/modules/privacy/retention.py-141-            delete(ReportRun).where(
+mp-app/backend/modules/privacy/retention.py:142:                ReportRun.created_at < _cutoff(POLICIES["report_runs"]["days"], moment)
+mp-app/backend/modules/privacy/retention.py-143-            )
+--
+docs/MuscleParadise/DATA-RETENTION.md-2-
+docs/MuscleParadise/DATA-RETENTION.md:3:> وضعیت: **پیش‌نویس مصوب مهندسی — اجرا پیش از ورود دادهٔ واقعی الزامی است.** این عبارت تأیید حقوقی/حریم یا تصمیم مالک دربارهٔ مدت نگهداری دادهٔ سلامت نیست.
+docs/MuscleParadise/DATA-RETENTION.md-4->
+--
+docs/MuscleParadise/DATA-RETENTION.md-16-| هویت/تماس | ۲۴ ماه (تمدید/بازگشت) | حذف/بی‌نام‌سازی |
+docs/MuscleParadise/DATA-RETENTION.md:17:| اندازه‌گیری/پیکرسنجی | ۳۶ ماه (روند پژوهشی) | بی‌نام‌سازی (بدون نام/تلفن) |
+docs/MuscleParadise/DATA-RETENTION.md-18-| مالی/پرداخت | ۶۰ ماه (الزام حسابداری ایران) | بایگانی رمزنگاری‌شده |
+--
+docs/MuscleParadise/DATA-RETENTION.md-42-| اعلان‌های **خوانده‌شده** | ۱۸۰ روز | اعلان نخوانده دست‌نخورده می‌ماند |
+docs/MuscleParadise/DATA-RETENTION.md:43:| `report_runs` | ۷۳۰ روز | مقایسهٔ سالانهٔ گزارش مالی |
+docs/MuscleParadise/DATA-RETENTION.md-44-
+docs/MuscleParadise/DATA-RETENTION.md-45-- دستور: `GET /api/v1/admin/retention` (پیش‌نمایش، بدون حذف) و `POST /api/v1/admin/retention/run` — **فقط `super_admin`**؛ هر اجرا با `retention_run` ممیزی می‌شود و هیچ دادهٔ شخصی در آن نیست.
+docs/MuscleParadise/DATA-RETENTION.md:46:- **دست‌نزن:** `payments`, `ledger_entries`, `expenses`, `expense_revisions`, `outbox_dead_letters` — نگهداری مالی/عملیاتی طبق جدول بالا و تأیید حسابدار (`BLOCKED` تا تأیید حقوقی/مالی).
+docs/MuscleParadise/DATA-RETENTION.md-47-- تست: `mp-app/backend/tests/integration/test_phase8_privacy.py` (۵ تست).
+
+$ sed -n 40,54p mp-app/backend/app/security/jwt.py
+def create_checkin_qr_token(member_id: int) -> str:
+    """توکن QR کوتاه‌عمر و جدا از bearer access token؛ یک jti مستقل برای replay gate."""
+    if member_id < 1:
+        raise ValueError("member_id must be positive")
+    now = datetime.now(UTC)
+    return pyjwt.encode(
+        {
+            "sub": str(member_id),
+            "type": "checkin_qr",
+            "jti": secrets.token_urlsafe(32),
+            "iat": now,
+            "exp": now + timedelta(minutes=2),
+        },
+        settings.secret_key,
+        algorithm=ALGORITHM,
+
+$ rg -n -C 1 M65/QR implementation status
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md-217-- [ ] **MEM-09 — کلاس و رزرو (`PWA-38`).** ظرفیت، reserve, cancel, conflict و duplicate با backend واقعی و آزمون race پوشش داده شوند؛ دکمهٔ disabled در UI اثبات عدم overbooking نیست.
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md:218:- [ ] **MEM-10 — QR حضور (`PWA-39`).** عمر/انقضا، امضا یا قرارداد اعتبارسنجی، replay، duplicate، عضو دیگر و fallback با server test بررسی شود. تست دوربین/اجازه/نور/شبکه روی دستگاه فیزیکی؛ QR محلی به‌تنهایی حضور/هویت اثبات نمی‌کند؛ face recognition اضافه نشود.
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md-219-- [ ] **MEM-11 — کیف پول و تاریخچه (`PWA-3A`).** مبلغ canonical backend، ترتیب، pagination، ریال و ownership؛ serialization عددی بدون float/گردکردن/unsafe integer JavaScript. هر رویداد مالی منبع و وضعیت داشته باشد.
+--
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md-333-| `MEM-03`, بخش واقعی `SEC-05`; `MEM-15`, `OPS-13` | تحویل OTP/SMS و Push واقعی در provider, شماره, account و دستگاه/network هدف؛ foreground/background و failure/retry عملیاتی. | mock provider، local inbox/webhook، clock/retry tests و test phone می‌توانند flow را محلی بسنجند؛ OSS به‌تنهایی شماره/account/provider فعال یا اجازهٔ ارسال ایجاد نمی‌کند. | provider/line/device/permission و credential در secret store با owner/operator مجاز؛ تا آن‌وقت فقط mock و inbox داخلی. |
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md:334:| `MEM-10`, `STAFF-04`, بخش device از `QA-03` | camera permission/focus/light/network و scan QR عملیاتی روی سخت‌افزار واقعی. | parser/expiry/signature/replay/duplicate/ownership و fake camera/video test قابل اجراست؛ headless app هم قابل تست است. | Android هدف با camera و آزمون مستند انسانی؛ mock نمی‌تواند اثبات کند دوربین/کاربر حضوری درست کار می‌کند. هیچ face-recognition سروری اضافه نمی‌شود. |
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md-335-| `MEM-12`, `STAFF-05`, مرحلهٔ مالی `QA-01`, `OPS-05` | اثبات واریز واقعی/مبلغ و تطبیق رسید با source بانکی مستقل توسط reviewer مجاز؛ فعال‌کردن/اجرای کار مالی واقعی. | mock bank/gateway، OCR و fixture می‌توانند parser، state machine، private receipt، idempotency و ledger را تست کنند؛ receipt image/OCR مدرک واریز نیست. | حساب/مرجع بانکی و کاربر مجاز در محیط امن، human review/audit و evidence. انتشار اول کارت‌به‌کارت است؛ merchant/live gateway خارج scope است. |
+--
+docs/MuscleParadise/TODO-2026-11-16.md-80-
+docs/MuscleParadise/TODO-2026-11-16.md:81:**اصلاح M65:** توکن QR مجزای `checkin_qr` با عمر دو دقیقه و `jti` تصادفی؛ عضویت باید در بازهٔ شروع/انقضای فعلی باشد؛ member فقط QR خودش را مصرف می‌کند؛ `jti` فقط به‌صورت SHA-256 ذخیره و با index یکتا replay/رقابت هم‌زمان بسته می‌شود. نقش reception در تست موفق ماند؛ QR منقضی رد می‌شود و QR عادی access token نیست.
+docs/MuscleParadise/TODO-2026-11-16.md-82-
+--
+docs/MuscleParadise/TODO-2026-11-16.md-469-| 5 | **UX-G3 — haptics** · ✅ **بسته در M98** | لایهٔ تزریق‌پذیر `MpHaptics` (`void`/fire-and-forget) با سه فراخوانیِ SDK؛ شاهد در سطح messenger با mock روی `SystemChannels.platform` و pin کردن `TargetPlatform.android`. run `44300167991` روی `776ca6f`: `client-flutter` سبز (`flutter analyze` با گیت error+warning + کل `flutter test` + manifest gate). | `finn/reports/m98-haptics-motion.md`؛ package لازم نبود. شدت/تأخیر روی گوشی سنجیده نشده. |
+docs/MuscleParadise/TODO-2026-11-16.md:470:| 6 | **Q5 — shared-element و micro-interactions** · کاهش حرکت ✅ در M98؛ shared-element عمداً ساخته نشد | `MpMotion` از `MediaQuery.disableAnimations` می‌خواند و duration ترنزیشن تب/لیست کلاس را صفر می‌کند (تست‌شده). Hero/shared-element بدون ارزش اثبات‌شده اضافه نشد — با `BUILD-QUEUE.md` Q5 (WCAG) یکی نیست. | `finn/reports/m98-haptics-motion.md`؛ dependency اضافه نشد. |
+docs/MuscleParadise/TODO-2026-11-16.md-471-
+--
+docs/MuscleParadise/TODO-2026-11-16.md-1276-
+docs/MuscleParadise/TODO-2026-11-16.md:1277:- **Source محدود:** `src/visual-concepts/VisualConcepts.tsx` سه مصرف مستقیم `useReducedMotion` را به `useMotionPreset` مشترک منتقل کرد. `motion.span` نشانگر جهت، در reduced `layoutId` ندارد و duration آن صفر است؛ spring و shared layout فقط در حالت عادی می‌مانند. ورود/خروج صفحه و art preview به fade کوتاه/بدون جابه‌جایی محدود شد و hover کارت از helper می‌آید. `visual-concepts.css` delayهای animation/transition را صفر و transform hover انتخاب جهت را خاموش می‌کند؛ README helper را توضیح می‌دهد.
+docs/MuscleParadise/TODO-2026-11-16.md-1278-- **Coverage محلی:** `tests/motion.test.tsx` allowlist را به ۱۹ consumer motion/chart گسترش داد و source guard مستقل برای `layoutId`, spring، preset/hover و CSS lab دارد. این source assertion است، نه DOM/computed-style/browser acceptance. `npm test -- --reporter=dot tests/motion.test.tsx tests/checkInPage.test.tsx` → ۲ فایل، ۳۴/۳۴ PASS.
+
+$ rg -n test names for retained policy paths
+mp-app/backend/tests/integration/test_phase8_privacy.py
+108:def test_preview_counts_without_deleting(client: TestClient) -> None:
+119:def test_run_deletes_only_expired_rows_and_keeps_money(client: TestClient) -> None:
+140:def test_each_run_is_audited_without_personal_data(client: TestClient) -> None:
+154:def test_only_super_admin_can_preview_or_run(client: TestClient) -> None:
+169:def test_policies_are_explicit_and_in_days() -> None:
+mp-app/backend/tests/integration/test_m65_qr_security.py
+64:def test_face_checkin_fails_closed_without_verified_biometric_proof(client, auth):
+101:def test_qr_does_not_grant_entry_without_active_membership(client, auth, membership_state):
+131:def test_member_cannot_redeem_another_members_qr(client, auth):
+144:def test_qr_token_is_one_time_under_replay(client, auth):
+160:def test_expired_qr_token_is_rejected(client, auth):
+185:def test_qr_token_cannot_be_used_as_a_staff_access_token(client, auth):
+mp-app/backend/tests/integration/test_qf10_period_report.py
+53:def test_month_is_jalali_tehran_window_not_gregorian() -> None:
+61:def test_nowruz_starts_the_year_and_week_starts_saturday() -> None:
+70:def test_unknown_kind_is_rejected() -> None:
+79:def test_report_sums_by_hand_with_refund_in_its_own_day(client: TestClient) -> None:
+125:def test_undated_refund_marks_report_incomplete_not_zero(client: TestClient) -> None:
+140:def test_period_requires_finance_read(client: TestClient) -> None:
+147:def test_bad_anchor_is_400_invalid_date(client: TestClient) -> None:
+mp-app/backend/tests/integration/test_phase5_admin_permissions.py
+82:def test_only_super_admin_manages_permissions(client: TestClient) -> None:
+102:def test_unknown_permission_and_owner_target_are_rejected(client: TestClient) -> None:
+127:def test_finance_is_closed_by_default_for_admin_and_manager(client: TestClient) -> None:
+145:def test_expired_or_revoked_permission_stops_working(client: TestClient) -> None:
+185:def test_confidential_report_needs_its_own_permission(client: TestClient) -> None:
+212:def test_every_grant_and_revoke_is_audited(client: TestClient) -> None:
+230:def test_role_change_is_super_admin_only(client: TestClient) -> None:
+mp-app/backend/tests/integration/test_routes_effective_guards.py
+33:def test_every_operation_declares_always_may_and_anonymous() -> None:
+43:def test_f12_admin_is_not_declared_on_owner_only_routes() -> None:
+59:def test_f12_grant_routes_keep_restricted_roles_conditional() -> None:
+68:def test_f12_authenticated_routes_accept_every_role() -> None:
+80:def test_f12_metrics_token_is_not_a_role_grant() -> None:
+87:def test_owner_scope_is_declared_for_member_row_routes() -> None:
+94:def test_public_routes_are_open_to_all_roles_and_anonymous() -> None:
+100:def test_body_credential_route_is_conditional_for_anonymous() -> None:
+
+$ rg -n -C 1 finance-accounting and bank-confirmation open decisions
+docs/MuscleParadise/TODO-CLOUD-FINANCE-ACCESS.md-10->
+docs/MuscleParadise/TODO-CLOUD-FINANCE-ACCESS.md:11:> **پیوند ردیابی DOC-06:** تفکیک policyهای مالی/حریمِ باز از رفتار فعلی source را در [tracker PWA](TODO-PWA-RELEASE-2026-11-23.fa.md) و [دفتر اجرای چرخه‌ها](PWA-EXECUTION-STATE.md) دنبال کنید. این snapshot مورخ ۲۰۲۶-۱۱-۱۸ و شناسهٔ شاخهٔ قدیمی‌اش مرجع وضعیت checkout جاری نیست؛ تطبیق بانکی واقعی یا تعریف حسابداری با این متن/fixture تأیید نمی‌شود.
+docs/MuscleParadise/TODO-CLOUD-FINANCE-ACCESS.md-12-
+--
+docs/MuscleParadise/TODO-CLOUD-FINANCE-ACCESS.md-25-| گزارش مالی | پیش‌فرض مشاهده برای ادمین و سرپرست خاموش؛ سوپرادمین همیشه دسترسی داشته باشد. مجوز شخصی برای ادمین قابل اعطا و لغو است؛ برای سرپرست با تصمیم فعلی کنترل شخصی مجاز نشده است. نباید دسترسی قبلی admin/manager ناخواسته باقی بماند. |
+docs/MuscleParadise/TODO-CLOUD-FINANCE-ACCESS.md:26:| حسابداری مدیریتی | گزارش هفتگی، ماهانه و سالانه؛ همهٔ تراکنش‌های در محدوده و هزینه‌های بیرونی مثل اجاره و حقوق نیز ثبت شوند. امکان تخمین دریافتی/جریان پول، تمدید و نتیجهٔ عملیاتی با دادهٔ کافی. |
+docs/MuscleParadise/TODO-CLOUD-FINANCE-ACCESS.md-27-| اعلان | گزارش مالی در پنل، همراه اعلان موبایل مالک؛ برای اعضا صندوق داخلی و اعلان موبایل. انتخاب سرویس و تحویل پس‌زمینه مشروط به آزمایش دسترسی و دستگاه است. |
+--
+docs/MuscleParadise/TODO-CLOUD-FINANCE-ACCESS.md-59-- [ ] تکمیل حلقه‌های M113 در [طرح پرداخت](PLAN-MANUAL-TRANSFER.md): `card_to_card` مستقل، ثبت درخواست، فیش خصوصی، صف بررسی، تأیید/رد با دلیل و تاریخچه، وضعیت واضح برای عضو و ادمین مجاز.
+docs/MuscleParadise/TODO-CLOUD-FINANCE-ACCESS.md:60:- [ ] تطبیق مبلغ، مقصد و مرجع با دادهٔ بانکی مستقل توسط شخص مجاز؛ **عکس فیش به‌تنهایی اثبات واریز نیست**. شماره و نحوهٔ تأیید حساب مقصد طبق تصمیم مالک و با عدم افشای اطلاعات غیرضروری مشخص شود.
+docs/MuscleParadise/TODO-CLOUD-FINANCE-ACCESS.md-61-- [ ] تأیید + ثبت مالی + فعال‌سازی اشتراک مربوط + ثبت رویداد اعلان یک تراکنش یکپارچه با idempotency، کنترل رقابت و جلوگیری از پرداخت یا فعال‌سازی دوباره. commit داخلی `create_payment` فعلی باید در بازطراحی لحاظ شود.
+--
+docs/MuscleParadise/TODO-CLOUD-FINANCE-ACCESS.md-69-- [ ] قابلیت ثبت هزینهٔ بیرونی با دسته، مبلغ، تاریخ، شرح و مدرک اختیاری خصوصی؛ مجوز مشاهده/ثبت/تأیید مستقل و تاریخچهٔ اصلاح با ذکر دلیل. اجاره، حقوق، تجهیزات و سایر هزینه‌ها قابل دسته‌بندی باشند.
+docs/MuscleParadise/TODO-CLOUD-FINANCE-ACCESS.md:70:- [ ] تفکیک «دریافتی/پرداخت نقدی»، «درآمد شناسایی‌شده» و «سود عملیاتی». تعریف بهای کالا، هزینه و دورهٔ اشتراک و قواعد مالیاتی با حسابدار و با توجه به کامل‌بودن داده. عدد ناقص، صفر یا سود قطعی نمایش داده نشود.
+docs/MuscleParadise/TODO-CLOUD-FINANCE-ACCESS.md-71-- [ ] گزارش هفته، ماه و سال شمسی با مرز زمانی `Asia/Tehran` و تعریف شروع هفته، به‌علاوه بازهٔ دلخواه؛ ذخیرهٔ زمان‌های مبنا و آزمون مرز ماه/سال، کبیسه و تراکنش‌های بازگشتی در دورهٔ متفاوت.
+docs/MuscleParadise/TODO-CLOUD-FINANCE-ACCESS.md-72-- [ ] کارت‌های جمع دریافتی، هزینهٔ ثبت‌شده، در انتظار، بازگشتی، تفکیک نوع و روش، مقایسهٔ دوره و مشاهدهٔ ریز همهٔ اعداد با فیلتر. نشان تاریخ تولید، منبع و داده‌های ناقص.
+docs/MuscleParadise/TODO-CLOUD-FINANCE-ACCESS.md:73:- [ ] تطبیق بانکی با ثبت یا ورود دادهٔ صورت‌حساب مورد تأیید و نمایش موارد تطبیق‌نیافته، تکراری و نیازمند بررسی؛ بدون وعدهٔ اتصال خودکار بانکی. خطا و اصلاح ردپای حسابرسی داشته باشند.
+docs/MuscleParadise/TODO-CLOUD-FINANCE-ACCESS.md:74:- [ ] خروجی مناسب حسابدار با مجوز جدا، ثبت دسترسی، محدودسازی داده و محافظت در برابر فرمول‌های مخرب CSV؛ PDF/Excel در صورت بررسی نیاز و تست. همهٔ خروجی‌ها باید با گزارش پنل تطبیق داشته باشند.
+docs/MuscleParadise/TODO-CLOUD-FINANCE-ACCESS.md-75-- [ ] گزارش نمونهٔ ساختگی برای همهٔ تراکنش‌ها و هزینه‌ها، test ledger/reconciliation و آزمون همزمانی، retry، بازپرداخت و عدم دوباره‌شماری؛ کاربر مالی فقط دادهٔ مجاز خود را ببیند.
+--
+docs/MuscleParadise/TODO-CLOUD-FINANCE-ACCESS.md-140-- ساعت دقیق تولید گزارش، انتخاب سرویس push و ارزیابی شبکه/GMS؛ در صورت عدم امکان، fallback مورد قبول مالک.
+docs/MuscleParadise/TODO-CLOUD-FINANCE-ACCESS.md:141:- حساب مقصد، مرجع مستقل تطبیق بانکی، روش رسیدگی به مبالغ نادرست و زمان تمدید اشتراک موجود؛ بدون درخواست مشخصات محرمانه در چت.
+docs/MuscleParadise/TODO-CLOUD-FINANCE-ACCESS.md:142:- تعریف مالی با حسابدار: درآمد و هزینه، دورهٔ شناسایی، فروشگاه و بهای کالا، مالیات، نرخ‌ها و مرز گزارش رسمی در برابر گزارش مدیریتی.
+docs/MuscleParadise/TODO-CLOUD-FINANCE-ACCESS.md-143-- متن و مبنای حقوقی اطلاع‌رسانی/رضایت، بازه‌های نگهداری و سازوکار حذف/پشتیبان، وضعیت احتمالی دادهٔ فعلی. عکس پیشرفت بدن در محدوده نیست.
+--
+docs/MuscleParadise/TODO-CLOUD-FINANCE-ACCESS.md-153-- [ ] OV-08/10: نقشهٔ عضلات و کاتالوگ با منشأ جداگانهٔ هندسه، تصویر، متن و مجوز API.
+docs/MuscleParadise/TODO-CLOUD-FINANCE-ACCESS.md:154:- [ ] OV-09: ارزیابی OCR فیش به‌عنوان پیشنهاد غیرقطعی، هرگز جایگزین تطبیق بانکی مستقل انسانی.
+docs/MuscleParadise/TODO-CLOUD-FINANCE-ACCESS.md-155-- [ ] OV-11: QA مستقل هر برش، CI همان SHA و sweep تعامل نهایی.
+--
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md-136-| OD-06 | threshold بار/همزمانی و trigger بررسی PostgreSQL | مالک برای آستانه؛ مهندسی برای benchmark | `OPEN` | workload و معیار عددی مصوب سپس benchmark روی محیط scratch؛ SQLite فعلاً مبنا و migration تولیدی ممنوع است. |
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md:137:| OD-07 | ساعات کار/قرارداد عملیاتی درخواست کارت‌به‌کارت | مالک/اپراتور | `OPEN` | منبع ساعت از سرور، متن حالت بسته/قطع شبکه و fixtureهای خارج ساعت؛ تطبیق بانکی واقعی نیازمند انسان/مرجع مجاز. Live merchant در scope انتشار اول نیست. |
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md-138-| OD-08 | نیاز push، provider، permission و مسئول تحویل | مالک/اپراتور | `OPEN` | تصمیم channel/payload غیرحساس و test device/provider واقعی؛ تا آن زمان فقط inbox را push تحویل‌شده نخوانید. |
+--
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md-142-- [ ] **DOC-05 — ردیابی تصمیم‌ها.** در هر سند به ADR/TODO canonical مربوط لینک دهید. دیاگرام، screenshot، package handoff یا Option 03 را «طراحی/مرجع» بنویسید، نه شاهد پیاده‌سازی. فایل‌های تاریخی را بی‌صدا حذف یا بازنویسی نکنید.
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md:143:- [ ] **DOC-06 — تصمیم‌های حساس را حدس نزنید.** برای نگهداری داده، مشاهده/حذف دادهٔ سلامت، تعریف سود/درآمد، تطبیق بانکی، مدت اعتبار QR و مجوزهای جزئی، فقط متن/منبع مصوب را اجرا کنید؛ اگر جزئیات لازم در سند نیست، `BLOCKED/UNKNOWN` ثبت شود.
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md-144-
+--
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md-204-### ۸. فاز چهار — جریان‌های عضو در همان PWA (`PWA-30` تا `PWA-3F`)
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md:205:> **مرز مختلط MEM:** vertical sliceها، API و stateها با دادهٔ ساختگی قابل توسعه/تست‌اند؛ SMS واقعی، camera device، تطبیق بانکی، push واقعی و تصویب policy آفلاین فقط در بخش دوم قابل پذیرش‌اند.
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md-206-
+--
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md-235-- [ ] **STAFF-04 — کلاس/check-in (`PWA-43`).** ظرفیت، roster، QR scan و نتیجه از API واقعی؛ roleهای مجاز/غیرمجاز و تکرار/replay؛ مخفی‌شدن منو به‌تنهایی شاهد مجوز نیست.
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md:236:- [ ] **STAFF-05 — فیش و بررسی مالی (`PWA-44`).** queue pending، مشاهدهٔ private، approve/reject با دلیل و actor، audit، دسترسی scoped؛ فقط reviewer مجاز. receipt را proof واریز حساب نکنید؛ تطبیق انسانی با مرجع بانکی مستقل پابرجاست.
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md-237-- [ ] **STAFF-06 — گزارش، هزینه و تحلیل (`PWA-45`).** ریال/تاریخ/منطقهٔ زمانی، هزینه‌ها، refund، منبع و زمان تولید؛ unknown/missing/incomplete هرگز صفر یا سود قطعی نمایش داده نشود. جمع گزارش با ledger و fixture تطبیق کند.
+
+$ rg -n -C 1 six roles and permission matrix blocker
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md-66-| `PWA-17` / `WEB-11` | Nginx مسیر exact `/api` و subtree اسلش‌دار `/api/…` را جداگانه به backend proxy می‌کند؛ matcher خام `/api` که `/apix` و `/apiary` را هم می‌گرفت حذف شد. `pwa.test.ts` هر دو location، proxy/X-Forwarded-For و مرز static مسیرها را assert می‌کند؛ تست هدفمند ۱۲/۱۲ PASS. افزون بر آن، [`verify_studio_nginx_runtime.py`](../../scripts/verify_studio_nginx_runtime.py) با Nginx upstream 1.27.5 build‌شده، `nginx -t` و runtime smoke را هم با fixture و هم با `--static-root mp-app/studio/dist --mime-types <nginx-src>/conf/mime.types` اجرا کرد؛ exact API paths، status/content-type/404، direct deep-route به shell واقعی build، assetهای JS/CSS هش‌شده با MIME table upstream، `/apix`/`/apiary`, POST و trusted/untrusted XFF PASS. | این شاهد `PARTIAL` را به پذیرش کامل ارتقا نمی‌دهد: مقادیر listen/root/upstream در config آزمایشی جایگزین شدند و upstream محلی ساختگی بود؛ image/container واقعی، backend واقعی، TLS، browser reload/hydration، staging و device هنوز `NOT_RUN` هستند. |
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md:67:| `PWA-20` / پوشش محلی OTP | `Login.tsx` فقط در حالت `import.meta.env.DEV` کد توسعه را رندر می‌کند. `login.test.tsx` شش حالت local را می‌سنجد (invalid phone، 429 mocked، loading، `dev_code` در DEV/production و خطای OTP)؛ همراه `authFlow.test.tsx`: ۲ فایل، ۱۰/۱۰ PASS. Backend regression در `test_wp12_env_failsafe.py` با fake provider غیر-dev و echo flag روشن می‌سنجد که API پاسخ را بدون `dev_code` می‌دهد؛ همراه `test_api_contract.py` و `test_m67_studio_auth.py`: ۲۹/۲۹ PASS؛ Ruff check/format هدفمند نیز موفق. | UI guard فقط رندر را می‌بندد: اگر backend مقدار `dev_code` را برگرداند، پاسخ همچنان به مرورگر می‌رسد؛ این تست fake provider اجرای SMS واقعی نیست و جای تضمین backend مبنی‌بر عدم صدور کد در production را نمی‌گیرد. rate-limit/provider زنده، policy/قرارداد نشست و ورود عضو تأیید نشده‌اند؛ member همچنان در `AuthContext` مجاز نیست و تصمیم‌های `PWA-02`/`PWA-03` بازند. |
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md-68-
+--
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md-109-- [ ] **یک کلاینت وب مشترک:** توسعه روی `mp-app/studio/`؛ اپ React دوم ساخته نشود. Flutter/Android، workflowها، تست‌ها، اسناد، تاریخچه و Electron حفظ شوند؛ PWA مجوز حذف یا خاموش‌کردن مسیر native نیست.
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md:110:- [ ] **نقش‌ها:** تک‌باشگاه و هر شش نقش جاری (`member`, `coach`, `reception`, `manager`, `admin`, `super_admin`) حفظ شوند. مدل سه‌نقشی داخل بعضی نمودارها/طرح‌های قدیمی، تصمیم مهاجرت نیست؛ نقش‌ها را ادغام یا grantها را گسترش ندهید. ماتریس واقعی route/عمل/مالکیت باید سمت سرور آزموده شود.
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md-111-- [ ] **داده و زیرساخت:** SQLite فعلاً مبنای ثبت‌شده است؛ PostgreSQL پیش‌فرض جدید نیست و فقط با benchmark/trigger و ADR بررسی می‌شود. جهت کلی میزبان، سرور محلی باشگاه با ورودی HTTPS است؛ میزبان، ingress دقیق، دامنه، بودجه و اپراتور هنوز تعیین/اثبات نشده‌اند.
+--
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md-124-- [x] **DOC-01 — رفع دوگانگی ADR-006/ADR-007.** در [ADR-006](adr/006-shared-react-pwa.md) یا یک افزودهٔ تاریخ‌دار توضیح دهید که جهت PWA مشترک حفظ شده و ADR-007 انتخاب کلاینت اصلی انتشار را بعداً روشن کرده است؛ سابقهٔ تاریخی را پاک نکنید. بندهای قدیمی D-01/D-10 را طوری اصلاح/علامت‌گذاری کنید که «انتخاب baseline کلاینت» با «معیارهای نهایی Go/No-Go» اشتباه نشود. **شاهد:** clarification تاریخ‌دار در ADR-006؛ D-01 به [ADR-007](adr/007-pwa-primary-release.md) ارجاع دارد و D-10/Go-No-Go باز است؛ docs gate/markdownlint موفق.
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md:125:- [x] **DOC-02 — تصحیح اسناد طرح قدیمی.** در [برنامهٔ تولید/AI](architecture/ai-autonomous-production-plan-v1-2026-11-23.md) و [فلوچارت نهایی PWA و دسترسی](architecture/muscle-paradise-final-pwa-access-flow-v1-2026-11-23.md) وضعیت را با ADR-007 هم‌راستا کنید: PWA baseline انتشار جاری است؛ شش نقش حفظ می‌شوند؛ مدل سه‌نقشی نمودار تصمیم جاری نیست. اگر نمودار تغییر نمی‌کند، آن را صریحاً historical/target-only برچسب بزنید. **شاهد:** plan و متن نمودار به ADR-007/OQ-03 پیوند دارند؛ نمودار سه‌نقشی صریحاً historical/target-only است؛ docs gate/markdownlint موفق.
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md-126-- [x] **DOC-03 — هم‌راستایی مالی و میزبانی.** [TODO-CLOUD-FINANCE-ACCESS](TODO-CLOUD-FINANCE-ACCESS.md)، [PLAN-CLOUD-PRODUCTION](PLAN-CLOUD-PRODUCTION.md)، [RELEASE-CHECKLIST](RELEASE-CHECKLIST.md) و هر متن قدیمی درگاه/Android را در برابر ADR-007 مرور کنید. درخواست «merchant/live gateway» را بی‌تصمیم به کارت‌به‌کارت تبدیل نکنید؛ برای انتشار اول درگاه واقعی هدف نیست، فروشگاه display-only است و سرور محلی + HTTPS مبناست. **شاهد:** سه مرجع فوق baseline و عدم مجوز production را صریح می‌کنند؛ متن‌های Android/gateway باقی‌مانده تاریخی یا فقط شرط رگرسیون native علامت‌گذاری شدند؛ docs gate/markdownlint موفق.
+--
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md-131-| OD-01 | روش ذخیره/انقضا/لغو نشست، cache و مرز آفلاین | مالک برای policy؛ مهندسی برای threat-model و آزمون | `OPEN` | policy نسخه‌دار و تست revocation؛ تا آن زمان API/PII/receipt/health cache نشود و offline write حساس نداشته باشد. |
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md:132:| OD-02 | جزئیات ماتریس route×role×permission×ownership | مالک برای قواعد؛ مهندسی برای inventory/negative tests | `OPEN` | فهرست route/service/file/export/job و تست direct API برای شش نقش و عضو A/B؛ شش role حفظ می‌شوند، مدل سه‌نقشی اجرا نمی‌شود. |
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md-133-| OD-03 | host/domain/ingress دقیق، operator، budget و ساعات پاسخ | مالک/اپراتور هنوز تعیین‌نشده | `BLOCKED` | طرح topology با trusted headers/firewall/TLS و owner/operator؛ staging/host و هزینه بدون تصمیم/مجوز ساخته نشود. |
+--
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md-164-
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md:165:### ۶. فاز دو — تصمیمات و پایهٔ امنیت/نشست (`PWA-02`, `PWA-03`, `PWA-20` تا `PWA-24`)
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md-166-
+--
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md-170-
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md:171:- [ ] **SEC-01 — ماتریس نقش نهایی (`PWA-02`).** شش نقش موجود + حالت ناشناس را نگه دارید و برای هر route/عمل/منبع/فایل/export ثبت کنید `allow/deny`, ownership/branch scope و علت را. مدل سه‌نقشی را مهاجرت ندهید.
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md-172-- [ ] **SEC-02 — ماتریس grant مالی و حساس.** مجوزهای `read/write/approve/export` را از هم جدا کنید؛ دسترسی مالی admin/manager پیش‌فرض باز نباشد؛ نقش‌های ثابت مربی/پذیرش/سرپرست را بدون تصمیم تازه گسترش ندهید. اگر grant شخصی برای admin لازم است، actor مجاز، مدت، انقضا و لغو در سرور تعریف شود.
+--
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md-182-**وابستگی:** crosswalk INV-02 تا INV-06 و policy صریح؛ بخشی از shell غیرحساس می‌تواند موازی ادامه یابد.
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md:183:**شاهد خروج:** permission matrix، تست مثبت/منفی روی backend و PWA، evidence revocation، audit و log-redaction. UI-only test کافی نیست.
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md-184-
+--
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md-193-- [ ] **WEB-05 — تقویم و عددها.** جلالی فقط در presentation؛ تاریخ/API در قرارداد canonical؛ مرز روز/منطقهٔ زمانی، ارقام فارسی/لاتین و ریال در ورودی/خروجی یکدست شود. اعداد مالی/سلامتِ نامعلوم به صفر تبدیل نشوند و مقدار ساختگی ساخته نشود.
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md:194:- [ ] **WEB-06 — Motion/Option 03.** visual direction و Motion Kit را با design tokens و منبع فعلی کد crosswalk کنید؛ provenance/license دارایی‌های واردشده را بررسی کنید. وضعیت‌های `MK-PWA-01-FU-01`, `MK-PWA-02`, `O3-08` را از hash/snapshot قدیمی به HEAD واقعی تعمیم ندهید؛ GAP را بر اساس helper/test جاری ببندید، سپس browser behavior و review را اجرا کنید.
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md-195-- [ ] **WEB-07 — کنترل‌های تعاملی/Q11.** از کتابخانهٔ تعاملی OSS موجود و SDK Flutter استفاده کنید؛ کنترل دست‌ساز switch/dialog/date picker نسازید. حالت focus/keyboard/disabled/error/RTL و license دقیق dependency را ثبت کنید؛ library موجود را بی‌نیاز بازنویسی یا موازی نکنید.
+--
+docs/MuscleParadise/adr/007-pwa-primary-release.md-12-- حفظ مسیر Flutter/Android، تاریخچه، مستندات، تست‌ها و CI؛
+docs/MuscleParadise/adr/007-pwa-primary-release.md:13:- حفظ سیاست جاری تک‌باشگاه، شش نقش، داده، پرداخت، حریم و امنیت، بدون تغییر ضمنی؛
+docs/MuscleParadise/adr/007-pwa-primary-release.md-14-- امکان ارزیابی همهٔ سفرهای اصلی و ماتریس مرورگر/device پیش از release؛
+--
+docs/MuscleParadise/adr/007-pwa-primary-release.md-27-3. **هدف آزمون مرورگر:** Android Chrome برای عضو؛ Chrome/Edge دسکتاپ برای کادر. این فقط انتخاب ماتریس هدف است، نه اثبات سازگاری؛ نسخه‌های دقیق، مدل‌های دستگاه و آزمون فیزیکی هنوز مشخص/اجرا نشده‌اند.
+docs/MuscleParadise/adr/007-pwa-primary-release.md:28:4. **سازمان و نقش:** تک‌باشگاه؛ شش نقش فعلی حفظ شوند. این ADR مجوز multi-tenancy، کاهش نقش‌ها، تغییر grant یا migration دسترسی نیست.
+docs/MuscleParadise/adr/007-pwa-primary-release.md-29-5. **داده و میزبانی:** SQLite فعلاً مبنا بماند و نیاز PostgreSQL فقط پس از benchmark/trigger مستند بررسی شود. جهت زیرساخت سرور محلی باشگاه با ورودی HTTPS است؛ نام میزبان، دامنه، اپراتور، بودجه، backup خارج‌میزبان، restore و RPO/RTO بازند.
+--
+docs/MuscleParadise/adr/007-pwa-primary-release.md-55-- **Supersedes:** baseline قدیمیِ «Android عضو + Studio کادر رابط اصلی انتشار اول» فقط در دامنهٔ کلاینت اصلی؛ فایل‌های Android/Flutter حفظ می‌شوند.
+docs/MuscleParadise/adr/007-pwa-primary-release.md:56:- **Does not supersede:** تصمیم‌های پرداخت دستی، تک‌باشگاه، شش نقش، SQLite فعلی، QR، حد و مرز ادعای پزشکی، حفاظت از داده و ممنوعیت انتشار/عملیات بدون گیت.
+docs/MuscleParadise/adr/007-pwa-primary-release.md-57-- **Superseded by:** ندارد.
+--
+docs/MuscleParadise/TODO-2026-11-16.md-618-
+docs/MuscleParadise/TODO-2026-11-16.md:619:#### MK-PWA-02 — preference زندهٔ reduced-motion در helper موجود (PWA-13)
+docs/MuscleParadise/TODO-2026-11-16.md-620-
+--
+docs/MuscleParadise/TODO-2026-11-16.md-632-- **NG:** انیمیشن مالی/حساس، count-up، optimistic success، `AnimatePresence` برای محتوای revokeشده، remount، transition:all یا کنترل دوم.
+docs/MuscleParadise/TODO-2026-11-16.md:633:- **وابستگی:** MK-PWA-02 و inventory واقعی؛ parent/AC از SOURCE_PLAN ارجاع شود، نه بازنویسی.
+docs/MuscleParadise/TODO-2026-11-16.md-634-- **I/N و شاهد:** unit/SSR برای policy و component tests جهت node/focus/empty state؛ مرور reduced-motion واقعی در Chromium target؛ before/after hash و diff allowlist.
+--
+docs/MuscleParadise/TODO-2026-11-16.md-650-- **NG:** اعلام PWA installable، service-worker/offline/update، authorization/API کامل، کل پنج سفر، Android یا «release-ready» بر اساس همین یک loop.
+docs/MuscleParadise/TODO-2026-11-16.md:651:- **وابستگی:** MK-PWA-02/03 و در صورت رسید MK-PWA-04؛ browser/device واقعی بر حسب ادعا.
+docs/MuscleParadise/TODO-2026-11-16.md-652-- **I/N و شاهد:** logهای تازه با SHA/revision/tool version/exit/count، screenshot پالایش‌شده فقط synthetic؛ CI فقط روی همان head وقتی مجاز/در دسترس است.
+--
+docs/MuscleParadise/TODO-2026-11-16.md-679-2. کار محصولی بعدی خودکار شروع نمی‌شود. ابتدا owner/current TODO و FINN را برای parent واقعی بخوان؛ اگر scope مجاز بود، فقط MK-PWA-01 به‌صورت read-only و با fingerprint تغییرهای dirty انجام شود.
+docs/MuscleParadise/TODO-2026-11-16.md:680:3. اگر inventory شکاف واقعی نشان نداد، «بدون نیاز به تغییر» را با evidence ببند. اگر شکاف نشان داد، یک contract مستقل با G1–G9، پنج گیت، allowlist و budget عددی بساز؛ فقط پس از مجوز همان زیرکار وارد MK-PWA-02/03 شو.
+docs/MuscleParadise/TODO-2026-11-16.md-681-4. receipt/access MK-PWA-04 تا قرارداد و تصمیم‌های مالی/حریم مسدود است؛ PWA install/offline/update و Go/No-Go به parentهای canonical خودشان تعلق دارند؛ Android فقط در صف آینده و M98/M104–M106 می‌ماند.
+--
+docs/MuscleParadise/TODO-2026-11-16.md-693-- **NOT RUN:** هیچ `npm test`, lint/build، browser/E2E/device یا test روی dirty worktree اجرا نشد. CI سبز PR مربوط به SHA mergeشده است و شاهد کدهای uncommitted نیست.
+docs/MuscleParadise/TODO-2026-11-16.md:694:- **گام بعدی پیشنهادی:** یک contract مستقل برای `MK-PWA-02` محدود به `src/lib/motion.ts` و `tests/motion.test.tsx` (حداکثر دو فایل و بدون dependency/network/API) تدوین شود تا null/unsupported به reduced محافظه‌کار و تغییر زنده/cleanup/state preservation با fixture سنجیده شود. این سقف و دامنه فعلاً **پیشنهاد** است، نه بودجهٔ عددیِ تأییدشده. تا contract همان parent، G1–G9/پنج گیت، allowlist، budget و معیار تلاش با منبع/تأیید مالک ثبت نشده، هیچ source patchی آغاز نشود. CSS و raw component motion حلقه‌های مستقل بمانند؛ Android فعال نشود.
+docs/MuscleParadise/TODO-2026-11-16.md-695-- **محافظت branch/worktree:** در این بررسی fetch/merge/checkout، stage، commit، push یا deploy انجام نشد؛ refهای GitHub فقط خوانده شدند. تغییرهای نامرتبط و فایل‌های خصوصی موجود دست‌نخورده ماندند.
+--
+docs/MuscleParadise/TODO-2026-11-16.md-709-| OQ-02 | سرور محلی باشگاه با ورودی HTTPS. | میزبان/دامنه، اپراتور، بودجه، backup/restore و RPO/RTO نامشخص؛ هیچ خرید، حساب‌سازی یا deploy از این تصمیم مجاز نیست. |
+docs/MuscleParadise/TODO-2026-11-16.md:710:| OQ-03 | تک‌باشگاه؛ شش نقش فعلی حفظ شوند. | مدل سه‌نقشی/تغییر role/grant مجاز نشده؛ route×role×scope server-side باید جداگانه ممیزی و آزموده شود. |
+docs/MuscleParadise/TODO-2026-11-16.md-711-| OQ-04 | SQLite فعلاً. | benchmark، concurrency/load threshold و trigger مهاجرت باز؛ PostgreSQL یا migration تولیدی تصویب نشده. |
+--
+docs/MuscleParadise/TODO-2026-11-16.md-753-
+docs/MuscleParadise/TODO-2026-11-16.md:754:##### `PWA-02` — تصویب ماتریس نقش و مجوز
+docs/MuscleParadise/TODO-2026-11-16.md-755-- **پذیرش canonical:** نقش‌های فعلی با نقش‌های هدف PWA تطبیق داده شوند؛ مشخص شود کدام مجوزها در سرور اعمال می‌شوند. تا آن زمان، تغییر نقش‌ها و grantهای backend متوقف می‌ماند؛ ساخت پوسته و کارهای بی‌خطر می‌توانند ادامه یابند.
+docs/MuscleParadise/TODO-2026-11-16.md:756:- **Verification focus:** ماتریس هر operation و شش نقش + anonymous و ownership؛ مدل سه‌نقشی بدون ADR اجرا نشود.
+docs/MuscleParadise/TODO-2026-11-16.md-757-- **فاز/وابستگی:** 0 — تثبیت تصمیم و خط مبنا؛ `PWA-01`.
+--
+docs/MuscleParadise/TODO-2026-11-16.md-806-- **Verification focus:** shell عضو/کادر و loading/empty/error/403/session expiry با نقش سروری؛ UI guard مرز امنیت نیست.
+docs/MuscleParadise/TODO-2026-11-16.md:807:- **فاز/وابستگی:** 1 — پوستهٔ PWA مشترک در Studio؛ `PWA-02`، `PWA-10`، `PWA-11`.
+docs/MuscleParadise/TODO-2026-11-16.md-808-- **تصمیم‌های مرجع کارت:** `D-03`؛ این IDها ارجاع تاریخی handoff‌اند و جای OQها/ADR را نمی‌گیرند.
+--
+docs/MuscleParadise/TODO-2026-11-16.md-856-- **Verification focus:** STUDIO_ROLES فعلی member را نمی‌پذیرد؛ ورود مشترک با نشست موجود، OTP منقضی/نامعتبر و rate-limit و بدون dev_code تولید.
+docs/MuscleParadise/TODO-2026-11-16.md:857:- **فاز/وابستگی:** 2 — هویت، نشست و امنیت دسترسی؛ `PWA-02`، `PWA-03`، `PWA-10`.
+docs/MuscleParadise/TODO-2026-11-16.md-858-- **تصمیم‌های مرجع کارت:** `D-03`؛ این IDها ارجاع تاریخی handoff‌اند و جای OQها/ADR را نمی‌گیرند.
+docs/MuscleParadise/TODO-2026-11-16.md-859-- **مسیرهای شاهد/کد پیشنهادی منبع:** `mp-app/studio/src/auth/AuthContext.tsx`، `mp-app/studio/src/pages/Login.tsx`، `mp-app/studio/src/lib/session.ts`، `mp-app/backend/modules/auth/`، `mp-app/studio/tests/login.test.tsx`، `mp-app/studio/tests/authFlow.test.tsx`، `mp-app/backend/tests/regression/test_wp12_env_failsafe.py`، `mp-app/backend/tests/integration/test_api_contract.py`، `mp-app/backend/tests/integration/test_m67_studio_auth.py`.
+docs/MuscleParadise/TODO-2026-11-16.md:860:- **Conditional:** خیر؛ **status منبع:** `PROPOSED`؛ **status فعلی صف:** `PARTIAL` — تست‌های محلی فرم OTP شمارهٔ نامعتبر، loading، پاسخ mockedِ 429، نمایش/پنهان‌سازی `dev_code` بر اساس DEV و خطای OTP (با `signIn` mocked) بدون نوشتن token توسط خود Login را می‌سنجند؛ هدفمند `login.test.tsx` + `authFlow.test.tsx`: ۱۰/۱۰ PASS. در backend، WP12 اکنون با fake provider غیر-dev و echo flag روشن می‌سنجد که پاسخ `dev_code` ندارد؛ همراه `test_api_contract.py` و `test_m67_studio_auth.py`: ۲۹/۲۹ PASS؛ `ruff check` و `ruff format --check` روی regression file پاس شدند. Suite کامل Studio در سه shard: ۳۶۲ PASS/۱۰ SKIP. `Login` در build production مقدار را UI رندر نمی‌کند، اما اگر backend آن را برگرداند پاسخ همچنان به مرورگر می‌رسد؛ این guard جای تضمین عدم صدور از backend نیست. **evidence:** [ثبت delta محلی](TODO-PWA-RELEASE-2026-11-23.fa.md). SMS/provider واقعی، rate-limit زنده، قرارداد session و سیاست `PWA-02`/`PWA-03` تأیید نشده‌اند؛ member در `STUDIO_ROLES` مجاز نیست و ورود مشترک کامل یا انتشار ادعا نمی‌شود.
+docs/MuscleParadise/TODO-2026-11-16.md-861-
+--
+docs/MuscleParadise/TODO-2026-11-16.md-887-- **پذیرش canonical:** برای endpointهای حساس، عضو، مربی/کارمند و مدیر مجاز/غیرمجاز، مالکیت رکورد، لغو grant و session stale روی API واقعی یا قرارداد تست شوند. تغییر backend فقط اگر gap مستند شد، میکرولوپ جدا می‌خواهد.
+docs/MuscleParadise/TODO-2026-11-16.md:888:- **Verification focus:** ماتریس مجاز/ممنوع شش نقش+anonymous، revoke و ownership؛ export متادیتا جای runtime authorization نیست.
+docs/MuscleParadise/TODO-2026-11-16.md:889:- **فاز/وابستگی:** 2 — هویت، نشست و امنیت دسترسی؛ `PWA-02`، `PWA-21`، `PWA-22`، `PWA-23`.
+docs/MuscleParadise/TODO-2026-11-16.md-890-- **تصمیم‌های مرجع کارت:** `D-03`؛ این IDها ارجاع تاریخی handoff‌اند و جای OQها/ADR را نمی‌گیرند.
+--
+docs/MuscleParadise/TODO-2026-11-16.md-1076-- **Verification focus:** admin به خود/دیگری اختیار ندهد؛ owner-only grant/revoke با audit و تست منفی؛ مهاجرت نقش ضمنی ممنوع.
+docs/MuscleParadise/TODO-2026-11-16.md:1077:- **فاز/وابستگی:** 4 — انتقال و تکمیل تجربهٔ کارکنان در همان PWA؛ `PWA-02`، `PWA-24`، `PWA-40`.
+docs/MuscleParadise/TODO-2026-11-16.md-1078-- **تصمیم‌های مرجع کارت:** `D-03`؛ این IDها ارجاع تاریخی handoff‌اند و جای OQها/ADR را نمی‌گیرند.
+--
+docs/MuscleParadise/TODO-2026-11-16.md-1191-| MK-PWA-01-FU-01 | read-only crosswalk تازهٔ helper/test بعد از source drift | `useSyncExternalStore`, SSR/unknown fallback, live updates, legacy events, cleanup/focus/draft؛ source/hash/tests به فایل/line/current evidence نگاشت شود؛ zero source diff. | PWA-13; snapshot قبلی MK-PWA-01 | `PARTIAL — current-tree ایستا: source/hash/line/test crosswalk تکمیل شد`; independent review، مرورگر/device و behavioral verification هنوز `NOT_RUN/UNKNOWN` هستند. [گزارش crosswalk](architecture/studio-motion-current-tree-static-crosswalk-2026-11-23.fa.md) شواهد را از snapshot قبلی جدا می‌کند. |
+docs/MuscleParadise/TODO-2026-11-16.md:1192:| MK-PWA-02 | قرارداد/implementation preference زنده + fallback محافظه‌کار | SSR, absent/throwing matchMedia, `false→true→false`, unsubscribe, preserve draft/focus; allowlist کوچک; هیچ provider/dependency دوم. | MK-PWA-01; PWA-13 | `PARTIAL — helper/test موجود`: `tests/motion.test.tsx` با 17/17 پاس؛ combined helper/component run با 22/22 و full suite با 329 پاس/10 skip ثبت شد. Helper در این پیگیری ویرایش نشد (hash همان است) و crosswalk ایستای کامل‌تر ثبت شد. Independent review (G9)، مرورگر/OS واقعی و behavior verification هنوز نیستند؛ پس loop/parent/PWA acceptance `PASS` اعلام نمی‌شود. جزئیات: [crosswalk](architecture/studio-motion-current-tree-static-crosswalk-2026-11-23.fa.md) و [follow-up](#motion-current-tree-static-scan-session). |
+docs/MuscleParadise/TODO-2026-11-16.md:1193:| MK-PWA-03 | motion intent/policy/list non-sensitive | critical/reduced/unknown بی‌حرکت؛ feedback timing کنترل‌شده؛ stable key/DOM; opt-in stagger bound. | MK-PWA-02; PWA-12/13 | `PROPOSED/NOT_RUN`; no animation in receipt/health/finance, no transition-all, no component-specific claim without browser test. |
+docs/MuscleParadise/TODO-2026-11-16.md-1194-| MK-PWA-04 | receipt visual states / access boundary | server status only; upload ≠ approval; unknown ≠ success/retry; UI no server authorization. | PWA-3B/PWA-44; D-05/D-06 | `BLOCKED` تا قرارداد API/مالکیت/audit و finance/privacy review؛ صرفاً UI mock کافی نیست. |
+docs/MuscleParadise/TODO-2026-11-16.md:1195:| MK-PWA-05 | verify only accepted motion GAP | fresh lint/typecheck/build/unit/component/synthetic browser per allowlist and SHA; no release/PWA claim. | MK-PWA-02/03 (04 if separately authorized) | `PROPOSED/NOT_RUN`; physical browser/device unknown remains. |
+docs/MuscleParadise/TODO-2026-11-16.md-1196-| MK-PWA-06 | normalize/handoff exact slice | evidence SHA, diff+test, budget, reviewer, blockers; no stage/commit/push/PR/merge/deploy. | MK-PWA-01…05 | `PROPOSED/NOT_RUN`; external/review authority is still a hard gate. |
+--
+docs/MuscleParadise/TODO-2026-11-16.md-1203-3. **Motion work:** MK-PWA-01 تنها inventory/read-only است؛ سپس contract محدود زیر PWA-13 و تغییرات کوچک با allowlist. raw motion/CSS/receipt/health/finance هر کدام boundary جدا؛ هیچ سؤال معمولی owner لازم نیست برای کار محلی امن بپرسیم، ولی مستقل review، permission و G gates لازم را دور نمی‌زنیم.
+docs/MuscleParadise/TODO-2026-11-16.md:1204:4. **PWA offline/cache/role/payment:** PWA-02/03 و PWA-3F وابسته به تصمیم/امنیت/حریم؛ هیچ تغییر backend نقش/grant یا cache دادهٔ شخصی از صرف انتخاب PWA استنتاج نشود. PWA-3F تا owner approval جدا `BLOCKED`.
+docs/MuscleParadise/TODO-2026-11-16.md-1205-5. **دستگاه و انتشار:** browser/device واقعی هدف، version pin، accessibility/security/finance/legal/product review، E2E/CI و No-Go همان SHA لازم است؛ ابزار در دسترس‌نبودنی `UNKNOWN/BLOCKED` ثبت می‌شود. emulator/log تاریخی جای شاهد فیزیکی نیست.
+--
+docs/MuscleParadise/TODO-2026-11-16.md-1236-- **رفتار قابل‌خواندن در source فعلی:** helper با `useSyncExternalStore` اشتراک زنده دارد؛ SSR و matchMedia ناموجود/خطادار یا MediaQueryList بدون change events به reduced می‌روند؛ modern و legacy listener بررسی می‌شود؛ ثبت/پاک‌سازی listener، تغییر زنده و preservation فیلد draft/focus در testها پوشش دارند. این فقط source/unit evidence همین dirty tree است، نه browser/platform behavior.
+docs/MuscleParadise/TODO-2026-11-16.md:1237:- `npx vitest run tests/motion.test.tsx --reporter=dot` → **۱ فایل/۱۷ تست PASS** (۱ ثانیه). اجرای full suite همین turn نیز ۳۲۸ پاس/۱۰ skip داشت. helper diff موجود است، اما independent G9 review، مرورگر واقعی/دستگاه و full component/CSS reduced-motion هنوز انجام نشده؛ `MK-PWA-02` فقط `PARTIAL`, نه loop closure.
+docs/MuscleParadise/TODO-2026-11-16.md-1238-- **اصلاح traceability در زمان این ثبت پیشین:** status `PASS` قدیمی `MK-PWA-01` صرفاً برای read-only snapshot/hash همان گزارش معتبر است؛ از آن برای توصیف working tree جدید استفاده نشود. `MK-PWA-01-FU-01` در همان زمان `PROPOSED/NOT_RUN` بود؛ وضعیت تازهٔ آن `PARTIAL` در [افزودهٔ پیگیری جدید](#motion-current-tree-static-scan-session) آمده است. هیچ تغییری در helper به‌عنوان بخشی از inventory read-only انجام نشد.
+--
+docs/MuscleParadise/TODO-2026-11-16.md-1254-- **تست‌ها و build محلی:** `npx vitest run tests/components.test.tsx tests/motion.test.tsx --reporter=dot` → **۲ فایل، ۲۲/۲۲ PASS**؛ `npm test -- --reporter=dot` → **۵۰ فایل PASS، ۲ فایل SKIP؛ ۳۲۹ PASS، ۱۰ SKIP، ۰ fail** (180.15 s). `npm run lint` و `npm run build` هر دو exit 0؛ build Vite `5.4.21` با ۴۰۴۵ module. در full suite warningهای JSDOM `getComputedStyle`, React `act(...)` و Recharts بدون layout تکرار شد؛ skipها pass نیستند.
+docs/MuscleParadise/TODO-2026-11-16.md:1255:- **Status/مرز:** `MK-PWA-01-FU-01 = PARTIAL` (crosswalk source/hash/line/test ایستا ثبت شد؛ independent review و behavioral browser evidence بازند)، `MK-PWA-02 = PARTIAL`, `O3-08 = PARTIAL`. Helper coverage یا Skeleton utility به‌تنهایی `MK-PWA-03/05` را نمی‌بندد؛ browser/E2E/device، actual computed styles، focus/draft integration، independent review و تمام gateهای محصول `NOT_RUN/UNKNOWN` می‌مانند. Canonical parent count/IDs و statusهای PWA تغییر نکردند؛ baseline محصول پذیرش release نیست.
+docs/MuscleParadise/TODO-2026-11-16.md-1256-- **صحت backlog canonical:** مقایسهٔ read-only TODO با `PWA_PLAN.json` در همین checkout: ۵۰ شناسهٔ یکتا و همهٔ acceptanceها، dependencies، source paths و source status دقیقاً منطبق؛ منبع ۴۹ `PROPOSED` + یک `BLOCKED` و ۵۰/۵۰ evidence `NOT_RUN`. Overlay محلی `PWA-00`/`PWA-04` از source evidence جدا و صریح نگه داشته شد. این فقط integrity متنی است و منشأ snapshot `c46e792657e361cd09799c896c47149b4a5c4d86` یا QA محصول را تأیید نمی‌کند.
+--
+docs/MuscleParadise/TODO-2026-11-16.md-1268-- **راستی‌آزمایی Studio:** targeted suite پنج فایل **۵۳/۵۳ PASS**؛ full `npm test -- --reporter=dot` **۵۰ فایل PASS، ۲ SKIP؛ ۳۴۲ PASS، ۱۰ SKIP، صفر fail**. `npm run lint` و `npm run build` exit `0`؛ Vite `5.4.21`, ۴۰۴۵ module. static inspection bundle `dist/assets/index-CRepSoME.css` وجود reduced media rule و utility variants را یافت. Warningهای JSDOM `getComputedStyle`, React `act(...)` و Recharts width/height صفر باقی‌اند؛ این‌ها مرورگر واقعی را پوشش نمی‌دهند.
+docs/MuscleParadise/TODO-2026-11-16.md:1269:- **وضعیت همچنان باز:** `MK-PWA-01-FU-01 = PARTIAL`، `MK-PWA-02 = PARTIAL`، `O3-08 = PARTIAL`. Browser/device/OS preference، computed style، screenshot، screen reader و independent review انجام نشد؛ این محدودیت‌ها gateها را باز نگه می‌دارند. canonical ۵۰ parent/acceptance/dependency و statusها دست‌نخورده؛ baseline PWA به‌تنهایی release approval نیست.
+docs/MuscleParadise/TODO-2026-11-16.md-1270-- **Fingerprint نهایی این snapshot:** branch=`arena/5e0f64cf-mp`, HEAD=`d92817f4151ebbafb25425b7b28776a4cc1180dc`, base=`35d4b35184b4148c658b415bd009fc076bf24e00`; `git status`: ۵۹ tracked changed، ۱۰۱ untracked، stage صفر. Studio tracked-diff SHA-256=`3e513215fd62329464e32769b94e28e9910f5c9a70afabd2c17eb848e15b3641`; ۹ فایل untracked Studio و content-manifest SHA-256=`e3239cced3ab630fd9bcc47147fe5eb74661e0324b52b991ad09e034c824b2b0`. فایل‌های نامرتبط/receipt خصوصی دست‌نخورده‌اند؛ stage/commit/push/PR/merge/release/deploy انجام نشد.
+--
+docs/MuscleParadise/TODO-2026-11-16.md-1279-- **راستی‌آزمایی نهایی Studio روی dirty tree:** `npm test -- --reporter=dot` → ۵۰ فایل PASS، ۲ SKIP؛ ۳۴۵ PASS، ۱۰ SKIP، صفر fail. Warningهای JSDOM (`getComputedStyle`، React `act(...)` و Recharts width/height=0) باقی‌اند. `npm run lint` و `npm run build` exit `0`; Vite `5.4.21`، ۴۰۴۵ module. Build استاندارد فقط `dist/index.html` را تولید کرد. برای entrypoint lab یک build جدا با JS API همان Vite config، ورودی `visual-concepts.html` و خروجی موقت خارج مخزن نیز exit `0` داد و ۳۳۸۹ module را تبدیل کرد؛ HTML و assetهای lab ساخته و temp حذف شد. در CSS asset تولیدشده (`visual-concepts-B6s-Jj05.css`, ۳۴٬۵۱۱ بایت) media query، animation/transition delay صفر و hover transform override با چک ایستای رشته‌ای PASS شدند. این bundle check و full suite شواهد محلی‌اند، نه browser/OS/device یا computed-style acceptance.
+docs/MuscleParadise/TODO-2026-11-16.md:1280:- **وضعیت همچنان باز:** `MK-PWA-01-FU-01 = PARTIAL`، `MK-PWA-02 = PARTIAL` و `O3-08 = PARTIAL`. Browser/device/OS preference، computed style، screenshot، screen reader، independent review و release Go/No-Go انجام نشد؛ ۵۰ parent/acceptance/dependency canonical و statusهایشان ارتقا نیافتند.
+docs/MuscleParadise/TODO-2026-11-16.md-1281-- **Fingerprint پس از patch lab:** branch=`arena/5e0f64cf-mp`, HEAD=`d92817f4151ebbafb25425b7b28776a4cc1180dc`, base=`35d4b35184b4148c658b415bd009fc076bf24e00`; `git status --porcelain` پیش‌فرض: ۵۹ مسیر tracked، ۱۰۱ ورودی untracked، stage صفر. Studio tracked diff SHA-256=`bdedaf8b6ca38dd5a19846017ad2a49ce50f1d4b5c9b0d7874608e1a1aba2aab`; ۹ فایل untracked Studio، content-manifest SHA-256=`18665cb8b0f84ee570ff3040f89c073397a00245c90d7f705e96f69bb0f8f2fa` (ردیف‌های sha256sum مرتب‌شده بر مسیر). Hash فایل‌های تازه/به‌روز در [crosswalk](architecture/studio-motion-current-tree-static-crosswalk-2026-11-23.fa.md) ثبت شده است.
+--
+docs/MuscleParadise/TODO-2026-11-16.md-1290-- **محدودیت:** این headless harness، preference را با `Playwright.emulateMedia` تغییر داد؛ OS preference، دستگاه/مرورگر فیزیکی، screenshot ذخیره‌شده، keyboard-only، screen reader، CI، auth/backend و routeهای اصلی محصول را نسنجد. test دائمی/CI اضافه نشد؛ کل suite/lint/build از نوبت پیشین ثبت شده و برای این تغییر مستنداتی تکرار نشد.
+docs/MuscleParadise/TODO-2026-11-16.md:1291:- **حکم:** `MK-PWA-01-FU-01 = PARTIAL`, `MK-PWA-02 = PARTIAL`, `O3-08 = PARTIAL`. evidence مرورگر synthetic یکی از شکاف‌ها را کاهش می‌دهد؛ independent G9 review و target browser/device/OS و پذیرش کامل محصول بازند. ۵۰ parent canonical، acceptance، dependency، PWA/release gate و Go/No-Go دست‌نخورده‌اند.
+docs/MuscleParadise/TODO-2026-11-16.md-1292-- **بدون تغییر source و عملیات بیرونی:** این نوبت فقط این مستندات را افزود؛ source/test محصول تغییری نکرد. Studio tracked-diff SHA-256=`bdedaf8b6ca38dd5a19846017ad2a49ce50f1d4b5c9b0d7874608e1a1aba2aab`; index پاک بود؛ stage/commit/push/PR/merge/release/deploy انجام نشد.
+--
+docs/MuscleParadise/TODO-2026-11-16.md-1299-- **درخواست/انتقال بیرونی:** برای همین درخت dirty روی Codespace/CI باید فقط patch مجاز همان scope را روی SHA مشخص منتقل و همان commands را دوباره اجرا کرد؛ branch remote در HEAD محلی فعلی source dirty را ندارد. reviewer مستقل G9، screen reader، OS/browser/device فیزیکی و acceptance کامل/Go-No-Go در Codespace صرفاً با headless test بسته نمی‌شوند؛ reviewer و دستگاه هدف باید واقعاً در دسترس باشند. ماتریس، ترتیب امن و محدودیت transfer را مشخص می‌کند.
+docs/MuscleParadise/TODO-2026-11-16.md:1300:- **حکم:** `MK-PWA-01-FU-01 = PARTIAL`, `MK-PWA-02 = PARTIAL`, `O3-08 = PARTIAL`; شواهد محلی افزایش یافتند، ولی ۵۰ parent canonical، acceptance/dependencyها، PWA status، release gate یا Go/No-Go تغییر نکردند. `FUTURE_ONLY`/آرشیوی نیز فعال نشده‌اند.
+docs/MuscleParadise/TODO-2026-11-16.md-1301-- **Git تازه:** branch=`arena/5e0f64cf-mp`, `HEAD=d92817f4151ebbafb25425b7b28776a4cc1180dc`, base=`35d4b35184b4148c658b415bd009fc076bf24e00`; `git status --porcelain=v1 -uall` پس از مستندات handoff: ۶۲ tracked changes، ۲۶۳ untracked paths (۷۰ receipt خصوصی، ۱۹۳ مورد دیگر؛ ۱۵۸ زیر `artifacts/`)، stage صفر. هیچ receiptی باز/کپی/stage نشد. بخش عمدهٔ untracked `artifacts/` از پیش موجود است؛ `git add -A` ممنوع. اسناد/خروجی‌های این follow-up را با path allowlist جدا نگه‌دار؛ سایر diffها را قاطی نکن.
+exit=0

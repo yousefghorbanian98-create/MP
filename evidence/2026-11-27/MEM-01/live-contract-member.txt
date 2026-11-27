@@ -1,0 +1,24 @@
+MEM-01 live member-account contract — sanitized evidence
+RECORDED_AT_UTC=2026-11-27T15:41:18Z
+BASE_SHA=9cdd96554108d8438fe906a82b233d68e21e0fd8
+API=http://127.0.0.1:8765 (local Uvicorn; temporary SQLite at /tmp/mp-live-contract-member-9cdd965.db)
+FIXTURES=synthetic member A + member B + two ID-offset anchors; no production data
+TOKEN=short-lived fixture member JWT; value neither printed nor saved
+
+Command (from mp-app/studio; values redacted):
+  MP_API_BASE=http://127.0.0.1:8765 MP_MEMBER_TOKEN=<synthetic member fixture> npm test -- tests/liveContractMember.test.ts
+
+Vitest result:
+  ✓ tests/liveContractMember.test.ts (4 tests)
+  Test Files  1 passed (1)
+  Tests       4 passed (4)
+  Exit code   0
+
+Assertions exercised against the live local API:
+- JWT role and `/members/me` role are `member`; response `id` is the server `Member.id`, `user_id` matches token `sub`, and those IDs are distinct.
+- `/members/me` response has only the allowlisted self-profile keys; it contains no B-member marker/phone or extra PII fields.
+- Typed client fetches memberships using `Member.id`; every returned row points to that ID. The wrong `User.id` path is rejected (403/404) by the server.
+- The seeded unknown `pending` membership maps to `{state: unknown, daysLeft: null}`, not expired.
+- `2026-11-23T23:30:00Z` formats as Persian `۳ آذر ۱۴۰۵` at `۳:۰۰` in `Asia/Tehran`.
+
+`fetchMe` and `fetchMemberMemberships` already existed in `src/lib/api.ts`; no API helper change was needed. `.github/workflows/ci.yml` now seeds isolated A/B identities and runs this suite with a member fixture token in the live-contract job. GitHub CI for the new push is a separate check and is not implied by this local pass.

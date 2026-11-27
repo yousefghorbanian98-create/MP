@@ -1,0 +1,695 @@
+
+query_utc=2026-11-27T12:08:15Z
+pr=30
+expected_sha=6593cb4bc7f42c9ada4ca7e499fe60124bf00703
+pr_head_sha=6593cb4bc7f42c9ada4ca7e499fe60124bf00703
+Client — pinned SDK · format gate · Android debug compile	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+Documentation links and handoff	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+PWA-00 patch applies cleanly and matches source docs	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+Reviewdog (Markdown findings as check annotations)	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+backend	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+client-flutter	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+secret-scan	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+studio	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+
+checks_exit=1
+
+watch_started_utc=2026-11-27T12:08:29Z
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+Documentation links and handoff	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Super-Linter (PWA-00 Markdown only)	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+backend	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+secret-scan	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Client — pinned SDK · format gate · Android debug compile	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+client-flutter	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+studio	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+Super-Linter (PWA-00 Markdown only)	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+backend	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Client — pinned SDK · format gate · Android debug compile	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+client-flutter	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+studio	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+Super-Linter (PWA-00 Markdown only)	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+backend	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Client — pinned SDK · format gate · Android debug compile	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+client-flutter	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+studio	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+Super-Linter (PWA-00 Markdown only)	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+backend	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Client — pinned SDK · format gate · Android debug compile	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+client-flutter	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+studio	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+Super-Linter (PWA-00 Markdown only)	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+backend	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Client — pinned SDK · format gate · Android debug compile	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+studio	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+client-flutter	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+backend	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+Client — pinned SDK · format gate · Android debug compile	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+studio	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+client-flutter	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+backend	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+Client — pinned SDK · format gate · Android debug compile	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+studio	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+client-flutter	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+backend	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+Client — pinned SDK · format gate · Android debug compile	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+studio	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+client-flutter	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+backend	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+Client — pinned SDK · format gate · Android debug compile	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+studio	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+client-flutter	pass	1m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+backend	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+Client — pinned SDK · format gate · Android debug compile	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+studio	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+client-flutter	pass	1m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+backend	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+Client — pinned SDK · format gate · Android debug compile	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+client-flutter	pass	1m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+studio	pass	2m0s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+backend	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+Client — pinned SDK · format gate · Android debug compile	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+client-flutter	pass	1m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+studio	pass	2m0s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+backend	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+Client — pinned SDK · format gate · Android debug compile	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+client-flutter	pass	1m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+studio	pass	2m0s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+backend	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+Client — pinned SDK · format gate · Android debug compile	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+client-flutter	pass	1m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+studio	pass	2m0s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+backend	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+Client — pinned SDK · format gate · Android debug compile	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+client-flutter	pass	1m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+studio	pass	2m0s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+backend	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+Client — pinned SDK · format gate · Android debug compile	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+client-flutter	pass	1m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+studio	pass	2m0s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+backend	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+Client — pinned SDK · format gate · Android debug compile	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+client-flutter	pass	1m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+studio	pass	2m0s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+backend	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+Client — pinned SDK · format gate · Android debug compile	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+client-flutter	pass	1m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+studio	pass	2m0s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+backend	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+Client — pinned SDK · format gate · Android debug compile	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+client-flutter	pass	1m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+studio	pass	2m0s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+backend	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+Client — pinned SDK · format gate · Android debug compile	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+client-flutter	pass	1m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+studio	pass	2m0s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+backend	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+Client — pinned SDK · format gate · Android debug compile	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+client-flutter	pass	1m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+studio	pass	2m0s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+backend	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+Client — pinned SDK · format gate · Android debug compile	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+client-flutter	pass	1m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+studio	pass	2m0s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+backend	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+Client — pinned SDK · format gate · Android debug compile	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+client-flutter	pass	1m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+studio	pass	2m0s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+e2e-api	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140497818971
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+backend	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+studio	pass	2m0s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+Client — pinned SDK · format gate · Android debug compile	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+client-flutter	pass	1m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+e2e-api	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140497818971
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+backend	pass	4m17s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+Client — pinned SDK · format gate · Android debug compile	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+client-flutter	pass	1m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+studio	pass	2m0s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+e2e-api	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140497818971
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+backend	pass	4m17s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+Client — pinned SDK · format gate · Android debug compile	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+client-flutter	pass	1m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+studio	pass	2m0s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+e2e-api	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140497818971
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+backend	pass	4m17s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+Client — pinned SDK · format gate · Android debug compile	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+client-flutter	pass	1m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+studio	pass	2m0s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+e2e-api	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140497818971
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+backend	pass	4m17s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+Client — pinned SDK · format gate · Android debug compile	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+client-flutter	pass	1m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+studio	pass	2m0s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+e2e-api	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140497818971
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+backend	pass	4m17s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+Client — pinned SDK · format gate · Android debug compile	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+client-flutter	pass	1m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+studio	pass	2m0s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+e2e-api	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140497818971
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+backend	pass	4m17s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+Client — pinned SDK · format gate · Android debug compile	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+client-flutter	pass	1m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+studio	pass	2m0s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+e2e-api	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140497818971
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+backend	pass	4m17s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+Client — pinned SDK · format gate · Android debug compile	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+client-flutter	pass	1m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+studio	pass	2m0s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+e2e-api	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140497818971
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+backend	pass	4m17s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+Client — pinned SDK · format gate · Android debug compile	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+client-flutter	pass	1m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+studio	pass	2m0s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+e2e-api	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996082112/job/140498529774
+backend	pass	4m17s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+Client — pinned SDK · format gate · Android debug compile	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+client-flutter	pass	1m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+studio	pass	2m0s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+e2e-api	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996082112/job/140498529774
+backend	pass	4m17s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+Client — pinned SDK · format gate · Android debug compile	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+client-flutter	pass	1m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+studio	pass	2m0s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+e2e-api	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996082112/job/140498529774
+Client — pinned SDK · format gate · Android debug compile	pass	6m5s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+backend	pass	4m17s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+client-flutter	pass	1m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+studio	pass	2m0s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+e2e-api	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996082112/job/140498529774
+Client — pinned SDK · format gate · Android debug compile	pass	6m5s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+backend	pass	4m17s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+client-flutter	pass	1m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+studio	pass	2m0s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+e2e-api	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996082112/job/140498529774
+Client — pinned SDK · format gate · Android debug compile	pass	6m5s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+backend	pass	4m17s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+client-flutter	pass	1m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+studio	pass	2m0s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+e2e-api	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996082112/job/140498529774
+Client — pinned SDK · format gate · Android debug compile	pass	6m5s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+backend	pass	4m17s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+client-flutter	pass	1m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+studio	pass	2m0s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+e2e-api	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996082112/job/140498529774
+Client — pinned SDK · format gate · Android debug compile	pass	6m5s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+backend	pass	4m17s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+client-flutter	pass	1m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+studio	pass	2m0s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+e2e-api	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996082112/job/140498529774
+Client — pinned SDK · format gate · Android debug compile	pass	6m5s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+backend	pass	4m17s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+client-flutter	pass	1m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+studio	pass	2m0s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+e2e-api	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996082112/job/140498529774
+Client — pinned SDK · format gate · Android debug compile	pass	6m5s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+backend	pass	4m17s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+client-flutter	pass	1m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+studio	pass	2m0s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+e2e-api	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996082112/job/140498529774
+Client — pinned SDK · format gate · Android debug compile	pass	6m5s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+backend	pass	4m17s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+client-flutter	pass	1m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+studio	pass	2m0s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+e2e-api	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996082112/job/140498529774
+Client — pinned SDK · format gate · Android debug compile	pass	6m5s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+backend	pass	4m17s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+client-flutter	pass	1m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+studio	pass	2m0s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+e2e-api	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996082112/job/140498529774
+Client — pinned SDK · format gate · Android debug compile	pass	6m5s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+backend	pass	4m17s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+client-flutter	pass	1m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+studio	pass	2m0s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+e2e-api	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996082112/job/140498529774
+Client — pinned SDK · format gate · Android debug compile	pass	6m5s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+backend	pass	4m17s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+client-flutter	pass	1m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+studio	pass	2m0s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+e2e-api	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996082112/job/140498529774
+Client — pinned SDK · format gate · Android debug compile	pass	6m5s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+backend	pass	4m17s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+client-flutter	pass	1m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+studio	pass	2m0s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+e2e-api	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996082112/job/140498529774
+Client — pinned SDK · format gate · Android debug compile	pass	6m5s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+backend	pass	4m17s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+client-flutter	pass	1m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+studio	pass	2m0s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+Refreshing checks status every 10 seconds. Press Ctrl+C to quit.
+
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+e2e-api	pending	0	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996082112/job/140498529774
+Client — pinned SDK · format gate · Android debug compile	pass	6m5s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+backend	pass	4m17s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+client-flutter	pass	1m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+studio	pass	2m0s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+Client — pinned SDK · format gate · Android debug compile	pass	6m5s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+backend	pass	4m17s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+client-flutter	pass	1m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+e2e-api	pass	2m49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996082112/job/140498529774
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+studio	pass	2m0s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+PWA-00 patch applies cleanly and matches source docs	fail	8s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808814
+secret-scan	fail	19s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809091
+Client — pinned SDK · format gate · Android debug compile	pass	6m5s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809595
+Documentation links and handoff	pass	15s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809481
+Reviewdog (Markdown findings as check annotations)	pass	11s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495809147
+Super-Linter (PWA-00 Markdown only)	pass	1m6s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116290/job/140495808417
+backend	pass	4m17s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809759
+client-flutter	pass	1m33s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809490
+e2e-api	pass	2m49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996082112/job/140498529774
+live-contract	pass	49s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809465
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140495894161
+studio	pass	2m0s	https://github.com/yousefghorbanian98-create/MP/actions/runs/45996116481/job/140495809697
+
+watch_exit=1
+watch_finished_utc=2026-11-27T12:16:57Z

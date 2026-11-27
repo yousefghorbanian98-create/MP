@@ -1,6 +1,8 @@
 # فلوچارت تاریخیِ مقصد PWA و دسترسی‌ها — snapshot سه‌نقشی
 
 > **وضعیت سند/تصویر: تاریخی و target-only؛ تصمیم جاری نیست.** این snapshot یک طرح قدیمی از PWA و مدل سه‌نقشی `super_admin/admin/member` را بازتاب می‌دهد. تصمیم جاری [ADR-007](../adr/007-pwa-primary-release.md) یک PWA مشترک React برای عضو و کادر را کلاینت اصلی انتشار اول می‌داند و OQ-03 شش نقش فعلی را حفظ می‌کند؛ Flutter/Android نیز حفظ می‌شود. بنابراین تصویر برای مهاجرت نقش یا تعیین مجوز جاری authority ندارد. PWA مشترک هنوز از نظر implementation/parity/QA پذیرفته نشده است. آنلاین‌محوربودن و دامنهٔ دقیق آفلاین همچنان تصمیم/گیت جدا دارند.
+>
+> **ردیابی جاری (الحاقیهٔ DOC-05):** acceptance/status جاری فقط از [TODO canonical PWA](../TODO-2026-11-16.md#pwa-ui-ux-full-backlog-2026-11-23)، [tracker انتشار](../TODO-PWA-RELEASE-2026-11-23.fa.md) و [دفتر اجرای چرخه‌ها](../PWA-EXECUTION-STATE.md) گرفته شود. نمودار و فایل‌های تصویری/source آن مرجع تاریخی‌اند، نه شاهد رفتار جاری یا پیاده‌سازی.
 
 ![فلوچارت مقصد PWA و مدل دسترسی](muscle-paradise-final-pwa-access-flow-v1-2026-11-23.png)
 

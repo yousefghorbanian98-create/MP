@@ -1,0 +1,76 @@
+INV-01 non-destructive worktree snapshot
+Reference date: 2026-11-23 UTC (Arena date).
+Snapshot path is excluded from its own untracked-file count. Individual untracked paths, especially private receipt filenames, are intentionally suppressed.
+
+$ git branch --show-current
+arena/5e0f64cf-mp
+$ git rev-parse HEAD
+e0ae95f48bf8451bd59b972a92c55fed404e6a92
+$ git rev-parse origin/main
+352781043ad2ba202d8b3b459df1ce7e3d914ef7
+Branch note base: 35d4b35184b4148c658b415bd009fc076bf24e00
+$ git branch -vv --no-color --list arena/5e0f64cf-mp
+* arena/5e0f64cf-mp e0ae95f Merge remote-tracking branch 'origin/main' into arena/5e0f64cf-mp Co-authored-by: arena-agent <297053741+arena-agent@users.noreply.github.com>
+$ git --version
+git version 2.39.5
+$ node --version
+v22.22.3
+$ npm --version
+10.9.8
+$ python3 --version
+Python 3.11.2
+$ /tmp/mp-backend-venv/bin/python -m pytest --version
+pytest 9.2.0
+$ /tmp/mp-backend-venv/bin/python -m ruff --version
+ruff 0.17.6
+$ gh --version (first line)
+gh version 2.23.0 (2023-02-27 Debian 2.23.0+dfsg1-1)
+
+$ git status --porcelain=v1 -z --untracked-files=all (redacted aggregate; status paths not emitted)
+tracked_changed_records=24; untracked_records=293; staged_records=0; self_record_excluded=1
+untracked_artifacts=157
+untracked_backend-evidence=4
+untracked_docs=5
+untracked_evidence=13
+untracked_other=1
+untracked_private-receipt-dir=112
+untracked_studio-images=1
+
+$ git diff --name-only (tracked paths only)
+README.md
+docs/MuscleParadise/DATA-RETENTION.md
+docs/MuscleParadise/MASTER_MAP.md
+docs/MuscleParadise/PROJECT_GUIDE.fa.md
+docs/MuscleParadise/SESSION_HANDOFF.md
+docs/MuscleParadise/TODO-2026-11-16.md
+docs/MuscleParadise/TODO-CLOUD-FINANCE-ACCESS.md
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md
+docs/MuscleParadise/architecture/README.md
+docs/MuscleParadise/architecture/ai-autonomous-production-plan-v1-2026-11-23.md
+docs/MuscleParadise/architecture/finn-loop-microtask-backlog-draft-v1-2026-11-23.md
+docs/MuscleParadise/architecture/frontend-ui-ux-flow-option-03-lab-v1-2026-11-23.md
+docs/MuscleParadise/architecture/motion-pwa-availability-matrix-2026-11-23.fa.md
+docs/MuscleParadise/architecture/muscle-paradise-final-pwa-access-flow-v1-2026-11-23.md
+docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-CONTRACT.fa.md
+docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-EVIDENCE.fa.md
+docs/MuscleParadise/architecture/session-decisions-2026-11-23/WIRING-LEDGER.md
+docs/MuscleParadise/architecture/studio-motion-current-tree-static-crosswalk-2026-11-23.fa.md
+docs/MuscleParadise/architecture/system-integrated-flow-v1-2026-11-23.md
+docs/MuscleParadise/project-guide/01-project-map.md
+docs/MuscleParadise/project-guide/04-development-testing-operations.md
+docs/MuscleParadise/project-guide/05-security-status-glossary.md
+docs/MuscleParadise/security/biometric-policy.md
+docs/README.md
+
+$ git diff --cached --quiet
+index_clean_exit=0
+
+$ gh run list --branch arena/5e0f64cf-mp --limit 5 --json databaseId,headSha,status,conclusion,workflowName,createdAt,url
+[{"conclusion":"success","createdAt":"2026-11-27T00:38:45Z","databaseId":45917926363,"headSha":"3f26e1d6ea05920a23236b368abd4c4ee0580799","status":"completed","url":"https://github.com/yousefghorbanian98-create/MP/actions/runs/45917926363","workflowName":"pwa00-doc-quality"},{"conclusion":"success","createdAt":"2026-11-27T00:38:45Z","databaseId":45917926298,"headSha":"3f26e1d6ea05920a23236b368abd4c4ee0580799","status":"completed","url":"https://github.com/yousefghorbanian98-create/MP/actions/runs/45917926298","workflowName":"mp-ci"},{"conclusion":"success","createdAt":"2026-11-27T00:38:42Z","databaseId":45917920881,"headSha":"3f26e1d6ea05920a23236b368abd4c4ee0580799","status":"completed","url":"https://github.com/yousefghorbanian98-create/MP/actions/runs/45917920881","workflowName":"mp-ci"},{"conclusion":"success","createdAt":"2026-11-27T00:29:11Z","databaseId":45916977572,"headSha":"640fb7e35636569502eec00489fee396d4e6af6a","status":"completed","url":"https://github.com/yousefghorbanian98-create/MP/actions/runs/45916977572","workflowName":"mp-ci"},{"conclusion":"success","createdAt":"2026-11-27T00:29:11Z","databaseId":45916977586,"headSha":"640fb7e35636569502eec00489fee396d4e6af6a","status":"completed","url":"https://github.com/yousefghorbanian98-create/MP/actions/runs/45916977586","workflowName":"pwa00-doc-quality"}]
+
+$ gh run list --branch arena/5e0f64cf-mp --limit 100 --json databaseId,headSha,status,conclusion,workflowName,createdAt,url --jq filter for HEAD e0ae95f48bf8451bd59b972a92c55fed404e6a92
+[]
+
+CI conclusion: no run for local HEAD was found among the latest 100 runs listed for this branch; latest listed success is for SHA 3f26e1d6ea05920a23236b368abd4c4ee0580799, not this worktree. GH timestamps 2026-11-27 conflict with Arena reference date 2026-11-23 and remain unresolved. No CI was launched by this snapshot.
+
+No pull/fetch/reset/clean, staging, commit, push, deploy, or receipt access was performed for INV-01.

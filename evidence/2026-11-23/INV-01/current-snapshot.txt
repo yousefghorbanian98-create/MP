@@ -1,0 +1,22 @@
+INV-01 — sanitized workspace snapshot (revalidated)
+Snapshot date: 2026-11-23 UTC (Arena reference date).
+Command: git status --porcelain=v1 -z --untracked-files=all; all path bytes were kept in memory and suppressed.
+branch=arena/5e0f64cf-mp
+tracked_changed_records=24; staged_records=0; unstaged_records=24; untracked_records_including_this_snapshot=310; self_record_excluded=1; pre-snapshot-untracked=309
+tracked_worktree_diff_paths=24; tracked_product_tree_diff_paths=0
+Command: git diff --binary (tracked worktree only); sha256=3acc250828f89d832af9ce8d22a04131c50f14ca5aedf45900b88c112a0d20da
+Command: git diff --cached --binary; index_empty=true; sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+git_version=git version 2.39.5
+HEAD=e0ae95f48bf8451bd59b972a92c55fed404e6a92
+origin/arena/5e0f64cf-mp=3f26e1d6ea05920a23236b368abd4c4ee0580799
+origin/main=352781043ad2ba202d8b3b459df1ce7e3d914ef7
+HEAD_parent_commits=3f26e1d6ea05920a23236b368abd4c4ee0580799 352781043ad2ba202d8b3b459df1ce7e3d914ef7
+HEAD_in_allowed_remote_branch=false
+allowed_remote_branch_is_ancestor_of_HEAD=true
+origin_main_is_ancestor_of_HEAD=true
+HEAD_tree=5974442a74277a9249ea503ed0dd4bcad61e7a86
+origin_main_tree=5974442a74277a9249ea503ed0dd4bcad61e7a86
+HEAD_tree_matches_origin_main=true
+origin_arena_vs_HEAD_commit_counts_remote_only:local_only=0:2
+Interpretation: local HEAD commit itself is not reachable from the checked remote-tracking refs; the allowed remote branch and origin/main are both ancestors, and local HEAD's tree exactly matches origin/main. The merge wrapper is unpushed; dirty worktree documents/evidence have no remote witness. No ref/worktree operation was performed.
+Safety: no untracked names, receipt names, receipt contents, secrets or personal data are present in this evidence file. Existing untracked items were preserved; no reset, checkout, clean, add, commit or push was run.

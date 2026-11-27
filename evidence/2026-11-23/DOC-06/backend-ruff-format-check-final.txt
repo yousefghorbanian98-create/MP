@@ -1,0 +1,12 @@
+Reference date: 2026-11-23 UTC (Arena date)
+$ git rev-parse HEAD
+e0ae95f48bf8451bd59b972a92c55fed404e6a92
+$ pwd
+/home/user/MP/mp-app/backend
+$ /tmp/mp-backend-venv/bin/python --version
+Python 3.11.2
+$ /tmp/mp-backend-venv/bin/python -m ruff --version
+ruff 0.17.6
+$ /tmp/mp-backend-venv/bin/python -m ruff format --check modules/privacy/retention.py modules/reports/period.py app/security/grants.py app/security/route_policy.py tests/integration/test_phase8_privacy.py tests/integration/test_m65_qr_security.py tests/integration/test_qf10_period_report.py tests/integration/test_phase5_admin_permissions.py tests/integration/test_routes_effective_guards.py
+9 files already formatted
+ruff_format_exit=0

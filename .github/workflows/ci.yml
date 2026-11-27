@@ -399,22 +399,100 @@ jobs:
         run: |
           cd mp-app/backend
           python - <<'EOF'
+          from datetime import UTC, datetime, timedelta
+
           from db.base import init_db, get_session_factory
-          from db.models import Member, User, Exercise
+          from db.models import Exercise, Member, Membership, User
           from security.crypto import FaceEmbeddingCipher  # noqa: F401
+
           init_db()
           with get_session_factory()() as s:
-              u = User(phone="09120000001", full_name="Admin", role="manager")
-              s.add(u); s.commit()
-              s.add(Member(user_id=u.id, gender="male", goal="hypertrophy", branch_id=1,
-                           emergency_contact=""))
+              manager = User(phone="09120000001", full_name="Admin", role="manager")
+              s.add(manager)
+              s.commit()
+              s.add(
+                  Member(
+                      user_id=manager.id,
+                      gender="male",
+                      goal="hypertrophy",
+                      branch_id=1,
+                      emergency_contact="",
+                  )
+              )
               s.commit()
               for i in range(1, 18):
-                  s.add(Exercise(id=i, external_id=f"e{i}", name_fa=f"حرکت {i}",
-                                 name_en=f"ex {i}", muscle_group="legs",
-                                 video_url=f"/static/exercises/{i}_0.jpg"))
+                  s.add(
+                      Exercise(
+                          id=i,
+                          external_id=f"e{i}",
+                          name_fa=f"حرکت {i}",
+                          name_en=f"ex {i}",
+                          muscle_group="legs",
+                          video_url=f"/static/exercises/{i}_0.jpg",
+                      )
+                  )
+
+              # Two users without profiles guarantee User.id != Member.id for this fixture.
+              s.add_all(
+                  [
+                      User(phone="09120000002", full_name="Contract anchor A", role="coach"),
+                      User(phone="09120000003", full_name="Contract anchor B", role="coach"),
+                  ]
+              )
+              s.flush()
+              member_a = User(
+                  phone="09120000004",
+                  full_name="Live Contract Member A",
+                  role="member",
+              )
+              member_b = User(
+                  phone="09120000005",
+                  full_name="Live Contract Member B",
+                  role="member",
+              )
+              s.add_all([member_a, member_b])
+              s.flush()
+              profile_a = Member(
+                  user_id=member_a.id,
+                  gender="female",
+                  goal="hypertrophy",
+                  constraints="[]",
+                  branch_id=1,
+              )
+              profile_b = Member(
+                  user_id=member_b.id,
+                  gender="male",
+                  goal="strength",
+                  constraints="[]",
+                  branch_id=1,
+              )
+              s.add_all([profile_a, profile_b])
+              s.flush()
+              now = datetime.now(UTC)
+              s.add_all(
+                  [
+                      Membership(
+                          member_id=profile_a.id,
+                          plan_name="Synthetic unknown-status membership",
+                          started_at=now,
+                          expires_at=now + timedelta(days=30),
+                          status="pending",
+                          price_rial=0,
+                          branch_id=1,
+                      ),
+                      Membership(
+                          member_id=profile_b.id,
+                          plan_name="Synthetic other-member membership",
+                          started_at=now,
+                          expires_at=now + timedelta(days=30),
+                          status="active",
+                          price_rial=0,
+                          branch_id=1,
+                      ),
+                  ]
+              )
               s.commit()
-          print("seeded")
+          print("seeded synthetic live-contract actors")
           EOF
           nohup python -m uvicorn app.main:create_app --factory --port 8000 \
             --host 127.0.0.1 > /tmp/api.log 2>&1 &
@@ -430,6 +508,24 @@ jobs:
         run: |
           TOKEN=$(cd ../backend && python -c "from app.security.jwt import create_access_token; print(create_access_token(1,'manager'))")
           MP_API_BASE=http://127.0.0.1:8000 MP_TOKEN="$TOKEN" npm test -- tests/liveContract.test.ts
+      - name: Live member-account contract (Studio TS client × real API)
+        working-directory: mp-app/studio
+        run: |
+          MEMBER_TOKEN=$(cd ../backend && python - <<'PY'
+          from sqlalchemy import select
+
+          from app.security.jwt import create_access_token
+          from db.base import get_session_factory
+          from db.models import User
+
+          with get_session_factory()() as session:
+              user = session.scalar(select(User).where(User.phone == "09120000004"))
+              if user is None or user.role != "member":
+                  raise SystemExit("synthetic member fixture is missing")
+              print(create_access_token(user.id, user.role))
+          PY
+          )
+          MP_API_BASE=http://127.0.0.1:8000 MP_MEMBER_TOKEN="$MEMBER_TOKEN" npm test -- tests/liveContractMember.test.ts
 
   e2e-api:
     runs-on: ubuntu-latest

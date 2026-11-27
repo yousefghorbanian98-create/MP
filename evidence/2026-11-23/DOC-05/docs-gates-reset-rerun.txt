@@ -1,0 +1,81 @@
+DOC-05 final current-cycle documentation gates after INV-04..06 slices (dirty local worktree; untracked pathnames suppressed)
+Run date: 2026-11-27 UTC; evidence directory baseline label: 2026-11-23 UTC (not the run date).
+branch=arena/5e0f64cf-mp
+HEAD=e0ae95f48bf8451bd59b972a92c55fed404e6a92
+Python=Python 3.11.2
+Node=v22.22.3
+npm=10.9.8
+
+$ python3 evidence/2026-11-23/DOC-05/traceability_audit.py
+PASS README.md: 4 traceability/boundary markers
+PASS docs/README.md: 4 traceability/boundary markers
+PASS docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md: 3 traceability/boundary markers
+PASS docs/MuscleParadise/TODO-2026-11-16.md: 3 traceability/boundary markers
+PASS docs/MuscleParadise/SESSION_HANDOFF.md: 3 traceability/boundary markers
+PASS docs/MuscleParadise/architecture/README.md: 4 traceability/boundary markers
+PASS docs/MuscleParadise/architecture/frontend-ui-ux-flow-option-03-lab-v1-2026-11-23.md: 5 traceability/boundary markers
+PASS docs/MuscleParadise/architecture/muscle-paradise-final-pwa-access-flow-v1-2026-11-23.md: 4 traceability/boundary markers
+PASS docs/MuscleParadise/architecture/ai-autonomous-production-plan-v1-2026-11-23.md: 4 traceability/boundary markers
+PASS docs/MuscleParadise/architecture/motion-pwa-availability-matrix-2026-11-23.fa.md: 4 traceability/boundary markers
+PASS docs/MuscleParadise/architecture/studio-motion-current-tree-static-crosswalk-2026-11-23.fa.md: 4 traceability/boundary markers
+PASS docs/MuscleParadise/architecture/system-integrated-flow-v1-2026-11-23.md: 4 traceability/boundary markers
+PASS docs/MuscleParadise/architecture/session-decisions-2026-11-23/WIRING-LEDGER.md: 4 traceability/boundary markers
+PASS docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-CONTRACT.fa.md: 4 traceability/boundary markers
+PASS docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-EVIDENCE.fa.md: 4 traceability/boundary markers
+PASS docs/MuscleParadise/project-guide/01-project-map.md: 4 traceability/boundary markers
+PASS docs/MuscleParadise/project-guide/04-development-testing-operations.md: 2 traceability/boundary markers
+PASS docs/MuscleParadise/project-guide/05-security-status-glossary.md: 3 traceability/boundary markers
+PASS docs/MuscleParadise/MASTER_MAP.md: 4 traceability/boundary markers
+PASS docs/MuscleParadise/architecture/finn-loop-microtask-backlog-draft-v1-2026-11-23.md: 3 traceability/boundary markers
+PASS docs/MuscleParadise/TODO-CLOUD-FINANCE-ACCESS.md: 4 traceability/boundary markers
+PASS docs/MuscleParadise/DATA-RETENTION.md: 4 traceability/boundary markers
+PASS docs/MuscleParadise/security/biometric-policy.md: 4 traceability/boundary markers
+PASS docs/MuscleParadise/PWA-EXECUTION-STATE.md: 3 traceability/boundary markers
+Checked 24 PWA/decision documents; result=PASS
+traceability_exit=0
+
+$ python3 scripts/docs_gate.py
+Documentation gate passed: 38 Markdown files, 605 local links, 15 Mermaid diagram block(s), handoff headings, README entrypoints, SVG XML.
+docs_gate_exit=0
+
+$ python3 scripts/assemble_project_guide.py --check
+Project guide is current: docs/MuscleParadise/PROJECT_GUIDE.fa.md.
+project_guide_exit=0
+
+$ python3 scripts/interaction_map.py --check
+Interaction map gate passed: 31 سطح، 163 مسیر قرارداد، رانش صفر.
+interaction_map_exit=0
+
+$ python3 scripts/repo_hygiene_gate.py
+Repository hygiene gate passed: index ignored, no tracked .claude/, no agent-tool git hook.
+repo_hygiene_exit=0
+
+$ git diff --check
+git_diff_check_exit=0
+
+$ (cd tools/mermaid-check && npm ls --depth=0 && npm run check)
+mp-mermaid-check@0.1.0 /home/user/MP/tools/mermaid-check
++-- jsdom@25.0.1
+`-- mermaid@11.17.2
+
+
+> mp-mermaid-check@0.1.0 check
+> node check.mjs
+
+Mermaid syntax gate passed: 27 diagram(s) parsed by mermaid
+mermaid_gate_exit=0
+
+Tracker checkbox aggregate:
+total=104 open=97 checked=7
+
+Current local artifact hashes:
+9672dca4fbebd1894627748fb23a190af745efe5df2b30d8aaadffd8173a9eb4  docs/MuscleParadise/PWA-EXECUTION-STATE.md
+7eab5e288a24b11f1ebd3ff91ba313d8a1a32d73b4497568769a78940e409dbf  docs/MuscleParadise/SESSION_HANDOFF.md
+62d7803aa11b9422d54c0c718800748d88c39331c067c308453f65023ba38375  docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md
+b4c213c5d197172db5489c1ed4247e82f4901541f9fe1db7d3c76fd2f089efb0  evidence/2026-11-23/INV-04/member-status-slice.txt
+1d70e8e09e26e39f2ca44525f3a294462ee04fca6662cbfb2eb5a719d020ca9b  evidence/2026-11-23/INV-05/dashboard-current-cycle-test.txt
+a7bb93059b0a101d99fd635176e4abc587adec8d2f2c825cde2dd2c0f05c27aa  evidence/2026-11-23/INV-06/dashboard-actor-data-tests.txt
+126a0716bc317c4517e5132436eca8d04eab09a0d6d8afec743081f57fb8d308  evidence/2026-11-23/INV-06/dashboard-actor-data-slice.txt
+cf639d51ef9bdea0a9b7317ffa46d4a394010ad942f6a72901d7fbadd4327df4  evidence/2026-11-23/INV-06/local-state-sanitized.txt
+
+overall_failing_gates=0

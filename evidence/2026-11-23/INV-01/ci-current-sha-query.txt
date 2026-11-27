@@ -1,0 +1,30 @@
+INV-01 read-only GitHub Actions lookup; no workflow was dispatched.
+Reference date: 2026-11-23 UTC
+branch=arena/5e0f64cf-mp
+local_HEAD=e0ae95f48bf8451bd59b972a92c55fed404e6a92
+origin_allowed_branch=3f26e1d6ea05920a23236b368abd4c4ee0580799
+
+$ gh --version
+gh version 2.23.0 (2023-02-27 Debian 2.23.0+dfsg1-1)
+https://github.com/cli/cli/releases/tag/v2.23.0
+
+$ gh run list --commit HEAD --limit 100 --json databaseId,headSha,status,conclusion,workflowName,event,createdAt
+unknown flag: --commit
+
+Usage:  gh run list [flags]
+
+Flags:
+  -b, --branch string     Filter runs by branch
+  -q, --jq expression     Filter JSON output using a jq expression
+      --json fields       Output JSON with the specified fields
+  -L, --limit int         Maximum number of runs to fetch (default 20)
+  -t, --template string   Format JSON output using a Go template; see "gh help formatting"
+  -u, --user string       Filter runs by user who triggered the run
+  -w, --workflow string   Filter runs by workflow
+
+gh_run_list_exit=1
+
+Fallback for gh 2.23 (branch listing, local filtering by exact head SHA):
+$ gh run list --branch arena/5e0f64cf-mp --limit 100 --json databaseId,headSha,status,conclusion,workflowName,event,createdAt --jq ...
+[]
+gh_branch_filtered_list_exit=0

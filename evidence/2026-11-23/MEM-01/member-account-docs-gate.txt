@@ -1,0 +1,10 @@
+Command (repo root):
+  python3 scripts/docs_gate.py
+
+Documentation gate passed: 38 Markdown files, 607 local links, 15 Mermaid diagram block(s), handoff headings, README entrypoints, SVG XML.
+
+Final whitespace gates (repo root):
+  git diff --check: PASS
+  git diff --cached --check: PASS
+
+The cached whitespace gate first found one extra blank line at EOF in each of two previously staged MEM-01 test transcripts. Only terminal blank lines were trimmed (transcript content preserved) and those two allowlisted files were re-staged; the final cached check passed.

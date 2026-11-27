@@ -7,6 +7,8 @@
 **Branch creation base:** `35d4b35184b4148c658b415bd009fc076bf24e00` (merge-base شاخهٔ جاری با مبنای اعلام‌شده)
 
 > **الحاقیهٔ تصمیم، ۲۰۲۶-۱۱-۲۳:** AC-4 و جمله‌های پایین‌تر که `D-01/D-10` را باز می‌خوانند، scope تاریخی PWA-00 هستند. OQ-01/ADR-007 بعداً `D-01` را برای baseline کلاینت پاسخ داد (PWA مشترک عضو/کادر، حفظ Flutter/Android)؛ `D-10`/Go-No-Go و evidence محصول همچنان بازند. این الحاقیه قرارداد/نتیجهٔ تاریخی PWA-00 را به QA یا پذیرش انتشار تبدیل نمی‌کند.
+>
+> **پیوند وضعیت جاری (DOC-05):** [ADR-007](../../adr/007-pwa-primary-release.md)، [backlog canonical](../../TODO-2026-11-16.md#pwa-ui-ux-full-backlog-2026-11-23)، [tracker](../../TODO-PWA-RELEASE-2026-11-23.fa.md) و [دفتر اجرا](../../PWA-EXECUTION-STATE.md) مرجع جاری‌اند؛ این قرارداد فقط artifact تاریخی PWA-00 است.
 
 ## دامنه و خروجی
 

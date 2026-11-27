@@ -1,0 +1,21 @@
+# WEB-03…WEB-11 — مرور صف پس از سبزشدن CI
+
+- **Checkout source:** `3e49232d2118e8212a4d1ddea20fc982da5cd13a` (product files زیر `mp-app/studio` در این HEAD نسبت به `origin/main` تغییر ندارند).
+- **مرور/آزمون هدفمند:** از `mp-app/studio/` اجرا شد:
+  `npm test -- tests/roleNav.test.tsx tests/adaptivePanel.test.tsx tests/settingsRole.test.tsx tests/appStore.test.ts tests/a11y.test.tsx tests/jalaliDate.test.tsx tests/clock.test.ts tests/wp15Money.test.ts tests/motion.test.tsx tests/design-tokens.test.ts tests/uiLibrary.test.ts tests/pwa.test.ts tests/update.test.ts tests/updateBanner.test.tsx`
+  نتیجه: **۱۴ فایل، ۱۲۸ تست PASS، صفر failure** (Vitest 3.2.7، jsdom/VM fixtureها). job کامل Studio در `mp-ci` PR run=`45998409658` روی همین SHA نیز Install, lint, Vitest, Vite build و audit را pass کرد.
+- **Scope guard:** این passها unit/mock/fixture یا build headless هستند؛ هیچ‌یک browser/device acceptance، independent accessibility/security review یا product approval نیست.
+
+| صف | کد/شاهد محدود | آنچه باز می‌ماند | status این مرور |
+|---|---|---|---|
+| `WEB-03` | `App.tsx`, `roleNav.ts`; `roleNav`, `settingsRole`, `adaptivePanel`, `appStore` tests | UI shell هنوز member را در `AuthContext` نمی‌پذیرد و `/member` placeholder است؛ viewport/mobile usability، permission مؤثر/سروری و stateهای API روی browser/OS واقعی کامل ارزیابی نشدند. | `PARTIAL / NOT_ACCEPTED` |
+| `WEB-04` | `index.html` `lang=fa, dir=rtl`; `main.tsx` Ant Design `faIR`/RTL؛ `a11y.test.tsx` ۱۴ rule-based/jsdom test از جمله heading/name checks؛ `motion.test.tsx` reduced-motion cases | screen reader/keyboard/contrast و usability دستی، مرورگر/OS/device و reviewer غایب. axe/jsdom جای کاربر یا SR نیست. | `PARTIAL / NOT_ACCEPTED` |
+| `WEB-05` | `JalaliDateField`, `clock.ts`, `money.ts`; `jalaliDate`, `clock`, `wp15Money` tests (۲۷ test در همین run) | تنها fixture/locale assertions؛ تأیید owner بر canonical date/financial formatting، timezoneهای واقعی و رفتار ورودی/خروجی در صفحات/دادهٔ جاری ثبت نشد. مقادیر نامعلوم به‌عنوان صفر یا نتیجهٔ پذیرفته‌شده تعبیر نمی‌شوند. | `PARTIAL / NOT_ACCEPTED` |
+| `WEB-06` | `motion.ts`, `designTokens.ts`; `motion`/`design-tokens` tests | تطبیق کامل Motion Kit/Option 03 و provenance/license دارایی‌های تصویری/واردشده این run بررسی نشد؛ هیچ license یا ownership ادعا نمی‌شود. Browser behavior و review انسانی بازند. | `PARTIAL / BLOCKED` |
+| `WEB-07` | Studio dependency manifest شامل Ant Design؛ `uiLibrary.test.ts` و component tests در CI | آزمون هدفمند ۵ test برای library موجود است، اما audit دقیق license/version هر dependency، coverage همهٔ تعامل‌ها، و Flutter SDK/device parity اینجا انجام/اثبات نشد. | `PARTIAL / NOT_ACCEPTED` |
+| `WEB-08` | `public/manifest.webmanifest`, metadata در `index.html`; `pwa.test.ts` metadata/icon checks | manifest/icon فایل‌محور بررسی می‌شود؛ install prompt، installed launch، icon rendering و scope در browser/OS واقعی اجرا نشدند. | `PARTIAL / NOT_ACCEPTED` |
+| `WEB-09` | `public/sw.js`; `pwa.test.ts` با VM cache/fetch fakes برای API/write/query/cross-origin و پاسخ‌های private/no-store/ناموفق، app-shell و پاک‌سازی cache | Cache API/headers/browser واقعی، logout، دو-account separation و مستقل security/privacy review اجرا نشدند؛ mock معادل runtime نیست. | `PARTIAL / NOT_ACCEPTED` |
+| `WEB-10` | `lib/update.ts`, `UpdateBanner`; `update.test.ts`/`updateBanner.test.tsx` (۶ test) و SW waiting message | فرم dirty، درخواست in-flight، چند tab، خرابی asset/rollback و activation browser هدف آزموده نشده‌اند؛ فقط state-machine/React test است. | `PARTIAL / NOT_ACCEPTED` |
+| `WEB-11` | `nginx.conf`, SPA fallback و exact `/api`/`/api/` locations؛ `pwa.test.ts` شامل config regression | Nginx binary در این sandbox غایب بود؛ در این run config/runtime server اجرا نشد. backend واقعی, image/container, TLS, staging و browser refresh/hydration بازند. Smokeهای synthetic تاریخی را به این SHA یا deployment تعمیم نمی‌دهیم. | `PARTIAL / NOT_ACCEPTED` |
+
+`WEB-03…WEB-11` checkboxes در TODO باز می‌مانند. Chromium/Chrome/Firefox, Playwright, Nginx، reviewer مستقل و device/OS هدف حاضر نبودند یا اجرا نشدند؛ مرورهای دستی و runtime gateها `BLOCKED/NOT_RUN` هستند. هیچ product source، permission، design asset، dependency license یا product status در این برش تغییر نکرد. `PWA-01=PROPOSED/NOT_RUN`; release=`NO-GO`.

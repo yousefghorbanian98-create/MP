@@ -1,0 +1,10 @@
+Command (cwd: mp-app/studio):
+  npm test -- --run --reporter=dot
+
+Result from Arena tool output: exit 0
+  Test Files  54 passed | 2 skipped (56)
+  Tests       379 passed | 10 skipped (389)
+  Duration    179.93s
+  Vitest      3.2.7
+
+stderr included existing JSDOM `window.getComputedStyle` not implemented messages, React `act(...)` warnings, and Recharts-related warnings. They did not change exit 0; skipped cases are not passes. Tool output was truncated because of warning volume; this is a result summary, not a complete raw stderr transcript.

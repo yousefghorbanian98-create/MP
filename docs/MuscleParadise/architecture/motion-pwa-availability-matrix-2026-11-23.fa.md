@@ -2,7 +2,9 @@
 
 **تاریخ مرجع:** ۲۰۲۶-۱۱-۲۳ UTC · **شاخه:** `arena/5e0f64cf-mp` · **HEAD:** `d92817f4151ebbafb25425b7b28776a4cc1180dc` · **پایه:** `35d4b35184b4148c658b415bd009fc076bf24e00`
 
-> **دامنهٔ فهرست:** فقط سه مورد بازِ Motion که همین حلقه دنبال می‌کرد: `MK-PWA-01-FU-01`, `MK-PWA-02`, `O3-08`. این فهرست جایگزین backlog پنجاه‌تایی PWA، تأیید محصول، یا release Go/No-Go نیست؛ وضعیت canonical آن‌ها را تغییر نمی‌دهد. `AVAILABLE` یعنی در این sandbox امکان تولید شاهد بوده، نه این‌که کل محصول پذیرفته شده باشد.
+> **دامنهٔ فهرست:** فقط سه مورد بازِ Motion که همان حلقه دنبال می‌کرد: `MK-PWA-01-FU-01`, `MK-PWA-02`, `O3-08`. این فهرست جایگزین backlog پنجاه‌تایی PWA، تأیید محصول، یا release Go/No-Go نیست؛ وضعیت canonical آن‌ها را تغییر نمی‌دهد. `AVAILABLE` یعنی در آن sandbox امکان تولید شاهد بوده، نه این‌که کل محصول پذیرفته شده باشد.
+>
+> **ردیابی canonical (الحاقیهٔ DOC-05):** baseline تصمیم در [ADR-007](../adr/007-pwa-primary-release.md)، acceptance در [backlog canonical](../TODO-2026-11-16.md#pwa-ui-ux-full-backlog-2026-11-23)، وضعیت کار در [tracker](../TODO-PWA-RELEASE-2026-11-23.fa.md) و این checkout در [دفتر اجرا](../PWA-EXECUTION-STATE.md) پیگیری می‌شود. SHA و screenshotهای بالای این سند متعلق به snapshot تاریخی/synthetic QA هستند؛ آن‌ها را به HEAD جاری، OS/device یا پذیرش PWA تعمیم نده.
 
 ## فهرست ۱ — اکنون در دسترس بود و انجام شد
 

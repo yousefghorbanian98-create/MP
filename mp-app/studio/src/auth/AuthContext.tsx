@@ -29,7 +29,7 @@ const noProvider: AuthContextValue = {
 };
 const AuthContext = createContext<AuthContextValue>(noProvider);
 
-const STUDIO_ROLES = new Set(["super_admin", "admin", "manager", "coach", "reception"]);
+const APP_ROLES = new Set(["super_admin", "admin", "manager", "coach", "reception", "member"]);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<AuthStatus>("checking");
@@ -38,7 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let active = true;
     const onSessionExpired = () => {
-      setNotice("نشست معتبر نیست؛ دوباره وارد شوید.");
+      setNotice("نشست منقضی یا لغو شده است؛ دوباره وارد شوید.");
       setStatus("unauthenticated");
     };
     window.addEventListener(SESSION_EXPIRED_EVENT, onSessionExpired);
@@ -51,16 +51,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         const response = await sessionFetch(`${API_BASE}/members/me`);
         const role = roleFromToken(getAccessToken());
-        if (response.ok && STUDIO_ROLES.has(role)) {
-          if (active) setStatus("authenticated");
+        if (response.ok) {
+          const identity = await response.json().catch(() => null) as { role?: unknown } | null;
+          if (APP_ROLES.has(role) && identity?.role === role) {
+            if (active) setStatus("authenticated");
+            return;
+          }
+          await logoutSession();
+          if (active) {
+            setNotice("نقش نشست با هویت حساب در سرور هم‌خوان نیست؛ دوباره وارد شوید.");
+            setStatus("unauthenticated");
+          }
           return;
         }
-        if (response.ok) await logoutSession();
-        else clearSession();
-        if (active) setStatus("unauthenticated");
+        if (response.status >= 500) {
+          if (active) {
+            setNotice("سرور نتوانست نشست را بررسی کند؛ اتصال را بررسی و دوباره تلاش کنید.");
+            setStatus("unauthenticated");
+          }
+          return;
+        }
+        clearSession();
+        if (active) {
+          if (response.status !== 401) setNotice("نشست معتبر نیست؛ دوباره وارد شوید.");
+          setStatus("unauthenticated");
+        }
       } catch {
-        // A network error cannot restore a protected screen; leave no authenticated UI.
-        if (active) setStatus("unauthenticated");
+        // A network error cannot restore a protected screen; retain credentials for an explicit retry.
+        if (active) {
+          setNotice("برای بررسی نشست به سرور دسترسی نیست؛ اتصال را بررسی و دوباره وارد شوید.");
+          setStatus("unauthenticated");
+        }
       }
     };
     void restore();
@@ -74,9 +95,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signIn = useCallback(async (phone: string, code: string) => {
     const pair = await verifyOtp(phone, code);
     const role = roleFromToken(pair.access_token);
-    if (!STUDIO_ROLES.has(role)) {
+    if (!APP_ROLES.has(role)) {
       await logoutSession(pair.refresh_token);
-      throw new Error("این حساب مجاز به ورود به استودیو نیست");
+      throw new Error("این حساب مجاز به ورود به برنامه نیست");
     }
     storeTokenPair(pair);
     setNotice(null);

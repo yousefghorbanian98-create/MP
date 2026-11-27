@@ -1,0 +1,129 @@
+INV-02 static member inventory v3; adds ref.watch(apiClientProvider) call chains missed by v2.
+Reference date: 2026-11-23 UTC.
+$ git branch --show-current
+arena/5e0f64cf-mp
+$ git rev-parse HEAD
+e0ae95f48bf8451bd59b972a92c55fed404e6a92
+$ python3 --version
+Python 3.11.2
+$ python3 -m py_compile evidence/2026-11-23/INV-02/member_static_inventory_v3.py
+py_compile_exit=0
+$ python3 evidence/2026-11-23/INV-02/member_static_inventory_v3.py
+Read-only static inventory; no Dart, Flutter, product source or tests were executed.
+feature_directories=17 (includes shell); feature_source_files=31; feature_source_lines=9501
+feature_tree_sha256=733d92f435567440438af02c4d9f77e93fcce814760e67ac9551ab6846d55b77
+FEATURE mp-app/client/lib/features/assessment14: files=2 lines=294
+FEATURE mp-app/client/lib/features/auth: files=1 lines=143
+FEATURE mp-app/client/lib/features/bodycomp: files=1 lines=536
+FEATURE mp-app/client/lib/features/chat: files=2 lines=775
+FEATURE mp-app/client/lib/features/checkin: files=2 lines=655
+FEATURE mp-app/client/lib/features/classes: files=1 lines=268
+FEATURE mp-app/client/lib/features/feedback: files=3 lines=669
+FEATURE mp-app/client/lib/features/home: files=1 lines=548
+FEATURE mp-app/client/lib/features/intake: files=2 lines=583
+FEATURE mp-app/client/lib/features/notifications: files=1 lines=252
+FEATURE mp-app/client/lib/features/nutrition: files=2 lines=1094
+FEATURE mp-app/client/lib/features/profile: files=2 lines=675
+FEATURE mp-app/client/lib/features/progress: files=1 lines=119
+FEATURE mp-app/client/lib/features/shell: files=1 lines=166
+FEATURE mp-app/client/lib/features/shop: files=3 lines=1228
+FEATURE mp-app/client/lib/features/today: files=4 lines=914
+FEATURE mp-app/client/lib/features/wallet: files=2 lines=582
+client_lib_source_files=44; client_lib_tree_sha256=3cbb71d9383e03574dcae4d76f848a36306d87b7733616068e7b610287912d99
+flutter_go_router_paths=14: /otp, /intake, /home, /bodycomp, /nutrition, /checkin, /wallet, /classes, /chat, /shop, /notifications, /today, /progress, /profile
+flutter_test_files_present=28; test_tree_sha256=5ca1043ff133bf313c57ec6806ea4183756742e9d573c3f884da7994c7259e30
+TEST_FILE mp-app/client/test/adaptive_nutrition_test.dart
+TEST_FILE mp-app/client/test/api_client_test.dart
+TEST_FILE mp-app/client/test/assessment14_page_test.dart
+TEST_FILE mp-app/client/test/bodycomp_real_data_test.dart
+TEST_FILE mp-app/client/test/classes_cancel_test.dart
+TEST_FILE mp-app/client/test/face_consent_gate_test.dart
+TEST_FILE mp-app/client/test/home_banner_test.dart
+TEST_FILE mp-app/client/test/home_page_test.dart
+TEST_FILE mp-app/client/test/logout_button_test.dart
+TEST_FILE mp-app/client/test/logout_test.dart
+TEST_FILE mp-app/client/test/member_chat_page_test.dart
+TEST_FILE mp-app/client/test/member_checkin_history_test.dart
+TEST_FILE mp-app/client/test/membership_test.dart
+TEST_FILE mp-app/client/test/motion_haptics_test.dart
+TEST_FILE mp-app/client/test/notifications_page_test.dart
+TEST_FILE mp-app/client/test/nutrition_food_log_test.dart
+TEST_FILE mp-app/client/test/offline_feedback_outbox_test.dart
+TEST_FILE mp-app/client/test/phone_change_dialog_test.dart
+TEST_FILE mp-app/client/test/qr_biometric_gate_test.dart
+TEST_FILE mp-app/client/test/readiness_card_test.dart
+TEST_FILE mp-app/client/test/session_refresh_test.dart
+TEST_FILE mp-app/client/test/set_feedback_sheet_test.dart
+TEST_FILE mp-app/client/test/shop_orders_receipt_test.dart
+TEST_FILE mp-app/client/test/shop_page_test.dart
+TEST_FILE mp-app/client/test/today_controller_test.dart
+TEST_FILE mp-app/client/test/today_page_test.dart
+TEST_FILE mp-app/client/test/volume_card_test.dart
+TEST_FILE mp-app/client/test/wallet_history_test.dart
+backend_routes_manifest_sha256=7f0333dfb92a5bb56514b7e003cc78370fc7e8fabe3a9a8b5342ccaab9a84cf8
+routes_manifest_paths=141; operations=163
+API scan spans client/lib and literal receivers `api`, `ref.read(apiClientProvider)`, and `ref.watch(apiClientProvider)` (whitespace/newlines accepted), excludes ApiClient's HTTP transport; query/parameter shapes normalized.
+CALL mp-app/client/lib/core/app_state.dart:14 GET /programs/member/$memberId => list_member_programs_api_v1_programs_member__member_id__get; guards=permission; roles=member,coach,manager,admin,super_admin; scopes=owner_scope
+CALL mp-app/client/lib/core/app_state.dart:56 GET /payments/wallet/$memberId => wallet_balance_api_v1_payments_wallet__member_id__get; guards=permission; roles=member,reception,manager,admin,super_admin; scopes=owner_scope
+CALL mp-app/client/lib/core/app_state.dart:69 GET /payments => list_payments_api_v1_payments_get; guards=permission; roles=member,reception,manager,admin,super_admin; scopes=-
+CALL mp-app/client/lib/core/app_state.dart:90 GET /members/$memberId/memberships => member_memberships_api_v1_members__member_id__memberships_get; guards=permission; roles=member,coach,reception,manager,admin,super_admin; scopes=owner_scope
+CALL mp-app/client/lib/core/app_state.dart:102 GET /shop/products => products_api_v1_shop_products_get; guards=permission; roles=member,coach,reception,manager,admin,super_admin; scopes=-
+CALL mp-app/client/lib/core/app_state.dart:113 GET /shop/categories => categories_api_v1_shop_categories_get; guards=permission; roles=member,coach,reception,manager,admin,super_admin; scopes=-
+CALL mp-app/client/lib/core/app_state.dart:122 GET /shop/cart => cart_api_v1_shop_cart_get; guards=permission; roles=member,coach,reception,manager,admin,super_admin; scopes=-
+CALL mp-app/client/lib/core/app_state.dart:131 GET /shop/orders => orders_api_v1_shop_orders_get; guards=permission; roles=member,coach,reception,manager,admin,super_admin; scopes=-
+CALL mp-app/client/lib/core/app_state.dart:142 GET /shop/gateways => gateways_api_v1_shop_gateways_get; guards=permission; roles=member,coach,reception,manager,admin,super_admin; scopes=-
+CALL mp-app/client/lib/core/app_state.dart:151 GET /classes => list_classes_api_v1_classes_get; guards=permission; roles=member,coach,reception,manager,admin,super_admin; scopes=-
+CALL mp-app/client/lib/core/app_state.dart:163 GET /nutrition/plans/member/$memberId => list_member_plans_api_v1_nutrition_plans_member__member_id__get; guards=permission; roles=member,coach,manager,admin,super_admin; scopes=owner_scope
+CALL mp-app/client/lib/core/app_state.dart:181 GET /nutrition/foods?q=${Uri.encodeQueryComponent(normalized)}&limit=25 => search_foods_api_v1_nutrition_foods_get; guards=permission; roles=member,coach,manager,admin,super_admin; scopes=-
+CALL mp-app/client/lib/core/app_state.dart:201 GET /nutrition/food-logs/member/${key.memberId}/daily?date=${Uri.encodeQueryComponent(key.date)} => daily_summary_api_v1_nutrition_food_logs_member__member_id__daily_get; guards=permission; roles=member,coach,manager,admin,super_admin; scopes=owner_scope
+CALL mp-app/client/lib/core/app_state.dart:219 GET /notifications/member/$memberId => list_notifications_api_v1_notifications_member__member_id__get; guards=permission; roles=member,coach,reception,manager,admin,super_admin; scopes=owner_scope
+CALL mp-app/client/lib/core/app_state.dart:252 GET /programs/member/$memberId/readiness => member_readiness_api_v1_programs_member__member_id__readiness_get; guards=permission; roles=member,coach,manager,admin,super_admin; scopes=owner_scope
+CALL mp-app/client/lib/core/app_state.dart:300 GET /programs/member/$memberId/volume?level=$level => member_volume_api_v1_programs_member__member_id__volume_get; guards=permission; roles=member,coach,manager,admin,super_admin; scopes=owner_scope
+CALL mp-app/client/lib/core/app_state.dart:358 GET /nutrition/member/$memberId/adaptive => adaptive_report_api_v1_nutrition_member__member_id__adaptive_get; guards=permission; roles=member,coach,manager,admin,super_admin; scopes=owner_scope
+CALL mp-app/client/lib/core/app_state.dart:416 GET /shop/orders/$orderId/receipt => order_receipt_api_v1_shop_orders__order_id__receipt_get; guards=permission; roles=member,coach,reception,manager,admin,super_admin; scopes=-
+CALL mp-app/client/lib/core/offline_feedback_outbox.dart:519 POST /programs/sync/set-feedback => sync_set_feedback_api_v1_programs_sync_set_feedback_post; guards=permission; roles=member,coach,manager,admin,super_admin; scopes=owner_scope
+CALL mp-app/client/lib/core/session.dart:93 POST /auth/otp/verify => otp_verify_api_v1_auth_otp_verify_post; guards=-; roles=member,coach,reception,manager,admin,super_admin; scopes=-
+CALL mp-app/client/lib/core/session.dart:110 GET /members/me => get_me_api_v1_members_me_get; guards=permission; roles=member,coach,reception,manager,admin,super_admin; scopes=-
+CALL mp-app/client/lib/core/session.dart:134 POST /auth/refresh => refresh_api_v1_auth_refresh_post; guards=-; roles=member,coach,reception,manager,admin,super_admin; scopes=body_credential
+CALL mp-app/client/lib/core/session.dart:192 POST /auth/logout => logout_api_v1_auth_logout_post; guards=-; roles=member,coach,reception,manager,admin,super_admin; scopes=-
+CALL mp-app/client/lib/core/session.dart:218 POST /auth/refresh => refresh_api_v1_auth_refresh_post; guards=-; roles=member,coach,reception,manager,admin,super_admin; scopes=body_credential
+CALL mp-app/client/lib/features/assessment14/assessment14_providers.dart:18 GET /axis-assessments/member/$memberId => list_member_history_api_v1_axis_assessments_member__member_id__get; guards=permission; roles=member,coach,manager,admin,super_admin; scopes=owner_scope
+CALL mp-app/client/lib/features/assessment14/assessment14_providers.dart:21 GET /axis-assessments/$latestId/matrix => get_matrix_api_v1_axis_assessments__assessment_id__matrix_get; guards=permission; roles=member,coach,manager,admin,super_admin; scopes=-
+CALL mp-app/client/lib/features/assessment14/assessment14_providers.dart:38 POST /axis-assessments => create_assessment_api_v1_axis_assessments_post; guards=permission; roles=coach,manager,admin,super_admin; scopes=-
+CALL mp-app/client/lib/features/auth/otp_page.dart:40 POST /auth/otp/request => otp_request_api_v1_auth_otp_request_post; guards=-; roles=member,coach,reception,manager,admin,super_admin; scopes=-
+CALL mp-app/client/lib/features/bodycomp/bodycomp_page.dart:31 GET /assessments/jp7/member/$memberId/trend => jp7_trend_api_v1_assessments_jp7_member__member_id__trend_get; guards=permission; roles=member,coach,manager,admin,super_admin; scopes=owner_scope
+CALL mp-app/client/lib/features/chat/member_chat_data.dart:77 GET /chat/conversations => list_conversations_api_v1_chat_conversations_get; guards=permission; roles=member,coach,manager,admin,super_admin; scopes=-
+CALL mp-app/client/lib/features/chat/member_chat_data.dart:101 GET /chat/conversations/$conversationId/messages => list_messages_api_v1_chat_conversations__conversation_id__messages_get; guards=permission; roles=member,coach,manager,admin,super_admin; scopes=owner_scope
+CALL mp-app/client/lib/features/chat/member_chat_page.dart:79 POST /chat/conversations/${conversation.id}/messages => send_message_api_v1_chat_conversations__conversation_id__messages_post; guards=permission; roles=member,coach,manager,admin,super_admin; scopes=owner_scope
+CALL mp-app/client/lib/features/chat/member_chat_page.dart:117 POST /chat/conversations/${conversation.id}/read => mark_read_api_v1_chat_conversations__conversation_id__read_post; guards=permission; roles=member,coach,manager,admin,super_admin; scopes=owner_scope
+CALL mp-app/client/lib/features/checkin/checkin_page.dart:19 GET /face/qr-token => qr_token_api_v1_face_qr_token_get; guards=permission; roles=member,coach,manager,admin,super_admin; scopes=-
+CALL mp-app/client/lib/features/checkin/checkin_page.dart:40 GET /face/privacy-notice => privacy_notice_api_v1_face_privacy_notice_get; guards=permission; roles=member,coach,reception,manager,admin,super_admin; scopes=-
+CALL mp-app/client/lib/features/checkin/checkin_page.dart:53 GET /members/me/face-consent => my_face_consent_api_v1_members_me_face_consent_get; guards=permission; roles=member,coach,reception,manager,admin,super_admin; scopes=-
+CALL mp-app/client/lib/features/checkin/checkin_page.dart:140 POST /face/consent => grant_consent_api_v1_face_consent_post; guards=permission; roles=member,coach,reception,manager,admin,super_admin; scopes=owner_scope
+CALL mp-app/client/lib/features/checkin/member_checkin_history.dart:17 GET /members/me/checkins?limit=$_historyPageSize&offset=$offset => my_checkins_api_v1_members_me_checkins_get; guards=permission; roles=member,coach,reception,manager,admin,super_admin; scopes=owner_scope
+CALL mp-app/client/lib/features/classes/classes_page.dart:36 POST /classes/book => book_api_v1_classes_book_post; guards=permission; roles=member,coach,manager,admin,super_admin; scopes=owner_scope
+CALL mp-app/client/lib/features/classes/classes_page.dart:76 POST /classes/cancel => cancel_api_v1_classes_cancel_post; guards=permission; roles=member,coach,manager,admin,super_admin; scopes=owner_scope
+CALL mp-app/client/lib/features/feedback/feedback_providers.dart:20 POST /programs/set-feedback => set_feedback_api_v1_programs_set_feedback_post; guards=permission; roles=member,coach,manager,admin,super_admin; scopes=-
+CALL mp-app/client/lib/features/intake/intake_page.dart:87 POST /population/gate-check => gate_check_api_v1_population_gate_check_post; guards=permission; roles=member,coach,reception,manager,admin,super_admin; scopes=-
+CALL mp-app/client/lib/features/intake/intake_page.dart:90 PUT /members/me => update_me_api_v1_members_me_put; guards=permission; roles=member,coach,reception,manager,admin,super_admin; scopes=-
+CALL mp-app/client/lib/features/intake/intake_page.dart:93 POST /ai/program/generate => generate_program_api_v1_ai_program_generate_post; guards=permission; roles=member,coach,manager,admin,super_admin; scopes=-
+CALL mp-app/client/lib/features/intake/intake_page.dart:104 GET /members/me => get_me_api_v1_members_me_get; guards=permission; roles=member,coach,reception,manager,admin,super_admin; scopes=-
+CALL mp-app/client/lib/features/intake/intake_page.dart:107 POST /ai/nutrition/generate => generate_nutrition_api_v1_ai_nutrition_generate_post; guards=permission; roles=member,coach,manager,admin,super_admin; scopes=-
+CALL mp-app/client/lib/features/notifications/notifications_page.dart:28 POST /notifications/$notificationId/read => mark_read_api_v1_notifications__notification_id__read_post; guards=permission; roles=member,coach,reception,manager,admin,super_admin; scopes=owner_scope
+CALL mp-app/client/lib/features/nutrition/adaptive_nutrition_card.dart:71 POST /nutrition/weight-logs => log_weight_api_v1_nutrition_weight_logs_post; guards=permission; roles=member,coach,manager,admin,super_admin; scopes=-
+CALL mp-app/client/lib/features/nutrition/nutrition_page.dart:234 POST /nutrition/food-logs => log_food_api_v1_nutrition_food_logs_post; guards=permission; roles=member,coach,manager,admin,super_admin; scopes=owner_scope
+CALL mp-app/client/lib/features/profile/phone_change_dialog.dart:59 POST /auth/phone-change/request => phone_change_request_api_v1_auth_phone_change_request_post; guards=authenticated; roles=member,coach,reception,manager,admin,super_admin; scopes=-
+CALL mp-app/client/lib/features/profile/phone_change_dialog.dart:71 POST /auth/phone-change/verify-old => phone_change_verify_old_api_v1_auth_phone_change_verify_old_post; guards=authenticated; roles=member,coach,reception,manager,admin,super_admin; scopes=-
+CALL mp-app/client/lib/features/profile/phone_change_dialog.dart:81 POST /auth/phone-change/confirm => phone_change_confirm_api_v1_auth_phone_change_confirm_post; guards=authenticated; roles=member,coach,reception,manager,admin,super_admin; scopes=-
+CALL mp-app/client/lib/features/profile/profile_page.dart:99 GET /members/me => get_me_api_v1_members_me_get; guards=permission; roles=member,coach,reception,manager,admin,super_admin; scopes=-
+CALL mp-app/client/lib/features/profile/profile_page.dart:133 PUT /members/me => update_me_api_v1_members_me_put; guards=permission; roles=member,coach,reception,manager,admin,super_admin; scopes=-
+CALL mp-app/client/lib/features/progress/progress_page.dart:17 GET /assessments/member/$memberId => list_member_assessments_api_v1_assessments_member__member_id__get; guards=permission; roles=member,coach,manager,admin,super_admin; scopes=owner_scope
+CALL mp-app/client/lib/features/shop/shop_page.dart:142 POST /shop/cart => cart_add_api_v1_shop_cart_post; guards=permission; roles=member,reception,manager,admin,super_admin; scopes=-
+CALL mp-app/client/lib/features/shop/shop_page.dart:325 PATCH /shop/cart/$itemId => cart_update_api_v1_shop_cart__item_id__patch; guards=permission; roles=member,reception,manager,admin,super_admin; scopes=-
+CALL mp-app/client/lib/features/shop/shop_page.dart:342 DELETE /shop/cart/$itemId => cart_remove_api_v1_shop_cart__item_id__delete; guards=permission; roles=member,reception,manager,admin,super_admin; scopes=-
+CALL mp-app/client/lib/features/shop/shop_page.dart:358 POST /shop/checkout => checkout_api_v1_shop_checkout_post; guards=permission; roles=member,reception,manager,admin,super_admin; scopes=-
+CALL mp-app/client/lib/features/wallet/wallet_ledger.dart:127 GET /payments/wallet/$memberId/transactions?limit=$_walletPageSize$cursor => wallet_transactions_api_v1_payments_wallet__member_id__transactions_get; guards=permission; roles=member,reception,manager,admin,super_admin; scopes=owner_scope
+literal_api_call_sites=60; manifest_shape_matches=60; unmatched=0
+REACT_SOURCE: current App.tsx maps /member to MemberRoutePending placeholder; text says full member shell/experience is not implemented; placeholder does not load member data. Staff pages are separate.
+LIMIT: this static scan is not a complete action/API/DB-ownership/error/test crosswalk, runtime test, browser check, or reviewer sign-off.
+inventory_script_exit=0

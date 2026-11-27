@@ -2,7 +2,76 @@
 
 > هشدار انتقال ۲۰۲۶-۱۱-۱۸: بخش‌های بعدی قدیمی snapshot هستند و branch/toolchain/status آن‌ها جاری فرض نشود. وضعیت تازهٔ Motion/PWA در این بخش و [handoff](../../docs/MuscleParadise/SESSION_HANDOFF.md) آمده؛ کارهای قدیمی M63–M99، M100–M106 و M107+ فقط پس از تطبیق با TODO و گیت‌های جاری ادامه یابند.
 
-## Snapshot جاری — Motion/PWA evidence (۲۰۲۶-۱۱-۲۳)
+## Current follow-up — MEM-01 live member-account contract and identity-negative (2026-11-27 UTC)
+
+STATE_LAST_UPDATED=2026-11-27T15:41:18Z
+EVIDENCE_DATE_DIRS=2026-11-23, 2026-11-27
+NOTE: تاریخ مرجع (2026-11-23) تاریخ شروع برنامه است، نه تاریخ STATE.
+CURRENT_BRANCH=arena/5e0f64cf-mp
+BASE_REMOTE_HEAD=9cdd96554108d8438fe906a82b233d68e21e0fd8
+MEM-01=PARTIAL/NOT_ACCEPTED — canonical checkbox remains open
+MEM02_PWA31=PARTIAL/NOT_ACCEPTED; no acceptance upgrade
+LIVE_MEMBER_CONTRACT=PASS — 1 file; 4 live local synthetic API tests; token value not recorded
+IDENTITY_NEGATIVE=PASS — 3 TestClient tests; wrong User.id and B Member.id explicitly denied
+TODAY_EMPTY_STATE_TEST=PASS — no-mock placeholder + non-member route denial; support destination/API error-retry remain unimplemented
+API_HELPERS=fetchMe/fetchMemberMemberships already existed; no API code change needed
+LOCAL_GATES=Studio lint PASS; memberAccountPage 6/6 PASS; live member contract 4/4 PASS; backend focused 3/3 PASS; Ruff/format + workflow YAML/shell syntax PASS; docs gate 38 Markdown/611 links/15 Mermaid PASS; interaction map 32 surfaces/163 routes/0 drift PASS
+INDEX_PROTECTION=60 unrelated staged paths existed before this follow-up and are preserved; receipts/untracked paths untouched
+PR30=OPEN/DRAFT/unmerged; release=NO-GO
+NEXT=begin MEM-03 scope review after this focused follow-up; no OTP/phone-change product implementation claimed
+
+## Previous continuation snapshot — MEM-01 / member account API slice (reference date: 2026-11-23 UTC; before live-identity follow-up)
+
+CURRENT_BRANCH=arena/5e0f64cf-mp
+HEAD_BEFORE_DIRTY_SOURCE_PATCH=5828c94c9d875fa5a4c58740611bf800324649f8
+MEM-01=PARTIAL/NOT_ACCEPTED — canonical checkbox open
+MEM-02/PWA-31=local account/history implementation + synthetic tests; PARTIAL/NOT_ACCEPTED; canonical checkbox remains open
+MEM-03…MEM-16=NOT_STARTED in this slice
+PWA-01=PROPOSED/NOT_RUN; INV-02/03=PARTIAL/NOT_ACCEPTED; SEC-01=PARTIAL/NOT_ACCEPTED; release=NO-GO
+CODE_OR_TEST_CHANGED_THIS_CYCLE=yes
+CODE_CHANGED=mp-app/studio/src/App.tsx; src/lib/api.ts; src/lib/memberAccount.ts; src/pages/MemberAccount.tsx
+TEST_CHANGED=Studio api/auth/navigation/member-account tests; backend test_m46_whoami.py and test_ownership.py
+BROWSER_AVAILABLE=no — libnspr4.so/libnss3.so missing (apt/npm verified)
+BROWSER_ALTERNATIVE=live-contract (CI job) + backend TestClient flow
+LIVE_CONTRACT=PASS — 1 file; 9 passed; local synthetic API; raw log evidence/2026-11-27/MEM-01/live-contract.raw.txt
+PENDING_PUSH=no
+PUSHED=7833508b2c8dde4d7cb3f86754af71aa6d47815c روی arena/5e0f64cf-mp (remote branch and evidence API verified)
+MEM01_COMMIT_ALLOWLISTED_COUNT=40
+STAGE_SLICE_COMMIT_ALLOWLISTED_COUNT=10
+INTERACTION_MAP_FIX_ALLOWLISTED_COUNT=10
+INDEX_ALLOWLISTED_COUNT=0 (no changed path from the allowlists remains staged; 60 unrelated staged paths remain untouched)
+PR30_CHECKS_E06=FAIL: backend + Documentation links/handoff; other listed jobs pass; e2e-api skipped; failure detail constrained by log-download EOF
+PR30_CHECKS_7833508=PASS: backend, docs, Studio, live-contract, secret-scan, client-flutter, pinned client, e2e-api; supplemental PWA-00 checks pass
+INTERACTION_MAP_LOCAL=PASS after generator refresh — 32 surfaces; 163 contract routes; 0 drift; 6 existing untested surfaces
+BACKEND_CI_LOCAL_REPRO=PASS — 1338 passed; 2 skipped; 2 warnings; total coverage 91%; GitHub run log retrieval ended with EOF, root cause unknown
+DOCS_GATE_LOCAL=PASS — 38 Markdown; 609 local links; 15 Mermaid after final handoff/evidence update
+BROWSER_RUN_THIS_CYCLE=no — no Chromium/browser/device assertions in this cycle.
+LOOP_STALLED=no
+
+- `/member` home consumes existing authenticated `GET /members/me`, then only after validating server role and `Member.id` calls owner-scoped `GET /members/{Member.id}/memberships`. It renders actual API profile/constraints and subscription status/history with loading/error/session/empty/retry states. Unknown or malformed values stay unknown; empty history is not called expired. UTC/naive timestamp display uses Persian calendar + `Asia/Tehran`. `/member/today` remains a no-fabricated-program placeholder; no staff API summary or client-selected member ID is used.
+- Synthetic Studio focused run: **5 files / 33 passed**; full Studio: **54 files passed, 2 skipped; 379 passed, 10 skipped**. Build/typecheck passed (Vite 5.4.21, 4048 modules); selected Studio ESLint passed. Backend TestClient/temporary SQLite tests for whoami + ownership: **9 passed, 1 Starlette/httpx warning**; touched backend test Ruff passed. Existing JSDOM `getComputedStyle`, React `act(...)`, Recharts warnings persist; skips are not passes. Details: `evidence/2026-11-23/MEM-01/member-account-slice.md` and its neighboring result logs.
+- Component/Auth/App fetch calls are mocked in Studio tests; backend TestClient is a separate synthetic test. No live Studio→backend account session, production member data, SMS, browser, physical Android/OS, screen-reader/manual review, independent reviewer or full PWA journey was tested. Browser/device acceptance remains unknown; headless library failure is not a product result.
+- The earlier shell-only statement “no profile/membership API” is historical and superseded by the account slice; `MEM-01` remains partial. Account/history work overlaps `MEM-02/PWA-31`, now recorded `PARTIAL/NOT_ACCEPTED`; its canonical checkbox remains open. Continue `MEM-02…MEM-16`, then `STAFF-01`, by canonical acceptance.
+- MEM-01 source/tests/evidence/docs were committed with exactly 40 allowlisted paths as `a7aa5b715de3da021934152b75e17ef67f6f19a5`. The exact-path staging helper/tests/allowlists were committed as `cdc989b198737e1d2235eaf570fb023e9306e264`; map refresh/CI diagnostics as `1afab65839b325b6a2013443f4d211f899e58c87`; final STATE check record was pushed through `7833508b2c8dde4d7cb3f86754af71aa6d47815c` on `arena/5e0f64cf-mp`. GitHub API confirmed 7833508 on the remote branch and the evidence directory (15 entries). The helper staged only allowlisted paths; 60 unrelated staged entries remain untouched. `gh pr checks 30` on e06a716 initially failed backend/docs; after the map refresh, `gh pr checks 30 --watch --interval 10` on 7833508 exited 0 with all main and supplemental checks passing, including backend, documentation and `e2e-api`. `PENDING_PUSH=no`; this is not a merge. Untracked/private receipts were not opened, copied, deleted, or staged; PR #30 remains OPEN/draft and unmerged.
+
+## Historical run snapshot — PWA / SEC-01 / WEB / INV (مرجع Arena: ۲۰۲۶-۱۱-۲۳ UTC)
+
+CURRENT_BRANCH=arena/5e0f64cf-mp
+HEAD_AT_TEST=5828c94c9d875fa5a4c58740611bf800324649f8
+BROWSER_AVAILABLE=yes — Chromium 153.0.8010.0 + Playwright Core 1.65.1 in headless sandbox only; no physical OS/device claim.
+WEB_CHECKED_BY_BROWSER=WEB-02…WEB-11 — each has separate `evidence/2026-11-27/WEB-xx/browser-<view>.txt`; WEB-11 is `RAN_WITH_API_BACKEND_UNAVAILABLE`.
+CODE_OR_TEST_CHANGED_THIS_CYCLE=yes
+CODE_CHANGED=scripts/crosswalk_v2.py
+TEST_CHANGED=scripts/test_crosswalk_v2.py; mp-app/backend/tests/integration/test_ownership.py; mp-app/backend/tests/integration/test_phase5_admin_permissions.py; mp-app/backend/tests/integration/test_qf10_period_report.py
+LOOP_STALLED=no
+
+- **Browser facts:** real Studio production build (`npm run build`, tsc + Vite 5.4.21, 4046 modules) and Chromium headless. WEB-02 deep-link unauthenticated redirect/history/reload observed; WEB-03/05 mobile horizontal overflow (document 569px at 390px viewport); WEB-04 zero axe violations but serious color-contrast incomplete (5 login / 43 analytics nodes); WEB-06 reduced motion only browser-emulated; WEB-07 keyboard Space selects week; WEB-08 root-scope SW, manifest and 192/512/maskable icons returned/decoded; WEB-09 synthetic A/B logout clears tokens and caches no `/api`/private fixture; WEB-10 same-URL waiting worker, update button, activation and reload observed; WEB-11 deep-link returns SPA HTML 200 but `/api/v1/members/me` is 500 text/plain/empty because Vite proxy cannot reach backend at `127.0.0.1:8000`. Raw roll-up: `evidence/2026-11-27/WEB-browser-run-summary.md`; build: `studio-build.txt`.
+- **SEC-01:** exact current focused command covers ownership, QF-00, QF-10 and phase-5 grant tests; `26 passed / 0 failed`, one Starlette/httpx deprecation warning. A→B sensitive reads exact 403 and A→A positive 200 remain checked; new anonymous cases expect 401; expired and revoked `finance.read` on period report return 403, active grant 200. Fixtures are synthetic and temporary. Report: `evidence/2026-11-27/SEC-01/current-run.md`.
+- **Crosswalk v2/v3 on same Git HEAD:** v2 member `16 PARTIAL_REVIEW / 1 GAP`, staff `12 PARTIAL_REVIEW`; 82 Studio call-sites, 24 dynamic, 0 missing-route shapes. Same-file page mapping has 15 records (member 1, staff 12, shared 2); call-site/page edges 0/69/6 and per-surface ratios 0.0/5.75/3.0. v3 member `13 PARTIAL_REVIEW / 4 GAP` (17 Flutter features, 141 server routes, 47 Studio call paths); v3 staff `11 PARTIAL_REVIEW / 1 GAP` (12/12 pages routed). Comparison: `evidence/2026-11-27/CROSSWALK-v2-v3-comparison.md`. Four synthetic crosswalk regressions pass; no `DYNAMIC_UNCOVERED` appears on current production paths.
+- **Validation:** focused backend tests 26/26 pass; crosswalk unittest 4/4; Studio Vitest full run 52 files passed, 2 skipped, 362 passed / 10 skipped; `npm run build` passed; Ruff on touched Python paths and `git diff --check` passed. JSDOM/React `act`/Recharts warnings persist; skipped tests are not passes.
+- **Status / next:** `PWA-01=PROPOSED/NOT_RUN`, crosswalks and SEC-01 remain `PARTIAL/NOT_ACCEPTED`, release=`NO-GO`. Current worktree has local pre-existing untracked paths, including private receipts; they are not to be staged or altered. At this checkpoint commit/push are pending. Do not merge PR #30. After this report continue the requested MEM-01…16 sequence without routine confirmation.
+
+## Historical snapshot — Motion/PWA evidence (۲۰۲۶-۱۱-۲۳)
 
 - **منبع evidence:** branch `arena/5e0f64cf-mp`, checkout زمان تست `HEAD=d92817f4151ebbafb25425b7b28776a4cc1180dc`, base=`35d4b35184b4148c658b415bd009fc076bf24e00`. Snapshot پیش از checkpoint handoff با `git status --porcelain=v1 -uall`: ۶۲ tracked changes، ۲۶۳ untracked (۷۰ private receipt و ۱۹۳ مورد دیگر)، index خالی. Receiptها نباید باز/کپی/stage شوند؛ بخش بزرگی از untrackedها reference/extraction داخل `artifacts/` است.
 - Scope فعال این پیگیری: `MK-PWA-01-FU-01`, `MK-PWA-02`, `O3-08`. Studio روی همان dirty tree: `npm test -- --reporter=dot` = ۵۰ فایل (۲ skip)، ۳۴۵ PASS/۱۰ SKIP، صفر fail؛ `npm run lint` و `npm run build` exit 0 (Vite 5.4.21/۴۰۴۵ modules). هشدارهای JSDOM/React `act(...)` ثبت‌شده‌اند، skipها PASS نیستند.

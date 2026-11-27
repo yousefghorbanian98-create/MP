@@ -1,0 +1,11 @@
+Commands and outcomes:
+
+Studio ESLint (cwd: mp-app/studio):
+  npx eslint src/App.tsx src/lib/api.ts src/lib/memberAccount.ts src/pages/MemberAccount.tsx tests/memberAccount.test.ts tests/memberAccountPage.test.tsx tests/api.test.ts tests/authFlow.test.tsx
+  exit 0; no diagnostics.
+
+Backend Ruff (repo root; only touched integration tests):
+  /tmp/mp-integration-venv/bin/ruff check mp-app/backend/tests/integration/test_m46_whoami.py mp-app/backend/tests/integration/test_ownership.py
+  All checks passed!; exit 0.
+
+Final documentation gate after the current handoff/TODO/evidence updates: `python3 scripts/docs_gate.py` passed (38 Markdown, 607 local links, 15 Mermaid, handoff headings, README entrypoints, SVG XML). Final `git diff --check` and `git diff --cached --check` both passed. The cached gate initially found an extra terminal blank line in two pre-staged test transcripts; only those blank lines were trimmed, then the existing allowlisted paths were re-staged and rechecked. Full result: `member-account-docs-gate.txt`.

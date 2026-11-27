@@ -82,10 +82,10 @@ index 241317b7113905787c9ad654635dc9d827067ff2..cf24d4a73ba988da2b059db71daf4ca1
  
 diff --git a/docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-CONTRACT.fa.md b/docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-CONTRACT.fa.md
 new file mode 100644
-index 0000000000000000000000000000000000000000..f69121ca0e2ec4f48a033e9118f8c0da1cfc997e
+index 0000000000000000000000000000000000000000..70126701ddc975b8cdc13bd6040484ef39b87cc6
 --- /dev/null
 +++ b/docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-CONTRACT.fa.md
-@@ -0,0 +1,109 @@
+@@ -0,0 +1,111 @@
 +# قرارداد PWA-00 — ثبت تصمیم پلتفرم
 +
 +**Parent:** `PWA-00` · **عنوان اصلی:** ثبت تصمیم پلتفرم · **نسخهٔ منبع:** Arena handoff v2.0.0
@@ -95,6 +95,8 @@ index 0000000000000000000000000000000000000000..f69121ca0e2ec4f48a033e9118f8c0da
 +**Branch creation base:** `35d4b35184b4148c658b415bd009fc076bf24e00` (merge-base شاخهٔ جاری با مبنای اعلام‌شده)
 +
 +> **الحاقیهٔ تصمیم، ۲۰۲۶-۱۱-۲۳:** AC-4 و جمله‌های پایین‌تر که `D-01/D-10` را باز می‌خوانند، scope تاریخی PWA-00 هستند. OQ-01/ADR-007 بعداً `D-01` را برای baseline کلاینت پاسخ داد (PWA مشترک عضو/کادر، حفظ Flutter/Android)؛ `D-10`/Go-No-Go و evidence محصول همچنان بازند. این الحاقیه قرارداد/نتیجهٔ تاریخی PWA-00 را به QA یا پذیرش انتشار تبدیل نمی‌کند.
++>
++> **پیوند وضعیت جاری (DOC-05):** [ADR-007](../../adr/007-pwa-primary-release.md)، [backlog canonical](../../TODO-2026-11-16.md#pwa-ui-ux-full-backlog-2026-11-23)، [tracker](../../TODO-PWA-RELEASE-2026-11-23.fa.md) و [دفتر اجرا](../../PWA-EXECUTION-STATE.md) مرجع جاری‌اند؛ این قرارداد فقط artifact تاریخی PWA-00 است.
 +
 +## دامنه و خروجی
 +
@@ -197,13 +199,15 @@ index 0000000000000000000000000000000000000000..f69121ca0e2ec4f48a033e9118f8c0da
 +- **انحراف تاریخی از ترتیب آغاز:** اسناد اولیه زمانی ساخته شدند که reviewer هنوز `UNASSIGNED` بود؛ بازبینی بعدی این ترتیب را به‌صورت عطف‌به‌ماسبق منطبق نمی‌کند. این انحراف صریح ثبت می‌شود و هیچ شاهد تاریخی تازه‌ای جعل نمی‌شود.
 diff --git a/docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-EVIDENCE.fa.md b/docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-EVIDENCE.fa.md
 new file mode 100644
-index 0000000000000000000000000000000000000000..390518ec81d879e25de79c02f7bd4d96e37a558b
+index 0000000000000000000000000000000000000000..e01d010920606de8cd7e5cf2f94644c97f3def4a
 --- /dev/null
 +++ b/docs/MuscleParadise/architecture/session-decisions-2026-11-23/PWA-00-EVIDENCE.fa.md
-@@ -0,0 +1,190 @@
+@@ -0,0 +1,192 @@
 +# شواهد PWA-00 — ADR ثبت تصمیم پلتفرم
 +
 +> **الحاقیهٔ وضعیت تصمیم، ۲۰۲۶-۱۱-۲۳:** جمله‌های `D-01/D-10` پایین‌تر، وضعیت زمان اجرای مستنداتی PWA-00 را توصیف می‌کنند. OQ-01/ADR-007 بعداً baseline کلاینت (`D-01`) را تعیین کرد: PWA مشترک عضو/کادر برای انتشار اول، با حفظ Flutter/Android. `D-10` و پذیرش/Go-No-Go همچنان بازند؛ این تغییر تصمیم evidence تاریخی PWA-00، status کارت یا آزمون محصول را ارتقا نمی‌دهد.
++>
++> **پیوند وضعیت جاری (DOC-05):** تصمیم در [ADR-007](../../adr/007-pwa-primary-release.md)، معیارها و ترتیب در [backlog canonical](../../TODO-2026-11-16.md#pwa-ui-ux-full-backlog-2026-11-23) و [tracker اجرایی](../../TODO-PWA-RELEASE-2026-11-23.fa.md) هستند؛ [دفتر اجرا](../../PWA-EXECUTION-STATE.md) status بین‌چرخه‌ای را نگه می‌دارد. این evidence فقط به artifact و محدودیت تاریخی خودش تعلق دارد.
 +
 +**نتیجه:** فقط یافته‌های مستنداتی R-01 تا R-03 رسیدگی شدند؛ کارت `DONE` یا `AGENT-READY` نیست. Product این کارت فقط برای صحت ثبت جهت پلتفرم `PASS` است؛ G7 برای دستور محدود مالک `PASS` است و نظارت شخصی اضافه طبق درخواست تازه skip شد؛ G5=`NOT_RUN`، G8 تاریخی=`UNKNOWN`، و G9 نسخهٔ اصلاح‌شده=`NOT_RUN` می‌مانند. پنج سفر، پذیرش انتشار و QA محصول ادعا نمی‌شوند.
 +

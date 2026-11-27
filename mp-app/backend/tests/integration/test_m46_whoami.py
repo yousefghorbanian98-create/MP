@@ -56,6 +56,9 @@ def test_me_returns_role_and_full_name(client: TestClient) -> None:
     body = r.json()
     assert body["role"] == "coach"
     assert body["full_name"] == "مربی سارا"
+    assert isinstance(body["id"], int) and body["id"] > 0
+    assert body["user_id"] > 0
+    assert body["constraints"] == "[]"
 
 
 def test_me_role_reflects_admin(client: TestClient) -> None:

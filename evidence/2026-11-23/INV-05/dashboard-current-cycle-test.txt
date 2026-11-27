@@ -1,0 +1,62 @@
+INV-05 Dashboard synthetic fallback/KPI slice; no live backend or member data used.
+Reference date: 2026-11-23 UTC
+branch=arena/5e0f64cf-mp
+HEAD=e0ae95f48bf8451bd59b972a92c55fed404e6a92
+Node=v22.22.3
+npm=10.9.8
+
+$ npm test -- tests/dashboard.test.tsx --reporter=dot
+
+> mp-studio@0.1.0 test
+> vitest run tests/dashboard.test.tsx --reporter=dot
+
+
+ RUN  v3.2.7 /home/user/MP/mp-app/studio
+
+stderr | tests/dashboard.test.tsx > Dashboard KPI cards (M45-c1) > اعداد واقعی KPI را نشان می‌دهد و «نامعلوم» را برای ظرفیت ثبت‌نشده
+Warning: An update to Dashboard inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Dashboard (/home/user/MP/mp-app/studio/src/pages/Dashboard.tsx:24:46)
+
+stderr | tests/dashboard.test.tsx > Dashboard KPI cards (M45-c1) > نبود داده را با پیام روشن اعلام می‌کند نه عدد ساختگی
+Warning: An update to Dashboard inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Dashboard (/home/user/MP/mp-app/studio/src/pages/Dashboard.tsx:24:46)
+
+··stderr | tests/dashboard.test.tsx > Dashboard KPI cards (M45-c1) > opens the selected member from the dashboard table
+Warning: An update to Dashboard inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Dashboard (/home/user/MP/mp-app/studio/src/pages/Dashboard.tsx:24:46)
+
+·
+
+ Test Files  1 passed (1)
+      Tests  3 passed (3)
+   Start at  08:44:41
+   Duration  2.95s (transform 223ms, setup 27ms, collect 1.94s, tests 235ms, environment 378ms, prepare 192ms)
+
+targeted_dashboard_test_exit=0

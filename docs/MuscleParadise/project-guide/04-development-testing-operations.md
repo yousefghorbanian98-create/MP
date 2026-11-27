@@ -168,7 +168,7 @@ python scripts/backup.py restore "$ARCHIVE" \\
 - rate-limit store مشترک، pool DB، worker heartbeat، outbox pending/dead letter و log correlation باید با deployment واقعی سنجیده شوند.
 - production secrets، HTTPS CORS origins، `MP_TRUSTED_PROXIES`, Valkey reachable، SMS واقعیِ approved، payment mode سازگار با تصمیم مالک، DB/migration/backup و registry/image pin باید پیش از هر استفاده از دادهٔ واقعی تأیید شوند.
 - OTP dev echo در production ممنوع است؛ code/token/secret را در report/console/chat/screenshot نیاورید.
-- Android debug compile در CI signed release نیست. `RELEASE-CHECKLIST.md` گیت‌هایی دربارهٔ signing key تاریخی، Gitleaks history، manifest/API، backup, staging و ops دارد؛ `ADR-007` می‌گوید تا تکمیل flowها و گیت‌ها NO-GO.
+- Android debug compile در CI signed release نیست. `RELEASE-CHECKLIST.md` گیت‌هایی دربارهٔ signing key تاریخی، Gitleaks history، manifest/API، backup, staging و ops دارد؛ `ADR-007` می‌گوید تا تکمیل flowها و گیت‌ها NO-GO. صف اجرایی جاری PWA در [tracker](../TODO-PWA-RELEASE-2026-11-23.fa.md) و [دفتر وضعیت loopها](../PWA-EXECUTION-STATE.md) ثبت می‌شود؛ گیت‌های device/production را از روی checklist یا screenshot بسته تلقی نکنید.
 
 ## ۴.۶ کارهایی که این سند/نوبت انجام نداده است
 
