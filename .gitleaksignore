@@ -507,3 +507,10 @@ c6f29449e8a55e0ed1204847357313ca0dd7a9cb:mp-app/client/android/keystore/keystore
 839500de55bfd08ac0826dc1a795837bdff54c35:docs/MuscleParadise/audit/evidence/detect-secrets.json:generic-api-key:1463
 839500de55bfd08ac0826dc1a795837bdff54c35:docs/MuscleParadise/audit/evidence/after/detect-secrets.json:generic-api-key:1456
 839500de55bfd08ac0826dc1a795837bdff54c35:docs/MuscleParadise/audit/evidence/detect-secrets.json:generic-api-key:1472
+
+# Crosswalk source SHA-256 metadata (not credentials); exact CI fingerprints only.
+6593cb4bc7f42c9ada4ca7e499fe60124bf00703:evidence/2026-11-27/INV-02-v1/member-capability-crosswalk.json:generic-api-key:11
+6593cb4bc7f42c9ada4ca7e499fe60124bf00703:evidence/2026-11-27/INV-02/member-capability-crosswalk.json:generic-api-key:12
+6593cb4bc7f42c9ada4ca7e499fe60124bf00703:evidence/2026-11-27/INV-02/member-capability-crosswalk.json:generic-api-key:13
+6593cb4bc7f42c9ada4ca7e499fe60124bf00703:evidence/2026-11-27/INV-03/staff-page-crosswalk.json:generic-api-key:12
+6593cb4bc7f42c9ada4ca7e499fe60124bf00703:evidence/2026-11-27/INV-03/staff-page-crosswalk.json:generic-api-key:13

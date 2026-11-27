@@ -29,6 +29,14 @@ PUBLIC_INTEGRITY_METADATA = (
     "docs/MuscleParadise/architecture/"
     "mp-ui-ux-motion-kit-v1.1.0-review.fa.md:generic-api-key:9"
 )
+CROSSWALK_EVIDENCE_COMMIT = "6593cb4bc7f42c9ada4ca7e499fe60124bf00703"
+CROSSWALK_HASH_FINDINGS = {
+    f"{CROSSWALK_EVIDENCE_COMMIT}:evidence/2026-11-27/INV-02-v1/member-capability-crosswalk.json:generic-api-key:11",
+    f"{CROSSWALK_EVIDENCE_COMMIT}:evidence/2026-11-27/INV-02/member-capability-crosswalk.json:generic-api-key:12",
+    f"{CROSSWALK_EVIDENCE_COMMIT}:evidence/2026-11-27/INV-02/member-capability-crosswalk.json:generic-api-key:13",
+    f"{CROSSWALK_EVIDENCE_COMMIT}:evidence/2026-11-27/INV-03/staff-page-crosswalk.json:generic-api-key:12",
+    f"{CROSSWALK_EVIDENCE_COMMIT}:evidence/2026-11-27/INV-03/staff-page-crosswalk.json:generic-api-key:13",
+}
 
 
 def run(args: list[str], *, env: dict[str, str], data: bytes | None = None) -> bytes:
@@ -50,6 +58,8 @@ def main() -> None:
         raise AssertionError("Retired-key exceptions differ from the two reviewed findings")
     if lines.count(PUBLIC_INTEGRITY_METADATA) != 1:
         raise AssertionError("Public integrity-metadata exception must remain exact")
+    if {line for line in lines if CROSSWALK_EVIDENCE_COMMIT in line} != CROSSWALK_HASH_FINDINGS:
+        raise AssertionError("Crosswalk source-digest exceptions differ from the five reviewed CI findings")
 
     scanner = os.environ.get("GITLEAKS") or shutil.which("gitleaks")
     if not scanner:
