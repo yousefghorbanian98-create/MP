@@ -27,9 +27,10 @@ MEM05_IDEMPOTENCY=NO for POST /programs/set-feedback (no key/version; duplicates
 WRITE_PATH=UI writes only to /programs/sync/set-feedback; the keyless endpoint is never called
 SERVER_TRUTH=after a write the page re-reads readiness/feedback counts from the API (no local counting)
 TIMEOUT=abort ⇒ explicit «ثبت نشد»; retry reuses the same client_id/updated_at
-CLIENT_JOB_FLAKY=yes — three samples (e22d8db attempt 1, 107968d event=push); root cause NOT proven (job log unreachable); job hardened (cache + no-daemon + bounded heap + full build-log artifact)
+CLIENT_JOB_FLAKY=yes — two historical failures (e22d8db attempt 1, 107968d event=push); the first push after hardening (6e69767) was green; root cause NOT proven (job log unreachable); job hardened (cache + no-daemon + bounded heap + full build-log artifact)
 STALE_ARTIFACTS=now inspected, not ignored: tracked_dirty=true ⇒ error; digests reported as `STALE <path> recorded=… actual=…`; summary line «N artifact بررسی شد، M STALE (گزارش‌شده)»
 CORRECTION_2026-11-27=ادعای قبلی «پیشوند sha256: ریشهٔ finding گیتلکس را بست» نادرست بود؛ آنچه finding را بست خطوط fingerprint بود
+CI_6E69767=pass on BOTH levels — PR 12/12 and the push run 46071739713 all success (secret-scan 17s with the same 10 ignore lines)
 RELEASE=NO-GO
 ```
 

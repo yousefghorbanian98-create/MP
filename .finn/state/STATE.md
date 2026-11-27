@@ -4,14 +4,14 @@
 
 ## Current follow-up — MEM-05 / PWA-34 + تریاژ flake + گزارش STALE (2026-11-27 UTC)
 
-STATE_LAST_UPDATED=2026-11-27T21:40:00Z
+STATE_LAST_UPDATED=2026-11-27T22:20:00Z
 CURRENT_BRANCH=arena/3c08bfbd-mp
 MEM-05/PWA-34=PARTIAL/NOT_ACCEPTED — BLOCKED نیست
 MEM05_IDEMPOTENCY=NO برای `POST /programs/set-feedback` (schemas.py:103-106، service.py:183-197؛ تکرار = ردیف تازه) · YES برای `POST /programs/sync/set-feedback` (router.py:134-143، service.py:584-700، db/models/programs.py:113-116)
 CODE_CHANGED=mp-app/studio/src/lib/{api.ts,feedbackQueue.ts}; mp-app/studio/src/components/{SetFeedbackForm.tsx,MemberTodayProgram.tsx}; scripts/{crosswalk_v2.py,verify_crosswalk_digests.py}; .github/workflows/ci.yml
 TEST_CHANGED=mp-app/studio/tests/setFeedback.test.tsx (تازه); mp-app/backend/tests/integration/test_mem05_set_feedback_idempotency.py (تازه)
 LOCAL_GATES=pytest ۱۴ pass؛ vitest ۵۷ فایل pass/۴ skip و ۴۰۳ تست pass/۱۵ skip؛ tsc/eslint/build پاک؛ interaction map pass
-CLIENT_JOB_FLAKY=yes — سه نمونه: e22d8db (تلاش اول)، 107968d event=push (run 46055611570، job 140697239420)؛ علت اثبات‌نشده (لاگ job از API در دسترس نیست)؛ hardening: cache + org.gradle.daemon=false + -Xmx3g/-XX:MaxMetaspaceSize=1g + artifact «client-android-build-log»
+CLIENT_JOB_FLAKY=yes — دو شکست تاریخی: e22d8db (تلاش اول) و 107968d event=push (run 46055611570، job 140697239420)؛ سومین push پس از hardening (6e69767، run 46071739713) **سبز** بود. علت ریشه‌ای اثبات‌نشده (لاگ job از API در دسترس نیست)؛ hardening: cache + org.gradle.daemon=false + -Xmx3g/-XX:MaxMetaspaceSize=1g + artifact «client-android-build-log»
 SECRET_SCAN_ROOT_FIX=base64 — قالب digest از `sha256:<hex>` به `sha256_b64:<44 base64url>` تغییر کرد. ادعای قبلی («پیشوند hex ریشه را بست») **نادرست** بود و اصلاح شد.
 GITLEAKSIGNORE_LINES=۱۰ (ثابت؛ خطوط به commitهای ebebef3/6593cb4b گره خورده‌اند و حذفشان یافته‌های تاریخی را برمی‌گرداند)
 STALE_ARTIFACTS=گیت حالا `*.STALE.json` را بازرسی می‌کند: tracked_dirty=true ⇒ خطا؛ digestها فقط گزارش می‌شوند (`STALE <path> recorded=… actual=…`)؛ خلاصه در GITHUB_STEP_SUMMARY

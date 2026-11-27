@@ -1,0 +1,33 @@
+# CI روی 6e69767 — هر دو سطح، در 2026-11-27
+
+## سطح PR
+Client — pinned SDK · format gate · Android debug compile	pass	4m59s	https://github.com/yousefghorbanian98-create/MP/actions/runs/46071745586/job/140750078652
+Documentation links and handoff	pass	14s	https://github.com/yousefghorbanian98-create/MP/actions/runs/46071745586/job/140750078669
+PWA-00 patch applies cleanly and matches source docs	pass	7s	https://github.com/yousefghorbanian98-create/MP/actions/runs/46071745577/job/140750078411
+Reviewdog (Markdown findings as check annotations)	pass	14s	https://github.com/yousefghorbanian98-create/MP/actions/runs/46071745577/job/140750078792
+Super-Linter (PWA-00 Markdown only)	pass	1m24s	https://github.com/yousefghorbanian98-create/MP/actions/runs/46071745577/job/140750078848
+backend	pass	6m10s	https://github.com/yousefghorbanian98-create/MP/actions/runs/46071745586/job/140750078716
+client-flutter	pass	1m41s	https://github.com/yousefghorbanian98-create/MP/actions/runs/46071745586/job/140750078758
+e2e-api	pass	3m7s	https://github.com/yousefghorbanian98-create/MP/actions/runs/46071745586/job/140752183071
+live-contract	pass	46s	https://github.com/yousefghorbanian98-create/MP/actions/runs/46071745586/job/140750078355
+markdownlint	pass	0	https://github.com/yousefghorbanian98-create/MP/runs/140750151329
+secret-scan	pass	17s	https://github.com/yousefghorbanian98-create/MP/actions/runs/46071745586/job/140750078712
+studio	pass	2m9s	https://github.com/yousefghorbanian98-create/MP/actions/runs/46071745586/job/140750078789
+
+## سطح push (همان SHA)
+completed	success	MEM-03/PWA-32: phone change, device sessions, late-response guard (+ digest gate, secret-scan evidence)	pwa00-doc-quality	arena/3c08bfbd-mp	pull_request	46071745577	1m27s	10m
+completed	success	MEM-03/PWA-32: phone change, device sessions, late-response guard (+ digest gate, secret-scan evidence)	mp-ci	arena/3c08bfbd-mp	pull_request	46071745586	9m23s	10m
+completed	success	chore(mem-05): regenerate crosswalks with base64 digests + STALE insp…	mp-ci	arena/3c08bfbd-mp	push	46071739713	6m17s	10m
+completed	success	MEM-03/PWA-32: phone change, device sessions, late-response guard (+ digest gate, secret-scan evidence)	pwa00-doc-quality	arena/3c08bfbd-mp	pull_request	46055618881	1m22s	2h
+completed	success	MEM-03/PWA-32: phone change, device sessions, late-response guard (+ digest gate, secret-scan evidence)	mp-ci	arena/3c08bfbd-mp	pull_request	46055618838	8m31s	2h
+
+## jobهای run سطح push 46071739713
+Documentation links and handoff — success
+Client — pinned SDK · format gate · Android debug compile — success
+backend — success
+live-contract — success
+studio — success
+client-flutter — success
+secret-scan — success
+markdownlint — success
+e2e-api — success

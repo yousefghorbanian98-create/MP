@@ -55,3 +55,12 @@ $ gh api repos/.../actions/runs/46055611570/artifacts
 ## وضعیت صادقانه
 علت ریشه‌ای **اثبات نشده** است (log در دسترس نبود). دو فرضیه محدود شد و شاهد برای اجرای بعدی
 قابل‌خواندن شد. تا سبزشدن push بعدی: `CLIENT_JOB_FLAKY=yes`.
+
+## نتیجهٔ سومین push (پس از hardening)
+- tip `6e69767`: سطح PR ۱۲/۱۲ pass و سطح push (`46071739713`) **success**؛
+  `Client — pinned SDK · format gate · Android debug compile` = pass در ۴m59s.
+- یعنی کش + `org.gradle.daemon=false` + heap محدود، برای این نمونه کافی بود؛ علت ریشه‌ای
+  همچنان **اثبات‌نشده** است و برای همین `CLIENT_JOB_FLAKY=yes` می‌ماند.
+- شاهد خام دو سطح: [`ci-6e69767-both-levels.txt`](ci-6e69767-both-levels.txt).
+  خروجی کامل لاگ APK اکنون به‌عنوان artifact `client-android-build-log` قابل‌دانلود است
+  (این push سبز بود، پس محتوایش فقط شاهد موفقیت است).

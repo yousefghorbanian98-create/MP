@@ -11,9 +11,10 @@ MEM05_IDEMPOTENCY=set-feedback: no (کلید/نسخه ندارد؛ تکرار = 
 WRITE_PATH=فقط /programs/sync/set-feedback؛ مسیر بدون کلید صدا زده نمی‌شود
 SERVER_TRUTH=پس از نوشتن، آمادگی/شمارش بازخورد از API دوباره خوانده می‌شود
 TIMEOUT=abort ⇒ «ثبت نشد»؛ تلاش دوباره همان client_id/updated_at
-CLIENT_JOB_FLAKY=yes — سه نمونه (e22d8db، 107968d-push)؛ علت اثبات‌نشده؛ job سخت‌سازی شد
+CLIENT_JOB_FLAKY=yes — دو شکست تاریخی (e22d8db، 107968d-push)؛ اولین push پس از سخت‌سازی (6e69767) سبز شد؛ علت اثبات‌نشده
 STALE_ARTIFACTS=بازرسی می‌شوند: dirty ⇒ خطا، کهنگی ⇒ گزارش `STALE <path> recorded/actual`
 GITLEAKSIGNORE=۱۰ خط، ثابت؛ قالب تازه `sha256_b64:` جلوی صف بی‌پایان را می‌گیرد
+CI_6E69767=سبز در هر دو سطح (PR ۱۲/۱۲ · run سطح push 46071739713 success؛ secret-scan ۱۷s با همان ۱۰ خط)
 RELEASE=NO-GO
 ```
 
