@@ -1,0 +1,28 @@
+# MEM-04 — پاسخ پرسش «آیا عضو به مسیر برنامه دسترسی دارد؟» با فایل/خط
+
+member = yes
+
+## لایهٔ قرارداد (routes.json)
+mp-app/backend/api/routes.json:3369-3385  GET /api/v1/programs/member/{member_id}
+    roles  = member, coach, manager, admin, super_admin
+    scopes = owner_scope · anonymous = never · guards = permission
+mp-app/backend/api/routes.json:3392-3408  GET /api/v1/programs/member/{member_id}/readiness  (همان roles/scopes)
+mp-app/backend/api/routes.json:3415-3431  GET /api/v1/programs/member/{member_id}/volume     (همان roles/scopes)
+mp-app/backend/api/routes.json:3488-3506  GET /api/v1/programs/{program_id}                  (roles شامل member)
+
+## لایهٔ کد
+mp-app/backend/modules/programs/router.py:12-14   router-level Depends(require_permission())
+mp-app/backend/modules/programs/router.py:31-37   def list_member_programs(member_id, db, user) → service(...)
+mp-app/backend/modules/programs/router.py:76-80   def member_readiness(...)  → ensure_member_scope(db, user, member_id)
+mp-app/backend/modules/programs/router.py:87-96   def member_volume(...)     → ensure_member_scope(db, user, member_id)
+mp-app/backend/modules/programs/service.py:28-30  list_member_programs → ensure_member_scope(db, user, member_id)
+mp-app/backend/modules/programs/service.py:16-22  get_program → ensure_record_scope(db, user, p)  (member_id رکورد)
+mp-app/backend/app/security/ownership.py:23-29    ensure_member_scope: role==member و member_id != own → ForbiddenError (403)
+mp-app/backend/app/security/ownership.py:32-36    ensure_record_scope → ensure_member_scope(record.member_id)
+
+## نتیجه
+عضو یک عضو است (member=yes) و مالکیت سطری هم اعمال می‌شود: عضو A به مسیرهای B ۴۰۳ می‌گیرد.
+این ادعا فقط از کد نیست؛ تست اجرا شد:
+- tests/integration/test_mem04_member_program_access.py (۳ تست، تازه)
+- tests/integration/test_ownership.py::test_member_cannot_read_other_members_data (از قبل)
+- tests/integration/test_e2e_adaptive_loop.py (readiness/volume برای member دیگر ۴۰۳)

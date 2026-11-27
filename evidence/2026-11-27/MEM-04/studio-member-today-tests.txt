@@ -1,0 +1,8 @@
+
+ ✓ tests/memberTodayProgram.test.tsx (4 tests) 153ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  19:01:50
+   Duration  1.16s (transform 154ms, setup 15ms, collect 290ms, tests 153ms, environment 374ms, prepare 181ms)
+

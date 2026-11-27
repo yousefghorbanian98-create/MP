@@ -188,6 +188,11 @@ describe("member home security surface (MEM-03 / PWA-32)", () => {
     window.history.replaceState({}, "", "/member/today");
     const { calls } = installApi((path) => {
       if (path === "/api/v1/members/me") return reply(200, memberProfile);
+      // MEM-04: today now reads the real program contract — but still no security surface.
+      if (path === "/api/v1/programs/member/17") return reply(200, []);
+      if (path === "/api/v1/programs/member/17/readiness") {
+        return reply(200, { member_id: 17, program_id: null, readiness: null, reason: "بدون برنامه", rule_version: "r1" });
+      }
       throw new Error(`today must not request account security: ${path}`);
     });
 
@@ -195,7 +200,9 @@ describe("member home security surface (MEM-03 / PWA-32)", () => {
 
     expect(await screen.findByRole("heading", { name: "امروز" })).toBeTruthy();
     expect(screen.queryByRole("button", { name: "خروج از همهٔ دستگاه‌ها" })).toBeNull();
-    expect(calls.map((call) => call.path)).toEqual(["/api/v1/members/me"]);
+    await waitFor(() => expect(calls.map((call) => call.path)).toContain("/api/v1/programs/member/17"));
+    expect(calls.some((call) => call.path === "/api/v1/auth/sessions")).toBe(false);
+    expect(calls.some((call) => call.path === "/api/v1/auth/logout-all")).toBe(false);
   });
 });
 
@@ -205,17 +212,35 @@ describe("member today honest empty state (MEM-01 follow-up)", () => {
     window.history.replaceState({}, "", "/member/today");
     const { calls } = installApi((path) => {
       if (path === "/api/v1/members/me") return reply(200, memberProfile);
-      throw new Error(`today must not call an unconnected program API: ${path}`);
+      // Server says: no program at all → the page must not invent one.
+      if (path === "/api/v1/programs/member/17") return reply(200, []);
+      if (path === "/api/v1/programs/member/17/readiness") {
+        return reply(200, { member_id: 17, program_id: null, readiness: null, reason: "بدون برنامه", rule_version: "r1" });
+      }
+      throw new Error(`unexpected API path: ${path}`);
     });
 
     render(<App />);
 
     expect(await screen.findByRole("heading", { name: "امروز" })).toBeTruthy();
-    const emptyState = await screen.findByRole("status");
-    expect(emptyState.textContent).toContain("برنامهٔ تمرین امروز هنوز به این پوسته متصل نشده است");
-    expect(emptyState.textContent).toContain("دادهٔ تمرینی ساختگی نمایش داده نمی‌شود");
+    expect(
+      await screen.findByText(/هیچ برنامهٔ تأییدشده‌ای برای شما از سرور دریافت نشد/),
+    ).toBeTruthy();
     expect(screen.queryByText(/برنامهٔ نمونه|جلسهٔ قدرت A|تمرینِ نمونه|۴۵′/)).toBeNull();
-    expect(calls.map((call) => call.path)).toEqual(["/api/v1/members/me"]);
+    // No number is rendered without a server value behind it.
+    expect(screen.queryByText(/ست ×/)).toBeNull();
+    expect(screen.queryByText(/آمادگی: [\d۰-۹]/)).toBeNull();
+    expect(screen.queryByText(/نسخهٔ موتور برنامه/)).toBeNull();
+    // Two reads of /members/me: one is the app's session restore (role vs token),
+    // the other is this page reading its server-owned Member.id. Both are the same
+    // authenticated identity; no client-selected member ID is ever used.
+    expect(calls.map((call) => call.path)).toEqual([
+      "/api/v1/members/me",
+      "/api/v1/members/me",
+      "/api/v1/programs/member/17",
+      "/api/v1/programs/member/17/readiness",
+    ]);
+    expect(calls.some((call) => call.path.includes("/programs/member/41"))).toBe(false);
   });
 
   it("denies /member/today to a non-member role", async () => {

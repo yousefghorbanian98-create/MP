@@ -18,6 +18,26 @@ LAST_KNOWN_EVIDENCE=evidence/2026-11-27/MEM-03/current-run.md و فایل‌ها
 
 در تعارض، تصمیم scope با ADR/تصمیم مالک، متن acceptance با کارت canonical، رفتار با کد و تست همان مسیر، و status اجرایی با آخرین شاهد پالایش‌شده تعیین می‌شود. Snapshotهای تاریخی، دیاگرام‌ها، screenshotها، artifact package، mock، skipped test و CI روی SHA دیگر acceptance محصول را ثابت نمی‌کنند.
 
+## Latest continuation — MEM-04 / PWA-33 today program on the real contract
+
+```text
+CURRENT_BRANCH=arena/3c08bfbd-mp
+STATE_LAST_UPDATED=2026-11-27T19:05:00Z
+MEM-04/PWA-33=PARTIAL/NOT_ACCEPTED (canonical checkbox open)
+MEM04_ROUTE_ACCESS=member=yes — api/routes.json:3369-3385 · modules/programs/router.py:31-37 · app/security/ownership.py:23-29
+SURFACE=/member/today now renders MemberTodayProgram on GET /programs/member/{id} + /readiness
+NUMBERS=هر عدد یک منبع مکتوب دارد؛ هیچ محاسبه‌ای در کلاینت نیست؛ KPI/کالری/ادعای پزشکی ساخته نشد
+EMPTY_STATE=بدون برنامهٔ approved → پیام تهی + شمارش در انتظار تأیید؛ readiness=null → فقط reason سرور
+AUTHORIZATION_PROOF=۳ تست تازه: عضو A روی /programs/member/B، /readiness، /volume و /programs/{id} → 403
+LOCAL_GATES=Studio ۴ تست تازه؛ کل ۳۹۹ pass/۱۵ skip؛ tsc/eslint/build پاک؛ backend ۹ pass؛ interaction map pass
+REVIEWER/DEVICE/CI=NOT_RUN؛ release=NO-GO
+```
+
+- قرارداد از قبل وجود داشت و چیزی ساخته نشد: `GET /api/v1/programs/member/{member_id}`، `/readiness`، `/volume` و `GET /api/v1/programs/{program_id}`.
+- دو شکاف واقعی قرارداد که UI به‌جای حدس زدن، صریح می‌نویسد: برنامه **شمارهٔ نسخهٔ عددی** و **تاریخ شروع/پایان** ندارد؛ تنها نسخه `engine_version` و تنها تاریخ `approved_at` است. پس «امروز» از روی شمارهٔ هفته حدس زده نمی‌شود.
+- `safety_flags = "{}"` یعنی غربالگری انجام نشده، نه «بی‌خطر»؛ همین جمله روی صفحه است و برنامهٔ با فلگ غیرخالی هشدار «پیش از اجرا با مربی مرور کنید» می‌گیرد.
+- شاهد: [`MEM-04 current run`](../../evidence/2026-11-27/MEM-04/current-run.md) و [`route-access`](../../evidence/2026-11-27/MEM-04/route-access.txt).
+
 ## Latest continuation — MEM-03 / PWA-32 phone change, device sessions and late-response guard
 
 ```text

@@ -1066,6 +1066,51 @@ export function fetchReadiness(memberId: number, token = getToken(), signal?: Ab
   return getJson<ReadinessReport>(`/programs/member/${memberId}/readiness`, token, signal);
 }
 
+// ── MEM-04 / PWA-33 — برنامهٔ عضو از قرارداد واقعی (GET /programs/member/{member_id}) ──
+//
+// شکل پاسخ همان `ProgramOut` بک‌اند است. نکتهٔ صادقانه: این قرارداد «شمارهٔ نسخهٔ
+// عددی» و «تاریخ شروع/پایان برنامه» ندارد؛ تنها نسخهٔ موجود `engine_version` است
+// و تنها تاریخ، `approved_at`. پس UI هم چیزی از خودش نمی‌سازد.
+
+export interface MemberProgramExercise {
+  id: number;
+  exercise_id: number;
+  day: number;
+  order: number;
+  sets: number;
+  reps: string;
+  load_pct: number;
+  rest_seconds: number;
+  notes: string;
+}
+
+export interface MemberProgramWeek {
+  id: number;
+  week_number: number;
+  focus: string;
+  exercises: MemberProgramExercise[];
+}
+
+export interface MemberProgram {
+  id: number;
+  member_id: number;
+  coach_id: number | null;
+  status: "draft" | "approved" | "rejected" | string;
+  goal: string;
+  engine_version: string;
+  llm_explanation: string;
+  reject_reason: string;
+  approved_at: string | null;
+  approved_by: number | null;
+  /** Q7 — JSON غربالگری ایمنی؛ «{}» یعنی غربالگری نشده، نه بی‌خطر. */
+  safety_flags?: string;
+  weeks: MemberProgramWeek[];
+}
+
+export function fetchMemberPrograms(memberId: number, token = getToken(), signal?: AbortSignal) {
+  return getJson<MemberProgram[]>(`/programs/member/${memberId}`, token, signal);
+}
+
 // ── G8 — چت مربی–شاگرد ──
 
 export interface ChatConversation {

@@ -2,6 +2,25 @@
 
 > این فایل **خلاصهٔ جاری برای ادامهٔ کار** است، نه آرشیو گفتگو و نه منبع نهایی وضعیت محصول. پیش از فشرده‌سازی context یا پایان هر کار معنادار، همین snapshot را جایگزین/به‌روز کن؛ تاریخچه را با انباشت transcript طولانی نکن.
 
+## وضعیت جاری — MEM-04 / PWA-33 برنامهٔ امروز عضو (UTC 2026-11-27)
+
+```text
+CURRENT_BRANCH=arena/3c08bfbd-mp
+MEM-04/PWA-33=PARTIAL/NOT_ACCEPTED؛ checkbox canonical باز
+MEM04_ROUTE_ACCESS=member=yes — api/routes.json:3369-3385؛ modules/programs/router.py:31-37؛ app/security/ownership.py:23-29
+SURFACE=/member/today → MemberTodayProgram روی GET /programs/member/{id} + /readiness
+NUMBERS=هر عدد با برچسب «منبع: GET …»؛ engine_version تنها نسخه، approved_at تنها تاریخ، بدون محاسبهٔ کلاینت
+EMPTY_STATE=بدون approved → پیام تهی؛ readiness=null → reason سرور؛ پاسخ غیرآرایه → fail-closed
+ACCESS_TEST=۳ تست تازه: عضو A روی دادهٔ B در هر چهار مسیر ۴۰۳
+LOCAL_GATES=Studio ۴ تست تازه/کل ۳۹۹ pass・۱۵ skip؛ tsc/eslint/build پاک؛ backend ۹ pass
+REVIEWER/DEVICE/CI=NOT_RUN؛ release=NO-GO
+```
+
+- endpoint فرضی ساخته نشد. `GET /api/v1/programs/member/{member_id}`، `/readiness`، `/volume` و `GET /api/v1/programs/{program_id}` از قبل در `api/routes.json` بودند و نقش `member` را مجاز می‌دانستند؛ مالکیت سطری در `app/security/ownership.py:23-29` اعمال می‌شود.
+- UI فقط برنامهٔ `approved` را نشان می‌دهد؛ `draft`/`rejected` شمارش وضعیت‌اند، نه برنامه. هیچ KPI/کالری/۱RM/ادعای پزشکی ساخته نشد و هر عدد منبع مکتوب دارد.
+- محدودیت‌های قرارداد صریح نوشته شدند: برنامه شمارهٔ نسخهٔ عددی و تاریخ شروع/پایان ندارد؛ `safety_flags="{}"` یعنی غربالگری انجام نشده.
+- شاهد: [`MEM-04 current run`](../../evidence/2026-11-27/MEM-04/current-run.md) و [`route-access`](../../evidence/2026-11-27/MEM-04/route-access.txt). همچنان مرورگر/دستگاه واقعی، بازبینی انسانی و CI همین SHA اجرا نشده‌اند؛ `INV-02/03`، `SEC-01`، `MEM-01…04` partial می‌مانند و release=`NO-GO`.
+
 ## وضعیت جاری — MEM-03 / PWA-32 تغییر شماره، نشست دستگاه و پاسخ دیررس (UTC 2026-11-27)
 
 ```text

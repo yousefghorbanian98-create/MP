@@ -2,6 +2,21 @@
 
 > هشدار انتقال ۲۰۲۶-۱۱-۱۸: بخش‌های بعدی قدیمی snapshot هستند و branch/toolchain/status آن‌ها جاری فرض نشود. وضعیت تازهٔ Motion/PWA در این بخش و [handoff](../../docs/MuscleParadise/SESSION_HANDOFF.md) آمده؛ کارهای قدیمی M63–M99، M100–M106 و M107+ فقط پس از تطبیق با TODO و گیت‌های جاری ادامه یابند.
 
+## Current follow-up — MEM-04 / PWA-33 برنامهٔ امروز عضو (2026-11-27 UTC)
+
+STATE_LAST_UPDATED=2026-11-27T19:05:00Z
+CURRENT_BRANCH=arena/3c08bfbd-mp
+MEM-04/PWA-33=PARTIAL/NOT_ACCEPTED — سطح واقعی وصل شد، پذیرش نه
+MEM04_ROUTE_ACCESS=member=yes (api/routes.json:3369-3385؛ modules/programs/router.py:31-37؛ app/security/ownership.py:23-29)
+CODE_CHANGED=mp-app/studio/src/lib/api.ts; mp-app/studio/src/components/MemberTodayProgram.tsx; mp-app/studio/src/App.tsx
+TEST_CHANGED=mp-app/studio/tests/memberTodayProgram.test.tsx (تازه); memberAccountPage.test.tsx; authFlow.test.tsx; mp-app/backend/tests/integration/test_mem04_member_program_access.py (تازه)
+NUMBERS_SOURCED=هر عدد برچسب منبع دارد؛ بدون محاسبهٔ سمت کلاینت؛ KPI/کالری/ادعای پزشکی ساخته نشد
+ACCESS_PROOF=۳ تست تازه: عضو A روی /programs/member/B، /readiness، /volume، /programs/{id} → ۴۰۳
+LOCAL_GATES=Studio ۴ تست تازه، کل ۳۹۹ pass/۱۵ skip، tsc/eslint/build پاک؛ backend ۹ pass؛ interaction map pass
+EVIDENCE=evidence/2026-11-27/MEM-04/{current-run.md,route-access.txt,backend-access-tests.txt,studio-*.txt}
+TODO_AFTER_THIS=بازتولید INV-02/INV-03 روی درخت تمیز (چون api.ts تغییر کرد) — قاعدهٔ digest/HEAD بدون استثنا
+REVIEWER/DEVICE/CI=NOT_RUN؛ release=NO-GO
+
 ## Current follow-up — MEM-03 fixes: digest gate، شاهد secret-scan بدون راز، تست guard (2026-11-27 UTC)
 
 STATE_LAST_UPDATED=2026-11-27T18:50:00Z

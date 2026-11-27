@@ -21,6 +21,7 @@ import { AuthProvider, useAuth } from "./auth/AuthContext";
 import { Login } from "./pages/Login";
 import { MemberAccount } from "./pages/MemberAccount";
 import { MemberSecurity } from "./components/MemberSecurity";
+import { MemberTodayProgram } from "./components/MemberTodayProgram";
 import { canSeePage, parseRole } from "./lib/roleNav";
 import {
   canonicalRouteHref,
@@ -177,7 +178,6 @@ const memberNavigation: { page: MemberPage; href: string; label: string }[] = [
 /** Member account uses its own authenticated API vertical slice; today stays an honest placeholder. */
 function MemberShell({ page, onSignOut }: { page: MemberPage; onSignOut: () => void }) {
   const title = page === "today" ? "امروز" : "خانهٔ عضو";
-  const description = "برنامهٔ تمرین امروز هنوز به این پوسته متصل نشده است؛ دادهٔ تمرینی ساختگی نمایش داده نمی‌شود.";
 
   return (
     <main dir="rtl" className="min-h-screen px-4 py-6 sm:px-6">
@@ -220,9 +220,9 @@ function MemberShell({ page, onSignOut }: { page: MemberPage; onSignOut: () => v
               <MemberSecurity />
             </div>
           ) : (
-            <p role="status" className="mt-3 max-w-2xl text-sm leading-7 text-ink-dim">
-              {description}
-            </p>
+            <div className="mt-4">
+              <MemberTodayProgram />
+            </div>
           )}
         </section>
         <ToastViewport />
