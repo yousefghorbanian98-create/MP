@@ -6,7 +6,7 @@
 
 STATE_LAST_UPDATED=2026-11-27T23:55:00Z
 CURRENT_BRANCH=arena/3c08bfbd-mp
-BRANCH_VS_MAIN=ahead=16 behind=0 · tree_differs=yes (19 files, +941/−80) · main@7c4771f is ancestor → yes
+BRANCH_VS_MAIN=اندازه‌گیریِ ثبت‌شده روی 8cf9995: ahead=16 behind=0 · tree_differs=yes (19 files، +941/−80) · main@7c4771f is ancestor → yes؛ بعد از commitهای این دور عدد جلوتر می‌رود و در گزارش همان دور با `rev-list --count` تازه اعلام می‌شود (نه با «diff خالی»)
 CORRECTION_2026-11-27B=ادعای قبلی «درخت شاخه بایت‌به‌بایت برابر main است» نادرست بود؛ آن اندازه‌گیری مربوط به لحظهٔ merge (`8f960ad`) بود، نه tip. اعداد واقعی در `BRANCH_VS_MAIN` بالا آمده و دیگر از عبارت «diff خالی» استفاده نمی‌شود.
 DIGEST_GATE_BLIND_SPOT=fixed — `inspect_stale()` حالا `expected is None` و `actual is None` را مثل `check()` به problems می‌برد؛ پیش‌تر (digest خراب + فایل غایب) `None == None` می‌شد و artifact «سالم» گزارش می‌شد (با `git rm` می‌شد گیت را بی‌صدا کرد).
 DIGEST_GATE_TESTS=scripts/tests/test_digest_gate.py · ۴ تست · 4/4 pass · با حذف دو بررسی، ۳ تست قرمز می‌شود (شاهد: evidence/2026-11-27/GATE-P0/regression-proof.txt)
