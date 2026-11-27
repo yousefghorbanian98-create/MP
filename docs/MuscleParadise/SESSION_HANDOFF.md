@@ -13,7 +13,7 @@ NUMBERS=هر عدد با برچسب «منبع: GET …»؛ engine_version تن�
 EMPTY_STATE=بدون approved → پیام تهی؛ readiness=null → reason سرور؛ پاسخ غیرآرایه → fail-closed
 ACCESS_TEST=۳ تست تازه: عضو A روی دادهٔ B در هر چهار مسیر ۴۰۳
 LOCAL_GATES=Studio ۴ تست تازه/کل ۳۹۹ pass・۱۵ skip؛ tsc/eslint/build پاک؛ backend ۹ pass
-REVIEWER/DEVICE/CI=NOT_RUN؛ release=NO-GO
+CI=پاس روی tip 27ef138 (۱۲ check؛ شامل secret-scan و گیت digest)؛ REVIEWER/DEVICE=NOT_RUN؛ release=NO-GO
 ```
 
 - endpoint فرضی ساخته نشد. `GET /api/v1/programs/member/{member_id}`، `/readiness`، `/volume` و `GET /api/v1/programs/{program_id}` از قبل در `api/routes.json` بودند و نقش `member` را مجاز می‌دانستند؛ مالکیت سطری در `app/security/ownership.py:23-29` اعمال می‌شود.

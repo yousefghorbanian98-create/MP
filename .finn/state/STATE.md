@@ -15,7 +15,9 @@ ACCESS_PROOF=۳ تست تازه: عضو A روی /programs/member/B، /readiness
 LOCAL_GATES=Studio ۴ تست تازه، کل ۳۹۹ pass/۱۵ skip، tsc/eslint/build پاک؛ backend ۹ pass؛ interaction map pass
 EVIDENCE=evidence/2026-11-27/MEM-04/{current-run.md,route-access.txt,backend-access-tests.txt,studio-*.txt}
 TODO_AFTER_THIS=بازتولید INV-02/INV-03 روی درخت تمیز (چون api.ts تغییر کرد) — قاعدهٔ digest/HEAD بدون استثنا
-REVIEWER/DEVICE/CI=NOT_RUN؛ release=NO-GO
+CI_27EF138=PASS — هر ۱۲ check سبز (secret-scan و Documentation links/handoff هم سبز)؛ ران‌ها: 46054318564/46054323525/46054323556
+CI_E0C9104=success — هر سه ران روی e0c9104 هم success (شامل secret-scan)
+REVIEWER/DEVICE=NOT_RUN؛ release=NO-GO
 
 ## Current follow-up — MEM-03 fixes: digest gate، شاهد secret-scan بدون راز، تست guard (2026-11-27 UTC)
 

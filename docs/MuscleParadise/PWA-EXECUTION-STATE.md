@@ -30,7 +30,7 @@ NUMBERS=هر عدد یک منبع مکتوب دارد؛ هیچ محاسبه‌ا
 EMPTY_STATE=بدون برنامهٔ approved → پیام تهی + شمارش در انتظار تأیید؛ readiness=null → فقط reason سرور
 AUTHORIZATION_PROOF=۳ تست تازه: عضو A روی /programs/member/B، /readiness، /volume و /programs/{id} → 403
 LOCAL_GATES=Studio ۴ تست تازه؛ کل ۳۹۹ pass/۱۵ skip؛ tsc/eslint/build پاک؛ backend ۹ pass؛ interaction map pass
-REVIEWER/DEVICE/CI=NOT_RUN؛ release=NO-GO
+CI=پاس روی tip 27ef138 (۱۲ check، شامل secret-scan و گیت digest در job docs)؛ REVIEWER/DEVICE=NOT_RUN؛ release=NO-GO
 ```
 
 - قرارداد از قبل وجود داشت و چیزی ساخته نشد: `GET /api/v1/programs/member/{member_id}`، `/readiness`، `/volume` و `GET /api/v1/programs/{program_id}`.
