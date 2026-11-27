@@ -2,6 +2,27 @@
 
 > این فایل **خلاصهٔ جاری برای ادامهٔ کار** است، نه آرشیو گفتگو و نه منبع نهایی وضعیت محصول. پیش از فشرده‌سازی context یا پایان هر کار معنادار، همین snapshot را جایگزین/به‌روز کن؛ تاریخچه را با انباشت transcript طولانی نکن.
 
+## وضعیت جاری — MEM-06 / PWA-35 گیت ایمنی در مسیر عضو (UTC 2026-11-27)
+
+```text
+CURRENT_BRANCH=arena/3c08bfbd-mp (base main@7c4771f)
+MAIN_CI=7c4771f 9/9 pass (run 46074253433)
+MEM-06/PWA-35=PARTIAL/NOT_ACCEPTED؛ BLOCKED نیست (داده موجود بود)
+MEM06_SAFETY_STATES=blocked/needs_review/unknown/clear — چهار متن جدا در مسیر عضو
+MEM06_GATE=safe_to_generate=false ⇒ دکمهٔ شروع غیرفعال + دلیل متنی؛ فهرست حرکات و فرم ثبت پنهان
+EXECUTABLE_RULE=clear + safe_to_generate=true
+NEW_ENDPOINT=no
+STALE_HEX_REMAINING=0
+FILE_REF_FIX=0 (در مخزن) — ارجاع‌های MEM-05 با grep -n بازتولید شدند
+RELEASE=NO-GO
+```
+
+- **نقص بسته‌شده:** `MemberTodayProgram` قبلاً برای `blocked`/`needs_review`/`clear` یک پیام واحد داشت؛ یعنی برنامهٔ ناسازگار هم «قابل اجرا» ارائه می‌شد. `ProgramSafetyPanel` + `isExecutable()` اکنون چهار وضعیت را جدا می‌کند و اجرا را فقط با `clear + safe_to_generate=true` باز می‌کند.
+- **تغییر رفتار آگاهانه:** برنامهٔ `approved` با پرچم `{}`/`unknown` دیگر فهرست حرکات و فرم ثبت را نشان نمی‌دهد (دلیل متنی دارد). این از معیار MEM-06 می‌آید و در شاهد MEM-06 توضیح داده شده.
+- **تست‌ها:** `tests/safetyBadge.test.tsx` ۱۷ pass · `tests/memberTodayProgram.test.tsx` ۹ pass · `tests/setFeedback.test.tsx` ۴ pass · کل vitest ۴۱۶ pass/۱۵ skip · `pytest test_m56_safety_gate.py` ۸ pass · سه mutation قرمز شدند و فایل‌ها بایت‌به‌بایت بازگشتند.
+- **باز:** reviewer مستقل ایمنی (`UNKNOWN`)، اجرای دستگاه/مرورگر، و این‌که مربی هنوز می‌تواند برنامهٔ `blocked` را `approved` کند (تصمیم محصول، خارج از این برش).
+- شاهد: [`MEM-06 current run`](../../evidence/2026-11-27/MEM-06/current-run.md).
+
 ## وضعیت جاری — MEM-05 / PWA-34 ثبت بازخورد ست + تریاژ flake + گزارش STALE (UTC 2026-11-27)
 
 ```text

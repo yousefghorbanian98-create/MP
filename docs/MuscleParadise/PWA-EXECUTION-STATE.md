@@ -18,6 +18,26 @@ LAST_KNOWN_EVIDENCE=evidence/2026-11-27/MEM-03/current-run.md و فایل‌ها
 
 در تعارض، تصمیم scope با ADR/تصمیم مالک، متن acceptance با کارت canonical، رفتار با کد و تست همان مسیر، و status اجرایی با آخرین شاهد پالایش‌شده تعیین می‌شود. Snapshotهای تاریخی، دیاگرام‌ها، screenshotها، artifact package، mock، skipped test و CI روی SHA دیگر acceptance محصول را ثابت نمی‌کنند.
 
+## Latest continuation — MEM-06 / PWA-35 safety gate on the member path
+
+```text
+CURRENT_BRANCH=arena/3c08bfbd-mp (base main@7c4771f; tree identical to main)
+MAIN_CI=7c4771f 9/9 pass (run 46074253433) — release branch checked, not assumed
+MEM-06/PWA-35=PARTIAL/NOT_ACCEPTED (canonical checkbox open) — no independent safety reviewer
+MEM06_SAFETY_STATES=blocked|needs_review|unknown|clear — چهار متن و چهار رنگ جدا در مسیر عضو
+MEM06_GATE=safe_to_generate=false ⇒ «شروع تمرین» disabled + دلیل دیده‌شدنی؛ فهرست حرکات و فرم ثبت رندر نمی‌شود
+EXECUTABLE_RULE=status=="clear" AND safe_to_generate==true
+NEW_ENDPOINT=no — ProgramOut.safety_flags از قبل کل پرچم را به عضو می‌داد
+STALE_HEX_REMAINING=0 — هر دو *.STALE.json با همان تبدیل base64 بازنویسی شدند و گیت همچنان «کهنه» گزارش می‌کند
+FILE_REF_FIX=0 در مخزن (مسیر غلط فقط در گزارش چت بود)؛ ۲ ارجاع MEM-05 با grep -n بازتولید شد
+RELEASE=NO-GO
+```
+
+- **یافتهٔ اصلی:** `MemberTodayProgram` سه وضعیت را به **یک** پیام تبدیل می‌کرد («غربالگری ایمنی این برنامه خالی نیست»). `blocked` هم به‌عنوان برنامهٔ قابل‌اجرا ارائه می‌شد؛ `SafetyBadge` فقط در shell کارکنان بود. حالا `ProgramSafetyPanel` (تازه) تفکیک را به مسیر عضو می‌آورد: `blocked` ⇒ پیام قرمز با نام محدودیت، حرکات مسدود، جایگزین و توصیه؛ `needs_review` ⇒ «نیازمند بازبینی مربی» + یادداشت موتور؛ `unknown`/`{}` ⇒ «غربالگری نشده — نه بی‌خطر»؛ `clear` ⇒ تنها حالتی که «بدون ناسازگاری» می‌گوید.
+- **دروازهٔ اجرا:** در هر سه وضعیت غیرمجاز، `<button disabled>شروع تمرین</button>` با `aria-describedby` به متن دلیل رندر می‌شود و فهرست حرکات/فرم ثبت وجود ندارد؛ دلیل **متن دیده‌شدنی** است، نه tooltip. برای `clear` هیچ دکمهٔ مرده‌ای ساخته نمی‌شود.
+- **دادهٔ ساختگی صفر:** `ProgramOut.safety_flags` (`modules/programs/schemas.py:49`) از قبل `status`، `blocked[]`، `safe_to_generate`، `disclaimer_fa` و `rule_version` را برای عضو برمی‌گرداند، پس نیازی به endpoint تازه یا mock نبود.
+- **شاهد:** [`MEM-06 current run`](../../evidence/2026-11-27/MEM-06/current-run.md) · [`mutation proof`](../../evidence/2026-11-27/MEM-06/mutation-proof.txt) · [`main CI`](../../evidence/2026-11-27/MEM-06/main-ci-7c4771f.txt) · [`file-ref audit`](../../evidence/2026-11-27/MEM-06/file-ref-audit.txt).
+
 ## Latest continuation — MEM-05 / PWA-34 set feedback, CI flake triage, STALE reporting
 
 ```text

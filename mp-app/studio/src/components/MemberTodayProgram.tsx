@@ -11,15 +11,26 @@
  * - «امروز» از روی روزهای برنامه حدس زده نمی‌شود، چون قرارداد تاریخ شروع ندارد؛
  *   همین محدودیت روی صفحه نوشته می‌شود.
  * - نبود برنامه/آمادگی یک حالت تهیِ صادقانه است، نه صفر و نه KPI ساختگی.
+ * - MEM-06: وضعیت ایمنی پنهان یا یکسان‌سازی نمی‌شود. `blocked` / `needs_review` /
+ *   `unknown` / `clear` چهار متن جدا دارند (ProgramSafetyPanel) و فقط `clear` با
+ *   `safe_to_generate=true` برنامه را اجرایی می‌کند؛ در بقیهٔ وضعیت‌ها فهرست
+ *   حرکات و فرم ثبت بازخورد رندر نمی‌شود و دلیلش متن دیده‌شدنی است.
  */
 import type { MemberProgram, ReadinessReport } from "../lib/api";
+import {
+  ProgramSafetyPanel,
+  executionBlockReason,
+  isExecutable,
+} from "./ProgramSafetyPanel";
+import { parseSafety } from "./SafetyBadge";
 import { SetFeedbackForm } from "./SetFeedbackForm";
 import { fetchMe, fetchMemberPrograms, fetchReadiness } from "../lib/api";
 import { formatMemberDateTime } from "../lib/memberAccount";
 import { fa, useApi } from "../lib/useApi";
 
 const PROGRAMS_SOURCE = "منبع: GET /api/v1/programs/member/{member_id}";
-const READINESS_SOURCE = "منبع: GET /api/v1/programs/member/{member_id}/readiness";
+const READINESS_SOURCE =
+  "منبع: GET /api/v1/programs/member/{member_id}/readiness";
 
 const bandLabels: Record<string, string> = {
   ready: "آماده",
@@ -39,7 +50,15 @@ function SourceNote({ text }: { text: string }) {
   return <p className="mt-1 text-[11px] text-ink-dim">{text}</p>;
 }
 
-function Field({ label, value, source }: { label: string; value: string; source: string }) {
+function Field({
+  label,
+  value,
+  source,
+}: {
+  label: string;
+  value: string;
+  source: string;
+}) {
   return (
     <div className="rounded-xl border border-primary/10 px-4 py-3">
       <dt className="text-xs text-ink-dim">{label}</dt>
@@ -52,7 +71,9 @@ function Field({ label, value, source }: { label: string; value: string; source:
 function newestApproved(programs: MemberProgram[]): MemberProgram | null {
   const approved = programs.filter((program) => program.status === "approved");
   if (approved.length === 0) return null;
-  return approved.reduce((best, current) => (current.id > best.id ? current : best));
+  return approved.reduce((best, current) =>
+    current.id > best.id ? current : best,
+  );
 }
 
 function ReadinessBlock({ report }: { report: ReadinessReport }) {
@@ -72,12 +93,15 @@ function ReadinessBlock({ report }: { report: ReadinessReport }) {
   return (
     <div className="rounded-xl border border-primary/10 px-4 py-3">
       <p className="text-sm font-semibold">
-        آمادگی: {readiness.score === null ? "امتیاز محاسبه نشد" : fa(readiness.score)}
+        آمادگی:{" "}
+        {readiness.score === null ? "امتیاز محاسبه نشد" : fa(readiness.score)}
         {" · "}
         {bandLabels[readiness.band] ?? readiness.band}
       </p>
       <p className="mt-1 text-sm text-ink-dim">
-        توصیهٔ سرور: {recommendationLabels[readiness.recommendation] ?? readiness.recommendation}
+        توصیهٔ سرور:{" "}
+        {recommendationLabels[readiness.recommendation] ??
+          readiness.recommendation}
         {readiness.actionable ? " (کاهش حجم پیشنهاد شده)" : ""}
       </p>
       {readiness.missing_signals.length > 0 ? (
@@ -87,11 +111,13 @@ function ReadinessBlock({ report }: { report: ReadinessReport }) {
       ) : null}
       {report.data_counts ? (
         <p className="mt-1 text-xs text-ink-dim">
-          بازخوردهای ثبت‌شده در سرور: {fa(report.data_counts.feedback_rows)} (۷ روز اخیر:{" "}
-          {fa(report.data_counts.sets_last_7_days)})
+          بازخوردهای ثبت‌شده در سرور: {fa(report.data_counts.feedback_rows)} (۷
+          روز اخیر: {fa(report.data_counts.sets_last_7_days)})
         </p>
       ) : null}
-      <SourceNote text={`${READINESS_SOURCE} · نسخهٔ قاعده: ${readiness.rule_version}`} />
+      <SourceNote
+        text={`${READINESS_SOURCE} · نسخهٔ قاعده: ${readiness.rule_version}`}
+      />
     </div>
   );
 }
@@ -100,11 +126,17 @@ export function MemberTodayProgram() {
   const profile = useApi((signal) => fetchMe(undefined, signal), []);
   const memberId = profile.data?.id ?? null;
   const programs = useApi(
-    (signal) => (memberId === null ? Promise.resolve([]) : fetchMemberPrograms(memberId, undefined, signal)),
+    (signal) =>
+      memberId === null
+        ? Promise.resolve([])
+        : fetchMemberPrograms(memberId, undefined, signal),
     [memberId],
   );
   const readiness = useApi(
-    (signal) => (memberId === null ? Promise.resolve(null) : fetchReadiness(memberId, undefined, signal)),
+    (signal) =>
+      memberId === null
+        ? Promise.resolve(null)
+        : fetchReadiness(memberId, undefined, signal),
     [memberId],
   );
 
@@ -149,14 +181,17 @@ export function MemberTodayProgram() {
     // همان دروغِ «برنامه‌ای ندارید» است، پس fail-closed با پیام صریح.
     return (
       <p role="alert" className="text-sm text-danger">
-        پاسخ سرور با قرارداد فهرست برنامه نمی‌خواند؛ هیچ برنامه‌ای نمایش داده نمی‌شود.
+        پاسخ سرور با قرارداد فهرست برنامه نمی‌خواند؛ هیچ برنامه‌ای نمایش داده
+        نمی‌شود.
       </p>
     );
   }
 
   const all = Array.isArray(programs.data) ? programs.data : [];
   const program = newestApproved(all);
-  const pendingCount = all.filter((entry) => entry.status !== "approved").length;
+  const pendingCount = all.filter(
+    (entry) => entry.status !== "approved",
+  ).length;
 
   if (!program) {
     return (
@@ -165,18 +200,27 @@ export function MemberTodayProgram() {
           برنامهٔ تأییدشده
         </h3>
         <p role="status" className="text-sm leading-7 text-ink-dim">
-          هیچ برنامهٔ تأییدشده‌ای برای شما از سرور دریافت نشد. برنامهٔ تمرین، آمادگی، کالری یا عدد دیگری
-          نمایش داده نمی‌شود تا مربی برنامه را تأیید کند.
+          هیچ برنامهٔ تأییدشده‌ای برای شما از سرور دریافت نشد. برنامهٔ تمرین،
+          آمادگی، کالری یا عدد دیگری نمایش داده نمی‌شود تا مربی برنامه را تأیید
+          کند.
         </p>
         {pendingCount > 0 ? (
           <div className="rounded-xl border border-primary/10 px-4 py-3">
-            <p className="text-sm font-semibold">برنامه‌های در انتظار تأیید: {fa(pendingCount)}</p>
-            <SourceNote text={`${PROGRAMS_SOURCE} · وضعیت‌های draft/rejected برنامهٔ اجرایی نیستند`} />
+            <p className="text-sm font-semibold">
+              برنامه‌های در انتظار تأیید: {fa(pendingCount)}
+            </p>
+            <SourceNote
+              text={`${PROGRAMS_SOURCE} · وضعیت‌های draft/rejected برنامهٔ اجرایی نیستند`}
+            />
           </div>
         ) : null}
       </section>
     );
   }
+
+  // MEM-06: تصمیم اجرا فقط از پرچم ایمنی سرور می‌آید، نه از وضعیت گردش‌کار برنامه.
+  const safetyFlags = parseSafety(program.safety_flags);
+  const executable = isExecutable(safetyFlags);
 
   return (
     <section aria-labelledby="member-today-title" className="space-y-3">
@@ -185,72 +229,117 @@ export function MemberTodayProgram() {
           برنامهٔ تأییدشدهٔ شما
         </h3>
         <p className="mt-1 text-xs text-ink-dim">
-          تاریخ شروع برنامه در API ثبت نمی‌شود؛ پس «امروز» از روی شمارهٔ هفته/روز حدس زده نمی‌شود.
+          تاریخ شروع برنامه در API ثبت نمی‌شود؛ پس «امروز» از روی شمارهٔ هفته/روز
+          حدس زده نمی‌شود.
         </p>
       </div>
 
       <dl className="grid gap-3 sm:grid-cols-2">
-        <Field label="نسخهٔ موتور برنامه" value={program.engine_version} source={PROGRAMS_SOURCE} />
         <Field
-          label="تاریخ تأیید مربی"
-          value={program.approved_at ? formatMemberDateTime(program.approved_at) : "تأیید نشده (تاریخ ثبت نشده)"}
+          label="نسخهٔ موتور برنامه"
+          value={program.engine_version}
           source={PROGRAMS_SOURCE}
         />
-        <Field label="هدف برنامه" value={program.goal} source={PROGRAMS_SOURCE} />
-        <Field label="وضعیت گردش‌کار" value={program.status} source={PROGRAMS_SOURCE} />
+        <Field
+          label="تاریخ تأیید مربی"
+          value={
+            program.approved_at
+              ? formatMemberDateTime(program.approved_at)
+              : "تأیید نشده (تاریخ ثبت نشده)"
+          }
+          source={PROGRAMS_SOURCE}
+        />
+        <Field
+          label="هدف برنامه"
+          value={program.goal}
+          source={PROGRAMS_SOURCE}
+        />
+        <Field
+          label="وضعیت گردش‌کار"
+          value={program.status}
+          source={PROGRAMS_SOURCE}
+        />
       </dl>
 
-      {program.safety_flags && program.safety_flags !== "{}" ? (
-        <p className="rounded-xl border border-gold/30 px-4 py-3 text-xs text-ink-dim">
-          غربالگری ایمنی این برنامه خالی نیست؛ پیش از اجرا با مربی مرور کنید.
-        </p>
-      ) : (
-        <p className="text-[11px] text-ink-dim">
-          غربالگری ایمنی برای این برنامه ثبت نشده است ({} یعنی انجام‌نشده، نه «بی‌خطر»).
-        </p>
-      )}
+      <ProgramSafetyPanel flags={safetyFlags} />
 
       {readiness.data ? <ReadinessBlock report={readiness.data} /> : null}
 
-      <SetFeedbackForm
-        memberId={memberId ?? program.member_id}
-        program={program}
-        onRecorded={() => readiness.reload()}
-      />
+      {executable ? null : (
+        <div className="rounded-xl border border-danger/30 bg-danger/5 px-4 py-3">
+          <button
+            type="button"
+            disabled
+            aria-describedby="member-start-blocked-reason"
+            className="rounded-xl bg-surface px-4 py-2 text-sm font-semibold text-ink-dim opacity-70"
+          >
+            شروع تمرین
+          </button>
+          <p
+            id="member-start-blocked-reason"
+            className="mt-2 text-xs leading-6 text-ink-dim"
+          >
+            دلیل غیرفعال بودن دکمه: {executionBlockReason(safetyFlags)}
+          </p>
+        </div>
+      )}
+
+      {executable ? (
+        <SetFeedbackForm
+          memberId={memberId ?? program.member_id}
+          program={program}
+          onRecorded={() => readiness.reload()}
+        />
+      ) : null}
       {readiness.error ? (
         <p role="alert" className="text-sm text-danger">
           آمادگی از سرور دریافت نشد؛ امتیازی نمایش داده نمی‌شود.
         </p>
       ) : null}
 
-      <div className="space-y-3">
-        {program.weeks.length === 0 ? (
-          <p role="status" className="text-sm text-ink-dim">
-            سرور برای این برنامه هیچ هفته‌ای برنگرداند.
-          </p>
-        ) : (
-          program.weeks.map((week) => (
-            <article key={week.id} className="rounded-xl border border-primary/10 px-4 py-3">
-              <h4 className="text-sm font-semibold">
-                هفتهٔ {fa(week.week_number)} — {week.focus}
-              </h4>
-              {week.exercises.length === 0 ? (
-                <p className="mt-1 text-xs text-ink-dim">سرور برای این هفته حرکتی برنگرداند.</p>
-              ) : (
-                <ul className="mt-2 space-y-1 text-xs text-ink-dim">
-                  {week.exercises.map((exercise) => (
-                    <li key={exercise.id}>
-                      روز {fa(exercise.day)} · حرکت #{fa(exercise.exercise_id)} · {fa(exercise.sets)} ست ×{" "}
-                      {exercise.reps} تکرار · {fa(exercise.load_pct)}٪ بار · استراحت {fa(exercise.rest_seconds)} ثانیه
-                    </li>
-                  ))}
-                </ul>
-              )}
-              <SourceNote text={PROGRAMS_SOURCE} />
-            </article>
-          ))
-        )}
-      </div>
+      {executable ? (
+        <div className="space-y-3">
+          {program.weeks.length === 0 ? (
+            <p role="status" className="text-sm text-ink-dim">
+              سرور برای این برنامه هیچ هفته‌ای برنگرداند.
+            </p>
+          ) : (
+            program.weeks.map((week) => (
+              <article
+                key={week.id}
+                className="rounded-xl border border-primary/10 px-4 py-3"
+              >
+                <h4 className="text-sm font-semibold">
+                  هفتهٔ {fa(week.week_number)} — {week.focus}
+                </h4>
+                {week.exercises.length === 0 ? (
+                  <p className="mt-1 text-xs text-ink-dim">
+                    سرور برای این هفته حرکتی برنگرداند.
+                  </p>
+                ) : (
+                  <ul className="mt-2 space-y-1 text-xs text-ink-dim">
+                    {week.exercises.map((exercise) => (
+                      <li key={exercise.id}>
+                        روز {fa(exercise.day)} · حرکت #
+                        {fa(exercise.exercise_id)} · {fa(exercise.sets)} ست ×{" "}
+                        {exercise.reps} تکرار · {fa(exercise.load_pct)}٪ بار ·
+                        استراحت {fa(exercise.rest_seconds)} ثانیه
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                <SourceNote text={PROGRAMS_SOURCE} />
+              </article>
+            ))
+          )}
+        </div>
+      ) : (
+        <p className="text-xs leading-6 text-ink-dim">
+          فهرست حرکات این برنامه نمایش داده نمی‌شود، چون برنامه در وضعیت اجرایی
+          نیست؛ دلیلش در کادر ایمنی بالا نوشته شده است. این پنهان‌سازی برای
+          جلوگیری از اجرای برنامهٔ ناسازگار است، نه ثبت آن به‌عنوان «بررسی‌شده».
+        </p>
+      )}
     </section>
   );
 }

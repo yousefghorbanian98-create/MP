@@ -2,6 +2,24 @@
 
 > هشدار انتقال ۲۰۲۶-۱۱-۱۸: بخش‌های بعدی قدیمی snapshot هستند و branch/toolchain/status آن‌ها جاری فرض نشود. وضعیت تازهٔ Motion/PWA در این بخش و [handoff](../../docs/MuscleParadise/SESSION_HANDOFF.md) آمده؛ کارهای قدیمی M63–M99، M100–M106 و M107+ فقط پس از تطبیق با TODO و گیت‌های جاری ادامه یابند.
 
+## Current follow-up — MEM-06 / PWA-35 گیت ایمنی مسیر عضو (2026-11-27 UTC)
+
+STATE_LAST_UPDATED=2026-11-27T23:05:00Z
+CURRENT_BRANCH=arena/3c08bfbd-mp (base main@7c4771f؛ درختِ شاخه == درختِ main)
+MAIN_CI=7c4771f 9/9 pass (run 46074253433) — شاهد: evidence/2026-11-27/MEM-06/main-ci-7c4771f.txt
+MEM-06/PWA-35=PARTIAL/NOT_ACCEPTED — BLOCKED نیست
+MEM06_FINDING=MemberTodayProgram.tsx:203-211 چهار→یک وضعیت ایمنی را یکی می‌کرد؛ blocked به‌عنوان برنامهٔ اجرایی ارائه می‌شد
+MEM06_SAFETY_STATES=blocked|needs_review|unknown|clear با چهار متن/رنگ جدا (ProgramSafetyPanel.tsx تازه)
+MEM06_GATE=safe_to_generate!==true ⇒ «شروع تمرین» disabled + دلیل متنی دیده‌شدنی؛ weeks و SetFeedbackForm رندر نمی‌شوند
+EXECUTABLE_RULE=status=="clear" && safe_to_generate===true
+MEM06_NEW_ENDPOINT=no (ProgramOut.safety_flags از قبل کامل بود)
+MEM06_TESTS=vitest safetyBadge 17 · memberTodayProgram 9 · setFeedback 4 · کل 416 pass/15 skip؛ pytest m56 8 pass
+MEM06_MUTATION=isExecutable→true (۴ تست قرمز)، یکسان‌سازی blocked/unknown (۱ تست قرمز)، safety_flags→"{}" (۸ تست پایتست قرمز)؛ همه بازگردانده شد
+STALE_HEX_REMAINING=0 (INV-02-v1 و INV-03-v1، ۸ مقدار ۶۴-hex → sha256_b64؛ گیت همچنان ۳ منبع کهنه گزارش می‌کند)
+FILE_REF_FIX=0 در مخزن؛ مسیر غلط (programs/services.py) فقط در گزارش چت بود — شاهد: evidence/2026-11-27/MEM-06/file-ref-audit.txt
+BEHAVIOR_CHANGE=برنامهٔ approved با پرچم {} / unknown دیگر برای عضو اجرایی نمایش داده نمی‌شود (قابل بازگشت با یک شرط)
+RELEASE=NO-GO
+
 ## Current follow-up — MEM-05 / PWA-34 + تریاژ flake + گزارش STALE (2026-11-27 UTC)
 
 STATE_LAST_UPDATED=2026-11-27T22:20:00Z

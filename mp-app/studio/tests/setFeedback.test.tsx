@@ -43,7 +43,18 @@ const program = {
   reject_reason: "",
   approved_at: "2026-11-20T09:30:00",
   approved_by: 9,
-  safety_flags: "{}",
+  // MEM-06: فرم ثبت ست فقط برای برنامه‌ای رندر می‌شود که گیت ایمنی آن را اجرایی کرده
+  // باشد (`clear` + `safe_to_generate=true`). پس فیکسچر باید همان پرچم واقعی را داشته باشد.
+  safety_flags: JSON.stringify({
+    status: "clear",
+    headline: "برنامه با محدودیت‌های ثبت‌شده ناسازگاری ندارد",
+    blocked: [],
+    high_risk_patterns: [],
+    notes: [],
+    safe_to_generate: true,
+    disclaimer_fa: "این غربالگری جای تشخیص پزشک را نمی‌گیرد.",
+    rule_version: "screening-1.0",
+  }),
   weeks: [{ id: 71, week_number: 1, focus: "پایه", exercises: [] }],
 };
 

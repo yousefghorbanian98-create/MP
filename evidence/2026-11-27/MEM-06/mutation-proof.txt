@@ -1,0 +1,31 @@
+# MEM-06 — اثبات اینکه تست‌ها واقعاً گیت را می‌سنجند (mutation)
+
+## A) `isExecutable` همیشه true شود (دروازه باز شود)
+    308|     expect(screen.queryByText(/ست ×/)).toBeNull();
+ FAIL  tests/memberTodayProgram.test.tsx > member safety gate (MEM-06) > unknown ({}): says 'not screened', never 'safe', and blocks execution
+   ست ×
+    318|     expect(screen.queryByText(/ست ×/)).toBeNull();
+ FAIL  tests/memberTodayProgram.test.tsx > member safety gate (MEM-06) > a corrupt safety payload fails closed (not screened), not open
+   ست ×
+    338|     expect(screen.queryByText(/ست ×/)).toBeNull();
+      Tests  4 failed | 5 passed (9)
+
+## B) وضعیت blocked با متن unknown یکی شود (همان باگ قبلی: یک پیام برای همه)
+   ✓ SafetyBadge > shows a blocked verdict distinctly 4ms
+   × ProgramSafetyPanel — four statuses, four different texts (MEM-06) > renders four pairwise-different bodies, each with its own marker 19ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  tests/safetyBadge.test.tsx > ProgramSafetyPanel — four statuses, four different texts (MEM-06) > renders four pairwise-different bodies, each with its own marker
+      Tests  1 failed | 16 passed (17)
+
+## C) پرچم ایمنی هنگام ذخیره به «{}» تبدیل شود (مسیر عضو پرچم را از دست بدهد)
+FAILED tests/integration/test_m56_safety_gate.py::test_unmapped_exercise_needs_review_instead_of_clear
+FAILED tests/integration/test_m56_safety_gate.py::test_safety_flags_always_persist_valid_json
+FAILED tests/integration/test_m56_safety_gate.py::test_malformed_constraints_do_not_crash
+FAILED tests/integration/test_m56_safety_gate.py::test_member_route_returns_the_blocked_verdict
+FAILED tests/integration/test_m56_safety_gate.py::test_member_route_does_not_downgrade_unknown_to_clear
+8 failed, 1 warning in 1.32s
+
+## بازگردانی و تأیید بایت‌به‌بایت
+ProgramSafetyPanel.tsx restored
+service.py restored
+0

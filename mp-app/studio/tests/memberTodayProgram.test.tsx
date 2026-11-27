@@ -6,6 +6,8 @@
  * - فقط برنامهٔ `approved` نمایش داده می‌شود؛ draft/rejected برنامهٔ اجرایی نیست.
  * - هیچ عددی بدون منبع رندر نمی‌شود و حالت تهی، صفر جعلی نمی‌سازد.
  * - خطای آمادگی، امتیاز نمایش نمی‌دهد (fail-closed).
+ * - MEM-06: وضعیت ایمنی در مسیر عضو واقعاً تفکیک می‌شود؛ چهار وضعیت چهار متن
+ *   دارند و فقط `clear` + `safe_to_generate=true` فهرست حرکات و فرم ثبت را باز می‌کند.
  */
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -211,5 +213,129 @@ describe("member today program (MEM-04 / PWA-33)", () => {
 
     expect((await screen.findByRole("alert")).textContent).toContain("هیچ برنامه‌ای نمایش داده نمی‌شود");
     expect(screen.queryByText("rules-2.3.0")).toBeNull();
+  });
+});
+
+/**
+ * MEM-06 — دروازهٔ ایمنی روی مسیر عضو.
+ *
+ * ادعای پذیرش: «هیچ safety flag صرفاً برای ثبت یا warning دور زده نشود». بنابراین
+ * تست باید ثابت کند که هر چهار وضعیت متن متفاوت دارند و برنامهٔ غیرمجاز **قابل اجرا
+ * ارائه نمی‌شود** (فهرست حرکات و فرم ثبت رندر نمی‌شوند، دکمهٔ شروع غیرفعال است و
+ * دلیلش متن دیده‌شدنی است).
+ */
+const blockedFlags = JSON.stringify({
+  status: "blocked",
+  headline: "۱ محدودیت با برنامهٔ پیشنهادی ناسازگار است",
+  blocked: [
+    {
+      constraint: "knee_injury",
+      label_fa: "آسیب زانو",
+      blocked_exercises: ["squat", "lunge"],
+      alternatives: ["leg_press_light"],
+      advice_fa: "از اسکوات عمیق پرهیز شود.",
+    },
+  ],
+  high_risk_patterns: [],
+  notes: [],
+  safe_to_generate: false,
+  disclaimer_fa: "این غربالگری جای تشخیص پزشک را نمی‌گیرد.",
+  rule_version: "screening-1.0",
+});
+
+const needsReviewFlags = JSON.stringify({
+  status: "needs_review",
+  headline: "تأییدیهٔ پزشک ثبت نشده — نیازمند بازبینی",
+  blocked: [],
+  high_risk_patterns: [],
+  notes: ["تأییدیهٔ پزشک ثبت نشده است."],
+  safe_to_generate: false,
+  disclaimer_fa: "این غربالگری جای تشخیص پزشک را نمی‌گیرد.",
+  rule_version: "screening-1.0",
+});
+
+const clearFlags = JSON.stringify({
+  status: "clear",
+  headline: "برنامه با محدودیت‌های ثبت‌شده ناسازگاری ندارد",
+  blocked: [],
+  high_risk_patterns: [],
+  notes: [],
+  safe_to_generate: true,
+  disclaimer_fa: "این غربالگری جای تشخیص پزشک را نمی‌گیرد.",
+  rule_version: "screening-1.0",
+});
+
+function renderWithSafety(flags: string, program: Record<string, unknown> = {}) {
+  installApi((path) => {
+    if (path === "/api/v1/members/me") return reply(200, memberProfile);
+    if (path === "/api/v1/programs/member/17") {
+      return reply(200, [{ ...approvedProgram, safety_flags: flags, ...program }]);
+    }
+    if (path === "/api/v1/programs/member/17/readiness") return reply(200, readinessReady);
+    throw new Error(`unexpected API path: ${path}`);
+  });
+  return render(<MemberTodayProgram />);
+}
+
+const startButton = () => screen.queryByRole("button", { name: "شروع تمرین" }) as HTMLButtonElement | null;
+
+describe("member safety gate (MEM-06)", () => {
+  it("blocked: red alert with the constraint, no exercises, disabled start with a visible reason", async () => {
+    renderWithSafety(blockedFlags);
+
+    const alert = await screen.findByRole("alert");
+    expect(alert.textContent).toContain("این برنامه برای شما ناسازگار است");
+    expect(alert.textContent).toContain("آسیب زانو");
+    expect(alert.textContent).toContain("squat");
+    expect(alert.textContent).toContain("leg_press_light");
+    // برنامه به‌عنوان «قابل اجرا» ارائه نمی‌شود.
+    expect(screen.queryByText(/ست ×/)).toBeNull();
+    expect(screen.queryByText(/هفتهٔ/)).toBeNull();
+    expect(screen.queryByRole("button", { name: /ثبت بازخورد|ثبت/ })).toBeNull();
+    // دکمهٔ شروع وجود دارد ولی غیرفعال است و دلیلش متن دیده‌شدنی است، نه tooltip.
+    expect(startButton()?.disabled).toBe(true);
+    expect(screen.getByText(/دلیل غیرفعال بودن دکمه:/).textContent).toContain("ناسازگار");
+    // «بی‌خطر» هرگز برای برنامهٔ blocked گفته نمی‌شود.
+    expect(screen.queryByText(/بدون ناسازگاری با محدودیت‌های ثبت‌شده/)).toBeNull();
+  });
+
+  it("needs_review: different text, still not executable", async () => {
+    renderWithSafety(needsReviewFlags);
+
+    expect((await screen.findAllByText(/نیازمند بازبینی مربی/)).length).toBeGreaterThan(0);
+    expect(screen.queryByText(/این برنامه برای شما ناسازگار است/)).toBeNull();
+    expect(screen.queryByText(/بدون ناسازگاری با محدودیت‌های ثبت‌شده/)).toBeNull();
+    expect(screen.queryByText(/ست ×/)).toBeNull();
+    expect(startButton()?.disabled).toBe(true);
+    expect(screen.getByText(/دلیل غیرفعال بودن دکمه:/).textContent).toContain("بازبینی");
+  });
+
+  it("unknown ({}): says 'not screened', never 'safe', and blocks execution", async () => {
+    renderWithSafety("{}");
+
+    expect(await screen.findByText(/غربالگری نشده — نه «بی‌خطر»/)).toBeTruthy();
+    expect(screen.queryByText(/بدون ناسازگاری/)).toBeNull();
+    expect(screen.queryByText(/ست ×/)).toBeNull();
+    expect(startButton()?.disabled).toBe(true);
+    expect(screen.getByText(/دلیل غیرفعال بودن دکمه:/).textContent).toContain("انجام نشده");
+  });
+
+  it("clear: the only status that renders the plan, with no dead start button", async () => {
+    renderWithSafety(clearFlags);
+
+    expect(await screen.findByText(/بدون ناسازگاری با محدودیت‌های ثبت‌شده/)).toBeTruthy();
+    // فهرست حرکات از سرور نمایش داده می‌شود (قابل اجرا).
+    expect(await screen.findByText(/ست ×/)).toBeTruthy();
+    expect(screen.getByText(/هفتهٔ/)).toBeTruthy();
+    // هیچ دکمهٔ شروع غیرفعالی برای برنامهٔ مجاز ساخته نمی‌شود: کنترل مرده نداریم.
+    expect(startButton()).toBeNull();
+  });
+
+  it("a corrupt safety payload fails closed (not screened), not open", async () => {
+    renderWithSafety("{not-json");
+
+    expect(await screen.findByText(/غربالگری نشده — نه «بی‌خطر»/)).toBeTruthy();
+    expect(screen.queryByText(/ست ×/)).toBeNull();
+    expect(startButton()?.disabled).toBe(true);
   });
 });

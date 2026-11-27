@@ -4,10 +4,10 @@
     "branch": "HEAD",
     "dirty": false,
     "sources": {
-      "backend/api/routes.json": "7f0333dfb92a5bb56514b7e003cc78370fc7e8fabe3a9a8b5342ccaab9a84cf8",
-      "studio/src/lib/roleNav.ts": "650ff74343af6e25010f6a07bab4de477d2ffefcee94be3923a200ed05d53220",
-      "studio/src/lib/navigation.ts": "71fa84e7d3d0ca190e3a79ab91cb43beff7d2b8743ccc71a598b6a3722b73172",
-      "studio/src/stores/appStore.ts": "bb10aa017b194cf1f6367153311b7fb9b2db2997f0b2f2de76182c0ecb663f18"
+      "backend/api/routes.json": "sha256_b64:fwMz37kqW7VlFLfgA8x4Nw_H6Pq-OpqLU0LMqrmoTPg",
+      "studio/src/lib/roleNav.ts": "sha256_b64:ZQ_3Q0OvbiUBD2oHurTeR30v_vzulL45I6IA7QXVMiA",
+      "studio/src/lib/navigation.ts": "sha256_b64:cfqE59PQyhkOOnmrkctDvv99K4dDzMcaWYtqNyK3MXI",
+      "studio/src/stores/appStore.ts": "sha256_b64:uxCqAXsZTPH2NnFTMRt_ubLbKZfwsvLedhgsDstmPxg"
     },
     "counts": {
       "pages": 12,
