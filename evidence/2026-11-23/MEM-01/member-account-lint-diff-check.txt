@@ -1,0 +1,13 @@
+Run 1 (before evidence/docs additions), repo root:
+  git diff --check
+  exit 0
+
+Run 2 for modified Python integration tests:
+  /tmp/mp-integration-venv/bin/ruff check mp-app/backend/tests/integration/test_m46_whoami.py mp-app/backend/tests/integration/test_ownership.py
+  All checks passed!
+
+Run 3, Studio changed-file ESLint:
+  npx eslint src/App.tsx src/lib/api.ts src/lib/memberAccount.ts src/pages/MemberAccount.tsx tests/memberAccount.test.ts tests/memberAccountPage.test.tsx tests/api.test.ts tests/authFlow.test.tsx
+  exit 0, no diagnostics.
+
+A fresh `git diff --check` after the new docs is still required; see the final-run status in the handoff. No claim that this evidence folder is raw machine output beyond the command/result records above.

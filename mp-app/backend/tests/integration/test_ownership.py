@@ -56,7 +56,8 @@ def _user_headers(client, role: str, member_phone: str | None = None) -> tuple[d
     return {"Authorization": f"Bearer {token}"}, mid
 
 
-_user_headers.counter = itertools.count(int(__import__("time").time() * 1000) % 10**8)
+# هر تست DB موقت جداگانه دارد؛ شناسهٔ ثابت اعداد، اجرای fixture را قابل‌تکرار می‌کند.
+_user_headers.counter = itertools.count(100_000)
 
 
 def test_member_cannot_read_other_members_data(client):
@@ -129,11 +130,12 @@ def test_member_reads_own_data(client):
     """عضو به دادهٔ خودش (نتایج پیکرسنجی، سوابق، کیف پول) دسترسی دارد."""
     staff, _ = _user_headers(client, "manager")
     h, mid = _user_headers(client, "member", member_phone="09122220001")
-    client.post(
-        "/api/v1/memberships" if False else "/api/v1/members/memberships",
+    created_membership = client.post(
+        "/api/v1/members/memberships",
         json={"member_id": mid, "plan_name": "ماهانه", "duration_days": 30, "price_rial": 100000},
         headers=staff,
     )
+    assert created_membership.status_code == 200
     client.post(
         "/api/v1/assessments/jp7",
         json={
@@ -158,8 +160,16 @@ def test_member_reads_own_data(client):
         headers=staff,
     )
 
+    me = client.get("/api/v1/members/me", headers=h)
+    assert me.status_code == 200
+    assert me.json()["role"] == "member"
+    assert me.json()["id"] == mid
+    assert me.json()["constraints"] == "[]"
+
     assert client.get(f"/api/v1/members/{mid}", headers=h).status_code == 200
-    assert client.get(f"/api/v1/members/{mid}/memberships", headers=h).status_code == 200
+    own_history = client.get(f"/api/v1/members/{mid}/memberships", headers=h)
+    assert own_history.status_code == 200
+    assert own_history.json() == [created_membership.json()]
     assert client.get(f"/api/v1/assessments/member/{mid}", headers=h).status_code == 200
     assert client.get(f"/api/v1/programs/member/{mid}", headers=h).status_code == 200
     assert client.get(f"/api/v1/payments/wallet/{mid}", headers=h).status_code == 200
@@ -226,7 +236,7 @@ def test_member_checkin_only_self(client):
         json={"phone": "09124440001", "full_name": "قربانی", "gender": "male"},
         headers=staff,
     ).json()
-    h, mid = _user_headers(client, "member", member_phone="09124440002")
+    h, _mid = _user_headers(client, "member", member_phone="09124440002")
     # چک‌این به‌جای دیگری
     r = client.post("/api/v1/face/checkin", json={"member_id": b["id"], "method": "qr"}, headers=h)
     assert r.status_code == 403
@@ -243,6 +253,22 @@ def test_member_checkin_only_self(client):
     # حذف چهرهٔ دیگری
     r3 = client.delete(f"/api/v1/face/enroll/{b['id']}", headers=h)
     assert r3.status_code == 403
+
+
+def test_anonymous_cannot_read_sensitive_member_or_payment_routes(client):
+    """مسیرهای مالکیت/مالی قبل از هر lookup برای کاربر ناشناس ۴۰۱ می‌دهند."""
+    sensitive = [
+        ("GET", "/api/v1/members/1", None),
+        ("GET", "/api/v1/members/1/memberships", None),
+        ("GET", "/api/v1/assessments/member/1", None),
+        ("GET", "/api/v1/programs/member/1", None),
+        ("GET", "/api/v1/payments/invoice/1", None),
+        ("GET", "/api/v1/payments/wallet/1", None),
+        ("POST", "/api/v1/payments/1/start", {}),
+    ]
+    for method, path, payload in sensitive:
+        response = client.request(method, path, json=payload)
+        assert response.status_code == 401, f"anonymous {method} {path} → {response.status_code}"
 
 
 def test_staff_accesses_all(client):

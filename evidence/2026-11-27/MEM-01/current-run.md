@@ -1,0 +1,12 @@
+# MEM-01 current run — 2026-11-27 UTC
+
+- Branch: `arena/5e0f64cf-mp`; source HEAD under test: `5828c94c9d875fa5a4c58740611bf800324649f8`.
+- Browser/device availability: `BROWSER_AVAILABLE=no — libnspr4.so/libnss3.so missing (apt/npm verified)`. No Chromium/browser assertions were run in this turn. The accepted alternative was the existing live-contract Vitest job against a locally running API, plus the backend TestClient flow already recorded in `evidence/2026-11-23/MEM-01/`.
+- Backend: started Uvicorn locally on `127.0.0.1:8000` using a temporary SQLite DB at `/tmp/mp-live-contract-mem01-5828c94.sqlite3`; `/health` returned HTTP 200. Seeded synthetic manager/member and 17 synthetic exercise rows. No production data or external service was used.
+- Authentication: generated a short-lived synthetic **fixture token** for the seeded manager. Its value was not printed or written to evidence. The live run log is checked for and redacts that fixture token if present.
+- Command: from `mp-app/studio`, `npm test -- tests/liveContract.test.ts`, with `MP_API_BASE=http://127.0.0.1:8000` and `MP_TOKEN=<fixture token>`.
+- Result: exit code 0; **1 Vitest file passed, 9 tests passed, 0 failed, 0 skipped**. Raw test output: `live-contract.raw.txt`; exit status: `live-contract.exit-code.txt`.
+- Scope caveat: this existing live-contract suite verifies the listed Studio API contracts against a real local backend, but it does not directly exercise the new `/members/me` → owner-scoped memberships account page flow. MEM-01 remains `PARTIAL/NOT_ACCEPTED` until its canonical acceptance criteria are met.
+- The live-contract API process was local-only. No push/CI result is implied by this local test.
+- Focused validation reran on the local source: Studio **5 files / 33 passed**; backend TestClient ownership/whoami **9 passed, 1 deprecation warning**. Logs: `studio-focused-tests.txt`, `backend-focused-tests.txt`.
+- Documentation gate after updating the handoff/tracker passed: **38 Markdown / 607 local links / 15 Mermaid** (`docs-gate.txt`). Staged MEM-01 allowlist whitespace check passed; at that checkpoint the explicit slice contained **40 paths** out of **100 total staged paths**, with unrelated staged entries excluded from the MEM-01 commit.

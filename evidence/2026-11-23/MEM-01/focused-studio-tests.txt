@@ -1,0 +1,13 @@
+
+> mp-studio@0.1.0 test
+> vitest run --run tests/authFlow.test.tsx tests/navigation.test.tsx --reporter=dot
+
+
+ RUN  v3.2.7 /home/user/MP/mp-app/studio
+
+·············
+
+ Test Files  2 passed (2)
+      Tests  13 passed (13)
+   Start at  13:50:50
+   Duration  4.93s (transform 588ms, setup 38ms, collect 2.96s, tests 597ms, environment 803ms, prepare 237ms)

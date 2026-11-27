@@ -1,0 +1,3 @@
+MEM-01 headless browser smoke — NOT RUN
+
+Attempted Chromium + Playwright against the local Vite preview using only synthetic member identity data. The launcher failed before creating a browser page: `/tmp/chromium` exited with status 127 because the runtime library `libnspr4.so` is unavailable. No page navigation or browser assertions occurred. This is an environment/tool limitation, not an application pass or failure. Do not infer physical-device, browser, or OS acceptance from this attempt.

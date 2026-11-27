@@ -1,0 +1,19 @@
+Command (cwd: mp-app/studio):
+  npm run build
+
+> mp-studio@0.1.0 build
+> tsc -b && vite build
+
+vite v5.4.21 building for production...
+transforming...
+✓ 4048 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                               1.32 kB │ gzip:   0.60 kB
+dist/assets/vazirmatn-latin-ext-wght-normal-tDTa1Fj6.woff2   21.86 kB
+dist/assets/vazirmatn-latin-wght-normal-BFexNX-K.woff2       34.52 kB
+dist/assets/vazirmatn-arabic-wght-normal-Cafbb7Zc.woff2      46.31 kB
+dist/assets/index-CTKe0EdD.js                               206.69 kB │ gzip:  60.17 kB
+✓ built in 11.55s
+
+Result: exit 0. Vite's normal full asset list is abbreviated here; this build is uncommitted dirty-worktree evidence, not CI or release acceptance.

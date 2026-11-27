@@ -19,6 +19,7 @@ import { Shop } from "./pages/Shop";
 import { useAppStore, type PageId } from "./stores/appStore";
 import { AuthProvider, useAuth } from "./auth/AuthContext";
 import { Login } from "./pages/Login";
+import { MemberAccount } from "./pages/MemberAccount";
 import { canSeePage, parseRole } from "./lib/roleNav";
 import {
   canonicalRouteHref,
@@ -26,6 +27,7 @@ import {
   isStaffRole,
   loginPath,
   navigateTo,
+  type MemberPage,
   parseStudioRoute,
   postLoginPath,
   useStudioLocation,
@@ -99,7 +101,7 @@ function AppContent() {
 
   if (route.type === "member") {
     if (role !== "member") return <AccessDenied />;
-    return <MemberRoutePending onSignOut={() => void signOut()} />;
+    return <MemberShell page={route.page} onSignOut={() => void signOut()} />;
   }
 
   if (!isStaffRole(role)) return <AccessDenied />;
@@ -166,17 +168,62 @@ function NotFound() {
   );
 }
 
-/** Placeholder routes do not load member data until the dedicated shell is implemented. */
-function MemberRoutePending({ onSignOut }: { onSignOut: () => void }) {
+const memberNavigation: { page: MemberPage; href: string; label: string }[] = [
+  { page: "home", href: "/member", label: "خانه" },
+  { page: "today", href: "/member/today", label: "امروز" },
+];
+
+/** Member account uses its own authenticated API vertical slice; today stays an honest placeholder. */
+function MemberShell({ page, onSignOut }: { page: MemberPage; onSignOut: () => void }) {
+  const title = page === "today" ? "امروز" : "خانهٔ عضو";
+  const description = "برنامهٔ تمرین امروز هنوز به این پوسته متصل نشده است؛ دادهٔ تمرینی ساختگی نمایش داده نمی‌شود.";
+
   return (
-    <main dir="rtl" className="flex min-h-screen flex-col items-center justify-center gap-4 p-5 text-center">
-      <h1 className="text-xl font-bold">فضای عضو</h1>
-      <p className="max-w-lg text-sm text-ink-dim">
-        مسیر عضو تعریف شده است؛ پوسته و تجربهٔ کامل عضو در این مرحله هنوز پیاده‌سازی نشده است.
-      </p>
-      <button type="button" className="btn-ghost rounded-xl px-4 py-2" onClick={onSignOut}>
-        خروج از حساب
-      </button>
+    <main dir="rtl" className="min-h-screen px-4 py-6 sm:px-6">
+      <div className="mx-auto flex w-full max-w-3xl flex-col gap-5">
+        <header className="glass-card flex flex-wrap items-center justify-between gap-4 p-5">
+          <div>
+            <p className="text-xs font-semibold text-accent-soft">Muscle Paradise</p>
+            <h1 className="mt-1 text-xl font-bold">فضای عضو</h1>
+          </div>
+          <button type="button" className="btn-ghost rounded-xl px-4 py-2 text-sm" onClick={onSignOut}>
+            خروج از حساب
+          </button>
+        </header>
+
+        <nav aria-label="ناوبری عضو" className="glass-card flex gap-2 p-2">
+          {memberNavigation.map((item) => (
+            <a
+              key={item.page}
+              href={item.href}
+              aria-current={page === item.page ? "page" : undefined}
+              onClick={(event) => {
+                if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+                event.preventDefault();
+                if (page !== item.page) navigateTo(item.href);
+              }}
+              className={`focus-ring flex-1 rounded-xl px-4 py-3 text-center text-sm font-semibold transition-colors ${
+                page === item.page ? "bg-primary/25 text-ink" : "text-ink-dim hover:bg-surface/70 hover:text-ink"
+              }`}
+            >
+              {item.label}
+            </a>
+          ))}
+        </nav>
+
+        <section className="glass-card min-h-48 p-5" aria-labelledby="member-page-title">
+          <h2 id="member-page-title" className="text-lg font-bold">{title}</h2>
+          {page === "home" ? (
+            <div className="mt-4">
+              <MemberAccount />
+            </div>
+          ) : (
+            <p role="status" className="mt-3 max-w-2xl text-sm leading-7 text-ink-dim">
+              {description}
+            </p>
+          )}
+        </section>
+      </div>
     </main>
   );
 }

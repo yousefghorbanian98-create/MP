@@ -39,7 +39,12 @@ describe("Studio URL routes", () => {
       path: "/login",
       returnTo: "/staff/members",
     });
-    expect(parseStudioRoute("/member")).toEqual({ type: "member", path: "/member" });
+    expect(parseStudioRoute("/member")).toEqual({ type: "member", path: "/member", page: "home" });
+    expect(parseStudioRoute("/member/today")).toEqual({
+      type: "member",
+      path: "/member/today",
+      page: "today",
+    });
     expect(parseStudioRoute("/staff/finance")).toEqual({
       type: "staff",
       path: "/staff/finance",
@@ -73,8 +78,12 @@ describe("Studio URL routes", () => {
     expect(normalizeReturnTo("/staff/not-a-page")).toBeNull();
     expect(normalizeReturnTo("/staff/members?member_id=12")).toBeNull();
     expect(normalizeReturnTo("/staff/members#private")).toBeNull();
+    expect(normalizeReturnTo("/member/today")).toBe("/member/today");
+    expect(normalizeReturnTo("/member/today?member_id=2")).toBeNull();
     expect(postLoginPath("/staff/settings", "manager")).toBe("/staff/dashboard");
     expect(postLoginPath("/staff/members", "member")).toBe("/member");
+    expect(postLoginPath("/member/today", "member")).toBe("/member/today");
+    expect(postLoginPath("/member/today", "manager")).toBe("/staff/dashboard");
   });
 
   it("keeps the address bar, active route, and browser back/forward in sync", async () => {

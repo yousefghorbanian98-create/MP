@@ -61,8 +61,8 @@ export function Login() {
           <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/20 font-bold text-primary-light">
             MP
           </div>
-          <h1 id="login-title" className="text-xl font-bold">ورود به استودیو</h1>
-          <p className="mt-2 text-sm text-ink-dim">برای کارکنان مجاز باشگاه؛ کد یک‌بارمصرف پیامکی</p>
+          <h1 id="login-title" className="text-xl font-bold">ورود به Muscle Paradise</h1>
+          <p className="mt-2 text-sm text-ink-dim">با کد یک‌بارمصرف وارد حساب عضو یا کارکنان شوید.</p>
         </header>
 
         <div className="space-y-4">
