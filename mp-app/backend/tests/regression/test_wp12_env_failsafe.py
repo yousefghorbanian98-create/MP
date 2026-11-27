@@ -55,6 +55,24 @@ def test_otp_response_echoes_dev_code_only_with_explicit_flag(dev_client, monkey
     assert len(r.json()["dev_code"]) == 6
 
 
+def test_non_dev_sms_provider_never_echoes_otp_code(dev_client, monkeypatch) -> None:
+    from app import sms
+    from app.config import settings
+
+    class NonDevProvider:
+        name = "webmagfa"
+
+        def send(self, phone: str, text: str) -> bool:
+            return True
+
+    monkeypatch.setattr(settings, "allow_dev_otp_echo", True)
+    monkeypatch.setattr(sms, "get_sms_provider", NonDevProvider)
+    response = dev_client.post("/api/v1/auth/otp/request", json={"phone": "09121234503"})
+
+    assert response.status_code == 200
+    assert "dev_code" not in response.json()
+
+
 def test_dev_code_echo_is_double_gated_in_service_source() -> None:
     from pathlib import Path
 

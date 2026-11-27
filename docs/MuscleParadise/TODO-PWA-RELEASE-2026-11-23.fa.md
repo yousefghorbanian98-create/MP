@@ -1,0 +1,374 @@
+# TODO اجرایی MP تا آمادگی انتشار اول
+
+> **وضعیت سند:** برنامهٔ اجرایی و چک‌لیست تجمیعی؛ هیچ checkbox این سند به‌تنهایی اثبات پیاده‌سازی، QA یا مجوز انتشار نیست.
+> **تاریخ مبنا:** ۲۰۲۶-۱۱-۲۳ UTC.
+> **مرجع محصول:** [ADR-007 — PWA مشترک، رابط اصلی انتشار اول](adr/007-pwa-primary-release.md).
+> **مرجع parentهای PWA:** [TODO واحد MP، backlog کامل ۵۰ parent](TODO-2026-11-16.md#pwa-ui-ux-full-backlog-2026-11-23).
+> **قفل انتشار فعلی:** `NO-GO` تا تکمیل جریان‌های اصلی و گیت‌های امنیت، حریم، عملیات و دستگاه با شواهد روی artifact دقیق.
+
+## ۱. قابل انجام در این فضا
+
+> کارهای محلی روی source/docs، طراحی/تحلیل، build، test با دادهٔ ساختگی و ابزار OSS قابل نصب از registry/mirror مجاز در این بخش‌اند. فایل‌های production secret/دادهٔ عضو واقعی استفاده نشود. هیچ موردی را بر اساس mock، emulator، screenshot، CI روی SHA دیگر یا artifact uncommitted به‌تنهایی PASS نکنید.
+
+### ۱. هدف، کاربرد و قواعد این چک‌لیست
+
+> این چک‌لیست همان ۱۰۴ checkbox را نگه می‌دارد؛ هیچ checkbox در این بازچینش بسته نشده است. «قابل انجام» یعنی کار فنی/آماده‌سازی همین‌جا شدنی است، نه اینکه acceptance کامل یا release مجاز شده باشد. برای هر کار mixed، بخش محلی در این بخش و شاهد بیرونی در بخش دوم تفکیک شده است.
+
+این سند مسیر کار را به ترتیب وابستگی‌ها جمع می‌کند تا بتوان آن را مرحله‌به‌مرحله اجرا و شواهد هر بخش را ثبت کرد. جای backlog canonical پنجاه‌کارتی را نمی‌گیرد، شناسه‌های `PWA-*` را عوض نمی‌کند و برای آن‌ها parent جدید نمی‌سازد. جزئیات پذیرش هر parent همچنان در [TODO canonical](TODO-2026-11-16.md#pwa-ui-ux-full-backlog-2026-11-23) است؛ شناسهٔ `PWA-*` کنار هر بند برای پیوند کارها آمده است.
+
+- `[ ]` یعنی این **بند اجرایی هنوز در همین چک‌لیست با شاهد بسته نشده**؛ لزوماً نمی‌گوید کد یا تست مربوط اصلاً وجود ندارد. اگر چیزی از قبل هست، ابتدا آن را با نسخهٔ جاری تطبیق دهید و مدرکش را ثبت کنید؛ دوباره‌کاری نکنید.
+- `PASS` فقط وقتی ثبت شود که آزمون/بازبینی واقعاً روی SHA، محیط، نقش و دستگاه/مرورگر درج‌شده اجرا شده باشد. `UNKNOWN`، `NOT_RUN`، mock، screenshot، artifact قدیمی یا کد uncommitted برابر PASS نیست.
+- هر موردی که هنوز تصمیم، دسترسی، دستگاه، اپراتور یا بازبینی تخصصی لازم دارد `BLOCKED/UNKNOWN` می‌ماند؛ با حدس، حذف تست یا تغییر scope دور زده نمی‌شود.
+- زمان و درصد کلی در این TODO تعیین نشده‌اند؛ اسناد، ظرفیت تیم و effort کارت‌ها مبنای برآورد قطعی نیستند.
+- کار محلیِ کد/تست/مستندات این سند مجوز staging/production deploy، خرید یا ساخت حساب، استفاده از داده/secret واقعی، پرداخت واقعی، انتشار، commit/push/merge یا حذف/بازنویسی فایل‌های دیگر نیست. برای آن‌ها اختیار مستقل لازم است.
+
+### ۲. مبنای وضعیت فعلی — وضعیت مسیر، نه ادعای تکمیل محصول
+
+| حوزه | آنچه مبناست | معنای درست |
+|---|---|---|
+| CI مخزن | checkهای PR #28 روی SHA `67539e7` سبز گزارش شده‌اند. | کیفیت گیت‌های اجراشده روی همان SHA؛ پذیرش سفرهای محصول یا آمادگی انتشار نیست. |
+| تصمیم پلتفرم | ADR-007 یک PWA مشترک React روی `mp-app/studio/` برای عضو و کادر را کلاینت اصلی انتشار اول انتخاب می‌کند؛ Flutter/Android حفظ می‌شود. | انتخاب scope است، نه پیاده‌سازی، parity، نصب‌پذیری یا QA. |
+| Go/No-Go | ADR-007 انتشار را فعلاً `NO-GO` ثبت می‌کند. | تا بسته‌شدن گیت‌های واقعی و ارائهٔ evidence روی artifact دقیق همین حکم برقرار است. |
+| backlog PWA | TODO canonical پنجاه parent در شش فاز با شناسه‌های `PWA-00` تا `PWA-56` دارد؛ این «۵۶ کار» نیست. وضعیت جاری: `PWA-00` بسته فقط برای ثبت تصمیم؛ `PWA-04`، `PWA-11`، `PWA-14…PWA-17` و `PWA-20` partial محلی با شاهد محدود؛ ۴۱ parent `PROPOSED/NOT_RUN`؛ `PWA-3F` `BLOCKED/NOT_RUN`. | فقط خلاصهٔ status ثبت‌شده در همان TODO؛ نه effort، نه درصد تکمیل کل MP. artifact منبع خود محدودیت chronology/provenance دارد؛ status partial را QA محصول یا اجرای جاری روی runner نخوانید. |
+| تصمیم‌های تجربهٔ Motion/UI | بعضی inventoryها، تست‌های محلی و crosswalkهای ایستا ثبت شده‌اند؛ در TODO وضعیت بخش‌هایی از motion هنوز `PARTIAL` است. | این‌ها evidence محدود همان فایل/تست‌اند؛ مرورگر و دستگاه فیزیکی، screen reader، review مستقل و پذیرش کل PWA را ثابت نمی‌کنند. |
+| عملیات | [RELEASE-CHECKLIST](RELEASE-CHECKLIST.md) هنوز چند گیت production را باز دارد؛ [OPS-RUNBOOK](OPS-RUNBOOK.md) وجود دارد اما مانور واقعی روی میزبان/backup/هشدار هنوز معادل متن راهنما نیست. | تعریف workflow/Compose/runbook به‌تنهایی به معنی وجود سرور، secret عملیاتی، backup خارج‌میزبان، alert receiver یا deploy/rollback موفق نیست. |
+
+**یادداشت دربارهٔ `PWA-04`:** وضعیت آن در TODO canonical هنوز `PARTIAL` ثبت شده است. هرچند checkهای مخزن روی `67539e7` سبز گزارش شده‌اند، تا ثبت همان run/دستورها/نسخه‌ها/skipها در evidence کارت، وضعیت parent را بی‌صدا ارتقا ندهید. این تفاوت، CI سبز را بی‌اعتبار نمی‌کند و آن را هم به پذیرش محصول تبدیل نمی‌کند.
+
+### شواهد آزمون همین برنامه/محیط در این ارزیابی
+
+**شناسهٔ مبنای مخزن:** branch `arena/5e0f64cf-mp`، `HEAD=67539e7d35495cec154fb277df12e33c8c5f4d99`. نتایج جاری Studio در این سند روی worktree محلیِ تغییرکرده/commit‌نشده اجرا شدند؛ بخشی از source/test/docs حاضر در SHA یا CI آن نیست. baselineهای تاریخیِ جدول باید به دامنهٔ ثبت‌شدهٔ خودشان محدود بمانند و CI تازهٔ همین diff محسوب نمی‌شوند.
+
+| مسیر | ابزار/دستور و نتیجهٔ واقعی | دامنه و محدودیت |
+|---|---|---|
+| Studio | Node `v22.22.3`, npm `10.9.8`; از `mp-app/studio/` روی worktree جاری: اجرای suite در سه shard ⇒ **۵۲ فایل pass، ۲ فایل skip؛ ۳۶۲ PASS، ۱۰ SKIP**؛ `npm run build` موفق و ۴٬۰۴۶ ماژول transform؛ `npm run lint` موفق. | نتایج محلی روی source/test تغییرکرده و commit‌نشده‌اند؛ CI روی همین diff اجرا نشده. در stderr هشدارهای jsdom برای `getComputedStyle(..., pseudoElt)`، React `act(...)` و اندازهٔ صفر chart دیده شدند؛ ۱۰ تست skip و هشدارها PASS اضافه نیستند. این QA کامل محصول نیست. |
+| مرورگر روی برنامهٔ ساخته‌شده | Playwright Core + `@sparticuz/chromium`، Chromium `153.0.8010.0`, axe-core؛ build `dist` واقعی Studio روی HTTP localhost، viewportهای `1440×900` و `390×844`. | صفحهٔ Login واقعی: `dir=rtl`، overflow افقی نداشت، invalid-phone validation درست نشان داده شد، JS error صفر، axe صفر تخلف در **همین صفحهٔ unauthenticated**؛ SW فعال شد و پس از reload `controller=true`. flagهای `--disable-web-security`, site isolation و `--allow-running-insecure-content` حذف شدند، اما Chromium با `--no-sandbox` اجرا شد. این آزمون سفر عضو/کادر، API، نصب روی Android/Chrome هدف یا OS sandbox را ثابت نمی‌کند. |
+| Backend | وابستگی‌های پروژه با Python `3.11.2` از PyPI در venv موقت `/tmp/mp-backend-venv`، با `-c mp-app/backend/requirements.txt -e "mp-app/backend[dev]"` نصب شدند؛ از `mp-app/backend/`: pytest ⇒ `1335 passed, 2 skipped` در 200.25s؛ CI subset دستور Ruff ⇒ passed؛ `ruff format --check .` ⇒ `419 files already formatted`. | این‌ها test/lint محلی‌اند؛ دو warning آزمون شامل Starlette/httpx deprecation و کلید کوتاه HMAC در fixture بود. اجرای `scripts/coverage_run.sh` با PATH پیش‌فرض به‌علت `/usr/bin/python` بدون module `coverage` قبل از pytest شکست خورد؛ pytest مستقیم بالا اجرا شد، اما **coverage threshold/gate این wrapper را PASS حساب نکنید**. |
+| DB آزمایشی | `@electric-sql/pglite@0.6.0` از npm در `/tmp`؛ `SELECT version()` جواب داد و PostgreSQL `19.0` گزارش شد. | فقط smoke query در موتور WASM؛ migrationهای MP، driver backend، multi-process lock، server/network، backup/restore یا بار تولیدی آزموده نشد. SQLite همچنان انتخاب فعلی ADR-007 است. |
+| SBOM | `@cyclonedx/cyclonedx-npm@7.0.1` از npm: SBOM محلی مبتنی بر lockfile با ۵۶۶ component در `/tmp/mp-studio.sbom.json` ساخته شد. | اجرای `--validate` با `ERROR: cannot validate BOM` پایان یافت؛ پس artifact صرفاً خروجی تولیدشده است، نه SBOM معتبر/پذیرفته‌شده و در مخزن هم ذخیره نشده است. |
+| baseline CI موجود | CI مخزن `mp-ci` در `.github/workflows/ci.yml` شامل Gitleaks و Flutter jobs است؛ pinned Flutter job نسخهٔ `3.50.0` دارد. سابقهٔ checkهای PR #28 روی SHA `67539e7` سبز ثبت شده است. | فقط همان SHA و همان فایل‌های commitشده را پوشش می‌دهد؛ run جدید روی فایل‌های untracked حاضر اجرا نشده. برای candidate جدید باید همان SHA در runner مجاز دوباره سنجیده شود. |
+
+### الحاقیهٔ پیشرفت محلی PWA — پیگیری ۲۰۲۶-۱۱-۲۳
+
+این delta روی worktree با base `HEAD=67539e7d35495cec154fb277df12e33c8c5f4d99` انجام شد؛ تغییرها commit نشده‌اند.
+
+**Snapshot غیرمخرب `INV-01` (جزئی، وضعیت جاری):** branch=`arena/5e0f64cf-mp`، HEAD=`67539e7d35495cec154fb277df12e33c8c5f4d99`؛ `git status --porcelain=v1 -z --untracked-files=all` برابر **۳۱۷ رکورد** بود: **۳۹ tracked changed، ۲۷۸ untracked**؛ index خالی. شمار قبلی ۱۴۹/۲۸/۱۲۱ با فهرست untracked فشردهٔ git گرفته شده و به‌دلیل granularity متفاوت مستقیماً قابل‌مقایسه نیست. فهرست نام‌های untracked عمداً چاپ/بازبینی نشده؛ فقط source/test/docs شناخته‌شدهٔ همین کار خوانده شد و داده/رسید خصوصی باز یا لمس نشد. ابزار همین محیط: Node `v22.22.3`، npm `10.9.8`، Python `3.11.2`; Nginx/Docker/Podman در PATH نیستند. CI تازه روی dirty/uncommitted worktree اجرا نشده. چون فهرست امن/کامل همهٔ مسیرهای محلی و وضعیت CI همان revision هنوز ثبت نشده، INV-01 و checkbox آن باز می‌مانند.
+
+| parent / بند محلی | تغییر و شاهد همین worktree | آنچه هنوز برای پذیرش کامل لازم است |
+|---|---|---|
+| `PWA-11` / `WEB-02` | قرارداد فعلی URL در `src/lib/navigation.ts`: `/login`، `/member` رزروشده، `/staff/:page` برای ۱۲ صفحهٔ موجود، و `/` برای home نقش‌محور. ناوبری sidebar و CTAهای صفحه با `pushState` کار می‌کند؛ back/forward به state صفحه برمی‌گردد. redirect ورود فقط مسیر هم‌مبدأِ شناخته‌شده را می‌پذیرد؛ deep link بی‌نشست به Login می‌رود و مقصد پس از ورود با نقش بررسی می‌شود. `navigation.test.tsx`، `authFlow.test.tsx` و `topbarTitles.test.tsx` آزمون محلی دارند؛ direct link و refresh-token روی route محافظت‌شده و back/forward در jsdom پوشش یافتند. | `/member` فقط مسیر fail-closed رزروشده است؛ `AuthContext` فعلاً نقش member را برای Studio نمی‌پذیرد و shell/OTP/member home در scope این تغییر نیست. اجرای refresh حقیقی صفحه، Nginx/container، browser/device و QA پذیرش مسیر عضو/کارکنان هنوز انجام نشده؛ این کار PWA-11 را فقط `PARTIAL` می‌کند. |
+| `PWA-14` / `WEB-08` | هویت manifest و metadata سند HTML از «Studio/مربی و مدیر» به هویت مشترک عضو/کادر تغییر کرد؛ تست متنی، مسیر scope/start و iconهای موجود را کنترل می‌کند. | مرورگر/OS هدف، نصب واقعی، launch و پذیرش آیکون در دستگاه؛ unit test نصب‌پذیری واقعی را ثابت نمی‌کند. |
+| `PWA-15` / `WEB-09` | Service Worker فقط GET هم‌مبدأِ بدون query را برای cache بررسی می‌کند؛ allowlist به assetهای hashed و پاسخ 200 عمومی محدود است؛ API، write، private/no-store، opaque/non-200، cross-origin، query و مسیرهای غیرمجاز cache نمی‌شوند. Activation فقط cacheهای دارای prefix Studio را پاک می‌کند؛ app shell عمومی یک کلید ثابت دارد. Vitest رفتارها را در VM پوشش می‌دهد. | مرورگر واقعی روی همین build برای logout/account-switch/cache inspection، آزمون دو عضو و review امنیت/حریم مستقل لازم است؛ پاسخ‌های mocked جای header/runtime واقعی نیستند. |
+| `PWA-16` / `WEB-10` | نصب SW دیگر `skipWaiting()` خودکار نمی‌زند؛ پیام صریح دکمهٔ کاربر worker منتظر را فعال می‌کند و reload تا `activated`/کنترل worker صبر می‌کند. تست واحد رفتار waiting/activation را پوشش می‌دهد. | حفظ فرم کثیف و درخواست درحال‌اجرا در flowهای واقعی، خرابی asset/rollback و چند-tab در مرورگر هدف هنوز آزموده نشده؛ این پیاده‌سازی به‌تنهایی AC کامل update را نمی‌بندد. |
+| `PWA-17` / `WEB-11` | Nginx مسیر exact `/api` و subtree اسلش‌دار `/api/…` را جداگانه به backend proxy می‌کند؛ matcher خام `/api` که `/apix` و `/apiary` را هم می‌گرفت حذف شد. `pwa.test.ts` هر دو location، proxy/X-Forwarded-For و مرز static مسیرها را assert می‌کند؛ تست هدفمند ۱۲/۱۲ PASS. | اجرای Nginx/container واقعی، deep-link/refresh و API status/content-type در staging مجاز نشده/در این sandbox موجود نیست؛ تست static matcher رفتار runtime را ثابت نمی‌کند. |
+| `PWA-20` / پوشش محلی OTP | `Login.tsx` فقط در حالت `import.meta.env.DEV` کد توسعه را رندر می‌کند. `login.test.tsx` شش حالت local را می‌سنجد (invalid phone، 429 mocked، loading، `dev_code` در DEV/production و خطای OTP)؛ همراه `authFlow.test.tsx`: ۲ فایل، ۱۰/۱۰ PASS. Backend regression در `test_wp12_env_failsafe.py` با fake provider غیر-dev و echo flag روشن می‌سنجد که API پاسخ را بدون `dev_code` می‌دهد؛ همراه `test_api_contract.py` و `test_m67_studio_auth.py`: ۲۹/۲۹ PASS؛ Ruff check/format هدفمند نیز موفق. | UI guard فقط رندر را می‌بندد: اگر backend مقدار `dev_code` را برگرداند، پاسخ همچنان به مرورگر می‌رسد؛ این تست fake provider اجرای SMS واقعی نیست و جای تضمین backend مبنی‌بر عدم صدور کد در production را نمی‌گیرد. rate-limit/provider زنده، policy/قرارداد نشست و ورود عضو تأیید نشده‌اند؛ member همچنان در `AuthContext` مجاز نیست و تصمیم‌های `PWA-02`/`PWA-03` بازند. |
+
+**آزمون کد پس از تغییرهای جاری:** از `mp-app/studio/`، `npm test -- tests/login.test.tsx tests/authFlow.test.tsx` ⇒ ۲ فایل، ۱۰/۱۰ PASS؛ `npm run lint` موفق؛ `npm run build` (از جمله `tsc -b`) موفق و Vite با ۴٬۰۴۶ ماژول. اجرای کامل suite در سه shard ⇒ **۵۲ فایل PASS، ۲ فایل SKIP؛ ۳۶۲ تست PASS و ۱۰ SKIP، بدون failure**. هشدارهای jsdom `getComputedStyle(..., pseudoElt)`، React `act(...)` و chart با اندازهٔ صفر در stderr باقی‌اند؛ skip و warning به PASS افزوده نمی‌شوند. پس از به‌روزرسانی همین اسناد، `python3 scripts/docs_gate.py` موفق شد (۳۸ Markdown، ۵۴۷ لینک محلی، ۱۵ Mermaid)، `python3 scripts/assemble_project_guide.py --check` گفت راهنمای پروژه به‌روز است و markdownlint-cli2 روی سه سند جاری **۰ issue** داد. smoke مرورگر تازه launch نشد: Chromium بسته‌بندی‌شده با خطای وابستگی سیستمی `libnspr4.so` پیش از بازشدن صفحه خارج شد، پس روی این revision browser/installability claim نداریم. smoke تاریخیِ فقط صفحهٔ ورود، پذیرش flow یا دستگاه نیست و به این تغییرات تعمیم نمی‌یابد.
+
+**الحاقیهٔ PWA-11 — نتیجهٔ آزمون پس از پیاده‌سازی محلی:** در `mp-app/studio/`، `npm test -- tests/navigation.test.tsx tests/authFlow.test.tsx tests/topbarTitles.test.tsx tests/appStore.test.ts tests/roleNav.test.tsx` ⇒ ۵ فایل و ۳۶ تست PASS؛ `npm run lint` موفق؛ `npm run build` شامل `tsc -b` و Vite موفق با ۴٬۰۴۶ ماژول. اجرای یکپارچهٔ `npm test` با سقف ۱۸۰ ثانیه timeout شد؛ برای تکمیل، کل suite در سه shard (`npm test -- --shard=1/3`, `2/3`, `3/3`) اجرا شد: **۵۱ فایل PASS، ۲ فایل skip؛ ۳۵۶ تست PASS و ۱۰ skip، صفر failure**. هشدارهای موجود jsdom `getComputedStyle(..., pseudoElt)`/React `act(...)` و نمودار بدون اندازه همچنان در stderr دیده شدند. آزمون back/forward در `jsdom` اثبات مرورگر واقعی یا Nginx runtime نیست.
+
+**مرز ثابت:** `DOC-01…DOC-04` پس از تغییرات و بررسی مستندات بسته شدند؛ از ۱۰۴ checkbox فعلی، ۱۰۰ مورد همچنان بازند. `PWA-04`، `PWA-11`، `PWA-14…PWA-17` و `PWA-20` در صف canonical فقط `PARTIAL` هستند و Go/No-Go تکمیل/ارتقا نیافته است. هیچ CI روی worktree uncommitted، browser target قابل‌اجرا، نصب واقعی، device، review مستقل، secret، data واقعی، commit/push/PR، deploy یا release در این delta انجام نشد.
+
+### بررسی جایگزین‌های متن‌باز/mirror به‌جای ابزار ازپیش‌نصب‌شده
+
+| نیاز | جایگزین/منبع و مجوز اعلام‌شده | نتیجهٔ بررسی/آزمون | مرز باقی‌مانده |
+|---|---|---|---|
+| Browser، PWA و accessibility خودکار | [Playwright](https://github.com/microsoft/playwright) (`Apache-2.0`)، [@sparticuz/chromium](https://github.com/Sparticuz/chromium) (npm؛ `MIT` طبق metadata بررسی‌شده)، [axe-core npm](https://github.com/dequelabs/axe-core-npm) (`MPL-2.0`). | واقعاً در `/tmp` نصب و روی build **خود Studio** آزمایش شد؛ نتایج بالا. | headless Chromium جای Android Chrome/Edge نسخهٔ هدف، دوربین، notification background، screen reader یا آزمون انسانی نیست؛ `--no-sandbox` نیز محدودیت مهم است. هیچ dependency به اپ اضافه نشد. |
+| PostgreSQL برای query subset | [PGlite](https://github.com/electric-sql/pglite) (`Apache-2.0`). | نصب و query smoke موفق؛ نسخهٔ PostgreSQL `19.0`. | WASM embedded engine به‌تنهایی جای PostgreSQL server/network/locking و deployment DB را نمی‌گیرد؛ فقط در صورت بازشدن trigger تصمیم PostgreSQL به کار می‌آید. |
+| Flutter/Dart و secret scan در revision | GitHub Actions موجود؛ `subosito/flutter-action` در workflow pinned، Flutter `3.50.0`; Gitleaks `8.30.1` در workflow از release با checksum نصب می‌شود. | مسیر واقعی از پیش موجود برای CI؛ سابقهٔ green روی SHA `67539e7` در مرجع همین TODO ثبت است. در این sandbox Flutter/`dart` محلی نصب نشد و run تازه برای فایل TODO untracked نداریم. | remote CI می‌تواند analyzer/testهای Flutter و Gitleaks را روی SHA commitشده انجام دهد؛ device acceptance و secret-key rotation را انجام نمی‌دهد. «stable» در job جداگانه floating است؛ برای شاهد دقیق از job pinned استفاده شود. |
+| secret scan مکمل محلی | [secretlint](https://github.com/secretlint/secretlint) (`MIT`، npm) و [Yelp detect-secrets](https://github.com/Yelp/detect-secrets) (`Apache-2.0` در GitHub؛ PyPI `license` را خالی گزارش می‌کند). | metadata/source بررسی شد؛ این دو اینجا نصب/اجرا نشدند. | می‌توانند pre-scan باشند، نه جایگزین policy دقیق Gitleaks، full-history scan، revoke یا rotate کردن secret واقعی. |
+| SBOM JS | [CycloneDX npm](https://github.com/CycloneDX/cyclonedx-node-npm) (`Apache-2.0`). | version `7.0.1` اجرا شد؛ ۵۶۶ component تولید شد؛ validator آن نتوانست BOM را validate کند. | تا علت fail رفع و validation مستقل سبز نشود، خروجی فقط پیش‌نویس محلی است؛ sign/push/attestation به key و registry مجاز وابسته است. |
+| Podman/Compose و container | [Podman](https://github.com/containers/podman) (GitHub metadata: Apache-2.0) و [Docker Compose](https://github.com/docker/compose) (Apache-2.0) OSS‌اند. | source/metadata بررسی شد؛ runtime/socket در sandbox نبود؛ `go`, `runc`, `crun`, `conmon`, `slirp4netns`, `fuse-overlayfs`, Docker/Podman و `/dev/kvm` حاضر نبودند. source-build یا نصب runtime در این turn انجام/موفق نشد. npm client به‌تنهایی daemon نیست. | می‌توان config/build job را طراحی کرد یا بعداً runner مجاز را به‌کار گرفت؛ اینجا image/container/staging واقعی را اثبات نکرده‌ایم. حتی runtime هم host/domain/secrets نمی‌سازد. |
+| Flutter mirror/emulator اندروید | مخزن‌هایی از جمله [budtmo/docker-android](https://github.com/budtmo/docker-android) در GitHub دیده شد؛ metadata مجوز آن `NOASSERTION` است و Docker لازم دارد. جست‌وجو exhaustive نبود و mirror مستقیمِ معتبر SDK/system-image در این بررسی پیدا نشد. | `adb`, `sdkmanager`, `avdmanager`, Android SDK/emulator, QEMU و `/dev/kvm` حاضر نبودند؛ نصب image/device در این turn نشد. | CI Flutter راه جایگزین برای analyze/build است، نه hardware test. Docker-emulator نیز این runtime/KVM را لازم دارد و دوربین/Push/OS/screen reader واقعی را ثابت نمی‌کند. |
+| Backup رمزنگاری‌شده و alerting | [restic](https://github.com/restic/restic) (`BSD-2-Clause`)، [rclone](https://github.com/rclone/rclone) (`MIT`)، [Alertmanager](https://github.com/prometheus/alertmanager) (`Apache-2.0`). | metadata/source بررسی شد. دانلود release رسمی restic `v0.20.0` به redirect دامنهٔ `release-assets.githubusercontent.com` خورد و با `SSL_ERROR_SYSCALL` شکست؛ `go` هم نصب نیست. NPM `restic-linux@0.9.61` بررسی و اجرا شد، اما خود binary نسخهٔ `0.9.6-dev` با Go `1.13.7` گزارش کرد؛ به‌علت قدمت/provenance آن برای backup عملیاتی پذیرفته نشد. Alertmanager نصب/اجرا نشد. | منبع عمومی یا npm نام یک بسته را ثابت نمی‌کند که binary امن و جاری فراهم شده باشد. backup scratch پروژه را می‌توان با script/test موجود اجرا کرد؛ off-site encryption/restore و alert destination عملیاتی هنوز اثبات‌نشده‌اند. |
+| Hugging Face | دسترسی مستقیم `huggingface.co` از شبکهٔ این محیط ممکن نبود؛ در نتیجه Hub جست‌وجو یا مدل دانلود نشد. | **هیچ مدل/mirror Hugging Face شناسایی/نصب/آزموده نشده است**؛ این سند ادعای بررسی کل Hub ندارد. | مدل OCR/AI، حتی اگر از mirror آزاد پیدا شود، جای تأیید انسانی بانک، reviewer حقوقی/پزشکی، owner، device یا operator نیست؛ inference بیرونی نیز خارج از scope مصوب است. |
+
+### نگاشت کلی checkboxها به کار محلی و مرز دوم
+
+| گروه اصلی TODO | این بخش | مرز دوم |
+|---|---|---|
+| ۸ guardrail در Scope، `DOC-01…DOC-06` | رعایت scope مصوب، اصلاح سند و ساخت register تصمیم‌های باز | مالک باید فقط گزینه‌های واقعاً باز `DOC-04` را تصویب کند؛ ریز آن در بخش دوم است. |
+| `INV-01…INV-09` | inventory/crosswalk/evidence و test محلی/CI موجود | run runner روی candidate تغییرکرده و همان SHA؛ CI قدیمی برای فایل untracked حاضر مدرک نیست. |
+| `SEC-01…SEC-10` | پیاده‌سازی ماتریس، session/API guard، تست منفی، audit و redaction با fixture | policy/sign-off مالک در `SEC-01…04` و reviewer مستقل `SEC-10`. |
+| `WEB-01…WEB-11` | React shell، RTL، manifest/SW، unit/axe و headless browser | browser/OS/device و accessibility usability دستی. |
+| `MEM-01…MEM-16` | vertical-sliceهای محلی/API/fixture، QR/payment mock و inbox | OTP/SMS/Push واقعی، camera device، bank reconciliation و تصویب offline policy. |
+| `STAFF-01…STAFF-08` | UI/API/role test/گزارش با actor ساختگی | camera/bank/owner grant و device/screen-reader acceptance. |
+| `QA-01…QA-09` | automated journeys/probes، build، emulation و evidence template | بانک/device/reviewer/staging/exact remote run روی candidate. |
+| `OPS-01…OPS-14`, `PRIV-01…PRIV-02` | طراحی/config validator، test مصنوعی، scratch backup/restore، alert rule و SBOM draft | host/secret/key/offsite/receiver/operator، نظر حقوقی و production evidence. |
+| `PWA-56` | گردآوری نتایج و گزارش `NO-GO` | Go نهایی و release/deploy مجاز فقط به‌دست مالک پس از گیت‌های بخش دوم. |
+
+### ۳. Scope ثابت — تصمیم‌های پذیرفته‌شده را دوباره باز نکنیم
+
+> این هشت checkbox در این subsection «گاردریل scope» برای رعایت در کارهای محلی‌اند؛ scope مصوب را باز نمی‌کنند و لازم نیست آن را به تصمیم تازه تبدیل کنیم.
+
+این موارد باید در تمام کارهای پایین حفظ شوند؛ تغییرشان نیازمند تصمیم و ADR تازه است:
+
+- [ ] **یک کلاینت وب مشترک:** توسعه روی `mp-app/studio/`؛ اپ React دوم ساخته نشود. Flutter/Android، workflowها، تست‌ها، اسناد، تاریخچه و Electron حفظ شوند؛ PWA مجوز حذف یا خاموش‌کردن مسیر native نیست.
+- [ ] **نقش‌ها:** تک‌باشگاه و هر شش نقش جاری (`member`, `coach`, `reception`, `manager`, `admin`, `super_admin`) حفظ شوند. مدل سه‌نقشی داخل بعضی نمودارها/طرح‌های قدیمی، تصمیم مهاجرت نیست؛ نقش‌ها را ادغام یا grantها را گسترش ندهید. ماتریس واقعی route/عمل/مالکیت باید سمت سرور آزموده شود.
+- [ ] **داده و زیرساخت:** SQLite فعلاً مبنای ثبت‌شده است؛ PostgreSQL پیش‌فرض جدید نیست و فقط با benchmark/trigger و ADR بررسی می‌شود. جهت کلی میزبان، سرور محلی باشگاه با ورودی HTTPS است؛ میزبان، ingress دقیق، دامنه، بودجه و اپراتور هنوز تعیین/اثبات نشده‌اند.
+- [ ] **مالی و فروشگاه:** تمدید از راه کارت‌به‌کارت با بررسی انسانی؛ ارسال رسید، تأیید مستقل بانکی نیست. فعال‌شدن اشتراک فقط پس از تأیید مجاز و باید یک‌بار/تراکنشی باشد. فروشگاه عضو نمایش‌محور و خرید حضوری است؛ checkout عضو و سفارش آنلاین در انتشار اول ساخته/فعال نشود.
+- [ ] **حضور و سلامت:** QR با اعتبارسنجی سمت سرور؛ تشخیص چهرهٔ سروری در scope نیست. راهنمای سلامت تشخیص/ادعای پزشکی نمی‌کند. عکس پیشرفت بدن خارج از scope انتشار اول است.
+- [ ] **انتشار کامل:** همهٔ جریان‌های اصلی مصوب باید پیش از انتشار واقعی کامل و آزموده شوند؛ pilot ناقص جایگزین تکمیل نیست.
+- [ ] **دادهٔ واقعی/AI:** تست و staging با دادهٔ ساختگی؛ API/inference بیرونی و ارسال کد/داده به مدل بیرونی در scope نیست. اطلاعات حساس عضو وارد log/telemetry/prompt نشود.
+- [ ] **کنترل رابط:** کنترل تعاملی از صفر ساخته نشود؛ کتابخانهٔ UI OSS موجود و کنترل‌های SDK فعلی استفاده شوند. افزودن کتابخانهٔ موازی فقط پس از اثبات GAP، بررسی license/accessibility و ثبت در مرجع dependency مجاز است.
+
+### ۴. فاز صفر — هم‌راستاسازی اسناد و تعیین مرزهای باز
+
+> **مرز مختلط DOC-04:** همین‌جا register گزینه‌های باز، مالک تصمیم، شاهد لازم و حالت را آماده کنید؛ انتخاب/تأیید واقعی مالک در بخش دوم ثبت شده است.
+
+**هدف خروج:** اسناد به یک baseline قابل‌فهم ارجاع دهند؛ فقط تصمیم‌هایی که واقعاً بازند باقی بمانند. این فاز اجرای محصول نیست.
+
+- [x] **DOC-01 — رفع دوگانگی ADR-006/ADR-007.** در [ADR-006](adr/006-shared-react-pwa.md) یا یک افزودهٔ تاریخ‌دار توضیح دهید که جهت PWA مشترک حفظ شده و ADR-007 انتخاب کلاینت اصلی انتشار را بعداً روشن کرده است؛ سابقهٔ تاریخی را پاک نکنید. بندهای قدیمی D-01/D-10 را طوری اصلاح/علامت‌گذاری کنید که «انتخاب baseline کلاینت» با «معیارهای نهایی Go/No-Go» اشتباه نشود. **شاهد:** clarification تاریخ‌دار در ADR-006؛ D-01 به [ADR-007](adr/007-pwa-primary-release.md) ارجاع دارد و D-10/Go-No-Go باز است؛ docs gate/markdownlint موفق.
+- [x] **DOC-02 — تصحیح اسناد طرح قدیمی.** در [برنامهٔ تولید/AI](architecture/ai-autonomous-production-plan-v1-2026-11-23.md) و [فلوچارت نهایی PWA و دسترسی](architecture/muscle-paradise-final-pwa-access-flow-v1-2026-11-23.md) وضعیت را با ADR-007 هم‌راستا کنید: PWA baseline انتشار جاری است؛ شش نقش حفظ می‌شوند؛ مدل سه‌نقشی نمودار تصمیم جاری نیست. اگر نمودار تغییر نمی‌کند، آن را صریحاً historical/target-only برچسب بزنید. **شاهد:** plan و متن نمودار به ADR-007/OQ-03 پیوند دارند؛ نمودار سه‌نقشی صریحاً historical/target-only است؛ docs gate/markdownlint موفق.
+- [x] **DOC-03 — هم‌راستایی مالی و میزبانی.** [TODO-CLOUD-FINANCE-ACCESS](TODO-CLOUD-FINANCE-ACCESS.md)، [PLAN-CLOUD-PRODUCTION](PLAN-CLOUD-PRODUCTION.md)، [RELEASE-CHECKLIST](RELEASE-CHECKLIST.md) و هر متن قدیمی درگاه/Android را در برابر ADR-007 مرور کنید. درخواست «merchant/live gateway» را بی‌تصمیم به کارت‌به‌کارت تبدیل نکنید؛ برای انتشار اول درگاه واقعی هدف نیست، فروشگاه display-only است و سرور محلی + HTTPS مبناست. **شاهد:** سه مرجع فوق baseline و عدم مجوز production را صریح می‌کنند؛ متن‌های Android/gateway باقی‌مانده تاریخی یا فقط شرط رگرسیون native علامت‌گذاری شدند؛ docs gate/markdownlint موفق.
+- [x] **DOC-04 — مرجع واحد open-decisionها.** به‌جای تکرار سؤال‌های حل‌شده، فهرست کوتاهی با مالک تصمیم، شاهد لازم و حالت `OPEN/BLOCKED` برای موارد واقعاً باز نگه دارید. جدول زیر baselineهای پاسخ‌داده‌شده را دوباره باز نمی‌کند؛ `OPEN` یعنی policy/انتخاب اجرایی هنوز نیازمند تصمیم است و `BLOCKED` یعنی evidence به actor، دستگاه یا محیط بیرونی وابسته است. **شاهد:** رجیستر OD-01…OD-10 زیر همین بند، هر ردیف را به مالک، status، شاهد لازم و رفتار امن تا بسته‌شدن وصل می‌کند؛ OQ-01 و baselineهای حل‌شده دوباره تصمیم‌گیری نمی‌شوند؛ docs gate/markdownlint موفق.
+
+| ID | مورد باز یا blocker | مالک/مسئول بعدی | وضعیت | شاهد لازم / رفتار امن تا بسته‌شدن |
+|---|---|---|---|---|
+| OD-01 | روش ذخیره/انقضا/لغو نشست، cache و مرز آفلاین | مالک برای policy؛ مهندسی برای threat-model و آزمون | `OPEN` | policy نسخه‌دار و تست revocation؛ تا آن زمان API/PII/receipt/health cache نشود و offline write حساس نداشته باشد. |
+| OD-02 | جزئیات ماتریس route×role×permission×ownership | مالک برای قواعد؛ مهندسی برای inventory/negative tests | `OPEN` | فهرست route/service/file/export/job و تست direct API برای شش نقش و عضو A/B؛ شش role حفظ می‌شوند، مدل سه‌نقشی اجرا نمی‌شود. |
+| OD-03 | host/domain/ingress دقیق، operator، budget و ساعات پاسخ | مالک/اپراتور هنوز تعیین‌نشده | `BLOCKED` | طرح topology با trusted headers/firewall/TLS و owner/operator؛ staging/host و هزینه بدون تصمیم/مجوز ساخته نشود. |
+| OD-04 | مدل و نسخهٔ دقیق Android Chrome / Chrome / Edge و screen reader | مالک برای pin؛ آزمون‌گر انسانی برای acceptance | `BLOCKED` | انتخاب model/OS/browser/version و گزارش فیزیکی با network/AT؛ emulation/headless جایگزین نیست. |
+| OD-05 | حریم/retention/اطلاع‌رسانی و reviewer مستقل | مالک برای انتصاب؛ reviewer مستقل واجد صلاحیت | `BLOCKED` | review مستند حقوقی/حریم و evidence نسخه‌دار؛ reviewer مستقل فعلاً موجود نیست، عکس پیشرفت بدن در scope انتشار اول نمی‌آید. |
+| OD-06 | threshold بار/همزمانی و trigger بررسی PostgreSQL | مالک برای آستانه؛ مهندسی برای benchmark | `OPEN` | workload و معیار عددی مصوب سپس benchmark روی محیط scratch؛ SQLite فعلاً مبنا و migration تولیدی ممنوع است. |
+| OD-07 | ساعات کار/قرارداد عملیاتی درخواست کارت‌به‌کارت | مالک/اپراتور | `OPEN` | منبع ساعت از سرور، متن حالت بسته/قطع شبکه و fixtureهای خارج ساعت؛ تطبیق بانکی واقعی نیازمند انسان/مرجع مجاز. Live merchant در scope انتشار اول نیست. |
+| OD-08 | نیاز push، provider، permission و مسئول تحویل | مالک/اپراتور | `OPEN` | تصمیم channel/payload غیرحساس و test device/provider واقعی؛ تا آن زمان فقط inbox را push تحویل‌شده نخوانید. |
+| OD-09 | مقصد backup خارج‌میزبان، RPO/RTO و مسئول مانور | مالک/اپراتور | `BLOCKED` | میزبان/مقصد مجاز، restore مستقل اندازه‌گیری‌شده و پذیرش RPO/RTO؛ فایل backup هم‌میزبان PASS نیست. |
+| OD-10 | provider واقعی OTP/SMS برای سفرهای نهایی | مالک/اپراتور؛ credentials فقط secret-store | `BLOCKED` | provider/test number مجاز و device/network evidence؛ dev OTP/mock تولیدی محسوب نشود. |
+
+- [ ] **DOC-05 — ردیابی تصمیم‌ها.** در هر سند به ADR/TODO canonical مربوط لینک دهید. دیاگرام، screenshot، package handoff یا Option 03 را «طراحی/مرجع» بنویسید، نه شاهد پیاده‌سازی. فایل‌های تاریخی را بی‌صدا حذف یا بازنویسی نکنید.
+- [ ] **DOC-06 — تصمیم‌های حساس را حدس نزنید.** برای نگهداری داده، مشاهده/حذف دادهٔ سلامت، تعریف سود/درآمد، تطبیق بانکی، مدت اعتبار QR و مجوزهای جزئی، فقط متن/منبع مصوب را اجرا کنید؛ اگر جزئیات لازم در سند نیست، `BLOCKED/UNKNOWN` ثبت شود.
+
+**وابستگی:** هیچ؛ این کار را می‌توان بدون تغییر کد محصول انجام داد.
+**شاهد خروج:** diff مستندات + بررسی لینک‌ها/ارجاع‌ها + فهرست تصمیم‌های باز، بدون ادعای QA.
+
+### ۵. فاز یک — inventory واقعی و baseline قابل‌تکرار (`PWA-01`, `PWA-04`, `PWA-05`)
+
+**هدف خروج:** برای هر جریان معلوم باشد امروز چه چیزی کار می‌کند، چه GAP دارد، کدام API و نقش درگیر است و چه آزمونی آن را اثبات می‌کند.
+
+- [ ] **INV-01 — ثبت snapshot غیرمخرب.** شاخه، HEAD، فایل‌های tracked تغییرکرده/untracked، نسخهٔ ابزار و وضعیت CI را ثبت کنید. secret یا دادهٔ شخصی را در گزارش نیاورید؛ `pull/reset/clean` نزنید و untracked خصوصی را stage/delete نکنید.
+- [ ] **INV-02 — crosswalk کامل عضو (`PWA-01`).** تمام featureهای Flutter را از screen/action تا رفتار، route React هدف، API/قرارداد، مدل داده، مالکیت، نقش، خطا، تست و شاهد map کنید. map ایستای Motion یا flowchart به‌تنهایی inventory کامل نیست.
+- [ ] **INV-03 — crosswalk کارکنان (`PWA-01`).** Dashboard، اعضا، برنامه‌ها، تغذیه، ارزیابی، چت، حضور، مالی، هزینه، تحلیل، تنظیمات و Shop را به URL/route، actor/role، API، permission، state و تست وصل کنید؛ route بدون رفتار یا endpoint بدون UI را جدا علامت بزنید.
+- [ ] **INV-04 — وضعیت چهارگانه.** هر capability را `CURRENT`, `GAP`, `TARGET`, `BLOCKED` تعیین کنید؛ کنار آن owner/scope، test موجود، test لازم، فایل/line، و منبع داده را بنویسید. «صفحه هست» یا «API هست» به‌تنهایی `CURRENT` نیست.
+- [ ] **INV-05 — یافتن mock و خروجی ساختگی.** داده‌های hard-coded، fallbackهای خاموش، دکمهٔ بی‌اثر، state محلیِ بدون persistence، endpointهای بی‌مصرف، responseهای نمونه و عدد/KPI بی‌منبع را مشخص کنید. هیچ mock را به‌عنوان دادهٔ کاربر یا گزارش واقعی معرفی نکنید.
+- [ ] **INV-06 — نقشهٔ actor و داده.** برای هر view/mutation/file/export/job/event ثبت کنید چه کسی، چه چیزی، با چه scope/ownership و چه مجوزی می‌خواند/می‌نویسد؛ مسیرهای direct API را هم در نظر بگیرید.
+- [ ] **INV-07 — baseline CI (`PWA-04`).** command، cwd، toolchain/version، SHA، مدت/نتیجه، تعداد pass/fail/skip و URL/run مرجع را برای backend، Studio، docs، Flutter/Android و گیت‌های امنیت ثبت کنید. checkهای سبز PR #28 فقط برای SHA همان PR معتبرند؛ آن‌ها را به تغییر بعدی تعمیم ندهید.
+- [ ] **INV-08 — حفاظت از مسیر native (`PWA-05`).** فهرست pathها و workflowهای `mp-app/client/`، Flutter/Android، `web.yml` و Electron را به‌عنوان regression boundary ثبت کنید؛ build/test/format آن‌ها در CI حفظ شود. نبود SDK یا دستگاه `UNKNOWN` است، نه مجوز حذف job.
+- [ ] **INV-09 — acceptance matrix.** برای هر capability: precondition، نقش مجاز، نقش غیرمجاز، دادهٔ ساختگی، happy path، error/timeout/retry، persistence پس از reload، privacy، log و test ID بنویسید.
+
+**وابستگی:** DOC-01 تا DOC-06.
+**شاهد خروج:** crosswalk versioned و لینک‌دار + baseline commands/results روی SHA مشخص + فهرست GAPها. به‌روزرسانی وضعیت parent فقط پس از پذیرش همین شواهد.
+
+### ۶. فاز دو — تصمیمات و پایهٔ امنیت/نشست (`PWA-02`, `PWA-03`, `PWA-20` تا `PWA-24`)
+
+> **مرز مختلط SEC:** پیاده‌سازی ماتریس و تست‌های منفی با actor/fixture ساختگی در این بخش انجام‌پذیر است؛ تأیید مالک برای policy باز و بازبینی مستقل، پذیرش بیرونی بخش دوم است.
+
+**هدف خروج:** PWA با همان نقش‌ها و قرارداد سرور، نشست قابل‌ابطال و رفتار امن در direct route/API داشته باشد.
+
+- [ ] **SEC-01 — ماتریس نقش نهایی (`PWA-02`).** شش نقش موجود + حالت ناشناس را نگه دارید و برای هر route/عمل/منبع/فایل/export ثبت کنید `allow/deny`, ownership/branch scope و علت را. مدل سه‌نقشی را مهاجرت ندهید.
+- [ ] **SEC-02 — ماتریس grant مالی و حساس.** مجوزهای `read/write/approve/export` را از هم جدا کنید؛ دسترسی مالی admin/manager پیش‌فرض باز نباشد؛ نقش‌های ثابت مربی/پذیرش/سرپرست را بدون تصمیم تازه گسترش ندهید. اگر grant شخصی برای admin لازم است، actor مجاز، مدت، انقضا و لغو در سرور تعریف شود.
+- [ ] **SEC-03 — owner-only نقش/grant.** ایجاد/لغو نقش و grant در backend فقط برای `super_admin`; admin نتواند خودش یا دیگری را ارتقا دهد، حق grant بگیرد یا از route جایگزین همان کار را انجام دهد. ساخت super_admin از API عادی ممنوع بماند مگر ADR تازه.
+- [ ] **SEC-04 — policy نشست (`PWA-03`).** روش storage، انقضا/refresh/logout/logout-all، revocation، XSS/CSRF و رفتار offline را روشن کنید. قبل از تصمیم نهایی، cache دادهٔ حساس API، receipt، مالی/سلامت، token و نوشتن حساس آفلاین را فعال نکنید.
+- [ ] **SEC-05 — ورود OTP مشترک (`PWA-20`).** عضو و کارکنان در یک React app وارد شوند؛ OTP اشتباه/منقضی، retry، rate limit، خطای provider، شمارهٔ نامعتبر و session creation پوشش داده شود. `dev_code` فقط در محیط توسعه قابل مشاهده باشد؛ production fallback به کد توسعه نداشته باشد.
+- [ ] **SEC-06 — چرخهٔ نشست (`PWA-21`).** refresh همزمان با logout/revoke، پاسخ دیررس، چند tab، نشست منقضی، account disabled، شبکهٔ قطع‌شده و logout-all را با API واقعی/contract تست کنید؛ پس از revocation هیچ عملیات محافظت‌شده‌ای سرور را دور نزند.
+- [ ] **SEC-07 — هویت از سرور (`PWA-22`).** role/permission/scope از قرارداد احراز هویت‌شدهٔ backend بیاید؛ decode نقش در browser فقط UX است و مجوز محسوب نمی‌شود. role/permission ناشناخته با deny رفتار کند.
+- [ ] **SEC-08 — route guard (`PWA-23`).** ورود مستقیم/refresh/deep link، نقش مجهول، نشست کهنه و 401/403 را صریح اداره کنید؛ guard فرانت جای backend authorization نیست.
+- [ ] **SEC-09 — منفی‌تست API (`PWA-24`).** برای هر route حساس anonymous، شش role، رکورد عضو A/B، grant فعال/منقضی/لغوشده، export/file/job و درخواست مستقیم تست کنید. assert کند 200 فقط به دادهٔ مجاز می‌رسد؛ response خالی/پوشاندن UI را جای deny واقعی نپذیرید.
+- [ ] **SEC-10 — audit و redaction.** تغییر نقش/grant، بررسی فیش، دسترسی/خروجی مالی و عملیات حساس actor، target، زمان، scope، دلیل و نتیجه داشته باشد؛ logها OTP/token/receipt/health detail یا secret را افشا نکنند.
+
+**وابستگی:** crosswalk INV-02 تا INV-06 و policy صریح؛ بخشی از shell غیرحساس می‌تواند موازی ادامه یابد.
+**شاهد خروج:** permission matrix، تست مثبت/منفی روی backend و PWA، evidence revocation، audit و log-redaction. UI-only test کافی نیست.
+
+### ۷. فاز سه — پوستهٔ PWA، راست‌به‌چپ و رفتار مرورگر (`PWA-10` تا `PWA-17`)
+
+> **مرز مختلط WEB:** کد، unit/axe و headless browser را محلی اجرا کنید؛ آزمون target OS/device و screen reader انسانی در بخش دوم است.
+
+- [ ] **WEB-01 — یک runtime React (`PWA-10`).** Studio موجود پایه بماند؛ مشخص کنید browser PWA و Electron چه مرزهایی دارند. اپ دوم/کپی موازی Studio ساخته نشود.
+- [ ] **WEB-02 — URL و deep link (`PWA-11`).** صفحهٔ ورود، عضو و staff مسیرهای مستقیم/قابل‌بازگشت داشته باشند؛ refresh، back/forward، bookmark، link منقضی و login redirect آزموده شود. مسیر محافظت‌شده بدون session محتوای شخصی ندهد.
+- [ ] **WEB-03 — shell نقش‌محور و responsive (`PWA-12`).** ناوبری عضو و کادر مطابق شش role/permission مؤثر باشد؛ موبایل عضو و دسکتاپ staff اولویت دارند؛ loading، empty، zero، unknown، stale، error، 401/403 و session-expired state طراحی شوند.
+- [ ] **WEB-04 — زبان، RTL و accessibility (`PWA-13`).** فارسی، `dir=rtl`, font، اندازهٔ متن، focus-visible، keyboard، label/name، contrast، فرم/جدول موبایل و `prefers-reduced-motion` در shell و صفحه‌ها بررسی شود. axe/unit test مکمل بررسی screen reader/کاربر است، نه جایگزین آن.
+- [ ] **WEB-05 — تقویم و عددها.** جلالی فقط در presentation؛ تاریخ/API در قرارداد canonical؛ مرز روز/منطقهٔ زمانی، ارقام فارسی/لاتین و ریال در ورودی/خروجی یکدست شود. اعداد مالی/سلامتِ نامعلوم به صفر تبدیل نشوند و مقدار ساختگی ساخته نشود.
+- [ ] **WEB-06 — Motion/Option 03.** visual direction و Motion Kit را با design tokens و منبع فعلی کد crosswalk کنید؛ provenance/license دارایی‌های واردشده را بررسی کنید. وضعیت‌های `MK-PWA-01-FU-01`, `MK-PWA-02`, `O3-08` را از hash/snapshot قدیمی به HEAD واقعی تعمیم ندهید؛ GAP را بر اساس helper/test جاری ببندید، سپس browser behavior و review را اجرا کنید.
+- [ ] **WEB-07 — کنترل‌های تعاملی/Q11.** از کتابخانهٔ تعاملی OSS موجود و SDK Flutter استفاده کنید؛ کنترل دست‌ساز switch/dialog/date picker نسازید. حالت focus/keyboard/disabled/error/RTL و license دقیق dependency را ثبت کنید؛ library موجود را بی‌نیاز بازنویسی یا موازی نکنید.
+- [ ] **WEB-08 — manifest (`PWA-14`).** نام/توضیح مشترک، iconها، `start_url`, `scope`, display/theme و مسیرهای launch را بررسی کنید؛ manifest بودن را مساوی installability نگیرید.
+- [ ] **WEB-09 — Service Worker امن (`PWA-15`).** cache را به allowlist محدود فایل‌های ایستا و قابل‌اعتماد کنید. API، POST، نشست/token، فیش، سلامت، اطلاعات شخصی و صفحهٔ خصوصی cache نشوند. پاک‌سازی logout/update به cache خود برنامه محدود باشد؛ cache بی‌ربط origin حذف نشود.
+- [ ] **WEB-10 — چرخهٔ update (`PWA-16`).** کاربر با فرم dirty/درخواست درحال‌اجرا هنگام update داده از دست ندهد؛ waiting/activation، کنترل reload، نسخهٔ قبلی و خرابی asset تازه تست شود. activation فوری را بدون اثبات سلامت فرض نکنید.
+- [ ] **WEB-11 — reverse proxy و SPA (`PWA-17`).** Nginx/استقرار: deep link و refresh به SPA برسد؛ `/api` واقعاً به backend برسد و HTML اشتباه برنگردد؛ MIME/cache headers و خطای API بررسی شود.
+
+**وابستگی:** INV-01 تا INV-09؛ route shell به SEC-01..08 متکی است.
+**شاهد خروج:** Studio build/test + browser test؛ security cache scan؛ screenshots فقط برای ردیابی بصری‌اند، نه معیار کارکرد.
+
+### ۸. فاز چهار — جریان‌های عضو در همان PWA (`PWA-30` تا `PWA-3F`)
+> **مرز مختلط MEM:** vertical sliceها، API و stateها با دادهٔ ساختگی قابل توسعه/تست‌اند؛ SMS واقعی، camera device، تطبیق بانکی، push واقعی و تصویب policy آفلاین فقط در بخش دوم قابل پذیرش‌اند.
+
+هر سفر باید از API و DB تا UI با دادهٔ ساختگی کامل شود؛ state محلی یا mock به‌عنوان persistence معرفی نشود.
+
+- [ ] **MEM-01 — shell عضو (`PWA-30`).** مسیر home/today، ناوبری RTL، back/forward، deep link، loading/error و session expiry؛ رگرسیون صفحه‌های کادر هم بررسی شود.
+- [ ] **MEM-02 — حساب و عضویت (`PWA-31`).** عضو فقط پروفایل، وضعیت و تاریخ انقضای خودش را از API ببیند؛ عضو A به B دسترسی نداشته باشد. عضویت خالی/منقضی، timezone و retry نمایش درست داشته باشد.
+- [ ] **MEM-03 — تغییر شماره و دستگاه (`PWA-32`).** فقط بر پایهٔ challenge/OTP و قرارداد واقعی؛ اثبات شمارهٔ جدید، انقضا، شمارهٔ غلط، revoke نشست‌های لازم، logout-all و پاسخ دیررس آزموده شود؛ endpoint فرضی نسازید.
+- [ ] **MEM-04 — خانه و برنامهٔ امروز (`PWA-33`).** فقط برنامهٔ نسخه‌دار/تأییدشده و دادهٔ backend را نمایش دهید؛ version، تاریخ، readiness و منبع مشخص باشد. KPI، کالری یا ادعای پزشکی بی‌منبع ساخته نشود.
+- [ ] **MEM-05 — ثبت تمرین/feedback (`PWA-34`).** completion/ست/feedback به شناسه و نسخهٔ درست وصل، سمت سرور persist و پس از reload از API بازخوانی شود؛ timeout مبهم، دوبار ارسال و retry idempotent باشند.
+- [ ] **MEM-06 — intake و safety gate (`PWA-35`).** قرارداد و validation با backend همسان باشد؛ ورودی `unknown`, `blocked` یا `needs_review` برنامهٔ اجرایی نسازد/نمایش ندهد. هیچ safety flag صرفاً برای ثبت یا warning دور زده نشود؛ نظر متخصص در موارد لازم `UNKNOWN` می‌ماند.
+- [ ] **MEM-07 — ارزیابی و روند (`PWA-36`).** ownership، مقدار/واحد، زمان، منبع و قابلیت مقایسه ثبت شود؛ `unknown`, `missing`, `stale`, `not comparable` از صفر/پیشرفت واقعی تفکیک شوند. عکس progress بدن پیاده‌سازی یا نمایش داده نشود.
+- [ ] **MEM-08 — تغذیه (`PWA-37`).** plan، meal، food log و محاسبه از هم تفکیک؛ `meals: []` برنامهٔ کامل نیست. محاسبه یا توصیهٔ حساس بدون داده/فرمول/منبع معتبر و review لازم فعال نشود؛ ادعای پزشکی ممنوع.
+- [ ] **MEM-09 — کلاس و رزرو (`PWA-38`).** ظرفیت، reserve, cancel, conflict و duplicate با backend واقعی و آزمون race پوشش داده شوند؛ دکمهٔ disabled در UI اثبات عدم overbooking نیست.
+- [ ] **MEM-10 — QR حضور (`PWA-39`).** عمر/انقضا، امضا یا قرارداد اعتبارسنجی، replay، duplicate، عضو دیگر و fallback با server test بررسی شود. تست دوربین/اجازه/نور/شبکه روی دستگاه فیزیکی؛ QR محلی به‌تنهایی حضور/هویت اثبات نمی‌کند؛ face recognition اضافه نشود.
+- [ ] **MEM-11 — کیف پول و تاریخچه (`PWA-3A`).** مبلغ canonical backend، ترتیب، pagination، ریال و ownership؛ serialization عددی بدون float/گردکردن/unsafe integer JavaScript. هر رویداد مالی منبع و وضعیت داشته باشد.
+- [ ] **MEM-12 — پرداخت دستی و رسید (`PWA-3B`).** فقط جریان کارت‌به‌کارت مصوب؛ رسید خصوصی با محدودیت اندازه/نوع و دسترسی محدود، وضعیت `pending`، خطا/تکرار و audit. آپلود رسید ≠ تأیید بانک. فرد دارای مجوز با مرجع بانکی مستقل بررسی کند؛ سپس فعال‌سازی اشتراک در یک عملیات تراکنشی/idempotent و فقط یک‌بار انجام شود.
+- [ ] **MEM-13 — Shop عضو (`PWA-3C`).** فهرست/تصویر/توضیح/قیمت/موجودی صرفاً برای نمایش؛ API و UI عضو cart/order/checkout نداشته باشند یا fail-closed باشند. خرید حضوری است؛ عملیات staff جداگانه و مطابق مجوز.
+- [ ] **MEM-14 — چت (`PWA-3D`).** طرفین مجاز، ownership، retry/duplicate، empty state و disconnect؛ پیام عضو دیگر یا متن ساختگی نمایش داده نشود.
+- [ ] **MEM-15 — inbox اعلان (`PWA-3E`).** فهرست/خوانده‌شدن با scope کاربر و recovery بعد از اتصال. inbox موجود به معنی push/SMS ارسال‌شده یا مشاهده‌شده نیست؛ کانال push، permission دستگاه و تحویل واقعی جداگانه تصمیم و تست می‌خواهد.
+- [ ] **MEM-16 — outbox آفلاین مشروط (`PWA-3F`).** تا تصویب policy نشست/آفلاین، encryption/device storage، TTL، حد اندازه، idempotency، sync/conflict، revoke، logout/پاک‌سازی و آزمون بازیابی `BLOCKED` بماند. هیچ مالی، QR یا تأیید حساس offline replay نشود. برای Go یا پیاده‌سازی کامل با evidence لازم است یا defer صریح و مصوب با دلیل/اثر؛ وضعیت را بی‌صدا PASS نکنید.
+
+**وابستگی:** پوسته، SEC، قرارداد API و inventory. هر جریان می‌تواند در برش جدا اجرا شود، اما `PWA-50` تا تکمیل جریان‌های در scope بسته نمی‌شود.
+
+### ۹. فاز پنج — جریان‌های کارکنان در همان Studio (`PWA-40` تا `PWA-47`)
+
+> **مرز مختلط STAFF:** صفحات، role/API و گردش کارِ شبیه‌سازی‌شده در این بخش‌اند؛ دوربین فیزیکی، تطبیق واقعی با بانک، تأیید owner و screen-reader/device review در بخش دوم می‌مانند.
+
+- [ ] **STAFF-01 — route map (`PWA-40`).** تمام صفحه‌های جاری (Dashboard، Members، Programs، Nutrition، Assessment، Chat، CheckIn، Finance، Expenses، Analytics، Settings و Shop) به route/role/API/ownership/test map شوند؛ رفتار فعلی را قبل از بازنویسی بسنجید.
+- [ ] **STAFF-02 — اعضا و پروفایل (`PWA-41`).** search/filter/list/detail/edit با API واقعی و permission server؛ pagination، empty/error، stale، دادهٔ نمونه و sentinelها؛ direct API و دسترسی عضو/شعبهٔ دیگر منفی تست شود.
+- [ ] **STAFF-03 — review برنامه (`PWA-42`).** draft، version، approve/reject با دلیل/actor/time و تغییر نسخه؛ عضو دقیقاً نسخهٔ مجاز/تأییدشده را ببیند. تصمیم عددی برنامه به LLM سپرده نشود.
+- [ ] **STAFF-04 — کلاس/check-in (`PWA-43`).** ظرفیت، roster، QR scan و نتیجه از API واقعی؛ roleهای مجاز/غیرمجاز و تکرار/replay؛ مخفی‌شدن منو به‌تنهایی شاهد مجوز نیست.
+- [ ] **STAFF-05 — فیش و بررسی مالی (`PWA-44`).** queue pending، مشاهدهٔ private، approve/reject با دلیل و actor، audit، دسترسی scoped؛ فقط reviewer مجاز. receipt را proof واریز حساب نکنید؛ تطبیق انسانی با مرجع بانکی مستقل پابرجاست.
+- [ ] **STAFF-06 — گزارش، هزینه و تحلیل (`PWA-45`).** ریال/تاریخ/منطقهٔ زمانی، هزینه‌ها، refund، منبع و زمان تولید؛ unknown/missing/incomplete هرگز صفر یا سود قطعی نمایش داده نشود. جمع گزارش با ledger و fixture تطبیق کند.
+- [ ] **STAFF-07 — Settings/grants/audit (`PWA-46`).** نقش/grant فقط از server و owner-only؛ admin حق تغییر مجوز خود/دیگری نداشته باشد. مدت، لغو/انقضا، دسترسی مؤثر و audit در UI/API و تست race بین revoke و درخواست بررسی شوند.
+- [ ] **STAFF-08 — تعامل/واکنش‌گرایی (`PWA-47`).** مسیرهای پرتکرار روی موبایل/دسکتاپ، فرم/جدول/dialog، keyboard/focus، RTL، zoom و reduced motion؛ کنترل از کتابخانهٔ موجود باشد و کار با screen reader نیز بررسی شود.
+
+**وابستگی:** route/access matrix، API، PWA shell و جریان‌های عضو مرتبط برای finance/check-in.
+**شاهد خروج:** staff E2E با roleهای متفاوت + API منفی + تطبیق ledger/receipt + accessibility/browser evidence.
+
+### ۱۰. فاز شش — E2E، نصب‌پذیری، امنیت و حفظ Flutter (`PWA-50` تا `PWA-55`)
+
+> **مرز مختلط QA:** تست خودکار/API/headless، responsive emulation و build محلی در این بخش قابل اجراست؛ نتیجهٔ همان SHA در runner، مرورگر/دستگاه واقعی، reviewer مستقل و staging واقعی را از آن جدا نگه دارید (بخش دوم).
+
+- [ ] **QA-01 — پنج سفر end-to-end (`PWA-50`).** روی backend واقعی تست و دادهٔ کاملاً مصنوعی:
+  1. عضو: OTP → حساب خودش → برنامهٔ تأییدشده → ثبت تمرین/feedback → reload و مشاهدهٔ persistence سرور.
+  2. مربی: ورود → عضو مجاز → ارزیابی → draft → review/approve/reject با دلیل → همان نسخه در حساب عضو.
+  3. حضور: عضو/پذیرش → QR → server validation → رد انقضا/replay/duplicate.
+  4. مالی: عضو رسید ارسال می‌کند → reviewer مجاز آن را با مرجع بانکی مستقل تطبیق می‌دهد → نتیجه/اشتراک/ledger/audit؛ رسید با bank approval یکی نیست.
+  5. امنیت: member A نتواند route/API/receipt/message/data عضو B را ببیند؛ URL مستقیم و دست‌کاری UI هم دسترسی ندهد.
+- [ ] **QA-02 — browser واقعی و نصب/Service Worker (`PWA-51`).** نصب، update، offline shell، cache، logout و تغییر حساب را در مرورگر هدف تست کنید. با دو عضو ثابت کنید API/PII/receipt/health پس از logout یا تغییر حساب از cache برنمی‌گردد؛ cache originهای نامرتبط باقی بماند.
+- [ ] **QA-03 — هدف دستگاه/browser (`PWA-52`).** Android Chrome برای عضو و Chrome/Edge دسکتاپ برای کادر؛ version، مدل دستگاه، سیستم‌عامل، viewport، شبکه و نتیجه ثبت شوند. نسخه‌ها و دستگاه‌های دقیق هنوز باید انتخاب و pin شوند؛ emulation، synthetic headless یا axe به‌تنهایی پذیرش دستگاه/دسترس‌پذیری نیست.
+- [ ] **QA-04 — accessibility و RTL (`PWA-52`).** keyboard-only، focus order/visible, zoom، contrast، labels، dynamic error، screen reader هدف، تقویم/ارقام/RTL و reduced-motion؛ با گره بحرانی/بالای باز Go ندهید.
+- [ ] **QA-05 — adversarial/security (`PWA-53`).** direct route/API، role/ownership A/B، grant/session revoked، stale refresh، CSRF/XSS مربوط، QR replay، cache بعد از logout، فایل private، export و raceها. بازبینی مستقل روی head نهایی ثبت شود؛ test نویسنده به‌تنهایی independent review نیست.
+- [ ] **QA-06 — build و staging package (`PWA-54`).** React از Studio ساخته شود؛ Docker/Nginx/proxy/deep link/API path روی محیط staging مجاز با دادهٔ ساختگی سنجیده شود. SHA و image digest ثابت بماند؛ build artifact، smoke، config و نتیجه به هم پیوند بخورند. این بند مجوز deploy نیست.
+- [ ] **QA-07 — رگرسیون Android/Flutter (`PWA-55`).** تمام build/test/format/workflowهای client و Android ادامه یابند؛ React jobهای آن‌ها را حذف/skip/تضعیف نکند. release signing key موضوع جداگانهٔ gate است؛ تا چرخش/مدیریت امن، Android release build ساخته نشود.
+- [ ] **QA-08 — اجرای گیت همان SHA.** backend، Studio unit/integration/E2E، docs/security scan، Flutter/Android و هر گیت release روی candidate دقیق اجرا و به evidence bundle وصل شوند؛ CI قدیمی یا run مربوط به SHA دیگر جای آن نیست.
+- [ ] **QA-09 — evidence bundle.** SHA/branch، dependency/toolchain versions، environment، synthetic fixtures، commands، logهای پالایش‌شده، pass/fail/skip، device/browser versions، تصاویر مجاز، independent review و riskهای باز ثبت شوند؛ secret/PII در artifact نباشد.
+
+**وابستگی:** تمام جریان‌های در scope، role/session/security، PWA shell، Studio build و دستگاه‌های هدف.
+**شاهد خروج:** پنج سفر کامل، browser+device matrix، cache/security/accessibility evidence و CI همان SHA.
+
+### ۱۱. فاز هفت — گیت‌های عملیات، امنیت و حریم قبل از production
+
+> در این فاز، فقط طراحی، validator/config، fixture و scratch test را در فضای محلی انجام دهید. دسترسی به host، DNS، secrets، bank، destination off-site، receiver عملیاتی و deploy/rollback واقعی به بخش دوم وابسته‌اند؛ نوشتن runbook را با اجرای مانور یکی نگیرید.
+
+این کارها می‌توانند برای طراحی/آماده‌سازی با fixture موازی شوند، اما staging واقعی و production فقط پس از مجوز جدا اجرا می‌شوند.
+
+- [ ] **OPS-01 — topology مصوب.** سرور محلی باشگاه + ورودی HTTPS را در یک طرح مشخص کنید: host/شبکه، روش دسترسی بیرونی، DNS/domain، TLS، firewall، proxy/trusted headers، CORS، مسیرهای public/private، مالک حساب، اپراتور، بودجه و ساعات پاسخ. Full Cloud یا خرید زیرساخت را بدون ADR/مجوز وارد نکنید.
+- [ ] **OPS-02 — انتخاب DB بر پایهٔ شواهد.** SQLite baseline را با workload/همزمانی/مالی مورد انتظار و readiness/backup واقعی benchmark کنید؛ trigger/آستانه و صاحب تصمیم ثبت شود. فقط اگر معیارها fail شد، برنامهٔ PostgreSQL، driver، migration، SQL parity، backup/restore و CI جدا تدوین و تصویب شود؛ صرفاً URL را عوض نکنید.
+- [ ] **OPS-03 — production config/secrets.** secretهای مجزا و تصادفی، CORS/TLS، storage rate-limit/Valkey در صورت الزام runtime، مجوز فایل‌ها و secret manager را بررسی کنید؛ مقادیر واقعی چاپ/commit نشوند. `dev_code`, mock gateway و debug در production نباشد.
+- [ ] **OPS-04 — کلید/secret افشاشده.** Android signing key در تاریخچهٔ عمومی افشاشده گزارش شده؛ گردش/ابطال/جایگزینی امن و اثر update/install را ثبت کنید. برای APK release تا بسته‌شدن این gate build امضاشده نسازید. Gitleaks روی history و secretهای دیگر اجرا شود؛ finding با baseline/allowlist سراسری پنهان نشود.
+- [ ] **OPS-05 — پرداخت بدون gateway آنلاین.** production validator، UI و docs را با تصمیم کارت‌به‌کارت تطبیق دهید: gateway/merchant نباید برای آماده‌نمایی production فعال یا mock جا زده شود؛ حالت خاموش باید صریح و fail-closed باشد. قیمت/وضعیت/ساعات کاری از سرور بیاید و خارج از ساعت/قطع ارتباط پیام روشن دهد.
+- [ ] **OPS-06 — migration واقعی‌نما.** migration از DB تمیز و روی clone امنِ backup در scratch اجرا شود؛ duplicate authority/رکورد و نسخهٔ schema بررسی شوند. هیچ migration روی DB production از این TODO مجاز نیست.
+- [ ] **OPS-07 — فایل receipt خصوصی.** ذخیره بیرون webroot/public media، access check در هر خواندن، نام غیرقابل‌حدس، محدودیت size/type/content، retention، log-redaction و backup+restore فایل به‌همراه DB را اثبات کنید.
+- [ ] **OPS-08 — backup و restore خارج‌میزبان.** برای SQLite فعلی از روش سازگار با WAL و فایل‌های لازم استفاده کنید؛ نسخهٔ رمزگذاری‌شده در محل مستقل از host نگهداری شود. روی scratch/host جدا verify و restore کنید، manifest/integrity/Alembic و فایل‌ها را بررسی و زمان/نتیجه ثبت کنید. backup همان میزبان کافی نیست.
+- [ ] **OPS-09 — تعیین RPO/RTO واقعی.** نیاز محصول/مالک را ثبت، پس از مانور restore زمان واقعی اندازه‌گیری و هدف‌های قابل‌تحقق را تصویب کنید؛ عدد پیشنهادی سند قدیمی را خودکار وعده ندهید.
+- [ ] **OPS-10 — مانیتورینگ و هشدار.** readiness, backend, DB/storage, backup age, disk, worker/queue, TLS expiry و error rate پایش شوند؛ Prometheus rules به‌تنهایی notification نیستند. receiver بیرونی واقعی تنظیم/تست و دریافت هشدار با actor/time evidence ثبت شود.
+- [ ] **OPS-11 — deploy/rollback روی staging.** artifact همان SHA/digest، migration، smoke، tag قبلی، data-compatibility و rollback دستی را با دادهٔ ساختگی تمرین کنید. rollback نباید نوشتهٔ جدید مالی/عضویت را بی‌بررسی با restore کور حذف کند؛ هیچ auto-deploy از این شاخه مفروض نیست.
+- [ ] **OPS-12 — incident/support.** مسئول on-call، راه تماس، severity، توقف feature، حفظ شواهد، اطلاع‌رسانی، restore/rollback و روند رویداد مالی/حریم تعیین و runbook تمرین شود. نام/تعهد مالک را حدس نزنید.
+- [ ] **PRIV-01 — اطلاع‌رسانی/نگهداری/حذف.** نوع داده، purpose، role، محل ذخیره، retention/deletion، backup retention و پاسخ به درخواست عضو را با متن سیاست و review حقوقیِ لازم تطبیق دهید؛ تا reviewer مستقل در دسترس نیست گیت نیازمند او `UNKNOWN/BLOCKED` بماند.
+- [ ] **PRIV-02 — حداقل‌سازی و telemetry.** هیچ عکس پیشرفت بدن جمع نشود؛ receipt خصوصی بماند؛ اطلاعات health/finance/identity در log/metrics/analytics/prompt وارد نشود مگر مجاز و مستند؛ تست redaction و دسترسی به logها اجرا شود.
+- [ ] **OPS-13 — اعلان‌ها.** نیاز inbox درون‌برنامه‌ای را از push/SMS جدا کنید؛ provider، permission، foreground/background، دستگاه/network واقعی، payload غیرحساس، retry و failure mode را تصویب و تست کنید. تا آن زمان قول تحویل push ندهید.
+- [ ] **OPS-14 — supply chain و artifact.** گیت dependency/license/secret/image و در صورت تصویب SBOM/signature روی artifact واقعی اجرا شود؛ digest واحد از build تا staging ثبت شود. وجود workflow/template به معنی registry push/deploy عملیاتی نیست.
+
+**وابستگی:** topology/DB/product decisions و acceptance flowها؛ OPS-08/10/11 نیازمند محیط/اپراتور واقعی و مجوز جدا هستند.
+**شاهد خروج:** ops gateهای RELEASE-CHECKLIST به‌روز با گزارش مانور واقعی، receiver واقعی و مالک عملیاتی؛ متن راهنما به‌تنهایی کافی نیست.
+
+### ۱۳. الگوی ثبت هر بند هنگام اجرا
+
+برای هر `DOC-*`, `INV-*`, `SEC-*`, `WEB-*`, `MEM-*`, `STAFF-*`, `QA-*`, `OPS-*`, `PRIV-*` رکورد زیر تکمیل شود:
+
+```text
+ID و parent PWA-*:
+وضعیت: PROPOSED | READY | IN_PROGRESS | PARTIAL | PASS | BLOCKED | UNKNOWN | NOT_RUN
+دلیل/status قبلی و تغییر آن:
+SHA / diff fingerprint / محیط:
+مسئول اجرا و reviewer (اگر لازم است):
+وابستگی‌ها و تصمیم مصوب:
+فایل/route/API/دستگاه/نقش‌های تحت پوشش:
+دستورهای آزمون، نسخه ابزار و cwd:
+نتیجه pass/fail/skip + تست منفی:
+لینک evidence پالایش‌شده:
+ریسک باقیمانده، blocker، جبران و انقضا:
+روش rollback یا وضعیت بازگشت‌پذیری:
+```
+
+### ۱۴. ترتیب شروع پیشنهادی، بدون تخمین زمان
+
+1. DOC-01 تا DOC-06: هم‌راستاسازی اسناد و ثبت فقط open decisionهای واقعی؛ scopeهای ثبت‌شده را دوباره از مالک نپرسید.
+2. INV-01 تا INV-09: inventory/crosswalk جامع و evidence baseline؛ GAP را قبل از کدنویسی روشن کنید.
+3. SEC-01 تا SEC-10 و policy `PWA-03`: دسترسی، نشست و offline/cache؛ تا آن زمان cache حساس و offline write نسازید.
+4. WEB-01 تا WEB-11: shell، route، RTL/accessibility، manifest/SW/update و proxy.
+5. MEM-01…MEM-16 و STAFF-01…STAFF-08: جریان‌ها به vertical sliceهای کوچک، هرکدام با API/role/test واقعی.
+6. QA-01…QA-09: پنج سفر، browser/device/security/accessibility و رگرسیون Flutter روی candidate مشخص.
+7. OPS-01…OPS-14 و PRIV-01/02: عملیات و حریم؛ کارهای نیازمند میزبان/اپراتور/تأیید را BLOCKED نگه دارید تا اختیار/پیش‌نیاز برسد.
+8. PWA-56 و Go/No-Go مالک. تا عبور از همهٔ گیت‌های مربوط، release همچنان `NO-GO` است.
+
+## ۲. غیرقابل انجام با امکانات این فضا
+
+> این بخش فقط باقیماندهٔ هر بند mixed را دسته‌بندی می‌کند؛ معنی‌اش «ناممکن برای پروژه» نیست. کار محلی/کدنویسی/تست همان ID در بخش اول می‌ماند. این موارد را بدون شاهد واقعی، credential/اختیار، device یا reviewer انسانی `PASS` نکنید. نبودن یک ابزار از پیش نصب‌شده به‌تنهایی دلیل این طبقه‌بندی نیست؛ گزینه‌های OSS/mirror و نتیجهٔ بررسی یا آزمونشان در بخش اول آمده است.
+
+### گیت‌های بیرونیِ دقیق برای موارد مختلط
+
+| شناسه / checkbox مرتبط | آنچه در این فضا قابل تکمیل/اثبات نیست | جایگزین یا workaround که بررسی شد | شرط واقعی لازم |
+|---|---|---|---|
+| `DOC-04`; تصمیم‌های مجوز در `SEC-01…04`, `STAFF-07`; `MEM-16`; جزئیات `OPS-01/02/09/12/13` | اختیار/تصویب مالک برای policy نشست/cache/offline، role×permission×ownership نهایی، topology/ingress و budget/dns، آستانهٔ DB، ساعت کار، قرارداد عملیاتی و نیاز push. | می‌توان register/ADR، گزینه‌ها، test matrix و draft اینجا ساخت؛ OSS/مدل زبانی می‌تواند پیشنهاد بنویسد نه اینکه به‌جای owner تصمیم/مسئولیت بپذیرد. | تصمیم صریح مالک فقط برای گزینه‌های هنوز باز؛ تصمیم‌های ثابت ADR-007 دوباره باز نشوند. تا آن زمان فقط draft و `BLOCKED/UNKNOWN`. |
+| `SEC-10`, reviewer در `QA-05`, `PRIV-01`, safety review `MEM-06` | review مستقلِ لازم امنیت، حریم، حقوق/پزشکی یا تفسیر تخصصی safety؛ نویسندهٔ کد نمی‌تواند reviewer مستقل خودش باشد. | CI، Gitleaks، Semgrep، axe، pytest/Vitest، static source review و OWASP checklist برای یافتن اشکال کمک می‌کنند؛ در این turn هیچ scan/tool آن جایگزینی را انجام نداد. | reviewer مستقل و واجد صلاحیت با scope/نسخه/evidence مشخص؛ اگر دسترس‌پذیر نیست همان gate `UNKNOWN/BLOCKED`. |
+| `WEB-04/06/07`, `STAFF-08`, `QA-02/03/04`; release-gateهای device | Android Chrome/target Chrome/Edge روی مدل/نسخهٔ واقعی، نصب/update/OS lifecycle/permission، TalkBack یا screen reader و usability واقعی. | Workaround واقعی: mirror npm Playwright/Chromium 153 و axe روی build Studio login اجرا شد؛ zero axe violations **فقط همان صفحه**؛ desktop/mobile viewport و SW localhost after-reload کنترل شد. `docker-android` در GitHub نیز دیده شد. | user دارای دستگاه target برای آزمون/گزارش model, OS, browser, network, assistive-tech؛ browser headless/viewport emulation یا container بدون Docker/KVM هم‌ارز نیست. |
+| `MEM-03`, بخش واقعی `SEC-05`; `MEM-15`, `OPS-13` | تحویل OTP/SMS و Push واقعی در provider, شماره, account و دستگاه/network هدف؛ foreground/background و failure/retry عملیاتی. | mock provider، local inbox/webhook، clock/retry tests و test phone می‌توانند flow را محلی بسنجند؛ OSS به‌تنهایی شماره/account/provider فعال یا اجازهٔ ارسال ایجاد نمی‌کند. | provider/line/device/permission و credential در secret store با owner/operator مجاز؛ تا آن‌وقت فقط mock و inbox داخلی. |
+| `MEM-10`, `STAFF-04`, بخش device از `QA-03` | camera permission/focus/light/network و scan QR عملیاتی روی سخت‌افزار واقعی. | parser/expiry/signature/replay/duplicate/ownership و fake camera/video test قابل اجراست؛ headless app هم قابل تست است. | Android هدف با camera و آزمون مستند انسانی؛ mock نمی‌تواند اثبات کند دوربین/کاربر حضوری درست کار می‌کند. هیچ face-recognition سروری اضافه نمی‌شود. |
+| `MEM-12`, `STAFF-05`, مرحلهٔ مالی `QA-01`, `OPS-05` | اثبات واریز واقعی/مبلغ و تطبیق رسید با source بانکی مستقل توسط reviewer مجاز؛ فعال‌کردن/اجرای کار مالی واقعی. | mock bank/gateway، OCR و fixture می‌توانند parser، state machine، private receipt، idempotency و ledger را تست کنند؛ receipt image/OCR مدرک واریز نیست. | حساب/مرجع بانکی و کاربر مجاز در محیط امن، human review/audit و evidence. انتشار اول کارت‌به‌کارت است؛ merchant/live gateway خارج scope است. |
+| `QA-06`, بخش host از `OPS-01`, deploy/rollback در `OPS-11` | runtime/image container روی host، DNS/domain/cert عمومی، staging و rollback واقعی در server محلی باشگاه + HTTPS. | Podman/Docker Compose/Nginx و runnerهای GitHub OSS هستند؛ Studio local build/preview و config lint در بخش اول قابل انجام‌اند. Source mirror به‌تنهایی runtime نیافرید و remote Docker endpoint در این فضا تنظیم نیست. | میزبان/دامنه، network/TLS/credential، operator، staging مجاز و اجازهٔ اجرا. preview محلی یا config/build CI میزبان واقعی نیست. |
+| `OPS-02` — فقط اگر SQLite trigger مصوب fail شود | PostgreSQL daemon/integration واقعی، migration/locking/concurrency و backup/recovery روی topology چند worker. | PGlite `0.6.0` اینجا query smoke پاس کرد؛ GitHub Actions runner می‌تواند در آینده DB service را فقط با workflow مصوب provision کند. | فعلاً SQLite baseline است، پس این blocker قطعی نیست. اگر trigger و تصمیم PostgreSQL فعال شد، PG service/runner، migration test و evidence production-like لازم است؛ PGlite جای daemon را نمی‌گیرد. |
+| `OPS-03/04`, Android signing portion `QA-07`, production-sign/promotion `OPS-14` | production secrets/key، revoke/rotate signing key افشاشده، access to owner secret manager/release history و امضای/publish artifact واقعی. | OpenSSL می‌تواند test key بسازد؛ Gitleaks MIT از طریق workflow موجود اجرا می‌شود؛ signing/SBOM tool به‌تنهایی کلید owner را مدیریت نمی‌کند. | owner/operator با دسترسی امن برای rotation/revocation، verification و secret injection؛ secret واقعی در log/چت/fixture وارد نشود. ساخت کلید جدید، کلید قدیمی را باطل نمی‌کند. |
+| `OPS-06`, `OPS-08/09` | clone/backup واقعی، مقصد رمزنگاری‌شده خارج از host، restore روی host دیگر و اندازه‌گیری/تصویب RPO/RTO واقعی. | backup script/test موجود پروژه و pytest این turn مسیر scratch را پوشش می‌دهند؛ restic/rclone بررسی شدند، اما release asset رسمی اینجا قابل دانلود نشد و NPM restic موجود قدیمی/provenance نامناسب بود. | destination خارج‌میزبان، credential/key/retention، clone امن، host دوم و اپراتور؛ دو مسیر روی یک filesystem یا tar.gz محلی off-site/encrypted نیست. |
+| `OPS-10` | دریافت هشدار در مقصد واقعیِ مستقل و پاسخ اپراتور با actor/time evidence. | Alertmanager/Prometheus و local webhook برای rule/config/routing قابل استفاده‌اند؛ metadata OSS بررسی شد اما binary/receiver عملیاتی نصب/تعریف نشد. | مقصد مستقل (mail/notification/page)، credentials، route فعال و فرد پاسخ‌گو؛ موفقیت localhost HTTP delivery عملیاتی نیست. |
+| `OPS-12` | تعیین فرد on-call، ساعت پوشش، contact و تعهد واقعی support/incident response. | می‌توان runbook و rotation template آماده کرد؛ ابزار OSS/شیفت‌بندی به‌تنهایی مسئولیت انسانی نمی‌سازد. | owner/operator نام و تعهد قابل‌اجرا را بپذیرد و مانور انجام شود. |
+| `PRIV-01/02` | تأیید حقوقی سیاست اطلاع‌رسانی/retention/deletion و review دادهٔ telemetry/log **واقعاً production**. | متن draft، synthetic redaction/minimization tests و Prometheus/OTel OSS کمک می‌کنند؛ دادهٔ تولید واقعی به این workspace آورده نشده است. | مسئول/مشاور حقوقی و privacy owner واجد صلاحیت؛ دسترسی مجاز به محیط production و دادهٔ پالایش‌شده، بدون افشای PII. |
+| `INV-07`, `QA-07/08`, بخشی از `OPS-14` | اجرای گیت runner روی candidate/فایل‌های این worktree که هنوز untracked است و انتشار artifact همان digest. | اجرای محلی در این turn شامل Studio tests/build/lint، backend pytest/Ruff و browser smoke است؛ CI مخزن برای commitهای `arena/**` trigger می‌شود و toolchain Flutter/Gitleaks را فراهم می‌کند. | candidate باید با روال مجاز commit/push/workflow به runner برسد؛ در این درخواست آن کار انجام نشد. CI قدیمی روی SHA `67539e7` فایل‌های untracked حاضر را نمی‌بیند و attestation/deploy production نیست. |
+
+> **گیت release:** checkboxهای فاز هشت را اینجا نگه می‌داریم چون **کل پذیرش release** را توصیف می‌کنند؛ testهای محلی/CI متناظر در بخش اول‌اند، اما این gate با mock/headless یا CI قدیمی PASS نمی‌شود.
+
+### ۱۲. فاز هشت — تصمیم Go/No-Go (`PWA-56`)
+
+Go فقط روی release candidate مشخص و artifact تغییرناپذیر؛ owner تصمیم می‌گیرد، evidence تصمیم را پشتیبانی می‌کند.
+
+- [ ] تمام capabilityهای اصلی در crosswalk نهایی وضعیت دارند؛ جریان اصلی `UNKNOWN/NOT_RUN/BLOCKED` یعنی هنوز تکمیل/قابل‌اعلام نیست.
+- [ ] پنج سفر E2E و همهٔ release-critical journeys روی همان SHA/digest پاس شده‌اند؛ نقش، scope، API، persistence، خطا و audit در evidence دیده می‌شود.
+- [ ] Android Chrome عضو و Chrome/Edge دسکتاپ کادر روی مدل/نسخهٔ دقیق و دستگاه واقعی آزموده شده‌اند؛ device/browser matrix امضا/تأیید شده است.
+- [ ] امنیت، حریم، فایل خصوصی، session/cache/offline و reviewer لازم شواهد بسته دارند؛ یافتهٔ بحرانی/بالا یا exception بدون owner/جبران/انقضا باز نیست.
+- [ ] مالی: رسید به‌تنهایی تأیید نیست، بررسی انسانی و ledger reconciliation درست است، اشتراک یک‌بار فعال می‌شود، فروشگاه checkout ندارد و هیچ gateway mock/live ناخواسته فعال نیست.
+- [ ] DB، migration، encrypted off-host backup، restore، alert delivery، اپراتور، incident response و rollback در topology مصوب عملاً تمرین شده‌اند.
+- [ ] CI، test results، secret scan، build/artifact و review به SHA/digest دقیق release candidate متصل‌اند؛ گیت skipped/غیرفعال نشده است.
+- [ ] موضوع signing key/secretهای افشاشده طبق scope تصمیم گرفته و بسته شده است؛ Android release build تا rotation مدیریت‌شده ساخته نمی‌شود.
+- [ ] `PWA-3F` یا کامل شده و شواهد دارد، یا defer آن با دلیل/اثر/تأیید مناسب ثبت شده است؛ هیچ offline write حساس باز نمانده.
+- [ ] پشتیبانی، مسئول عملیات، مسیر قطع قابلیت، نسخهٔ قبلی سازگار، release note و روش rollback آماده‌اند.
+- [ ] تأیید صریح Go/No-Go مالک روی artifact و دامنهٔ همان release ثبت شود. این TODO، CI سبز یا نظر عامل جای تأیید را نمی‌گیرد.
+
+**شرط توقف:** هر core flow ناقص/نامعلوم، گیت عملیاتی بدون مانور، گیت امنیت/حریم بدون شاهد یا artifactی که شواهدش به SHA/digest دیگری تعلق دارد ⇒ `NO-GO`.
+
+### پوشش موردبه‌مورد همهٔ checkboxهای بخش بیرونی
+
+- ۸ checkbox «Scope ثابت» و تمام checkboxهای `DOC/INV/SEC/WEB/MEM/STAFF/QA/OPS/PRIV` در قسمت اجرایی بخش اول باقی مانده‌اند؛ برای هر گروه جدول نگاشت بخش اول نشان می‌دهد کار محلی چیست و جدول بالا دقیقاً کدام گیتِ بیرونی را از آن جدا می‌کند.
+- تمام ۱۱ checkbox Go/No-Go اصلی به‌عنوان **شرط پذیرش release** در فاز هشت همین بخش حفظ شده‌اند؛ آزمون فنی متناظرشان در بخش اول اجراپذیر است، اما تأیید نهایی همان gate بدون همهٔ پیش‌نیازهای بالا ناممکن است.
+- همهٔ checkboxها همچنان بازند؛ جابه‌جایی آن‌ها به معنی تغییر status، پذیرش نقص، scope جدید یا اجازهٔ deploy نیست. اصل محصول و حکم ADR-007 تا اثبات خلافش `NO-GO` است.
+
+### منابع جاری
+
+- [ADR-007](adr/007-pwa-primary-release.md) و [ADR-006](adr/006-shared-react-pwa.md)
+- [TODO واحد و backlog canonical PWA](TODO-2026-11-16.md#pwa-ui-ux-full-backlog-2026-11-23)
+- [TODO دسترسی/مالی/انتشار](TODO-CLOUD-FINANCE-ACCESS.md)
+- [Release checklist](RELEASE-CHECKLIST.md)، [Ops runbook](OPS-RUNBOOK.md)، [Cloud production plan](PLAN-CLOUD-PRODUCTION.md)
+- [تصمیم‌های مالک](OWNER-DECISIONS.md)، [سیاست نگهداری داده](DATA-RETENTION.md)

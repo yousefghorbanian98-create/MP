@@ -40,6 +40,36 @@ export async function checkUpdate(
   return (await resp.json()) as UpdateManifest;
 }
 
+/** Activate a waiting worker only on explicit user action, then reload after takeover. */
+export function applyWaitingWorkerUpdate(
+  registration: Pick<ServiceWorkerRegistration, "waiting"> | undefined,
+  serviceWorker: Pick<ServiceWorkerContainer, "addEventListener" | "removeEventListener">,
+  reload: () => void,
+): void {
+  const waiting = registration?.waiting;
+  if (!waiting) {
+    reload();
+    return;
+  }
+
+  let reloaded = false;
+  const cleanup = () => {
+    waiting.removeEventListener("statechange", reloadAfterActivation);
+    serviceWorker.removeEventListener("controllerchange", reloadAfterActivation);
+  };
+  const reloadAfterActivation = () => {
+    if (waiting.state !== "activated" || reloaded) return;
+    reloaded = true;
+    cleanup();
+    reload();
+  };
+
+  waiting.addEventListener("statechange", reloadAfterActivation);
+  serviceWorker.addEventListener("controllerchange", reloadAfterActivation);
+  waiting.postMessage("SKIP_WAITING");
+  reloadAfterActivation();
+}
+
 /** قلاب React: بررسی دوره‌ای مانیفست + وضعیت آمادهٔ به‌روزرسانی. */
 export function useUpdateCheck(current: string, platform: "web" | "kiosk" = "web", intervalMs = 30 * 60_000) {
   const [manifest, setManifest] = useState<UpdateManifest | null>(null);
@@ -59,13 +89,18 @@ export function useUpdateCheck(current: string, platform: "web" | "kiosk" = "web
   }, [current, platform, intervalMs]);
 
   const apply = () => {
-    // فعال‌سازی SW جدید + reload — بدون حذف/نصب
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.getRegistration().then((reg) => {
-        reg?.waiting?.postMessage("SKIP_WAITING");
-      });
+    if (!("serviceWorker" in navigator)) {
+      window.location.reload();
+      return;
     }
-    setTimeout(() => window.location.reload(), 300);
+
+    const serviceWorker = navigator.serviceWorker;
+    void serviceWorker
+      .getRegistration()
+      .then((registration) =>
+        applyWaitingWorkerUpdate(registration, serviceWorker, () => window.location.reload()),
+      )
+      .catch(() => window.location.reload());
   };
 
   return { manifest, apply };

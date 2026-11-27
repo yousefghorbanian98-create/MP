@@ -29,7 +29,7 @@ export function Login() {
       const result = await requestOtp(phone);
       setRequested(true);
       setExpiresIn(result.expires_in);
-      setDevCode(result.dev_code ?? null);
+      setDevCode(import.meta.env.DEV ? result.dev_code ?? null : null);
       setCode("");
     } catch (err) {
       setError(err instanceof Error ? err.message : "ارسال کد ناموفق بود");

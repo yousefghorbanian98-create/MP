@@ -32,11 +32,15 @@ const expected: Record<PageId, string> = {
   shop: "فروشگاه",
 };
 
-afterEach(() => cleanup());
+afterEach(() => {
+  cleanup();
+  window.history.replaceState({}, "", "/");
+});
 
 describe("TopBar — عنوان هر صفحه", () => {
   for (const [page, title] of Object.entries(expected)) {
     it(`صفحهٔ ${page} عنوان «${title}» را نشان می‌دهد`, () => {
+      window.history.replaceState({}, "", `/staff/${page}`);
       useAppStore.setState({ page: page as PageId, search: "" });
       render(<TopBar />);
       expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(title);

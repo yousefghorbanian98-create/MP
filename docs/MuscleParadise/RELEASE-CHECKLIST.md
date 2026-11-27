@@ -1,5 +1,7 @@
 # چک‌لیست انتشار (M31) — Release Checklist
 
+> **دامنهٔ جاری:** طبق [ADR-007](adr/007-pwa-primary-release.md)، PWA مشترک React عضو/کادر کلاینت اصلی انتشار اول است؛ Flutter/Android حفظ می‌شود. بندهای APK و REA پایین‌تر فقط برای build/tag توزیع Android کاربرد دارند و شرط جایگزینی یا اثبات پذیرش PWA نیستند. این چک‌لیست نیز گیت‌های عملیاتی تاریخی/بیرونی را PASS نمی‌کند. برای scope و QA PWA، [TODO اجرایی جاری](TODO-PWA-RELEASE-2026-11-23.fa.md) مرجع است.
+
 ## الف) کیفیت (همه سبز = شرط انتشار)
 - [x] pytest: ۱۸۲+ تست سبز (`mp-app/backend`)
 - [x] ruff: صفر خطا
@@ -12,7 +14,7 @@
 - [ ] کلید signing افشاشده rotate/revoke و مسیر به‌روزرسانی کاربران تأیید شد؛ حذف فایل از HEAD کافی نیست.
 - [ ] Gitleaks MIT CLI روی کل history اجرا شد؛ findings قرمز و بدون baseline/allowlist پنهان شدند.
 - [ ] `.env` production با کلید JWT و کلید بیومتریک مجزای ۳۲ بایتی، CORS/TLS و secret manager آماده است.
-- [ ] SMS provider واقعی/HTTPS و live payment merchant/sandbox policy عملیاتی تأیید شدند؛ OTP توسعه و gateway mock در production ممنوع‌اند.
+- [ ] SMS provider واقعی/HTTPS و policy پرداخت دستیِ کارت‌به‌کارت در production تأیید شدند؛ برای انتشار اول live merchant gateway لازم/مجاز نیست. OTP توسعه و gateway mock در production ممنوع‌اند و مسیر gateway آنلاین باید خاموش/fail-closed بماند.
 - [ ] Valkey production سالم، `/api/v1/health/ready` سبز و rate-limit storage مشترک بین workerها تأیید شد.
 - [ ] migration `alembic upgrade head` روی دیتابیس scratch از صفر و روی clone امنِ backup اجرا شد؛ duplicate gateway authorityها پیش از upgrade بررسی شدند.
 - [ ] backup صحیح از `/data/mp.db` ساخته، restore drill انجام و نسخهٔ رمزگذاری‌شده خارج از همان میزبان نگهداری شد.
@@ -21,7 +23,7 @@
 
 > موارد بالا وضعیت عملیاتی‌اند؛ Compose/API تغییرکرده به‌تنهایی معادل secret، merchant، DNS/TLS، host inventory، backup offsite یا staging verification نیست.
 
-## الف-۲) بازبینی REA پیش از هر تگ (M45 — از ۲۰۲۶-۱۱-۱۵ اجباری)
+## الف-۲) بازبینی REA پیش از هر تگ Android APK (M45 — از ۲۰۲۶-۱۱-۱۵ اجباری)
 - [ ] `rea identify-flutter-build <apk>` — هش Dart snapshot + نسخهٔ engine ثبت شد
 - [ ] `rea inspect-apk-signature <apk>` — طرح‌های v1/v2/v3 و اثر انگشت گواهی ثبت شد
 - [ ] `rea audit-release-exposure <apk>` — هیچ source map / debug symbol / credential marker افشا نشد

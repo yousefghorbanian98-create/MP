@@ -27,7 +27,7 @@
 | تصمیم پذیرفته‌شدهٔ baseline PWA انتشار اول | [ADR-007](../adr/007-pwa-primary-release.md) · [فهرست ADRها](../adr/README.md) |
 | route inventory و سیاست دسترسی | [`routes.json`](../../../mp-app/backend/api/routes.json) · [`export_routes.py`](../../../mp-app/backend/scripts/export_routes.py) · [کاتالوگ خوانای ۱۶۳ عملیات (snapshot کاری)](../architecture/session-decisions-2026-11-23/API-ROUTE-CATALOG.md) |
 | زنجیرهٔ UI→API→DB، سفرها و شواهد سناریو | [Wiring ledger (بستهٔ بازبینی کاری)](../architecture/session-decisions-2026-11-23/WIRING-LEDGER.md) · [تحلیل ۲۰۲۶-۱۱-۲۳](../architecture/analysis-2026-11-23.md) |
-| صف محصول و پاسخ تصمیم‌گیرنده | [TODO جاری/تصمیم‌های مالک](../TODO-CLOUD-FINANCE-ACCESS.md) · [ADRها](../adr/README.md) |
+| صف محصول و پاسخ تصمیم‌گیرنده | [TODO اجرایی PWA و گیت‌های انتشار](../TODO-PWA-RELEASE-2026-11-23.fa.md) · [TODO ابری/مالی و تصمیم‌های مالک](../TODO-CLOUD-FINANCE-ACCESS.md) · [ADRها](../adr/README.md) |
 | اجرا و release | [Deployment](../DEPLOYMENT.md) · [Ops runbook](../OPS-RUNBOOK.md) · [Release checklist](../RELEASE-CHECKLIST.md) |
 | حریم داده | [سیاست نگهداری داده](../DATA-RETENTION.md) · [`modules/privacy/retention.py`](../../../mp-app/backend/modules/privacy/retention.py) |
 | استانداردهای مشارکت | [`AGENTS.md`](../../../AGENTS.md) · [راهنمای مخزن](../../../README.md) |

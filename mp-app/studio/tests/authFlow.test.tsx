@@ -17,11 +17,13 @@ function tokenFor(role: string, marker = "login"): string {
 
 beforeEach(() => {
   localStorage.clear();
+  window.history.replaceState({}, "", "/");
   useAppStore.setState({ page: "dashboard" });
 });
 afterEach(() => {
   vi.unstubAllGlobals();
   localStorage.clear();
+  window.history.replaceState({}, "", "/");
 });
 
 describe("Studio OTP authentication flow (M67)", () => {
@@ -102,9 +104,14 @@ describe("Studio OTP authentication flow (M67)", () => {
       return reply(200, {});
     });
     vi.stubGlobal("fetch", fetchMock);
+    window.history.replaceState({}, "", "/staff/members");
 
     render(<App />);
     const phone = await screen.findByLabelText("شمارهٔ موبایل");
+    expect(window.location.pathname).toBe("/login");
+    expect(new URLSearchParams(window.location.search).get("returnTo")).toBe("/staff/members");
+    expect(calls).toHaveLength(0);
+    expect(screen.queryByText("پرچم‌های قابلیت")).toBeNull();
     expect(screen.queryByPlaceholderText("توکن ادمین (JWT) را اینجا بچسبانید")).toBeNull();
     fireEvent.change(phone, { target: { value: "۰۹۱۲۱۲۳۴۵۶۷" } });
     fireEvent.click(screen.getByRole("button", { name: "دریافت کد ورود" }));
@@ -114,6 +121,8 @@ describe("Studio OTP authentication flow (M67)", () => {
     fireEvent.click(screen.getByRole("button", { name: "ورود امن" }));
 
     await screen.findByRole("button", { name: "خروج از حساب" });
+    expect(window.location.pathname).toBe("/staff/members");
+    expect(screen.getByRole("heading", { level: 1 }).textContent).toBe("مدیریت اعضا");
     await waitFor(() => expect(memberMeCalls).toBe(2));
     expect(calls.filter((call) => call.url === "/api/v1/auth/refresh")).toHaveLength(1);
     const memberRequests = calls.filter((call) => call.url === "/api/v1/members/me");
@@ -137,7 +146,7 @@ describe("Studio OTP authentication flow (M67)", () => {
   it("blocks direct navigation to settings for an authenticated manager", async () => {
     localStorage.setItem("mp_token", tokenFor("manager"));
     localStorage.setItem("mp_refresh", "manager-refresh");
-    useAppStore.setState({ page: "settings" });
+    window.history.replaceState({}, "", "/staff/settings");
     const paths: string[] = [];
     const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
       const url = new URL(input instanceof Request ? input.url : String(input), window.location.href);
@@ -164,9 +173,52 @@ describe("Studio OTP authentication flow (M67)", () => {
     render(<App />);
 
     const alert = await screen.findByRole("alert");
+    expect(window.location.pathname).toBe("/staff/settings");
     expect(alert.textContent).toContain("دسترسی به این صفحه برای نقش جاری مجاز نیست");
     expect(paths).not.toContain("/api/v1/admin/flags");
     expect(screen.queryByText("پرچم‌های قابلیت")).toBeNull();
+  });
+
+  it("restores a refresh-protected deep link without exposing the requested screen", async () => {
+    localStorage.setItem("mp_token", tokenFor("manager", "expired"));
+    localStorage.setItem("mp_refresh", "refresh-before-load");
+    window.history.replaceState({}, "", "/staff/settings");
+    const paths: string[] = [];
+    let meCalls = 0;
+    const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
+      const url = new URL(input instanceof Request ? input.url : String(input), window.location.href);
+      paths.push(url.pathname);
+      if (url.pathname === "/api/v1/members/me") {
+        meCalls += 1;
+        if (meCalls === 1) return reply(401, { error: { message: "expired" } });
+        return reply(200, {
+          id: 3,
+          user_id: 3,
+          full_name: "مدیر آزمون",
+          phone: "09121234567",
+          role: "manager",
+          goal: "",
+          gender: "male",
+          height_cm: null,
+        });
+      }
+      if (url.pathname === "/api/v1/auth/refresh") {
+        return reply(200, { access_token: tokenFor("manager", "fresh"), refresh_token: "refresh-after-load" });
+      }
+      return reply(200, []);
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(<App />);
+
+    const alert = await screen.findByRole("alert");
+    expect(window.location.pathname).toBe("/staff/settings");
+    expect(alert.textContent).toContain("دسترسی به این صفحه برای نقش جاری مجاز نیست");
+    expect(meCalls).toBe(3); // restore + one retry + TopBar identity lookup
+    expect(paths.filter((path) => path === "/api/v1/auth/refresh")).toHaveLength(1);
+    expect(paths).not.toContain("/api/v1/admin/flags");
+    expect(localStorage.getItem("mp_token")).toBe(tokenFor("manager", "fresh"));
+    expect(localStorage.getItem("mp_refresh")).toBe("refresh-after-load");
   });
 
   it("rejects a member account from Studio and revokes its refresh token", async () => {
@@ -188,9 +240,12 @@ describe("Studio OTP authentication flow (M67)", () => {
       return reply(200, {});
     });
     vi.stubGlobal("fetch", fetchMock);
+    window.history.replaceState({}, "", "/member");
 
     render(<App />);
     fireEvent.change(await screen.findByLabelText("شمارهٔ موبایل"), { target: { value: "09121112222" } });
+    expect(window.location.pathname).toBe("/login");
+    expect(new URLSearchParams(window.location.search).get("returnTo")).toBe("/member");
     fireEvent.click(screen.getByRole("button", { name: "دریافت کد ورود" }));
     await screen.findByText(/کد آزمایشی محیط توسعه/);
     fireEvent.change(screen.getByLabelText("کد یک‌بارمصرف"), { target: { value: "111111" } });
