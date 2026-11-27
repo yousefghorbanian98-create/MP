@@ -16,8 +16,10 @@ TEST_CHANGED=Studio api/auth/navigation/member-account tests; backend test_m46_w
 BROWSER_AVAILABLE=no — libnspr4.so/libnss3.so missing (apt/npm verified)
 BROWSER_ALTERNATIVE=live-contract (CI job) + backend TestClient flow
 LIVE_CONTRACT=PASS — 1 file; 9 passed; local synthetic API; raw log evidence/2026-11-27/MEM-01/live-contract.raw.txt
-PENDING_PUSH=yes
-INDEX_ALLOWLISTED_COUNT=40 (MEM-01 explicit allowlist; 100 total staged entries, including unrelated earlier staged slices left untouched)
+PENDING_PUSH=yes (MEM-01 push succeeded; stage-slice follow-up still pending)
+PUSHED=a7aa5b715de3da021934152b75e17ef67f6f19a5 روی arena/5e0f64cf-mp (MEM-01 slice; GitHub API verified)
+MEM01_COMMIT_ALLOWLISTED_COUNT=40
+INDEX_ALLOWLISTED_COUNT=10 (current staged paths from the 11-file STAGE-SLICE-TOOLING allowlist; 60 unrelated staged paths remain; total index=70)
 BROWSER_RUN_THIS_CYCLE=no — no Chromium/browser/device assertions in this cycle.
 LOOP_STALLED=no
 
@@ -25,7 +27,7 @@ LOOP_STALLED=no
 - Synthetic Studio focused run: **5 files / 33 passed**; full Studio: **54 files passed, 2 skipped; 379 passed, 10 skipped**. Build/typecheck passed (Vite 5.4.21, 4048 modules); selected Studio ESLint passed. Backend TestClient/temporary SQLite tests for whoami + ownership: **9 passed, 1 Starlette/httpx warning**; touched backend test Ruff passed. Existing JSDOM `getComputedStyle`, React `act(...)`, Recharts warnings persist; skips are not passes. Details: `evidence/2026-11-23/MEM-01/member-account-slice.md` and its neighboring result logs.
 - Component/Auth/App fetch calls are mocked in Studio tests; backend TestClient is a separate synthetic test. No live Studio→backend account session, production member data, SMS, browser, physical Android/OS, screen-reader/manual review, independent reviewer or full PWA journey was tested. Browser/device acceptance remains unknown; headless library failure is not a product result.
 - The earlier shell-only statement “no profile/membership API” is historical and superseded by the account slice; `MEM-01` remains partial. Account/history work overlaps `MEM-02/PWA-31`, now recorded `PARTIAL/NOT_ACCEPTED`; its canonical checkbox remains open. Continue `MEM-02…MEM-16`, then `STAFF-01`, by canonical acceptance.
-- Worktree is dirty. Baseline HEAD is not the tested source SHA; the index already contained the earlier curated allowlist, and current product/evidence changes were not bulk-staged. Private receipts/unrelated untracked files were not opened, copied, deleted, or staged. No commit/push/merge occurred; PR #30 must not merge.
+- MEM-01 source/tests/evidence/docs were committed with exactly 40 allowlisted paths as `a7aa5b715de3da021934152b75e17ef67f6f19a5` and pushed to `arena/5e0f64cf-mp`; GitHub API confirmed the branch SHA and that `evidence/2026-11-23/MEM-01` exists (15 entries). This is not a merge. Sixty unrelated staged entries were left untouched. A `stage_slice.py` run over the 40-file MEM-01 list staged exactly four changed allowlisted state/docs files; a second run over the 11-file tooling allowlist staged 10 changed paths (one allowed docs-gate file was identical to HEAD); index total=70. The helper's five safety tests, Ruff and `py_compile` pass. Tooling follow-up is still pending push. Untracked/private receipts were not opened, copied, deleted, or staged; PR #30 must remain draft and unmerged.
 
 ## Historical run snapshot — PWA / SEC-01 / WEB / INV (مرجع Arena: ۲۰۲۶-۱۱-۲۳ UTC)
 

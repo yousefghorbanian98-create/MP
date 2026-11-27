@@ -1,0 +1,10 @@
+test_literal_pathspec_does_not_expand_brackets (__main__.StageSliceTests.test_literal_pathspec_does_not_expand_brackets) ... ok
+test_rejects_directory_traversal_and_missing_path_without_staging (__main__.StageSliceTests.test_rejects_directory_traversal_and_missing_path_without_staging) ... ok
+test_rejects_duplicate_paths (__main__.StageSliceTests.test_rejects_duplicate_paths) ... ok
+test_stages_explicit_deletion (__main__.StageSliceTests.test_stages_explicit_deletion) ... ok
+test_stages_only_allowlisted_and_preserves_preexisting_index (__main__.StageSliceTests.test_stages_only_allowlisted_and_preserves_preexisting_index) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.412s
+
+OK

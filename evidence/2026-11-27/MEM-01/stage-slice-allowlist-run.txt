@@ -1,0 +1,8 @@
+allowlisted_paths=40
+staged_allowlisted_count=4
+index_staged_path_count=64
+staged_allowlisted_paths:
+  .finn/state/STATE.md
+  docs/MuscleParadise/PWA-EXECUTION-STATE.md
+  docs/MuscleParadise/SESSION_HANDOFF.md
+  evidence/2026-11-27/MEM-01/current-run.md
