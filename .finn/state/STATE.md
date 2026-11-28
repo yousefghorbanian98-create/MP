@@ -16,7 +16,7 @@ BACKEND_REVERIFIED=test_m65_qr_security 7 pass · test_m83_wallet_ledger + test_
 BLOCKED=MEM-10 پوشش حضور/تأیید مربی (تصمیم مالک) · MEM-11 و MEM-13 تصمیم مالی (کاربر/مالی)
 TODO_DONE=7/104 (بدون تیک تازه — فاصله‌های دستگاه/مرورگر/پیامک/بازبین مستقل NOT_RUN)
 SLICES_LANDED=5 (۲ قبلی + ۳ این دور)
-CROSSWALK_IMPACT=studio/src/lib/{navigation.ts,api.ts} منابع crosswalk‌اند ⇒ بازتولید هر دو artifact در commit بعدی
+CROSSWALK_IMPACT=studio/src/lib/{navigation.ts,api.ts} منابع crosswalk‌اند ⇒ هر دو artifact روی bab5572 (چک‌اوت تمیز همین HEAD) بازتولید شد؛ GAP=3 · PARTIAL_REVIEW=14 (member) · PARTIAL_REVIEW=12 (staff)، call-site helper ۶۷
 RELEASE=NO-GO
 
 ## Current follow-up — MEM-08 nutrition + MEM-09 classes/booking (2026-11-27 UTC)
