@@ -4,14 +4,14 @@
 > رفع می‌کند (تمپلیت `${base}`, alias نقش‌ها, مسیرهای پویا) — طبق یافته‌های
 > `review.md` خودِ اجرای قبلی. هیچ ردیفی CURRENT نمی‌شود.
 
-- SHA: `f648848c26f5adbd108bb6a3edd9373cfd57ca64` · branch: `arena/3c08bfbd-mp` · tracked-dirty: `False` · untracked: `0`
+- SHA: `a52f2e749b4eab1f3b928baf9b2aff0513e9083b` · branch: `arena/3c08bfbd-mp` · tracked-dirty: `False` · untracked: `14`
 - `backend/api/routes.json` → `sha256_b64:fwMz37kqW7VlFLfgA8x4Nw_H6Pq-OpqLU0LMqrmoTPg`
 - `backend/security/rbac.py` → `sha256_b64:qHQPdbM-hk4aOZD0134vp4HwwhBcEz2YkqQc5j_fnSw`
 - `studio/src/lib/roleNav.ts` → `sha256_b64:ZQ_3Q0OvbiUBD2oHurTeR30v_vzulL45I6IA7QXVMiA`
-- `studio/src/lib/api.ts` → `sha256_b64:9SGYAkelFLPOe5b8cy7f5zsIErOwivvBMoafb3YagJM`
+- `studio/src/lib/api.ts` → `sha256_b64:3QnqbHGjBm2yzTGVi4tcuevka4OEhrpme46P5-Y2PDQ`
 - `studio/src/lib/adminApi.ts` → `sha256_b64:YSy9HomngwFUX2fIgmRRmnxJLRSO9Ed5BQ9QzBMn8s4`
 - `studio/src/lib/navigation.ts` → `sha256_b64:jK8O-3bBVXFSK8npGcVssNEmheE1f94OgCModv8nwF4`
-- call-site: `{'template-base': 29, 'helper': 70, 'literal': 0}` · پویا: **0**
+- call-site: `{'template-base': 29, 'helper': 71, 'literal': 0}` · پویا: **0**
 - شمارش: `PARTIAL_REVIEW=12`
 
 | وضعیت | معنا |
