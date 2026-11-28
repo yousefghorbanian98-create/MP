@@ -2,6 +2,21 @@
 
 > هشدار انتقال ۲۰۲۶-۱۱-۱۸: بخش‌های بعدی قدیمی snapshot هستند و branch/toolchain/status آن‌ها جاری فرض نشود. وضعیت تازهٔ Motion/PWA در این بخش و [handoff](../../docs/MuscleParadise/SESSION_HANDOFF.md) آمده؛ کارهای قدیمی M63–M99، M100–M106 و M107+ فقط پس از تطبیق با TODO و گیت‌های جاری ادامه یابند.
 
+## Current follow-up — MEM-12 member receipt upload (2026-11-27 UTC)
+
+STATE_LAST_UPDATED=2026-11-28T08:50:00Z
+MEM-12/PWA-3B=PARTIAL/NOT_ACCEPTED — پرداخت کارت‌به‌کارت: ارسال فیش فقط برای pending، پاسخ سرور 202/`in_review` نمایش داده می‌شود و «پرداخت شد» ادعا نمی‌شود
+NEW_ENDPOINTS=0 (GET /payments و POST /payments/{id}/receipt از قبل بودند)
+ROUTES_ADDED=/member/payments (MemberPage: home|today|progress|nutrition|classes|checkin|payments|wallet|shop)
+TESTS_ADDED=7 (memberPayments) · کل vitest 456 pass/15 skip (68 فایل)
+MUTATIONS_PROVEN=3 — شاهد: evidence/2026-11-27/MEM-12/mutation-proof.txt
+BACKEND_REVERIFIED=test_phase6_card_to_card + test_manual_transfer_policy ⇒ 66 passed (دوباره اجرا شد)
+Q11=کنترل فایل با Upload کتابخانه‌ای antd؛ بودجهٔ کنترل دست‌ساز باد نکرد
+BLOCKED=تأیید فیش با مرجع بانکی مستقل و فعال‌سازی اشتراک (تصمیم فرد مجاز/مالی)
+TODO_DONE=7/104 (بدون تیک تازه) · SLICES_LANDED=6
+CROSSWALK_IMPACT=studio/src/lib/{navigation.ts,api.ts} منابع crosswalk‌اند ⇒ بازتولید هر دو artifact روی همین commit
+RELEASE=NO-GO
+
 ## Current follow-up — MEM-10 QR check-in + MEM-11 wallet + MEM-13 shop display (2026-11-27 UTC)
 
 STATE_LAST_UPDATED=2026-11-28T02:00:00Z

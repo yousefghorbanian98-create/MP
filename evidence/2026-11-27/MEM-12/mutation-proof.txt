@@ -1,0 +1,20 @@
+# MEM-12 — mutation proofs (member receipt upload)
+
+## A) اعلام «پرداخت تأیید شد» به‌جای وضعیت واقعی صف بازبینی
+   × member payments (MEM-12) > posts the receipt and reports the server's in_review state instead of claiming payment 41ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 6 passed (7)
+
+## B) بازکردن ورودی فیش برای هر ردیف کارت‌به‌کارت (حذف شرط pending)
+   × member payments (MEM-12) > opens the receipt input only for a pending card-to-card row 51ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 6 passed (7)
+
+## C) حذف پیش‌فیلتر نوع/حجم در کلاینت
+   × member payments (MEM-12) > rejects a wrong type and an oversized file before any request leaves the client 1043ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 6 passed (7)
+
+## بازگردانی
+restored
+      Tests  7 passed (7)

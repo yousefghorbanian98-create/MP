@@ -18,6 +18,24 @@ LAST_KNOWN_EVIDENCE=evidence/2026-11-27/MEM-03/current-run.md و فایل‌ها
 
 در تعارض، تصمیم scope با ADR/تصمیم مالک، متن acceptance با کارت canonical، رفتار با کد و تست همان مسیر، و status اجرایی با آخرین شاهد پالایش‌شده تعیین می‌شود. Snapshotهای تاریخی، دیاگرام‌ها، screenshotها، artifact package، mock، skipped test و CI روی SHA دیگر acceptance محصول را ثابت نمی‌کنند.
 
+## Latest continuation — MEM-12 manual card-to-card receipt, member side
+
+```text
+MEM-12/PWA-3B=PARTIAL/NOT_ACCEPTED — ارسال فیش عضو با 202/in_review، بدون ادعای تأیید
+NEW_ENDPOINTS=0 · TESTS_ADDED=7 · MUTATIONS_PROVEN=3
+BACKEND_REVERIFIED=test_phase6_card_to_card + test_manual_transfer_policy ⇒ 66 passed
+BLOCKED=تأیید فیش با مرجع بانکی مستقل و فعال‌سازی اشتراک (مالی/مجاز)
+TODO_DONE=7/104 ثابت · SLICES_LANDED=6
+RELEASE=NO-GO
+```
+
+- **قرارداد:** آپلود فقط `card_to_card` + `pending` با `ensure_record_scope` (`receipts.py:100-104`)، سقف ۵ مگابایت (`app/config.py:58`)، سه قالب تصویری با سنجش محتوا (`receipts.py:49-82`)، پاسخ **202** و `status=in_review`.
+- **دامنه:** `GET /payments` برای نقش member خودش به عضو محدود می‌شود (`service.py:414-427`)؛ تست ثابت می‌کند کلاینت `member_id` نمی‌فرستد.
+- **UI:** `MemberPayments` روی `/member/payments`؛ مبلغ سرور با واحد ریال و منبع، ورودی فیش فقط برای `pending`، وضعیت `in_review` با کد پیگیری و مهلت، و متن «آپلود فیش ≠ تأیید بانک». هیچ دکمهٔ تأیید/رد ندارد و هیچ مسیر `approve|reject|verify|refund|wallet|start|callback` را صدا نمی‌زند (تست).
+- **Q11:** کنترل فایل با `Upload` کتابخانه‌ای antd — بودجهٔ کنترل دست‌ساز باد نکرد.
+- **BLOCKED:** تأیید فیش و فعال‌سازی اشتراک (پول/مجوز انسانی). مسیر کارکنان از قبل هست (`src/pages/Finance.tsx:135` → `ReceiptQueue`).
+- **شاهد:** [`MEM-12`](../../evidence/2026-11-27/MEM-12/current-run.md).
+
 ## Latest continuation — MEM-10 QR check-in, MEM-11 wallet, MEM-13 shop display
 
 ```text
