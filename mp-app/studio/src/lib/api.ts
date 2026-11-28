@@ -145,7 +145,19 @@ export interface MembersSummary {
   generated_at: string;
 }
 
-export function fetchMembersSummary(token = getToken(), signal?: AbortSignal) {
+/**
+ * `q` جست‌وجوی نام/تلفن را **سمت سرور** اعمال می‌کند (STAFF-02 / PWA-41).
+ *
+ * پیش‌تر فیلتر روی همان ردیف‌های برگشته در مرورگر انجام می‌شد؛ با بیشتر از
+ * `limit` عضو، عضوی که در صفحهٔ اول نبود پیدا نمی‌شد. حالا مقدار خالی یعنی
+ * «بدون فیلتر» و سرور منبع نتیجه است.
+ */
+export function fetchMembersSummary(token = getToken(), signal?: AbortSignal, q?: string) {
+  const needle = (q ?? "").trim();
+  // دو فراخوانیِ جدا، نه یک مسیرِ ساخته‌شده در متغیر: گیت‌های `apiCoverage` و
+  // `interaction_map` هر دو مسیرها را از literalهای داخل همان call می‌خوانند؛
+  // با متغیر میانی، مسیر «مصرف‌نشده» دیده می‌شد و هر دو گیت قرمز می‌کردند.
+  if (needle) return getJson<MembersSummary>(`/admin/members-summary?q=${encodeURIComponent(needle)}`, token, signal);
   return getJson<MembersSummary>("/admin/members-summary", token, signal);
 }
 

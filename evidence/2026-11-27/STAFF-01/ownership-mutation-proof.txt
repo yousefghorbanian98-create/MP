@@ -1,0 +1,53 @@
+# STAFF-01(ب) — اثبات جهش (mutation proof)
+branch: arena/3c08bfbd-mp
+base_sha: 151b72c
+date: 2026-11-28T18:45:41Z
+gate: mp-app/backend/tests/integration/test_staff_ownership_gate.py
+
+== baseline (unmutated) ==
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+27 passed, 1 warning in 6.94s
+
+== MUTATION M1 — allow leak: ("member", "/api/v1/admin/kpis", "GET") added to security/rbac.py POLICIES ==
+        )
+E       AssertionError: GET /api/v1/admin/kpis با نقش member باید ۴۰۳ بدهد، داد 200: {"members_total":0,"active_members":0,"new_members_30d":0,"revenue_paid_rial":0,"active_memberships":0,"classes":0,"class_fill_rate":null,"generated_at":"2026-11-28T18:45:53.713687+00:00"}
+E       assert 200 == 403
+E        +  where 200 = <Response [200 OK]>.status_code
+
+tests/integration/test_staff_ownership_gate.py:143: AssertionError
+---------------------------- Captured stdout setup -----------------------------
+2026-11-28T18:45:53.358282Z [warning  ] effective_configuration        dev_otp_echo=False environment=development init_db_on_startup=True log_format=console rate_limit_storage=memory sms_provider=dev trusted_proxies_configured=False
+=============================== warnings summary ===============================
+../../../../../tmp/mpvenv/lib/python3.11/site-packages/fastapi/testclient.py:1
+  /tmp/mpvenv/lib/python3.11/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/integration/test_staff_ownership_gate.py::test_live_selection_matches_artifact
+FAILED tests/integration/test_staff_ownership_gate.py::test_member_gets_403_on_staff_route[api-v1-admin-kpis]
+2 failed, 25 deselected, 1 warning in 1.17s
+--- raw status proof (member token on staff route, mutated policy) ---
+/tmp/mpvenv/lib/python3.11/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+  from starlette.testclient import TestClient as TestClient  # noqa
+GET /api/v1/admin/kpis as member -> 200 {"members_total":0,"active_members":0,"new_members_30d":0,"revenue_paid_rial":0,"active_memberships":0,"classes":0,"clas
+restore: security/rbac.py: OK
+
+== MUTATION M2 — staff route added to modules/admin/router.py with no role rule ==
+(route has require_permission() guard from the router, but no POLICIES row matches /api/v1/admin/ownership-gate-probe)
+E         At index 9 diff: '/api/v1/admin/ownership-gate-probe' != '/api/v1/admin/permissions'
+E         Left contains one more item: '/api/v1/reports/confidential/{member_id}'
+E         Use -v to get more diff
+
+tests/integration/test_staff_ownership_gate.py:95: AssertionError
+=============================== warnings summary ===============================
+../../../../../tmp/mpvenv/lib/python3.11/site-packages/fastapi/testclient.py:1
+  /tmp/mpvenv/lib/python3.11/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/integration/test_staff_ownership_gate.py::test_live_selection_matches_artifact
+1 failed, 2 passed, 24 deselected, 1 warning in 0.71s
+restore: modules/admin/router.py: OK

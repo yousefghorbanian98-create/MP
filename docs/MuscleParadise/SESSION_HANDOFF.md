@@ -2,6 +2,20 @@
 
 > این فایل **خلاصهٔ جاری برای ادامهٔ کار** است، نه آرشیو گفتگو و نه منبع نهایی وضعیت محصول. پیش از فشرده‌سازی context یا پایان هر کار معنادار، همین snapshot را جایگزین/به‌روز کن؛ تاریخچه را با انباشت transcript طولانی نکن.
 
+## وضعیت جاری — دور ۲/۹ فاز B: SEC-01 و کارکنان (UTC 2026-11-28)
+
+```text
+MEMBER_ROUTES=11 · MEMBER_SCREENS=11 · STAFF_GATED=23 · TODO_DONE=7 · OPEN_TESTIDS=0
+SEC-01_CONVERTIBLE=yes · STAFF-01(ب)=DONE (این بند) · STAFF-02=PARTIAL · STAFF-07/QF-03=PARTIAL (testidها بسته)
+NEW_ENDPOINTS=0 · TESTS_ADDED=37 · MUTATIONS_PROVEN=7 · RELEASE=NO-GO
+```
+
+- ماتریس SEC-01 قابل تبدیل بود و همان ماتریس اجرایی شد؛ ماتریس دوم ساخته نشد.
+- ۲۳ مسیر staff-only GET با توکن member واقعاً ۴۰۳ می‌گیرند (بدون ۲۰۰/۵۰۰)؛ گیت با افزودن مسیر بی‌قاعده قرمز می‌شود.
+- جست‌وجوی اعضا از مرورگر به سرور منتقل شد (`q` در SQL با escape) — فیلتر روی ۲۰۰ ردیف اول دیگر گم نمی‌کند.
+- `permission-user` و `permission-expiry` تست رفتاری گرفتند: `OPEN_TESTIDS: 2 → 0`.
+- جمع‌بندی: `evidence/2026-11-27/MEM-CLOSE/round-2.md`.
+
 ## وضعیت جاری — دور ۱/۹ فاز A: چت عضو و بستن MEM (UTC 2026-11-28)
 
 ```text

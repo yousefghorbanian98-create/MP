@@ -1,0 +1,16 @@
+# STAFF-02 — اثبات جهشِ سمت Studio (جست‌وجوی سمت سرور)
+branch: arena/3c08bfbd-mp · base_sha: 151b72c
+gate: mp-app/studio/tests/staffMemberSearch.test.tsx
+
+== baseline ==
+ ✓ tests/staffMemberSearch.test.tsx (3 tests) 124ms
+      Tests  3 passed (3)
+
+== MUTATION M7 — q دوباره از کلاینت فرستاده نمی‌شود (بازگشت به فیلتر مرورگر) ==
+   × جست‌وجوی اعضای کارکنان > متن جست‌وجو را به‌صورت q سمت سرور می‌فرستد 1040ms
+   ✓ جست‌وجوی اعضای کارکنان > ردیف‌های نمایش‌داده‌شده همان پاسخ سرور است، نه نتیجهٔ فیلتر مرورگر 21ms
+   ✓ جست‌وجوی اعضای کارکنان > جست‌وجوی بی‌نتیجه حالت خالی صریح نشان می‌دهد و داده نمی‌سازد 9ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 2 passed (3)
+
+restore: src/components/MemberTable.tsx: OK
