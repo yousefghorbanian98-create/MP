@@ -18,6 +18,23 @@ LAST_KNOWN_EVIDENCE=evidence/2026-11-27/MEM-03/current-run.md و فایل‌ها
 
 در تعارض، تصمیم scope با ADR/تصمیم مالک، متن acceptance با کارت canonical، رفتار با کد و تست همان مسیر، و status اجرایی با آخرین شاهد پالایش‌شده تعیین می‌شود. Snapshotهای تاریخی، دیاگرام‌ها، screenshotها، artifact package، mock، skipped test و CI روی SHA دیگر acceptance محصول را ثابت نمی‌کنند.
 
+## Latest continuation — ROUND 1/9 (phase A): MEM-14 chat, MEM-02 review, MEM-CLOSE
+
+```text
+MEMBER_ROUTES=11 · MEMBER_SCREENS=11 · STAFF_GATED=5 · TODO_DONE=7
+MEM-14/PWA-3D=PARTIAL/NOT_ACCEPTED — ۶ تست، ۳ mutation؛ ارسال فقط با بازخوانی؛ بدون realtime
+MEM-02/PWA-31=PARTIAL/NOT_ACCEPTED — بازبینی + ۲ mutation (unknown≠active، expired≠active)
+MEM-16/PWA-3F=BLOCKED (policy)  ·  MEM-01=PARTIAL (نیازمند مرورگر)
+NEW_ENDPOINTS=0 · TESTS_ADDED=6 · MUTATIONS_PROVEN=5
+RELEASE=NO-GO
+```
+
+- **MEM-14:** `MemberChat` روی `/member/chat`. قرارداد: پنج مسیر REST (`chat_router.py:24-53`)، ownership سمت سرور (`chat_service.py:26-44` ⇒ ۴۰۳)، ارسال با فرستنده از توکن و رد پیام خالی/بلند/گفتگوی بسته (`:99-125`). پیام‌ها فقط از بازخوانی می‌آیند (تست با سروری که پیام را ذخیره نمی‌کند)، خوانده‌شدن با `marked_read` سرور و بازخوانی، `GAP: idempotency ارسال`.
+- **MEM-02:** منطق پنج‌حالته از قبل در `memberAccount.ts:44-59` بود؛ این دور فقط اثبات شد که گیت است: `unknown→active` و `expired→active` هر دو تست را قرمز کردند.
+- **MEM-CLOSE:** جدول ۱۶ ردیفی MEM با mutation/تست/وضعیت در `evidence/2026-11-27/MEM-CLOSE/summary.md`.
+- **BLOCKED:** MEM-16 (policy آفلاین) · تأیید فیش با مرجع بانکی · تأیید حضور مربی · device/browser/reviewer.
+- شاهد: [`MEM-14`](../../evidence/2026-11-27/MEM-14/current-run.md) · [`MEM-02`](../../evidence/2026-11-27/MEM-02/current-run.md).
+
 ## Latest continuation — MEM-15 inbox + STAFF-01 completeness gate
 
 ```text

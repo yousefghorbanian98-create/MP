@@ -1,0 +1,54 @@
+# MEM-14 — پاسخ قرارداد پیش از UI (grep -n واقعی)
+# HEAD: d6e8b14
+
+## ① مسیرها
+$ grep -n "@router\." mp-app/backend/modules/notification/chat_router.py
+```
+24:@router.get("/conversations", summary="گفتگوهای من (عضو یا مربی)")
+29:@router.post("/conversations", summary="شروع گفتگوی جدید")
+40:@router.get("/conversations/{conversation_id}/messages", summary="پیام‌های گفتگو")
+45:@router.post("/conversations/{conversation_id}/messages", summary="ارسال پیام")
+52:@router.post("/conversations/{conversation_id}/read", summary="علامت‌گذاری خوانده‌شده")
+```
+
+## ② ownership — عضو فقط گفتگوی خودش
+$ sed -n '26,44p' mp-app/backend/modules/notification/chat_service.py
+```python
+def _load_conversation(db: Session, conversation_id: int, user) -> object:
+    ...
+    if user.role == "member":
+        member = db.scalar(select(Member).where(Member.user_id == user.id))
+        if member is None or conv.member_id != member.id:
+            raise ForbiddenError("این گفتگو متعلق به شما نیست")
+```
+
+## ③ ارسال: فرستنده از توکن، پیام خالی/بلند/گفتگوی بسته رد
+$ sed -n '99,125p' mp-app/backend/modules/notification/chat_service.py
+```python
+def send_message(db: Session, *, conversation_id: int, body: str, user) -> dict:
+    conv = _load_conversation(db, conversation_id, user)
+    text = (body or "").strip()
+    if not text: raise ApiError("پیام خالی ارسال نمی‌شود", code="empty_message")
+    if len(text) > MAX_BODY: raise ApiError(..., code="message_too_long")
+    if conv.status == "closed": raise ApiError("این گفتگو بسته شده است", code="conversation_closed")
+    role = "member" if user.role == "member" else "coach"
+```
+
+## ④ خواندن پیام‌ها و شمارش
+$ sed -n '127,148p' mp-app/backend/modules/notification/chat_service.py
+```python
+    rows = list(db.scalars(select(.Message).where(...).order_by(Message.id.desc()).limit(...)).all())
+    rows.reverse()
+    unread = sum(1 for m in rows if m.read_at is None and m.sender_id != user.id)
+    return {"conversation_id": ..., "messages": [...], "unread_count": unread, "rule_version": ...}
+```
+
+## نتیجه — چه هست و چه نیست
+- **هست:** فهرست گفتگو، پیام‌ها (صعودی، `limit` سقف‌دار)، ارسال با فرستنده از توکن،
+  علامت خوانده‌شدن با شمارش واقعی، ownership سمت سرور (۴۰۳).
+- **نیست:** realtime/WebSocket. سرور فقط REST دارد؛ پس UI باید بگوید «تازه‌سازی با بازخوانی».
+- **نیست:** idempotency برای ارسال پیام. سرور کلید تکرار ندارد ⇒ `GAP:` ارسال دوباره با
+  همان متن، دو پیام می‌سازد. در UI دکمه در حین ارسال غیرفعال است و پیام فقط از بازخوانی
+  نمایش داده می‌شود، ولی این «اثبات idempotency» نیست و ادعا نمی‌شود.
+- **نیست:** وضعیت تحویل/دیده‌شدن پیام روی دستگاه طرف مقابل؛ `read_at` فقط «سرور ثبت کرد»
+  است و UI همین را می‌گوید.

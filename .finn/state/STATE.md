@@ -2,6 +2,27 @@
 
 > هشدار انتقال ۲۰۲۶-۱۱-۱۸: بخش‌های بعدی قدیمی snapshot هستند و branch/toolchain/status آن‌ها جاری فرض نشود. وضعیت تازهٔ Motion/PWA در این بخش و [handoff](../../docs/MuscleParadise/SESSION_HANDOFF.md) آمده؛ کارهای قدیمی M63–M99، M100–M106 و M107+ فقط پس از تطبیق با TODO و گیت‌های جاری ادامه یابند.
 
+## Current follow-up — ROUND 1/9 phase A: MEM-14 chat + MEM-02 review + MEM-CLOSE (2026-11-27 UTC)
+
+STATE_LAST_UPDATED=2026-11-28T16:30:00Z
+ROUND=1/9 · PHASE=A · ORDER=v11-final (standing orders 2026-11-28)
+MEMBER_ROUTES=11
+MEMBER_SCREENS=11
+STAFF_GATED=5
+TODO_DONE=7
+MEM-14/PWA-3D=PARTIAL/NOT_ACCEPTED — چت عضو: ۶ تست، ۳ mutation؛ ارسال فقط با بازخوانی، بدون realtime، گفتگوی بسته غیرفعال
+MEM-02/PWA-31=PARTIAL/NOT_ACCEPTED — بازبینی: پنج حالت (active|expiring|expired|cancelled|unknown) از قبل بود؛ ۲ mutation تازه اثبات شد
+MEM-01/PWA-30=PARTIAL/NOT_ACCEPTED — شواهد کافی؛ پذیرش نیازمند مرورگر (بخش ②)
+MEM-16/PWA-3F=BLOCKED — policy آفلاین/رمزنگاری/TTL/sync/revoke تصویب نشده (TODO line 244)
+MEM-CLOSE=evidence/2026-11-27/MEM-CLOSE/summary.md (جدول ۱۶ ردیفی)
+NEW_ENDPOINTS=0 (chat و memberships از قبل بودند)
+ROUTES_ADDED=/member/chat (MemberPage: home|today|progress|nutrition|classes|checkin|payments|inbox|chat|wallet|shop)
+TESTS_ADDED=6 (memberChat)
+MUTATIONS_PROVEN=5 این دور (MEM-14: ۳ · MEM-02: ۲)
+GAP=ارسال پیام در سرور idempotency ندارد (evidence/2026-11-27/MEM-14/contract-answer.txt) — ادعا نمی‌شود
+CROSSWALK_DIRTY=no — هر دو artifact یک‌بار در پایان دور روی f648848 بازتولید شد؛ عضو: 15 PARTIAL_REVIEW / 2 GAP (دامنهٔ chat از GAP بیرون آمد) · کارکنان بدون تغییر شمارش
+RELEASE=NO-GO
+
 ## Current follow-up — MEM-15 inbox + STAFF-01 completeness gate (2026-11-27 UTC)
 
 STATE_LAST_UPDATED=2026-11-28T10:20:00Z

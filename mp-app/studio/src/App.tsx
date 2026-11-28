@@ -26,6 +26,7 @@ import { MemberClasses } from "./components/MemberClasses";
 import { MemberJp7Trend } from "./components/MemberJp7Trend";
 import { MemberNutrition } from "./components/MemberNutrition";
 import { MemberShop } from "./components/MemberShop";
+import { MemberChat } from "./components/MemberChat";
 import { MemberInbox } from "./components/MemberInbox";
 import { MemberPayments } from "./components/MemberPayments";
 import { MemberWallet } from "./components/MemberWallet";
@@ -187,6 +188,7 @@ const memberNavigation: { page: MemberPage; href: string; label: string }[] = [
   { page: "checkin", href: "/member/checkin", label: "حضور" },
   { page: "payments", href: "/member/payments", label: "پرداخت و فیش" },
   { page: "inbox", href: "/member/inbox", label: "اعلان‌ها" },
+  { page: "chat", href: "/member/chat", label: "گفتگو" },
   { page: "wallet", href: "/member/wallet", label: "کیف پول" },
   { page: "shop", href: "/member/shop", label: "فروشگاه" },
 ];
@@ -202,6 +204,7 @@ function MemberShell({ page, onSignOut }: { page: MemberPage; onSignOut: () => v
     checkin: "حضور (QR)",
     payments: "پرداخت و فیش",
     inbox: "اعلان‌ها",
+    chat: "گفتگو با مربی",
     wallet: "کیف پول",
     shop: "فروشگاه",
   };
@@ -270,6 +273,10 @@ function MemberShell({ page, onSignOut }: { page: MemberPage; onSignOut: () => v
           ) : page === "inbox" ? (
             <div className="mt-4">
               <MemberInbox />
+            </div>
+          ) : page === "chat" ? (
+            <div className="mt-4">
+              <MemberChat />
             </div>
           ) : page === "wallet" ? (
             <div className="mt-4">

@@ -1,0 +1,20 @@
+# MEM-14 — mutation proofs
+
+## A) افزودن خوش‌بینانهٔ پیام ارسال‌شده (بدون بازخوانی سرور)
+   × member chat (MEM-14) > does not invent a sent message: it re-reads and shows only what the server stores 1213ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 5 passed (6)
+
+## B) ادعای خوانده‌شدن از کلیک، بدون تأیید سرور
+   × member chat (MEM-14) > marks read through the server and reports the server's own count 1048ms
+   × member chat (MEM-14) > does not invent a sent message: it re-reads and shows only what the server stores 1216ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+## C) حذف گارد گفتگوی بسته (اجازهٔ ارسال به گفتگوی closed)
+   × member chat (MEM-14) > surfaces the server's refusal and keeps the draft when the conversation is closed 53ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 5 passed (6)
+
+## بازگردانی
+restored
+      Tests  6 passed (6)

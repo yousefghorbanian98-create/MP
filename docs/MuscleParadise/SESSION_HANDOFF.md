@@ -2,6 +2,20 @@
 
 > این فایل **خلاصهٔ جاری برای ادامهٔ کار** است، نه آرشیو گفتگو و نه منبع نهایی وضعیت محصول. پیش از فشرده‌سازی context یا پایان هر کار معنادار، همین snapshot را جایگزین/به‌روز کن؛ تاریخچه را با انباشت transcript طولانی نکن.
 
+## وضعیت جاری — دور ۱/۹ فاز A: چت عضو و بستن MEM (UTC 2026-11-28)
+
+```text
+MEMBER_ROUTES=11 · MEMBER_SCREENS=11 · STAFF_GATED=5 · TODO_DONE=7
+MEM-14/PWA-3D=PARTIAL/NOT_ACCEPTED · MEM-02/PWA-31=PARTIAL/NOT_ACCEPTED · MEM-16=BLOCKED
+NEW_ENDPOINTS=0 · TESTS_ADDED=6 · MUTATIONS_PROVEN=5
+RELEASE=NO-GO
+```
+
+- `MemberChat` روی `/member/chat`: گفتگوها و پیام‌ها از سرور، ارسال بدون افزودن خوش‌بینانه، «خوانده شد» با شمارش سرور، گفتگوی بسته غیرفعال، بدون ادعای realtime.
+- MEM-02 بازبینی شد و گیتش با دو mutation (`unknown≠active`، `expired≠active`) اثبات شد.
+- جدول بستن MEM: `evidence/2026-11-27/MEM-CLOSE/summary.md`.
+- مسیرهای عضو: `home` · `today` · `progress` · `nutrition` · `classes` · `checkin` · `payments` · `inbox` · `chat` · `wallet` · `shop`.
+
 ## وضعیت جاری — MEM-15 اعلان‌ها و گیت STAFF-01 (UTC 2026-11-27)
 
 ```text
