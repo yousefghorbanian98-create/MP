@@ -1,0 +1,16 @@
+# MEM-15 — mutation proofs
+
+## A) «خوانده شد» خوش‌بینانه از کلیک (بدون بازخوانی سرور)
+   × member inbox (MEM-15) > marks a notification read only after the server confirms, then re-reads the list 164ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 5 passed (6)
+
+## B) ترجمهٔ کانال inapp به ادعای «پیامک ارسال شد»
+   × member inbox (MEM-15) > lists the server's notifications with channel, kind and a visible source 193ms
+   × member inbox (MEM-15) > never claims push or SMS delivery when the channel is inapp 53ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  2 failed | 4 passed (6)
+
+## بازگردانی
+restored
+      Tests  6 passed (6)

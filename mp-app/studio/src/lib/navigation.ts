@@ -16,7 +16,8 @@ export type MemberPage =
   | "checkin"
   | "wallet"
   | "shop"
-  | "payments";
+  | "payments"
+  | "inbox";
 
 export type StudioRoute =
   | { type: "home"; path: "/" }
@@ -32,7 +33,8 @@ export type StudioRoute =
         | "/member/checkin"
         | "/member/wallet"
         | "/member/shop"
-        | "/member/payments";
+        | "/member/payments"
+        | "/member/inbox";
       page: MemberPage;
     }
   | { type: "staff"; path: string; page: PageId }
@@ -66,6 +68,7 @@ function routeForPath(pathname: string): StudioRoute {
   if (path === "/member/shop") return { type: "member", path: "/member/shop", page: "shop" };
   if (path === "/member/payments")
     return { type: "member", path: "/member/payments", page: "payments" };
+  if (path === "/member/inbox") return { type: "member", path: "/member/inbox", page: "inbox" };
   if (path === "/staff") return { type: "staff", path: staffPath("dashboard"), page: "dashboard" };
 
   const match = path.match(/^\/staff\/([a-z]+)$/);

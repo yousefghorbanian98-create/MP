@@ -2,6 +2,21 @@
 
 > این فایل **خلاصهٔ جاری برای ادامهٔ کار** است، نه آرشیو گفتگو و نه منبع نهایی وضعیت محصول. پیش از فشرده‌سازی context یا پایان هر کار معنادار، همین snapshot را جایگزین/به‌روز کن؛ تاریخچه را با انباشت transcript طولانی نکن.
 
+## وضعیت جاری — MEM-15 اعلان‌ها و گیت STAFF-01 (UTC 2026-11-27)
+
+```text
+MEMBER_ROUTES=10 · MEMBER_SCREENS=10 · TODO_DONE=7 (بدون تیک)
+MEM-15/PWA-3E=PARTIAL/NOT_ACCEPTED · STAFF-01/PWA-40=PARTIAL/NOT_ACCEPTED
+CHECKIN_CONTRACT: replay=yes expiry=yes other-member=yes
+NEW_ENDPOINTS=0 · TESTS_ADDED=10 · MUTATIONS_PROVEN=5
+RELEASE=NO-GO
+```
+
+- `MemberInbox` روی `/member/inbox`: کانال `inapp` صریح، «خوانده شد» فقط پس از تأیید سرور و بازخوانی، صفر ارسال اعلان، ۴۰۳ fail-closed.
+- `tests/staffRouteMap.test.ts`: برای هر `PAGE_IDS` مسیر + رندر + تست اختصاصی؛ بدهی `members`/`analytics` در baseline ratchet ثبت شده.
+- مسیرهای عضو: `home` · `today` · `progress` · `nutrition` · `classes` · `checkin` · `payments` · `inbox` · `wallet` · `shop`.
+- شاهد: [`MEM-15`](../../evidence/2026-11-27/MEM-15/current-run.md) · [`STAFF-01`](../../evidence/2026-11-27/STAFF-01/current-run.md).
+
 ## وضعیت جاری — MEM-12 ارسال فیش کارت‌به‌کارت (UTC 2026-11-27)
 
 ```text

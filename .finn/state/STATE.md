@@ -2,6 +2,24 @@
 
 > هشدار انتقال ۲۰۲۶-۱۱-۱۸: بخش‌های بعدی قدیمی snapshot هستند و branch/toolchain/status آن‌ها جاری فرض نشود. وضعیت تازهٔ Motion/PWA در این بخش و [handoff](../../docs/MuscleParadise/SESSION_HANDOFF.md) آمده؛ کارهای قدیمی M63–M99، M100–M106 و M107+ فقط پس از تطبیق با TODO و گیت‌های جاری ادامه یابند.
 
+## Current follow-up — MEM-15 inbox + STAFF-01 completeness gate (2026-11-27 UTC)
+
+STATE_LAST_UPDATED=2026-11-28T10:20:00Z
+MEMBER_ROUTES=10
+MEMBER_SCREENS=10
+TODO_DONE=7
+MEM-15/PWA-3E=PARTIAL/NOT_ACCEPTED — جعبهٔ اعلان: فهرست از سرور، کانال `inapp` صریح، خواندن فقط با تأیید+بازخوانی، صفر ارسال اعلان
+STAFF-01/PWA-40=PARTIAL/NOT_ACCEPTED — گیت کامل‌بودن: route/render/dedicated-test برای ۱۲ صفحه؛ بدهی `members`+`analytics` در baseline ratchet
+NEW_ENDPOINTS=0 (GET /notifications/member/{id} و POST /notifications/{id}/read از قبل بودند)
+ROUTES_ADDED=/member/inbox (MemberPage: home|today|progress|nutrition|classes|checkin|payments|inbox|wallet|shop)
+TESTS_ADDED=10 (memberInbox 6 · staffRouteMap 4)
+MUTATIONS_PROVEN=5 این دور (MEM-15: ۲ · STAFF-01: ۳)
+CHECKIN_CONTRACT: replay=yes expiry=yes other-member=yes — evidence/2026-11-27/MEM-10/checkin-contract.txt
+STAFF01_COMPLETENESS_GATE=pass (route/render/test) · STAFF01_OWNERSHIP_GATE=not-yet (روی SEC-01 سوار می‌شود)
+BLOCKED=MEM-16 outbox آفلاین (policy مصوب ندارد) · تأیید فیش/فعال‌سازی اشتراک (مالی) · تأیید حضور مربی (ایمنی)
+CROSSWALK_DIRTY=no — هر دو artifact یک بار در پایان دور روی 485d962 (چک‌اوت تمیز) بازتولید شد
+RELEASE=NO-GO
+
 ## Current follow-up — MEM-12 member receipt upload (2026-11-27 UTC)
 
 STATE_LAST_UPDATED=2026-11-28T08:50:00Z
