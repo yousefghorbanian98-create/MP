@@ -2,6 +2,24 @@
 
 > هشدار انتقال ۲۰۲۶-۱۱-۱۸: بخش‌های بعدی قدیمی snapshot هستند و branch/toolchain/status آن‌ها جاری فرض نشود. وضعیت تازهٔ Motion/PWA در این بخش و [handoff](../../docs/MuscleParadise/SESSION_HANDOFF.md) آمده؛ کارهای قدیمی M63–M99، M100–M106 و M107+ فقط پس از تطبیق با TODO و گیت‌های جاری ادامه یابند.
 
+## Current follow-up — ROUND 2/9 phase B: SEC-01 answer + STAFF-01(ب) ownership gate + STAFF-02 slice + testid close (2026-11-27 UTC)
+
+STATE_LAST_UPDATED=2026-11-28T19:10:00Z
+ROUND=2/9 · PHASE=B · ORDER=v11-final (standing orders 2026-11-28)
+MEMBER_ROUTES=11
+MEMBER_SCREENS=11
+STAFF_GATED=23 (تعریف این دور: مسیرهای staff-only با تست ۴۰۳ در سطح HTTP؛ عدد ۵ دورهای قبل هم‌تعریف نیست)
+TODO_DONE=7
+OPEN_TESTIDS=0 (۲ → ۰: `permission-user` و `permission-expiry` تست رفتاری گرفتند)
+SEC01_CONVERTIBLE=yes — ماتریس SEC-01 از همان `access_matrix` می‌آید (۱۶۳ operation)، سه گیت موجود اجرایی‌اش می‌کنند (evidence/2026-11-27/SEC-01/convertibility.txt)
+STAFF-01(ب)/PWA-40=DONE برای همین بند — `tests/integration/test_staff_ownership_gate.py` (۲۷ تست: ۲۳ مسیر staff-only × ۴۰۳ + هم‌خوانی زنده/artifact) · mutations M1/M2
+STAFF-02/PWA-41=PARTIAL — جست‌وجوی نام/تلفن سمت سرور (`q` با escape) + ۷ تست بک‌اند و ۳ تست Studio · detail/edit، pagination UI، stale و بین‌شعبه‌ای باز
+STAFF-07/QF-03=PARTIAL — دو testid بی‌تست بسته شد (+۲ تست، mutations M5/M6)
+NEW_ENDPOINTS=0 · ROUTES_ADDED=0 · TESTS_ADDED=37 (۲۷ بک‌اند + ۷ بک‌اند + ۳ Studio)  · MUTATIONS_PROVEN=7 این دور (M1..M7)
+CROSSWALK_DIRTY=no — هر دو artifact یک‌بار در پایان دور روی a52f2e7 بازتولید شد؛ عضو: 15 PARTIAL_REVIEW / 2 GAP · کارکنان: 12 PARTIAL_REVIEW · digest gate: ۲ artifact برابر، ۲ STALE تاریخی
+INTERACTION_MAP=regen شد، بدون تغییر (رانش صفر) · CI: PR #36 = 12/12 pass · push mp-ci+pwa00 = success · CODERABBIT=absent
+RELEASE=NO-GO
+
 ## Current follow-up — ROUND 1/9 phase A: MEM-14 chat + MEM-02 review + MEM-CLOSE (2026-11-27 UTC)
 
 STATE_LAST_UPDATED=2026-11-28T16:30:00Z

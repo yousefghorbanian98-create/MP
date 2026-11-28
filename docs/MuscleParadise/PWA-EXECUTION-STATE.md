@@ -18,6 +18,23 @@ LAST_KNOWN_EVIDENCE=evidence/2026-11-27/MEM-03/current-run.md و فایل‌ها
 
 در تعارض، تصمیم scope با ADR/تصمیم مالک، متن acceptance با کارت canonical، رفتار با کد و تست همان مسیر، و status اجرایی با آخرین شاهد پالایش‌شده تعیین می‌شود. Snapshotهای تاریخی، دیاگرام‌ها، screenshotها، artifact package، mock، skipped test و CI روی SHA دیگر acceptance محصول را ثابت نمی‌کنند.
 
+## Latest continuation — ROUND 2/9 (phase B): SEC-01, STAFF-01(ب), STAFF-02
+
+```text
+MEMBER_ROUTES=11 · MEMBER_SCREENS=11 · STAFF_GATED=23 · TODO_DONE=7 · OPEN_TESTIDS=0
+SEC-01=ANSWERED (convertible: yes — ماتریس دوم ساخته نشد)
+STAFF-01(ب)/PWA-40=DONE (این بند) — ۲۳ مسیر staff-only با تست ۴۰۳ واقعی · ۲ mutation
+STAFF-02/PWA-41=PARTIAL — جست‌وجوی سرور (q با escape) · ۱۰ تست · ۳ mutation
+STAFF-07/QF-03=PARTIAL — permission-user/permission-expiry بسته شد · ۲ mutation
+NEW_ENDPOINTS=0 · TESTS_ADDED=37 · MUTATIONS_PROVEN=7
+RELEASE=NO-GO
+```
+
+- پاسخ تبدیل‌پذیری: `evidence/2026-11-27/SEC-01/convertibility.txt` (۱۶۳ operation زنده == artifact).
+- گیت مالکیت: `evidence/2026-11-27/STAFF-01/ownership-gate.md` + `ownership-mutation-proof.txt`.
+- سرور جست‌وجو: `GET /api/v1/admin/members-summary?q=` (نام/تلفن، `%`/`_` escape، ≤۸۰ کاراکتر).
+- جمع‌بندی دور: `evidence/2026-11-27/MEM-CLOSE/round-2.md`.
+
 ## Latest continuation — ROUND 1/9 (phase A): MEM-14 chat, MEM-02 review, MEM-CLOSE
 
 ```text

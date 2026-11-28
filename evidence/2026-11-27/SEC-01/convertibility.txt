@@ -1,0 +1,42 @@
+SEC-01 — پاسخِ پرسشِ تبدیل‌پذیری (ROUND 2/9، فاز B)
+=====================================================
+
+پرسش: ماتریس SEC-01 (۹۷۸ ردیف در evidence/2026-11-27/SEC-01/rbac-matrix.txt)
+قابل تبدیل به تست اجرایی است یا فقط یک جدول ایستاست؟
+
+پاسخ: YES — قابل تبدیل است و **قبلاً تبدیل شده**؛ ماتریس دوم ساخته نشد.
+
+دلیل (با شمارش، نه ادعا):
+1. هر ردیف ماتریس از تابع `access_matrix(app)` در `mp-app/backend/scripts/export_routes.py`
+   می‌آید؛ همان تابع artifact تعهدشدهٔ `mp-app/backend/api/routes.json` را می‌سازد.
+2. اندازه‌ها با هم می‌خوانند: matrix rows (live) = 163 · operations در routes.json = 163 ·
+   ۹۷۸ ردیفِ فایل SEC-01 = همان ۱۶۳ operation × تفکیک نقش/متد در قالب متنی.
+3. سه تست موجود همین ماتریس را اجرایی نگه می‌دارند:
+   - `tests/integration/test_routes_artifact.py` — تازگیِ method/path/operationId/tags.
+   - `tests/integration/test_routes_access_matrix.py` — برابریِ guards/roles/always_roles/anonymous
+     بین artifact و اپ زنده (یعنی drift سیاست ⇒ قرمز).
+   - `tests/integration/test_routes_effective_guards.py` — semantics برچسب guardها.
+   - به‌علاوه `scripts/route_guard_gate.py`: هر مسیر یا guard دارد یا در فهرست PUBLIC با دلیل است.
+4. بنابراین جدول SEC-01 «سند مشتق‌شده» است، نه منبع مستقل؛ رفرش آن با
+   `python3 evidence/2026-11-27/SEC-01/generate-rbac-matrix.py` انجام می‌شود.
+
+شکافی که این تست‌ها نمی‌بستند و در این دور بسته شد
+--------------------------------------------------
+تست‌های بالا فقط *اعلام* سیاست را می‌سنجند (`enforce(role, path, method)` چه جوابی می‌دهد)،
+نه این‌که یک درخواست HTTP واقعی با نقش غیرمجاز چه کدی می‌گیرد. STAFF-01(ب) همان لایه را
+می‌بندد: `mp-app/backend/tests/integration/test_staff_ownership_gate.py`
+
+- انتخاب مسیرها از artifact (`routes.json`) انجام می‌شود، نه از policy زنده؛ پس باز‌کردنِ
+  یک مسیر staff روی member فهرست را «کوچک» نمی‌کند، بلکه ۴۰۳های شکست‌خورده می‌سازد.
+- ۲۳ مسیر staff-only GET با توکن `member` واقعاً صدا زده می‌شوند و باید ۴۰۳ بگیرند.
+- مجموعهٔ مسیرهای staff در اپ زنده باید با artifact یکی باشد (staff route تازه بدون قاعدهٔ
+  نقش ⇒ قرمز، بدون نیاز به رفرش دستی artifact).
+- استثنای «بدون نقش» بسته و مستند است: فقط `GET /api/v1/metrics` (metrics_token؛ پوشش:
+  test_wp13_metrics_auth.py) — هر عضو تازه در این مجموعه گیت را قرمز می‌کند.
+
+محدودیت صریح (ادعا نمی‌شود)
+--------------------------
+ماتریس SEC-01 و این گیت **مالکیت سطری/داده‌ای** را اثبات نمی‌کنند (member فقط ردیف خودش)؛
+آن کنترل داخل service است. آنچه در این دور اثبات شد: ۴۰۳ در سطح route برای نقش غیرمجاز،
+و برای مالکیت، سه رفتار مشاهده‌شده با TestClient (member روی member دیگر ۴۰۳، روی خودش ۲۰۰،
+روی فهرست staff ۴۰۳) در evidence/2026-11-27/STAFF-02/current-run.md ثبت شده است.

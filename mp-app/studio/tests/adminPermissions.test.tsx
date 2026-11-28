@@ -31,6 +31,7 @@ interface Call {
 const USERS = [
   { id: 1, phone: "09120000001", full_name: "مالک", role: "super_admin", is_active: true, created_at: null },
   { id: 5, phone: "09120000005", full_name: "ادمین فروش", role: "admin", is_active: true, created_at: null },
+  { id: 7, phone: "09120000007", full_name: "ادمین پشتیبانی", role: "admin", is_active: true, created_at: null },
 ];
 
 const KEYS = [
@@ -191,6 +192,86 @@ describe("مجوز شخصی ادمین", () => {
     );
     expect(await screen.findByText("سلب‌شده")).toBeTruthy();
     expect(screen.queryByRole("button", { name: "سلب" })).toBeNull();
+  }, 20000);
+
+  it("کاربر هدف را از permission-user انتخاب می‌کند و گرنت همان کاربر را می‌فرستد", async () => {
+    // تا این دور، `permission-user` هیچ تست رفتاری نداشت (OPEN_TESTIDS=2):
+    // انتخاب کاربر فقط با state پیش‌فرض سنجیده می‌شد، نه با تعامل واقعی.
+    const state = { grants: [] as unknown[] };
+    const calls = stubApi(state);
+
+    render(<AdminPermissions />);
+    await waitFor(() =>
+      expect(calls.some((c) => c.path === "/api/v1/admin/permissions?user_id=5")).toBe(true),
+    );
+
+    fireEvent.mouseDown(screen.getByTestId("permission-user").querySelector(".ant-select-selector")!);
+    const option = await waitFor(() => {
+      const found = document.querySelector(".ant-select-item-option[title='ادمین پشتیبانی — admin']");
+      if (!found) throw new Error("target option not open");
+      return found as HTMLElement;
+    });
+    fireEvent.click(option);
+
+    // گرنت‌های کاربر تازه از سرور خوانده می‌شود (نه از کش کاربر قبلی).
+    await waitFor(() =>
+      expect(calls.some((c) => c.path === "/api/v1/admin/permissions?user_id=7")).toBe(true),
+    );
+
+    fireEvent.mouseDown(screen.getByTestId("permission-key").querySelector(".ant-select-selector")!);
+    const keyOption = await waitFor(() => {
+      const found = document.querySelector(".ant-select-item-option[title='finance.write']");
+      if (!found) throw new Error("key option not open");
+      return found as HTMLElement;
+    });
+    fireEvent.click(keyOption);
+
+    fireEvent.click(screen.getByRole("button", { name: "اعطای مجوز" }));
+
+    await waitFor(() =>
+      expect(calls.some((c) => c.method === "POST" && c.path === "/api/v1/admin/permissions")).toBe(true),
+    );
+    expect(JSON.parse(calls.find((c) => c.method === "POST")!.body!)).toEqual({
+      user_id: 7,
+      permission: "finance.write",
+      expires_in_hours: null,
+      note: "",
+    });
+  }, 20000);
+
+  it("مدت را از permission-expiry می‌خواند و expires_in_hours را همان مقدار می‌فرستد", async () => {
+    const state = { grants: [] as unknown[] };
+    const calls = stubApi(state);
+
+    render(<AdminPermissions />);
+    await waitFor(() =>
+      expect(calls.some((c) => c.path === "/api/v1/admin/permissions?user_id=5")).toBe(true),
+    );
+
+    fireEvent.mouseDown(screen.getByTestId("permission-key").querySelector(".ant-select-selector")!);
+    const keyOption = await waitFor(() => {
+      const found = document.querySelector(".ant-select-item-option[title='reports.confidential']");
+      if (!found) throw new Error("key option not open");
+      return found as HTMLElement;
+    });
+    fireEvent.click(keyOption);
+
+    fireEvent.mouseDown(screen.getByTestId("permission-expiry").querySelector(".ant-select-selector")!);
+    const expiryOption = await waitFor(() => {
+      const found = document.querySelector(".ant-select-item-option[title='۷ روز']");
+      if (!found) throw new Error("expiry option not open");
+      return found as HTMLElement;
+    });
+    fireEvent.click(expiryOption);
+
+    fireEvent.click(screen.getByRole("button", { name: "اعطای مجوز" }));
+
+    await waitFor(() =>
+      expect(calls.some((c) => c.method === "POST" && c.path === "/api/v1/admin/permissions")).toBe(true),
+    );
+    const post = JSON.parse(calls.find((c) => c.method === "POST")!.body!);
+    expect(post.permission).toBe("reports.confidential");
+    expect(post.expires_in_hours).toBe(24 * 7);
   }, 20000);
 
   it("برای غیرمالک هیچ درخواستی نمی‌فرستد و بخش را نشان نمی‌دهد", async () => {

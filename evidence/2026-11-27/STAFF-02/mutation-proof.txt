@@ -1,0 +1,26 @@
+# STAFF-02 (PWA-41) — اثبات جهش (mutation proof)
+branch: arena/3c08bfbd-mp · base_sha: 151b72c
+date: 2026-11-28T18:47:21Z
+gate: mp-app/backend/tests/integration/test_staff_members_search.py
+
+== baseline ==
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+7 passed, 1 warning in 2.65s
+
+== MUTATION M3 — q ignored (client-side-only search restored) ==
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/integration/test_staff_members_search.py::test_search_by_name_is_server_side
+FAILED tests/integration/test_staff_members_search.py::test_wildcards_are_not_honoured
+FAILED tests/integration/test_staff_members_search.py::test_unknown_query_returns_empty_not_everything
+3 failed, 4 passed, 1 warning in 2.93s
+
+== MUTATION M4 — LIKE escaping removed (% and _ become wildcards) ==
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/integration/test_staff_members_search.py::test_wildcards_are_not_honoured
+1 failed, 6 passed, 1 warning in 2.64s
+
+restore: modules/admin/analytics.py: OK

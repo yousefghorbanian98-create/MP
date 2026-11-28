@@ -9,7 +9,7 @@ from __future__ import annotations
 import math
 from datetime import UTC, datetime, timedelta
 
-from sqlalchemy import func, select
+from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
 
 from db.models import (
@@ -339,7 +339,13 @@ def attendance_summary(db: Session, *, window_days: int = DEFAULT_WINDOW_DAYS) -
     }
 
 
-def members_summary(db: Session, *, limit: int = 200) -> dict:
+def _like_pattern(needle: str) -> str:
+    """الگوی LIKE با escape صریح — `%` و `_` ورودی کاربر wildcard نمی‌شوند."""
+    escaped = needle.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+    return f"%{escaped}%"
+
+
+def members_summary(db: Session, *, limit: int = 200, q: str | None = None) -> dict:
     """خلاصهٔ اعضا برای جدول استودیو — نام، تلفن، هدف، وضعیت اشتراک، روز باقی‌مانده.
 
     وضعیت اشتراک از **آخرین** اشتراک عضو محاسبه می‌شود:
@@ -349,7 +355,20 @@ def members_summary(db: Session, *, limit: int = 200) -> dict:
     - وگرنه ← `active`
     """
     now = datetime.now(UTC)
-    members = db.scalars(select(Member).order_by(Member.id).limit(limit)).all()
+    stmt = select(Member).order_by(Member.id)
+    needle = (q or "").strip()
+    if needle:
+        # جست‌وجو سمت سرور است، نه فیلتر کلاینتی روی ۲۰۰ ردیف اول: با بیش از
+        # `limit` عضو، فیلتر کلاینتی عضو بیرون از صفحه را «پیدا نمی‌کرد» و
+        # تعداد نمایش‌داده‌شده با واقعیت نمی‌خواند (STAFF-02 / PWA-41).
+        pattern = _like_pattern(needle)
+        stmt = stmt.join(User, User.id == Member.user_id).where(
+            or_(
+                User.full_name.ilike(pattern, escape="\\"),
+                User.phone.ilike(pattern, escape="\\"),
+            )
+        )
+    members = db.scalars(stmt.limit(limit)).all()
     if not members:
         return {
             "items": [],

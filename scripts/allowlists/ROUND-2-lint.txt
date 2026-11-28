@@ -1,0 +1,5 @@
+# ROUND 2/9 — ruff format روی سه فایلِ همین دور (CI: «Lint (ruff) — بلوکینگ»)
+mp-app/backend/modules/admin/router.py
+mp-app/backend/tests/integration/test_staff_members_search.py
+mp-app/backend/tests/integration/test_staff_ownership_gate.py
+scripts/allowlists/ROUND-2-lint.txt

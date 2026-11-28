@@ -25,18 +25,16 @@ export function MemberTable({ onSelect }: { onSelect?: (id: number) => void }) {
   const motionPreset = useMotionPreset();
   const genderFilter = useAppStore((s) => s.genderFilter);
   const search = useAppStore((s) => s.search);
+  const q = search.trim();
+  // جست‌وجوی نام/تلفن سمت سرور است؛ فقط تفکیک جنسیت روی ردیف‌های برگشته
+  // اعمال می‌شود (فیلد `gender` بخشی از همان پاسخ است).
   const { data, loading, error, needsSession, reload } = useApi(
-    (s) => fetchMembersSummary(undefined, s),
-    [],
+    (s) => fetchMembersSummary(undefined, s, q),
+    [q],
   );
 
   const items = data?.items ?? [];
-  const q = search.trim();
-  const filtered = items.filter(
-    (m) =>
-      (genderFilter === "all" || m.gender === genderFilter) &&
-      (!q || m.full_name.includes(q) || m.phone.includes(q)),
-  );
+  const filtered = items.filter((m) => genderFilter === "all" || m.gender === genderFilter);
 
   return (
     <div className="glass-card overflow-hidden">

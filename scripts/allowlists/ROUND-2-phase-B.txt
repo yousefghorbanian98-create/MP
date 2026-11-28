@@ -1,0 +1,22 @@
+# ROUND 2/9 (فاز B) — دقیقاً همان فایل‌هایی که این دور ساخته/تغییر داده است.
+# الگو: git add -A -- $(grep -v '^#' scripts/allowlists/ROUND-2-phase-B.txt)
+mp-app/backend/modules/admin/analytics.py
+mp-app/backend/modules/admin/router.py
+mp-app/backend/tests/integration/test_staff_ownership_gate.py
+mp-app/backend/tests/integration/test_staff_members_search.py
+mp-app/studio/src/lib/api.ts
+mp-app/studio/src/components/MemberTable.tsx
+mp-app/studio/tests/adminPermissions.test.tsx
+mp-app/studio/tests/staffMemberSearch.test.tsx
+evidence/2026-11-27/SEC-01/convertibility.txt
+evidence/2026-11-27/STAFF-01/ownership-gate.md
+evidence/2026-11-27/STAFF-01/ownership-mutation-proof.txt
+evidence/2026-11-27/STAFF-02/current-run.md
+evidence/2026-11-27/STAFF-02/mutation-proof.txt
+evidence/2026-11-27/STAFF-02/frontend-mutation-proof.txt
+evidence/2026-11-27/STAFF-07/mutation-proof.txt
+evidence/2026-11-27/MEM-CLOSE/round-2.md
+.finn/state/STATE.md
+docs/MuscleParadise/PWA-EXECUTION-STATE.md
+docs/MuscleParadise/SESSION_HANDOFF.md
+scripts/allowlists/ROUND-2-phase-B.txt
