@@ -1,0 +1,14 @@
+# Exact file-level allowlist for the MEM-12 member-side card-to-card receipt slice.
+# One repository-relative path per line; no directories and no glob patterns.
+.finn/state/STATE.md
+docs/MuscleParadise/PWA-EXECUTION-STATE.md
+docs/MuscleParadise/SESSION_HANDOFF.md
+evidence/2026-11-27/MEM-12/contract-answer.txt
+evidence/2026-11-27/MEM-12/current-run.md
+evidence/2026-11-27/MEM-12/mutation-proof.txt
+mp-app/studio/src/App.tsx
+mp-app/studio/src/components/MemberPayments.tsx
+mp-app/studio/src/lib/api.ts
+mp-app/studio/src/lib/navigation.ts
+mp-app/studio/tests/memberPayments.test.tsx
+scripts/allowlists/MEM-12.txt

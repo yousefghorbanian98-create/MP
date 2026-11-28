@@ -1,0 +1,4 @@
+# Exact allowlist for the STAFF-01 route-map recon record. Contract/status only;
+# no map artifact, no gate and no UI in this commit.
+evidence/2026-11-27/STAFF-01/contract-answer.txt
+scripts/allowlists/STAFF-01-start.txt

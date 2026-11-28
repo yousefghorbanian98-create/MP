@@ -1,67 +1,96 @@
-# MEM-12 — پاسخ قرارداد پیش از UI (grep -n واقعی) — فقط شروع، UI ساخته نشد
-# HEAD: 091d659
+# MEM-12 — پاسخ قرارداد پیش از UI (grep -n واقعی)
+# HEAD: 66454d5 (پیش از این برش)
 
-## ① مسیر آپلود فیش کارت‌به‌کارت
-$ grep -n "receipt" -A 20 mp-app/backend/modules/payments/router.py | sed -n "30,70p"
+## ① نیمهٔ عضو: آپلود فیش کارت‌به‌کارت
+$ sed -n '118,141p' mp-app/backend/modules/payments/router.py
+```python
+@router.post(
     "/{payment_id}/receipt",
     response_model=ReceiptOut,
     status_code=202,
     summary="آپلود فیش کارت‌به‌کارت و ورود به صف بازبینی (QF-07/08)",
 )
-async def upload_receipt(
-    payment_id: int,
-    user: CurrentUser,
-    db: DbSession,
-    file: Annotated[UploadFile, File(description="تصویر فیش (JPEG/PNG/WebP)")],
-):
-    from modules.payments.receipts import submit_receipt
+async def upload_receipt(...)
+```
 
-    data = await file.read()
-    # سقف سخت پیش از خواندن کل فایل در حافظه هم اعمال می‌شود.
-    return submit_receipt(
-        db,
-        user=user,
-        payment_id=payment_id,
-        data=data,
-        declared_type=(file.content_type or "").split(";")[0].strip(),
-    )
-
-
-@router.post(
-    "/{payment_id}/approve",
-    summary="تأیید فیش و ثبت پرداخت + اشتراک در یک تراکنش (QF-09)",
-    dependencies=[Depends(require_grant("finance.write"))],
-)
-
-## ② محدودیت نوع/اندازه و حالت‌ها در سرویس
-$ grep -n "ALLOWED_IMAGE_TYPES\|def submit_receipt\|already_processed\|def approve_payment" mp-app/backend/modules/payments/receipts.py
+$ grep -n "ALLOWED_IMAGE_TYPES\|def _validate\|receipt_too_large\|receipt_type_mismatch\|already_processed\|receipt_not_applicable\|ensure_record_scope\|def submit_receipt\|member_only" mp-app/backend/modules/payments/receipts.py
+```
 31:ALLOWED_IMAGE_TYPES: dict[str, str] = {
+49:def _validate(data: bytes, declared_type: str) -> tuple[str, str]:
+55:            code="receipt_too_large",
 57:    if declared_type not in ALLOWED_IMAGE_TYPES:
+80:            code="receipt_type_mismatch",
 82:    return actual, ALLOWED_IMAGE_TYPES[actual]
 85:def submit_receipt(
+93:    from app.security.ownership import ensure_record_scope
+99:        raise ForbiddenError("آپلود فیش فقط از حساب عضو پذیرفته می‌شود", code="member_only")
+100:    ensure_record_scope(db, user, payment)
+102:        raise ApiError("این پرداخت مسیر فیش ندارد", code="receipt_not_applicable")
 104:        raise ApiError("این پرداخت قبلاً پردازش شده است", code="already_processed")
-167:def approve_payment(db: Session, *, actor: User, payment_id: int) -> dict:
 178:        raise ApiError("این پرداخت قبلاً پردازش شده است", code="already_processed")
-239:def reject_receipt(db: Session, *, actor: User, payment_id: int, reason: str) -> dict:
+```
 
-## ③ تأیید/رد فقط با مجوز مالی
-$ grep -n "require_grant(\"finance.write\")" mp-app/backend/modules/payments/router.py
-60:    dependencies=[Depends(require_grant("finance.write"))],
-71:    dependencies=[Depends(require_grant("finance.write"))],
-111:    dependencies=[Depends(require_grant("finance.write"))],
-146:    dependencies=[Depends(require_grant("finance.write"))],
-157:    dependencies=[Depends(require_grant("finance.write"))],
-176:        Depends(require_grant("finance.write")),
-197:    dependencies=[Depends(require_grant("finance.write"))],
-246:    dependencies=[Depends(require_grant("finance.write"))],
+$ grep -n "receipt_max_bytes\|receipt_review_ttl_hours" mp-app/backend/app/config.py
+```
+58:    receipt_max_bytes: int = 5 * 1024 * 1024
+59:    receipt_review_ttl_hours: int = 48
+```
 
-## نتیجه — چرا این برش «شروع‌شده» است و UI ندارد
-- قرارداد موجود است: `POST /payments/{id}/receipt` با `UploadFile` و سقف نوع (JPEG/PNG/WebP،
-  `receipts.py:31`) و پاسخ 202 ⇒ «در صف بازبینی»، نه «تأیید».
-- `already_processed` (`receipts.py:104` و `:178`) یعنی دوباره‌کاری مسدود است؛ تأیید با
-  `require_grant("finance.write")` محافظت می‌شود.
-- **BLOCKED (پول — اجباری):** ساخت جریان «تأیید و فعال‌سازی اشتراک» تصمیم مالی/مجوز انسانی است و
-  مرجع بانکی مستقل لازم دارد؛ ما آن را نمی‌سازیم و ادعا نمی‌کنیم. آپلود رسید ≠ تأیید بانک.
-- تصمیم بعدی که مالک باید بگیرد: نمایش «فیش در صف بازبینی» به عضو مجاز است یا نه، و اینکه
-  فعال‌سازی اشتراک پس از تأیید مجاز چگونه و توسط چه کسی انجام شود.
-- بنابراین در این دور فقط قرارداد ثبت شد؛ هیچ فایل UI/تست برای MEM-12 اضافه نشد.
+## ② دامنهٔ فهرست برای عضو
+$ sed -n '414,427p' mp-app/backend/modules/payments/service.py
+```python
+def list_payments(
+    db: Session, member_id: int | None = None, status: str | None = None, user=None
+) -> list[Payment]:
+    if user is not None and user.role == "member":
+        from app.security.ownership import get_own_member
+
+        own = get_own_member(db, user)
+        member_id = own.id if own else -1
+    stmt = select(Payment).order_by(Payment.id.desc())
+    if member_id is not None:
+        stmt = stmt.where(Payment.member_id == member_id)
+    if status is not None:
+        stmt = stmt.where(Payment.status == status)
+    return list(db.scalars(stmt))
+```
+⇒ عضو با `GET /payments` فقط ردیف‌های خودش را می‌بیند؛ UI هیچ `member_id` نمی‌فرستد.
+
+$ grep -n '("member", "/api/v1/payments' mp-app/backend/security/rbac.py
+```
+73:    ("member", "/api/v1/payments", "GET"),
+74:    ("member", "/api/v1/payments/*", "GET"),
+75:    ("member", "/api/v1/payments/wallet/pay", "POST"),
+78:    ("member", "/api/v1/payments", "POST"),
+80:    ("member", "/api/v1/payments/*/receipt", "POST"),
+81:    ("member", "/api/v1/payments/*/start", "POST"),
+82:    ("member", "/api/v1/payments/*/callback", "POST"),
+217:    ("member", "/api/v1/payments/finance/*", "*"),
+```
+(خط ۲۱۷ سلب دسترسی است: عضو به گزارش مالی کل باشگاه و CSV نمی‌رسد.)
+
+## ③ نیمهٔ کارکنان (از قبل وجود دارد، دست‌نخورده)
+$ grep -n "ReceiptQueue" mp-app/studio/src/pages/Finance.tsx
+```
+135:      <ReceiptQueue />
+```
+`ReceiptQueue` صف `GET /payments?status=in_review` را نشان می‌دهد و تأیید/رد با
+`finance.write` انجام می‌شود؛ رد اجباری دلیل دارد. این برش به آن دست نمی‌زند.
+
+## ④ اجرای زندهٔ تست‌های پشتیبان
+$ /tmp/mpvenv/bin/python -m pytest tests/integration/test_phase6_card_to_card.py tests/regression/test_manual_transfer_policy.py -q
+```
+66 passed, 1 warning in 4.31s
+```
+(شامل: آپلود عضو → `in_review`، کارکنان نمی‌توانند فیش عضو را آپلود کنند،
+نوع/حجم اجباری است، پرداخت نقدی مسیر فیش ندارد.)
+
+## نتیجه (پاسخ صریح)
+- آپلود فیش: `POST /payments/{id}/receipt` → **202** با `status="in_review"`،
+  `review_id` و `expires_at` (۴۸ ساعت). این «تأیید بانک» نیست.
+- محدودیت‌ها سمت سرور: ۵ مگابایت، فقط JPEG/PNG/WebP، و **سنجش محتوای فایل**
+  (نوع اعلام‌شده با محتوا باید بخواند) — کلاینت فقط پیش‌فیلتر می‌کند.
+- فقط `card_to_card` + `pending` مسیر فیش دارد؛ هر چیز دیگر کد `receipt_not_applicable`
+  یا `already_processed` می‌گیرد.
+- BLOCKED (پول، اجباری): تأیید فیش با مرجع بانکی مستقل و فعال‌سازی اشتراک تصمیم
+  فرد مجاز/مالی است؛ UI عضو هیچ دکمهٔ تأیید/رد ندارد و ادعای «پرداخت شد» نمی‌کند.

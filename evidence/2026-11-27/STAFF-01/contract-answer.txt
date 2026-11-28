@@ -1,0 +1,88 @@
+# STAFF-01 — نقشهٔ مسیر کارکنان: پاسخ قرارداد/وضعیت موجود پیش از ساخت (grep -n واقعی)
+# HEAD: 2aeb323
+
+## ① فهرست canonical صفحه‌های کارکنان
+$ grep -n "PAGE_IDS" -A 4 mp-app/studio/src/lib/navigation.ts
+3:import { PAGE_IDS, useAppStore, type PageId } from "../stores/appStore";
+4-
+5-const ROUTE_ORIGIN = "https://studio.invalid";
+6-const LOCATION_CHANGE_EVENT = "mp:studio-location-change";
+7-
+8:export const STAFF_PAGES: readonly PageId[] = PAGE_IDS;
+9-
+10-export type MemberPage =
+11-  | "home"
+12-  | "today"
+
+## ② نقش‌ها با دلیل (همین حالا در کد است)
+$ sed -n "38,72p" mp-app/studio/src/lib/roleNav.ts
+ */
+export const PAGE_RULES: Record<string, NavRule> = {
+  dashboard: { roles: ALL_STAFF, why: "خلاصهٔ روز برای همه" },
+  members: { roles: ["super_admin", "admin", "manager", "coach", "reception"], why: "عضو عادی فهرست اعضا را نمی‌بیند" },
+  programs: { roles: ["super_admin", "admin", "manager", "coach", "member"], why: "عضو برنامهٔ خودش را می‌بیند" },
+  nutrition: { roles: ["super_admin", "admin", "manager", "coach", "member"], why: "عضو برنامهٔ غذایی خودش" },
+  assessment: { roles: ["super_admin", "admin", "manager", "coach", "member"], why: "ارزیابی خودِ عضو مجاز است" },
+  chat: { roles: ALL_STAFF, why: "چت برای همهٔ نقش‌ها باز است" },
+  checkin: { roles: ALL_STAFF, why: "حضور برای همه" },
+  // ── R3: دادهٔ مالی خالص ──
+  // reception پیش‌تر منو را می‌دید ولی سرور ۴۰۳ می‌داد (DENIES در rbac.py).
+  // manager و بالاتر می‌مانند؛ coach و member هرگز.
+  finance: {
+    roles: ["super_admin", "admin", "manager"],
+    why: "درآمد باشگاه و CSV همهٔ پرداخت‌ها — reception/coach/member رد می‌شوند (rbac DENIES)",
+  },
+  // QF-06: هزینه‌های باشگاه — دادهٔ مالی خالص؛ همان قاعدهٔ «مالی» برای reception/coach/member.
+  expenses: {
+    roles: ["super_admin", "admin", "manager"],
+    why: "هزینه‌ها سود/زیان باشگاه را می‌سازند؛ reception/coach/member رد می‌شوند (finance.read سرور)",
+  },
+  analytics: {
+    roles: ["super_admin", "admin", "manager", "coach"],
+    why: "تحلیل عملکرد؛ پذیرش داده‌ای برای تحلیل ندارد",
+  },
+  // ── R3: نوشتن پیکربندی ──
+  // قیمت/محصول/درگاه فقط super_admin (خواستهٔ صریح کارفرما)؛ admin فقط
+  // درخواست تغییر می‌دهد. صفحه برای admin باز است تا درخواست ببیند.
+  settings: {
+    roles: ["super_admin", "admin"],
+    why: "تنظیمات و نقش‌ها — manager/coach/reception/member نمی‌بینند",
+  },
+  shop: { roles: ALL_STAFF, why: "فروشگاه برای همه باز است؛ تب‌ها داخلش گیت می‌شوند" },
+};
+
+
+## ③ آنچه از قبل وجود دارد
+$ ls evidence/2026-11-27/INV-03/
+crosswalk-v2-run.txt
+review.md
+staff-page-crosswalk.json
+staff-page-crosswalk.md
+$ sed -n "1,16p" evidence/2026-11-27/INV-03/staff-page-crosswalk.md
+# INV-03 — crosswalk صفحات کارکنان (v2)
+
+> **وضعیت:** `PARTIAL / NOT_ACCEPTED`. این نسخه سه false-negative نسخهٔ اول را
+> رفع می‌کند (تمپلیت `${base}`, alias نقش‌ها, مسیرهای پویا) — طبق یافته‌های
+> `review.md` خودِ اجرای قبلی. هیچ ردیفی CURRENT نمی‌شود.
+
+- SHA: `3fd6152cf912326fa24b9cc66bfde90ae8f02ef0` · branch: `arena/3c08bfbd-mp` · tracked-dirty: `False` · untracked: `0`
+- `backend/api/routes.json` → `sha256_b64:fwMz37kqW7VlFLfgA8x4Nw_H6Pq-OpqLU0LMqrmoTPg`
+- `backend/security/rbac.py` → `sha256_b64:qHQPdbM-hk4aOZD0134vp4HwwhBcEz2YkqQc5j_fnSw`
+- `studio/src/lib/roleNav.ts` → `sha256_b64:ZQ_3Q0OvbiUBD2oHurTeR30v_vzulL45I6IA7QXVMiA`
+- `studio/src/lib/api.ts` → `sha256_b64:u7PafkCfgDhLFBkj5cizbsnmUb7HNaRdYJXCbiECcKY`
+- `studio/src/lib/adminApi.ts` → `sha256_b64:YSy9HomngwFUX2fIgmRRmnxJLRSO9Ed5BQ9QzBMn8s4`
+- `studio/src/lib/navigation.ts` → `sha256_b64:qU1pePZ45tLOOfLiQwAgWSHqQ8ke3ZLMOBM7fGAvDSA`
+- call-site: `{'template-base': 29, 'helper': 68, 'literal': 0}` · پویا: **0**
+- شمارش: `PARTIAL_REVIEW=12`
+
+
+## نتیجه — STAFF-01 چه چیزی کم دارد
+- route + نقش + API + اشارهٔ تستی از قبل با `scripts/crosswalk_v2.py --kind staff` تولید می‌شود
+  (۱۲ ردیف، همه PARTIAL_REVIEW) و در گیت `verify_crosswalk_digests.py` چک می‌شود.
+- دو ستون TODO هنوز غایب است: **ownership سرور** برای هر مسیر (آیا سرور دامنه را می‌بندد یا
+  فقط منو پنهان می‌شود) و **گیتِ کامل‌بودن نقشه** (اگر صفحهٔ تازه‌ای به `PAGE_IDS` اضافه شود و
+  نویسندهٔ نقشه یادش برود، هیچ چیز قرمز نمی‌شود).
+- برنامهٔ برش بعد: یک artifact نقشه (`evidence/…/STAFF-01/staff-route-map.md`) که هر ۱۲ صفحه را با
+  route/role/API/ownership/test پوشش دهد + تست گیت روی `PAGE_IDS` (صفحهٔ بی‌ردیف ⇒ قرمز) و
+  ستون ownership از `security/rbac.py` + ownership helperهای سرور استخراج شود، نه از UI.
+- چرا هنوز شروع نشده: این دور برای MEM-12 مصرف شد؛ برش بعدی از همین نقطه ادامه می‌یابد.

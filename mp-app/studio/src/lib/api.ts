@@ -782,6 +782,76 @@ export function listPayments(token = getToken()) {
   return getJson<PaymentRow[]>("/payments", token);
 }
 
+/** MEM-12 — پرداخت‌های خود عضو (سرور با نقش `member` فقط ردیف‌های خودش را می‌دهد). */
+export function fetchMyPayments(token = getToken(), signal?: AbortSignal) {
+  return getJson<PaymentRow[]>("/payments", token, signal);
+}
+
+export interface ReceiptUploadResult {
+  receipt_id: number;
+  review_id: string;
+  payment_id: number;
+  status: string;
+  expires_at: string;
+  size_bytes: number;
+  mime: string;
+}
+
+/**
+ * خطای آپلود فیش با `code` سرور — تا UI بتواند دلیل دقیق (نوع/حجم/تکرار) را بگوید.
+ *
+ * چرا کلاس جدا: `ApiError` فقط پیام و status دارد و تغییر امضای آن روی همهٔ
+ * فراخوانی‌های موجود اثر می‌گذاشت.
+ */
+export class ReceiptUploadError extends Error {
+  constructor(
+    message: string,
+    readonly status: number,
+    readonly code: string,
+  ) {
+    super(message);
+  }
+}
+
+/**
+ * MEM-12 — آپلود فیش کارت‌به‌کارت (`POST /payments/{id}/receipt`).
+ *
+ * قرارداد سرور (`modules/payments/router.py:118-141`): پاسخ **202** و
+ * `status="in_review"`؛ یعنی فیش در صف بازبینی است، نه تأیید واریز.
+ * نوع/حجم و محتوای فایل در سرور سنجیده می‌شود (`receipts.py:49-82`).
+ */
+export async function uploadPaymentReceipt(
+  paymentId: number,
+  file: File,
+  token = getToken(),
+): Promise<ReceiptUploadResult> {
+  const form = new FormData();
+  form.append("file", file);
+  const resp = await sessionFetch(`${API_BASE}/payments/${paymentId}/receipt`, {
+    method: "POST",
+    headers: authHeaders(token),
+    body: form,
+  });
+  if (resp.status === 401 || resp.status === 403) await throwAuthOrForbidden(resp);
+  if (!resp.ok) {
+    let code = "";
+    let message = "";
+    try {
+      const body = (await resp.json()) as { error?: { code?: string; message?: string } };
+      code = body.error?.code ?? "";
+      message = body.error?.message ?? "";
+    } catch {
+      /* بدنه JSON نبود */
+    }
+    throw new ReceiptUploadError(
+      message || "آپلود فیش انجام نشد؛ نوع یا حجم فایل را بررسی کنید",
+      resp.status,
+      code,
+    );
+  }
+  return (await resp.json()) as ReceiptUploadResult;
+}
+
 export function refundPayment(paymentId: number, token = getToken()) {
   return postJson<PaymentRow>(`/payments/${paymentId}/refund`, {}, token);
 }

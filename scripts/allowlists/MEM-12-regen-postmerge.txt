@@ -1,0 +1,8 @@
+# Exact allowlist for re-anchoring the crosswalk artifacts on the post-merge
+# checkout (3fd6152). Only the recorded SHA line changes; row counts are identical.
+.finn/state/STATE.md
+evidence/2026-11-27/INV-02/member-capability-crosswalk.json
+evidence/2026-11-27/INV-02/member-capability-crosswalk.md
+evidence/2026-11-27/INV-03/staff-page-crosswalk.json
+evidence/2026-11-27/INV-03/staff-page-crosswalk.md
+scripts/allowlists/MEM-12-regen-postmerge.txt

@@ -4,14 +4,14 @@
 > رفع می‌کند (تمپلیت `${base}`, alias نقش‌ها, مسیرهای پویا) — طبق یافته‌های
 > `review.md` خودِ اجرای قبلی. هیچ ردیفی CURRENT نمی‌شود.
 
-- SHA: `bab5572ac1a5b09ee2904c4d2daac8a47a110d70` · branch: `arena/3c08bfbd-mp` · tracked-dirty: `False` · untracked: `0`
+- SHA: `3fd6152cf912326fa24b9cc66bfde90ae8f02ef0` · branch: `arena/3c08bfbd-mp` · tracked-dirty: `False` · untracked: `0`
 - `backend/api/routes.json` → `sha256_b64:fwMz37kqW7VlFLfgA8x4Nw_H6Pq-OpqLU0LMqrmoTPg`
 - `backend/security/rbac.py` → `sha256_b64:qHQPdbM-hk4aOZD0134vp4HwwhBcEz2YkqQc5j_fnSw`
 - `studio/src/lib/roleNav.ts` → `sha256_b64:ZQ_3Q0OvbiUBD2oHurTeR30v_vzulL45I6IA7QXVMiA`
-- `studio/src/lib/api.ts` → `sha256_b64:7NVt0vlfhLQDgKTaPzGd0aqB0Cy8tOpubnj-Pv0LSmE`
+- `studio/src/lib/api.ts` → `sha256_b64:u7PafkCfgDhLFBkj5cizbsnmUb7HNaRdYJXCbiECcKY`
 - `studio/src/lib/adminApi.ts` → `sha256_b64:YSy9HomngwFUX2fIgmRRmnxJLRSO9Ed5BQ9QzBMn8s4`
-- `studio/src/lib/navigation.ts` → `sha256_b64:xkspscx19MhTTiRnLDjPxp66l39EjLoH4konkMqgthc`
-- call-site: `{'template-base': 28, 'helper': 67, 'literal': 0}` · پویا: **0**
+- `studio/src/lib/navigation.ts` → `sha256_b64:qU1pePZ45tLOOfLiQwAgWSHqQ8ke3ZLMOBM7fGAvDSA`
+- call-site: `{'template-base': 29, 'helper': 68, 'literal': 0}` · پویا: **0**
 - شمارش: `GAP=3` · `PARTIAL_REVIEW=14`
 
 | وضعیت | معنا |
@@ -43,7 +43,7 @@
 | 15 | `shop` | 3 فایل | — | super_admin, admin, manager, coach, reception, member | 8 / 15 | `api.ts` | — | `apiCoverage.test.ts`<br>`memberShop.test.tsx`<br>`test_m59_shop.py`<br>`test_phase2_shop_display.py` | **PARTIAL_REVIEW** |
 | 16 | `today` | 4 فایل | — | — | 0 / 4 | — | — | — | **GAP** |
 |  |  |  |  |  |  |  |  |  | ↳ هیچ call-site استاتیکی برای مسیرهای این دامنه نیست |
-| 17 | `wallet` | 2 فایل | — | — | 4 / 25 | `api.ts` | — | `locustfile_full.py`<br>`paymentPanel.test.tsx`<br>`receiptQueue.test.tsx`<br>`test_api_contract.py` | **PARTIAL_REVIEW** |
+| 17 | `wallet` | 2 فایل | — | — | 4 / 25 | `api.ts` | — | `locustfile_full.py`<br>`memberPayments.test.tsx`<br>`paymentPanel.test.tsx`<br>`receiptQueue.test.tsx` | **PARTIAL_REVIEW** |
 
 ## چه چیزی این نسخه هنوز اثبات نمی‌کند
 

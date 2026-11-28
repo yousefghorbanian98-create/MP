@@ -1,0 +1,9 @@
+# Exact allowlist for the crosswalk regeneration that follows the MEM-12 slice
+# commit (90f0896). Both artifacts are regenerated on a clean checkout of that
+# commit; navigation.ts and api.ts are crosswalk sources.
+.finn/state/STATE.md
+evidence/2026-11-27/INV-02/member-capability-crosswalk.json
+evidence/2026-11-27/INV-02/member-capability-crosswalk.md
+evidence/2026-11-27/INV-03/staff-page-crosswalk.json
+evidence/2026-11-27/INV-03/staff-page-crosswalk.md
+scripts/allowlists/MEM-12-regen.txt
