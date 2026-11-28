@@ -95,7 +95,9 @@ def checkins(
 def members_summary(
     db: DbSession,
     limit: int = Query(200, ge=1, le=500),
-    q: str | None = Query(None, max_length=80, description="جست‌وجوی نام/تلفن — سمت سرور (STAFF-02)"),
+    q: str | None = Query(
+        None, max_length=80, description="جست‌وجوی نام/تلفن — سمت سرور (STAFF-02)"
+    ),
 ):
     from modules.admin.analytics import members_summary as _summary
 

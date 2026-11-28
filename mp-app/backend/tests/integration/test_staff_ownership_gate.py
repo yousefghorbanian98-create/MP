@@ -62,9 +62,7 @@ def _live_matrix() -> dict[tuple[str, str], dict]:
 
 def _is_staff(access: dict) -> bool:
     return (
-        access["anonymous"] == "never"
-        and bool(access["roles"])
-        and "member" not in access["roles"]
+        access["anonymous"] == "never" and bool(access["roles"]) and "member" not in access["roles"]
     )
 
 
@@ -75,9 +73,7 @@ def _artifact_operations() -> list[dict]:
 def _artifact_staff_gets() -> list[str]:
     """فهرست ثابت (snapshot) مسیرهای staff-only GET — از artifact، نه policy."""
     return sorted(
-        op["path"]
-        for op in _artifact_operations()
-        if op["method"] == "GET" and _is_staff(op)
+        op["path"] for op in _artifact_operations() if op["method"] == "GET" and _is_staff(op)
     )
 
 
@@ -86,12 +82,18 @@ _STAFF_GETS = _artifact_staff_gets()
 
 def test_selection_is_not_empty():
     """گیت نباید بی‌صدا خالی شود؛ خالی‌بودن یعنی تست هیچ‌چیز را نمی‌سنجد."""
-    assert len(_STAFF_GETS) >= 20, f"فقط {len(_STAFF_GETS)} مسیر staff در artifact — الگو را بررسی کنید"
+    assert len(_STAFF_GETS) >= 20, (
+        f"فقط {len(_STAFF_GETS)} مسیر staff در artifact — الگو را بررسی کنید"
+    )
 
 
 def test_live_selection_matches_artifact(matrix_cache):
     """مجموعهٔ staff در اپ زنده == artifact (route تازهٔ بدون قاعدهٔ نقش ⇒ قرمز)."""
-    live = sorted(path for (method, path), access in matrix_cache.items() if method == "GET" and _is_staff(access))
+    live = sorted(
+        path
+        for (method, path), access in matrix_cache.items()
+        if method == "GET" and _is_staff(access)
+    )
     assert live == _STAFF_GETS, (
         "مسیرهای staff بین اپ زنده و artifact نمی‌خوانند: "
         f"اضافه(زنده)={sorted(set(live) - set(_STAFF_GETS))} "

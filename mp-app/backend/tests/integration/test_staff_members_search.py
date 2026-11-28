@@ -54,9 +54,7 @@ def test_search_by_name_is_server_side(client, roster):
 
 def test_search_by_phone_fragment(client, roster):
     staff, rows = roster
-    phone = client.get(
-        "/api/v1/admin/members-summary", params={"q": rows[0]["id"]}, headers=staff
-    )
+    phone = client.get("/api/v1/admin/members-summary", params={"q": rows[0]["id"]}, headers=staff)
     assert phone.status_code == 200  # شناسه عددی مسیر جست‌وجو نیست (نه نام، نه تلفن)
     found = client.get("/api/v1/admin/members-summary", params={"q": "0912"}, headers=staff)
     assert found.status_code == 200
