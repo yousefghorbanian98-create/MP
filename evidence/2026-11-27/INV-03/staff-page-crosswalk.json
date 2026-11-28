@@ -1,7 +1,7 @@
 {
   "meta": {
     "kind": "staff",
-    "sha": "bab5572ac1a5b09ee2904c4d2daac8a47a110d70",
+    "sha": "90f0896de4089f8c581bbccbda76b941ce13731c",
     "branch": "arena/3c08bfbd-mp",
     "tracked_dirty": false,
     "untracked": 0,
@@ -9,13 +9,13 @@
       "backend/api/routes.json": "sha256_b64:fwMz37kqW7VlFLfgA8x4Nw_H6Pq-OpqLU0LMqrmoTPg",
       "backend/security/rbac.py": "sha256_b64:qHQPdbM-hk4aOZD0134vp4HwwhBcEz2YkqQc5j_fnSw",
       "studio/src/lib/roleNav.ts": "sha256_b64:ZQ_3Q0OvbiUBD2oHurTeR30v_vzulL45I6IA7QXVMiA",
-      "studio/src/lib/api.ts": "sha256_b64:7NVt0vlfhLQDgKTaPzGd0aqB0Cy8tOpubnj-Pv0LSmE",
+      "studio/src/lib/api.ts": "sha256_b64:u7PafkCfgDhLFBkj5cizbsnmUb7HNaRdYJXCbiECcKY",
       "studio/src/lib/adminApi.ts": "sha256_b64:YSy9HomngwFUX2fIgmRRmnxJLRSO9Ed5BQ9QzBMn8s4",
-      "studio/src/lib/navigation.ts": "sha256_b64:xkspscx19MhTTiRnLDjPxp66l39EjLoH4konkMqgthc"
+      "studio/src/lib/navigation.ts": "sha256_b64:qU1pePZ45tLOOfLiQwAgWSHqQ8ke3ZLMOBM7fGAvDSA"
     },
     "site_kinds": {
-      "template-base": 28,
-      "helper": 67,
+      "template-base": 29,
+      "helper": 68,
       "literal": 0
     },
     "dynamic_sites": 0,
@@ -366,11 +366,11 @@
       ],
       "tests": [
         "locustfile_full.py",
+        "memberPayments.test.tsx",
         "paymentPanel.test.tsx",
         "receiptQueue.test.tsx",
         "test_api_contract.py",
-        "test_battle.py",
-        "test_classes_finance.py"
+        "test_battle.py"
       ],
       "uncovered_dynamic": [],
       "status": "PARTIAL_REVIEW",

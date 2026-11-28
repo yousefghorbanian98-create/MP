@@ -14,7 +14,7 @@ BACKEND_REVERIFIED=test_phase6_card_to_card + test_manual_transfer_policy ⇒ 66
 Q11=کنترل فایل با Upload کتابخانه‌ای antd؛ بودجهٔ کنترل دست‌ساز باد نکرد
 BLOCKED=تأیید فیش با مرجع بانکی مستقل و فعال‌سازی اشتراک (تصمیم فرد مجاز/مالی)
 TODO_DONE=7/104 (بدون تیک تازه) · SLICES_LANDED=6
-CROSSWALK_IMPACT=studio/src/lib/{navigation.ts,api.ts} منابع crosswalk‌اند ⇒ بازتولید هر دو artifact روی همین commit
+CROSSWALK_IMPACT=studio/src/lib/{navigation.ts,api.ts} منابع crosswalk‌اند ⇒ هر دو artifact روی 90f0896 (چک‌اوت تمیز) بازتولید شد؛ GAP=3 · PARTIAL_REVIEW=14 (member) · PARTIAL_REVIEW=12 (staff)، call-site helper ۶۸
 RELEASE=NO-GO
 
 ## Current follow-up — MEM-10 QR check-in + MEM-11 wallet + MEM-13 shop display (2026-11-27 UTC)
