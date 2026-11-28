@@ -1,0 +1,15 @@
+# MEM-02 — mutation proofs (حساب/عضویت، پنج حالت)
+
+## A) وضعیت ناشناخته به «فعال» ترجمه شود (unknown ≠ active)
+   × member account membership status and timezone (MEM-02) > does not label an unknown backend status as active or expired 8ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 5 passed (6)
+
+## B) انقضای گذشته به «فعال» ترجمه شود (expired ≠ active)
+   × member account membership status and timezone (MEM-02) > uses the exact expiry instant, even before the scheduled expiry job runs 10ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 5 passed (6)
+
+## بازگردانی
+restored
+      Tests  14 passed (14)

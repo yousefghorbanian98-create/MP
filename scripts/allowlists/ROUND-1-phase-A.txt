@@ -1,0 +1,16 @@
+# Exact file-level allowlist for ROUND 1/9 (phase A): MEM-14 chat + MEM-02 review
+# + MEM-CLOSE summary. One path per line; no directories, no globs.
+.finn/state/STATE.md
+docs/MuscleParadise/PWA-EXECUTION-STATE.md
+docs/MuscleParadise/SESSION_HANDOFF.md
+evidence/2026-11-27/MEM-02/current-run.md
+evidence/2026-11-27/MEM-02/mutation-proof.txt
+evidence/2026-11-27/MEM-14/contract-answer.txt
+evidence/2026-11-27/MEM-14/current-run.md
+evidence/2026-11-27/MEM-14/mutation-proof.txt
+evidence/2026-11-27/MEM-CLOSE/summary.md
+mp-app/studio/src/App.tsx
+mp-app/studio/src/components/MemberChat.tsx
+mp-app/studio/src/lib/navigation.ts
+mp-app/studio/tests/memberChat.test.tsx
+scripts/allowlists/ROUND-1-phase-A.txt
