@@ -4,7 +4,7 @@
 > رفع می‌کند (تمپلیت `${base}`, alias نقش‌ها, مسیرهای پویا) — طبق یافته‌های
 > `review.md` خودِ اجرای قبلی. هیچ ردیفی CURRENT نمی‌شود.
 
-- SHA: `90f0896de4089f8c581bbccbda76b941ce13731c` · branch: `arena/3c08bfbd-mp` · tracked-dirty: `False` · untracked: `0`
+- SHA: `3fd6152cf912326fa24b9cc66bfde90ae8f02ef0` · branch: `arena/3c08bfbd-mp` · tracked-dirty: `False` · untracked: `0`
 - `backend/api/routes.json` → `sha256_b64:fwMz37kqW7VlFLfgA8x4Nw_H6Pq-OpqLU0LMqrmoTPg`
 - `backend/security/rbac.py` → `sha256_b64:qHQPdbM-hk4aOZD0134vp4HwwhBcEz2YkqQc5j_fnSw`
 - `studio/src/lib/roleNav.ts` → `sha256_b64:ZQ_3Q0OvbiUBD2oHurTeR30v_vzulL45I6IA7QXVMiA`
