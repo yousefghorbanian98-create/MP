@@ -1,26 +1,27 @@
 {
   "meta": {
     "kind": "staff",
-    "sha": "a52f2e749b4eab1f3b928baf9b2aff0513e9083b",
+    "sha": "d629a1f15810ad094d826a7f0d2d9ebe83c3660b",
     "branch": "arena/3c08bfbd-mp",
     "tracked_dirty": false,
     "untracked": 14,
     "sources": {
       "backend/api/routes.json": "sha256_b64:fwMz37kqW7VlFLfgA8x4Nw_H6Pq-OpqLU0LMqrmoTPg",
       "backend/security/rbac.py": "sha256_b64:qHQPdbM-hk4aOZD0134vp4HwwhBcEz2YkqQc5j_fnSw",
-      "studio/src/lib/roleNav.ts": "sha256_b64:ZQ_3Q0OvbiUBD2oHurTeR30v_vzulL45I6IA7QXVMiA",
-      "studio/src/lib/api.ts": "sha256_b64:3QnqbHGjBm2yzTGVi4tcuevka4OEhrpme46P5-Y2PDQ",
+      "studio/src/lib/roleNav.ts": "sha256_b64:wdrcyaa_cXztAgTXtSdep6gUi954-EIPJUbFhBjkfPw",
+      "studio/src/lib/api.ts": "sha256_b64:NGmG9-qxoSBRy7_bC8IqI2-H4Py6qwJLgz7-JD6-Be8",
       "studio/src/lib/adminApi.ts": "sha256_b64:YSy9HomngwFUX2fIgmRRmnxJLRSO9Ed5BQ9QzBMn8s4",
       "studio/src/lib/navigation.ts": "sha256_b64:jK8O-3bBVXFSK8npGcVssNEmheE1f94OgCModv8nwF4"
     },
     "site_kinds": {
       "template-base": 29,
-      "helper": 71,
+      "helper": 73,
       "literal": 0
     },
     "dynamic_sites": 0,
     "status_counts": {
-      "PARTIAL_REVIEW": 12
+      "PARTIAL_REVIEW": 12,
+      "BLOCKED": 1
     },
     "role_aliases_resolved": {
       "dashboard": [
@@ -74,6 +75,13 @@
         "coach",
         "reception",
         "member"
+      ],
+      "classes": [
+        "super_admin",
+        "admin",
+        "manager",
+        "coach",
+        "reception"
       ],
       "finance": [
         "super_admin",
@@ -136,7 +144,7 @@
         "authFlow.test.tsx",
         "liveContract.test.ts",
         "locustfile_full.py",
-        "staffMemberSearch.test.tsx"
+        "staffMemberDetail.test.tsx"
       ],
       "uncovered_dynamic": [],
       "status": "PARTIAL_REVIEW",
@@ -336,13 +344,34 @@
         "a11y.test.tsx",
         "locustfile_full.py",
         "memberCheckin.test.tsx",
+        "staffClasses.test.tsx",
         "test_m45_checkin_feed.py",
-        "test_m46_security_matrix.py",
-        "test_m65_qr_security.py"
+        "test_m46_security_matrix.py"
       ],
       "uncovered_dynamic": [],
       "status": "PARTIAL_REVIEW",
       "reason": "route/نقش + call-site + اشارهٔ تستی پیدا شد؛ مجوز با تست منفی اثبات نشده و اجرای تست در این اجرا انجام نشده"
+    },
+    {
+      "key": "classes",
+      "files": [
+        "mp-app/studio/src/pages/Classes.tsx"
+      ],
+      "route": "/staff/classes",
+      "roles": [
+        "super_admin",
+        "admin",
+        "manager",
+        "coach",
+        "reception"
+      ],
+      "apis_used": [],
+      "apis_total": 0,
+      "consumers": [],
+      "tests": [],
+      "uncovered_dynamic": [],
+      "status": "BLOCKED",
+      "reason": "نقشهٔ دامنه برای این مورد تعریف نشده"
     },
     {
       "key": "finance",

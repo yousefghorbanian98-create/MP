@@ -1,0 +1,25 @@
+# STAFF-04 / STAFF-01(ب) — اثبات جهش دور ۳ (POST sweep + وضعیت حضور از سرور)
+branch: arena/3c08bfbd-mp · base_sha: 75ed039
+date: 2026-11-28T20:03:05Z
+
+== baseline: gیت مالکیت (GET+POST sweep) ==
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+61 passed, 1 warning in 13.67s
+
+== MUTATION M8 — افزودن allow برای member روی مسیر POST کارکنان ==
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/integration/test_staff_ownership_gate.py::test_live_selection_matches_artifact
+FAILED tests/integration/test_staff_ownership_gate.py::test_member_gets_403_on_staff_route[POST-api-v1-assessments]
+2 failed, 59 passed, 1 warning in 13.83s
+restore: security/rbac.py: OK
+
+== MUTATION M9 — وضعیت حضور در UI ثابت می‌شود (مستقل از result سرور) ==
+   (Classes.tsx: پاداشِ «در باشگاه (باز)» بدون نگاه به row.result)
+   ✓ STAFF-04 — کلاس‌ها و حضور کارکنان > ظرفیت و شمارش رزرو را عیناً از سرور نشان می‌دهد و جای خالی نمی‌سازد 64ms
+   ✓ STAFF-04 — کلاس‌ها و حضور کارکنان > وضعیت ورود را از result سرور می‌خواند، نه از متن ثابت 18ms
+   × STAFF-04 — کلاس‌ها و حضور کارکنان > وقتی سرور result=denied می‌دهد، همان را با دلیل نشان می‌دهد 1014ms
+   ✓ STAFF-04 — کلاس‌ها و حضور کارکنان > هیچ درخواست نوشتنی نمی‌فرستد و دکمهٔ «حاضر شد» ندارد 14ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 3 passed (4)
+restore: src/pages/Classes.tsx: OK

@@ -1,0 +1,37 @@
+ROUND 3/9 — دروازه‌های برداریِ تازه (NEW_GATES=5)
+==================================================
+قاعدهٔ دور ③: هر گیت باید با یک جهش قرمز شود؛ خروجی خام در فایل‌های STAFF-02/STAFF-04.
+
+G1 · STAFF_WRITES_403
+  فایل: mp-app/backend/tests/integration/test_staff_ownership_gate.py
+  چه چیزی: sweep از ۲۳ مسیر GET به **۵۷ مسیر** (۲۳ GET + ۳۴ POST) گسترش یافت؛
+           برای هر مسیر staff-only، توکن member باید ۴۰۳ بگیرد (POST با بدنهٔ خالی؛ ۴۲۲ هم قرمز است).
+  جهش: M8 — افزودن allow برای member روی POST /assessments ⇒ 2 failed / 59 passed
+  متریک: STAFF_GATED 23 → 57
+
+G2 · CHECKIN_STATUS_FROM_SERVER
+  فایل: mp-app/studio/tests/staffClasses.test.tsx
+  چه چیزی: متن وضعیت هر ورود از `result` سرور می‌آید؛ `denied` ⇒ «رد شد» + دلیل سرور.
+  جهش: M9 — `const accepted = true` ⇒ 1 failed / 3 passed
+
+G3 · NO_CLIENT_SIDE_CHECKIN_CLAIM
+  فایل: همان فایل
+  چه چیزی: صفحهٔ کلاس/حضور هیچ درخواست نوشتنی نمی‌فرستد و دکمهٔ «حاضر شد» ندارد
+           (بدون endpoint تأیید مربی، UI ادعا نمی‌سازد).
+  جهش: هر POST/PATCH در صفحه ⇒ تست «همه GET» قرمز (نتیجهٔ M9 همان مسیر را می‌پوشاند)
+
+G4 · SAVE_AFTER_SERVER_READBACK
+  فایل: mp-app/studio/tests/staffMemberDetail.test.tsx
+  چه چیزی: متن «ذخیره شد» فقط بعد از بازخوانیِ سرور و تطبیق مقدار ظاهر می‌شود؛
+           اگر سرور مقدار دیگری بدهد، همان نمایش داده می‌شود و هشدار می‌آید.
+  جهش: M10 (اجرای دوم، بعد از تقویت گیت) ⇒ 1 failed / 5 passed
+
+G5 · PAGE_LIMIT_SERVER_SIDE (+ STALE_FLAG)
+  فایل: همان فایل
+  چه چیزی: `limit` در همان درخواست سرور فرستاده می‌شود (برش محلی نیست) و
+           `generated_at` قدیمی‌تر از ۵ دقیقه ⇒ نشان «تازه نیست».
+  جهش: M11 — نادیده‌گرفتن limit ⇒ 1 failed / 4 passed
+
+بدهیِ گیت (صادقانه): «CHAT_NO_OPTIMISTIC» و «PAYMENT_NO_APPROVE» که مالک به‌عنوان
+مثال آماده نام برد، در این دور ساخته نشدند (زمان/دامنه)؛ دور ۴ با همان معیار
+«گیت + جهش» ساخته می‌شوند و ادعای وجودشان نمی‌شود.

@@ -18,6 +18,19 @@ LAST_KNOWN_EVIDENCE=evidence/2026-11-27/MEM-03/current-run.md و فایل‌ها
 
 در تعارض، تصمیم scope با ADR/تصمیم مالک، متن acceptance با کارت canonical، رفتار با کد و تست همان مسیر، و status اجرایی با آخرین شاهد پالایش‌شده تعیین می‌شود. Snapshotهای تاریخی، دیاگرام‌ها، screenshotها، artifact package، mock، skipped test و CI روی SHA دیگر acceptance محصول را ثابت نمی‌کنند.
 
+## Latest continuation — ROUND 3/9 (phase B): STAFF-02 detail/edit · STAFF-04 classes
+
+```text
+MEMBER_ROUTES=11 · MEMBER_SCREENS=11 · STAFF_GATED=57 · STAFF_PAGES=12 · TODO_DONE=7 · OPEN_TESTIDS=0
+STAFF-02/PWA-41=PARTIAL (detail+edit+limit+stale) · STAFF-04/PWA-43=PARTIAL (صفحهٔ classes)
+NEW_GATES=5 · MUTATIONS_PROVEN=4 · NEW_ENDPOINTS=0 · TESTS_ADDED=10 · RELEASE=NO-GO
+```
+
+- detail از `GET /members/{id}`، ویرایش با `PATCH` و **بازخوانی از سرور**؛ «ذخیره شد» پیش از بازخوانی گفته نمی‌شود.
+- صفحهٔ `classes`: ظرفیت/رزرو از `GET /classes`، حضور از `GET /admin/checkins`؛ هیچ دکمهٔ «حاضر شد» و هیچ POST.
+- `GAP`: offset صفحه‌بندی، roster نام‌دار، تأیید حضور توسط مربی — هر سه endpoint ندارند.
+- گیت‌ها: `evidence/2026-11-27/ROUND-3/gates.txt` · جمع‌بندی: `evidence/2026-11-27/MEM-CLOSE/round-3.md`.
+
 ## Latest continuation — ROUND 2/9 (phase B): SEC-01, STAFF-01(ب), STAFF-02
 
 ```text

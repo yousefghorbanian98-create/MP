@@ -70,34 +70,45 @@ def _artifact_operations() -> list[dict]:
     return json.loads(_ARTIFACT.read_text(encoding="utf-8"))["operations"]
 
 
-def _artifact_staff_gets() -> list[str]:
-    """فهرست ثابت (snapshot) مسیرهای staff-only GET — از artifact، نه policy."""
+SWEPT_METHODS = ("GET", "POST")
+
+
+def _artifact_staff_cases() -> list[tuple[str, str]]:
+    """فهرست ثابت (snapshot) مسیرهای staff-only — از artifact، نه policy زنده.
+
+    چرا از artifact: اگر کسی قاعده‌ای را به نفع member باز کند، این فهرست
+    «کوچک» نمی‌شود؛ همان مسیر صدا زده می‌شود و ۲۰۰/۲۰۴ می‌گیرد ⇒ قرمز.
+    """
     return sorted(
-        op["path"] for op in _artifact_operations() if op["method"] == "GET" and _is_staff(op)
+        (op["method"], op["path"])
+        for op in _artifact_operations()
+        if op["method"] in SWEPT_METHODS and _is_staff(op)
     )
 
 
-_STAFF_GETS = _artifact_staff_gets()
+_STAFF_CASES = _artifact_staff_cases()
 
 
 def test_selection_is_not_empty():
     """گیت نباید بی‌صدا خالی شود؛ خالی‌بودن یعنی تست هیچ‌چیز را نمی‌سنجد."""
-    assert len(_STAFF_GETS) >= 20, (
-        f"فقط {len(_STAFF_GETS)} مسیر staff در artifact — الگو را بررسی کنید"
+    gets = sum(1 for method, _path in _STAFF_CASES if method == "GET")
+    posts = sum(1 for method, _path in _STAFF_CASES if method == "POST")
+    assert gets >= 20 and posts >= 20, (
+        f"فقط {gets} GET و {posts} POST مسیر staff در artifact — الگو را بررسی کنید"
     )
 
 
 def test_live_selection_matches_artifact(matrix_cache):
     """مجموعهٔ staff در اپ زنده == artifact (route تازهٔ بدون قاعدهٔ نقش ⇒ قرمز)."""
     live = sorted(
-        path
+        (method, path)
         for (method, path), access in matrix_cache.items()
-        if method == "GET" and _is_staff(access)
+        if method in SWEPT_METHODS and _is_staff(access)
     )
-    assert live == _STAFF_GETS, (
+    assert live == _STAFF_CASES, (
         "مسیرهای staff بین اپ زنده و artifact نمی‌خوانند: "
-        f"اضافه(زنده)={sorted(set(live) - set(_STAFF_GETS))} "
-        f"کم(زنده)={sorted(set(_STAFF_GETS) - set(live))}"
+        f"اضافه(زنده)={sorted(set(live) - set(_STAFF_CASES))} "
+        f"کم(زنده)={sorted(set(_STAFF_CASES) - set(live))}"
     )
 
 
@@ -136,12 +147,16 @@ def matrix_cache() -> dict[tuple[str, str], dict]:
 
 
 @pytest.mark.parametrize(
-    "path", _STAFF_GETS, ids=lambda value: re.sub(r"[^A-Za-z0-9]+", "-", value).strip("-")
+    ("method", "path"),
+    _STAFF_CASES,
+    ids=lambda value: re.sub(r"[^A-Za-z0-9]+", "-", value).strip("-"),
 )
-def test_member_gets_403_on_staff_route(client, auth, path):
-    """نقش غیرمجاز روی مسیر staff باید ۴۰۳ بگیرد — نه ۲۰۰، نه ۵۰۰."""
+def test_member_gets_403_on_staff_route(client, auth, method, path):
+    """نقش غیرمجاز روی مسیر staff باید ۴۰۳ بگیرد — نه ۲۰۰، نه ۵۰۰، نه ۴۲۲."""
     url = re.sub(r"\{[^}]+\}", "1", path)
-    response = client.get(url, headers=auth("member"))
+    kwargs = {"json": {}} if method == "POST" else {}
+    response = client.request(method, url, headers=auth("member"), **kwargs)
     assert response.status_code == 403, (
-        f"GET {path} با نقش member باید ۴۰۳ بدهد، داد {response.status_code}: {response.text[:200]}"
+        f"{method} {path} با نقش member باید ۴۰۳ بدهد، داد {response.status_code}: "
+        f"{response.text[:200]}"
     )

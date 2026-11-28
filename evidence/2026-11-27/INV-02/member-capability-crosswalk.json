@@ -1,21 +1,21 @@
 {
   "meta": {
     "kind": "member",
-    "sha": "a52f2e749b4eab1f3b928baf9b2aff0513e9083b",
+    "sha": "d629a1f15810ad094d826a7f0d2d9ebe83c3660b",
     "branch": "arena/3c08bfbd-mp",
     "tracked_dirty": false,
     "untracked": 14,
     "sources": {
       "backend/api/routes.json": "sha256_b64:fwMz37kqW7VlFLfgA8x4Nw_H6Pq-OpqLU0LMqrmoTPg",
       "backend/security/rbac.py": "sha256_b64:qHQPdbM-hk4aOZD0134vp4HwwhBcEz2YkqQc5j_fnSw",
-      "studio/src/lib/roleNav.ts": "sha256_b64:ZQ_3Q0OvbiUBD2oHurTeR30v_vzulL45I6IA7QXVMiA",
-      "studio/src/lib/api.ts": "sha256_b64:3QnqbHGjBm2yzTGVi4tcuevka4OEhrpme46P5-Y2PDQ",
+      "studio/src/lib/roleNav.ts": "sha256_b64:wdrcyaa_cXztAgTXtSdep6gUi954-EIPJUbFhBjkfPw",
+      "studio/src/lib/api.ts": "sha256_b64:NGmG9-qxoSBRy7_bC8IqI2-H4Py6qwJLgz7-JD6-Be8",
       "studio/src/lib/adminApi.ts": "sha256_b64:YSy9HomngwFUX2fIgmRRmnxJLRSO9Ed5BQ9QzBMn8s4",
       "studio/src/lib/navigation.ts": "sha256_b64:jK8O-3bBVXFSK8npGcVssNEmheE1f94OgCModv8nwF4"
     },
     "site_kinds": {
       "template-base": 29,
-      "helper": 71,
+      "helper": 73,
       "literal": 0
     },
     "dynamic_sites": 0,
@@ -75,6 +75,13 @@
         "coach",
         "reception",
         "member"
+      ],
+      "classes": [
+        "super_admin",
+        "admin",
+        "manager",
+        "coach",
+        "reception"
       ],
       "finance": [
         "super_admin",
@@ -256,9 +263,9 @@
         "a11y.test.tsx",
         "locustfile_full.py",
         "memberCheckin.test.tsx",
+        "staffClasses.test.tsx",
         "test_m45_checkin_feed.py",
-        "test_m46_security_matrix.py",
-        "test_m65_qr_security.py"
+        "test_m46_security_matrix.py"
       ],
       "uncovered_dynamic": [],
       "status": "PARTIAL_REVIEW",
@@ -270,7 +277,13 @@
         "mp-app/client/lib/features/classes/classes_page.dart"
       ],
       "route": null,
-      "roles": null,
+      "roles": [
+        "super_admin",
+        "admin",
+        "manager",
+        "coach",
+        "reception"
+      ],
       "apis_used": [
         "/api/v1/classes",
         "/api/v1/classes/book",
@@ -286,8 +299,8 @@
         "apiCoverage.test.ts",
         "authFlow.test.tsx",
         "memberClasses.test.tsx",
-        "test_classes_finance.py",
-        "test_e2e_dataflow.py"
+        "staffClasses.test.tsx",
+        "test_classes_finance.py"
       ],
       "uncovered_dynamic": [],
       "status": "PARTIAL_REVIEW",

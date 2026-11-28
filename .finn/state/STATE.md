@@ -2,6 +2,27 @@
 
 > هشدار انتقال ۲۰۲۶-۱۱-۱۸: بخش‌های بعدی قدیمی snapshot هستند و branch/toolchain/status آن‌ها جاری فرض نشود. وضعیت تازهٔ Motion/PWA در این بخش و [handoff](../../docs/MuscleParadise/SESSION_HANDOFF.md) آمده؛ کارهای قدیمی M63–M99، M100–M106 و M107+ فقط پس از تطبیق با TODO و گیت‌های جاری ادامه یابند.
 
+## Current follow-up — ROUND 3/9 phase B: STAFF-02 detail/edit + STAFF-04 classes/check-in + 5 vector gates (2026-11-27 UTC)
+
+STATE_LAST_UPDATED=2026-11-28T20:30:00Z
+ROUND=3/9 · PHASE=B · ORDER=v11-final (standing orders 2026-11-28)
+MERGED_MAIN=6facc52 (PR #36 merged by owner) · merge commit at round start
+MEMBER_ROUTES=11
+MEMBER_SCREENS=11
+STAFF_GATED=57 (تعریف ثابت مالک: تست‌های HTTP که نقش غیرمجاز را رد می‌کنند — ۲۳ GET + ۳۴ POST)
+STAFF_PAGES=12 (تعریف فایل‌محور: PAGE_IDS=13 − withoutDedicatedTest=["analytics"]؛ عدد «۵» دستور از staffRouteMap.test.ts بازتولید نشد — اختلاف گزارش شده)
+TODO_DONE=7
+OPEN_TESTIDS=0
+STAFF-02/PWA-41=PARTIAL (بسته‌تر) — detail از `GET /members/{id}`، ویرایش `PATCH` با بازخوانی سرور، سقف صفحه از سرور، نشان کهنگی؛ GAP=offset ندارد · OWNER_DECISION=بین‌شعبه‌ای
+STAFF-04/PWA-43=PARTIAL — صفحهٔ `classes` (PAGE_IDS تازه): ظرفیت/رزرو از `GET /classes`، جریان حضور از `GET /admin/checkins`، بدون دکمهٔ «حاضر شد»؛ GAP=roster نام‌دار و تأیید مربی
+STAFF-01(ب)=DONE — sweep نوشتن‌ها: ۳۴ مسیر POST در همان گیت ۴۰۳
+NEW_GATES=5 (STAFF_WRITES_403 · CHECKIN_STATUS_FROM_SERVER · NO_CLIENT_SIDE_CHECKIN_CLAIM · SAVE_AFTER_SERVER_READBACK · PAGE_LIMIT_SERVER_SIDE+STALE)
+MUTATIONS_PROVEN=4 این دور (M8..M11؛ M10 اجرای اول قرمز نشد و گیت تقویت شد — ثبت شده)
+NEW_ENDPOINTS=0 · ROUTES_ADDED=/staff/classes (PAGE_IDS) · TESTS_ADDED=10 (۶ detail + ۴ classes)
+LINT_LOCAL=pass (ruff check/format + studio tsc/eslint قبل از commit)
+CROSSWALK_DIRTY=no (بازتولید پایان دور)
+RELEASE=NO-GO
+
 ## Current follow-up — ROUND 2/9 phase B: SEC-01 answer + STAFF-01(ب) ownership gate + STAFF-02 slice + testid close (2026-11-27 UTC)
 
 STATE_LAST_UPDATED=2026-11-28T19:10:00Z

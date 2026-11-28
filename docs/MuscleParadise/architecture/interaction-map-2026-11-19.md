@@ -17,10 +17,10 @@ python3 scripts/interaction_map.py --check
 | سنجه | مقدار |
 |---|---|
 | مسیر قرارداد API | 163 |
-| صفحهٔ استودیو | 14 |
+| صفحهٔ استودیو | 15 |
 | ویژگی کلاینت | 18 |
-| endpoint یکتای استفاده‌شده | 94 |
-| سطح بی‌تست | 6 |
+| endpoint یکتای استفاده‌شده | 95 |
+| سطح بی‌تست | 5 |
 
 ## گپ‌های قرارداد
 
@@ -33,7 +33,6 @@ python3 scripts/interaction_map.py --check
 - client-feature:intake
 - client-feature:progress
 - studio-page:Analytics
-- studio-page:Members
 
 ## استودیو
 
@@ -84,6 +83,17 @@ python3 scripts/interaction_map.py --check
 | GET | `/api/v1/admin/checkins` | permission | coach, reception, manager, admin, super_admin | بله |
 
 تست: `mp-app/studio/tests/checkInPage.test.tsx`
+
+### Classes
+
+دکمه 0 · ورودی 0 · عدد 0 · انتخاب 0 · دیالوگ 0
+
+| متد | مسیر | guard | نقش‌ها | در قرارداد |
+|---|---|---|---|---|
+| GET | `/api/v1/admin/checkins` | permission | coach, reception, manager, admin, super_admin | بله |
+| GET | `/api/v1/classes` | permission | member, coach, reception, manager, admin, super_admin | بله |
+
+تست: `mp-app/studio/tests/staffClasses.test.tsx`
 
 ### Dashboard
 
@@ -154,7 +164,7 @@ python3 scripts/interaction_map.py --check
 
 ### Members
 
-دکمه 4 · ورودی 0 · عدد 0 · انتخاب 0 · دیالوگ 0
+دکمه 5 · ورودی 2 · عدد 1 · انتخاب 1 · دیالوگ 0
 
 | متد | مسیر | guard | نقش‌ها | در قرارداد |
 |---|---|---|---|---|
@@ -162,8 +172,9 @@ python3 scripts/interaction_map.py --check
 | POST | `/api/v1/ai/program/generate` | permission | member, coach, manager, admin, super_admin | بله |
 | GET | `/api/v1/axis-assessments/*/matrix` | permission | member, coach, manager, admin, super_admin | بله |
 | GET | `/api/v1/axis-assessments/member/*` | permission | member, coach, manager, admin, super_admin | بله |
+| GET | `/api/v1/members/*` | permission | member, coach, reception, manager, admin, super_admin | بله |
 
-تست: **ندارد**
+تست: `mp-app/studio/tests/staffMemberDetail.test.tsx`
 
 ### Nutrition
 
@@ -287,12 +298,12 @@ python3 scripts/interaction_map.py --check
 
 | نقش | تعداد endpoint | نمونهٔ سطح‌ها |
 |---|---|---|
-| admin | 104 | Analytics، Assessment، Chat، CheckIn، Dashboard، Expenses |
-| coach | 74 | Assessment، Chat، CheckIn، Dashboard، MemberAccount، Members |
-| manager | 104 | Analytics، Assessment، Chat، CheckIn، Dashboard، Expenses |
-| member | 77 | Assessment، Chat، Finance، MemberAccount، Members، Nutrition |
-| reception | 50 | Assessment، CheckIn، Dashboard، Finance، MemberAccount، Members |
-| super_admin | 111 | Analytics، Assessment، Chat، CheckIn، Dashboard، Expenses |
+| admin | 107 | Analytics، Assessment، Chat، CheckIn، Classes، Dashboard |
+| coach | 77 | Assessment، Chat، CheckIn، Classes، Dashboard، MemberAccount |
+| manager | 107 | Analytics، Assessment، Chat، CheckIn، Classes، Dashboard |
+| member | 79 | Assessment، Chat، Classes، Finance، MemberAccount، Members |
+| reception | 53 | Assessment، CheckIn، Classes، Dashboard، Finance، MemberAccount |
+| super_admin | 114 | Analytics، Assessment، Chat، CheckIn، Classes، Dashboard |
 
 ## محدودیت صریح
 
