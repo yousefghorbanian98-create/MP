@@ -16,8 +16,8 @@ STAFF-01(ب)/PWA-40=DONE برای همین بند — `tests/integration/test_st
 STAFF-02/PWA-41=PARTIAL — جست‌وجوی نام/تلفن سمت سرور (`q` با escape) + ۷ تست بک‌اند و ۳ تست Studio · detail/edit، pagination UI، stale و بین‌شعبه‌ای باز
 STAFF-07/QF-03=PARTIAL — دو testid بی‌تست بسته شد (+۲ تست، mutations M5/M6)
 NEW_ENDPOINTS=0 · ROUTES_ADDED=0 · TESTS_ADDED=37 (۲۷ بک‌اند + ۷ بک‌اند + ۳ Studio)  · MUTATIONS_PROVEN=7 این دور (M1..M7)
-CROSSWALK_DIRTY=yes — بازتولید یک‌بار در پایان همین دور
-INTERACTION_MAP=regen شد، بدون تغییر (رانش صفر)
+CROSSWALK_DIRTY=no — هر دو artifact یک‌بار در پایان دور روی a52f2e7 بازتولید شد؛ عضو: 15 PARTIAL_REVIEW / 2 GAP · کارکنان: 12 PARTIAL_REVIEW · digest gate: ۲ artifact برابر، ۲ STALE تاریخی
+INTERACTION_MAP=regen شد، بدون تغییر (رانش صفر) · CI: PR #36 = 12/12 pass · push mp-ci+pwa00 = success · CODERABBIT=absent
 RELEASE=NO-GO
 
 ## Current follow-up — ROUND 1/9 phase A: MEM-14 chat + MEM-02 review + MEM-CLOSE (2026-11-27 UTC)

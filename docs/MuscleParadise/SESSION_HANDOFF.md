@@ -14,7 +14,8 @@ NEW_ENDPOINTS=0 · TESTS_ADDED=37 · MUTATIONS_PROVEN=7 · RELEASE=NO-GO
 - ۲۳ مسیر staff-only GET با توکن member واقعاً ۴۰۳ می‌گیرند (بدون ۲۰۰/۵۰۰)؛ گیت با افزودن مسیر بی‌قاعده قرمز می‌شود.
 - جست‌وجوی اعضا از مرورگر به سرور منتقل شد (`q` در SQL با escape) — فیلتر روی ۲۰۰ ردیف اول دیگر گم نمی‌کند.
 - `permission-user` و `permission-expiry` تست رفتاری گرفتند: `OPEN_TESTIDS: 2 → 0`.
-- جمع‌بندی: `evidence/2026-11-27/MEM-CLOSE/round-2.md`.
+- جمع‌بندی: `evidence/2026-11-27/MEM-CLOSE/round-2.md` · CI: `evidence/2026-11-27/ROUND-2/ci-proof.txt`.
+- crosswalk یک‌بار در پایان دور روی `a52f2e7` بازتولید شد؛ digest gate پاس (۲ STALE تاریخی گزارش‌شده).
 
 ## وضعیت جاری — دور ۱/۹ فاز A: چت عضو و بستن MEM (UTC 2026-11-28)
 
