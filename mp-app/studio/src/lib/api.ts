@@ -1128,6 +1128,47 @@ export function cancelClassBooking(classId: number, memberId: number, token = ge
   return postJson<ClassBookingResult>("/classes/cancel", { class_id: classId, member_id: memberId }, token);
 }
 
+// ── MEM-10 / PWA-39 — QR حضور: توکن کوتاه‌عمر + تاریخچهٔ چک‌این خود عضو ──
+//
+// قرارداد (با grep -n): `modules/face_id/router.py:70-80` توکن امضاشده می‌دهد
+// (`app/security/jwt.py:40-56`: `type="checkin_qr"`, `jti`, `exp=+2min`) و
+// `router.py:83-126` ریدیم را با `ensure_member_scope` و گارد replay انجام می‌دهد
+// (کد `qr_replayed`، ۴۰۹؛ ایندکس یکتا `uq_checkins_qr_jti_hash` در
+// `db/models/face_id.py:52`). تاریخچه: `GET /membership/me/checkins`
+// (`modules/membership/service.py:97-141`) با `has_more` و صفحه‌بندی offset.
+
+export interface CheckinQrToken {
+  payload: string;
+  member_id: number;
+}
+
+export interface MyCheckinRow {
+  checkin_id: number;
+  method: string;
+  result: string;
+  denial_reason: string;
+  checked_in_at: string | null;
+  checked_out_at: string | null;
+  is_open: boolean;
+}
+
+export interface MyCheckinHistory {
+  items: MyCheckinRow[];
+  limit: number;
+  offset: number;
+  has_more: boolean;
+  rule_version: string;
+  generated_at: string;
+}
+
+export function fetchCheckinQrToken(token = getToken(), signal?: AbortSignal) {
+  return getJson<CheckinQrToken>("/face/qr-token", token, signal);
+}
+
+export function fetchMyCheckins(limit = 10, offset = 0, token = getToken(), signal?: AbortSignal) {
+  return getJson<MyCheckinHistory>(`/membership/me/checkins?limit=${limit}&offset=${offset}`, token, signal);
+}
+
 /** G12 — مرور جدول غذایی با فیلتر دسته (بدون جستجو = همهٔ غذاها). */
 export function browseFoods(
   query: string,

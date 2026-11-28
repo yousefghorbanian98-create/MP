@@ -1,0 +1,15 @@
+# MEM-13 — mutation
+
+## A) افزودن فراخوانی /shop/cart (نوشتن در فروشگاه نمایش‌محور)
+   × member shop, display only (MEM-13) > lists products with server price and stock, and never calls cart or checkout 74ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 4 passed (5)
+
+## B) موجودی صفر به‌عنوان موجود نمایش داده شود
+   × member shop, display only (MEM-13) > marks an out-of-stock product as unavailable, not available 1013ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 4 passed (5)
+
+## بازگردانی
+restored
+      Tests  5 passed (5)

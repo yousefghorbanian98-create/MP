@@ -1,0 +1,84 @@
+# MEM-10 — پاسخ قرارداد پیش از UI (grep -n واقعی)
+# HEAD: 74033cb
+
+## ① آیا POST /face/checkin-qr ردیف را جایگزین می‌کند یا ردیف تازه می‌سازد؟
+$ grep -n "def check_in" -A 12 mp-app/backend/modules/face_id/service.py
+248:def check_in(
+249-    db: Session,
+250-    member_id: int,
+251-    method: str,
+252-    result: str = "ok",
+253-    denial_reason: str = "",
+254-    user=None,
+255-    qr_jti_hash: str | None = None,
+256-) -> CheckIn:
+257-    """Record a check-in and observe its end-to-end service duration."""
+258-    from app.metrics import Timer
+259-
+260-    with Timer("mp_checkin_duration_seconds", method=method):
+
+$ grep -n "_check_in" -A 26 mp-app/backend/modules/face_id/service.py | sed -n "1,40p"
+8:    qr_jti_hash: str | None = None,
+27:            select(Membership).where(
+42:        qr_jti_hash=qr_jti_hash,
+45:    db.add(ci)
+46:    db.commit()
+
+## ② یکتایی روی کدام ستون است؟
+$ grep -n "uq_checkins_qr_jti_hash" -r mp-app/backend --include=*.py
+mp-app/backend/db/migrations/versions/c5d6e7f8a9b0_m65_qr_replay_guard.py:21:    op.create_index("uq_checkins_qr_jti_hash", "checkins", ["qr_jti_hash"], unique=True)
+mp-app/backend/db/migrations/versions/c5d6e7f8a9b0_m65_qr_replay_guard.py:25:    op.drop_index("uq_checkins_qr_jti_hash", table_name="checkins")
+mp-app/backend/db/models/face_id.py:52:    __table_args__ = (Index("uq_checkins_qr_jti_hash", "qr_jti_hash", unique=True),)
+
+$ sed -n "21p" mp-app/backend/db/migrations/versions/c5d6e7f8a9b0_m65_qr_replay_guard.py
+    op.create_index("uq_checkins_qr_jti_hash", "checkins", ["qr_jti_hash"], unique=True)
+
+## ③ توکن QR
+$ grep -n "def create_checkin_qr_token" -A 16 mp-app/backend/app/security/jwt.py
+40:def create_checkin_qr_token(member_id: int) -> str:
+41-    """توکن QR کوتاه‌عمر و جدا از bearer access token؛ یک jti مستقل برای replay gate."""
+42-    if member_id < 1:
+43-        raise ValueError("member_id must be positive")
+44-    now = datetime.now(UTC)
+45-    return pyjwt.encode(
+46-        {
+47-            "sub": str(member_id),
+48-            "type": "checkin_qr",
+49-            "jti": secrets.token_urlsafe(32),
+50-            "iat": now,
+51-            "exp": now + timedelta(minutes=2),
+52-        },
+53-        settings.secret_key,
+54-        algorithm=ALGORITHM,
+55-    )
+56-
+
+## ④ سه حالت پشتیبان — آیا tests/integration پوشش دارد؟
+$ grep -n "def test_\|qr_replayed" mp-app/backend/tests/integration/test_m65_qr_security.py
+64:def test_face_checkin_fails_closed_without_verified_biometric_proof(client, auth):
+101:def test_qr_does_not_grant_entry_without_active_membership(client, auth, membership_state):
+131:def test_member_cannot_redeem_another_members_qr(client, auth):
+144:def test_qr_token_is_one_time_under_replay(client, auth):
+156:    assert second.json()["error"]["code"] == "qr_replayed"
+160:def test_expired_qr_token_is_rejected(client, auth):
+185:def test_qr_token_cannot_be_used_as_a_staff_access_token(client, auth):
+
+## ⑤ تاریخچهٔ حضور عضو
+$ grep -n "me/checkins" mp-app/backend/modules/membership/router.py
+94:@router.get("/me/checkins", summary="تاریخچهٔ چک‌این‌های خود عضو (M80)")
+
+## نتیجه (پاسخ صریح)
+- ثبت، INSERT است نه upsert: هر پذیرش یک ردیف تازه در `checkins` می‌سازد؛ هیچ `update/upsert` روی ردیف قبلی وجود ندارد.
+- یکتایی روی `checkins.qr_jti_hash` است (`uq_checkins_qr_jti_hash`، migration c5d6e7f8a9b0:21) ⇒ همان JTI دوباره قابل درج نیست و مسابقهٔ replay در سطح DB بسته می‌شود.
+- سه حالت پشتیبان از قبل تست شده‌اند و پاس می‌شوند:
+  * replay  → 409 با کد `qr_replayed`  (test_m65_qr_security.py:144، assert در :156)
+  * منقضی  → رد می‌شود، 200 نیست        (test_m65_qr_security.py:160)
+  * عضو دیگر → 403                      (test_m65_qr_security.py:131)
+  * مسیر چهره fail-closed 409 `face_checkin_unavailable` (test_m65_qr_security.py:64)
+- پس برای این برش **تست بک‌اند تازه لازم نیست**؛ فقط شاهد (همین فایل) ثبت می‌شود. UI روی همین قرارداد ساخته شد.
+- دامنه: ماژول نامش `face_id` است ولی بازشناسی چهره در دامنهٔ این برش نیست؛ UI هیچ فراخوانی `/face/checkin` ندارد (تست gate دارد).
+
+## ⑥ اجرای زندهٔ پشتیبان (نه فقط خواندن)
+$ /tmp/mpvenv/bin/python -m pytest tests/integration/test_m65_qr_security.py -q
+7 passed, 1 warning in 3.21s
+  ← همان هفت تست بالا، شامل replay(:144)، منقضی(:160)، عضو دیگر(:131)، fail-closed چهره(:64).

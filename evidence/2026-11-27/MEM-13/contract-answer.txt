@@ -1,0 +1,120 @@
+# MEM-13 — پاسخ قرارداد پیش از UI (grep -n واقعی)
+# HEAD: 74033cb
+
+## ① خواندن وضعیت/محصولات
+$ sed -n "119,152p" mp-app/backend/modules/shop/router.py
+@router.get("/status", summary="وضعیت فروشگاه (باز/بسته + علت + حالت خرید)")
+def status(user: CurrentUser):
+    """منبع حقیقت باز/بسته بودن؛ کلاینت نباید ساعت دستگاه را جای آن بگذارد."""
+    return service.store_status()
+
+
+@router.get("/categories", summary="دسته‌های فروشگاه")
+def categories(db: DbSession, user: CurrentUser, include_inactive: bool = False):
+    from app.security.hierarchy import rank_of
+
+    return service.list_categories(
+        db, include_inactive=include_inactive and rank_of(user.role) >= rank_of("super_admin")
+    )
+
+
+@router.get("/products", summary="فهرست محصولات (فروشگاه)")
+def products(
+    db: DbSession,
+    user: CurrentUser,
+    category: str | None = Query(None),
+    kind: str | None = Query(None, pattern="^(equipment|supplement|apparel|service)$"),
+    search: str | None = Query(None, max_length=60),
+    limit: int = Query(100, ge=1, le=200),
+):
+    return service.list_products(db, category=category, kind=kind, search=search, limit=limit)
+
+
+@router.get("/products/{product_id}", summary="جزئیات محصول")
+def product_detail(product_id: int, db: DbSession, user: CurrentUser):
+    return service.get_product(db, product_id)
+
+
+@router.post("/products", summary="ساخت محصول (فقط super_admin)")
+def create_product(payload: ProductCreate, db: DbSession, user: CurrentUser):
+
+## ② نوشتن (سبد/پرداخت) — گیت سمت سرور
+$ sed -n "168,218p" mp-app/backend/modules/shop/router.py
+    return service.get_cart(db, user=user)
+
+
+@router.post("/cart", summary="افزودن به سبد (بسته در فروشگاه نمایش‌محور)")
+@limiter.limit(settings.shop_write_rate_limit)
+def cart_add(request: Request, payload: CartAdd, db: DbSession, user: CurrentUser):
+    # فاز ۲ — fail-closed قبل از هر نوشتن: اول بسته بودن، بعد بقیهٔ قواعد.
+    service.assert_online_purchase_open()
+    # M60 — چرا سقف: بدون آن، حلقهٔ سبد/تسویه همهٔ موجودی را رزرو می‌کند
+    # (نوعی DoS روی موجودی). `request` اول است چون slowapi امضای آن را
+    # از decorated function می‌خواند.
+    return service.add_to_cart(
+        db,
+        user=user,
+        product_id=payload.product_id,
+        qty=payload.qty,
+        variant_id=payload.variant_id,
+    )
+
+
+@router.patch("/cart/{item_id}", summary="تغییر تعداد قلم سبد (بسته)")
+@limiter.limit(settings.shop_write_rate_limit)
+def cart_update(
+    request: Request, item_id: int, payload: CartUpdate, db: DbSession, user: CurrentUser
+):
+    service.assert_online_purchase_open()
+    return service.update_cart_item(db, user=user, item_id=item_id, qty=payload.qty)
+
+
+@router.delete("/cart/{item_id}", summary="حذف قلم سبد (بسته)")
+@limiter.limit(settings.shop_write_rate_limit)
+def cart_remove(request: Request, item_id: int, db: DbSession, user: CurrentUser):
+    service.assert_online_purchase_open()
+    return service.remove_cart_item(db, user=user, item_id=item_id)
+
+
+@router.post("/checkout", summary="تسویهٔ سبد ← سفارش (بسته: خرید حضوری است)")
+@limiter.limit(settings.shop_checkout_rate_limit)
+def checkout(request: Request, payload: CheckoutIn, db: DbSession, user: CurrentUser):
+    service.assert_online_purchase_open()
+    # M60 — سقف سخت‌گیرانه‌تر: هر تسویه یک تراکنش پول است.
+    order = service.checkout(db, user=user, method=payload.method, note=payload.note)
+    return {
+        "order_id": order.id,
+        "status": order.status,
+        "total_rial": order.total_rial,
+        "payment_id": order.payment_id,
+    }
+
+
+@router.get("/orders", summary="سفارش‌های من (کادر: همه)")
+
+## ③ اثبات fail-closed در تست‌های پشتیبان
+$ grep -n "assert_online_purchase_open\|shop_closed\|def test_" mp-app/backend/tests/integration/test_phase2_shop_display.py
+98:def test_status_reports_in_person_mode(client: TestClient) -> None:
+111:def test_status_closed_outside_hours() -> None:
+124:def test_status_closed_on_weekly_holiday(monkeypatch) -> None:
+128:    monkeypatch.setattr(settings, "shop_closed_weekdays", "3")
+134:def test_catalog_is_readable(client: TestClient) -> None:
+144:def test_cart_write_is_fail_closed(client: TestClient) -> None:
+153:    assert r.status_code == 409, r.text
+157:def test_cart_mutation_is_fail_closed(client: TestClient) -> None:
+160:    assert r.status_code == 409, r.text
+163:    assert r.status_code == 409, r.text
+166:def test_checkout_is_fail_closed(client: TestClient) -> None:
+169:    assert r.status_code == 409, r.text
+175:def test_order_history_stays_readable(client: TestClient) -> None:
+
+## ④ اجرای زندهٔ پشتیبان
+$ /tmp/mpvenv/bin/python -m pytest tests/integration/test_phase2_shop_display.py -q
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+8 passed, 1 warning in 2.45s
+
+## نتیجه
+- `GET /shop/status` و `GET /shop/products` خواندنی‌اند (نیازمند احراز هویت عضو).
+- هر نوشتن روی `shop/cart|cart/items|checkout` اول `service.assert_online_purchase_open()` را صدا می‌زند ⇒ وقتی فروشگاه آنلاین بسته است، نوشتن **سمت سرور** رد می‌شود (fail-closed)، نه با پنهان‌کردن دکمه.
+- پس این برش «فقط نمایش» است: UI هیچ‌گاه مسیر cart/checkout را صدا نمی‌زند و این در تست gate شده است؛ افزودن یک `POST /shop/cart` تست را می‌شکند (mutation A).
+- موجودی صفر = «ناموجود»؛ قیمت با واحد ریال و `منبع:` سرور؛ عکس محصول اگر در پاسخ نیست، ساخته نمی‌شود و همین گفته می‌شود.

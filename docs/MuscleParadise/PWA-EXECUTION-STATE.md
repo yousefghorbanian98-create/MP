@@ -18,6 +18,27 @@ LAST_KNOWN_EVIDENCE=evidence/2026-11-27/MEM-03/current-run.md و فایل‌ها
 
 در تعارض، تصمیم scope با ADR/تصمیم مالک، متن acceptance با کارت canonical، رفتار با کد و تست همان مسیر، و status اجرایی با آخرین شاهد پالایش‌شده تعیین می‌شود. Snapshotهای تاریخی، دیاگرام‌ها، screenshotها، artifact package، mock، skipped test و CI روی SHA دیگر acceptance محصول را ثابت نمی‌کنند.
 
+## Latest continuation — MEM-10 QR check-in, MEM-11 wallet, MEM-13 shop display
+
+```text
+CURRENT_BRANCH=arena/3c08bfbd-mp
+MEM-10/PWA-39=PARTIAL/NOT_ACCEPTED — QR check-in؛ سه حالت پشتیبان (replay 409 qr_replayed، منقضی، عضو دیگر 403) دوباره اجرا شد: 7 pass
+MEM-11/PWA-3A=PARTIAL/NOT_ACCEPTED — موجودی از سرور، تطبیق کیف پول/دفتر، بدون صفحه‌بندی ساختگی
+MEM-13/PWA-3C=PARTIAL/NOT_ACCEPTED — فقط نمایش؛ نوشتن سمت سرور fail-closed (409)
+NEW_ENDPOINTS=0
+TESTS_ADDED=14 · MUTATIONS_PROVEN=6
+BLOCKED=تأیید حضور توسط مربی (MEM-10) · تصمیم مالی (MEM-11/MEM-13)
+TODO_DONE=7/104 بدون تغییر · SLICES_LANDED=5
+RELEASE=NO-GO
+```
+
+- **MEM-10:** `MemberCheckin` روی `/member/checkin`. قرارداد: ثبت، **INSERT تازه** در `checkins` است و یکتایی روی `qr_jti_hash` (`db/models/face_id.py:52`، migration `c5d6e7f8a9b0_m65_qr_replay_guard.py:21`) ⇒ replay در سطح DB بسته است. توکن فقط در `state` می‌ماند؛ هیچ فراخوانی بازشناسی چهره نیست؛ متن «حضور شما برای این نشست ثبت شد؛ تأیید نهایی توسط مربی/سیستم.» جای «حضور ثبت شد ✅».
+- **MEM-11:** `MemberWallet` روی `/member/wallet`. موجودی از `balance_rial` سرور (`modules/payments/ledger.py:97`)، اختلاف `reconcile.matches=false` با هشدار قرمز و هر دو عدد، ردیف‌ها با `kind` واقعی (`charge|pay|refund|reversal`) و `reversed_by_entry_id`. UI می‌گوید سرور صفحه‌بندی ندارد (`ledger.py:86-95`: `id desc`, limit 200, بدون offset).
+- **MEM-13:** `MemberShop` روی `/member/shop`. خواندن `GET /shop/status|products`؛ هیچ `POST /shop/cart|checkout` (تست همهٔ درخواست‌ها را ثبت می‌کند)؛ موجودی صفر = «ناموجود»؛ تصویر اختراع نمی‌شود.
+- **mutation:** ۶ شکست عمدی ⇒ ۶ تست قرمز و بازگشت سبز (`evidence/2026-11-27/MEM-10|MEM-11|MEM-13/mutation-proof.txt`).
+- **BLOCKED:** تأیید نهایی حضور (ایمنی/پوشش) و هر تصمیم مالی؛ ثبت شد و به مورد بعدی رفتیم.
+- **شاهد:** [`MEM-10`](../../evidence/2026-11-27/MEM-10/current-run.md) · [`MEM-11`](../../evidence/2026-11-27/MEM-11/current-run.md) · [`MEM-13`](../../evidence/2026-11-27/MEM-13/current-run.md).
+
 ## Latest continuation — MEM-08 nutrition and MEM-09 classes/booking on the member path
 
 ```text

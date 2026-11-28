@@ -21,9 +21,12 @@ import { AuthProvider, useAuth } from "./auth/AuthContext";
 import { Login } from "./pages/Login";
 import { MemberAccount } from "./pages/MemberAccount";
 import { MemberSecurity } from "./components/MemberSecurity";
+import { MemberCheckin } from "./components/MemberCheckin";
 import { MemberClasses } from "./components/MemberClasses";
 import { MemberJp7Trend } from "./components/MemberJp7Trend";
 import { MemberNutrition } from "./components/MemberNutrition";
+import { MemberShop } from "./components/MemberShop";
+import { MemberWallet } from "./components/MemberWallet";
 import { MemberTodayProgram } from "./components/MemberTodayProgram";
 import { canSeePage, parseRole } from "./lib/roleNav";
 import {
@@ -179,6 +182,9 @@ const memberNavigation: { page: MemberPage; href: string; label: string }[] = [
   { page: "progress", href: "/member/progress", label: "ارزیابی و روند" },
   { page: "nutrition", href: "/member/nutrition", label: "تغذیه" },
   { page: "classes", href: "/member/classes", label: "کلاس و رزرو" },
+  { page: "checkin", href: "/member/checkin", label: "حضور" },
+  { page: "wallet", href: "/member/wallet", label: "کیف پول" },
+  { page: "shop", href: "/member/shop", label: "فروشگاه" },
 ];
 
 /** Member account uses its own authenticated API vertical slice; today stays an honest placeholder. */
@@ -189,6 +195,9 @@ function MemberShell({ page, onSignOut }: { page: MemberPage; onSignOut: () => v
     progress: "ارزیابی و روند",
     nutrition: "تغذیه",
     classes: "کلاس و رزرو",
+    checkin: "حضور (QR)",
+    wallet: "کیف پول",
+    shop: "فروشگاه",
   };
   const title = titles[page];
 
@@ -243,6 +252,18 @@ function MemberShell({ page, onSignOut }: { page: MemberPage; onSignOut: () => v
           ) : page === "classes" ? (
             <div className="mt-4">
               <MemberClasses />
+            </div>
+          ) : page === "checkin" ? (
+            <div className="mt-4">
+              <MemberCheckin />
+            </div>
+          ) : page === "wallet" ? (
+            <div className="mt-4">
+              <MemberWallet />
+            </div>
+          ) : page === "shop" ? (
+            <div className="mt-4">
+              <MemberShop />
             </div>
           ) : (
             <div className="mt-4">

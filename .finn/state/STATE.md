@@ -2,6 +2,23 @@
 
 > هشدار انتقال ۲۰۲۶-۱۱-۱۸: بخش‌های بعدی قدیمی snapshot هستند و branch/toolchain/status آن‌ها جاری فرض نشود. وضعیت تازهٔ Motion/PWA در این بخش و [handoff](../../docs/MuscleParadise/SESSION_HANDOFF.md) آمده؛ کارهای قدیمی M63–M99، M100–M106 و M107+ فقط پس از تطبیق با TODO و گیت‌های جاری ادامه یابند.
 
+## Current follow-up — MEM-10 QR check-in + MEM-11 wallet + MEM-13 shop display (2026-11-27 UTC)
+
+STATE_LAST_UPDATED=2026-11-28T02:00:00Z
+MEM-10/PWA-39=PARTIAL/NOT_ACCEPTED — حضور با QR: توکن فقط در state، صفر فراخوانی چهره، متن «تأیید نهایی توسط مربی/سیستم»، تاریخچه از سرور
+MEM-11/PWA-3A=PARTIAL/NOT_ACCEPTED — کیف پول: موجودی از balance_rial سرور (بدون جمع کلاینتی)، اختلاف کیف پول/دفتر پنهان نمی‌شود، بدون صفحه‌بندی ساختگی
+MEM-13/PWA-3C=PARTIAL/NOT_ACCEPTED — فروشگاه فقط نمایش: هیچ درخواست cart/checkout، موجودی صفر = «ناموجود»
+NEW_ENDPOINTS=0 برای هر سه برش (GET /face/qr-token، GET /membership/me/checkins، GET /payments/ledger/{id}، GET /shop/status، GET /shop/products همه از قبل بودند)
+ROUTES_ADDED=/member/checkin · /member/wallet · /member/shop (MemberPage: home|today|progress|nutrition|classes|checkin|wallet|shop)
+TESTS_ADDED=14 (memberCheckin 4 · memberWallet 5 · memberShop 5) — کل vitest 449 pass/15 skip (67 فایل)
+MUTATIONS_PROVEN=6 این دور (۲+۲+۲) — شاهد: evidence/2026-11-27/MEM-10|MEM-11|MEM-13/mutation-proof.txt
+BACKEND_REVERIFIED=test_m65_qr_security 7 pass · test_m83_wallet_ledger + test_phase2_shop_display 10 pass (دوباره اجرا شد، نه فقط خوانده)
+BLOCKED=MEM-10 پوشش حضور/تأیید مربی (تصمیم مالک) · MEM-11 و MEM-13 تصمیم مالی (کاربر/مالی)
+TODO_DONE=7/104 (بدون تیک تازه — فاصله‌های دستگاه/مرورگر/پیامک/بازبین مستقل NOT_RUN)
+SLICES_LANDED=5 (۲ قبلی + ۳ این دور)
+CROSSWALK_IMPACT=studio/src/lib/{navigation.ts,api.ts} منابع crosswalk‌اند ⇒ بازتولید هر دو artifact در commit بعدی
+RELEASE=NO-GO
+
 ## Current follow-up — MEM-08 nutrition + MEM-09 classes/booking (2026-11-27 UTC)
 
 STATE_LAST_UPDATED=2026-11-28T00:30:00Z

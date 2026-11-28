@@ -2,6 +2,24 @@
 
 > این فایل **خلاصهٔ جاری برای ادامهٔ کار** است، نه آرشیو گفتگو و نه منبع نهایی وضعیت محصول. پیش از فشرده‌سازی context یا پایان هر کار معنادار، همین snapshot را جایگزین/به‌روز کن؛ تاریخچه را با انباشت transcript طولانی نکن.
 
+## وضعیت جاری — MEM-10 حضور، MEM-11 کیف پول، MEM-13 فروشگاه (UTC 2026-11-27)
+
+```text
+MEM-10/PWA-39=PARTIAL/NOT_ACCEPTED
+MEM-11/PWA-3A=PARTIAL/NOT_ACCEPTED
+MEM-13/PWA-3C=PARTIAL/NOT_ACCEPTED
+NEW_ENDPOINTS=0 · TESTS_ADDED=14 · MUTATIONS_PROVEN=6
+TODO_DONE=7/104 (بدون تیک) · SLICES_LANDED=5
+BLOCKED=تأیید حضور توسط مربی · تصمیم مالی
+RELEASE=NO-GO
+```
+
+- **MEM-10:** `MemberCheckin` روی `/member/checkin`؛ توکن QR فقط در state، تاریخچه از `GET /membership/me/checkins`، بدون بازشناسی چهره، متن «تأیید نهایی توسط مربی/سیستم».
+- **MEM-11:** `MemberWallet` روی `/member/wallet`؛ موجودی از سرور، اختلاف دفتر/کیف پول پنهان نمی‌شود، بدون صفحه‌بندی ساختگی.
+- **MEM-13:** `MemberShop` روی `/member/shop`؛ فقط نمایش، هیچ درخواست سبد/پرداخت، موجودی صفر = «ناموجود».
+- مسیرهای عضو اکنون: `home` · `today` · `progress` · `nutrition` · `classes` · `checkin` · `wallet` · `shop` (تغییر `navigation.ts` ⇒ بازتولید crosswalk).
+- شاهد: [`MEM-10`](../../evidence/2026-11-27/MEM-10/current-run.md) · [`MEM-11`](../../evidence/2026-11-27/MEM-11/current-run.md) · [`MEM-13`](../../evidence/2026-11-27/MEM-13/current-run.md).
+
 ## وضعیت جاری — MEM-08 تغذیه و MEM-09 کلاس/رزرو (UTC 2026-11-27)
 
 ```text

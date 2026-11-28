@@ -7,14 +7,30 @@ const LOCATION_CHANGE_EVENT = "mp:studio-location-change";
 
 export const STAFF_PAGES: readonly PageId[] = PAGE_IDS;
 
-export type MemberPage = "home" | "today" | "progress" | "nutrition" | "classes";
+export type MemberPage =
+  | "home"
+  | "today"
+  | "progress"
+  | "nutrition"
+  | "classes"
+  | "checkin"
+  | "wallet"
+  | "shop";
 
 export type StudioRoute =
   | { type: "home"; path: "/" }
   | { type: "login"; path: "/login"; returnTo: string | null }
   | {
       type: "member";
-      path: "/member" | "/member/today" | "/member/progress" | "/member/nutrition" | "/member/classes";
+      path:
+        | "/member"
+        | "/member/today"
+        | "/member/progress"
+        | "/member/nutrition"
+        | "/member/classes"
+        | "/member/checkin"
+        | "/member/wallet"
+        | "/member/shop";
       page: MemberPage;
     }
   | { type: "staff"; path: string; page: PageId }
@@ -43,6 +59,9 @@ function routeForPath(pathname: string): StudioRoute {
   if (path === "/member/nutrition")
     return { type: "member", path: "/member/nutrition", page: "nutrition" };
   if (path === "/member/classes") return { type: "member", path: "/member/classes", page: "classes" };
+  if (path === "/member/checkin") return { type: "member", path: "/member/checkin", page: "checkin" };
+  if (path === "/member/wallet") return { type: "member", path: "/member/wallet", page: "wallet" };
+  if (path === "/member/shop") return { type: "member", path: "/member/shop", page: "shop" };
   if (path === "/staff") return { type: "staff", path: staffPath("dashboard"), page: "dashboard" };
 
   const match = path.match(/^\/staff\/([a-z]+)$/);
