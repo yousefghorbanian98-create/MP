@@ -4,13 +4,13 @@
 > رفع می‌کند (تمپلیت `${base}`, alias نقش‌ها, مسیرهای پویا) — طبق یافته‌های
 > `review.md` خودِ اجرای قبلی. هیچ ردیفی CURRENT نمی‌شود.
 
-- SHA: `485d9625aebc95212b19ba5674679fa3042f3664` · branch: `arena/3c08bfbd-mp` · tracked-dirty: `False` · untracked: `0`
+- SHA: `f648848c26f5adbd108bb6a3edd9373cfd57ca64` · branch: `arena/3c08bfbd-mp` · tracked-dirty: `False` · untracked: `0`
 - `backend/api/routes.json` → `sha256_b64:fwMz37kqW7VlFLfgA8x4Nw_H6Pq-OpqLU0LMqrmoTPg`
 - `backend/security/rbac.py` → `sha256_b64:qHQPdbM-hk4aOZD0134vp4HwwhBcEz2YkqQc5j_fnSw`
 - `studio/src/lib/roleNav.ts` → `sha256_b64:ZQ_3Q0OvbiUBD2oHurTeR30v_vzulL45I6IA7QXVMiA`
 - `studio/src/lib/api.ts` → `sha256_b64:9SGYAkelFLPOe5b8cy7f5zsIErOwivvBMoafb3YagJM`
 - `studio/src/lib/adminApi.ts` → `sha256_b64:YSy9HomngwFUX2fIgmRRmnxJLRSO9Ed5BQ9QzBMn8s4`
-- `studio/src/lib/navigation.ts` → `sha256_b64:sz8wEjTEfIIxJmtt5DR6wfVGSMqCSpKqNKtdhjyLbgY`
+- `studio/src/lib/navigation.ts` → `sha256_b64:jK8O-3bBVXFSK8npGcVssNEmheE1f94OgCModv8nwF4`
 - call-site: `{'template-base': 29, 'helper': 70, 'literal': 0}` · پویا: **0**
 - شمارش: `PARTIAL_REVIEW=12`
 
@@ -29,7 +29,7 @@
 | 3 | `programs` | 1 فایل | `/staff/programs` | super_admin, admin, manager, coach, member | 3 / 10 | `api.ts` | — | `apiCoverage.test.ts`<br>`locustfile_full.py`<br>`setFeedback.test.tsx`<br>`test_axis_assessment_api.py` | **PARTIAL_REVIEW** |
 | 4 | `nutrition` | 1 فایل | `/staff/nutrition` | super_admin, admin, manager, coach, member | 3 / 9 | `api.ts` | — | `test_e2e_adaptive_loop.py`<br>`test_m49_adaptive_nutrition.py`<br>`test_m49_food_logging.py`<br>`test_m78_adaptive_nutrition_client.py` | **PARTIAL_REVIEW** |
 | 5 | `assessment` | 1 فایل | `/staff/assessment` | super_admin, admin, manager, coach, member | 3 / 8 | `api.ts` | — | `apiCoverage.test.ts`<br>`test_ai_kpis.py`<br>`test_api_contract.py`<br>`test_battle.py` | **PARTIAL_REVIEW** |
-| 6 | `chat` | 1 فایل | `/staff/chat` | super_admin, admin, manager, coach, reception, member | 1 / 3 | `api.ts` | — | `a11y.test.tsx`<br>`test_e2e_adaptive_loop.py`<br>`test_m51_chat.py` | **PARTIAL_REVIEW** |
+| 6 | `chat` | 1 فایل | `/staff/chat` | super_admin, admin, manager, coach, reception, member | 1 / 3 | `api.ts` | — | `a11y.test.tsx`<br>`memberChat.test.tsx`<br>`test_e2e_adaptive_loop.py`<br>`test_m51_chat.py` | **PARTIAL_REVIEW** |
 | 7 | `checkin` | 1 فایل | `/staff/checkin` | super_admin, admin, manager, coach, reception, member | 2 / 11 | `api.ts` | — | `a11y.test.tsx`<br>`locustfile_full.py`<br>`memberCheckin.test.tsx`<br>`test_m45_checkin_feed.py` | **PARTIAL_REVIEW** |
 | 8 | `finance` | 1 فایل | `/staff/finance` | super_admin, admin, manager | 4 / 21 | `api.ts` | — | `locustfile_full.py`<br>`memberPayments.test.tsx`<br>`paymentPanel.test.tsx`<br>`receiptQueue.test.tsx` | **PARTIAL_REVIEW** |
 | 9 | `expenses` | 1 فایل | `/staff/expenses` | super_admin, admin, manager | 1 / 3 | `api.ts` | — | `test_phase6c_expenses.py`<br>`test_phase8_release_sweep.py`<br>`test_qf06_expense_receipt.py`<br>`test_routes_effective_guards.py` | **PARTIAL_REVIEW** |

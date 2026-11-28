@@ -1,0 +1,7 @@
+# Exact allowlist for the single end-of-round crosswalk regeneration (ROUND 1/9).
+.finn/state/STATE.md
+evidence/2026-11-27/INV-02/member-capability-crosswalk.json
+evidence/2026-11-27/INV-02/member-capability-crosswalk.md
+evidence/2026-11-27/INV-03/staff-page-crosswalk.json
+evidence/2026-11-27/INV-03/staff-page-crosswalk.md
+scripts/allowlists/ROUND-1-regen.txt

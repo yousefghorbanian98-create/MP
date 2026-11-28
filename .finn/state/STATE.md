@@ -20,7 +20,7 @@ ROUTES_ADDED=/member/chat (MemberPage: home|today|progress|nutrition|classes|che
 TESTS_ADDED=6 (memberChat)
 MUTATIONS_PROVEN=5 این دور (MEM-14: ۳ · MEM-02: ۲)
 GAP=ارسال پیام در سرور idempotency ندارد (evidence/2026-11-27/MEM-14/contract-answer.txt) — ادعا نمی‌شود
-CROSSWALK_DIRTY=yes — بازتولید یک‌بار در پایان دور
+CROSSWALK_DIRTY=no — هر دو artifact یک‌بار در پایان دور روی f648848 بازتولید شد؛ عضو: 15 PARTIAL_REVIEW / 2 GAP (دامنهٔ chat از GAP بیرون آمد) · کارکنان بدون تغییر شمارش
 RELEASE=NO-GO
 
 ## Current follow-up — MEM-15 inbox + STAFF-01 completeness gate (2026-11-27 UTC)
