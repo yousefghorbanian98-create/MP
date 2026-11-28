@@ -4,15 +4,15 @@
 > رفع می‌کند (تمپلیت `${base}`, alias نقش‌ها, مسیرهای پویا) — طبق یافته‌های
 > `review.md` خودِ اجرای قبلی. هیچ ردیفی CURRENT نمی‌شود.
 
-- SHA: `3fd6152cf912326fa24b9cc66bfde90ae8f02ef0` · branch: `arena/3c08bfbd-mp` · tracked-dirty: `False` · untracked: `0`
+- SHA: `485d9625aebc95212b19ba5674679fa3042f3664` · branch: `arena/3c08bfbd-mp` · tracked-dirty: `False` · untracked: `0`
 - `backend/api/routes.json` → `sha256_b64:fwMz37kqW7VlFLfgA8x4Nw_H6Pq-OpqLU0LMqrmoTPg`
 - `backend/security/rbac.py` → `sha256_b64:qHQPdbM-hk4aOZD0134vp4HwwhBcEz2YkqQc5j_fnSw`
 - `studio/src/lib/roleNav.ts` → `sha256_b64:ZQ_3Q0OvbiUBD2oHurTeR30v_vzulL45I6IA7QXVMiA`
-- `studio/src/lib/api.ts` → `sha256_b64:u7PafkCfgDhLFBkj5cizbsnmUb7HNaRdYJXCbiECcKY`
+- `studio/src/lib/api.ts` → `sha256_b64:9SGYAkelFLPOe5b8cy7f5zsIErOwivvBMoafb3YagJM`
 - `studio/src/lib/adminApi.ts` → `sha256_b64:YSy9HomngwFUX2fIgmRRmnxJLRSO9Ed5BQ9QzBMn8s4`
-- `studio/src/lib/navigation.ts` → `sha256_b64:qU1pePZ45tLOOfLiQwAgWSHqQ8ke3ZLMOBM7fGAvDSA`
-- call-site: `{'template-base': 29, 'helper': 68, 'literal': 0}` · پویا: **0**
-- شمارش: `GAP=3` · `PARTIAL_REVIEW=14`
+- `studio/src/lib/navigation.ts` → `sha256_b64:sz8wEjTEfIIxJmtt5DR6wfVGSMqCSpKqNKtdhjyLbgY`
+- call-site: `{'template-base': 29, 'helper': 70, 'literal': 0}` · پویا: **0**
+- شمارش: `GAP=2` · `PARTIAL_REVIEW=15`
 
 | وضعیت | معنا |
 |---|---|
@@ -34,8 +34,7 @@
 | 8 | `home` | 1 فایل | — | — | 1 / 11 | `AuthContext.tsx`<br>`api.ts` | — | `a11y.test.tsx`<br>`api.test.ts`<br>`authFlow.test.tsx`<br>`liveContractMember.test.ts` | **PARTIAL_REVIEW** |
 | 9 | `intake` | 2 فایل | — | — | 0 / 3 | — | — | — | **GAP** |
 |  |  |  |  |  |  |  |  |  | ↳ هیچ call-site استاتیکی برای مسیرهای این دامنه نیست |
-| 10 | `notifications` | 1 فایل | — | — | 0 / 4 | — | — | — | **GAP** |
-|  |  |  |  |  |  |  |  |  | ↳ هیچ call-site استاتیکی برای مسیرهای این دامنه نیست |
+| 10 | `notifications` | 1 فایل | — | — | 1 / 4 | `api.ts` | — | `apiCoverage.test.ts`<br>`memberInbox.test.tsx`<br>`test_api_contract.py`<br>`test_m75_notifications.py` | **PARTIAL_REVIEW** |
 | 11 | `nutrition` | 2 فایل | — | super_admin, admin, manager, coach, member | 3 / 8 | `api.ts` | — | `test_e2e_adaptive_loop.py`<br>`test_m49_adaptive_nutrition.py`<br>`test_m49_food_logging.py`<br>`test_m78_adaptive_nutrition_client.py` | **PARTIAL_REVIEW** |
 | 12 | `profile` | 2 فایل | — | — | 4 / 10 | `AuthContext.tsx`<br>`api.ts`<br>`session.ts` | — | `a11y.test.tsx`<br>`api.test.ts`<br>`authFlow.test.tsx`<br>`liveContractMember.test.ts` | **PARTIAL_REVIEW** |
 | 13 | `progress` | 1 فایل | — | — | 2 / 7 | `api.ts` | — | `apiCoverage.test.ts`<br>`test_api_contract.py`<br>`test_battle.py`<br>`test_e2e_adaptive_loop.py` | **PARTIAL_REVIEW** |

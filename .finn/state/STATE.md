@@ -17,7 +17,7 @@ MUTATIONS_PROVEN=5 این دور (MEM-15: ۲ · STAFF-01: ۳)
 CHECKIN_CONTRACT: replay=yes expiry=yes other-member=yes — evidence/2026-11-27/MEM-10/checkin-contract.txt
 STAFF01_COMPLETENESS_GATE=pass (route/render/test) · STAFF01_OWNERSHIP_GATE=not-yet (روی SEC-01 سوار می‌شود)
 BLOCKED=MEM-16 outbox آفلاین (policy مصوب ندارد) · تأیید فیش/فعال‌سازی اشتراک (مالی) · تأیید حضور مربی (ایمنی)
-CROSSWALK_DIRTY=yes — بازتولید artifacts فقط یک بار در پایان دور
+CROSSWALK_DIRTY=no — هر دو artifact یک بار در پایان دور روی 485d962 (چک‌اوت تمیز) بازتولید شد
 RELEASE=NO-GO
 
 ## Current follow-up — MEM-12 member receipt upload (2026-11-27 UTC)

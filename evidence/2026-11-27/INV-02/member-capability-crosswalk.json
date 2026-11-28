@@ -1,7 +1,7 @@
 {
   "meta": {
     "kind": "member",
-    "sha": "3fd6152cf912326fa24b9cc66bfde90ae8f02ef0",
+    "sha": "485d9625aebc95212b19ba5674679fa3042f3664",
     "branch": "arena/3c08bfbd-mp",
     "tracked_dirty": false,
     "untracked": 0,
@@ -9,19 +9,19 @@
       "backend/api/routes.json": "sha256_b64:fwMz37kqW7VlFLfgA8x4Nw_H6Pq-OpqLU0LMqrmoTPg",
       "backend/security/rbac.py": "sha256_b64:qHQPdbM-hk4aOZD0134vp4HwwhBcEz2YkqQc5j_fnSw",
       "studio/src/lib/roleNav.ts": "sha256_b64:ZQ_3Q0OvbiUBD2oHurTeR30v_vzulL45I6IA7QXVMiA",
-      "studio/src/lib/api.ts": "sha256_b64:u7PafkCfgDhLFBkj5cizbsnmUb7HNaRdYJXCbiECcKY",
+      "studio/src/lib/api.ts": "sha256_b64:9SGYAkelFLPOe5b8cy7f5zsIErOwivvBMoafb3YagJM",
       "studio/src/lib/adminApi.ts": "sha256_b64:YSy9HomngwFUX2fIgmRRmnxJLRSO9Ed5BQ9QzBMn8s4",
-      "studio/src/lib/navigation.ts": "sha256_b64:qU1pePZ45tLOOfLiQwAgWSHqQ8ke3ZLMOBM7fGAvDSA"
+      "studio/src/lib/navigation.ts": "sha256_b64:sz8wEjTEfIIxJmtt5DR6wfVGSMqCSpKqNKtdhjyLbgY"
     },
     "site_kinds": {
       "template-base": 29,
-      "helper": 68,
+      "helper": 70,
       "literal": 0
     },
     "dynamic_sites": 0,
     "status_counts": {
-      "PARTIAL_REVIEW": 14,
-      "GAP": 3
+      "PARTIAL_REVIEW": 15,
+      "GAP": 2
     },
     "role_aliases_resolved": {
       "dashboard": [
@@ -372,13 +372,22 @@
       ],
       "route": null,
       "roles": null,
-      "apis_used": [],
+      "apis_used": [
+        "/api/v1/notifications"
+      ],
       "apis_total": 4,
-      "consumers": [],
-      "tests": [],
+      "consumers": [
+        "api.ts"
+      ],
+      "tests": [
+        "apiCoverage.test.ts",
+        "memberInbox.test.tsx",
+        "test_api_contract.py",
+        "test_m75_notifications.py"
+      ],
       "uncovered_dynamic": [],
-      "status": "GAP",
-      "reason": "هیچ call-site استاتیکی برای مسیرهای این دامنه نیست"
+      "status": "PARTIAL_REVIEW",
+      "reason": "route/نقش + call-site + اشارهٔ تستی پیدا شد؛ مجوز با تست منفی اثبات نشده و اجرای تست در این اجرا انجام نشده"
     },
     {
       "key": "nutrition",
