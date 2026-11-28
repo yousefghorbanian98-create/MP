@@ -1,0 +1,67 @@
+# MEM-12 — پاسخ قرارداد پیش از UI (grep -n واقعی) — فقط شروع، UI ساخته نشد
+# HEAD: 091d659
+
+## ① مسیر آپلود فیش کارت‌به‌کارت
+$ grep -n "receipt" -A 20 mp-app/backend/modules/payments/router.py | sed -n "30,70p"
+    "/{payment_id}/receipt",
+    response_model=ReceiptOut,
+    status_code=202,
+    summary="آپلود فیش کارت‌به‌کارت و ورود به صف بازبینی (QF-07/08)",
+)
+async def upload_receipt(
+    payment_id: int,
+    user: CurrentUser,
+    db: DbSession,
+    file: Annotated[UploadFile, File(description="تصویر فیش (JPEG/PNG/WebP)")],
+):
+    from modules.payments.receipts import submit_receipt
+
+    data = await file.read()
+    # سقف سخت پیش از خواندن کل فایل در حافظه هم اعمال می‌شود.
+    return submit_receipt(
+        db,
+        user=user,
+        payment_id=payment_id,
+        data=data,
+        declared_type=(file.content_type or "").split(";")[0].strip(),
+    )
+
+
+@router.post(
+    "/{payment_id}/approve",
+    summary="تأیید فیش و ثبت پرداخت + اشتراک در یک تراکنش (QF-09)",
+    dependencies=[Depends(require_grant("finance.write"))],
+)
+
+## ② محدودیت نوع/اندازه و حالت‌ها در سرویس
+$ grep -n "ALLOWED_IMAGE_TYPES\|def submit_receipt\|already_processed\|def approve_payment" mp-app/backend/modules/payments/receipts.py
+31:ALLOWED_IMAGE_TYPES: dict[str, str] = {
+57:    if declared_type not in ALLOWED_IMAGE_TYPES:
+82:    return actual, ALLOWED_IMAGE_TYPES[actual]
+85:def submit_receipt(
+104:        raise ApiError("این پرداخت قبلاً پردازش شده است", code="already_processed")
+167:def approve_payment(db: Session, *, actor: User, payment_id: int) -> dict:
+178:        raise ApiError("این پرداخت قبلاً پردازش شده است", code="already_processed")
+239:def reject_receipt(db: Session, *, actor: User, payment_id: int, reason: str) -> dict:
+
+## ③ تأیید/رد فقط با مجوز مالی
+$ grep -n "require_grant(\"finance.write\")" mp-app/backend/modules/payments/router.py
+60:    dependencies=[Depends(require_grant("finance.write"))],
+71:    dependencies=[Depends(require_grant("finance.write"))],
+111:    dependencies=[Depends(require_grant("finance.write"))],
+146:    dependencies=[Depends(require_grant("finance.write"))],
+157:    dependencies=[Depends(require_grant("finance.write"))],
+176:        Depends(require_grant("finance.write")),
+197:    dependencies=[Depends(require_grant("finance.write"))],
+246:    dependencies=[Depends(require_grant("finance.write"))],
+
+## نتیجه — چرا این برش «شروع‌شده» است و UI ندارد
+- قرارداد موجود است: `POST /payments/{id}/receipt` با `UploadFile` و سقف نوع (JPEG/PNG/WebP،
+  `receipts.py:31`) و پاسخ 202 ⇒ «در صف بازبینی»، نه «تأیید».
+- `already_processed` (`receipts.py:104` و `:178`) یعنی دوباره‌کاری مسدود است؛ تأیید با
+  `require_grant("finance.write")` محافظت می‌شود.
+- **BLOCKED (پول — اجباری):** ساخت جریان «تأیید و فعال‌سازی اشتراک» تصمیم مالی/مجوز انسانی است و
+  مرجع بانکی مستقل لازم دارد؛ ما آن را نمی‌سازیم و ادعا نمی‌کنیم. آپلود رسید ≠ تأیید بانک.
+- تصمیم بعدی که مالک باید بگیرد: نمایش «فیش در صف بازبینی» به عضو مجاز است یا نه، و اینکه
+  فعال‌سازی اشتراک پس از تأیید مجاز چگونه و توسط چه کسی انجام شود.
+- بنابراین در این دور فقط قرارداد ثبت شد؛ هیچ فایل UI/تست برای MEM-12 اضافه نشد.

@@ -1,0 +1,4 @@
+# Exact allowlist for the MEM-12 (manual card-to-card receipt) contract answer.
+# This commit records the contract only; no UI and no test file for MEM-12 yet.
+evidence/2026-11-27/MEM-12/contract-answer.txt
+scripts/allowlists/MEM-12-start.txt
