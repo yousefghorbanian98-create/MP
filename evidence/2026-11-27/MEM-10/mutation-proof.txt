@@ -1,0 +1,15 @@
+# MEM-10 — mutation
+
+## A) توکن QR در localStorage ذخیره شود
+   × member check-in QR (MEM-10) > issues a QR token, keeps it out of localStorage and warns about final confirmation 73ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 3 passed (4)
+
+## B) ادعای اثبات حضور بدون تأیید (متن «حضور ثبت شد ✅»)
+   × member check-in QR (MEM-10) > shows server history with its source and never claims presence by itself 50ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 3 passed (4)
+
+## بازگردانی
+restored
+      Tests  4 passed (4)

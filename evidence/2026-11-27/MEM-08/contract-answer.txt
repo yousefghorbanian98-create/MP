@@ -1,0 +1,45 @@
+# MEM-08 — پاسخ قرارداد پیش از UI (grep -n واقعی)
+# HEAD: 3e6b4c0
+
+## plan/meal
+$ grep -n "class PlanOut" -A 13 mp-app/backend/modules/nutrition/schemas.py
+38:class PlanOut(BaseModel):
+39-    id: int
+40-    member_id: int
+41-    coach_id: int | None
+42-    status: str
+43-    daily_kcal: int
+44-    protein_g: int
+45-    carbs_g: int
+46-    fat_g: int
+47-    engine_version: str
+48-    llm_explanation: str
+49-    meals: list[MealItemOut] = []
+50-
+51-    model_config = {"from_attributes": True}
+
+## ownership + plans
+$ grep -n "def list_member_plans" -A 5 mp-app/backend/modules/nutrition/service.py
+60:def list_member_plans(db: Session, member_id: int, user=None) -> list[NutritionPlan]:
+61-    from app.security.ownership import ensure_member_scope
+62-
+63-    ensure_member_scope(db, user, member_id)
+64-    return list(
+65-        db.scalars(
+
+## food log state (برای تفکیک «ثبت‌نشده» از «صفر»)
+$ grep -n "data_state\|target_source\|def daily_summary" mp-app/backend/modules/nutrition/service.py | head
+169:def daily_summary(db: Session, *, member_id: int, day: str | None = None, user=None) -> dict:
+172:    اگر برنامه‌ای نباشد، `target` صفر می‌شود و `target_source="none"` —
+254:        target_source = "approved_plan"
+258:        target_source = "none"
+275:        "target_source": target_source,
+277:        "data_state": "logged" if rows else "nothing_logged",
+
+## routes
+$ grep -n "plans/member\|food-logs/member" mp-app/backend/modules/nutrition/router.py
+39:    "/plans/member/{member_id}", response_model=list[PlanOut], summary="برنامه‌های تغذیهٔ عضو"
+72:    "/food-logs/member/{member_id}/daily",
+
+## نتیجه
+unit=yes(ضمنی: daily_kcal/_g) · measured_at=no (برنامه تاریخ اندازه‌گیری ندارد؛ food log تاریخ روز دارد: logged_for_date) · comparable=yes برای ثبت روزانه (data_state logged|nothing_logged و target_source approved_plan|none)

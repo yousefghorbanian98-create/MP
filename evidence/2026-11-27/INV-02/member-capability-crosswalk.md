@@ -4,14 +4,14 @@
 > رفع می‌کند (تمپلیت `${base}`, alias نقش‌ها, مسیرهای پویا) — طبق یافته‌های
 > `review.md` خودِ اجرای قبلی. هیچ ردیفی CURRENT نمی‌شود.
 
-- SHA: `07cb5434bfbbd6bc5e5c95c87c6c238475972854` · branch: `arena/3c08bfbd-mp` · tracked-dirty: `False` · untracked: `0`
+- SHA: `bab5572ac1a5b09ee2904c4d2daac8a47a110d70` · branch: `arena/3c08bfbd-mp` · tracked-dirty: `False` · untracked: `0`
 - `backend/api/routes.json` → `sha256_b64:fwMz37kqW7VlFLfgA8x4Nw_H6Pq-OpqLU0LMqrmoTPg`
 - `backend/security/rbac.py` → `sha256_b64:qHQPdbM-hk4aOZD0134vp4HwwhBcEz2YkqQc5j_fnSw`
 - `studio/src/lib/roleNav.ts` → `sha256_b64:ZQ_3Q0OvbiUBD2oHurTeR30v_vzulL45I6IA7QXVMiA`
-- `studio/src/lib/api.ts` → `sha256_b64:nwYQEuCviS1-QrVNh1jJsHsMONJoo_6g1OSMCNI_K2w`
+- `studio/src/lib/api.ts` → `sha256_b64:7NVt0vlfhLQDgKTaPzGd0aqB0Cy8tOpubnj-Pv0LSmE`
 - `studio/src/lib/adminApi.ts` → `sha256_b64:YSy9HomngwFUX2fIgmRRmnxJLRSO9Ed5BQ9QzBMn8s4`
-- `studio/src/lib/navigation.ts` → `sha256_b64:b5tDQgf2_b-2cBNV4yPOqsLz0Q0tLlBaggrjJ1LyBrY`
-- call-site: `{'template-base': 28, 'helper': 60, 'literal': 0}` · پویا: **0**
+- `studio/src/lib/navigation.ts` → `sha256_b64:xkspscx19MhTTiRnLDjPxp66l39EjLoH4konkMqgthc`
+- call-site: `{'template-base': 28, 'helper': 67, 'literal': 0}` · پویا: **0**
 - شمارش: `GAP=3` · `PARTIAL_REVIEW=14`
 
 | وضعیت | معنا |
@@ -28,8 +28,8 @@
 | 2 | `auth` | 1 فایل | — | — | 8 / 10 | `api.ts`<br>`session.ts` | — | `a11y.test.tsx`<br>`apiCoverage.test.ts`<br>`authFlow.test.tsx`<br>`deviceSessions.test.tsx` | **PARTIAL_REVIEW** |
 | 3 | `bodycomp` | 1 فایل | — | — | 2 / 8 | `api.ts` | — | `apiCoverage.test.ts`<br>`test_api_contract.py`<br>`test_battle.py`<br>`test_e2e_adaptive_loop.py` | **PARTIAL_REVIEW** |
 | 4 | `chat` | 2 فایل | — | super_admin, admin, manager, coach, reception, member | 1 / 3 | `api.ts` | — | `a11y.test.tsx`<br>`test_e2e_adaptive_loop.py`<br>`test_m51_chat.py` | **PARTIAL_REVIEW** |
-| 5 | `checkin` | 2 فایل | — | super_admin, admin, manager, coach, reception, member | 1 / 12 | `api.ts` | — | `a11y.test.tsx`<br>`locustfile_full.py`<br>`test_m45_checkin_feed.py`<br>`test_m46_security_matrix.py` | **PARTIAL_REVIEW** |
-| 6 | `classes` | 1 فایل | — | — | 1 / 3 | `ScheduleTimeline.tsx` | — | `a11y.test.tsx`<br>`authFlow.test.tsx`<br>`test_classes_finance.py`<br>`test_e2e_dataflow.py` | **PARTIAL_REVIEW** |
+| 5 | `checkin` | 2 فایل | — | super_admin, admin, manager, coach, reception, member | 2 / 12 | `api.ts` | — | `a11y.test.tsx`<br>`locustfile_full.py`<br>`memberCheckin.test.tsx`<br>`test_m45_checkin_feed.py` | **PARTIAL_REVIEW** |
+| 6 | `classes` | 1 فایل | — | — | 3 / 3 | `ScheduleTimeline.tsx`<br>`api.ts` | — | `a11y.test.tsx`<br>`apiCoverage.test.ts`<br>`authFlow.test.tsx`<br>`memberClasses.test.tsx` | **PARTIAL_REVIEW** |
 | 7 | `feedback` | 3 فایل | — | — | 3 / 10 | `api.ts` | — | `apiCoverage.test.ts`<br>`locustfile_full.py`<br>`setFeedback.test.tsx`<br>`test_axis_assessment_api.py` | **PARTIAL_REVIEW** |
 | 8 | `home` | 1 فایل | — | — | 1 / 11 | `AuthContext.tsx`<br>`api.ts` | — | `a11y.test.tsx`<br>`api.test.ts`<br>`authFlow.test.tsx`<br>`liveContractMember.test.ts` | **PARTIAL_REVIEW** |
 | 9 | `intake` | 2 فایل | — | — | 0 / 3 | — | — | — | **GAP** |
@@ -40,7 +40,7 @@
 | 12 | `profile` | 2 فایل | — | — | 4 / 10 | `AuthContext.tsx`<br>`api.ts`<br>`session.ts` | — | `a11y.test.tsx`<br>`api.test.ts`<br>`authFlow.test.tsx`<br>`liveContractMember.test.ts` | **PARTIAL_REVIEW** |
 | 13 | `progress` | 1 فایل | — | — | 2 / 7 | `api.ts` | — | `apiCoverage.test.ts`<br>`test_api_contract.py`<br>`test_battle.py`<br>`test_e2e_adaptive_loop.py` | **PARTIAL_REVIEW** |
 | 14 | `shell` | 1 فایل | — | — | 8 / 10 | `api.ts`<br>`session.ts` | — | `a11y.test.tsx`<br>`apiCoverage.test.ts`<br>`authFlow.test.tsx`<br>`deviceSessions.test.tsx` | **PARTIAL_REVIEW** |
-| 15 | `shop` | 3 فایل | — | super_admin, admin, manager, coach, reception, member | 8 / 15 | `api.ts` | — | `apiCoverage.test.ts`<br>`test_m59_shop.py`<br>`test_phase2_shop_display.py`<br>`test_phase3_no_online_gateway.py` | **PARTIAL_REVIEW** |
+| 15 | `shop` | 3 فایل | — | super_admin, admin, manager, coach, reception, member | 8 / 15 | `api.ts` | — | `apiCoverage.test.ts`<br>`memberShop.test.tsx`<br>`test_m59_shop.py`<br>`test_phase2_shop_display.py` | **PARTIAL_REVIEW** |
 | 16 | `today` | 4 فایل | — | — | 0 / 4 | — | — | — | **GAP** |
 |  |  |  |  |  |  |  |  |  | ↳ هیچ call-site استاتیکی برای مسیرهای این دامنه نیست |
 | 17 | `wallet` | 2 فایل | — | — | 4 / 25 | `api.ts` | — | `locustfile_full.py`<br>`paymentPanel.test.tsx`<br>`receiptQueue.test.tsx`<br>`test_api_contract.py` | **PARTIAL_REVIEW** |

@@ -1,7 +1,7 @@
 {
   "meta": {
     "kind": "staff",
-    "sha": "07cb5434bfbbd6bc5e5c95c87c6c238475972854",
+    "sha": "bab5572ac1a5b09ee2904c4d2daac8a47a110d70",
     "branch": "arena/3c08bfbd-mp",
     "tracked_dirty": false,
     "untracked": 0,
@@ -9,13 +9,13 @@
       "backend/api/routes.json": "sha256_b64:fwMz37kqW7VlFLfgA8x4Nw_H6Pq-OpqLU0LMqrmoTPg",
       "backend/security/rbac.py": "sha256_b64:qHQPdbM-hk4aOZD0134vp4HwwhBcEz2YkqQc5j_fnSw",
       "studio/src/lib/roleNav.ts": "sha256_b64:ZQ_3Q0OvbiUBD2oHurTeR30v_vzulL45I6IA7QXVMiA",
-      "studio/src/lib/api.ts": "sha256_b64:nwYQEuCviS1-QrVNh1jJsHsMONJoo_6g1OSMCNI_K2w",
+      "studio/src/lib/api.ts": "sha256_b64:7NVt0vlfhLQDgKTaPzGd0aqB0Cy8tOpubnj-Pv0LSmE",
       "studio/src/lib/adminApi.ts": "sha256_b64:YSy9HomngwFUX2fIgmRRmnxJLRSO9Ed5BQ9QzBMn8s4",
-      "studio/src/lib/navigation.ts": "sha256_b64:b5tDQgf2_b-2cBNV4yPOqsLz0Q0tLlBaggrjJ1LyBrY"
+      "studio/src/lib/navigation.ts": "sha256_b64:xkspscx19MhTTiRnLDjPxp66l39EjLoH4konkMqgthc"
     },
     "site_kinds": {
       "template-base": 28,
-      "helper": 60,
+      "helper": 67,
       "literal": 0
     },
     "dynamic_sites": 0,
@@ -324,7 +324,8 @@
         "member"
       ],
       "apis_used": [
-        "/api/v1/admin/checkins"
+        "/api/v1/admin/checkins",
+        "/api/v1/face/qr-token"
       ],
       "apis_total": 11,
       "consumers": [
@@ -333,9 +334,10 @@
       "tests": [
         "a11y.test.tsx",
         "locustfile_full.py",
+        "memberCheckin.test.tsx",
         "test_m45_checkin_feed.py",
         "test_m46_security_matrix.py",
-        "test_m80_member_checkin_history.py"
+        "test_m65_qr_security.py"
       ],
       "uncovered_dynamic": [],
       "status": "PARTIAL_REVIEW",
@@ -505,11 +507,11 @@
       ],
       "tests": [
         "apiCoverage.test.ts",
+        "memberShop.test.tsx",
         "test_m59_shop.py",
         "test_phase2_shop_display.py",
         "test_phase3_no_online_gateway.py",
-        "test_role_nav_parity.py",
-        "test_wp24_rbac_decision_cache.py"
+        "test_role_nav_parity.py"
       ],
       "uncovered_dynamic": [],
       "status": "PARTIAL_REVIEW",

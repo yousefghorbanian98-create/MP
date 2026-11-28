@@ -1,0 +1,15 @@
+# MEM-11 — mutation
+
+## A) موجودی از جمع ردیف‌ها محاسبه شود (به‌جای balance_rial سرور)
+   × member wallet (MEM-11) > renders the server balance with its unit and source, without client-side summing 59ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 4 passed (5)
+
+## B) پنهان‌کردن اختلاف کیف پول و دفتر
+   × member wallet (MEM-11) > surfaces a wallet/ledger mismatch instead of hiding it 1016ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 4 passed (5)
+
+## بازگردانی
+restored
+      Tests  5 passed (5)

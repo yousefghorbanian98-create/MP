@@ -5,10 +5,10 @@
 > پیشین هرگز push نشد؛ تنها راه معتبر، اجرای دوبارهٔ همین اسکریپت روی SHA تازه است.
 
 - SHA: `352781043ad2ba202d8b3b459df1ce7e3d914ef7` · branch: `HEAD` · tracked-dirty: `False` · untracked: `3`
-- `backend/api/routes.json` → `7f0333dfb92a5bb56514b7e003cc78370fc7e8fabe3a9a8b5342ccaab9a84cf8`
-- `backend/security/rbac.py` → `a8740f75b33e864e1a3990f4d77e2fa781f0c2105c133d9892a41ce63fdf9d2c`
-- `studio/src/lib/navigation.ts` → `71fa84e7d3d0ca190e3a79ab91cb43beff7d2b8743ccc71a598b6a3722b73172`
-- `studio/src/lib/api.ts` → `f5e977948640587ac5a9c0816c401b63246f4613de77504accfd563b1950af28`
+- `backend/api/routes.json` → `sha256_b64:fwMz37kqW7VlFLfgA8x4Nw_H6Pq-OpqLU0LMqrmoTPg`
+- `backend/security/rbac.py` → `sha256_b64:qHQPdbM-hk4aOZD0134vp4HwwhBcEz2YkqQc5j_fnSw`
+- `studio/src/lib/navigation.ts` → `sha256_b64:cfqE59PQyhkOOnmrkctDvv99K4dDzMcaWYtqNyK3MXI`
+- `studio/src/lib/api.ts` → `sha256_b64:9el3lIZAWHrFqcCBbEAbYyRvRhPed1BKzP1WOxlQryg`
 - featureهای Flutter: **17** · مسیرهای API سرور: **141** · مسیرهای صدا‌زده‌شده در Studio: **47**
 - شمارش: `GAP=4` · `PARTIAL_REVIEW=13`
 

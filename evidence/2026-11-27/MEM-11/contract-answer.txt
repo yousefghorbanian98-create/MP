@@ -1,0 +1,145 @@
+# MEM-11 — پاسخ قرارداد پیش از UI (grep -n واقعی)
+# HEAD: 74033cb
+
+## ① نقطهٔ پایانی دفتر
+$ grep -n "ledger" -A 14 mp-app/backend/modules/payments/router.py | sed -n "1,20p"
+    return build_invoice(db, member_id, user=user)
+
+
+@router.get("/ledger/{member_id}", summary="دفتر پول عضو با موجودی و تطبیق (QF-05)")
+def ledger_list(member_id: int, db: DbSession, user: CurrentUser):
+    from app.security.ownership import ensure_member_scope
+    from modules.payments import ledger as ledger_service
+
+    ensure_member_scope(db, user, member_id)
+    ledger_service.ensure_member(db, member_id)
+    return {
+        "member_id": member_id,
+        "balance_rial": ledger_service.balance(db, member_id),
+        "reconcile": ledger_service.reconcile(db, member_id),
+        "entries": [ledger_service.serialize(row) for row in ledger_service.entries(db, member_id)],
+    }
+
+
+@router.post(
+    "/ledger/{entry_id}/reverse",
+    summary="معکوس‌سازی رویداد دفتر با دلیل (QF-05)",
+
+## ② مرتب‌سازی/صفحه‌بندی/موجودی/تطبیق
+$ sed -n "84,130p" mp-app/backend/modules/payments/ledger.py
+
+
+def entries(db: Session, member_id: int, *, limit: int = 200) -> list[LedgerEntry]:
+    return list(
+        db.scalars(
+            select(LedgerEntry)
+            .where(LedgerEntry.member_id == member_id)
+            .order_by(LedgerEntry.id.desc())
+            .limit(limit)
+        )
+    )
+
+
+def balance(db: Session, member_id: int) -> int:
+    return int(
+        db.scalar(
+            select(func.coalesce(func.sum(LedgerEntry.amount_rial), 0)).where(
+                LedgerEntry.member_id == member_id
+            )
+        )
+        or 0
+    )
+
+
+def reconcile(db: Session, member_id: int) -> dict:
+    """تطبیق دفتر با کیف‌پول؛ اختلاف گزارش می‌شود، نه پنهان."""
+    from modules.payments.service import wallet_balance
+
+    wallet = wallet_balance(db, member_id)
+    ledger = balance(db, member_id)
+    return {
+        "member_id": member_id,
+        "wallet_balance_rial": wallet,
+        "ledger_balance_rial": ledger,
+        "matches": wallet == ledger,
+        "difference_rial": ledger - wallet,
+    }
+
+
+def reverse(
+    db: Session,
+    *,
+    entry_id: int,
+    actor,
+    reason: str,
+    commit: bool = True,
+) -> dict:
+
+## ③ فیلدهای هر ردیف
+$ sed -n "187,205p" mp-app/backend/modules/payments/ledger.py
+
+
+def serialize(entry: LedgerEntry) -> dict:
+    return {
+        "id": entry.id,
+        "member_id": entry.member_id,
+        "amount_rial": entry.amount_rial,
+        "kind": entry.kind,
+        "source_type": entry.source_type,
+        "source_id": entry.source_id,
+        "note": entry.note or "",
+        "reverses_entry_id": entry.reverses_entry_id,
+        "reversed_by_id": entry.reversed_by_entry_id,
+        "created_at": entry.created_at.isoformat() if entry.created_at else None,
+    }
+
+
+def ensure_member(db: Session, member_id: int) -> None:
+    if db.get(Member, member_id) is None:
+
+## ④ تایپ کلاینت (منبع حقیقت برای نام فیلدها)
+$ sed -n "225,256p" mp-app/studio/src/lib/api.ts
+export interface LedgerRow {
+  id: number;
+  member_id: number;
+  amount_rial: number;
+  kind: "charge" | "pay" | "refund" | "reversal";
+  source_type: string;
+  source_id: number | null;
+  reverses_entry_id: number | null;
+  reversed_by_entry_id: number | null;
+  note: string;
+  created_at: string | null;
+}
+
+export interface LedgerReconcile {
+  wallet_balance_rial: number;
+  ledger_balance_rial: number;
+  matches: boolean;
+  difference_rial: number;
+}
+
+export interface MemberLedger {
+  member_id: number;
+  balance_rial: number;
+  reconcile: LedgerReconcile;
+  entries: LedgerRow[];
+}
+
+export function fetchMemberLedger(memberId: number, token = getToken(), signal?: AbortSignal) {
+  return getJson<MemberLedger>(`/payments/ledger/${memberId}`, token, signal);
+}
+
+export function reverseLedgerEntry(entryId: number, reason: string, token = getToken()) {
+
+## ⑤ اجرای زندهٔ پشتیبان
+$ /tmp/mpvenv/bin/python -m pytest tests/integration/test_m83_wallet_ledger.py -q
+ (همراه با test_phase2_shop_display.py) 10 passed
+
+## نتیجه
+- `GET /payments/ledger/{member_id}` → `balance_rial` + `reconcile{wallet_balance_rial, ledger_balance_rial, matches, difference_rial}` + `entries[]`.
+- `entries` با `id desc` و `limit=200` و **بدون offset** ⇒ صفحه‌بندی سمت سرور وجود ندارد؛ UI باید همین را بگوید نه اینکه صفحه بسازد (تست gate دارد).
+- مبالغ **عدد صحیح ریال**‌اند ⇒ هر نمایش باید واحد «ریال» داشته باشد؛ بدون واحد ممنوع (قاعدهٔ MEM-06/07).
+- `kind` ∈ charge|pay|refund|reversal ، به‌همراه `source_type`/`source_id`/`reverses_entry_id`/`reversed_by_entry_id`.
+- `matches=false` ⇒ اختلاف کیف پول و دفتر؛ UI باید هشدار بدهد نه پنهان‌کردن (تست gate دارد).
+- موجودی از `balance_rial` سرور خوانده می‌شود، نه جمع کلاینت.

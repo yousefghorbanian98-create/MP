@@ -18,6 +18,83 @@ LAST_KNOWN_EVIDENCE=evidence/2026-11-27/MEM-03/current-run.md و فایل‌ها
 
 در تعارض، تصمیم scope با ADR/تصمیم مالک، متن acceptance با کارت canonical، رفتار با کد و تست همان مسیر، و status اجرایی با آخرین شاهد پالایش‌شده تعیین می‌شود. Snapshotهای تاریخی، دیاگرام‌ها، screenshotها، artifact package، mock، skipped test و CI روی SHA دیگر acceptance محصول را ثابت نمی‌کنند.
 
+## Latest continuation — MEM-10 QR check-in, MEM-11 wallet, MEM-13 shop display
+
+```text
+CURRENT_BRANCH=arena/3c08bfbd-mp
+MEM-10/PWA-39=PARTIAL/NOT_ACCEPTED — QR check-in؛ سه حالت پشتیبان (replay 409 qr_replayed، منقضی، عضو دیگر 403) دوباره اجرا شد: 7 pass
+MEM-11/PWA-3A=PARTIAL/NOT_ACCEPTED — موجودی از سرور، تطبیق کیف پول/دفتر، بدون صفحه‌بندی ساختگی
+MEM-13/PWA-3C=PARTIAL/NOT_ACCEPTED — فقط نمایش؛ نوشتن سمت سرور fail-closed (409)
+NEW_ENDPOINTS=0
+TESTS_ADDED=14 · MUTATIONS_PROVEN=6
+BLOCKED=تأیید حضور توسط مربی (MEM-10) · تصمیم مالی (MEM-11/MEM-13)
+TODO_DONE=7/104 بدون تغییر · SLICES_LANDED=5
+RELEASE=NO-GO
+```
+
+- **MEM-10:** `MemberCheckin` روی `/member/checkin`. قرارداد: ثبت، **INSERT تازه** در `checkins` است و یکتایی روی `qr_jti_hash` (`db/models/face_id.py:52`، migration `c5d6e7f8a9b0_m65_qr_replay_guard.py:21`) ⇒ replay در سطح DB بسته است. توکن فقط در `state` می‌ماند؛ هیچ فراخوانی بازشناسی چهره نیست؛ متن «حضور شما برای این نشست ثبت شد؛ تأیید نهایی توسط مربی/سیستم.» جای «حضور ثبت شد ✅».
+- **MEM-11:** `MemberWallet` روی `/member/wallet`. موجودی از `balance_rial` سرور (`modules/payments/ledger.py:97`)، اختلاف `reconcile.matches=false` با هشدار قرمز و هر دو عدد، ردیف‌ها با `kind` واقعی (`charge|pay|refund|reversal`) و `reversed_by_entry_id`. UI می‌گوید سرور صفحه‌بندی ندارد (`ledger.py:86-95`: `id desc`, limit 200, بدون offset).
+- **MEM-13:** `MemberShop` روی `/member/shop`. خواندن `GET /shop/status|products`؛ هیچ `POST /shop/cart|checkout` (تست همهٔ درخواست‌ها را ثبت می‌کند)؛ موجودی صفر = «ناموجود»؛ تصویر اختراع نمی‌شود.
+- **mutation:** ۶ شکست عمدی ⇒ ۶ تست قرمز و بازگشت سبز (`evidence/2026-11-27/MEM-10|MEM-11|MEM-13/mutation-proof.txt`).
+- **BLOCKED:** تأیید نهایی حضور (ایمنی/پوشش) و هر تصمیم مالی؛ ثبت شد و به مورد بعدی رفتیم.
+- **شاهد:** [`MEM-10`](../../evidence/2026-11-27/MEM-10/current-run.md) · [`MEM-11`](../../evidence/2026-11-27/MEM-11/current-run.md) · [`MEM-13`](../../evidence/2026-11-27/MEM-13/current-run.md).
+
+## Latest continuation — MEM-08 nutrition and MEM-09 classes/booking on the member path
+
+```text
+CURRENT_BRANCH=arena/3c08bfbd-mp
+BRANCH_VS_MAIN=ahead=18 behind=0 files=36 · main@7c4771f is ancestor → yes · tree differs (expected)
+MEM-08/PWA-37=PARTIAL/NOT_ACCEPTED — plan/meal/food-log جدا؛ meals خالی و nothing_logged و target_source=none هر سه گیت دارند
+MEM-09/PWA-38=PARTIAL/NOT_ACCEPTED — ظرفیت از سرور؛ بازخوانی پس از رزرو/لغو؛ پیام از status سرور
+NEW_ENDPOINTS=0
+MUTATIONS_PROVEN=6 این دور (۳+۳)
+RELEASE=NO-GO
+```
+
+- **MEM-08:** `MemberNutrition` روی `/member/nutrition`. قرارداد با `grep -n`: `PlanOut` در `modules/nutrition/schemas.py:38-51`، `list_member_plans` با `ensure_member_scope` در `service.py:60-70`، و `daily_summary` (`service.py:169-284`) که خودش `data_state` (`logged`/`nothing_logged`)، `target_source` (`approved_plan`/`none`) و `reason` را می‌دهد. سه گیت در تست: `meals: []` ⇒ «برنامهٔ کامل نیست»؛ `nothing_logged` ⇒ هیچ عدد مصرفی؛ `target_source=none` ⇒ هیچ مقایسه‌ای. هر عدد واحد (`کیلوکالری`/`گرم`) و منبع دارد.
+- **MEM-09:** `MemberClasses` روی `/member/classes`. فیلدهای ظرفیت از `modules/classes/service.py:198-211` و رفتار رزرو (قفل، `already_booked`، `waitlisted`) از `service.py:66-120`. طبق TODO «دکمهٔ disabled اثبات عدم overbooking نیست»: بعد از هر رزرو/لغو، فهرست از سرور دوباره خوانده می‌شود (تست دو `GET /classes` را می‌شمارد) و پیام از `status` پاسخ سرور می‌آید.
+- **mutation:** ۶ شکست عمدی ⇒ ۶ تست قرمز و بازگشت سبز (`evidence/2026-11-27/MEM-08|MEM-09/mutation-proof.txt`).
+- **اصلاح متن:** ادعای برابری درخت با main به‌کلی حذف و با `ahead=18 behind=0 files=36 · ancestor=yes` جایگزین شد.
+- **شاهد:** [`MEM-08`](../../evidence/2026-11-27/MEM-08/current-run.md) · [`MEM-09`](../../evidence/2026-11-27/MEM-09/current-run.md).
+
+## Latest continuation — digest-gate blind spot, Markdown gates on PRs, MEM-07 member trend
+
+```text
+CURRENT_BRANCH=arena/3c08bfbd-mp
+BRANCH_VS_MAIN=ahead=16 behind=0 · tree_differs=yes (19 files) · main@7c4771f is ancestor → yes
+DIGEST_GATE_BLIND_SPOT=fixed — STALE artifact با «digest خراب + فایل غایب» دیگر pass نمی‌شود (۳ تست رگرسیون)
+DOC_GATES_ON_PR=4 — pwa00-doc-quality از هفت مسیر به docs/MuscleParadise/**+evidence/**+.finn/** گسترش یافت
+MEM-07/PWA-36=PARTIAL/NOT_ACCEPTED — unit/measured_at/comparable هر سه در قرارداد هست
+MEM07_GATE=عدد پیشرفت فقط با data_state=="trend_available" و trend!=null؛ بقیه ⇒ «قابل مقایسه نیست»، نه صفر
+RELEASE=NO-GO
+```
+
+- **P0 — حالت کور گیت:** در `inspect_stale()` اگر هم digest ثبت‌شده خراب بود و هم منبع از checkout حذف شده بود، `None == None` می‌شد و artifact «سالم» گزارش می‌شد؛ با `git rm` می‌شد گیت را بی‌صدا خاموش کرد. حالا همان دو بررسی `check()` اضافه شده و `scripts/tests/test_digest_gate.py` چهار حالت را قفل می‌کند (۴/۴ pass؛ با حذف دو خط، ۳ تست قرمز).
+- **اصلاح ادعای قبلی:** جملهٔ «درخت شاخه بایت‌به‌بایت برابر main است» نادرست بود — آن اندازه‌گیری لحظهٔ merge بود. اندازهٔ واقعی: `ahead=16 behind=0`، ۱۹ فایل تفاوت، `main@7c4771f` ancestor است. از این پس فقط با `rev-list --count` و tree SHA گزارش می‌شود.
+- **DOC gates:** `pwa00-doc-quality.yml` فقط هفت مسیر PWA-00 را trigger می‌کرد، پس تغییرات `docs/MuscleParadise/**` و `evidence/**` و `.finn/**` روی PRها هیچ گیت Markdown نداشتند. اکنون هر سه دامنه trigger هستند و `FILTER_REGEX_INCLUDE`/reviewdog هم همان دامنه را lint می‌کنند (۴ چک).
+- **MEM-07:** قرارداد با `grep -n` پاسخ گرفت: `measured_at` در `modules/assessment/service.py:193`، واحد ضمنی در نام فیلدها (`sum_mm:194`، `delta_mm:281`، `threshold_mm:292`)، و «قابل مقایسه بودن» صریح (`trend: null` + `data_state` در `204/211/300`). `MemberJp7Trend.tsx` روی مسیر تازهٔ `/member/progress` فقط در `trend_available` عدد پیشرفت می‌سازد؛ `stale`/`insufficient`/سری خالی ⇒ متن صریح «قابل مقایسه نیست» و «پیشرفت صفر نیست»؛ درصد چربی قفل «قفل» گفته می‌شود و عکس بدن نه پیاده‌سازی و نه رندر می‌شود.
+- **شاهد:** [`GATE-P0`](../../evidence/2026-11-27/GATE-P0/regression-proof.txt) · [`MEM-07 contract`](../../evidence/2026-11-27/MEM-07/contract-answer.txt) · [`MEM-07 run`](../../evidence/2026-11-27/MEM-07/current-run.md).
+
+## Latest continuation — MEM-06 / PWA-35 safety gate on the member path
+
+```text
+CURRENT_BRANCH=arena/3c08bfbd-mp (base main@7c4771f; tree identical to main)
+MAIN_CI=7c4771f 9/9 pass (run 46074253433) — release branch checked, not assumed
+MEM-06/PWA-35=PARTIAL/NOT_ACCEPTED (canonical checkbox open) — no independent safety reviewer
+MEM06_SAFETY_STATES=blocked|needs_review|unknown|clear — چهار متن و چهار رنگ جدا در مسیر عضو
+MEM06_GATE=safe_to_generate=false ⇒ «شروع تمرین» disabled + دلیل دیده‌شدنی؛ فهرست حرکات و فرم ثبت رندر نمی‌شود
+EXECUTABLE_RULE=status=="clear" AND safe_to_generate==true
+NEW_ENDPOINT=no — ProgramOut.safety_flags از قبل کل پرچم را به عضو می‌داد
+STALE_HEX_REMAINING=0 — هر دو *.STALE.json با همان تبدیل base64 بازنویسی شدند و گیت همچنان «کهنه» گزارش می‌کند
+FILE_REF_FIX=0 در مخزن (مسیر غلط فقط در گزارش چت بود)؛ ۲ ارجاع MEM-05 با grep -n بازتولید شد
+RELEASE=NO-GO
+```
+
+- **یافتهٔ اصلی:** `MemberTodayProgram` سه وضعیت را به **یک** پیام تبدیل می‌کرد («غربالگری ایمنی این برنامه خالی نیست»). `blocked` هم به‌عنوان برنامهٔ قابل‌اجرا ارائه می‌شد؛ `SafetyBadge` فقط در shell کارکنان بود. حالا `ProgramSafetyPanel` (تازه) تفکیک را به مسیر عضو می‌آورد: `blocked` ⇒ پیام قرمز با نام محدودیت، حرکات مسدود، جایگزین و توصیه؛ `needs_review` ⇒ «نیازمند بازبینی مربی» + یادداشت موتور؛ `unknown`/`{}` ⇒ «غربالگری نشده — نه بی‌خطر»؛ `clear` ⇒ تنها حالتی که «بدون ناسازگاری» می‌گوید.
+- **دروازهٔ اجرا:** در هر سه وضعیت غیرمجاز، `<button disabled>شروع تمرین</button>` با `aria-describedby` به متن دلیل رندر می‌شود و فهرست حرکات/فرم ثبت وجود ندارد؛ دلیل **متن دیده‌شدنی** است، نه tooltip. برای `clear` هیچ دکمهٔ مرده‌ای ساخته نمی‌شود.
+- **دادهٔ ساختگی صفر:** `ProgramOut.safety_flags` (`modules/programs/schemas.py:49`) از قبل `status`، `blocked[]`، `safe_to_generate`، `disclaimer_fa` و `rule_version` را برای عضو برمی‌گرداند، پس نیازی به endpoint تازه یا mock نبود.
+- **شاهد:** [`MEM-06 current run`](../../evidence/2026-11-27/MEM-06/current-run.md) · [`mutation proof`](../../evidence/2026-11-27/MEM-06/mutation-proof.txt) · [`main CI`](../../evidence/2026-11-27/MEM-06/main-ci-7c4771f.txt) · [`file-ref audit`](../../evidence/2026-11-27/MEM-06/file-ref-audit.txt).
+
 ## Latest continuation — MEM-05 / PWA-34 set feedback, CI flake triage, STALE reporting
 
 ```text

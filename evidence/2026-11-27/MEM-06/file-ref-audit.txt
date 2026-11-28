@@ -1,0 +1,29 @@
+# P1 — بازرسی ارجاع فایل: آیا `programs/services.py` واقعاً وجود دارد؟
+# (این فایل خودش نام آن مسیر را نقل می‌کند، پس در شمارش مستثنی شده است.)
+
+## 1) فایل
+$ ls mp-app/backend/modules/programs/services.py
+ls: cannot access 'mp-app/backend/modules/programs/services.py': No such file or directory
+$ ls mp-app/backend/modules/programs/service.py
+mp-app/backend/modules/programs/service.py
+
+## 2) شمارش ارجاع غلط در اسناد/شواهد (به‌جز همین فایل)
+$ grep -rn "services\.py" --include="*.md" --include="*.txt" --include="*.json" . --exclude=file-ref-audit.txt | grep -v node_modules | wc -l
+0
+
+## 3) ارجاع درست با grep -n (خروجی واقعی)
+$ grep -n "def sync_set_feedback" mp-app/backend/modules/programs/service.py
+584:def sync_set_feedback(db: Session, *, member_id: int, items: list[dict], user=None) -> dict:
+$ grep -n "key = \|unchanged_keys" mp-app/backend/modules/programs/service.py
+605:        key = f"{row.device_id or 'server'}:{row.client_id or row.id}"
+617:        key = f"{item['device_id']}:{item['client_id']}"
+634:        key = result["entity_key"]
+681:        "unchanged_keys": unchanged_ids,
+
+## 4) ارجاع‌های MEM-05 در اسناد (همه با نام مفرد)
+docs/MuscleParadise/PWA-EXECUTION-STATE.md:40:- **MEM-05:** پرسش گیت با فایل/خط پاسخ گرفت (`schem
+docs/MuscleParadise/SESSION_HANDOFF.md:21:- **MEM-05:** پاسخ گیت با فایل/خط: `modules/programs/schemas.py
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md:229:  - برش ۲۰۲۶-۱۱-۲۷: پرسش گیت با فایل/�
+.finn/state/STATE.md:10:MEM05_IDEMPOTENCY=NO برای `POST /programs/set-feedback` (schemas.py:103-106، service.py:183
+
+## نتیجه: ۰ ارجاع غلط در مخزن؛ مسیر غلط فقط در گزارش چت بود و اصلاح شد.

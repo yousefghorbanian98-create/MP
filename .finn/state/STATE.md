@@ -2,6 +2,69 @@
 
 > هشدار انتقال ۲۰۲۶-۱۱-۱۸: بخش‌های بعدی قدیمی snapshot هستند و branch/toolchain/status آن‌ها جاری فرض نشود. وضعیت تازهٔ Motion/PWA در این بخش و [handoff](../../docs/MuscleParadise/SESSION_HANDOFF.md) آمده؛ کارهای قدیمی M63–M99، M100–M106 و M107+ فقط پس از تطبیق با TODO و گیت‌های جاری ادامه یابند.
 
+## Current follow-up — MEM-10 QR check-in + MEM-11 wallet + MEM-13 shop display (2026-11-27 UTC)
+
+STATE_LAST_UPDATED=2026-11-28T02:00:00Z
+MEM-10/PWA-39=PARTIAL/NOT_ACCEPTED — حضور با QR: توکن فقط در state، صفر فراخوانی چهره، متن «تأیید نهایی توسط مربی/سیستم»، تاریخچه از سرور
+MEM-11/PWA-3A=PARTIAL/NOT_ACCEPTED — کیف پول: موجودی از balance_rial سرور (بدون جمع کلاینتی)، اختلاف کیف پول/دفتر پنهان نمی‌شود، بدون صفحه‌بندی ساختگی
+MEM-13/PWA-3C=PARTIAL/NOT_ACCEPTED — فروشگاه فقط نمایش: هیچ درخواست cart/checkout، موجودی صفر = «ناموجود»
+NEW_ENDPOINTS=0 برای هر سه برش (GET /face/qr-token، GET /membership/me/checkins، GET /payments/ledger/{id}، GET /shop/status، GET /shop/products همه از قبل بودند)
+ROUTES_ADDED=/member/checkin · /member/wallet · /member/shop (MemberPage: home|today|progress|nutrition|classes|checkin|wallet|shop)
+TESTS_ADDED=14 (memberCheckin 4 · memberWallet 5 · memberShop 5) — کل vitest 449 pass/15 skip (67 فایل)
+MUTATIONS_PROVEN=6 این دور (۲+۲+۲) — شاهد: evidence/2026-11-27/MEM-10|MEM-11|MEM-13/mutation-proof.txt
+BACKEND_REVERIFIED=test_m65_qr_security 7 pass · test_m83_wallet_ledger + test_phase2_shop_display 10 pass (دوباره اجرا شد، نه فقط خوانده)
+BLOCKED=MEM-10 پوشش حضور/تأیید مربی (تصمیم مالک) · MEM-11 و MEM-13 تصمیم مالی (کاربر/مالی)
+TODO_DONE=7/104 (بدون تیک تازه — فاصله‌های دستگاه/مرورگر/پیامک/بازبین مستقل NOT_RUN)
+SLICES_LANDED=5 (۲ قبلی + ۳ این دور)
+CROSSWALK_IMPACT=studio/src/lib/{navigation.ts,api.ts} منابع crosswalk‌اند ⇒ هر دو artifact روی bab5572 (چک‌اوت تمیز همین HEAD) بازتولید شد؛ GAP=3 · PARTIAL_REVIEW=14 (member) · PARTIAL_REVIEW=12 (staff)، call-site helper ۶۷
+RELEASE=NO-GO
+
+## Current follow-up — MEM-08 nutrition + MEM-09 classes/booking (2026-11-27 UTC)
+
+STATE_LAST_UPDATED=2026-11-28T00:30:00Z
+MEM-08/PWA-37=PARTIAL/NOT_ACCEPTED — تغذیهٔ عضو: plan/meal/food-log تفکیک‌شده؛ meals خالی ⇒ «برنامهٔ کامل نیست»؛ nothing_logged ⇒ بدون عدد؛ target_source=none ⇒ بدون مقایسه
+MEM-09/PWA-38=PARTIAL/NOT_ACCEPTED — کلاس/رزرو: ظرفیت از سرور، بازخوانی پس از هر رزرو/لغو، پیام از status سرور، already_booked پنهان نمی‌شود
+NEW_ENDPOINTS=0 برای هر دو برش (GET /nutrition/plans/member/{id}، GET /nutrition/food-logs/member/{id}/daily، GET /classes، POST /classes/{book,cancel})
+ROUTES_ADDED=/member/nutrition · /member/classes (MemberPage: home|today|progress|nutrition|classes)
+TESTS_ADDED=12 (memberNutrition 5 · memberClasses 7) — کل vitest 435 pass/15 skip (64 فایل)
+MUTATIONS_PROVEN=6 (۳ برای MEM-08، ۳ برای MEM-09) — شاهد: evidence/2026-11-27/MEM-08|MEM-09/mutation-proof.txt
+CROSSWALK_IMPACT=studio/src/lib/{navigation.ts,api.ts} منابع crosswalk‌اند ⇒ بازتولید هر دو artifact در commit دوم
+RELEASE=NO-GO
+
+## Current follow-up — P0 digest-gate blind spot + DOC gates + MEM-07 (2026-11-27 UTC)
+
+STATE_LAST_UPDATED=2026-11-27T23:55:00Z
+CURRENT_BRANCH=arena/3c08bfbd-mp
+BRANCH_VS_MAIN=ahead=18 behind=0 files=36 · main@7c4771f is ancestor → yes · tree differs (expected)
+CORRECTION_2026-11-27B=ادعای برابری درخت شاخه با main نادرست بود (اندازه‌گیریِ لحظهٔ merge، نه tip). فقط اعداد `BRANCH_VS_MAIN` بالا معتبر است و هر دور با `rev-list --count` + `diff --name-only | wc -l` بازخوانی می‌شود.
+DIGEST_GATE_BLIND_SPOT=fixed — `inspect_stale()` حالا `expected is None` و `actual is None` را مثل `check()` به problems می‌برد؛ پیش‌تر (digest خراب + فایل غایب) `None == None` می‌شد و artifact «سالم» گزارش می‌شد (با `git rm` می‌شد گیت را بی‌صدا کرد).
+DIGEST_GATE_TESTS=scripts/tests/test_digest_gate.py · ۴ تست · 4/4 pass · با حذف دو بررسی، ۳ تست قرمز می‌شود (شاهد: evidence/2026-11-27/GATE-P0/regression-proof.txt)
+DOC_GATES_ON_PR=4 — trigger `pwa00-doc-quality.yml` از هفت مسیر PWA-00 به `docs/MuscleParadise/**`+`evidence/**`+`.finn/**` گسترش یافت؛ FILTER_REGEX_INCLUDE و reviewdog هم همان دامنه را lint می‌کنند
+DOC_GATES_EVIDENCE=پیش از اصلاح: صفر چک از این گردش‌کار روی #32 (تنها ۸ چک mp-ci). اکنون ۴ چک (Super-Linter، Reviewdog، markdownlint، PWA-00 patch) هم روی تغییرات مستندات اجرا می‌شوند
+MEM-07/PWA-36=PARTIAL/NOT_ACCEPTED — BLOCKED نیست
+MEM07_CONTRACT=unit=yes(ضمنی `_mm`) · measured_at=yes (service.py:193) · comparable=yes (data_state+trend=null+threshold) — شاهد: evidence/2026-11-27/MEM-07/contract-answer.txt
+MEM07_SLICE=MemberJp7Trend.tsx + مسیر /member/progress + ۷ تست؛ عدد پیشرفت فقط در trend_available؛ stale/insufficient/خالی ⇒ «قابل مقایسه نیست»، نه صفر؛ عکس بدن پیاده‌سازی نشد
+LOCAL_GATES=vitest 423 pass/15 skip (62 فایل · 58 pass/4 skip) · tsc/eslint پاک · interaction map 32 سطح/163 مسیر · docs_gate 38 فایل/625 لینک/15 Mermaid
+RELEASE=NO-GO
+
+## Current follow-up — MEM-06 / PWA-35 گیت ایمنی مسیر عضو (2026-11-27 UTC)
+
+STATE_LAST_UPDATED=2026-11-27T23:05:00Z
+CURRENT_BRANCH=arena/3c08bfbd-mp (base main@7c4771f؛ درختِ شاخه == درختِ main)
+MAIN_CI=7c4771f 9/9 pass (run 46074253433) — شاهد: evidence/2026-11-27/MEM-06/main-ci-7c4771f.txt
+MEM-06/PWA-35=PARTIAL/NOT_ACCEPTED — BLOCKED نیست
+MEM06_FINDING=MemberTodayProgram.tsx:203-211 چهار→یک وضعیت ایمنی را یکی می‌کرد؛ blocked به‌عنوان برنامهٔ اجرایی ارائه می‌شد
+MEM06_SAFETY_STATES=blocked|needs_review|unknown|clear با چهار متن/رنگ جدا (ProgramSafetyPanel.tsx تازه)
+MEM06_GATE=safe_to_generate!==true ⇒ «شروع تمرین» disabled + دلیل متنی دیده‌شدنی؛ weeks و SetFeedbackForm رندر نمی‌شوند
+EXECUTABLE_RULE=status=="clear" && safe_to_generate===true
+MEM06_NEW_ENDPOINT=no (ProgramOut.safety_flags از قبل کامل بود)
+MEM06_TESTS=vitest safetyBadge 17 · memberTodayProgram 9 · setFeedback 4 · کل 416 pass/15 skip؛ pytest m56 8 pass
+MEM06_MUTATION=isExecutable→true (۴ تست قرمز)، یکسان‌سازی blocked/unknown (۱ تست قرمز)، safety_flags→"{}" (۸ تست پایتست قرمز)؛ همه بازگردانده شد
+STALE_HEX_REMAINING=0 (INV-02-v1 و INV-03-v1، ۸ مقدار ۶۴-hex → sha256_b64؛ گیت همچنان ۳ منبع کهنه گزارش می‌کند)
+FILE_REF_FIX=0 در مخزن؛ مسیر غلط (programs/services.py) فقط در گزارش چت بود — شاهد: evidence/2026-11-27/MEM-06/file-ref-audit.txt
+BEHAVIOR_CHANGE=برنامهٔ approved با پرچم {} / unknown دیگر برای عضو اجرایی نمایش داده نمی‌شود (قابل بازگشت با یک شرط)
+RELEASE=NO-GO
+
 ## Current follow-up — MEM-05 / PWA-34 + تریاژ flake + گزارش STALE (2026-11-27 UTC)
 
 STATE_LAST_UPDATED=2026-11-27T22:20:00Z

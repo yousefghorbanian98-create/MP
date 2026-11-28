@@ -1,0 +1,24 @@
+# CI سطح main — 7c4771f (squash of PR #31)
+# ثبت‌شده: 2026-11-27
+
+## gh run view 46074253433
+sha=7c4771f21073db6d1bd4b00e23fd1c7817701a17 event=push status=completed conclusion=success workflow=mp-ci
+
+## gh run list --branch main --limit 3
+completed	success	MEM-03/PWA-32: phone change, device sessions, late-response guard (+ …	pwa00-doc-quality	main	push	46074253456	1m25s	29m
+completed	success	MEM-03/PWA-32: phone change, device sessions, late-response guard (+ …	mp-ci	main	push	46074253433	6m30s	29m
+completed	success	PWA: INV/SEC evidence + WEB partial reviews (#30)	pwa00-doc-quality	main	push	46036816354	1m23s	5h
+
+## jobهای run 46074253433
+success	Client — pinned SDK · format gate · Android debug compile
+success	Documentation links and handoff
+success	backend
+success	client-flutter
+success	e2e-api
+success	live-contract
+success	markdownlint
+success	secret-scan
+success	studio
+
+## شمارش
+9/9 success

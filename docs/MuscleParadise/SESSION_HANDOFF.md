@@ -2,6 +2,80 @@
 
 > این فایل **خلاصهٔ جاری برای ادامهٔ کار** است، نه آرشیو گفتگو و نه منبع نهایی وضعیت محصول. پیش از فشرده‌سازی context یا پایان هر کار معنادار، همین snapshot را جایگزین/به‌روز کن؛ تاریخچه را با انباشت transcript طولانی نکن.
 
+## وضعیت جاری — MEM-10 حضور، MEM-11 کیف پول، MEM-13 فروشگاه (UTC 2026-11-27)
+
+```text
+MEM-10/PWA-39=PARTIAL/NOT_ACCEPTED
+MEM-11/PWA-3A=PARTIAL/NOT_ACCEPTED
+MEM-13/PWA-3C=PARTIAL/NOT_ACCEPTED
+NEW_ENDPOINTS=0 · TESTS_ADDED=14 · MUTATIONS_PROVEN=6
+TODO_DONE=7/104 (بدون تیک) · SLICES_LANDED=5
+BLOCKED=تأیید حضور توسط مربی · تصمیم مالی
+RELEASE=NO-GO
+```
+
+- **MEM-10:** `MemberCheckin` روی `/member/checkin`؛ توکن QR فقط در state، تاریخچه از `GET /membership/me/checkins`، بدون بازشناسی چهره، متن «تأیید نهایی توسط مربی/سیستم».
+- **MEM-11:** `MemberWallet` روی `/member/wallet`؛ موجودی از سرور، اختلاف دفتر/کیف پول پنهان نمی‌شود، بدون صفحه‌بندی ساختگی.
+- **MEM-13:** `MemberShop` روی `/member/shop`؛ فقط نمایش، هیچ درخواست سبد/پرداخت، موجودی صفر = «ناموجود».
+- مسیرهای عضو اکنون: `home` · `today` · `progress` · `nutrition` · `classes` · `checkin` · `wallet` · `shop` (تغییر `navigation.ts` ⇒ بازتولید crosswalk).
+- شاهد: [`MEM-10`](../../evidence/2026-11-27/MEM-10/current-run.md) · [`MEM-11`](../../evidence/2026-11-27/MEM-11/current-run.md) · [`MEM-13`](../../evidence/2026-11-27/MEM-13/current-run.md).
+
+## وضعیت جاری — MEM-08 تغذیه و MEM-09 کلاس/رزرو (UTC 2026-11-27)
+
+```text
+BRANCH_VS_MAIN=ahead=18 behind=0 files=36 · main@7c4771f ancestor=yes · tree differs (expected)
+MEM-08/PWA-37=PARTIAL/NOT_ACCEPTED
+MEM-09/PWA-38=PARTIAL/NOT_ACCEPTED
+NEW_ENDPOINTS=0
+TESTS_ADDED=12 · MUTATIONS_PROVEN=6
+RELEASE=NO-GO
+```
+
+- **MEM-08:** `MemberNutrition` روی `/member/nutrition`؛ سه تفکیک (برنامه / وعده / ثبت روزانه) و سه گیت: `meals: []`، `data_state=nothing_logged`، `target_source=none`. واحد و منبع روی صفحه.
+- **MEM-09:** `MemberClasses` روی `/member/classes`؛ ظرفیت از سرور، بازخوانی اجباری پس از رزرو/لغو، پیام از `status` سرور (`confirmed`/`waitlisted`)، خطای `already_booked` دیده‌می‌شود.
+- مسیرهای عضو اکنون: `home` · `today` · `progress` · `nutrition` · `classes` (تغییر `navigation.ts` ⇒ بازتولید crosswalk).
+- شاهد: [`MEM-08`](../../evidence/2026-11-27/MEM-08/current-run.md) · [`MEM-09`](../../evidence/2026-11-27/MEM-09/current-run.md).
+
+## وضعیت جاری — P0 گیت + گیت‌های Markdown روی PR + MEM-07 (UTC 2026-11-27)
+
+```text
+CURRENT_BRANCH=arena/3c08bfbd-mp
+BRANCH_VS_MAIN=ahead=16 behind=0 · tree_differs=yes (19 files) · main@7c4771f ancestor=yes
+DIGEST_GATE_BLIND_SPOT=fixed (۳ تست رگرسیون · 4/4 pass)
+DOC_GATES_ON_PR=4 (trigger از ۷ مسیر PWA-00 به docs/MuscleParadise/**+evidence/**+.finn/**)
+MEM-07/PWA-36=PARTIAL/NOT_ACCEPTED
+MEM07_CONTRACT=unit=yes(ضمنی) · measured_at=yes · comparable=yes
+MEM07_GATE=عدد پیشرفت فقط در trend_available؛ بقیه «قابل مقایسه نیست»
+RELEASE=NO-GO
+```
+
+- **P0:** `inspect_stale()` حالت «digest خراب + فایل غایب» را pass می‌داد (`None == None`). دو بررسی `check()` اضافه شد و `scripts/tests/test_digest_gate.py` سه حالت خواسته‌شده + حالت ترکیبی را قفل می‌کند؛ با حذف دو خط، ۳ تست قرمز می‌شود.
+- **اصلاح:** «درخت برابر main» با اعداد واقعی جایگزین شد (ahead=16، ۱۹ فایل، ancestor=yes). عبارت «diff خالی» دیگر استفاده نمی‌شود.
+- **DOC gates:** گردش‌کار PWA-00 روی PR #32 صفر چک داشت؛ اکنون trigger و فیلتر linter هر دو دامنهٔ `docs/MuscleParadise/**`، `evidence/**`، `.finn/**` را می‌پوشانند.
+- **MEM-07:** `MemberJp7Trend.tsx` روی `/member/progress`; هر عدد با واحد+تاریخ+منبع؛ `trend===null`/`stale` ⇒ هیچ عدد پیشرفتی؛ `body_fat_pct=null` ⇒ «قفل»؛ عکس بدن پیاده‌سازی نشد. ۷ تست تازه (کل vitest ۴۲۳ pass/۱۵ skip).
+- شاهد: [`MEM-07 run`](../../evidence/2026-11-27/MEM-07/current-run.md) و [`regression-proof`](../../evidence/2026-11-27/GATE-P0/regression-proof.txt).
+
+## وضعیت جاری — MEM-06 / PWA-35 گیت ایمنی در مسیر عضو (UTC 2026-11-27)
+
+```text
+CURRENT_BRANCH=arena/3c08bfbd-mp (base main@7c4771f)
+MAIN_CI=7c4771f 9/9 pass (run 46074253433)
+MEM-06/PWA-35=PARTIAL/NOT_ACCEPTED؛ BLOCKED نیست (داده موجود بود)
+MEM06_SAFETY_STATES=blocked/needs_review/unknown/clear — چهار متن جدا در مسیر عضو
+MEM06_GATE=safe_to_generate=false ⇒ دکمهٔ شروع غیرفعال + دلیل متنی؛ فهرست حرکات و فرم ثبت پنهان
+EXECUTABLE_RULE=clear + safe_to_generate=true
+NEW_ENDPOINT=no
+STALE_HEX_REMAINING=0
+FILE_REF_FIX=0 (در مخزن) — ارجاع‌های MEM-05 با grep -n بازتولید شدند
+RELEASE=NO-GO
+```
+
+- **نقص بسته‌شده:** `MemberTodayProgram` قبلاً برای `blocked`/`needs_review`/`clear` یک پیام واحد داشت؛ یعنی برنامهٔ ناسازگار هم «قابل اجرا» ارائه می‌شد. `ProgramSafetyPanel` + `isExecutable()` اکنون چهار وضعیت را جدا می‌کند و اجرا را فقط با `clear + safe_to_generate=true` باز می‌کند.
+- **تغییر رفتار آگاهانه:** برنامهٔ `approved` با پرچم `{}`/`unknown` دیگر فهرست حرکات و فرم ثبت را نشان نمی‌دهد (دلیل متنی دارد). این از معیار MEM-06 می‌آید و در شاهد MEM-06 توضیح داده شده.
+- **تست‌ها:** `tests/safetyBadge.test.tsx` ۱۷ pass · `tests/memberTodayProgram.test.tsx` ۹ pass · `tests/setFeedback.test.tsx` ۴ pass · کل vitest ۴۱۶ pass/۱۵ skip · `pytest test_m56_safety_gate.py` ۸ pass · سه mutation قرمز شدند و فایل‌ها بایت‌به‌بایت بازگشتند.
+- **باز:** reviewer مستقل ایمنی (`UNKNOWN`)، اجرای دستگاه/مرورگر، و این‌که مربی هنوز می‌تواند برنامهٔ `blocked` را `approved` کند (تصمیم محصول، خارج از این برش).
+- شاهد: [`MEM-06 current run`](../../evidence/2026-11-27/MEM-06/current-run.md).
+
 ## وضعیت جاری — MEM-05 / PWA-34 ثبت بازخورد ست + تریاژ flake + گزارش STALE (UTC 2026-11-27)
 
 ```text

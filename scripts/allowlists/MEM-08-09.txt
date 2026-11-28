@@ -1,0 +1,20 @@
+# Exact file-level allowlist for the MEM-08 (nutrition) and MEM-09 (classes/booking) slices.
+# One repository-relative path per line; no directories and no glob patterns.
+.finn/state/STATE.md
+docs/MuscleParadise/PWA-EXECUTION-STATE.md
+docs/MuscleParadise/SESSION_HANDOFF.md
+docs/MuscleParadise/TODO-PWA-RELEASE-2026-11-23.fa.md
+evidence/2026-11-27/MEM-08/contract-answer.txt
+evidence/2026-11-27/MEM-08/current-run.md
+evidence/2026-11-27/MEM-08/mutation-proof.txt
+evidence/2026-11-27/MEM-09/contract-answer.txt
+evidence/2026-11-27/MEM-09/current-run.md
+evidence/2026-11-27/MEM-09/mutation-proof.txt
+mp-app/studio/src/App.tsx
+mp-app/studio/src/components/MemberClasses.tsx
+mp-app/studio/src/components/MemberNutrition.tsx
+mp-app/studio/src/lib/api.ts
+mp-app/studio/src/lib/navigation.ts
+mp-app/studio/tests/memberClasses.test.tsx
+mp-app/studio/tests/memberNutrition.test.tsx
+scripts/allowlists/MEM-08-09.txt
