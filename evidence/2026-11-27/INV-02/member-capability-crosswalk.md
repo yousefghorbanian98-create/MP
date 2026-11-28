@@ -4,14 +4,14 @@
 > رفع می‌کند (تمپلیت `${base}`, alias نقش‌ها, مسیرهای پویا) — طبق یافته‌های
 > `review.md` خودِ اجرای قبلی. هیچ ردیفی CURRENT نمی‌شود.
 
-- SHA: `97c0ec785cbea15e1feb7e60c4d4ff4a84bc1ba8` · branch: `arena/3c08bfbd-mp` · tracked-dirty: `False` · untracked: `0`
+- SHA: `e3d0e0d97c3225d6c01eaf08bcb871e947baf3b8` · branch: `arena/3c08bfbd-mp` · tracked-dirty: `False` · untracked: `0`
 - `backend/api/routes.json` → `sha256_b64:fwMz37kqW7VlFLfgA8x4Nw_H6Pq-OpqLU0LMqrmoTPg`
 - `backend/security/rbac.py` → `sha256_b64:qHQPdbM-hk4aOZD0134vp4HwwhBcEz2YkqQc5j_fnSw`
 - `studio/src/lib/roleNav.ts` → `sha256_b64:ZQ_3Q0OvbiUBD2oHurTeR30v_vzulL45I6IA7QXVMiA`
-- `studio/src/lib/api.ts` → `sha256_b64:nwYQEuCviS1-QrVNh1jJsHsMONJoo_6g1OSMCNI_K2w`
+- `studio/src/lib/api.ts` → `sha256_b64:acT95IUGaVYKls84lzMBspOMhH6iz6p0UtdObvK3hyk`
 - `studio/src/lib/adminApi.ts` → `sha256_b64:YSy9HomngwFUX2fIgmRRmnxJLRSO9Ed5BQ9QzBMn8s4`
-- `studio/src/lib/navigation.ts` → `sha256_b64:5tZQZEXIt9IX8L64sYJP0CtwNnzZi8ty9ZgtyS95ADA`
-- call-site: `{'template-base': 28, 'helper': 60, 'literal': 0}` · پویا: **0**
+- `studio/src/lib/navigation.ts` → `sha256_b64:TIOKW6d3xSYg_QW1Cla2QZ1nnahsvttdR16fyYQo3Fk`
+- call-site: `{'template-base': 28, 'helper': 65, 'literal': 0}` · پویا: **0**
 - شمارش: `GAP=3` · `PARTIAL_REVIEW=14`
 
 | وضعیت | معنا |
@@ -29,7 +29,7 @@
 | 3 | `bodycomp` | 1 فایل | — | — | 2 / 8 | `api.ts` | — | `apiCoverage.test.ts`<br>`test_api_contract.py`<br>`test_battle.py`<br>`test_e2e_adaptive_loop.py` | **PARTIAL_REVIEW** |
 | 4 | `chat` | 2 فایل | — | super_admin, admin, manager, coach, reception, member | 1 / 3 | `api.ts` | — | `a11y.test.tsx`<br>`test_e2e_adaptive_loop.py`<br>`test_m51_chat.py` | **PARTIAL_REVIEW** |
 | 5 | `checkin` | 2 فایل | — | super_admin, admin, manager, coach, reception, member | 1 / 12 | `api.ts` | — | `a11y.test.tsx`<br>`locustfile_full.py`<br>`test_m45_checkin_feed.py`<br>`test_m46_security_matrix.py` | **PARTIAL_REVIEW** |
-| 6 | `classes` | 1 فایل | — | — | 1 / 3 | `ScheduleTimeline.tsx` | — | `a11y.test.tsx`<br>`authFlow.test.tsx`<br>`test_classes_finance.py`<br>`test_e2e_dataflow.py` | **PARTIAL_REVIEW** |
+| 6 | `classes` | 1 فایل | — | — | 3 / 3 | `ScheduleTimeline.tsx`<br>`api.ts` | — | `a11y.test.tsx`<br>`apiCoverage.test.ts`<br>`authFlow.test.tsx`<br>`memberClasses.test.tsx` | **PARTIAL_REVIEW** |
 | 7 | `feedback` | 3 فایل | — | — | 3 / 10 | `api.ts` | — | `apiCoverage.test.ts`<br>`locustfile_full.py`<br>`setFeedback.test.tsx`<br>`test_axis_assessment_api.py` | **PARTIAL_REVIEW** |
 | 8 | `home` | 1 فایل | — | — | 1 / 11 | `AuthContext.tsx`<br>`api.ts` | — | `a11y.test.tsx`<br>`api.test.ts`<br>`authFlow.test.tsx`<br>`liveContractMember.test.ts` | **PARTIAL_REVIEW** |
 | 9 | `intake` | 2 فایل | — | — | 0 / 3 | — | — | — | **GAP** |
