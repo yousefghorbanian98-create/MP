@@ -1,0 +1,20 @@
+# MEM-08 — mutation: آیا تست‌ها واقعاً گیت را می‌سنجند؟
+
+## A) «meals خالی» به‌عنوان برنامهٔ کامل (complete = true)
+   × member nutrition (MEM-08) > calls an empty meals[] an incomplete plan, not a healthy one 1012ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 4 passed (5)
+
+## B) نادیده‌گرفتن data_state (logged = true)
+   × member nutrition (MEM-08) > shows no consumption numbers when nothing is logged 20ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 4 passed (5)
+
+## C) نشان‌دادن مقایسه حتی وقتی target_source=none
+   × member nutrition (MEM-08) > does not build a comparison when the target does not come from an approved plan 1012ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 4 passed (5)
+
+## بازگردانی و اجرای دوباره
+MemberNutrition.tsx restored
+      Tests  5 passed (5)

@@ -21,7 +21,9 @@ import { AuthProvider, useAuth } from "./auth/AuthContext";
 import { Login } from "./pages/Login";
 import { MemberAccount } from "./pages/MemberAccount";
 import { MemberSecurity } from "./components/MemberSecurity";
+import { MemberClasses } from "./components/MemberClasses";
 import { MemberJp7Trend } from "./components/MemberJp7Trend";
+import { MemberNutrition } from "./components/MemberNutrition";
 import { MemberTodayProgram } from "./components/MemberTodayProgram";
 import { canSeePage, parseRole } from "./lib/roleNav";
 import {
@@ -175,11 +177,20 @@ const memberNavigation: { page: MemberPage; href: string; label: string }[] = [
   { page: "home", href: "/member", label: "خانه" },
   { page: "today", href: "/member/today", label: "امروز" },
   { page: "progress", href: "/member/progress", label: "ارزیابی و روند" },
+  { page: "nutrition", href: "/member/nutrition", label: "تغذیه" },
+  { page: "classes", href: "/member/classes", label: "کلاس و رزرو" },
 ];
 
 /** Member account uses its own authenticated API vertical slice; today stays an honest placeholder. */
 function MemberShell({ page, onSignOut }: { page: MemberPage; onSignOut: () => void }) {
-  const title = page === "today" ? "امروز" : page === "progress" ? "ارزیابی و روند" : "خانهٔ عضو";
+  const titles: Record<MemberPage, string> = {
+    home: "خانهٔ عضو",
+    today: "امروز",
+    progress: "ارزیابی و روند",
+    nutrition: "تغذیه",
+    classes: "کلاس و رزرو",
+  };
+  const title = titles[page];
 
   return (
     <main dir="rtl" className="min-h-screen px-4 py-6 sm:px-6">
@@ -224,6 +235,14 @@ function MemberShell({ page, onSignOut }: { page: MemberPage; onSignOut: () => v
           ) : page === "progress" ? (
             <div className="mt-4">
               <MemberJp7Trend />
+            </div>
+          ) : page === "nutrition" ? (
+            <div className="mt-4">
+              <MemberNutrition />
+            </div>
+          ) : page === "classes" ? (
+            <div className="mt-4">
+              <MemberClasses />
             </div>
           ) : (
             <div className="mt-4">

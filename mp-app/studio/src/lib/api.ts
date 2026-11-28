@@ -1023,6 +1023,111 @@ export function fetchJp7Trend(memberId: number, token = getToken(), signal?: Abo
   return getJson<Jp7Trend>(`/assessments/jp7/member/${memberId}/trend`, token, signal);
 }
 
+// ── MEM-08 / PWA-37 — تغذیهٔ عضو: برنامه، وعده و ثبت روزانه از سه قرارداد جدا ──
+//
+// قرارداد (با grep -n): `modules/nutrition/schemas.py:38-51` (`PlanOut` با
+// `daily_kcal`/`protein_g`/`carbs_g`/`fat_g`/`meals[]`) و
+// `modules/nutrition/service.py:169-284` (`daily_summary` با `data_state`,
+// `target_source`, `totals`, `target`, `rule_version`). واحد کلید جدا نیست؛ در نام فیلد است.
+
+export interface NutritionPlanMeal {
+  id: number;
+  meal_slot: string;
+  name_fa: string;
+  kcal: number;
+  protein_g: number;
+  carbs_g: number;
+  fat_g: number;
+}
+
+export interface NutritionPlan {
+  id: number;
+  member_id: number;
+  coach_id: number | null;
+  status: string;
+  daily_kcal: number;
+  protein_g: number;
+  carbs_g: number;
+  fat_g: number;
+  engine_version: string;
+  llm_explanation: string;
+  meals: NutritionPlanMeal[];
+}
+
+export interface FoodLogItem {
+  id: number;
+  food_id: number;
+  name_fa: string;
+  grams: number;
+  meal_slot: string;
+  kcal: number;
+  protein_g: number;
+  carbs_g: number;
+  fat_g: number;
+  warning: string;
+}
+
+export interface DailyFoodLog {
+  member_id: number;
+  date: string;
+  items: FoodLogItem[];
+  totals: { kcal: number; protein_g: number; carbs_g: number; fat_g: number };
+  by_slot: Record<string, { kcal: number; protein_g: number; count: number }>;
+  target: { kcal: number; protein_g: number; carbs_g: number; fat_g: number };
+  target_source: "approved_plan" | "none" | string;
+  plan_id: number | null;
+  data_state: "logged" | "nothing_logged" | string;
+  reason: string;
+  rule_version: string;
+}
+
+export function fetchMemberNutritionPlans(memberId: number, token = getToken(), signal?: AbortSignal) {
+  return getJson<NutritionPlan[]>(`/nutrition/plans/member/${memberId}`, token, signal);
+}
+
+export function fetchDailyFoodLog(memberId: number, day?: string, token = getToken(), signal?: AbortSignal) {
+  const suffix = day ? `?date=${encodeURIComponent(day)}` : "";
+  return getJson<DailyFoodLog>(`/nutrition/food-logs/member/${memberId}/daily${suffix}`, token, signal);
+}
+
+// ── MEM-09 / PWA-38 — کلاس و رزرو: ظرفیت از سرور، نه از دکمهٔ disabled ──
+//
+// قرارداد (با grep -n): `modules/classes/service.py:198-211` هر کلاس را با
+// `capacity`/`confirmed`/`waitlisted`/`seats_left`، و برای عضو با
+// `member_booking_status` برمی‌گرداند؛ رزرو/لغو در `service.py:66-120` با قفل
+// و خطای صریح `already_booked`.
+
+export interface GymClassRow {
+  id: number;
+  name: string;
+  capacity: number;
+  schedule_text: string;
+  coach_id: number | null;
+  confirmed: number;
+  waitlisted: number;
+  seats_left: number;
+  member_booking_status?: "confirmed" | "waitlisted" | null;
+  member_booking_name?: string | null;
+}
+
+export interface ClassBookingResult {
+  id: number;
+  status: string;
+  member_name?: string;
+}
+
+export function fetchClasses(token = getToken(), signal?: AbortSignal) {
+  return getJson<GymClassRow[]>("/classes", token, signal);
+}
+
+export function bookClass(classId: number, memberId: number, token = getToken()) {
+  return postJson<ClassBookingResult>("/classes/book", { class_id: classId, member_id: memberId }, token);
+}
+
+export function cancelClassBooking(classId: number, memberId: number, token = getToken()) {
+  return postJson<ClassBookingResult>("/classes/cancel", { class_id: classId, member_id: memberId }, token);
+}
+
 /** G12 — مرور جدول غذایی با فیلتر دسته (بدون جستجو = همهٔ غذاها). */
 export function browseFoods(
   query: string,

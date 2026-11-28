@@ -2,6 +2,22 @@
 
 > این فایل **خلاصهٔ جاری برای ادامهٔ کار** است، نه آرشیو گفتگو و نه منبع نهایی وضعیت محصول. پیش از فشرده‌سازی context یا پایان هر کار معنادار، همین snapshot را جایگزین/به‌روز کن؛ تاریخچه را با انباشت transcript طولانی نکن.
 
+## وضعیت جاری — MEM-08 تغذیه و MEM-09 کلاس/رزرو (UTC 2026-11-27)
+
+```text
+BRANCH_VS_MAIN=ahead=18 behind=0 files=36 · main@7c4771f ancestor=yes · tree differs (expected)
+MEM-08/PWA-37=PARTIAL/NOT_ACCEPTED
+MEM-09/PWA-38=PARTIAL/NOT_ACCEPTED
+NEW_ENDPOINTS=0
+TESTS_ADDED=12 · MUTATIONS_PROVEN=6
+RELEASE=NO-GO
+```
+
+- **MEM-08:** `MemberNutrition` روی `/member/nutrition`؛ سه تفکیک (برنامه / وعده / ثبت روزانه) و سه گیت: `meals: []`، `data_state=nothing_logged`، `target_source=none`. واحد و منبع روی صفحه.
+- **MEM-09:** `MemberClasses` روی `/member/classes`؛ ظرفیت از سرور، بازخوانی اجباری پس از رزرو/لغو، پیام از `status` سرور (`confirmed`/`waitlisted`)، خطای `already_booked` دیده‌می‌شود.
+- مسیرهای عضو اکنون: `home` · `today` · `progress` · `nutrition` · `classes` (تغییر `navigation.ts` ⇒ بازتولید crosswalk).
+- شاهد: [`MEM-08`](../../evidence/2026-11-27/MEM-08/current-run.md) · [`MEM-09`](../../evidence/2026-11-27/MEM-09/current-run.md).
+
 ## وضعیت جاری — P0 گیت + گیت‌های Markdown روی PR + MEM-07 (UTC 2026-11-27)
 
 ```text

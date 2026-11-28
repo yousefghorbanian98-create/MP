@@ -1,0 +1,38 @@
+# MEM-09 — پاسخ قرارداد پیش از UI (grep -n واقعی)
+# HEAD: 3e6b4c0
+
+## فیلدهای ظرفیت در پاسخ فهرست کلاس‌ها
+$ grep -n "seats_left\|member_booking_status\|confirmed\":" mp-app/backend/modules/classes/service.py
+92:            .where(ClassBooking.class_id == class_id, ClassBooking.status == "confirmed")
+96:    status = "confirmed" if confirmed < cls.capacity else "waitlisted"
+130:    freed_confirmed_seat = b.status == "confirmed"
+141:                .where(ClassBooking.class_id == class_id, ClassBooking.status == "confirmed")
+159:                next_waiting.status = "confirmed"
+173:                ClassBooking.status.in_(("confirmed", "waitlisted")),
+186:                .where(ClassBooking.class_id == c.id, ClassBooking.status == "confirmed")
+204:            "confirmed": confirmed,
+
+## رفتار رزرو: قفل، تکراری، لیست انتظار
+$ grep -n "def book\|_lock_class\|already_booked\|status = \"confirmed\"" mp-app/backend/modules/classes/service.py | head
+41:def _lock_class(db: Session, class_id: int) -> GymClass | None:
+66:def book(db: Session, *, class_id: int, member_id: int, user=None) -> ClassBooking:
+72:    cls = _lock_class(db, class_id)
+87:        raise ApiError("عضو قبلاً رزرو کرده است", code="already_booked")
+96:    status = "confirmed" if confirmed < cls.capacity else "waitlisted"
+117:    if _lock_class(db, class_id) is None:
+159:                next_waiting.status = "confirmed"
+
+## مسیرها و احراز هویت
+$ grep -n "@router.post\|/book\|/cancel" mp-app/backend/modules/classes/router.py
+47:@router.post(
+63:@router.post(
+64:    "/book",
+77:@router.post(
+78:    "/cancel",
+
+## آزمون موجود ظرفیت/ارتقای لیست انتظار
+$ grep -n "def test_booking_capacity_waitlist_promotion" mp-app/backend/tests/integration/test_classes_finance.py
+54:def test_booking_capacity_waitlist_promotion(client, auth):
+
+## نتیجه
+unit=no(شمارش است، واحد لازم ندارد) · measured_at=no (schedule_text متنی است) · comparable=no (روند نیست) · capacity/waitlist=yes · duplicate=server-side already_booked · race=قفل کلاس در service.py

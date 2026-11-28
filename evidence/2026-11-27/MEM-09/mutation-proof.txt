@@ -1,0 +1,21 @@
+# MEM-09 — mutation: آیا تست‌ها گیت را می‌سنجند، یا فقط وجود متن؟
+
+## A) حذف بازخوانی از سرور بعد از رزرو (اعتماد به کلیک)
+   × member classes and booking (MEM-09) > books through the API, then re-reads the server instead of trusting the click 1072ms
+   × member classes and booking (MEM-09) > cancels a booking and re-reads the server 1015ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  2 failed | 5 passed (7)
+
+## B) پیام موفقیت ثابت («تأیید شد») بی‌توجه به status سرور
+   × member classes and booking (MEM-09) > reports a waitlisted result when the server says the class is full 1025ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 6 passed (7)
+
+## C) پنهان‌کردن خطای already_booked
+   × member classes and booking (MEM-09) > surfaces the server's duplicate-booking error instead of hiding it 1024ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 6 passed (7)
+
+## بازگردانی و اجرای دوباره
+MemberClasses.tsx restored
+      Tests  7 passed (7)

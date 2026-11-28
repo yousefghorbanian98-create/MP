@@ -2,12 +2,24 @@
 
 > هشدار انتقال ۲۰۲۶-۱۱-۱۸: بخش‌های بعدی قدیمی snapshot هستند و branch/toolchain/status آن‌ها جاری فرض نشود. وضعیت تازهٔ Motion/PWA در این بخش و [handoff](../../docs/MuscleParadise/SESSION_HANDOFF.md) آمده؛ کارهای قدیمی M63–M99، M100–M106 و M107+ فقط پس از تطبیق با TODO و گیت‌های جاری ادامه یابند.
 
+## Current follow-up — MEM-08 nutrition + MEM-09 classes/booking (2026-11-27 UTC)
+
+STATE_LAST_UPDATED=2026-11-28T00:30:00Z
+MEM-08/PWA-37=PARTIAL/NOT_ACCEPTED — تغذیهٔ عضو: plan/meal/food-log تفکیک‌شده؛ meals خالی ⇒ «برنامهٔ کامل نیست»؛ nothing_logged ⇒ بدون عدد؛ target_source=none ⇒ بدون مقایسه
+MEM-09/PWA-38=PARTIAL/NOT_ACCEPTED — کلاس/رزرو: ظرفیت از سرور، بازخوانی پس از هر رزرو/لغو، پیام از status سرور، already_booked پنهان نمی‌شود
+NEW_ENDPOINTS=0 برای هر دو برش (GET /nutrition/plans/member/{id}، GET /nutrition/food-logs/member/{id}/daily، GET /classes، POST /classes/{book,cancel})
+ROUTES_ADDED=/member/nutrition · /member/classes (MemberPage: home|today|progress|nutrition|classes)
+TESTS_ADDED=12 (memberNutrition 5 · memberClasses 7) — کل vitest 435 pass/15 skip (64 فایل)
+MUTATIONS_PROVEN=6 (۳ برای MEM-08، ۳ برای MEM-09) — شاهد: evidence/2026-11-27/MEM-08|MEM-09/mutation-proof.txt
+CROSSWALK_IMPACT=studio/src/lib/{navigation.ts,api.ts} منابع crosswalk‌اند ⇒ بازتولید هر دو artifact در commit دوم
+RELEASE=NO-GO
+
 ## Current follow-up — P0 digest-gate blind spot + DOC gates + MEM-07 (2026-11-27 UTC)
 
 STATE_LAST_UPDATED=2026-11-27T23:55:00Z
 CURRENT_BRANCH=arena/3c08bfbd-mp
-BRANCH_VS_MAIN=اندازه‌گیریِ ثبت‌شده روی 8cf9995: ahead=16 behind=0 · tree_differs=yes (19 files، +941/−80) · main@7c4771f is ancestor → yes؛ بعد از commitهای این دور عدد جلوتر می‌رود و در گزارش همان دور با `rev-list --count` تازه اعلام می‌شود (نه با «diff خالی»)
-CORRECTION_2026-11-27B=ادعای قبلی «درخت شاخه بایت‌به‌بایت برابر main است» نادرست بود؛ آن اندازه‌گیری مربوط به لحظهٔ merge (`8f960ad`) بود، نه tip. اعداد واقعی در `BRANCH_VS_MAIN` بالا آمده و دیگر از عبارت «diff خالی» استفاده نمی‌شود.
+BRANCH_VS_MAIN=ahead=18 behind=0 files=36 · main@7c4771f is ancestor → yes · tree differs (expected)
+CORRECTION_2026-11-27B=ادعای برابری درخت شاخه با main نادرست بود (اندازه‌گیریِ لحظهٔ merge، نه tip). فقط اعداد `BRANCH_VS_MAIN` بالا معتبر است و هر دور با `rev-list --count` + `diff --name-only | wc -l` بازخوانی می‌شود.
 DIGEST_GATE_BLIND_SPOT=fixed — `inspect_stale()` حالا `expected is None` و `actual is None` را مثل `check()` به problems می‌برد؛ پیش‌تر (digest خراب + فایل غایب) `None == None` می‌شد و artifact «سالم» گزارش می‌شد (با `git rm` می‌شد گیت را بی‌صدا کرد).
 DIGEST_GATE_TESTS=scripts/tests/test_digest_gate.py · ۴ تست · 4/4 pass · با حذف دو بررسی، ۳ تست قرمز می‌شود (شاهد: evidence/2026-11-27/GATE-P0/regression-proof.txt)
 DOC_GATES_ON_PR=4 — trigger `pwa00-doc-quality.yml` از هفت مسیر PWA-00 به `docs/MuscleParadise/**`+`evidence/**`+`.finn/**` گسترش یافت؛ FILTER_REGEX_INCLUDE و reviewdog هم همان دامنه را lint می‌کنند

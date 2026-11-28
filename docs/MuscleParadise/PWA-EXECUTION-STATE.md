@@ -18,6 +18,24 @@ LAST_KNOWN_EVIDENCE=evidence/2026-11-27/MEM-03/current-run.md و فایل‌ها
 
 در تعارض، تصمیم scope با ADR/تصمیم مالک، متن acceptance با کارت canonical، رفتار با کد و تست همان مسیر، و status اجرایی با آخرین شاهد پالایش‌شده تعیین می‌شود. Snapshotهای تاریخی، دیاگرام‌ها، screenshotها، artifact package، mock، skipped test و CI روی SHA دیگر acceptance محصول را ثابت نمی‌کنند.
 
+## Latest continuation — MEM-08 nutrition and MEM-09 classes/booking on the member path
+
+```text
+CURRENT_BRANCH=arena/3c08bfbd-mp
+BRANCH_VS_MAIN=ahead=18 behind=0 files=36 · main@7c4771f is ancestor → yes · tree differs (expected)
+MEM-08/PWA-37=PARTIAL/NOT_ACCEPTED — plan/meal/food-log جدا؛ meals خالی و nothing_logged و target_source=none هر سه گیت دارند
+MEM-09/PWA-38=PARTIAL/NOT_ACCEPTED — ظرفیت از سرور؛ بازخوانی پس از رزرو/لغو؛ پیام از status سرور
+NEW_ENDPOINTS=0
+MUTATIONS_PROVEN=6 این دور (۳+۳)
+RELEASE=NO-GO
+```
+
+- **MEM-08:** `MemberNutrition` روی `/member/nutrition`. قرارداد با `grep -n`: `PlanOut` در `modules/nutrition/schemas.py:38-51`، `list_member_plans` با `ensure_member_scope` در `service.py:60-70`، و `daily_summary` (`service.py:169-284`) که خودش `data_state` (`logged`/`nothing_logged`)، `target_source` (`approved_plan`/`none`) و `reason` را می‌دهد. سه گیت در تست: `meals: []` ⇒ «برنامهٔ کامل نیست»؛ `nothing_logged` ⇒ هیچ عدد مصرفی؛ `target_source=none` ⇒ هیچ مقایسه‌ای. هر عدد واحد (`کیلوکالری`/`گرم`) و منبع دارد.
+- **MEM-09:** `MemberClasses` روی `/member/classes`. فیلدهای ظرفیت از `modules/classes/service.py:198-211` و رفتار رزرو (قفل، `already_booked`، `waitlisted`) از `service.py:66-120`. طبق TODO «دکمهٔ disabled اثبات عدم overbooking نیست»: بعد از هر رزرو/لغو، فهرست از سرور دوباره خوانده می‌شود (تست دو `GET /classes` را می‌شمارد) و پیام از `status` پاسخ سرور می‌آید.
+- **mutation:** ۶ شکست عمدی ⇒ ۶ تست قرمز و بازگشت سبز (`evidence/2026-11-27/MEM-08|MEM-09/mutation-proof.txt`).
+- **اصلاح متن:** ادعای برابری درخت با main به‌کلی حذف و با `ahead=18 behind=0 files=36 · ancestor=yes` جایگزین شد.
+- **شاهد:** [`MEM-08`](../../evidence/2026-11-27/MEM-08/current-run.md) · [`MEM-09`](../../evidence/2026-11-27/MEM-09/current-run.md).
+
 ## Latest continuation — digest-gate blind spot, Markdown gates on PRs, MEM-07 member trend
 
 ```text
