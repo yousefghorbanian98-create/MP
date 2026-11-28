@@ -1,0 +1,6 @@
+# ROUND 3/9 — بازتولید یک‌بارِ crosswalk در پایان دور (SHA=d629a1f)
+evidence/2026-11-27/INV-02/member-capability-crosswalk.json
+evidence/2026-11-27/INV-02/member-capability-crosswalk.md
+evidence/2026-11-27/INV-03/staff-page-crosswalk.json
+evidence/2026-11-27/INV-03/staff-page-crosswalk.md
+scripts/allowlists/ROUND-3-regen.txt
