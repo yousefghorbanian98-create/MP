@@ -1,0 +1,24 @@
+# STAFF-01 (الف) — mutation proofs (گیت کامل‌بودن صفحه‌های کارکنان)
+
+## A) حذف یک صفحه از نقشهٔ pages در App.tsx (صفحهٔ بی‌رندر)
+   × STAFF-01 — نقشهٔ مسیر کارکنان > نقشهٔ pages در App.tsx دقیقاً همان PAGE_IDS است (صفحهٔ بی‌رندر ⇒ قرمز) 9ms
+   × STAFF-01 — نقشهٔ مسیر کارکنان > هر صفحهٔ کارکنان تست اختصاصی دارد — و فهرست بی‌تست‌ها فقط کوچک می‌شود 3ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  2 failed | 2 passed (4)
+
+## B) افزودن صفحهٔ تازه به PAGE_IDS بدون مسیر/رندر/تست
+   × STAFF-01 — نقشهٔ مسیر کارکنان > نقشهٔ pages در App.tsx دقیقاً همان PAGE_IDS است (صفحهٔ بی‌رندر ⇒ قرمز) 10ms
+   × STAFF-01 — نقشهٔ مسیر کارکنان > هر صفحهٔ کارکنان تست اختصاصی دارد — و فهرست بی‌تست‌ها فقط کوچک می‌شود 4ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  2 failed | 2 passed (4)
+
+## C) بادکردن baseline (پنهان‌کردن یک بدهی تازه در فهرست بی‌تست)
+   × STAFF-01 — نقشهٔ مسیر کارکنان > هر صفحهٔ کارکنان تست اختصاصی دارد — و فهرست بی‌تست‌ها فقط کوچک می‌شود 9ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 3 passed (4)
+
+## بازگردانی
+restored mp-app/studio/src/App.tsx
+restored mp-app/studio/src/stores/appStore.ts
+restored mp-app/studio/tests/staffRouteMapBaseline.json
+      Tests  4 passed (4)

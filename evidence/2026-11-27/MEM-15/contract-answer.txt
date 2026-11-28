@@ -1,0 +1,71 @@
+# MEM-15 — پاسخ قرارداد پیش از UI (grep -n واقعی)
+# HEAD: 2c82b1e
+
+## ① فهرست اعلان عضو + دامنه
+$ sed -n '21,32p' mp-app/backend/modules/notification/router.py
+```python
+@router.get("/member/{member_id}", response_model=list[NotificationOut], summary="اعلان‌های عضو")
+def list_notifications(
+    member_id: int,
+    db: DbSession,
+    user: CurrentUser,
+    unread_only: bool = Query(False),
+):
+    return service.list_member_notifications(db, member_id, unread_only, user=user)
+```
+
+$ grep -n "def list_member_notifications" -A 14 mp-app/backend/modules/notification/service.py
+```
+36:def list_member_notifications(
+37:    db: Session, member_id: int, unread_only: bool = False, user=None
+38:) -> list[Notification]:
+39:    from app.security.ownership import ensure_member_scope
+41:    ensure_member_scope(db, user, member_id)
+42:    stmt = (
+43:        select(Notification)
+44:        .where(Notification.member_id == member_id)
+45:        .order_by(Notification.id.desc())
+46:    )
+47:    if unread_only:
+48:        stmt = stmt.where(Notification.read_at.is_(None))
+49:    return list(db.scalars(stmt))
+```
+
+## ② خوانده‌شدن (ایدمپوتنت + مالکیت)
+$ grep -n "def mark_read" -A 12 mp-app/backend/modules/notification/service.py
+```
+53:def mark_read(db: Session, notification_id: int, user=None) -> Notification:
+54:    from app.security.ownership import ensure_member_scope
+56:    n = db.get(Notification, notification_id)
+58:        raise NotFoundError("اعلان یافت نشد")
+59:    ensure_member_scope(db, user, n.member_id)
+60:    if n.read_at is None:
+61:        n.read_at = datetime.now(UTC)
+```
+
+## ③ فیلدها — `channel` کلید صداقت است
+$ sed -n '21,31p' mp-app/backend/modules/notification/schemas.py
+```python
+class NotificationOut(BaseModel):
+    id: int
+    member_id: int
+    channel: str
+    title: str
+    body: str
+    kind: str
+    read_at: datetime | None
+    created_at: datetime
+```
+$ grep -n "channel" mp-app/backend/db/models/notification.py
+```
+22:    channel: Mapped[str] = mapped_column(String(10), default="inapp", nullable=False)
+```
+
+## نتیجه
+- فهرست با `id desc`، بدون صفحه‌بندی، و دامنهٔ عضو **سمت سرور** بسته می‌شود
+  (`ensure_member_scope`). UI شناسهٔ عضو را از `/members/me` می‌گیرد، نه از URL.
+- خواندن اعلان ایدمپوتنت است (فقط اگر `read_at` خالی باشد می‌نویسد) و همان کنترل مالکیت را دارد.
+- `channel` پیش‌فرض `inapp` است ⇒ «اعلان درون‌برنامه‌ای» هرگز به «push/SMS تحویل شد»
+  ترجمه نمی‌شود؛ این همان جمله‌ای است که TODO در MEM-15 می‌خواهد.
+- چیزی که **نیست**: push/device permission و تحویل واقعی؛ MEM-16 (outbox آفلاین) هم با
+  policy مصوب `BLOCKED` می‌ماند و در این برش ساخته نشد.

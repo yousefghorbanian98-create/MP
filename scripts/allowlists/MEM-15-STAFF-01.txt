@@ -1,0 +1,19 @@
+# Exact file-level allowlist for the MEM-15 (member inbox) and STAFF-01 (الف)
+# (staff route-map completeness gate) work of this round.
+.finn/state/STATE.md
+docs/MuscleParadise/PWA-EXECUTION-STATE.md
+docs/MuscleParadise/SESSION_HANDOFF.md
+evidence/2026-11-27/MEM-10/checkin-contract.txt
+evidence/2026-11-27/MEM-15/contract-answer.txt
+evidence/2026-11-27/MEM-15/current-run.md
+evidence/2026-11-27/MEM-15/mutation-proof.txt
+evidence/2026-11-27/STAFF-01/current-run.md
+evidence/2026-11-27/STAFF-01/mutation-proof.txt
+mp-app/studio/src/App.tsx
+mp-app/studio/src/components/MemberInbox.tsx
+mp-app/studio/src/lib/api.ts
+mp-app/studio/src/lib/navigation.ts
+mp-app/studio/tests/memberInbox.test.tsx
+mp-app/studio/tests/staffRouteMap.test.ts
+mp-app/studio/tests/staffRouteMapBaseline.json
+scripts/allowlists/MEM-15-STAFF-01.txt

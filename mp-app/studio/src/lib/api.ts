@@ -782,6 +782,46 @@ export function listPayments(token = getToken()) {
   return getJson<PaymentRow[]>("/payments", token);
 }
 
+/** MEM-15 — اعلان درون‌برنامه‌ای عضو (`modules/notification/schemas.py:21-31`). */
+export interface MemberNotification {
+  id: number;
+  member_id: number;
+  /** `db/models/notification.py:22` — پیش‌فرض `inapp`؛ کانال تحویل واقعی نیست. */
+  channel: string;
+  title: string;
+  body: string;
+  kind: string;
+  read_at: string | null;
+  created_at: string;
+}
+
+export function fetchMyNotifications(
+  memberId: number,
+  unreadOnly = false,
+  token = getToken(),
+  signal?: AbortSignal,
+) {
+  const query = unreadOnly ? "?unread_only=true" : "";
+  return getJson<MemberNotification[]>(
+    `/notifications/member/${memberId}${query}`,
+    token,
+    signal,
+  );
+}
+
+export function markNotificationRead(
+  notificationId: number,
+  token = getToken(),
+  signal?: AbortSignal,
+) {
+  return postJson<MemberNotification>(
+    `/notifications/${notificationId}/read`,
+    {},
+    token,
+    signal,
+  );
+}
+
 /** MEM-12 — پرداخت‌های خود عضو (سرور با نقش `member` فقط ردیف‌های خودش را می‌دهد). */
 export function fetchMyPayments(token = getToken(), signal?: AbortSignal) {
   return getJson<PaymentRow[]>("/payments", token, signal);

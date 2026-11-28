@@ -1,0 +1,23 @@
+# MEM-10 — پاسخ کوتاه سه‌حالته (درخواست مالک، ⓪/④)
+# HEAD: 2c82b1e (merge main) · اجرای زنده در همین درخت
+
+CHECKIN_CONTRACT: replay=yes expiry=yes other-member=yes
+
+1) replay          → yes — 409 با کد `qr_replayed`
+   tests/integration/test_m65_qr_security.py:144 (تست) و :156 (assert کد)
+   + ایندکس یکتا `uq_checkins_qr_jti_hash` روی `checkins.qr_jti_hash`
+     (db/models/face_id.py:52 · migration c5d6e7f8a9b0:21)
+2) expiry          → yes — توکن منقضی پذیرفته نمی‌شود (۲۰۰ نمی‌گیرد)
+   tests/integration/test_m65_qr_security.py:160
+   + `exp = now + 2min` در app/security/jwt.py:40-56
+3) other-member    → yes — 403
+   tests/integration/test_m65_qr_security.py:131
+
+اجرای زنده (نه فقط خواندن):
+$ /tmp/mpvenv/bin/python -m pytest tests/integration/test_m65_qr_security.py -q
+7 passed, 1 warning in 3.21s
+(شامل face path fail-closed 409 در :64)
+
+UI: mp-app/studio/src/components/MemberCheckin.tsx — توکن فقط در state، صفر فراخوانی
+`/face/checkin`، متن «تأیید نهایی توسط مربی/سیستم». mutation‌های MEM-10:
+evidence/2026-11-27/MEM-10/mutation-proof.txt (۲ شکست عمدی، هر دو قرمز).

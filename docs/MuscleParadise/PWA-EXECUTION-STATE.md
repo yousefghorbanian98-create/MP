@@ -18,6 +18,24 @@ LAST_KNOWN_EVIDENCE=evidence/2026-11-27/MEM-03/current-run.md و فایل‌ها
 
 در تعارض، تصمیم scope با ADR/تصمیم مالک، متن acceptance با کارت canonical، رفتار با کد و تست همان مسیر، و status اجرایی با آخرین شاهد پالایش‌شده تعیین می‌شود. Snapshotهای تاریخی، دیاگرام‌ها، screenshotها، artifact package، mock، skipped test و CI روی SHA دیگر acceptance محصول را ثابت نمی‌کنند.
 
+## Latest continuation — MEM-15 inbox + STAFF-01 completeness gate
+
+```text
+MEMBER_ROUTES=10 · MEMBER_SCREENS=10 · TODO_DONE=7 (بدون تیک)
+MEM-15/PWA-3E=PARTIAL/NOT_ACCEPTED — کانال inapp صریح؛ «خوانده شد» فقط با تأیید+بازخوانی؛ صفر ارسال اعلان
+STAFF-01/PWA-40=PARTIAL/NOT_ACCEPTED — گیت route/render/test برای ۱۲ صفحه، baseline ratchet (members، analytics)
+CHECKIN_CONTRACT: replay=yes expiry=yes other-member=yes
+NEW_ENDPOINTS=0 · TESTS_ADDED=10 · MUTATIONS_PROVEN=5
+CROSSWALK_DIRTY=yes (یک بار در پایان دور)
+RELEASE=NO-GO
+```
+
+- **MEM-15:** `MemberInbox` روی `/member/inbox`؛ `GET /notifications/member/{id}` با `id desc` و `ensure_member_scope`، خواندن با `POST /notifications/{id}/read` (ایدمپوتنت) و بازخوانی اجباری. `channel` پیش‌فرض `inapp` است و صفحه می‌گوید این «push/SMS تحویل شد» نیست؛ هیچ `POST /notifications` صدا زده نمی‌شود.
+- **STAFF-01 (الف):** `tests/staffRouteMap.test.ts` برای هر `PAGE_IDS` سه چیز می‌سنجد: مسیر `/staff/<page>`، کلید نقشهٔ `pages` در `App.tsx` با import واقعی، و تست اختصاصی. بدهی موجود (`members`, `analytics`) در `tests/staffRouteMapBaseline.json` ثبت و ratchet شده است.
+- **CHECKIN_CONTRACT:** replay=yes (`test_m65_qr_security.py:144/:156` + ایندکس یکتا `qr_jti_hash`) · expiry=yes (`:160`) · other-member=yes (`:131`).
+- **BLOCKED:** MEM-16 (outbox آفلاین) تا policy مصوب؛ تأیید فیش و فعال‌سازی اشتراک (مالی)؛ تأیید حضور توسط مربی (ایمنی).
+- **شاهد:** [`MEM-15`](../../evidence/2026-11-27/MEM-15/current-run.md) · [`STAFF-01`](../../evidence/2026-11-27/STAFF-01/current-run.md) · [`CHECKIN`](../../evidence/2026-11-27/MEM-10/checkin-contract.txt).
+
 ## Latest continuation — MEM-12 manual card-to-card receipt, member side
 
 ```text
