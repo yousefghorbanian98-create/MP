@@ -152,12 +152,23 @@ export interface MembersSummary {
  * `limit` عضو، عضوی که در صفحهٔ اول نبود پیدا نمی‌شد. حالا مقدار خالی یعنی
  * «بدون فیلتر» و سرور منبع نتیجه است.
  */
-export function fetchMembersSummary(token = getToken(), signal?: AbortSignal, q?: string) {
+export function fetchMembersSummary(
+  token = getToken(),
+  signal?: AbortSignal,
+  q?: string,
+  limit?: number,
+) {
   const needle = (q ?? "").trim();
   // دو فراخوانیِ جدا، نه یک مسیرِ ساخته‌شده در متغیر: گیت‌های `apiCoverage` و
   // `interaction_map` هر دو مسیرها را از literalهای داخل همان call می‌خوانند؛
   // با متغیر میانی، مسیر «مصرف‌نشده» دیده می‌شد و هر دو گیت قرمز می‌کردند.
-  if (needle) return getJson<MembersSummary>(`/admin/members-summary?q=${encodeURIComponent(needle)}`, token, signal);
+  // `limit` سقفِ صفحه است (STAFF-02): سرور فقط limit دارد و offset ندارد —
+  // GAP ثبت شده؛ صفحه‌بندی واقعی بدون offset ادعا نمی‌شود.
+  if (needle) {
+    const suffix = limit ? `&limit=${limit}` : "";
+    return getJson<MembersSummary>(`/admin/members-summary?q=${encodeURIComponent(needle)}${suffix}`, token, signal);
+  }
+  if (limit) return getJson<MembersSummary>(`/admin/members-summary?limit=${limit}`, token, signal);
   return getJson<MembersSummary>("/admin/members-summary", token, signal);
 }
 
@@ -563,6 +574,46 @@ export interface Me {
 
 export function fetchMe(token = getToken(), signal?: AbortSignal) {
   return getJson<Me>("/members/me", token, signal);
+}
+
+// ── پروندهٔ عضو برای کارکنان (GET/PATCH /members/{id}) — STAFF-02 ──
+
+/** پاسخ `GET /members/{member_id}` — منبع همهٔ فیلدهای فرم ویرایش. */
+export interface MemberRecord {
+  id: number;
+  user_id: number;
+  branch_id: number;
+  goal: string;
+  gender: string;
+  height_cm: number | null;
+  constraints: string;
+}
+
+/** پروفایل عضو را از سرور می‌خواند (staff) — منبع حقیقت، نه state محلی. */
+export function fetchMemberDetail(memberId: number, token = getToken(), signal?: AbortSignal) {
+  if (!Number.isSafeInteger(memberId) || memberId <= 0) {
+    throw new ApiError("شناسهٔ عضو از سرور معتبر نیست", 400);
+  }
+  return getJson<MemberRecord>(`/members/${memberId}`, token, signal);
+}
+
+export interface MemberPatch {
+  goal?: string;
+  height_cm?: number;
+  constraints?: string;
+}
+
+/**
+ * ویرایش پروفایل توسط کارکنان (`PATCH /members/{member_id}`).
+ *
+ * پاسخ سرور برگردانده می‌شود و UI **بعد از** آن دوباره می‌خواند؛ متن موفقیت
+ * پیش از پاسخ سرور ساخته نمی‌شود (همان قاعدهٔ MEM-12: دکمه ادعا نیست).
+ */
+export function updateMember(memberId: number, patch: MemberPatch, token = getToken()) {
+  if (!Number.isSafeInteger(memberId) || memberId <= 0) {
+    throw new ApiError("شناسهٔ عضو از سرور معتبر نیست", 400);
+  }
+  return sendJson<MemberRecord>("PATCH", `/members/${memberId}`, patch, token);
 }
 
 export interface MemberMembership {

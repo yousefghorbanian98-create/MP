@@ -5,6 +5,7 @@ import { UpdateBanner } from "./components/UpdateBanner";
 import { Sidebar } from "./components/Sidebar";
 import { TopBar } from "./components/TopBar";
 import { CheckIn } from "./pages/CheckIn";
+import { Classes } from "./pages/Classes";
 import { Finance } from "./pages/Finance";
 import { Expenses } from "./pages/Expenses";
 import { Analytics } from "./pages/Analytics";
@@ -53,6 +54,7 @@ const pages: Record<PageId, () => JSX.Element> = {
   assessment: Assessment,
   chat: Chat,
   checkin: CheckIn,
+  classes: Classes,
   finance: Finance,
   expenses: Expenses,
   analytics: Analytics,

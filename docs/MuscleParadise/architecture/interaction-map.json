@@ -264,6 +264,57 @@
       ]
     },
     {
+      "surface": "Classes",
+      "kind": "studio-page",
+      "file": "mp-app/studio/src/pages/Classes.tsx",
+      "components": [],
+      "controls": {
+        "buttons": 0,
+        "inputs": 0,
+        "numbers": 0,
+        "selects": 0,
+        "modals": 0
+      },
+      "endpoints": [
+        {
+          "function": "fetchCheckinFeed",
+          "method": "GET",
+          "path": "/api/v1/admin/checkins",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "coach",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        },
+        {
+          "function": "fetchClasses",
+          "method": "GET",
+          "path": "/api/v1/classes",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
+        }
+      ],
+      "tests": [
+        "mp-app/studio/tests/staffClasses.test.tsx"
+      ]
+    },
+    {
       "surface": "Dashboard",
       "kind": "studio-page",
       "file": "mp-app/studio/src/pages/Dashboard.tsx",
@@ -734,10 +785,10 @@
         "mp-app/studio/src/components/MemberTable.tsx"
       ],
       "controls": {
-        "buttons": 4,
-        "inputs": 0,
-        "numbers": 0,
-        "selects": 0,
+        "buttons": 5,
+        "inputs": 2,
+        "numbers": 1,
+        "selects": 1,
         "modals": 0
       },
       "endpoints": [
@@ -804,9 +855,28 @@
             "admin",
             "super_admin"
           ]
+        },
+        {
+          "function": "fetchMemberDetail",
+          "method": "GET",
+          "path": "/api/v1/members/*",
+          "in_contract": true,
+          "guards": [
+            "permission"
+          ],
+          "roles": [
+            "member",
+            "coach",
+            "reception",
+            "manager",
+            "admin",
+            "super_admin"
+          ]
         }
       ],
-      "tests": []
+      "tests": [
+        "mp-app/studio/tests/staffMemberDetail.test.tsx"
+      ]
     },
     {
       "surface": "Nutrition",

@@ -2,6 +2,18 @@
 
 > این فایل **خلاصهٔ جاری برای ادامهٔ کار** است، نه آرشیو گفتگو و نه منبع نهایی وضعیت محصول. پیش از فشرده‌سازی context یا پایان هر کار معنادار، همین snapshot را جایگزین/به‌روز کن؛ تاریخچه را با انباشت transcript طولانی نکن.
 
+## وضعیت جاری — دور ۳/۹ فاز B: پروندهٔ عضو و کلاس/حضور (UTC 2026-11-28)
+
+```text
+MEMBER_ROUTES=11 · MEMBER_SCREENS=11 · STAFF_GATED=57 · STAFF_PAGES=12 · TODO_DONE=7 · OPEN_TESTIDS=0
+STAFF-02=PARTIAL (detail/edit/limit/stale) · STAFF-04=PARTIAL (صفحهٔ classes) · NEW_GATES=5 · MUTATIONS_PROVEN=4
+```
+
+- «ذخیره شد» در UI فقط بعد از بازخوانی از سرور؛ مغایرت سرور نمایش داده می‌شود (گیت + جهش M10).
+- صفحهٔ کلاس/حضور: اعداد از `GET /classes`، وضعیت ورود از `result` سرور؛ POST صفر و دکمهٔ «حاضر شد» صفر.
+- گیت مالکیت اکنون نوشتن‌ها را هم می‌سنجد: ۳۴ مسیر POST با توکن member باید ۴۰۳ بدهند (STAFF_GATED=57).
+- جمع‌بندی: `evidence/2026-11-27/MEM-CLOSE/round-3.md` · گیت‌ها: `evidence/2026-11-27/ROUND-3/gates.txt`.
+
 ## وضعیت جاری — دور ۲/۹ فاز B: SEC-01 و کارکنان (UTC 2026-11-28)
 
 ```text

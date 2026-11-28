@@ -1,0 +1,24 @@
+# ROUND 3/9 (فاز B) — STAFF-02 detail/edit + STAFF-04 classes + 5 دروازهٔ تازه
+mp-app/backend/tests/integration/test_staff_ownership_gate.py
+mp-app/studio/src/lib/api.ts
+mp-app/studio/src/pages/Members.tsx
+mp-app/studio/src/pages/Classes.tsx
+mp-app/studio/src/stores/appStore.ts
+mp-app/studio/src/App.tsx
+mp-app/studio/src/lib/roleNav.ts
+mp-app/studio/src/components/Sidebar.tsx
+mp-app/studio/tests/staffMemberDetail.test.tsx
+mp-app/studio/tests/staffClasses.test.tsx
+mp-app/studio/tests/staffRouteMapBaseline.json
+docs/MuscleParadise/architecture/interaction-map.json
+docs/MuscleParadise/architecture/interaction-map-2026-11-19.md
+evidence/2026-11-27/STAFF-02/round-3.md
+evidence/2026-11-27/STAFF-02/round-3-mutation-proof.txt
+evidence/2026-11-27/STAFF-04/current-run.md
+evidence/2026-11-27/STAFF-04/mutation-proof.txt
+evidence/2026-11-27/ROUND-3/gates.txt
+evidence/2026-11-27/MEM-CLOSE/round-3.md
+.finn/state/STATE.md
+docs/MuscleParadise/PWA-EXECUTION-STATE.md
+docs/MuscleParadise/SESSION_HANDOFF.md
+scripts/allowlists/ROUND-3-phase-B.txt

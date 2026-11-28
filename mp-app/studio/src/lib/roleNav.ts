@@ -44,6 +44,11 @@ export const PAGE_RULES: Record<string, NavRule> = {
   assessment: { roles: ["super_admin", "admin", "manager", "coach", "member"], why: "ارزیابی خودِ عضو مجاز است" },
   chat: { roles: ALL_STAFF, why: "چت برای همهٔ نقش‌ها باز است" },
   checkin: { roles: ALL_STAFF, why: "حضور برای همه" },
+  // STAFF-04: کلاس/ظرفیت برای کارکنان؛ عضو در اپ عضو مسیر /member/classes دارد.
+  classes: {
+    roles: ["super_admin", "admin", "manager", "coach", "reception"],
+    why: "ظرفیت و رزرو کلاس دادهٔ عملیاتی کارکنان است؛ نقش member به اپ عضو هدایت می‌شود",
+  },
   // ── R3: دادهٔ مالی خالص ──
   // reception پیش‌تر منو را می‌دید ولی سرور ۴۰۳ می‌داد (DENIES در rbac.py).
   // manager و بالاتر می‌مانند؛ coach و member هرگز.

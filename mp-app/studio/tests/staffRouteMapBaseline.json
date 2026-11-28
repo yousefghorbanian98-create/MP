@@ -1,4 +1,6 @@
 {
-  "_why": "STAFF-01 (الف): صفحه‌های کارکنان که امروز تست اختصاصی import ندارند. این فهرست ratchet است و فقط می‌تواند کوچک شود؛ صفحهٔ تازه بدون تست ردیف اضافه می‌کند و tests/staffRouteMap.test.ts را قرمز می‌کند.",
-  "withoutDedicatedTest": ["members", "analytics"]
+  "_why": "STAFF-01 (الف): صفحه‌های کارکنان که امروز تست اختصاصی import ندارند. این فهرست ratchet است و فقط می‌تواند کوچک شود؛ صفحهٔ تازه بدون تست ردیف اضافه می‌کند و tests/staffRouteMap.test.ts را قرمز می‌کند. · ROUND 3: members تست اختصاصی گرفت (STAFF-02) و صفحهٔ classes با تست اضافه شد؛ فقط analytics مانده.",
+  "withoutDedicatedTest": [
+    "analytics"
+  ]
 }

@@ -13,6 +13,7 @@ const items: { id: PageId; label: string; icon: string }[] = [
   { id: "assessment", label: "ارزیابی", icon: "◬" },
   { id: "chat", label: "چت", icon: "✉" },
   { id: "checkin", label: "حضور", icon: "◎" },
+  { id: "classes", label: "کلاس‌ها", icon: "▦" },
   { id: "finance", label: "مالی", icon: "◈" },
   { id: "expenses", label: "هزینه‌ها", icon: "▾" },
   { id: "analytics", label: "تحلیل‌ها", icon: "◆" },

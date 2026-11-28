@@ -15,6 +15,7 @@ export const PAGE_IDS = [
   "assessment",
   "chat",
   "checkin",
+  "classes",
   "finance",
   "expenses",
   "analytics",
