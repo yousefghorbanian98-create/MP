@@ -1,0 +1,37 @@
+ROUND 2/9 (phase B) — CI proof
+==============================
+date: 2026-11-28T19:40Z
+branch: arena/3c08bfbd-mp
+PR: #36 (draft)  https://github.com/yousefghorbanian98-create/MP/pull/36
+head_sha: aa254e2384e5d997dd888f3c05d7bf0689aa0f44 (aa254e2)
+mergeable_state: CLEAN
+
+PR checks (gh pr checks 36) — 12 checks, all pass:
+  backend                                  pass  5m5s
+  studio                                   pass  1m22s
+  client-flutter                           pass  1m23s
+  Client — pinned SDK · format gate · Android debug compile  pass 3m41s
+  live-contract                            pass  48s
+  secret-scan                              pass  23s
+  Documentation links and handoff          pass  19s
+  markdownlint                             pass
+  Reviewdog (Markdown findings)            pass  14s
+  Super-Linter (PWA-00 Markdown only)      pass  1m9s
+  PWA-00 patch applies cleanly…            pass  7s
+  e2e-api                                  pass
+
+push-level workflow runs on aa254e2:
+  mp-ci             success  46180214002
+  pwa00-doc-quality success  46180213999
+  (an earlier mp-ci 46180208112 on the same tree also success)
+
+CODERABBIT=absent — no CodeRabbit check-run exists on aa254e2
+(`check-runs?filter` scan: names matching /CodeRabbit/i → 0).
+In round 1 a cancelled CodeRabbit run was present; this round there is none,
+so no cancelled check is being folded into the pass count.
+
+First attempt on 1f41336 failed the blocking ``Lint (ruff)`` step (ruff format --check
+on 3 round-2 files); fixed in aa254e2 (formatting only) and re-verified locally:
+  ruff check --select E,F,W,I,N,UP,B,SIM,DTZ,TRY400,S --ignore E501 . → All checks passed
+  ruff format --check . → 424 files already formatted
+  pytest (ownership + search + routes gates) → 37 passed
